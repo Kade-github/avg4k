@@ -12,6 +12,7 @@ vector<Object*>* objects;
 Menu* Game::currentMenu = NULL;
 Camera* Game::mainCamera = NULL;
 SaveFile* Game::save = NULL;
+Steam* Game::steam = NULL;
 
 map<int, bool> Game::controls = {
 	{SDLK_d, false},
@@ -45,6 +46,9 @@ void Game::createGame()
 	mainCamera = new Camera();
 	mainCamera->cameraTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 792, 600);
 	save = new SaveFile();
+
+	steam = new Steam();
+	steam->InitSteam();
 }
 
 

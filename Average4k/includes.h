@@ -4,6 +4,7 @@
 #include <SDL_ttf.h>
 #include <vector>
 #include <string>
+#include "steam/steam_api.h"
 
 class Events
 {

@@ -40,6 +40,9 @@
     <Filter Include="Source Files\Chart\ChartParsers\SM">
       <UniqueIdentifier>{dffb58e5-349c-4796-8bcb-dc2e6e5adee4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Steam">
+      <UniqueIdentifier>{0c8d56f0-d2fa-41a8-af33-fa371439f959}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Average4k.cpp">
@@ -80,6 +83,9 @@
     </ClCompile>
     <ClCompile Include="Chart.cpp">
       <Filter>Source Files\Chart</Filter>
+    </ClCompile>
+    <ClCompile Include="Steam.cpp">
+      <Filter>Source Files\Steam</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -127,6 +133,9 @@
     </ClInclude>
     <ClInclude Include="Chart.h">
       <Filter>Source Files\Chart</Filter>
+    </ClInclude>
+    <ClInclude Include="Steam.h">
+      <Filter>Source Files\Steam</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

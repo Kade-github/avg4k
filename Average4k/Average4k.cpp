@@ -1,4 +1,5 @@
 #include "includes.h"
+#include "Steam.h"
 #include "Game.h"
 #include <SDL_sound.h>
 #include <bass.h>
@@ -58,7 +59,8 @@ void fpsthink() {
 	Game::gameFPS = std::floorf(1000.f / Game::gameFPS);
 }
 
-int main(int argc, char* argv[])
+INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+	PSTR lpCmdLine, INT nCmdShow)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -178,6 +180,8 @@ int main(int argc, char* argv[])
 
 	SDL_Quit();
 
+	if (Game::steam != nullptr)
+		Game::steam->ShutdownSteam();
 
 	return 0;
 }

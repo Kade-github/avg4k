@@ -61,8 +61,8 @@ void fpsthink() {
 int main(int argc, char* argv[])
 {
 	VM_START
-		STR_ENCRYPT_START
-		 STR_ENCRYPTW_START
+	STR_ENCRYPT_START
+	STR_ENCRYPTW_START
 	SDL_Init(SDL_INIT_EVERYTHING);
 
 	BASS_Init(-1,44100,0,NULL,NULL);
@@ -196,7 +196,7 @@ int main(int argc, char* argv[])
 
 
 	STR_ENCRYPT_END
-		STR_ENCRYPTW_END
+	STR_ENCRYPTW_END
 	VM_END
 		
 	return 0;

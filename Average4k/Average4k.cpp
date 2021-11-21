@@ -59,9 +59,25 @@ void fpsthink() {
 
 int main(int argc, char* argv[])
 {
+	VM_START
+		STR_ENCRYPT_START
+		 STR_ENCRYPTW_START
 	SDL_Init(SDL_INIT_EVERYTHING);
 
 	BASS_Init(-1,44100,0,NULL,NULL);
+
+
+	int test = 123;
+
+	CHECK_CODE_INTEGRITY(test, 6969);
+
+
+	if (test != 6969) {
+
+
+		//FUCK SHIT WE PATCHED
+
+	}
 
 	TTF_Init();
 
@@ -178,5 +194,9 @@ int main(int argc, char* argv[])
 	SDL_Quit();
 
 
+	STR_ENCRYPT_END
+		STR_ENCRYPTW_END
+	VM_END
+		
 	return 0;
 }

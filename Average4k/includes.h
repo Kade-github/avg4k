@@ -4,7 +4,9 @@
 #include <SDL_ttf.h>
 #include <vector>
 #include <string>
+#include "steam/steam_api.h"
 #include <Themida/ThemidaSDK.h>
+
 
 class Events
 {

@@ -1,6 +1,7 @@
 #pragma once
 #include "includes.h"
 #include <map>
+#include "Steam.h"
 #include "SaveFile.h"
 #include "Camera.h"
 #include "Menu.h"
@@ -19,6 +20,7 @@ public:
 	static Menu* currentMenu;
 	static Camera* mainCamera;
 	static SaveFile* save;
+	static Steam* steam;
 
 	static int gameWidth;
 	static int gameHeight;

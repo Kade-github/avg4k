@@ -63,6 +63,8 @@ int main(int argc, char* argv[])
 	VM_START
 	STR_ENCRYPT_START
 	STR_ENCRYPTW_START
+
+
 	SDL_Init(SDL_INIT_EVERYTHING);
 
 	BASS_Init(-1,44100,0,NULL,NULL);

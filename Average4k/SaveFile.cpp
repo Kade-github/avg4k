@@ -21,14 +21,13 @@ void SaveFile::CreateNewFile()
 {
 	// default settings
     settings.push_back(CreateSetting(false,0,"downscroll"));
-    settings.push_back(CreateSetting(false,2.4,"scrollspeed"));
+    settings.push_back(CreateSetting(true,2.4,"scrollspeed"));
     
+    Save();
+}
 
-    /// <summary>
-    /// BITCH BITCH BITCH
-    /// </summary>
-    
-
+void SaveFile::Save()
+{
     std::ofstream of("settings.pack");
 
     std::stringstream bitch;
@@ -40,9 +39,27 @@ void SaveFile::CreateNewFile()
     of.close();
 }
 
+void SaveFile::SetDouble(std::string sett, double value)
+{
+    for (setting& set : settings)
+    {
+        if (set.name == sett)
+            set.value = value;
+    }
+}
+
+void SaveFile::SetBool(std::string sett, bool value)
+{
+    for (setting& set : settings)
+    {
+        if (set.name == sett)
+            set.active = value;
+    }
+}
+
 double SaveFile::GetDouble(std::string sett)
 {
-    for (setting set : settings)
+    for (setting& set : settings)
     {
         if (set.name == sett)
             return set.value;
@@ -52,7 +69,7 @@ double SaveFile::GetDouble(std::string sett)
 
 bool SaveFile::GetBool(std::string sett)
 {
-    for (setting set : settings)
+    for (setting& set : settings)
     {
         if (set.name == sett)
             return set.active;

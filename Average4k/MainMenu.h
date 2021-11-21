@@ -10,10 +10,11 @@ class MainMenu :
 		static Chart* currentChart;
 		static float offset;
 
+		static int selectedDiffIndex;
+
 		std::vector<std::string> listOfCharts;
 
 		int selectedIndex;
-		static int selectedDiffIndex;
 
 		void updateList();
 

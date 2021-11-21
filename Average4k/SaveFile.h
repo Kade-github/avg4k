@@ -19,6 +19,11 @@ class SaveFile
 
 		void CreateNewFile();
 
+		void Save();
+
+		void SetDouble(std::string setting, double value);
+		void SetBool(std::string setting, bool value);
+
 		double GetDouble(std::string setting);
 		bool GetBool(std::string setting);
 

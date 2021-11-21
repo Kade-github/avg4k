@@ -49,6 +49,15 @@ class Gameplay :
 		double notesPlayed = 0;
 		double notesHit = 0;
 
+		bool botplay = false;
+
+		int Marvelous = 0;
+		int Perfect = 0;
+		int Great = 0;
+		int Eh = 0;
+		int Yikes = 0;
+		int Misses = 0;
+
 		float heldEnd[3];
 
 		float positionInSong = 0;

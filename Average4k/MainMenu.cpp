@@ -11,7 +11,6 @@ MainMenu* MainMenu::instance;
 Chart* MainMenu::currentChart;
 float MainMenu::offset = 0;
 int MainMenu::selectedDiffIndex = 0;
-
 Text* mainMenuText;
 
 Text* songSelect;
@@ -45,6 +44,7 @@ void MainMenu::updateList() {
 MainMenu::MainMenu()
 {
 	instance = this;
+	selectedDiffIndex = 0;
 	mainMenuText = new Text(0, 0, "Average 4k", 100, 50);
 	mainMenuText->setX((Game::gameWidth / 2) - (mainMenuText->surfaceMessage->w / 2));
 	mainMenuText->setY((Game::gameHeight / 2) - 250);
@@ -88,6 +88,14 @@ void MainMenu::keyDown(SDL_KeyboardEvent event)
 		diffSelected->die();
 	}
 
+	// downscroll toggle
+
+	if (event.keysym.sym == SDLK_1)
+	{
+		Game::save->SetBool("downscroll", !Game::save->GetBool("downscroll"));
+		std::cout << "downscroll is now " << Game::save->GetBool("downscroll") << std::endl;
+	}
+
 	if (event.keysym.sym == SDLK_RIGHT)
 	{
 		selectedDiffIndex++;
@@ -104,6 +112,56 @@ void MainMenu::keyDown(SDL_KeyboardEvent event)
 		if (selectedDiffIndex < 0)
 			selectedDiffIndex = currentChart->meta->difficulties->size() - 1;
 		difficulty diff = (*currentChart->meta->difficulties)[selectedDiffIndex];
+		diffSelected->setText(diff.name + " (" + std::to_string(diff.notes->size()) + " NOTES) (" + std::to_string((*currentChart->meta->bpms)[0].bpm) + " BPM)");
+		diffSelected->setX((Game::gameWidth / 2) - (diffSelected->surfaceMessage->w / 2));
+		diffSelected->setY(songSelect->y + songSelect->surfaceMessage->h + 30);
+	}
+
+	if (event.keysym.sym == SDLK_UP)
+	{
+		selectedIndex--;
+
+		selectedDiffIndex = 0;
+
+		if (selectedIndex < 0)
+			selectedIndex = listOfCharts.size() - 1;
+
+		SMFile* file = new SMFile(listOfCharts[selectedIndex]);
+
+		currentChart->destroy();
+
+		currentChart = new Chart(&file->meta);
+
+		difficulty diff = (*currentChart->meta->difficulties)[selectedDiffIndex];
+		songSelect->setText("> " + currentChart->meta->songName);
+		songSelect->setX((Game::gameWidth / 2) - (songSelect->surfaceMessage->w / 2));
+		songSelect->setY((Game::gameHeight / 2) - songSelect->surfaceMessage->h);
+
+		diffSelected->setText(diff.name + " (" + std::to_string(diff.notes->size()) + " NOTES) (" + std::to_string((*currentChart->meta->bpms)[0].bpm) + " BPM)");
+		diffSelected->setX((Game::gameWidth / 2) - (diffSelected->surfaceMessage->w / 2));
+		diffSelected->setY(songSelect->y + songSelect->surfaceMessage->h + 30);
+	}
+
+	if (event.keysym.sym == SDLK_DOWN)
+	{
+		selectedIndex++;
+
+		selectedDiffIndex = 0;
+
+		if (selectedIndex > listOfCharts.size() - 1)
+			selectedIndex = 0;
+
+		SMFile* file = new SMFile(listOfCharts[selectedIndex]);
+
+		currentChart->destroy();
+
+		currentChart = new Chart(&file->meta);
+
+		difficulty diff = (*currentChart->meta->difficulties)[selectedDiffIndex];
+		songSelect->setText("> " + currentChart->meta->songName);
+		songSelect->setX((Game::gameWidth / 2) - (songSelect->surfaceMessage->w / 2));
+		songSelect->setY((Game::gameHeight / 2) - songSelect->surfaceMessage->h);
+
 		diffSelected->setText(diff.name + " (" + std::to_string(diff.notes->size()) + " NOTES) (" + std::to_string((*currentChart->meta->bpms)[0].bpm) + " BPM)");
 		diffSelected->setX((Game::gameWidth / 2) - (diffSelected->surfaceMessage->w / 2));
 		diffSelected->setY(songSelect->y + songSelect->surfaceMessage->h + 30);

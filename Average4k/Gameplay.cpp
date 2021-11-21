@@ -41,16 +41,17 @@ void Gameplay::updateAccuracy(double hitWorth)
 {
 	notesPlayed++;
 	notesHit += hitWorth;
-
-	accuracy = (notesHit / notesPlayed) * 100;
+	accuracy = ((notesHit / notesPlayed) * 100);
 	if (accuracy < 0)
 		accuracy = 0;
 
-	std::string format = std::to_string(accuracy - fmod(accuracy, 0.01));
+	std::string format = std::to_string((double)((int)(accuracy * 100)) / 100);
 	format.erase(format.find_last_not_of('0') + 1, std::string::npos);
 
+	if (floor(accuracy) == accuracy)
+		format.erase(format.find_last_not_of('.') + 1, std::string::npos);
 
-	Accuracy->setText(format + "%");
+	Accuracy->setText(format + "%\n\nMarvelous: " + std::to_string(Marvelous) + "\nPerfect : " + std::to_string(Perfect) + "\nGreat : " + std::to_string(Great) + "\nEh : " + std::to_string(Eh) + "\nYikes: " + std::to_string(Yikes) + "\nCombo Breaks: " + std::to_string(Misses));
 }
 
 void Gameplay::removeNote(NoteObject* object)
@@ -66,6 +67,7 @@ void Gameplay::removeNote(NoteObject* object)
 
 void Gameplay::miss(NoteObject* object)
 {
+	Misses++;
 	updateAccuracy(-0.4);
 	combo = 0;
 	Judgement->setText("MISS");
@@ -114,7 +116,7 @@ Gameplay::Gameplay()
 	Combo = new Text(Game::gameWidth / 2, Game::gameHeight / 2 + 40, " ", 100, 100);
 	Combo->create();
 
-	Accuracy = new Text(0, Game::gameHeight / 2, "N/A", 100, 40);
+	Accuracy = new Text(0, Game::gameHeight / 2, "N/A\n\nMarvelous: " + std::to_string(Marvelous) + "\nPerfect: " + std::to_string(Perfect) + "\nGreat: " + std::to_string(Great) + "\nEh: " + std::to_string(Eh) + "\nYikes: " + std::to_string(Yikes) + "\nCombo Breaks: " + std::to_string(Misses), 100, 40);
 	Accuracy->create();
 
 	for (int i = 0; i < 4; i++)
@@ -246,7 +248,6 @@ void Gameplay::update(Events::updateEvent event)
 
 					double beat = MainMenu::currentChart->getBeatFromTimeOffset(i, holdSeg);
 
-
 					if (beat >= object->endBeat - 0.4)
 						break;
 
@@ -311,12 +312,34 @@ void Gameplay::update(Events::updateEvent event)
 
 		if (!note->destroyed)
 		{
+			float wh = MainMenu::currentChart->getTimeFromBeat(note->beat, MainMenu::currentChart->getSegmentFromBeat(note->beat)) * 1000;
+
+			if (wh - positionInSong < 2 && note->active && botplay)
+			{
+				Judgement->setText("Marvelous (2ms)");
+				(*Judgement).color.r = 0;
+				(*Judgement).color.g = 255;
+				(*Judgement).color.b = 255;
+				Marvelous++;
+				updateAccuracy(1);
+				note->active = false;
+
+				combo++;
+
+				Judgement->setX((Game::gameWidth / 2) - (Judgement->surfaceMessage->w / 2));
+				Judgement->setY((Game::gameHeight / 2));
+
+				Combo->setText("Botplay");
+				Combo->setX((Game::gameWidth / 2) - (Combo->surfaceMessage->w / 2));
+				Combo->setY((Game::gameHeight / 2) + 40);
+
+			}
 
 			// BEFORE DRAW, CHECK HELD NOTES!!
 
 			if (note->type == Note_Head)
 			{
-				if (keys[note->lane]) // holding that lane!
+				if (keys[note->lane] || botplay) // holding that lane!
 				{
 					for (int i = 0; i < note->heldTilings.size(); i++)
 					{
@@ -352,7 +375,7 @@ void Gameplay::update(Events::updateEvent event)
 				auto whHold = MainMenu::currentChart->getTimeFromBeat(tile.beat, MainMenu::currentChart->getSegmentFromBeat(tile.beat)) * 1000;
 				float diff = whHold - positionInSong;
 
-				if (diff < -Judge::hitWindows[2] && tile.active && !tile.fucked)
+				if (diff < -Judge::hitWindows[4] && tile.active && !tile.fucked)
 				{
 					std::cout << note->lane << " fucked" << std::endl;
 					miss(note);
@@ -378,15 +401,16 @@ void Gameplay::update(Events::updateEvent event)
 					tile.fucked = true;
 			}
 
-			note->draw(positionInSong, beat, receptors[note->lane].rect);
-			float wh = MainMenu::currentChart->getTimeFromBeat(note->beat, MainMenu::currentChart->getSegmentFromBeat(note->beat)) * 1000;
-			if (wh - positionInSong  <= -Judge::hitWindows[2] && note->active)
+			if (note->lane < 4 && note->lane >= 0)
+				note->draw(positionInSong, beat, receptors[note->lane].rect);
+			
+			if (wh - positionInSong  <= -Judge::hitWindows[4] && note->active)
 			{
 				miss(note);
 				removeNote(note);
 			}
 
-			if (wh - positionInSong <= -Judge::hitWindows[4] && (note->heldTilings.size() == 0 || note->heldTilings[0].fucked))
+			if (wh - positionInSong <= -Judge::hitWindows[4] && !note->active && (note->heldTilings.size() == 0 || note->heldTilings[0].fucked))
 			{
 				removeNote(note);
 			}
@@ -404,7 +428,6 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			if (!MainMenu::instance)
 				delete MainMenu::instance;
 			MainMenu::currentChart->destroy();
-			Game::currentMenu = new MainMenu();
 			Judgement->die();
 			Combo->die();
 			Accuracy->die();
@@ -416,7 +439,12 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 			BASS_ChannelStop(tempostream);
 			BASS_ChannelFree(tempostream);
+
+			Game::currentMenu = new MainMenu();
 			delete this;
+			return;
+		case SDLK_F1:
+			botplay = !botplay;
 			return;
 		case SDLK_BACKQUOTE:
 			Game::currentMenu = new Gameplay();
@@ -493,6 +521,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 						(*Judgement).color.r = 0;
 						(*Judgement).color.g = 255;
 						(*Judgement).color.b = 255;
+						Marvelous++;
 						updateAccuracy(1);
 						break;
 					case judgement::Judge_perfect:
@@ -500,6 +529,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 						(*Judgement).color.r = 255;
 						(*Judgement).color.g = 255;
 						(*Judgement).color.b = 0;
+						Perfect++;
 						updateAccuracy(0.88);
 						break;
 					case judgement::Judge_great:
@@ -507,6 +537,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 						(*Judgement).color.r = 0;
 						(*Judgement).color.g = 255;
 						(*Judgement).color.b = 0;
+						Great++;
 						updateAccuracy(0.7);
 						break;
 					case judgement::Judge_good:
@@ -515,6 +546,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 						(*Judgement).color.r = 255;
 						(*Judgement).color.g = 0;
 						(*Judgement).color.b = 0;
+						Eh++;
 						updateAccuracy(0.35);
 						break;
 					case judgement::Judge_bad:
@@ -523,6 +555,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 						(*Judgement).color.r = 128;
 						(*Judgement).color.g = 0;
 						(*Judgement).color.b = 0;
+						Yikes++;
 						updateAccuracy(0.1);
 						break;
 					}

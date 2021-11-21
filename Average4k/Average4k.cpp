@@ -66,6 +66,15 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	STR_ENCRYPT_START
 	STR_ENCRYPTW_START
 	SDL_Init(SDL_INIT_EVERYTHING);
+	
+
+
+	#ifdef  _DEBUG
+	AllocConsole();
+	freopen("conout$", "w", stdout);
+	#else
+	freopen("log.txt", "w", stdout);
+	#endif
 
 	BASS_Init(-1,44100,0,NULL,NULL);
 

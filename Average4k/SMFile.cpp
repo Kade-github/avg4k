@@ -96,16 +96,16 @@ SMFile::SMFile(std::string path) {
                         if (stuff[0] == "#BPMS") {
                             // gather bpms
                             readingBPMS = true;
-                            std::vector < std::string > bpmSeg = split(stuff[1], '=');
-                            if (bpmSeg.size() != 1)
+                            std::vector < std::string > bpmSeg = split(stuff[1], ',');
+                            if (bpmSeg.size() != 0)
                             {
                                 for (int ii = 0; ii < bpmSeg.size(); ii += 2)
                                 {
                                     bpmSegment seg;
-                                    seg.startBeat = std::stod(split(bpmSeg[ii], ',')[ii == 0 ? 0 : 1]);
+                                    seg.startBeat = std::stod(split(bpmSeg[ii],'=')[0]);
                                     seg.endBeat = INT_MAX;
                                     seg.length = INT_MAX;
-                                    seg.bpm = std::stof(split(bpmSeg[ii + 1],',')[0]);
+                                    seg.bpm = std::stof(split(bpmSeg[ii], '=')[1]);
                                     seg.startTime = 0;
 
                                     if (bpmIndex != 0) // previous lol

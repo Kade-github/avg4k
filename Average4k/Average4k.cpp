@@ -59,9 +59,6 @@ void fpsthink() {
 
 int main(int argc, char* argv[])
 {
-
-	cout << "gaming";
-
 	SDL_Init(SDL_INIT_EVERYTHING);
 
 	BASS_Init(-1,44100,0,NULL,NULL);
@@ -85,8 +82,6 @@ int main(int argc, char* argv[])
 	game->gameHeight = 600;
 
 	SDL_StartTextInput();
-
-	cout << "gaming";
 
 	bool run = true;
 

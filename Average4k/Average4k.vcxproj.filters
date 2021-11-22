@@ -43,6 +43,18 @@
     <Filter Include="Source Files\Steam">
       <UniqueIdentifier>{0c8d56f0-d2fa-41a8-af33-fa371439f959}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Multiplayer">
+      <UniqueIdentifier>{b3de5d8a-7cb5-4837-baf0-8db05e4f51f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Multiplayer\Packets">
+      <UniqueIdentifier>{ee75d285-db1d-4a97-993f-44f4bdd2dfa2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Multiplayer\Packets\Client">
+      <UniqueIdentifier>{ff794bf5-423d-480f-9527-0ed7e748e146}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Multiplayer\Packets\Server">
+      <UniqueIdentifier>{484f4ac6-8737-48c2-a66b-0c44979b41f5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Average4k.cpp">
@@ -87,6 +99,9 @@
     <ClCompile Include="Steam.cpp">
       <Filter>Source Files\Steam</Filter>
     </ClCompile>
+    <ClCompile Include="Multiplayer.cpp">
+      <Filter>Source Files\Multiplayer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes.h">
@@ -99,9 +114,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MainMenu.h">
@@ -136,6 +148,81 @@
     </ClInclude>
     <ClInclude Include="Steam.h">
       <Filter>Source Files\Steam</Filter>
+    </ClInclude>
+    <ClInclude Include="Multiplayer.h">
+      <Filter>Source Files\Multiplayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketClientMissingChart.h">
+      <Filter>Source Files\Multiplayer\Packets\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet.h">
+      <Filter>Source Files\Multiplayer\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketHello.h">
+      <Filter>Source Files\Multiplayer\Packets\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketHostChangeChart.h">
+      <Filter>Source Files\Multiplayer\Packets\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketHostServer.h">
+      <Filter>Source Files\Multiplayer\Packets\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketHostStartGame.h">
+      <Filter>Source Files\Multiplayer\Packets\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketJoinServer.h">
+      <Filter>Source Files\Multiplayer\Packets\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketNoteHit.h">
+      <Filter>Source Files\Multiplayer\Packets\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketServerList.h">
+      <Filter>Source Files\Multiplayer\Packets\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketSongFinished.h">
+      <Filter>Source Files\Multiplayer\Packets\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketHello.h">
+      <Filter>Source Files\Multiplayer\Packets\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketFinalizeChart.h">
+      <Filter>Source Files\Multiplayer\Packets\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketHostServerReply.h">
+      <Filter>Source Files\Multiplayer\Packets\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketInvalidPacket.h">
+      <Filter>Source Files\Multiplayer\Packets\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketJoinServerReply.h">
+      <Filter>Source Files\Multiplayer\Packets\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketServerListReply.h">
+      <Filter>Source Files\Multiplayer\Packets\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketStartLobbyGame.h">
+      <Filter>Source Files\Multiplayer\Packets\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketStatus.h">
+      <Filter>Source Files\Multiplayer\Packets\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketUpdateLeaderboard.h">
+      <Filter>Source Files\Multiplayer\Packets\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketUpdateLobbyChart.h">
+      <Filter>Source Files\Multiplayer\Packets\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketUpdateLobbyData.h">
+      <Filter>Source Files\Multiplayer\Packets\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Base64.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketStatus.h">
+      <Filter>Source Files\Multiplayer\Packets\Client</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

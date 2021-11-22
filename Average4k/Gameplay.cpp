@@ -124,9 +124,9 @@ Gameplay::Gameplay()
 		Receptor r;
 		SDL_FRect rect;
 		if (downscroll)
-			rect.y = (Game::gameHeight / 2) + 200;
+			rect.y = (Game::gameHeight / 2) + 300;
 		else
-			rect.y = (Game::gameHeight / 2) - 250;
+			rect.y = (Game::gameHeight / 2) - 300;
 		rect.x = (Game::gameWidth / 2) - 146 + ((76) * i);
 		rect.w = 64;
 		rect.h = 64;

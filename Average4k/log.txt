@@ -40,3 +40,60 @@ starting measure 4
 starting measure 12
 starting measure 12
 starting measure 6
+Creating things
+Setting handlers
+handlers set
+got connection
+connected
+Calling run
+awaiting auth ticket from steam
+got auth ticket
+encoded ticket: CAEQ7Y2M2Q8YBSA/KnDv7zGqncEnICfMKpQQAIMULi1bMshf1K0t16DM3tI4NhPKJe/Wdxa8HBYswnmChSemx0nHsKQpwrM8MFDoLR1wDv4jAZ9QIAurAFuJP37wbXdmgI7fHgL2Y5CdDlA2NALJsKp76vpF9t6MHqlKnxpJ
+done run
+awaiting auth ticket from steam
+exc: invalid state
+got auth ticket
+encoded ticket: CAEQ7Y2M2Q8YBSA/KnDv7zGqncEnICfMKpQQAIMULi1bMshf1K0t16DM3tI4NhPKJe/Wdxa8HBYswnmChSemx0nHsKQpwrM8MFDoLR1wDv4jAZ9QIAurAFuJP37wbXdmgI7fHgL2Y5CdDlA2NALJsKp76vpF9t6MHqlKnxpJ
+playing assets/charts/1-l forest funk/dB soundworks - Super Meat Boy! Soundtrack - 03 Forest Funk (Ch 1 Light World).ogg
+creating new SM
+starting measure 12
+starting measure 12
+starting measure 12
+starting measure 12
+starting measure 12
+starting measure 12
+starting measure 12
+starting measure 12
+starting measure 6
+starting measure 12
+starting measure 12
+starting measure 12
+starting measure 12
+starting measure 4
+starting measure 12
+starting measure 12
+starting measure 12
+starting measure 4
+starting measure 12
+starting measure 12
+starting measure 6
+starting measure 12
+starting measure 12
+starting measure 12
+starting measure 6
+starting measure 4
+starting measure 12
+starting measure 12
+starting measure 12
+starting measure 4
+starting measure 12
+starting measure 12
+starting measure 12
+starting measure 4
+starting measure 12
+starting measure 12
+starting measure 12
+starting measure 4
+starting measure 12
+starting measure 12
+starting measure 6

@@ -165,6 +165,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="Gameplay.cpp" />
     <ClCompile Include="Judge.cpp" />
     <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="Multiplayer.cpp" />
     <ClCompile Include="NoteObject.cpp" />
     <ClCompile Include="Noteskin.cpp" />
     <ClCompile Include="Object.cpp" />
@@ -175,7 +176,18 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioManager.h" />
+    <ClInclude Include="Base64.h" />
     <ClInclude Include="Chart.h" />
+    <ClInclude Include="CPacketClientMissingChart.h" />
+    <ClInclude Include="CPacketHello.h" />
+    <ClInclude Include="CPacketHostChangeChart.h" />
+    <ClInclude Include="CPacketHostServer.h" />
+    <ClInclude Include="CPacketHostStartGame.h" />
+    <ClInclude Include="CPacketJoinServer.h" />
+    <ClInclude Include="CPacketNoteHit.h" />
+    <ClInclude Include="CPacketServerList.h" />
+    <ClInclude Include="CPacketSongFinished.h" />
+    <ClInclude Include="CPacketStatus.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Gameplay.h" />
@@ -183,11 +195,24 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="Judge.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="Multiplayer.h" />
     <ClInclude Include="NoteObject.h" />
     <ClInclude Include="Noteskin.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="Packet.h" />
     <ClInclude Include="SaveFile.h" />
     <ClInclude Include="SMFile.h" />
+    <ClInclude Include="SPacketFinalizeChart.h" />
+    <ClInclude Include="SPacketHello.h" />
+    <ClInclude Include="SPacketHostServerReply.h" />
+    <ClInclude Include="SPacketInvalidPacket.h" />
+    <ClInclude Include="SPacketJoinServerReply.h" />
+    <ClInclude Include="SPacketServerListReply.h" />
+    <ClInclude Include="SPacketStartLobbyGame.h" />
+    <ClInclude Include="SPacketStatus.h" />
+    <ClInclude Include="SPacketUpdateLeaderboard.h" />
+    <ClInclude Include="SPacketUpdateLobbyChart.h" />
+    <ClInclude Include="SPacketUpdateLobbyData.h" />
     <ClInclude Include="Steam.h" />
     <ClInclude Include="Text.h" />
   </ItemGroup>

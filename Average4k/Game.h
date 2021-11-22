@@ -5,6 +5,7 @@
 #include "SaveFile.h"
 #include "Camera.h"
 #include "Menu.h"
+#include "Multiplayer.h"
 
 class Game
 {
@@ -21,6 +22,7 @@ public:
 	static Camera* mainCamera;
 	static SaveFile* save;
 	static Steam* steam;
+	static Multiplayer* multi;
 
 	bool fullscreen = false;
 

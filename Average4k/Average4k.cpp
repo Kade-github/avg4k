@@ -15,6 +15,8 @@ using namespace std;
 #pragma comment(lib,"x64\\SDL2_ttf.lib")
 #pragma comment(lib,"x64\\SDL2_image.lib")
 #pragma comment(lib,"x64\\steam_api64.lib")
+#pragma comment(lib,"x64\\libcrypto.lib")
+#pragma comment(lib,"x64\\libssl.lib")
 
 #define FRAME_VALUES 60
 

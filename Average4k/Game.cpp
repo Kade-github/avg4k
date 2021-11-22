@@ -13,6 +13,7 @@ Menu* Game::currentMenu = NULL;
 Camera* Game::mainCamera = NULL;
 SaveFile* Game::save = NULL;
 Steam* Game::steam = NULL;
+Multiplayer* Game::multi = NULL;
 
 map<int, bool> Game::controls = {
 	{SDLK_d, false},
@@ -41,6 +42,10 @@ void Game::createGame()
 {
 	objects = new std::vector<Object*>();
 
+	steam = new Steam();
+	steam->InitSteam();
+
+
 	// to start
 	currentMenu = new MainMenu();
 
@@ -48,13 +53,14 @@ void Game::createGame()
 	mainCamera->cameraTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, Game::gameWidth, Game::gameHeight);
 	save = new SaveFile();
 
-	steam = new Steam();
-	steam->InitSteam();
+	multi = new Multiplayer();
+	CreateThread(NULL, NULL, Multiplayer::connect, NULL, NULL, NULL);
 }
 
 
 void Game::update(Events::updateEvent update)
 {
+	SteamAPI_RunCallbacks();
 
 	SDL_RenderClear(update.renderer);
 

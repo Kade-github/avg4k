@@ -103,8 +103,6 @@ void MainMenu::keyDown(SDL_KeyboardEvent event)
 			selectedDiffIndex = 0;
 		difficulty diff = (*currentChart->meta->difficulties)[selectedDiffIndex];
 		diffSelected->setText(diff.name + " (" + std::to_string(diff.notes->size()) + " NOTES) (" + std::to_string((*currentChart->meta->bpms)[0].bpm) + " BPM)");
-		diffSelected->setX((Game::gameWidth / 2) - (diffSelected->surfaceMessage->w / 2));
-		diffSelected->setY(songSelect->y + songSelect->surfaceMessage->h + 30);
 	}
 	else if (event.keysym.sym == SDLK_LEFT)
 	{
@@ -113,8 +111,6 @@ void MainMenu::keyDown(SDL_KeyboardEvent event)
 			selectedDiffIndex = currentChart->meta->difficulties->size() - 1;
 		difficulty diff = (*currentChart->meta->difficulties)[selectedDiffIndex];
 		diffSelected->setText(diff.name + " (" + std::to_string(diff.notes->size()) + " NOTES) (" + std::to_string((*currentChart->meta->bpms)[0].bpm) + " BPM)");
-		diffSelected->setX((Game::gameWidth / 2) - (diffSelected->surfaceMessage->w / 2));
-		diffSelected->setY(songSelect->y + songSelect->surfaceMessage->h + 30);
 	}
 
 	if (event.keysym.sym == SDLK_UP)
@@ -134,12 +130,8 @@ void MainMenu::keyDown(SDL_KeyboardEvent event)
 
 		difficulty diff = (*currentChart->meta->difficulties)[selectedDiffIndex];
 		songSelect->setText("> " + currentChart->meta->songName);
-		songSelect->setX((Game::gameWidth / 2) - (songSelect->surfaceMessage->w / 2));
-		songSelect->setY((Game::gameHeight / 2) - songSelect->surfaceMessage->h);
 
 		diffSelected->setText(diff.name + " (" + std::to_string(diff.notes->size()) + " NOTES) (" + std::to_string((*currentChart->meta->bpms)[0].bpm) + " BPM)");
-		diffSelected->setX((Game::gameWidth / 2) - (diffSelected->surfaceMessage->w / 2));
-		diffSelected->setY(songSelect->y + songSelect->surfaceMessage->h + 30);
 	}
 
 	if (event.keysym.sym == SDLK_DOWN)
@@ -159,11 +151,13 @@ void MainMenu::keyDown(SDL_KeyboardEvent event)
 
 		difficulty diff = (*currentChart->meta->difficulties)[selectedDiffIndex];
 		songSelect->setText("> " + currentChart->meta->songName);
-		songSelect->setX((Game::gameWidth / 2) - (songSelect->surfaceMessage->w / 2));
-		songSelect->setY((Game::gameHeight / 2) - songSelect->surfaceMessage->h);
 
 		diffSelected->setText(diff.name + " (" + std::to_string(diff.notes->size()) + " NOTES) (" + std::to_string((*currentChart->meta->bpms)[0].bpm) + " BPM)");
-		diffSelected->setX((Game::gameWidth / 2) - (diffSelected->surfaceMessage->w / 2));
-		diffSelected->setY(songSelect->y + songSelect->surfaceMessage->h + 30);
 	}
+
+	songSelect->setX((Game::gameWidth / 2) - (songSelect->surfaceMessage->w / 2));
+	songSelect->setY((Game::gameHeight / 2) - songSelect->surfaceMessage->h);
+
+	diffSelected->setX((Game::gameWidth / 2) - (diffSelected->surfaceMessage->w / 2));
+	diffSelected->setY(songSelect->y + songSelect->surfaceMessage->h + 30);
 }

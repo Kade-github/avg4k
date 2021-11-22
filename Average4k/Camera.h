@@ -4,7 +4,19 @@
 class Camera : public Object
 {
 public:
-	Camera();
+	int w = 0;
+	int h = 0;
+
+	float angle = 0;
+
+	bool shaking = false;
+	float shakeIntensity = 0;
+	int shakeTimer = 0;
+
+	int min = -8;
+	int max = 8;
+
+	Camera(int ww, int hh);
 	~Camera() = default;
 
 	SDL_Texture* cameraTexture;
@@ -13,9 +25,5 @@ public:
 
 	void shakeEffect(float intensity, int ms);
 
-	float angle = 0;
-
-	int w = 792;
-	int h = 600;
 };
 

@@ -43,8 +43,9 @@ void Game::createGame()
 
 	// to start
 	currentMenu = new MainMenu();
-	mainCamera = new Camera();
-	mainCamera->cameraTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 792, 600);
+
+	mainCamera = new Camera(1280, 720);
+	mainCamera->cameraTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, Game::gameWidth, Game::gameHeight);
 	save = new SaveFile();
 
 	steam = new Steam();
@@ -109,6 +110,35 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 		controls[ev.keysym.sym] = true;
 
 	currentMenu->keyDown(ev);
+
+	if (ev.keysym.sym == SDLK_F4)
+	{
+		fullscreen = !fullscreen;
+
+		if (fullscreen)
+		{
+			int idx = SDL_GetWindowDisplayIndex(Game::window);
+			SDL_Rect bounds;
+			SDL_GetDisplayBounds(idx, &bounds);
+			SDL_SetWindowBordered(Game::window, SDL_FALSE);
+			SDL_SetWindowPosition(Game::window, bounds.x, bounds.y);
+			SDL_SetWindowSize(Game::window, bounds.w, bounds.h);
+
+			mainCamera->w = bounds.w;
+			mainCamera->h = bounds.h;
+		}
+		else
+		{
+			int idx = SDL_GetWindowDisplayIndex(Game::window);
+			SDL_Rect bounds;
+			SDL_GetDisplayBounds(idx, &bounds);
+			SDL_SetWindowBordered(Game::window, SDL_TRUE);
+			SDL_SetWindowPosition(Game::window, bounds.w / 2, bounds.h / 2);
+			SDL_SetWindowSize(Game::window, 1280, 720);
+			mainCamera->w = 1280;
+			mainCamera->h = 720;
+		}
+	}
 
 	for (int i = 0; i < objects->size(); i++)
 	{

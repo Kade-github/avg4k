@@ -22,6 +22,8 @@ public:
 	static SaveFile* save;
 	static Steam* steam;
 
+	bool fullscreen = false;
+
 	static int gameWidth;
 	static int gameHeight;
 

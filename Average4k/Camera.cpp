@@ -1,14 +1,12 @@
 #include "Camera.h"
 
-bool shaking = false;
-float shakeIntensity = 0;
-int shakeTimer = 0;
 
-int min = -8;
-int max = 8;
-
-Camera::Camera()
+Camera::Camera(int ww, int hh)
 {
+
+	w = ww;
+	h = hh;
+
 	std::srand(std::time(nullptr));
 }
 

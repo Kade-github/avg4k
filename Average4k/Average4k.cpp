@@ -93,12 +93,14 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	}
 
+	bool fullscreen = false;
+
 	TTF_Init();
 
 	fpsinit();
 
 	SDL_Window* window = SDL_CreateWindow("Da window", SDL_WINDOWPOS_UNDEFINED,
-		SDL_WINDOWPOS_UNDEFINED, 800, 600, SDL_WINDOW_SHOWN);
+		SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL_WINDOW_SHOWN);
 
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
@@ -108,8 +110,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	Game* game = new Game();
 
-	game->gameWidth = 800;
-	game->gameHeight = 600;
+	game->gameWidth = 1280;
+	game->gameHeight = 720;
 
 	SDL_StartTextInput();
 

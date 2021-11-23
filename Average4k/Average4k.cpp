@@ -17,7 +17,7 @@ using namespace std;
 #pragma comment(lib,"x64\\steam_api64.lib")
 #pragma comment(lib,"x64\\libcrypto.lib")
 #pragma comment(lib,"x64\\libssl.lib")
-
+#pragma comment(lib,"x64\\zip.lib")
 #define FRAME_VALUES 60
 
 Uint32 frametimes[FRAME_VALUES];

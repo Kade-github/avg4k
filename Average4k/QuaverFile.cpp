@@ -173,8 +173,8 @@ chartMeta QuaverFile::returnChart(std::string path)
                 if (split[0] == "HitObjects")
                     notes = true;
             }
-            infile.close();
         }
+        infile.close();
     }
     for (difficulty& diff : (*meta.difficulties))
     {

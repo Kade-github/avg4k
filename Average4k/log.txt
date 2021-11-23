@@ -6,6 +6,5 @@ connected
 Calling run
 awaiting auth ticket from steam
 got auth ticket
-encoded ticket: CAEQ5uLV4wIYBSA/KnDHBon7G2ZhnDLA+jRIUCk02hY1v5EMjxczgbzgCwMDLj3Pyi0irZdZM8ChLznLV48vV5tIT5TDIwEUI/ZBTwHiE4PaveNqxDQr5zjzADCRnETdy6Uwd1guY8QCb6nNijrBKkXHbi7emxCLq/rvhHnU
+encoded ticket: CAEQ8YzdTBgFID8qcPiJHaOx5+aXMdJ47da1C+6ZneuYpvjVkFiDUHTAWsaBRJ0WkdbNWLA6KQ3lSRtwvF1Rt2qF0EGK0dex4O8evW0/3LHdTaeV4ppaL+q0aWA2GWiDWf6EkrUhN8f+NypLvV6LKgcO27S9G6HtLvwiLmA=
 fuckyou Kade. hello server, fuck you too! 
-playing assets/charts/assets/charts/778 - 74/audio.mp3

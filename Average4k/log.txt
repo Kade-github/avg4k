@@ -1,45 +1,3 @@
-creating new SM
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 6
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 4
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 4
-starting measure 12
-starting measure 12
-starting measure 6
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 6
-starting measure 4
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 4
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 4
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 4
-starting measure 12
-starting measure 12
-starting measure 6
 Creating things
 Setting handlers
 handlers set
@@ -48,52 +6,6 @@ connected
 Calling run
 awaiting auth ticket from steam
 got auth ticket
-encoded ticket: CAEQ7Y2M2Q8YBSA/KnDv7zGqncEnICfMKpQQAIMULi1bMshf1K0t16DM3tI4NhPKJe/Wdxa8HBYswnmChSemx0nHsKQpwrM8MFDoLR1wDv4jAZ9QIAurAFuJP37wbXdmgI7fHgL2Y5CdDlA2NALJsKp76vpF9t6MHqlKnxpJ
-done run
-awaiting auth ticket from steam
-exc: invalid state
-got auth ticket
-encoded ticket: CAEQ7Y2M2Q8YBSA/KnDv7zGqncEnICfMKpQQAIMULi1bMshf1K0t16DM3tI4NhPKJe/Wdxa8HBYswnmChSemx0nHsKQpwrM8MFDoLR1wDv4jAZ9QIAurAFuJP37wbXdmgI7fHgL2Y5CdDlA2NALJsKp76vpF9t6MHqlKnxpJ
-playing assets/charts/1-l forest funk/dB soundworks - Super Meat Boy! Soundtrack - 03 Forest Funk (Ch 1 Light World).ogg
-creating new SM
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 6
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 4
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 4
-starting measure 12
-starting measure 12
-starting measure 6
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 6
-starting measure 4
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 4
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 4
-starting measure 12
-starting measure 12
-starting measure 12
-starting measure 4
-starting measure 12
-starting measure 12
-starting measure 6
+encoded ticket: CAEQ5uLV4wIYBSA/KnDHBon7G2ZhnDLA+jRIUCk02hY1v5EMjxczgbzgCwMDLj3Pyi0irZdZM8ChLznLV48vV5tIT5TDIwEUI/ZBTwHiE4PaveNqxDQr5zjzADCRnETdy6Uwd1guY8QCb6nNijrBKkXHbi7emxCLq/rvhHnU
+fuckyou Kade. hello server, fuck you too! 
+playing assets/charts/assets/charts/778 - 74/audio.mp3

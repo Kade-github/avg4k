@@ -169,6 +169,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="NoteObject.cpp" />
     <ClCompile Include="Noteskin.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="QuaverFile.cpp" />
     <ClCompile Include="SaveFile.cpp" />
     <ClCompile Include="SMFile.cpp" />
     <ClCompile Include="Steam.cpp" />
@@ -200,6 +201,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="Noteskin.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Packet.h" />
+    <ClInclude Include="QuaverFile.h" />
     <ClInclude Include="SaveFile.h" />
     <ClInclude Include="SMFile.h" />
     <ClInclude Include="SPacketFinalizeChart.h" />

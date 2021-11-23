@@ -55,6 +55,9 @@
     <Filter Include="Source Files\Multiplayer\Packets\Server">
       <UniqueIdentifier>{484f4ac6-8737-48c2-a66b-0c44979b41f5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Chart\ChartParsers\Quaver">
+      <UniqueIdentifier>{ad949f2e-57d2-404b-b8ed-34d441bfcd18}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Average4k.cpp">
@@ -101,6 +104,9 @@
     </ClCompile>
     <ClCompile Include="Multiplayer.cpp">
       <Filter>Source Files\Multiplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="QuaverFile.cpp">
+      <Filter>Source Files\Chart\ChartParsers\Quaver</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -223,6 +229,9 @@
     </ClInclude>
     <ClInclude Include="CPacketStatus.h">
       <Filter>Source Files\Multiplayer\Packets\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="QuaverFile.h">
+      <Filter>Source Files\Chart\ChartParsers\Quaver</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -35,9 +35,42 @@ void MainMenu::updateList() {
 
 			std::transform(bruh.begin(), bruh.end(), bruh.begin(),
 				[](unsigned char c) { return std::tolower(c); });
-			if (ends_with(bruh,".sm"))
-				listOfCharts.push_back(bruh);
+			if (ends_with(bruh, ".sm"))
+			{
+				song s;
+				s.type = StepMania;
+				s.path = bruh;
+				listOfCharts.push_back(s);
+			}
+			if (ends_with(bruh, ".qua"))
+			{
+				song s;
+				s.type = Quaver;
+				s.path = entry.path().string();
+				listOfCharts.push_back(s);
+				break;
+			}
+
 		}
+	}
+}
+
+void MainMenu::switchChart(song s)
+{
+	// cannot do switch due to "YOU CANNOT DEFINE VARIABLES IN SWITCHES OR SOMETHING"
+	if (s.type == StepMania)
+	{
+		SMFile* filee = new SMFile(s.path);
+		currentChart = new Chart(filee->meta);
+		delete filee;
+	}
+
+	if (s.type == Quaver)
+	{
+		QuaverFile* file = new QuaverFile();
+		chartMeta meta = file->returnChart(s.path);
+		currentChart = new Chart(meta);
+		delete file;
 	}
 }
 
@@ -53,26 +86,23 @@ MainMenu::MainMenu()
 	selectedIndex = 0;
 
 	updateList();
-	
-	std::cout << "creating new SM" << std::endl;
 
-	SMFile* file = new SMFile(listOfCharts[selectedIndex]);
+	switchChart(listOfCharts[selectedIndex]);
 
-	currentChart = new Chart(&file->meta);
+	difficulty diff = (*currentChart->meta.difficulties)[selectedDiffIndex];
 
-	difficulty diff = (*currentChart->meta->difficulties)[selectedDiffIndex];
-
-	songSelect = new Text(0, 0, "> " + currentChart->meta->songName, 100, 500);
+	songSelect = new Text(0, 0, "> " + currentChart->meta.songName, 100, 500);
 	songSelect->setX((Game::gameWidth / 2) - (songSelect->surfaceMessage->w / 2));
 	songSelect->setY((Game::gameHeight / 2) - songSelect->surfaceMessage->h);
 	songSelect->create();
 
-	diffSelected = new Text(0, 0, diff.name + " (" + std::to_string(diff.notes->size()) + " NOTES) (" + std::to_string((*currentChart->meta->bpms)[0].bpm) + " BPM)", 100, 500);
+	diffSelected = new Text(0, 0, diff.name + " (" + std::to_string(diff.notes->size()) + " NOTES) (" + std::to_string((*currentChart->meta.bpms)[0].bpm) + " BPM)", 100, 500);
 	diffSelected->setX((Game::gameWidth / 2) - (diffSelected->surfaceMessage->w / 2));
 	diffSelected->setY(songSelect->y + songSelect->surfaceMessage->h + 30);
 	diffSelected->create();
 
 }
+
 
 void MainMenu::update(Events::updateEvent event)
 {
@@ -99,18 +129,18 @@ void MainMenu::keyDown(SDL_KeyboardEvent event)
 	if (event.keysym.sym == SDLK_RIGHT)
 	{
 		selectedDiffIndex++;
-		if (selectedDiffIndex > currentChart->meta->difficulties->size() - 1)
+		if (selectedDiffIndex > currentChart->meta.difficulties->size() - 1)
 			selectedDiffIndex = 0;
-		difficulty diff = (*currentChart->meta->difficulties)[selectedDiffIndex];
-		diffSelected->setText(diff.name + " (" + std::to_string(diff.notes->size()) + " NOTES) (" + std::to_string((*currentChart->meta->bpms)[0].bpm) + " BPM)");
+		difficulty diff = (*currentChart->meta.difficulties)[selectedDiffIndex];
+		diffSelected->setText(diff.name + " (" + std::to_string(diff.notes->size()) + " NOTES) (" + std::to_string((*currentChart->meta.bpms)[0].bpm) + " BPM)");
 	}
 	else if (event.keysym.sym == SDLK_LEFT)
 	{
 		selectedDiffIndex--;
 		if (selectedDiffIndex < 0)
-			selectedDiffIndex = currentChart->meta->difficulties->size() - 1;
-		difficulty diff = (*currentChart->meta->difficulties)[selectedDiffIndex];
-		diffSelected->setText(diff.name + " (" + std::to_string(diff.notes->size()) + " NOTES) (" + std::to_string((*currentChart->meta->bpms)[0].bpm) + " BPM)");
+			selectedDiffIndex = currentChart->meta.difficulties->size() - 1;
+		difficulty diff = (*currentChart->meta.difficulties)[selectedDiffIndex];
+		diffSelected->setText(diff.name + " (" + std::to_string(diff.notes->size()) + " NOTES) (" + std::to_string((*currentChart->meta.bpms)[0].bpm) + " BPM)");
 	}
 
 	if (event.keysym.sym == SDLK_UP)
@@ -122,16 +152,22 @@ void MainMenu::keyDown(SDL_KeyboardEvent event)
 		if (selectedIndex < 0)
 			selectedIndex = listOfCharts.size() - 1;
 
-		SMFile* file = new SMFile(listOfCharts[selectedIndex]);
-
 		currentChart->destroy();
 
-		currentChart = new Chart(&file->meta);
+		switchChart(listOfCharts[selectedIndex]);
+		try {
+			difficulty diff = (*currentChart->meta.difficulties)[selectedDiffIndex];
+			songSelect->setText("> " + currentChart->meta.songName);
 
-		difficulty diff = (*currentChart->meta->difficulties)[selectedDiffIndex];
-		songSelect->setText("> " + currentChart->meta->songName);
-
-		diffSelected->setText(diff.name + " (" + std::to_string(diff.notes->size()) + " NOTES) (" + std::to_string((*currentChart->meta->bpms)[0].bpm) + " BPM)");
+			diffSelected->setText(diff.name + " (" + std::to_string(diff.notes->size()) + " NOTES) (" + std::to_string((*currentChart->meta.bpms)[0].bpm) + " BPM)");
+		}
+		catch (...) {
+			listOfCharts.erase(listOfCharts.begin() + selectedIndex);
+			selectedIndex++;
+			songSelect->setText("> Failed to load");
+			diffSelected->setText("Select a different chart please");
+			MessageBox(NULL, L"Failed to load the chart.", L"Failure!", MB_OK | MB_ICONQUESTION);
+		}
 	}
 
 	if (event.keysym.sym == SDLK_DOWN)
@@ -143,16 +179,23 @@ void MainMenu::keyDown(SDL_KeyboardEvent event)
 		if (selectedIndex > listOfCharts.size() - 1)
 			selectedIndex = 0;
 
-		SMFile* file = new SMFile(listOfCharts[selectedIndex]);
-
 		currentChart->destroy();
 
-		currentChart = new Chart(&file->meta);
+		switchChart(listOfCharts[selectedIndex]);
 
-		difficulty diff = (*currentChart->meta->difficulties)[selectedDiffIndex];
-		songSelect->setText("> " + currentChart->meta->songName);
+		try {
+			difficulty diff = (*currentChart->meta.difficulties)[selectedDiffIndex];
+			songSelect->setText("> " + currentChart->meta.songName);
 
-		diffSelected->setText(diff.name + " (" + std::to_string(diff.notes->size()) + " NOTES) (" + std::to_string((*currentChart->meta->bpms)[0].bpm) + " BPM)");
+			diffSelected->setText(diff.name + " (" + std::to_string(diff.notes->size()) + " NOTES) (" + std::to_string((*currentChart->meta.bpms)[0].bpm) + " BPM)");
+		}
+		catch (...) {
+			listOfCharts.erase(listOfCharts.begin() + selectedIndex);
+			selectedIndex--;
+			songSelect->setText("> Failed to load");
+			diffSelected->setText("Select a different chart please");
+			MessageBox(NULL, L"Failed to load the chart.", L"Failure!", MB_OK | MB_ICONQUESTION);
+		}
 	}
 
 	songSelect->setX((Game::gameWidth / 2) - (songSelect->surfaceMessage->w / 2));

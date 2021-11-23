@@ -197,13 +197,36 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
             std::cout << "Calling run" << std::endl;
             c.run();
             std::cout << "done run" << std::endl;
-
-            CreateThread(NULL, NULL, pleaseLogin, NULL, NULL, NULL);
         }
     }
     catch (websocketpp::exception const& e) {
-        connectedToServer = false;
         std::cout << "exc: " << e.what() << std::endl;
+
+        connectedToServer = false;
+
+        websocketpp::lib::error_code ec;
+        client::connection_ptr con = c.get_connection(url, ec);
+        if (ec) {
+            std::cout << "could not create connection because: " << ec.message() << std::endl;
+            return 0;
+        }
+        std::cout << "got connection" << std::endl;
+
+        // Note that connect here only requests a connection. No network messages are
+        // exchanged until the event loop starts running in the next line.
+        connectionHdl = c.connect(con);
+        std::cout << "connected" << std::endl;
+        // Start the ASIO io_service run loop
+        // this will cause a single connection to be made to the server. c.run()
+        // will exit when this connection is closed.
+
+        connectedToServer = true;
+
+        std::cout << "Calling run" << std::endl;
+        c.run();
+        std::cout << "done run" << std::endl;
+
+        CreateThread(NULL, NULL, pleaseLogin, NULL, NULL, NULL);
     }
 }
 

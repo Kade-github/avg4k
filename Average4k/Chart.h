@@ -1,5 +1,8 @@
 #pragma once
 #include "includes.h"
+#include <sstream>
+#include <string>
+#include <fstream>
 
 struct bpmSegment {
 	float startBeat;
@@ -31,20 +34,22 @@ struct difficulty
 
 class chartMeta {
 	public:
-		chartMeta() {};
 		std::string songName;
 		std::string audio;
 		std::string folder;
 		std::vector<bpmSegment>* bpms;
 		std::vector<difficulty>* difficulties;
 		float chartOffset;
+		int chartType = 0;
 };
 
 class Chart
 {
 	public:
-		Chart(chartMeta* m) { meta = m; };
-		chartMeta* meta;
+		Chart(chartMeta m) { meta = m; };
+		chartMeta meta;
+
+		static std::vector < std::string > split(std::string str, char delimiter);
 
 		float getTimeFromBeat(float beat, bpmSegment seg);
 		float getTimeFromBeatOffset(float beat, bpmSegment seg);

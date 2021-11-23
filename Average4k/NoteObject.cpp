@@ -15,8 +15,11 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 {
 		float noteOffset = (0.45 * Game::save->GetDouble("scrollspeed")) + MainMenu::offset;
 
-		float wh = MainMenu::currentChart->getTimeFromBeat(beat, MainMenu::currentChart->getSegmentFromBeat(beat)) * 1000;
+		bpmSegment bruh = MainMenu::currentChart->getSegmentFromBeat(beat);
 
+		float wh = MainMenu::currentChart->getTimeFromBeat(beat, bruh) * 1000;
+
+		
 		bool downscroll = Game::save->GetBool("downscroll");
 
 		if (downscroll)
@@ -29,6 +32,14 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 		// get quant
 
 		float beatRow = beat * 48;
+
+		if (MainMenu::currentChart->meta.chartType == 1) // osu/quaver
+		{
+			float pos = (wh / 1000) - bruh.startTime;
+			float bps = 60 / bruh.bpm;
+
+			beatRow = std::roundf(48 * (pos / bps));
+		}
 		if (fmod(beatRow, (192 / 4)) == 0)
 			texture = Gameplay::noteskin->fourth;
 		else if (fmod(beatRow, (192 / 8)) == 0)
@@ -48,6 +59,7 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 			{
 				holdTile& tile = heldTilings[i];
 				auto whHold = MainMenu::currentChart->getTimeFromBeat(tile.beat, MainMenu::currentChart->getSegmentFromBeat(tile.beat)) * 1000;
+				
 				float diff = whHold - wh;
 				tile.rect.x = rect.x;
 

@@ -43,6 +43,8 @@ class Gameplay :
 
 		bool keys[3];
 
+		float startTime = 0;
+
 		int combo = 0;
 
 		double accuracy = 0;

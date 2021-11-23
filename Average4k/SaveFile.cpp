@@ -1,8 +1,23 @@
 #include "SaveFile.h"
 
+template <typename T>
+bool contains(std::vector<T> vec, const T& elem)
+{
+    bool result = false;
+    if (find(vec.begin(), vec.end(), elem) != vec.end())
+    {
+        result = true;
+    }
+    return result;
+}
 
 SaveFile::SaveFile()
 {
+    // default settings
+    defaultSettings.push_back(CreateSetting(false, 0, "downscroll"));
+    defaultSettings.push_back(CreateSetting(true, 2.4, "scrollspeed"));
+    defaultSettings.push_back(CreateSetting(true, 0, "offset"));
+
     std::ifstream ifs("settings.pack");
     if (!ifs.good())
     {
@@ -15,14 +30,26 @@ SaveFile::SaveFile()
 
     msgpack::unpacked upd = msgpack::unpack(buffer.str().data(), buffer.str().size());
     upd.get().convert(settings);
+
+    // check for new settings
+    if (settings.size() != defaultSettings.size())
+    {
+        for (int i = 0; i < defaultSettings.size(); i++)
+        {
+            if (i > settings.size() - 1)
+            {
+                settings.push_back(defaultSettings[i]);
+                std::cout << "user didn't have " << defaultSettings[i].name << std::endl;
+            }
+        }
+        Save();
+    }
 }
 
 void SaveFile::CreateNewFile()
 {
-	// default settings
-    settings.push_back(CreateSetting(false,0,"downscroll"));
-    settings.push_back(CreateSetting(true,2.4,"scrollspeed"));
-    
+    for (setting& set : defaultSettings)
+        settings.push_back(set);
     Save();
 }
 

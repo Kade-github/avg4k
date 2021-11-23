@@ -94,7 +94,7 @@ Gameplay::Gameplay()
 
 	Judge::judgeNote(174);
 
-	std::string path = "assets/charts/" + MainMenu::currentChart->meta->folder + "/" + MainMenu::currentChart->meta->audio;
+	std::string path = MainMenu::currentChart->meta.folder + "/" + MainMenu::currentChart->meta.audio;
 
 	std::cout << "playing " << path << std::endl;
 	
@@ -105,7 +105,7 @@ Gameplay::Gameplay()
 	BASS_ChannelSetAttribute(tempostream, BASS_ATTRIB_TEMPO, 0);
 
 	noteskin = Noteskin::getNoteskin();
-	notesToPlay = *(*MainMenu::currentChart->meta->difficulties)[MainMenu::selectedDiffIndex].notes;
+	notesToPlay = *(*MainMenu::currentChart->meta.difficulties)[MainMenu::selectedDiffIndex].notes;
 
 	positionAndBeats = new Text(0, 20, "Time: 0 | Beat: 0 | Offset: 0", 60, 40);
 	positionAndBeats->create();
@@ -124,7 +124,7 @@ Gameplay::Gameplay()
 		Receptor r;
 		SDL_FRect rect;
 		if (downscroll)
-			rect.y = (Game::gameHeight / 2) + 300;
+			rect.y = (Game::gameHeight / 2) + 250;
 		else
 			rect.y = (Game::gameHeight / 2) - 300;
 		rect.x = (Game::gameWidth / 2) - 146 + ((76) * i);
@@ -147,11 +147,14 @@ float lerp(float a, float b, float f)
 
 void Gameplay::update(Events::updateEvent event)
 {
-	if (positionInSong >= 0)
+	if (positionInSong >= startTime)
 	{
 		if (!play)
 		{
-			BASS_ChannelPlay(tempostream, true);
+			auto stuff = BASS_ChannelSeconds2Bytes(tempostream, startTime);
+			std::cout << "offset time: " << stuff << " = " << startTime << std::endl;
+			BASS_ChannelSetPosition(tempostream, stuff, BASS_POS_BYTE);
+			BASS_ChannelPlay(tempostream, false);
 			play = true;
 		}
 
@@ -209,7 +212,6 @@ void Gameplay::update(Events::updateEvent event)
 			bpmSegment noteSeg = MainMenu::currentChart->getSegmentFromBeat(object->beat);
 
 			object->time = MainMenu::currentChart->getTimeFromBeatOffset(object->beat, noteSeg) * 1000;
-
 			rect.y = Game::gameHeight + 400;
 			rect.x = receptors[object->lane].rect.x;
 			rect.w = 64;
@@ -246,12 +248,12 @@ void Gameplay::update(Events::updateEvent event)
 				{
 					bpmSegment holdSeg = MainMenu::currentChart->getSegmentFromTime(i);
 
-					double beat = MainMenu::currentChart->getBeatFromTimeOffset(i, holdSeg);
+					double beat = MainMenu::currentChart->getBeatFromTime(i, holdSeg);
 
 					if (beat >= object->endBeat - 0.4)
 						break;
 
-					auto whHold = MainMenu::currentChart->getTimeFromBeatOffset(beat, holdSeg) * 1000;
+					auto whHold = MainMenu::currentChart->getTimeFromBeat(beat, holdSeg) * 1000;
 					float diff = whHold - object->time;
 					if (object->heldTilings.size() != 0)
 						diff = whHold - object->heldTilings.back().time;
@@ -372,7 +374,7 @@ void Gameplay::update(Events::updateEvent event)
 							}),
 						note->heldTilings.end());
 				}
-				auto whHold = MainMenu::currentChart->getTimeFromBeat(tile.beat, MainMenu::currentChart->getSegmentFromBeat(tile.beat)) * 1000;
+				auto whHold = MainMenu::currentChart->getTimeFromBeatOffset(tile.beat, MainMenu::currentChart->getSegmentFromBeat(tile.beat)) * 1000;
 				float diff = whHold - positionInSong;
 
 				if (diff < -Judge::hitWindows[4] && tile.active && !tile.fucked)

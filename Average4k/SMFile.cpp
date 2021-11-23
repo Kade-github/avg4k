@@ -1,22 +1,5 @@
 #include "SMFile.h"
 
-
-// BLAH BLAH I KNOW THIS IS A BAD FILE BUT CRY ABOUT IT I SUCK AT CPP
-// LOOOOOOOOOOL
-
-std::vector < std::string > split(std::string str, char delimiter) {
-    std::vector < std::string > internal;
-    std::stringstream ss(str);
-    std::string tok;
-
-    while (std::getline(ss, tok, delimiter)) {
-        internal.push_back(tok);
-    }
-
-    return internal;
-}
-
-
 SMFile::SMFile(std::string path) {
 
     path.replace(path.find("\\"), sizeof("\\") - 1, "/");
@@ -25,8 +8,8 @@ SMFile::SMFile(std::string path) {
 
     meta.bpms = new std::vector < bpmSegment >();
     meta.difficulties = new std::vector < difficulty >();
-    auto pathSplit = split(path, '/');
-    meta.folder = pathSplit[pathSplit.size() - 2];
+    auto pathSplit = Chart::split(path, '/');
+    meta.folder = "assets/charts/" + pathSplit[pathSplit.size() - 2];
 
     std::string line;
 
@@ -59,7 +42,7 @@ SMFile::SMFile(std::string path) {
         {
             if (!readingNotes) {
                 s.erase(std::remove(s.begin(), s.end(), ';'), s.end());
-                std::vector < std::string > stuff = split(s, ':');
+                std::vector < std::string > stuff = Chart::split(s, ':');
    
                 if (readingBPMS)
                 {
@@ -68,7 +51,7 @@ SMFile::SMFile(std::string path) {
                     else
                     {
                         stuff[0].erase(std::remove(stuff[0].begin(), stuff[0].end(), ','), stuff[0].end());
-                        std::vector < std::string > bpmSeg = split(stuff[0], '=');
+                        std::vector < std::string > bpmSeg = Chart::split(stuff[0], '=');
                         bpmSegment seg;
                         seg.startBeat = std::stod(bpmSeg[0]);
                         seg.endBeat = INT_MAX;
@@ -96,16 +79,16 @@ SMFile::SMFile(std::string path) {
                         if (stuff[0] == "#BPMS") {
                             // gather bpms
                             readingBPMS = true;
-                            std::vector < std::string > bpmSeg = split(stuff[1], ',');
+                            std::vector < std::string > bpmSeg = Chart::split(stuff[1], ',');
                             if (bpmSeg.size() != 0)
                             {
                                 for (int ii = 0; ii < bpmSeg.size(); ii += 2)
                                 {
                                     bpmSegment seg;
-                                    seg.startBeat = std::stod(split(bpmSeg[ii],'=')[0]);
+                                    seg.startBeat = std::stod(Chart::split(bpmSeg[ii],'=')[0]);
                                     seg.endBeat = INT_MAX;
                                     seg.length = INT_MAX;
-                                    seg.bpm = std::stof(split(bpmSeg[ii], '=')[1]);
+                                    seg.bpm = std::stof(Chart::split(bpmSeg[ii], '=')[1]);
                                     seg.startTime = 0;
 
                                     if (bpmIndex != 0) // previous lol
@@ -141,7 +124,7 @@ SMFile::SMFile(std::string path) {
                 }
             }
             else {
-                std::vector < std::string > stuff = split(s, ':');
+                std::vector < std::string > stuff = Chart::split(s, ':');
                 if (iss.str().find(":") != std::string::npos) {
                     stuff[0].erase(std::remove(stuff[0].begin(), stuff[0].end(), ':'), stuff[0].end());
                     stuff[0].erase(std::remove(stuff[0].begin(), stuff[0].end(), ' '), stuff[0].end());
@@ -166,8 +149,6 @@ SMFile::SMFile(std::string path) {
                         float lengthInRows = 192 / (measure->size());
 
                         int rowIndex = 0;
-
-                        std::cout << "starting measure " << lengthInRows << std::endl;
 
                         for (int i = 0; i < measure->size(); i++) {
                             float noteRow = (measureIndex * 192) + (lengthInRows * rowIndex);

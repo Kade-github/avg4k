@@ -21,6 +21,8 @@ class SaveFile
 
 		void Save();
 
+
+
 		void SetDouble(std::string setting, double value);
 		void SetBool(std::string setting, bool value);
 
@@ -30,5 +32,6 @@ class SaveFile
 		setting CreateSetting(bool defaultActive, double defaultValue, std::string defaultName);
 
 		std::vector<setting> settings;
+		std::vector<setting> defaultSettings;
 };
 

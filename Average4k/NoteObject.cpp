@@ -64,9 +64,9 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 				tile.rect.x = rect.x;
 
 				if (downscroll)
-					tile.rect.y = (rect.y - (diff * noteOffset)) - 64;
+					tile.rect.y = (rect.y - (diff * noteOffset)) - 96;
 				else
-					tile.rect.y = (rect.y + (diff * noteOffset)) + 64;
+					tile.rect.y = (rect.y + (diff * noteOffset)) + 96;
 
 				if (tile.fucked)
 					SDL_SetTextureAlphaMod(Gameplay::noteskin->hold, 60);

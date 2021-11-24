@@ -4,6 +4,7 @@
 #include <curl/curl.h>
 #include <SDL_image.h>
 #include "Game.h"
+#include "Chart.h"
 
 void Steam::InitSteam()
 {
@@ -47,9 +48,9 @@ extern "C"
     }
 }
 
+
 SDL_Texture* Steam::getAvatar(const char* url)
 {
-
 	CURL* curlCtx = curl_easy_init();
 
     struct MemoryStruct chunk;
@@ -59,7 +60,6 @@ SDL_Texture* Steam::getAvatar(const char* url)
 
     std::cout << "loading " << url << std::endl;
 
-    std::ostringstream stream;
     curl_easy_setopt(curlCtx, CURLOPT_URL, url);
     curl_easy_setopt(curlCtx, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
     curl_easy_setopt(curlCtx, CURLOPT_WRITEDATA, (void*)&chunk);
@@ -74,25 +74,19 @@ SDL_Texture* Steam::getAvatar(const char* url)
 
     std::cout << "downloaded!" << std::endl;
 
-    SDL_RWops* rw = SDL_RWFromMem(chunk.memory, chunk.size);
+    SDL_RWops* rw = SDL_RWFromConstMem(chunk.memory, chunk.size);
     curl_easy_cleanup(curlCtx);
 
-    SDL_Surface* surf = IMG_LoadJPG_RW(rw);
+    std::cout << "trying to texture bruh" << std::endl;
 
-    free(chunk.memory);
+    SDL_Texture* tex = IMG_LoadTexture_RW(Game::renderer, rw, true);
 
-    std::cout << "freed" << std::endl;
+    std::cout << "textured " << std::endl;
 
-    SDL_RWclose(rw);
-
-    std::cout << "closed" << std::endl;
-    
-    if (!surf)
+    if (!tex)
         return NULL;
 
-    SDL_Texture* tex = SDL_CreateTextureFromSurface(Game::renderer, surf);
-
-    std::cout << "surf" << std::endl;
+    free(chunk.memory);
 
     return tex;
 }

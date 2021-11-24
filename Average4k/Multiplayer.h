@@ -44,7 +44,7 @@ private:
 public:
 	void inQuotesGracefullyDisconnect();
 
-	bool loggedIn;
+	static bool loggedIn;
 
 	void login();
 };

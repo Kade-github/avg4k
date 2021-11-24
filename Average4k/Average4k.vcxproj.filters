@@ -13,50 +13,68 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\Menus">
-      <UniqueIdentifier>{b6301c7e-c15d-47b0-9c20-2cf7d2e2a121}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Objects">
-      <UniqueIdentifier>{04e96f39-8ba8-41e9-b7ae-3826ee032126}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Assets">
       <UniqueIdentifier>{69dc1526-92fc-4c12-847e-9f574384459f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Renderers">
-      <UniqueIdentifier>{62171a5d-b7ec-42fd-896a-251a818642c8}</UniqueIdentifier>
+    <Filter Include="Source Files\Average4k">
+      <UniqueIdentifier>{176b08cb-98e0-4f35-a5f1-5a9dfb16afa5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Settings">
-      <UniqueIdentifier>{242663df-b141-4d30-90c7-2d5c3960b8ab}</UniqueIdentifier>
+    <Filter Include="Source Files\Average4k\Structs">
+      <UniqueIdentifier>{316e8891-43e1-4ee5-8474-059a4a11bbf7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\UIObjects">
-      <UniqueIdentifier>{32ad7e70-1c57-4b41-a225-9067bab9f56a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Chart">
+    <Filter Include="Source Files\Average4k\Structs\Chart">
       <UniqueIdentifier>{16627269-c2b1-47aa-965a-f4cb02e8a001}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Chart\ChartParsers">
+    <Filter Include="Source Files\Average4k\Structs\Chart\ChartParsers">
       <UniqueIdentifier>{ae5ecdf7-ada5-4c04-9520-2415da6bf42d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Chart\ChartParsers\SM">
+    <Filter Include="Source Files\Average4k\Structs\Chart\ChartParsers\SM">
       <UniqueIdentifier>{dffb58e5-349c-4796-8bcb-dc2e6e5adee4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Steam">
-      <UniqueIdentifier>{0c8d56f0-d2fa-41a8-af33-fa371439f959}</UniqueIdentifier>
+    <Filter Include="Source Files\Average4k\Structs\Chart\ChartParsers\Quaver">
+      <UniqueIdentifier>{ad949f2e-57d2-404b-b8ed-34d441bfcd18}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Multiplayer">
+    <Filter Include="Source Files\Average4k\Screens">
+      <UniqueIdentifier>{af1f5bdf-f698-477e-a1be-21eec5a29f7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Average4k\Screens\Menus">
+      <UniqueIdentifier>{b6301c7e-c15d-47b0-9c20-2cf7d2e2a121}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Average4k\Screens\Menus\Gaming">
+      <UniqueIdentifier>{9abdccc3-ddcf-4104-aef0-b111accd722f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Average4k\Screens\Menus\MultiplayerMenus">
+      <UniqueIdentifier>{c51bd9e1-36a3-4e04-a8eb-bf0319857a06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Average4k\Utils">
+      <UniqueIdentifier>{8e3496b2-b21e-429b-97b7-d896efd24794}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Average4k\Multiplayer">
       <UniqueIdentifier>{b3de5d8a-7cb5-4837-baf0-8db05e4f51f8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Multiplayer\Packets">
+    <Filter Include="Source Files\Average4k\Multiplayer\Packets">
       <UniqueIdentifier>{ee75d285-db1d-4a97-993f-44f4bdd2dfa2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Multiplayer\Packets\Client">
+    <Filter Include="Source Files\Average4k\Multiplayer\Packets\Client">
       <UniqueIdentifier>{ff794bf5-423d-480f-9527-0ed7e748e146}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Multiplayer\Packets\Server">
+    <Filter Include="Source Files\Average4k\Multiplayer\Packets\Server">
       <UniqueIdentifier>{484f4ac6-8737-48c2-a66b-0c44979b41f5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Chart\ChartParsers\Quaver">
-      <UniqueIdentifier>{ad949f2e-57d2-404b-b8ed-34d441bfcd18}</UniqueIdentifier>
+    <Filter Include="Source Files\Average4k\Utils\Settings">
+      <UniqueIdentifier>{242663df-b141-4d30-90c7-2d5c3960b8ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Average4k\Utils\Steam">
+      <UniqueIdentifier>{0c8d56f0-d2fa-41a8-af33-fa371439f959}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Average4k\Objects">
+      <UniqueIdentifier>{04e96f39-8ba8-41e9-b7ae-3826ee032126}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Average4k\Objects\Renderers">
+      <UniqueIdentifier>{62171a5d-b7ec-42fd-896a-251a818642c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Average4k\Objects\UIObjects">
+      <UniqueIdentifier>{32ad7e70-1c57-4b41-a225-9067bab9f56a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -72,41 +90,47 @@
     <ClCompile Include="Object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MainMenu.cpp">
-      <Filter>Source Files\Menus</Filter>
-    </ClCompile>
     <ClCompile Include="Text.cpp">
-      <Filter>Source Files\Objects</Filter>
+      <Filter>Source Files\Average4k\Objects</Filter>
     </ClCompile>
     <ClCompile Include="SMFile.cpp">
-      <Filter>Source Files\Chart\ChartParsers\SM</Filter>
+      <Filter>Source Files\Average4k\Structs\Chart\ChartParsers\SM</Filter>
     </ClCompile>
     <ClCompile Include="Noteskin.cpp">
       <Filter>Source Files\Assets</Filter>
-    </ClCompile>
-    <ClCompile Include="Gameplay.cpp">
-      <Filter>Source Files\Menus</Filter>
     </ClCompile>
     <ClCompile Include="Judge.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NoteObject.cpp">
-      <Filter>Source Files\Renderers</Filter>
+      <Filter>Source Files\Average4k\Objects\Renderers</Filter>
     </ClCompile>
     <ClCompile Include="SaveFile.cpp">
-      <Filter>Source Files\Settings</Filter>
+      <Filter>Source Files\Average4k\Utils\Settings</Filter>
     </ClCompile>
     <ClCompile Include="Chart.cpp">
-      <Filter>Source Files\Chart</Filter>
+      <Filter>Source Files\Average4k\Structs\Chart</Filter>
     </ClCompile>
     <ClCompile Include="Steam.cpp">
-      <Filter>Source Files\Steam</Filter>
+      <Filter>Source Files\Average4k\Utils\Steam</Filter>
     </ClCompile>
     <ClCompile Include="Multiplayer.cpp">
-      <Filter>Source Files\Multiplayer</Filter>
+      <Filter>Source Files\Average4k\Multiplayer</Filter>
     </ClCompile>
     <ClCompile Include="QuaverFile.cpp">
-      <Filter>Source Files\Chart\ChartParsers\Quaver</Filter>
+      <Filter>Source Files\Average4k\Structs\Chart\ChartParsers\Quaver</Filter>
+    </ClCompile>
+    <ClCompile Include="Gameplay.cpp">
+      <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenu.cpp">
+      <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiplayerLobby.cpp">
+      <Filter>Source Files\Average4k\Screens\Menus\MultiplayerMenus</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiplayerLobbies.cpp">
+      <Filter>Source Files\Average4k\Screens\Menus\MultiplayerMenus</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -122,20 +146,14 @@
     <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MainMenu.h">
-      <Filter>Source Files\Menus</Filter>
-    </ClInclude>
     <ClInclude Include="Text.h">
-      <Filter>Source Files\Objects</Filter>
+      <Filter>Source Files\Average4k\Objects</Filter>
     </ClInclude>
     <ClInclude Include="SMFile.h">
-      <Filter>Source Files\Chart\ChartParsers\SM</Filter>
+      <Filter>Source Files\Average4k\Structs\Chart\ChartParsers\SM</Filter>
     </ClInclude>
     <ClInclude Include="Noteskin.h">
       <Filter>Source Files\Assets</Filter>
-    </ClInclude>
-    <ClInclude Include="Gameplay.h">
-      <Filter>Source Files\Menus</Filter>
     </ClInclude>
     <ClInclude Include="AudioManager.h">
       <Filter>Header Files</Filter>
@@ -144,94 +162,109 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NoteObject.h">
-      <Filter>Source Files\Renderers</Filter>
+      <Filter>Source Files\Average4k\Objects\Renderers</Filter>
     </ClInclude>
     <ClInclude Include="SaveFile.h">
-      <Filter>Source Files\Settings</Filter>
+      <Filter>Source Files\Average4k\Utils\Settings</Filter>
     </ClInclude>
     <ClInclude Include="Chart.h">
-      <Filter>Source Files\Chart</Filter>
+      <Filter>Source Files\Average4k\Structs\Chart</Filter>
     </ClInclude>
     <ClInclude Include="Steam.h">
-      <Filter>Source Files\Steam</Filter>
+      <Filter>Source Files\Average4k\Utils\Steam</Filter>
     </ClInclude>
     <ClInclude Include="Multiplayer.h">
-      <Filter>Source Files\Multiplayer</Filter>
+      <Filter>Source Files\Average4k\Multiplayer</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CPacketClientMissingChart.h">
-      <Filter>Source Files\Multiplayer\Packets\Client</Filter>
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
     </ClInclude>
     <ClInclude Include="Packet.h">
-      <Filter>Source Files\Multiplayer\Packets</Filter>
+      <Filter>Source Files\Average4k\Multiplayer\Packets</Filter>
     </ClInclude>
     <ClInclude Include="CPacketHello.h">
-      <Filter>Source Files\Multiplayer\Packets\Client</Filter>
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
     </ClInclude>
     <ClInclude Include="CPacketHostChangeChart.h">
-      <Filter>Source Files\Multiplayer\Packets\Client</Filter>
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
     </ClInclude>
     <ClInclude Include="CPacketHostServer.h">
-      <Filter>Source Files\Multiplayer\Packets\Client</Filter>
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
     </ClInclude>
     <ClInclude Include="CPacketHostStartGame.h">
-      <Filter>Source Files\Multiplayer\Packets\Client</Filter>
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
     </ClInclude>
     <ClInclude Include="CPacketJoinServer.h">
-      <Filter>Source Files\Multiplayer\Packets\Client</Filter>
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
     </ClInclude>
     <ClInclude Include="CPacketNoteHit.h">
-      <Filter>Source Files\Multiplayer\Packets\Client</Filter>
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
     </ClInclude>
     <ClInclude Include="CPacketServerList.h">
-      <Filter>Source Files\Multiplayer\Packets\Client</Filter>
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
     </ClInclude>
     <ClInclude Include="CPacketSongFinished.h">
-      <Filter>Source Files\Multiplayer\Packets\Client</Filter>
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
     </ClInclude>
     <ClInclude Include="SPacketHello.h">
-      <Filter>Source Files\Multiplayer\Packets\Server</Filter>
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Server</Filter>
     </ClInclude>
     <ClInclude Include="SPacketFinalizeChart.h">
-      <Filter>Source Files\Multiplayer\Packets\Server</Filter>
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Server</Filter>
     </ClInclude>
     <ClInclude Include="SPacketHostServerReply.h">
-      <Filter>Source Files\Multiplayer\Packets\Server</Filter>
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Server</Filter>
     </ClInclude>
     <ClInclude Include="SPacketInvalidPacket.h">
-      <Filter>Source Files\Multiplayer\Packets\Server</Filter>
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Server</Filter>
     </ClInclude>
     <ClInclude Include="SPacketJoinServerReply.h">
-      <Filter>Source Files\Multiplayer\Packets\Server</Filter>
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Server</Filter>
     </ClInclude>
     <ClInclude Include="SPacketServerListReply.h">
-      <Filter>Source Files\Multiplayer\Packets\Server</Filter>
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Server</Filter>
     </ClInclude>
     <ClInclude Include="SPacketStartLobbyGame.h">
-      <Filter>Source Files\Multiplayer\Packets\Server</Filter>
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Server</Filter>
     </ClInclude>
     <ClInclude Include="SPacketStatus.h">
-      <Filter>Source Files\Multiplayer\Packets\Server</Filter>
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Server</Filter>
     </ClInclude>
     <ClInclude Include="SPacketUpdateLeaderboard.h">
-      <Filter>Source Files\Multiplayer\Packets\Server</Filter>
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Server</Filter>
     </ClInclude>
     <ClInclude Include="SPacketUpdateLobbyChart.h">
-      <Filter>Source Files\Multiplayer\Packets\Server</Filter>
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Server</Filter>
     </ClInclude>
     <ClInclude Include="SPacketUpdateLobbyData.h">
-      <Filter>Source Files\Multiplayer\Packets\Server</Filter>
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Server</Filter>
     </ClInclude>
     <ClInclude Include="Base64.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CPacketStatus.h">
-      <Filter>Source Files\Multiplayer\Packets\Client</Filter>
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
     </ClInclude>
     <ClInclude Include="QuaverFile.h">
-      <Filter>Source Files\Chart\ChartParsers\Quaver</Filter>
+      <Filter>Source Files\Average4k\Structs\Chart\ChartParsers\Quaver</Filter>
+    </ClInclude>
+    <ClInclude Include="Gameplay.h">
+      <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenu.h">
+      <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiplayerLobby.h">
+      <Filter>Source Files\Average4k\Screens\Menus\MultiplayerMenus</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiplayerLobbies.h">
+      <Filter>Source Files\Average4k\Screens\Menus\MultiplayerMenus</Filter>
+    </ClInclude>
+    <ClInclude Include="Lobby.h">
+      <Filter>Source Files\Average4k\Multiplayer\Packets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

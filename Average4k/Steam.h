@@ -8,5 +8,7 @@ public:
 	void InitSteam();
 
 	void ShutdownSteam();
+
+	SDL_Texture* getAvatar(std::string url);
 };
 

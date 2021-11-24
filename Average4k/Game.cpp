@@ -37,6 +37,7 @@ float Game::startTick = 0;
 int Game::gameWidth = 0;
 int Game::gameHeight = 0;
 
+HANDLE multiThreadHandle;
 
 void Game::createGame()
 {
@@ -54,13 +55,19 @@ void Game::createGame()
 	save = new SaveFile();
 
 	multi = new Multiplayer();
-	CreateThread(NULL, NULL, Multiplayer::connect, NULL, NULL, NULL);
+	multiThreadHandle = CreateThread(NULL, NULL, Multiplayer::connect, NULL, NULL, NULL);
 }
 
 
 void Game::update(Events::updateEvent update)
 {
 	SteamAPI_RunCallbacks();
+
+	if (!Multiplayer::connectedToServer)
+	{
+		CloseHandle(multiThreadHandle);
+		multiThreadHandle = CreateThread(NULL, NULL, Multiplayer::connect, NULL, NULL, NULL);
+	}
 
 	SDL_RenderClear(update.renderer);
 
@@ -101,7 +108,7 @@ void Game::update(Events::updateEvent update)
 	DestR.w = mainCamera->w;
 	DestR.h = mainCamera->h;
 
-	SDL_SetRenderDrawColor(renderer, 10, 10, 10, 255);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
 	SDL_SetRenderTarget(renderer, NULL);
 

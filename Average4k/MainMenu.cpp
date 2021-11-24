@@ -3,6 +3,7 @@
 #include "Game.h"
 #include "Text.h"
 #include "Gameplay.h"
+#include "MultiplayerLobbies.h"
 #include <string>
 #include <iostream>
 #include <filesystem>
@@ -187,6 +188,14 @@ void MainMenu::keyDown(SDL_KeyboardEvent event)
 	if (event.keysym.sym == SDLK_RETURN)
 	{
 		Game::currentMenu = new Gameplay();
+		mainMenuText->die();
+		songSelect->die();
+		diffSelected->die();
+	}
+
+	if (event.keysym.sym == SDLK_F1)
+	{
+		Game::currentMenu = new MultiplayerLobbies();
 		mainMenuText->die();
 		songSelect->die();
 		diffSelected->die();

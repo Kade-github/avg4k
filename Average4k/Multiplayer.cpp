@@ -11,6 +11,8 @@ using websocketpp::lib::bind;
 
 bool Multiplayer::connectedToServer = false;
 
+bool Multiplayer::loggedIn = false;
+
 client c;
 websocketpp::connection_hdl connectionHdl;
 
@@ -92,33 +94,44 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
 
             obj = msgpack::object(result.get());
 
-            free(ptr);
-
             obj.convert(status);
 
             switch (status.code)
             {
                 case 403:
-                    CreateThread(NULL, NULL, pleaseLogin, NULL, NULL, NULL);
-                break;
+                    if (!Multiplayer::loggedIn)
+                    {
+                        std::cout << "trying to login cuz unauthorized" << std::endl;
+                        CreateThread(NULL, NULL, pleaseLogin, NULL, NULL, NULL);
+                    }
+                    break;
+                case 409:
+                    std::cout << "conflict" << std::endl;
+                    break;
+                case 404:
+                    std::cout << "not found" << std::endl;
+                    break;
             }
+            Game::currentMenu->onPacket(type, data, length);
         break;
         case eSPacketHello:
             unpack(result, data, length);
 
             obj = msgpack::object(result.get());
 
-            free(ptr);
-
             obj.convert(helloBack);
 
 
             CreateThread(NULL, NULL, NewThread, NULL, NULL, NULL);
+            Multiplayer::loggedIn = true;
 
             std::cout << helloBack.Message << ". hello server, fuck you too! " << std::endl;
         break;
+        default:
+            Game::currentMenu->onPacket(type, data, length);
+            break;
     }
-
+    free(ptr);
 }
 
 
@@ -148,11 +161,9 @@ context_ptr on_tls_init(const char* hostname, websocketpp::connection_hdl) {
     return ctx;
 }
 
-
-
-
 DWORD WINAPI Multiplayer::connect(LPVOID agh)
 {
+    connectedToServer = true;
     std::string url = "wss://titnoas.xyz/ballsandsex/";
 
     std::cout << "Creating things" << std::endl;
@@ -192,7 +203,6 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
             // this will cause a single connection to be made to the server. c.run()
             // will exit when this connection is closed.
 
-            connectedToServer = true;
 
             std::cout << "Calling run" << std::endl;
             c.run();
@@ -201,32 +211,8 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
     }
     catch (websocketpp::exception const& e) {
         std::cout << "exc: " << e.what() << std::endl;
-
+        loggedIn = false;
         connectedToServer = false;
-
-        websocketpp::lib::error_code ec;
-        client::connection_ptr con = c.get_connection(url, ec);
-        if (ec) {
-            std::cout << "could not create connection because: " << ec.message() << std::endl;
-            return 0;
-        }
-        std::cout << "got connection" << std::endl;
-
-        // Note that connect here only requests a connection. No network messages are
-        // exchanged until the event loop starts running in the next line.
-        connectionHdl = c.connect(con);
-        std::cout << "connected" << std::endl;
-        // Start the ASIO io_service run loop
-        // this will cause a single connection to be made to the server. c.run()
-        // will exit when this connection is closed.
-
-        connectedToServer = true;
-
-        std::cout << "Calling run" << std::endl;
-        c.run();
-        std::cout << "done run" << std::endl;
-
-        CreateThread(NULL, NULL, pleaseLogin, NULL, NULL, NULL);
     }
 }
 

@@ -3,7 +3,7 @@
 class CPacketJoinServer : public Packet
 {
 	public:
-		unsigned int lobbyId;
+		unsigned long LobbyID;
 
-		MSGPACK_DEFINE_MAP(lobbyId);
+		MSGPACK_DEFINE_MAP(LobbyID);
 };

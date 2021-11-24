@@ -166,6 +166,8 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="Judge.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Multiplayer.cpp" />
+    <ClCompile Include="MultiplayerLobbies.cpp" />
+    <ClCompile Include="MultiplayerLobby.cpp" />
     <ClCompile Include="NoteObject.cpp" />
     <ClCompile Include="Noteskin.cpp" />
     <ClCompile Include="Object.cpp" />
@@ -194,9 +196,12 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="Gameplay.h" />
     <ClInclude Include="includes.h" />
     <ClInclude Include="Judge.h" />
+    <ClInclude Include="Lobby.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Multiplayer.h" />
+    <ClInclude Include="MultiplayerLobbies.h" />
+    <ClInclude Include="MultiplayerLobby.h" />
     <ClInclude Include="NoteObject.h" />
     <ClInclude Include="Noteskin.h" />
     <ClInclude Include="Object.h" />

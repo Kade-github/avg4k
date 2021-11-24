@@ -6,7 +6,79 @@ connected
 Calling run
 awaiting auth ticket from steam
 got auth ticket
-encoded ticket: CAEQ0u6d/gsYBSA/KnCaa8Ou0jkeSJ0nFLkOB1N0GaxFlrUVK9+trV5cky3Z5It6sBTSWEOuIbMZkOC/UjQcgqBmCHCQdps0ZNAwWweVUhOqylRkCMGN7uiRhm80xEqZxnN82IIDYJtcasjlfIy/DeRTQNCc3WNmv5TESfpA
-fuckyou Kade. hello server, fuck you too! 
+encoded ticket: CAEQgcvxkQgYBSA/KnDf8gvZwCZHrFAHHWcJXZJEau1x+gUWrc/E1uw4UIontaCh9wNqbCs7Y4xv4txB/cV7fOfpZ3Lne0oBOnDQ4a7AULLLAoGzSJ6Saddm6Gesry0KOkuj0q8TAtzym1+ZQi0GwVGL7ITdN+DTAN9qXBIi
+done run
+exc: invalid state
+got connection
+connected
+Calling run
+done run
+awaiting auth ticket from steam
+got auth ticket
+encoded ticket: CAEQgcvxkQgYBSA/KnDf8gvZwCZHrFAHHWcJXZJEau1x+gUWrc/E1uw4UIontaCh9wNqbCs7Y4xv4txB/cV7fOfpZ3Lne0oBOnDQ4a7AULLLAoGzSJ6Saddm6Gesry0KOkuj0q8TAtzym1+ZQi0GwVGL7ITdN+DTAN9qXBIi
 playing assets/charts/2-x c.h.a.d.'s broken wind/dB soundworks - Super Meat Boy! Soundtrack - 07 C.H.A.D.'s Broken Wind (Ch 2 Dark World).ogg
 offset time: 0 = 0
+pressing 2
+pressing 3
+3 fucked
+playing assets/charts/2-x c.h.a.d.'s broken wind/dB soundworks - Super Meat Boy! Soundtrack - 07 C.H.A.D.'s Broken Wind (Ch 2 Dark World).ogg
+offset time: 0 = 0
+pressing 3
+3 fucked
+playing assets/charts/2-x c.h.a.d.'s broken wind/dB soundworks - Super Meat Boy! Soundtrack - 07 C.H.A.D.'s Broken Wind (Ch 2 Dark World).ogg
+pressing 3
+offset time: 0 = 0
+3 fucked
+playing assets/charts/2-x c.h.a.d.'s broken wind/dB soundworks - Super Meat Boy! Soundtrack - 07 C.H.A.D.'s Broken Wind (Ch 2 Dark World).ogg
+pressing 3
+pressing 3
+pressing 3
+offset time: 0 = 0
+pressing 3
+pressing 3
+pressing 3
+playing assets/charts/2-x c.h.a.d.'s broken wind/dB soundworks - Super Meat Boy! Soundtrack - 07 C.H.A.D.'s Broken Wind (Ch 2 Dark World).ogg
+pressing 3
+pressing 3
+pressing 3
+offset time: 0 = 0
+pressing 3
+pressing 3
+pressing 3
+pressing 3
+playing assets/charts/2-x c.h.a.d.'s broken wind/dB soundworks - Super Meat Boy! Soundtrack - 07 C.H.A.D.'s Broken Wind (Ch 2 Dark World).ogg
+pressing 3
+pressing 3
+pressing 3
+pressing 3
+offset time: 0 = 0
+pressing 3
+pressing 3
+pressing 3
+playing assets/charts/2-x c.h.a.d.'s broken wind/dB soundworks - Super Meat Boy! Soundtrack - 07 C.H.A.D.'s Broken Wind (Ch 2 Dark World).ogg
+pressing 3
+pressing 3
+pressing 3
+pressing 3
+offset time: 0 = 0
+pressing 3
+pressing 3
+playing assets/charts/2-x c.h.a.d.'s broken wind/dB soundworks - Super Meat Boy! Soundtrack - 07 C.H.A.D.'s Broken Wind (Ch 2 Dark World).ogg
+pressing 3
+pressing 3
+pressing 3
+pressing 3
+offset time: 0 = 0
+pressing 3
+pressing 3
+pressing 3
+playing assets/charts/2-x c.h.a.d.'s broken wind/dB soundworks - Super Meat Boy! Soundtrack - 07 C.H.A.D.'s Broken Wind (Ch 2 Dark World).ogg
+pressing 3
+pressing 3
+pressing 3
+offset time: 0 = 0
+pressing 3
+pressing 3
+playing assets/charts/2-x c.h.a.d.'s broken wind/dB soundworks - Super Meat Boy! Soundtrack - 07 C.H.A.D.'s Broken Wind (Ch 2 Dark World).ogg
+offset time: 0 = 0
+3 fucked

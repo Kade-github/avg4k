@@ -385,7 +385,7 @@ void Gameplay::update(Events::updateEvent event)
 					tile.fucked = true;
 				}
 
-				if (diff < -Judge::hitWindows[4] && tile.fucked)
+				if (diff < -200 && tile.fucked)
 				{
 					note->heldTilings.erase(
 						std::remove_if(note->heldTilings.begin(), note->heldTilings.end(), [&](holdTile& const nn) {
@@ -408,11 +408,11 @@ void Gameplay::update(Events::updateEvent event)
 			
 			if (wh - positionInSong  <= -Judge::hitWindows[4] && note->active)
 			{
+				note->active = false;
 				miss(note);
-				removeNote(note);
 			}
 
-			if (wh - positionInSong <= -Judge::hitWindows[4] && !note->active && (note->heldTilings.size() == 0 || note->heldTilings[0].fucked))
+			if (wh - positionInSong <= -200 && !note->active && (note->heldTilings.size() == 0 || note->heldTilings[0].fucked))
 			{
 				removeNote(note);
 			}
@@ -543,7 +543,6 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 						updateAccuracy(0.7);
 						break;
 					case judgement::Judge_good:
-						combo = 0;
 						Judgement->setText("Eh (" + format + "ms)");
 						(*Judgement).color.r = 255;
 						(*Judgement).color.g = 0;

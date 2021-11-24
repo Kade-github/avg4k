@@ -153,7 +153,7 @@ MainMenu::MainMenu()
 {
 	instance = this;
 	selectedDiffIndex = 0;
-	mainMenuText = new Text(0, 0, "Average 4k (Hi " + std::string(SteamFriends()->GetPersonaName()) + ")", 100, 50);
+	mainMenuText = new Text(0, 0, "Average 4k (F1 for lobby list)", 100, 50);
 	mainMenuText->setX((Game::gameWidth / 2) - (mainMenuText->surfaceMessage->w / 2));
 	mainMenuText->setY((Game::gameHeight / 2) - 250);
 	mainMenuText->create();

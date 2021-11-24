@@ -49,6 +49,7 @@ extern "C"
 
 SDL_Texture* Steam::getAvatar(std::string url)
 {
+
 	CURL* curlCtx = curl_easy_init();
 
     struct MemoryStruct chunk;

@@ -13,12 +13,12 @@ public:
     std::vector<Text*> lobbyTexts;
     std::vector<lobby> Lobbies;
 
+    Text* helpText;
+
     bool joiningServer = false;
 
     int selectedIndex;
-
     void updateList(std::vector<lobby> lobs);
-
     void onPacket(PacketType pt, char* data, int32_t length);
 
     void update(Events::updateEvent event) override;

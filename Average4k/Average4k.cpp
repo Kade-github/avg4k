@@ -3,6 +3,7 @@
 #include "Game.h"
 #include <SDL_sound.h>
 #include <bass.h>
+#include <curl/curl.h>
 using namespace std;
 
 #undef main
@@ -72,6 +73,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	SDL_Init(SDL_INIT_EVERYTHING);
 	
+	curl_global_init(CURL_GLOBAL_ALL);
 
 
 	#ifdef  _DEBUG

@@ -16,7 +16,14 @@ void refreshLobbies() {
 
 MultiplayerLobbies::MultiplayerLobbies()
 {
+	helpText = new Text(0, 46, "F1 to host a lobby, enter to join", 10, 10);
+	helpText->create();
 	refreshLobbies();
+}
+
+void getSteamAvatar(player& pl, std::vector<SDL_Texture*>& vec)
+{
+	vec.push_back(Game::steam->getAvatar(pl.AvatarURL));
 }
 
 void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
@@ -41,11 +48,13 @@ void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
 		for (int p = 0; p < l.PlayerList.size(); p++)
 		{
 			player& pl = l.PlayerList[i];
-			peopleTextures.push_back(Game::steam->getAvatar(pl.AvatarURL));
+			std::thread t(&getSteamAvatar, std::ref(pl), std::ref(peopleTextures));
+			t.join();
 		}
 		lobbyTexts.push_back(t);
 	}
 }
+
 
 void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 {
@@ -68,16 +77,26 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 			updateList(fuck.Lobbies);
 			break;
 		case eSPacketJoinServerReply:
-			Game::currentMenu = new MultiplayerLobby();
+			Game::currentMenu = new MultiplayerLobby(Lobbies[selectedIndex]);
 			for (Text* t : lobbyTexts)
 				t->die();
+
+			for (SDL_Texture* t : peopleTextures)
+				SDL_DestroyTexture(t);
+
+			helpText->die();
 
 			std::cout << "you joined!" << std::endl;
 			break;
 		case eSPacketHostServerReply:
-			Game::currentMenu = new MultiplayerLobby();
+			Game::currentMenu = new MultiplayerLobby(Lobbies[selectedIndex]);
 			for (Text* t : lobbyTexts)
 				t->die();
+
+			for (SDL_Texture* t : peopleTextures)
+				SDL_DestroyTexture(t);
+
+			helpText->die();
 
 			std::cout << "you hosted and joined!" << std::endl;
 			break;
@@ -123,10 +142,10 @@ void MultiplayerLobbies::update(Events::updateEvent event)
 	{
 		SDL_Texture* t = peopleTextures[i];
 		SDL_FRect rect;
-		rect.x = selected->x + (64 * i);
-		rect.y = selected->y + 32;
-		rect.w = 32;
-		rect.h = 32;
+		rect.x = selected->x + (52 * i);
+		rect.y = selected->y + 46;
+		rect.w = 46;
+		rect.h = 46;
 
 		SDL_RenderCopyF(Game::renderer, t, NULL, &rect);
 

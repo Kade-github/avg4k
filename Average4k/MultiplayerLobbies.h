@@ -15,9 +15,12 @@ public:
 
     Text* helpText;
 
+    float refreshTimer = 3000;
+
     bool joiningServer = false;
 
     int selectedIndex;
+    void refreshLobbies();
     void updateList(std::vector<lobby> lobs);
     void onPacket(PacketType pt, char* data, int32_t length);
 

@@ -17,7 +17,7 @@ class MultiplayerLobby :
 
         Text* helpDisplay;
 
-        std::vector<person*> people;
+        std::vector<person> people;
 
         void refreshLobby(lobby l);
         void onPacket(PacketType pt, char* data, int32_t length);

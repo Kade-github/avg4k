@@ -5,7 +5,10 @@
 #include "MultiplayerLobby.h"
 #include "CPacketHostServer.h"
 
-void refreshLobbies() {
+void MultiplayerLobbies::refreshLobbies() {
+	if (refreshTimer < 2999)
+		return;
+	refreshTimer = 0;
 	std::cout << "refreshing lobbies" << std::endl;
 	CPacketServerList list;
 	list.Order = 0;
@@ -21,20 +24,6 @@ MultiplayerLobbies::MultiplayerLobbies()
 	refreshLobbies();
 }
 
-struct SPARAMETERS
-{
-	paramPlayer* pl;
-	std::vector<SDL_Texture*>* vec;
-};
-
-DWORD CALLBACK getSteamAvatarP(LPVOID param)
-{
-	SPARAMETERS* params = (SPARAMETERS*)param;
-
-	params->vec->push_back(Steam::getAvatar(params->pl->AvatarURL->c_str()));
-	return 0;
-}
-
 void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
 {
 	Lobbies.clear();
@@ -46,7 +35,10 @@ void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
 	lobbyTexts.clear();
 
 	for (SDL_Texture* t : peopleTextures)
-		SDL_DestroyTexture(t);
+		if (t)
+			SDL_DestroyTexture(t);
+
+	peopleTextures.clear();
 
 	for (int i = 0; i < Lobbies.size(); i++)
 	{
@@ -57,14 +49,9 @@ void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
 		for (int p = 0; p < l.PlayerList.size(); p++)
 		{
 			player pl = l.PlayerList[i];
-			SPARAMETERS* params = (SPARAMETERS*)malloc(sizeof(SPARAMETERS));
-			params->vec = &peopleTextures;
-			paramPlayer* pp = (paramPlayer*)malloc(sizeof(player));
-			pp->AvatarURL = new std::string(pl.AvatarURL);
-			pp->Name = new std::string(pl.Name);
-			pp->SteamID64 = pl.SteamID64;
-			params->pl = pp;
-			CreateThread(NULL, 0, getSteamAvatarP, params, 0, NULL);
+			SDL_Texture* t = Steam::getAvatar(pl.AvatarURL.c_str());
+			if (t)
+				peopleTextures.push_back(t);
 		}
 		lobbyTexts.push_back(t);
 	}
@@ -147,6 +134,9 @@ void MultiplayerLobbies::update(Events::updateEvent event)
 		selectedIndex = 0;
 	if (selectedIndex < 0)
 		selectedIndex = lobbyTexts.size() - 1;
+
+	if (refreshTimer < 3000)
+		refreshTimer += Game::deltaTime;
 
 	lobby& l = Lobbies[selectedIndex];
 	Text* selected = lobbyTexts[selectedIndex];

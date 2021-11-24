@@ -68,22 +68,31 @@ SDL_Texture* Steam::getAvatar(const char* url)
     std::cout << "downloading avatar" << std::endl;
 
     CURLcode rc = curl_easy_perform(curlCtx);
-    if (rc)
-    {
-        printf("!!! Failed to download: %s\n", url);
-        return NULL;
-    }
+    if (rc != CURLE_OK)
+        fprintf(stderr, "curl_easy_perform() failed: %s\n",
+            curl_easy_strerror(rc));
 
     std::cout << "downloaded!" << std::endl;
 
-    SDL_RWops* rw = SDL_RWFromConstMem(chunk.memory, chunk.size);
+    SDL_RWops* rw = SDL_RWFromMem(chunk.memory, chunk.size);
     curl_easy_cleanup(curlCtx);
 
     SDL_Surface* surf = IMG_LoadJPG_RW(rw);
 
     free(chunk.memory);
 
+    std::cout << "freed" << std::endl;
+
     SDL_RWclose(rw);
 
-    return SDL_CreateTextureFromSurface(Game::renderer,surf);
+    std::cout << "closed" << std::endl;
+    
+    if (!surf)
+        return NULL;
+
+    SDL_Texture* tex = SDL_CreateTextureFromSurface(Game::renderer, surf);
+
+    std::cout << "surf" << std::endl;
+
+    return tex;
 }

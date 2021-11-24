@@ -86,7 +86,8 @@ void Game::update(Events::updateEvent update)
 
 	currentMenu->update(update);
 
-	fpsText->setText("FPS: " + std::to_string(gameFPS) + " | Delta Time: " + std::to_string(deltaTime));
+	if (fpsText)
+		fpsText->setText("FPS: " + std::to_string(gameFPS) + " | Delta Time: " + std::to_string(deltaTime));
 
 	for (int i = 0; i < objects->size(); i++)
 	{

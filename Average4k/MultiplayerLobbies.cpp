@@ -6,8 +6,8 @@
 #include "CPacketHostServer.h"
 
 void MultiplayerLobbies::refreshLobbies() {
-	/*if (refreshTimer < 2999)
-		return;*/
+	if (refreshTimer < 2999)
+		return;
 	refreshTimer = 0;
 	std::cout << "refreshing lobbies" << std::endl;
 	CPacketServerList list;
@@ -39,8 +39,6 @@ void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
 			SDL_DestroyTexture(t);
 
 	peopleTextures.clear();
-
-	std::cout << "bruh" << std::endl;
 
 	for (int i = 0; i < Lobbies.size(); i++)
 	{
@@ -166,8 +164,6 @@ void MultiplayerLobbies::update(Events::updateEvent event)
 
 void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 {
-	if (refreshTimer < 1)
-		return;
 	CPacketHostServer host;
 	lobby& l = Lobbies[selectedIndex];
 	Text* selected = lobbyTexts[selectedIndex];

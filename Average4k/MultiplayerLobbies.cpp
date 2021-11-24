@@ -21,9 +21,18 @@ MultiplayerLobbies::MultiplayerLobbies()
 	refreshLobbies();
 }
 
-void getSteamAvatar(player& pl, std::vector<SDL_Texture*>& vec)
+struct SPARAMETERS
 {
-	vec.push_back(Game::steam->getAvatar(pl.AvatarURL));
+	paramPlayer* pl;
+	std::vector<SDL_Texture*>* vec;
+};
+
+DWORD CALLBACK getSteamAvatarP(LPVOID param)
+{
+	SPARAMETERS* params = (SPARAMETERS*)param;
+
+	params->vec->push_back(Steam::getAvatar(params->pl->AvatarURL->c_str()));
+	return 0;
 }
 
 void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
@@ -47,9 +56,15 @@ void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
 		t->create();
 		for (int p = 0; p < l.PlayerList.size(); p++)
 		{
-			player& pl = l.PlayerList[i];
-			std::thread t(&getSteamAvatar, std::ref(pl), std::ref(peopleTextures));
-			t.join();
+			player pl = l.PlayerList[i];
+			SPARAMETERS* params = (SPARAMETERS*)malloc(sizeof(SPARAMETERS));
+			params->vec = &peopleTextures;
+			paramPlayer* pp = (paramPlayer*)malloc(sizeof(player));
+			pp->AvatarURL = new std::string(pl.AvatarURL);
+			pp->Name = new std::string(pl.Name);
+			pp->SteamID64 = pl.SteamID64;
+			params->pl = pp;
+			CreateThread(NULL, 0, getSteamAvatarP, params, 0, NULL);
 		}
 		lobbyTexts.push_back(t);
 	}
@@ -138,7 +153,7 @@ void MultiplayerLobbies::update(Events::updateEvent event)
 	selected->setText("> " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")");
 	selected->setX((Game::gameWidth / 2) - (selected->surfaceMessage->w / 2));
 
-	for (int i = 0; i < l.PlayerList.size(); i++)
+	for (int i = 0; i < peopleTextures.size(); i++)
 	{
 		SDL_Texture* t = peopleTextures[i];
 		SDL_FRect rect;

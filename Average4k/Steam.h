@@ -9,6 +9,6 @@ public:
 
 	void ShutdownSteam();
 
-	SDL_Texture* getAvatar(std::string url);
+	static SDL_Texture* getAvatar(const char* url);
 };
 

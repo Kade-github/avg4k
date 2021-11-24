@@ -2,6 +2,12 @@
 #include "includes.h"
 #include <msgpack.hpp>
 
+struct paramPlayer {
+	std::string* Name;
+	unsigned long SteamID64;
+	std::string* AvatarURL;
+};
+
 class player {
 	public:
 		std::string Name;

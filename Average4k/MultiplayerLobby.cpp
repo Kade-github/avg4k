@@ -1,11 +1,11 @@
 #include "MultiplayerLobby.h"
 #include "SPacketUpdateLobbyData.h"
 
-void getSteamAvatar(player& pl, SDL_Texture* tex)
+void getSteamAvatar(player& pl, person& p)
 {
 	SDL_Texture* t = Game::steam->getAvatar(pl.AvatarURL);
-	if (tex)
-		tex = t;
+	if (p.display)
+		p.avatar = t;
 }
 
 void MultiplayerLobby::refreshLobby(lobby l)
@@ -25,7 +25,7 @@ void MultiplayerLobby::refreshLobby(lobby l)
 		player& p = l.PlayerList[i];
 		person per;
 		per.avatar = SDL_CreateTexture(Game::renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 46,46);
-		std::thread t(&getSteamAvatar, std::ref(p), std::ref(per.avatar));
+		std::thread t(&getSteamAvatar, std::ref(p), std::ref(per));
 		t.join();
 		per.display = new Text(82,192 + (46 * i), p.Name, 10, 10);
 		per.display->create();
@@ -75,7 +75,7 @@ void MultiplayerLobby::update(Events::updateEvent event)
 	{
 		SDL_FRect avat;
 		avat.x = p.display->x - 58;
-		avat.y = p.display->y - 23;
+		avat.y = p.display->y;
 		avat.w = 46;
 		avat.h = 46;
 

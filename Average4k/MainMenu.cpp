@@ -154,7 +154,7 @@ MainMenu::MainMenu()
 	instance = this;
 	selectedDiffIndex = 0;
 	mainMenuText = new Text(0, 0, "Average 4k (F1 for lobby list)", 100, 50);
-	mainMenuText->setX((Game::gameWidth / 2) - (mainMenuText->surfaceMessage->w / 2));
+	mainMenuText->setX((Game::gameWidth / 2) - (mainMenuText->surfW / 2));
 	mainMenuText->setY((Game::gameHeight / 2) - 250);
 	mainMenuText->create();
 
@@ -167,13 +167,13 @@ MainMenu::MainMenu()
 	difficulty diff = (*currentChart->meta.difficulties)[selectedDiffIndex];
 
 	songSelect = new Text(0, 0, "> " + currentChart->meta.songName, 100, 500);
-	songSelect->setX((Game::gameWidth / 2) - (songSelect->surfaceMessage->w / 2));
-	songSelect->setY((Game::gameHeight / 2) - songSelect->surfaceMessage->h);
+	songSelect->setX((Game::gameWidth / 2) - (songSelect->surfW / 2));
+	songSelect->setY((Game::gameHeight / 2) - songSelect->surfH);
 	songSelect->create();
 
 	diffSelected = new Text(0, 0, diff.name + " (" + std::to_string(diff.notes->size()) + " NOTES) (" + std::to_string((*currentChart->meta.bpms)[0].bpm) + " BPM)", 100, 500);
-	diffSelected->setX((Game::gameWidth / 2) - (diffSelected->surfaceMessage->w / 2));
-	diffSelected->setY(songSelect->y + songSelect->surfaceMessage->h + 30);
+	diffSelected->setX((Game::gameWidth / 2) - (diffSelected->surfW / 2));
+	diffSelected->setY(songSelect->y + songSelect->surfH + 30);
 	diffSelected->create();
 
 }
@@ -281,9 +281,9 @@ void MainMenu::keyDown(SDL_KeyboardEvent event)
 		}
 	}
 
-	songSelect->setX((Game::gameWidth / 2) - (songSelect->surfaceMessage->w / 2));
-	songSelect->setY((Game::gameHeight / 2) - songSelect->surfaceMessage->h);
+	songSelect->setX((Game::gameWidth / 2) - (songSelect->surfW / 2));
+	songSelect->setY((Game::gameHeight / 2) - songSelect->surfH);
 
-	diffSelected->setX((Game::gameWidth / 2) - (diffSelected->surfaceMessage->w / 2));
-	diffSelected->setY(songSelect->y + songSelect->surfaceMessage->h + 30);
+	diffSelected->setX((Game::gameWidth / 2) - (diffSelected->surfW / 2));
+	diffSelected->setY(songSelect->y + songSelect->surfH + 30);
 }

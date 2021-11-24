@@ -1,6 +1,7 @@
 #pragma once
 #include "Object.h"
 #include "includes.h"
+#include "Game.h"
 
 struct Color {
 	unsigned char r;
@@ -12,18 +13,26 @@ class Text : public Object
 {
 public:
 
+	TTF_Font* GetFont() {
+		static TTF_Font* Sans = nullptr;
+
+		if (!Sans)
+			Sans = TTF_OpenFont("C:\\Windows\\Fonts\\Arial.ttf", 24); // we support linux :)
+		return Sans;
+	}
+
 	Text(int x, int y, std::string temp, int w, int h) : Object(x, y) {
 
-		std::string* _text = new std::string(temp);
-
-		this->text = _text;
+		this->text = temp;
 		this->w = w;
 		this->h = h;
 		this->rW = w;
 		this->rH = h;
 
-		color = { 255,255,255 };
+		SDL_Surface* screen = SDL_GetWindowSurface(Game::window);
 
+		color = { 255,255,255 };
+		
 		setText(temp);
 	};
 
@@ -33,13 +42,15 @@ public:
 
 	Color color;
 
-	SDL_Surface* surfaceMessage;
 	SDL_Texture* message;
-	SDL_Rect message_Rect;
+	SDL_FRect message_Rect;
 
-	std::string* text;
+	std::string text;
 	int w;
 	int h;
+
+	int surfW;
+	int surfH;
 
 	int rW;
 	int rH;

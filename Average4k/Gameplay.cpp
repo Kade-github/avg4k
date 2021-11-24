@@ -75,12 +75,12 @@ void Gameplay::miss(NoteObject* object)
 	(*Judgement).color.g = 0;
 	(*Judgement).color.b = 0;
 
-	Judgement->setX((Game::gameWidth / 2) - (Judgement->surfaceMessage->w / 2));
+	Judgement->setX((Game::gameWidth / 2) - (Judgement->surfW / 2));
 	Judgement->setY((Game::gameHeight / 2));
 
 
 	Combo->setText(" ");
-	Combo->setX((Game::gameWidth / 2) - (Combo->surfaceMessage->w / 2));
+	Combo->setX((Game::gameWidth / 2) - (Combo->surfW / 2));
 	Combo->setY((Game::gameHeight / 2) + 40);
 }
 
@@ -328,11 +328,11 @@ void Gameplay::update(Events::updateEvent event)
 
 				combo++;
 
-				Judgement->setX((Game::gameWidth / 2) - (Judgement->surfaceMessage->w / 2));
+				Judgement->setX((Game::gameWidth / 2) - (Judgement->surfW / 2));
 				Judgement->setY((Game::gameHeight / 2));
 
 				Combo->setText("Botplay");
-				Combo->setX((Game::gameWidth / 2) - (Combo->surfaceMessage->w / 2));
+				Combo->setX((Game::gameWidth / 2) - (Combo->surfW / 2));
 				Combo->setY((Game::gameHeight / 2) + 40);
 
 			}
@@ -563,14 +563,14 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 					combo++;
 
-					Judgement->setX((Game::gameWidth / 2) - (Judgement->surfaceMessage->w / 2));
+					Judgement->setX((Game::gameWidth / 2) - (Judgement->surfW / 2));
 					Judgement->setY((Game::gameHeight / 2));
 
 					if (combo == 0)
 						Combo->setText(" ");
 					else
 						Combo->setText(std::to_string(combo));
-					Combo->setX((Game::gameWidth / 2) - (Combo->surfaceMessage->w / 2));
+					Combo->setX((Game::gameWidth / 2) - (Combo->surfW / 2));
 					Combo->setY((Game::gameHeight / 2) + 40);
 					break;
 				}

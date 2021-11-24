@@ -44,7 +44,7 @@ void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
 	{
 		lobby& l = Lobbies[i];
 		Text* t = new Text(Game::gameWidth / 2, 100 + (135 * i), l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")", 10, 10);
-		t->setX((Game::gameWidth / 2) - (t->surfaceMessage->w / 2));
+		t->setX((Game::gameWidth / 2) - (t->surfW / 2));
 		t->create();
 		for (int p = 0; p < l.PlayerList.size(); p++)
 		{
@@ -141,7 +141,7 @@ void MultiplayerLobbies::update(Events::updateEvent event)
 	lobby& l = Lobbies[selectedIndex];
 	Text* selected = lobbyTexts[selectedIndex];
 	selected->setText("> " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")");
-	selected->setX((Game::gameWidth / 2) - (selected->surfaceMessage->w / 2));
+	selected->setX((Game::gameWidth / 2) - (selected->surfW / 2));
 
 	for (int i = 0; i < peopleTextures.size(); i++)
 	{
@@ -197,12 +197,12 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 			break;
 		case SDLK_UP:
 			selected->setText(l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")");
-			selected->setX((Game::gameWidth / 2) - (selected->surfaceMessage->w / 2));
+			selected->setX((Game::gameWidth / 2) - (selected->surfW / 2));
 			selectedIndex--;
 			break;
 		case SDLK_DOWN:
 			selected->setText(l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")");
-			selected->setX((Game::gameWidth / 2) - (selected->surfaceMessage->w / 2));
+			selected->setX((Game::gameWidth / 2) - (selected->surfW / 2));
 			selectedIndex++;
 			break;
 	}

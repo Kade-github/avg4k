@@ -196,7 +196,7 @@ void Game::keyUp(SDL_KeyboardEvent ev)
 		bruh->keyDown(ev);
 	}
 }
-
+//asd
 void Game::weGotPacket(Events::packetEvent p)
 {
 	std::lock_guard<std::mutex> s(pog);

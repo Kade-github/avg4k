@@ -29,6 +29,8 @@ void MultiplayerLobby::refreshLobby(lobby l)
 			per.avatar = NULL;
 		people.push_back(per);
 	}
+
+	helpDisplay->setText("Lobby: " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")");
 	
 }
 

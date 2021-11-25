@@ -5,4 +5,6 @@ class SPacketWtfAmInReply : public Packet
 {
 public:
 	lobby Lobby;
+
+	MSGPACK_DEFINE_MAP(Lobby);
 };

@@ -4,14 +4,21 @@
 #include "Lobby.h"
 #include "Text.h"
 #include "Game.h"
+
+struct bruh {
+    player p;
+    SDL_Texture* avatar;
+};
+
 class MultiplayerLobbies :
     public Menu
 {
 public:
     MultiplayerLobbies();
-    std::vector<SDL_Texture*> peopleTextures;
     std::vector<Text*> lobbyTexts;
     std::vector<lobby> Lobbies;
+
+    std::vector<bruh> avatars;
 
     Text* helpText;
 

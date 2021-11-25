@@ -1,5 +1,7 @@
 #include "MultiplayerLobby.h"
 #include "SPacketUpdateLobbyData.h"
+#include "SPacketWtfAmInReply.h"
+#include "CPacketWtfAmIn.h"
 
 
 void MultiplayerLobby::refreshLobby(lobby l)
@@ -27,12 +29,15 @@ void MultiplayerLobby::refreshLobby(lobby l)
 			per.avatar = NULL;
 		people.push_back(per);
 	}
+
+	helpDisplay->setText("Lobby: " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")");
 	
 }
 
 void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 {
 	SPacketUpdateLobbyData update;
+	SPacketWtfAmInReply reply;
 	SPacketStatus f;
 	msgpack::unpacked result;
 
@@ -50,6 +55,17 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 
 		refreshLobby(update.Lobby);
 		break;
+	case eSPacketWtfAmInReply:
+		msgpack::unpack(result, data, length);
+
+		obj = msgpack::object(result.get());
+
+		obj.convert(reply);
+
+		std::cout << "refresh lobby" << std::endl;
+
+		refreshLobby(reply.Lobby);
+		break;
 	}
 }
 
@@ -58,7 +74,11 @@ MultiplayerLobby::MultiplayerLobby(lobby l)
 	helpDisplay = new Text(24, 100, "Lobby: " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")", 10, 10);
 	helpDisplay->create();
 
-	refreshLobby(l);
+	CPacketWtfAmIn fuck;
+	fuck.Order = 0;
+	fuck.PacketType = eCPacketWtfAmIn;
+
+	Multiplayer::sendMessage<CPacketWtfAmIn>(fuck);
 }
 
 void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)

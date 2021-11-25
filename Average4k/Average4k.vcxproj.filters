@@ -272,5 +272,11 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CPacketWtfAmIn.h">
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketWtfAmInReply.h">
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Server</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -34,11 +34,10 @@ void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
 
 	lobbyTexts.clear();
 
-	for (SDL_Texture* t : peopleTextures)
-		if (t)
-			SDL_DestroyTexture(t);
+	for (bruh t : avatars)
+		SDL_DestroyTexture(t.avatar);
 
-	peopleTextures.clear();
+	avatars.clear();
 
 	for (int i = 0; i < Lobbies.size(); i++)
 	{
@@ -48,10 +47,12 @@ void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
 		t->create();
 		for (int p = 0; p < l.PlayerList.size(); p++)
 		{
-			player pl = l.PlayerList[i];
+			player& pl = l.PlayerList[p];
 			SDL_Texture* t = Steam::getAvatar(pl.AvatarURL.c_str());
-			if (t)
-				peopleTextures.push_back(t);
+			bruh b;
+			b.p = pl;
+			b.avatar = t;
+			avatars.push_back(b);
 		}
 		lobbyTexts.push_back(t);
 	}
@@ -83,8 +84,10 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 			for (Text* t : lobbyTexts)
 				t->die();
 
-			for (SDL_Texture* t : peopleTextures)
-				SDL_DestroyTexture(t);
+			for (bruh t : avatars)
+				SDL_DestroyTexture(t.avatar);
+
+			avatars.clear();
 
 			helpText->die();
 
@@ -95,8 +98,10 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 			for (Text* t : lobbyTexts)
 				t->die();
 
-			for (SDL_Texture* t : peopleTextures)
-				SDL_DestroyTexture(t);
+			for (bruh t : avatars)
+				SDL_DestroyTexture(t.avatar);
+
+			avatars.clear();
 
 			helpText->die();
 
@@ -143,9 +148,11 @@ void MultiplayerLobbies::update(Events::updateEvent event)
 	selected->setText("> " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")");
 	selected->setX((Game::gameWidth / 2) - (selected->surfW / 2));
 
-	for (int i = 0; i < peopleTextures.size(); i++)
+	for (int i = 0; i < avatars.size(); i++)
 	{
-		SDL_Texture* t = peopleTextures[i];
+		bruh& b = avatars[i];
+
+		SDL_Texture* t = b.avatar;
 		SDL_FRect rect;
 		rect.x = selected->x + (52 * i);
 		rect.y = selected->y + 46;

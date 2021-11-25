@@ -96,6 +96,8 @@ Gameplay::Gameplay()
 
 	Judge::judgeNote(174);
 
+	float bassRate = (rate * 100) - 100;
+
 	std::string path = MainMenu::currentChart->meta.folder + "/" + MainMenu::currentChart->meta.audio;
 
 	std::cout << "playing " << path << std::endl;
@@ -104,7 +106,7 @@ Gameplay::Gameplay()
 
 	tempostream = BASS_FX_TempoCreate(channel, BASS_FX_FREESOURCE);
 
-	BASS_ChannelSetAttribute(tempostream, BASS_ATTRIB_TEMPO, 0);
+	BASS_ChannelSetAttribute(tempostream, BASS_ATTRIB_TEMPO, bassRate);
 
 	noteskin = Noteskin::getNoteskin();
 	notesToPlay = *(*MainMenu::currentChart->meta.difficulties)[MainMenu::selectedDiffIndex].notes;
@@ -314,7 +316,6 @@ void Gameplay::update(Events::updateEvent event)
 				}
 			}
 			std::sort(object->heldTilings.begin(), object->heldTilings.end());
-			std::cout << "pushed " << object->heldTilings.size() << " tiles" << std::endl;
 			spawnedNotes.push_back(object);
 		}
 	}

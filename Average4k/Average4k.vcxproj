@@ -203,6 +203,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="CPacketServerList.h" />
     <ClInclude Include="CPacketSongFinished.h" />
     <ClInclude Include="CPacketStatus.h" />
+    <ClInclude Include="CPacketWtfAmIn.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Gameplay.h" />
@@ -233,6 +234,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="SPacketUpdateLeaderboard.h" />
     <ClInclude Include="SPacketUpdateLobbyChart.h" />
     <ClInclude Include="SPacketUpdateLobbyData.h" />
+    <ClInclude Include="SPacketWtfAmInReply.h" />
     <ClInclude Include="Steam.h" />
     <ClInclude Include="Text.h" />
   </ItemGroup>

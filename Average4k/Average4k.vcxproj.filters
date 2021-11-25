@@ -132,6 +132,9 @@
     <ClCompile Include="MultiplayerLobbies.cpp">
       <Filter>Source Files\Average4k\Screens\Menus\MultiplayerMenus</Filter>
     </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes.h">
@@ -265,6 +268,9 @@
     </ClInclude>
     <ClInclude Include="Lobby.h">
       <Filter>Source Files\Average4k\Multiplayer\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

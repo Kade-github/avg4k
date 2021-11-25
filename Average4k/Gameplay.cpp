@@ -135,6 +135,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 			format.erase(format.find_last_not_of('0') + 1, std::string::npos);
 
 			spot.t = new Text(4, (Game::gameHeight / 2) + 4, spot.score.Username + " - (" + std::to_string(spot.score.score) + "/" + format + "ms)", 10, 10);
+			spot.t->y = spot.t->y + (spot.t->surfH * i);
 			leaderboard.push_back(spot);
 			spot.t->create();
 		}
@@ -376,6 +377,7 @@ void Gameplay::update(Events::updateEvent event)
 
 			spot.rect.w = spot.t->surfW + 4;
 			spot.rect.h = spot.t->surfH + 4;
+			spot.rect.y = spot.rect.y + (spot.t->surfH * i);
 			SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 128);
 			SDL_RenderFillRectF(Game::renderer, &spot.rect);
 			SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);

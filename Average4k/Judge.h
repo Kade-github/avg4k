@@ -17,7 +17,7 @@ class Judge
 		static std::vector<int> scoreWindows;
 		static void initJudge();
 
-		static judgement judgeNote(float diff);
+		static judgement judgeNote(float difff);
 		static int scoreNote(float diff);
 };
 

@@ -1,6 +1,5 @@
 #include "Text.h"
 
-
 void Text::setText(std::string temp)
 {
 	this->text = temp;

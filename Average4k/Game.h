@@ -24,12 +24,16 @@ public:
 	static Steam* steam;
 	static Multiplayer* multi;
 
+	static Game* instance;
+
 	bool fullscreen = false;
 
 	static int gameWidth;
 	static int gameHeight;
 
 	static std::map<int, bool> controls;
+
+	void weGotPacket(Events::packetEvent p);
 
 	static std::vector<Object*>* getGlobalObjects();
 	static void addGlobalObject(Object* obj);

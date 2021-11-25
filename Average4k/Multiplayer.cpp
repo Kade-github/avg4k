@@ -82,6 +82,7 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
 
     SPacketStatus status;
     SPacketHello helloBack;
+    Events::packetEvent p;
 
     msgpack::unpacked result;
 
@@ -112,7 +113,11 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
                     std::cout << "not found" << std::endl;
                     break;
             }
-            Game::currentMenu->onPacket(type, data, length);
+            p.data = data;
+            p.length = length;
+            p.type = type;
+            p.ogPtr = ptr;
+            Game::instance->weGotPacket(p);
         break;
         case eSPacketHello:
             unpack(result, data, length);
@@ -128,10 +133,13 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
             std::cout << helloBack.Message << ". hello server, fuck you too! " << std::endl;
         break;
         default:
-            Game::currentMenu->onPacket(type, data, length);
+            p.data = data;
+            p.length = length;
+            p.type = type;
+            p.ogPtr = ptr;
+            Game::instance->weGotPacket(p);
             break;
     }
-    free(ptr);
 }
 
 

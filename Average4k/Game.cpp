@@ -7,13 +7,18 @@
 
 using namespace std;
 
+mutex pog;
+
 vector<Object*>* objects;
+
+std::vector<Events::packetEvent> packetsToBeHandeld;
 
 Menu* Game::currentMenu = NULL;
 Camera* Game::mainCamera = NULL;
 SaveFile* Game::save = NULL;
 Steam* Game::steam = NULL;
 Multiplayer* Game::multi = NULL;
+Game* Game::instance = NULL;
 
 map<int, bool> Game::controls = {
 	{SDLK_d, false},
@@ -42,7 +47,6 @@ HANDLE multiThreadHandle;
 void Game::createGame()
 {
 	objects = new std::vector<Object*>();
-
 	steam = new Steam();
 	steam->InitSteam();
 
@@ -107,6 +111,23 @@ void Game::update(Events::updateEvent update)
 	DestR.y = mainCamera->y;
 	DestR.w = mainCamera->w;
 	DestR.h = mainCamera->h;
+
+	std::vector<Events::packetEvent> bruh;
+	{
+		std::lock_guard cock(pog);
+		// copy shit
+		bruh = packetsToBeHandeld;
+		packetsToBeHandeld.clear();
+	}
+
+	for (int i = 0; i < bruh.size(); i++)
+	{
+		// uh
+		Events::packetEvent& p = bruh[i];
+		currentMenu->onPacket(p.type, p.data, p.length);
+		free(p.ogPtr);
+	}
+
 
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
@@ -173,6 +194,12 @@ void Game::keyUp(SDL_KeyboardEvent ev)
 		Object* bruh = (*objects)[i];
 		bruh->keyDown(ev);
 	}
+}
+
+void Game::weGotPacket(Events::packetEvent p)
+{
+	std::lock_guard<std::mutex> s(pog);
+	packetsToBeHandeld.push_back(p);
 }
 
 std::vector<Object*>* Game::getGlobalObjects()

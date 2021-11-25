@@ -1,4 +1,5 @@
 #pragma once
+#include "Packet.h"
 #include <iostream>
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -15,5 +16,14 @@ public:
 		SDL_Renderer* renderer;
 		SDL_Window* window;
 	};
+
+	struct packetEvent
+	{
+		PacketType type;
+		char* data;
+		int32_t length;
+		char* ogPtr;
+	};
+
 
 };

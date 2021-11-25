@@ -72,9 +72,10 @@ SDL_Texture* Steam::getAvatar(const char* url)
         fprintf(stderr, "curl_easy_perform() failed: %s\n",
             curl_easy_strerror(rc));
 
-    std::cout << "downloaded!" << std::endl;
+    std::cout << "downloaded! " << chunk.size << std::endl;
 
     SDL_RWops* rw = SDL_RWFromConstMem(chunk.memory, chunk.size);
+
     curl_easy_cleanup(curlCtx);
 
     std::cout << "trying to texture bruh" << std::endl;

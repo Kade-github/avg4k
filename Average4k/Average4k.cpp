@@ -29,6 +29,8 @@ Uint32 frametimelast;
 
 Uint32 framecount;
 
+
+
 void fpsinit() {
 	memset(frametimes, 0, sizeof(frametimes));
 	framecount = 0;
@@ -115,6 +117,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
 	Game* game = new Game();
+
+	Game::instance = game;
 
 	game->gameWidth = 1280;
 	game->gameHeight = 720;

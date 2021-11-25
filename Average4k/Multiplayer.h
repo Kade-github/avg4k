@@ -1,11 +1,4 @@
 #pragma once
-#include <openssl/opensslconf.h>
-
-#include <websocketpp/config/asio_client.hpp>
-#include <websocketpp/client.hpp>
-#include <msgpack.hpp>
-
-#include "Packet.h"
 
 #include "includes.h"
 #include "CPacketHello.h"

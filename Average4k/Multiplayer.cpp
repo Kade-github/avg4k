@@ -172,15 +172,17 @@ context_ptr on_tls_init(const char* hostname, websocketpp::connection_hdl) {
 DWORD WINAPI Multiplayer::connect(LPVOID agh)
 {
     connectedToServer = true;
-    std::string url = "wss://titnoas.xyz/ballsandsex/";
 
+    STR_ENCRYPT_START
+    std::string url = "wss://titnoas.xyz/ballsandsex/";
+   
     std::cout << "Creating things" << std::endl;
 
     try {
 
         while (true)
         {
-
+            VM_TIGER_BLACK_START
             c.set_access_channels(websocketpp::log::alevel::none);
             c.clear_access_channels(websocketpp::log::alevel::all);
             c.set_error_channels(websocketpp::log::elevel::none);
@@ -213,6 +215,8 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
 
 
             std::cout << "Calling run" << std::endl;
+
+            VM_TIGER_BLACK_END
             c.run();
             std::cout << "done run" << std::endl;
         }
@@ -222,6 +226,7 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
         loggedIn = false;
         connectedToServer = false;
     }
+    STR_ENCRYPT_END
 }
 
 void Multiplayer::login()

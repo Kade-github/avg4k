@@ -17,6 +17,7 @@ noteskin_asset* Noteskin::getNoteskin()
 	static noteskin_asset* asset;
 	if (!asset)
 	{
+		std::cout << "creating noteskin" << std::endl;
 		asset = new noteskin_asset();
 		asset->fourth = getAsset("assets/noteskin/" + type + "/4th.png", Game::renderer);
 		asset->eighth = getAsset("assets/noteskin/" + type + "/8th.png", Game::renderer);

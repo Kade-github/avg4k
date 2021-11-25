@@ -361,7 +361,7 @@ void Gameplay::update(Events::updateEvent event)
 		}
 	}
 
-	// multiplayer shit
+	// underlay for accuracy
 
 	SDL_FRect overlayForAccuracy;
 
@@ -374,6 +374,10 @@ void Gameplay::update(Events::updateEvent event)
 	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 128);
 	SDL_RenderFillRectF(Game::renderer, &overlayForAccuracy);
 	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
+
+	// multiplayer shit
+
+	// leaderboard
 
 	if (MultiplayerLobby::inLobby)
 	{
@@ -705,6 +709,8 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			return;
 	}
 
+	// hit notes
+
 	for (int i = 0; i < 4; i++)
 	{
 		gameplayControl& control = controls[i];
@@ -768,47 +774,50 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 					Multiplayer::sendMessage<CPacketNoteHit>(hit);
 				}
+				(*Judgement).color.r = 255;
+				(*Judgement).color.g = 255;
+				(*Judgement).color.b = 255;
 
 				switch (judge)
 				{
 					case judgement::Judge_marvelous:
-						Judgement->setText("Marvelous (" + format + "ms)");
 						(*Judgement).color.r = 0;
 						(*Judgement).color.g = 255;
 						(*Judgement).color.b = 255;
+						Judgement->setText("Marvelous (" + format + "ms)");
 						Marvelous++;
 						updateAccuracy(1);
 						break;
 					case judgement::Judge_perfect:
-						Judgement->setText("Perfect (" + format + "ms)");
 						(*Judgement).color.r = 255;
 						(*Judgement).color.g = 255;
 						(*Judgement).color.b = 0;
+						Judgement->setText("Perfect (" + format + "ms)");
 						Perfect++;
 						updateAccuracy(0.88);
 						break;
 					case judgement::Judge_great:
-						Judgement->setText("Great (" + format + "ms)");
 						(*Judgement).color.r = 0;
 						(*Judgement).color.g = 255;
 						(*Judgement).color.b = 0;
+						Judgement->setText("Great (" + format + "ms)");
 						Great++;
 						updateAccuracy(0.7);
 						break;
 					case judgement::Judge_good:
-						Judgement->setText("Eh (" + format + "ms)");
 						(*Judgement).color.r = 255;
 						(*Judgement).color.g = 0;
 						(*Judgement).color.b = 0;
+						Judgement->setText("Eh (" + format + "ms)");
 						Eh++;
 						updateAccuracy(0.35);
 						break;
 					case judgement::Judge_bad:
 						combo = 0;
-						Judgement->setText("Yikes (" + format + "ms) ");
 						(*Judgement).color.r = 128;
 						(*Judgement).color.g = 0;
 						(*Judgement).color.b = 0;
+						Judgement->setText("Yikes (" + format + "ms) ");
 						Yikes++;
 						updateAccuracy(0.1);
 						break;

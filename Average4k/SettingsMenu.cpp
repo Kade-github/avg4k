@@ -43,7 +43,7 @@ void SettingsMenu::update(Events::updateEvent event)
 	if (selectedIndex < 0)
 		selectedIndex = settings.size() - 1;
 
-	bruhhh b = settings[selectedIndex];
+	bruhhh& b = settings[selectedIndex];
 
 	Text* t = b.display;
 
@@ -52,7 +52,7 @@ void SettingsMenu::update(Events::updateEvent event)
 	std::string value = "";
 
 	if (set->takesActive)
-		value = ": " + set->active ? " true" : " false";
+		value = ": " + std::string((set->active ? " true" : " false"));
 	else
 		value = ": " + std::to_string(set->value);
 
@@ -64,13 +64,13 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 {
 	if (settings.size() == 0)
 		return;
-	bruhhh b = settings[selectedIndex];
+	bruhhh& b = settings[selectedIndex];
 	Text* t = b.display;
 	std::string value = "";
 	switch (event.keysym.sym)
 	{
 	case SDLK_ESCAPE:
-		for (bruhhh t : settings)
+		for (bruhhh& t : settings)
 			t.display->destroy();
 		settings.clear();
 		Game::currentMenu = new MainMenu();
@@ -79,7 +79,8 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 	case SDLK_RETURN:
 		if (b.set->takesActive)
 		{
-			b.set->active = !b.set->active;
+			std::cout << "toggle" << std::endl;
+			Game::save->SetBool("downscroll", !Game::save->GetBool("downscroll"));
 			Game::save->Save();
 		}
 		break;
@@ -87,7 +88,7 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 		selectedIndex--;
 
 		if (b.set->takesActive)
-			value = ": " + b.set->active ? " true" : " false";
+			value = ": " + std::string((b.set->active ? " true" : " false"));
 		else
 			value = ": " + std::to_string(b.set->value);
 
@@ -98,7 +99,7 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 		selectedIndex++;
 
 		if (b.set->takesActive)
-			value = ": " + b.set->active ? " true" : " false";
+			value = ": " + std::string((b.set->active ? " true" : " false"));
 		else
 			value = ": " + std::to_string(b.set->value);
 

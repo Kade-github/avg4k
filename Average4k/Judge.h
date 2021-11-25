@@ -14,8 +14,10 @@ class Judge
 
 	public:
 		static std::vector<double> hitWindows;
+		static std::vector<int> scoreWindows;
 		static void initJudge();
 
 		static judgement judgeNote(float diff);
+		static int scoreNote(float diff);
 };
 

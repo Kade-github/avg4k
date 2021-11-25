@@ -50,6 +50,8 @@ class Gameplay :
 
 		static float rate;
 
+		int noteId;
+
 		bpmSegment curSeg;
 		double beat;
 		bool play = false;

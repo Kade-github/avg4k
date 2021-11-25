@@ -71,6 +71,18 @@ void Gameplay::removeNote(NoteObject* object)
 
 void Gameplay::miss(NoteObject* object)
 {
+	if (MultiplayerLobby::inLobby)
+	{
+		noteId++;
+		CPacketNoteHit hit;
+		hit.NoteID = noteId;
+		hit.NoteTiming = Judge::hitWindows[4];
+		hit.Order = 0;
+		hit.PacketType = eCPacketNoteHit;
+
+		Multiplayer::sendMessage<CPacketNoteHit>(hit);
+	}
+
 	Misses++;
 	updateAccuracy(-0.4);
 	combo = 0;
@@ -119,7 +131,12 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 			PlayerScore score = pack.orderedScores[i];
 			leaderboardSpot spot;
 			spot.score = score;
+			std::string format = std::to_string((double)((int)(spot.score.meanTiming * 100)) / 100);
+			format.erase(format.find_last_not_of('0') + 1, std::string::npos);
+
+			spot.t = new Text(4, (Game::gameHeight / 2) + 4, spot.score.Username + " - (" + std::to_string(spot.score.score) + "/" + format + "ms)", 10, 10);
 			leaderboard.push_back(spot);
+			spot.t->create();
 		}
 
 		break;
@@ -138,6 +155,8 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 		BASS_ChannelFree(tempostream);
 		if (background)
 			SDL_DestroyTexture(background);
+
+		std::cout << "go back" << std::endl;
 
 		Game::currentMenu = new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost);
 		delete this;
@@ -208,14 +227,12 @@ Gameplay::Gameplay()
 
 	tempostream = BASS_FX_TempoCreate(channel, BASS_FX_FREESOURCE);
 
-	BASS_ChannelSetSync(tempostream, BASS_SYNC_END, NULL, sync, 0);
-
 	BASS_ChannelSetAttribute(tempostream, BASS_ATTRIB_TEMPO, bassRate);
 
 	int diff = MainMenu::selectedDiffIndex;
 
 	if (MultiplayerLobby::inLobby)
-		diff = 0; // for now
+		diff = 3; // for now
 
 	noteskin = Noteskin::getNoteskin();
 	notesToPlay = *(*MainMenu::currentChart->meta.difficulties)[diff].notes;
@@ -229,7 +246,7 @@ Gameplay::Gameplay()
 	Combo = new Text(Game::gameWidth / 2, Game::gameHeight / 2 + 40, " ", 100, 100);
 	Combo->create();
 
-	Accuracy = new Text(145, Game::gameHeight / 2, "N/A\n\nMarvelous: " + std::to_string(Marvelous) + "\nPerfect: " + std::to_string(Perfect) + "\nGreat: " + std::to_string(Great) + "\nEh: " + std::to_string(Eh) + "\nYikes: " + std::to_string(Yikes) + "\nCombo Breaks: " + std::to_string(Misses), 100, 40);
+	Accuracy = new Text(230, Game::gameHeight / 2, "N/A\n\nMarvelous: " + std::to_string(Marvelous) + "\nPerfect: " + std::to_string(Perfect) + "\nGreat: " + std::to_string(Great) + "\nEh: " + std::to_string(Eh) + "\nYikes: " + std::to_string(Yikes) + "\nCombo Breaks: " + std::to_string(Misses), 100, 40);
 	Accuracy->create();
 
 	for (int i = 0; i < 4; i++)
@@ -268,6 +285,7 @@ void Gameplay::update(Events::updateEvent event)
 			std::cout << "offset time: " << stuff << " = " << startTime << std::endl;
 			BASS_ChannelSetPosition(tempostream, stuff, BASS_POS_BYTE);
 			BASS_ChannelPlay(tempostream, false);
+			BASS_ChannelSetSync(tempostream, BASS_SYNC_END, NULL, sync, 0);
 			play = true;
 		}
 
@@ -300,6 +318,10 @@ void Gameplay::update(Events::updateEvent event)
 	SDL_RenderFillRectF(Game::renderer, &laneUnderway);
 	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
 
+
+	if (!MainMenu::currentChart)
+		return;
+
 	curSeg = MainMenu::currentChart->getSegmentFromTime(positionInSong);
 	beat = MainMenu::currentChart->getBeatFromTimeOffset(positionInSong, curSeg);
 	positionAndBeats->setText("Time: " + std::to_string(positionInSong) + " | Beat: " + std::to_string(beat) + " | BPM: " + std::to_string(curSeg.bpm));
@@ -330,6 +352,18 @@ void Gameplay::update(Events::updateEvent event)
 
 	// multiplayer shit
 
+	SDL_FRect overlayForAccuracy;
+
+	overlayForAccuracy.x = Accuracy->x - 4;
+	overlayForAccuracy.y = (Game::gameHeight / 2) - 2;
+	overlayForAccuracy.w = Accuracy->surfH;
+	overlayForAccuracy.h = Accuracy->surfH;
+
+
+	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 128);
+	SDL_RenderFillRectF(Game::renderer, &overlayForAccuracy);
+	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
+
 	if (MultiplayerLobby::inLobby)
 	{
 		for (int i = 0; i < leaderboard.size(); i++)
@@ -338,15 +372,10 @@ void Gameplay::update(Events::updateEvent event)
 			spot.rect.w = 100;
 			spot.rect.h = 85;
 			spot.rect.x = 0;
-			spot.rect.y = Game::gameHeight / 2;
+			spot.rect.y = (Game::gameHeight / 2) + 2;
 
-			if (!spot.t)
-			{
-				spot.t = new Text(4, spot.rect.y + 4, spot.score.Username + " - " + std::to_string(spot.score.score), 10, 10);
-				spot.t->create();
-			}
-
-			spot.rect.w = spot.t->surfW + 12;
+			spot.rect.w = spot.t->surfW + 4;
+			spot.rect.h = spot.t->surfH + 4;
 			SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 128);
 			SDL_RenderFillRectF(Game::renderer, &spot.rect);
 			SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
@@ -662,7 +691,6 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			NoteObject* closestObject = nullptr;
 			float currentDiff = Judge::hitWindows[4] + 1;
 
-			int id = 0;
 
 			for (int n = 0; n < spawnedNotes.size(); n++)
 			{
@@ -674,7 +702,6 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 				if (diff <= Judge::hitWindows[4] && diff < currentDiff && object->lane == control.lane)
 				{
-					id = n;
 					closestObject = object;
 					currentDiff = diff;
 				}
@@ -701,7 +728,8 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				if (MultiplayerLobby::inLobby)
 				{
 					CPacketNoteHit hit;
-					hit.NoteID = id;
+					noteId++;
+					hit.NoteID = noteId;
 					hit.NoteTiming = diff;
 					hit.Order = 0;
 					hit.PacketType = eCPacketNoteHit;

@@ -14,6 +14,7 @@ enum PacketType
     eCPacketNoteHit = 8,
     eCPacketSongFinished = 9,
     eCPacketStatus = 10,
+    eCPacketWtfAmIn = 11,
 
     //Server Packets
     eSPacketHello = -1,
@@ -26,6 +27,7 @@ enum PacketType
     eSPacketUpdateLeaderboard = -8,
     eSPacketPlayerSongFinished = -9,
     eSPacketFinalizeChart = -10,
+    eSPacketWtfAmInReply = -11,
 
 
     //Other Server Packets

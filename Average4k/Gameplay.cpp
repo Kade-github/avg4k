@@ -156,53 +156,6 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 	}
 }
 
-std::mutex weirdChamp;
-
-void CALLBACK sync(HSYNC handle, DWORD channel, DWORD data, void* user)
-{
-	std::lock_guard bruh(weirdChamp);
-	Gameplay* inst = (Gameplay*)Game::currentMenu;
-	if (!inst)
-		return;
-	if (!MultiplayerLobby::inLobby)
-	{
-		MainMenu::currentChart->destroy();
-		inst->Judgement->destroy();
-		inst->Combo->destroy();
-		inst->Accuracy->destroy();
-		inst->positionAndBeats->destroy();
-		for (int i = 0; i < inst->spawnedNotes.size(); i++)
-		{
-			inst->spawnedNotes[i]->destroy();
-		}
-
-		BASS_ChannelStop(inst->tempostream);
-		BASS_ChannelFree(inst->tempostream);
-		if (inst->background)
-			SDL_DestroyTexture(inst->background);
-
-		for (std::map<std::string, SDL_Texture*>::iterator iter = avatars.begin(); iter != avatars.end(); ++iter)
-		{
-			std::string k = iter->first;
-			SDL_DestroyTexture(avatars[k]);
-		}
-
-		Game::currentMenu = new MainMenu();
-	}
-	else
-	{
-		CPacketSongFinished song;
-		song.Order = 0;
-		song.PacketType = eCPacketSongFinished;
-
-		Multiplayer::sendMessage<CPacketSongFinished>(song);
-
-		inst->Combo->setText("Waiting for others to finish (" + std::to_string(inst->combo) + ")");
-		inst->Combo->setX((Game::gameWidth / 2) - (inst->Combo->surfW / 2));
-		inst->Combo->setY((Game::gameHeight / 2) + 40);
-	}
-}
-
 Gameplay::Gameplay()
 {
 	initControls();
@@ -280,7 +233,6 @@ Gameplay::Gameplay()
 }
 
 
-
 float lerp(float a, float b, float f)
 {
 	return a + f * (b - a);
@@ -296,7 +248,6 @@ void Gameplay::update(Events::updateEvent event)
 			std::cout << "offset time: " << stuff << " = " << startTime << std::endl;
 			BASS_ChannelSetPosition(tempostream, stuff, BASS_POS_BYTE);
 			BASS_ChannelPlay(tempostream, false);
-			BASS_ChannelSetSync(tempostream, BASS_SYNC_END, NULL,sync, 0);
 			play = true;
 		}
 
@@ -416,6 +367,7 @@ void Gameplay::update(Events::updateEvent event)
 			SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
 		}
 	}
+
 
 	// spawning shit
 
@@ -541,7 +493,50 @@ void Gameplay::update(Events::updateEvent event)
 			spawnedNotes.push_back(object);
 		}
 	}
+	else
+	{
+		if (!ended)
+		{
+			ended = true;
+			if (!MultiplayerLobby::inLobby)
+			{
+				MainMenu::currentChart->destroy();
+				Judgement->destroy();
+				Combo->destroy();
+				Accuracy->destroy();
+				positionAndBeats->destroy();
+				for (int i = 0; i < spawnedNotes.size(); i++)
+				{
+					spawnedNotes[i]->destroy();
+				}
 
+				BASS_ChannelStop(tempostream);
+				BASS_ChannelFree(tempostream);
+				if (background)
+					SDL_DestroyTexture(background);
+
+				for (std::map<std::string, SDL_Texture*>::iterator iter = avatars.begin(); iter != avatars.end(); ++iter)
+				{
+					std::string k = iter->first;
+					SDL_DestroyTexture(avatars[k]);
+				}
+
+				Game::currentMenu = new MainMenu();
+			}
+			else
+			{
+				CPacketSongFinished song;
+				song.Order = 0;
+				song.PacketType = eCPacketSongFinished;
+
+				Multiplayer::sendMessage<CPacketSongFinished>(song);
+
+				Combo->setText("Waiting for others to finish (" + std::to_string(combo) + ")");
+				Combo->setX((Game::gameWidth / 2) - (Combo->surfW / 2));
+				Combo->setY((Game::gameHeight / 2) + 40);
+			}
+		}
+	}
 	// ok lets draw all of them now
 
 

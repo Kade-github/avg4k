@@ -2,6 +2,7 @@
 #include "SMFile.h"
 #include "QuaverFile.h"
 #include "Menu.h"
+#include "SettingsMenu.h"
 
 enum chartType {
 	StepMania = 0,

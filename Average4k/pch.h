@@ -13,3 +13,11 @@
 #include <websocketpp/client.hpp>
 
 #include "Packet.h"
+#include "SPacketUpdateLobbyData.h"
+#include "SPacketWtfAmInReply.h"
+#include "CPacketWtfAmIn.h"
+#include "CPacketLeave.h"
+#include "SPacketStartLobbyGame.h"
+#include "SPacketUpdateLobbyChart.h"
+#include "CPacketClientMissingChart.h"
+#include "CPacketHostChangeChart.h"

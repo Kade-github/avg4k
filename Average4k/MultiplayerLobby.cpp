@@ -1,13 +1,14 @@
 #include "MultiplayerLobby.h"
-#include "SPacketUpdateLobbyData.h"
-#include "SPacketWtfAmInReply.h"
-#include "CPacketWtfAmIn.h"
-#include "CPacketLeave.h"
+
+bool MultiplayerLobby::inLobby = false;
+lobby MultiplayerLobby::CurrentLobby;
+bool MultiplayerLobby::isHost = false;
 
 
 void MultiplayerLobby::refreshLobby(lobby l)
 {
 	CurrentLobby = l;
+	inLobby = true;
 
 	for (person p : people)
 	{
@@ -31,7 +32,7 @@ void MultiplayerLobby::refreshLobby(lobby l)
 		people.push_back(per);
 	}
 
-	helpDisplay->setText("Lobby: " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")");
+	helpDisplay->setText("Lobby: " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ") " + (isHost ? "You are the host!" : ""));
 	
 }
 
@@ -39,12 +40,30 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 {
 	SPacketUpdateLobbyData update;
 	SPacketWtfAmInReply reply;
+	SPacketUpdateLobbyChart cc;
 	SPacketStatus f;
 	msgpack::unpacked result;
 
 	msgpack::object obj;
 	switch (pt)
 	{
+	case eSPacketStatus:
+		msgpack::unpack(result, data, length);
+
+		obj = msgpack::object(result.get());
+
+		obj.convert(f);
+
+		switch (f.code)
+		{
+		case 803:
+			// we host pog
+			isHost = true;
+			refreshLobby(CurrentLobby);
+			break;
+		}
+
+		break;
 	case eSPacketUpdateLobbyData:
 		msgpack::unpack(result, data, length);
 
@@ -67,11 +86,31 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 
 		refreshLobby(reply.Lobby);
 		break;
+	case eSPacketUpdateLobbyChart:
+		// tell the server we aint got it lol (if we dont :))
+		break;
+	case eSPacketStartLobbyGame:
+		QuaverFile* file = new QuaverFile();
+		chartMeta meta = file->returnChart("assets/charts/Rozebud - Philly Nice [B-Side Remix] - 53269");
+		MainMenu::currentChart = new Chart(meta);
+		Game::currentMenu = new Gameplay();
+		helpDisplay->die();
+
+		Game::currentMenu = new MultiplayerLobbies();
+		for (person p : people)
+		{
+			p.display->die();
+			SDL_DestroyTexture(p.avatar);
+		}
+
+		people.clear();
+		break;
 	}
 }
 
-MultiplayerLobby::MultiplayerLobby(lobby l)
+MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted)
 {
+	isHost = hosted;
 	helpDisplay = new Text(24, 100, "Lobby: " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")", 10, 10);
 	helpDisplay->create();
 
@@ -84,6 +123,7 @@ MultiplayerLobby::MultiplayerLobby(lobby l)
 
 void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 {
+	SPacketStartLobbyGame start;
 	switch (event.keysym.sym)
 	{
 		case SDLK_ESCAPE:
@@ -103,6 +143,15 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 			}
 
 			people.clear();
+			inLobby = false;
+			break;
+		case SDLK_RETURN:
+			if (!isHost)
+				return;
+			start.Order = 0;
+			start.PacketType = eSPacketStartLobbyGame;
+
+			Multiplayer::sendMessage<SPacketStartLobbyGame>(start);
 			break;
 	}
 }

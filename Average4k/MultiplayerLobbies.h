@@ -20,6 +20,8 @@ public:
 
     std::vector<bruh> avatars;
 
+
+
     Text* helpText;
 
     float refreshTimer = 3000;

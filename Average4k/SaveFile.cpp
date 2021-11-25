@@ -14,11 +14,11 @@ bool contains(std::vector<T> vec, const T& elem)
 SaveFile::SaveFile()
 {
     // default settings
-    defaultSettings.push_back(CreateSetting(false, 0, "downscroll"));
-    defaultSettings.push_back(CreateSetting(true, 1100, "scrollspeed"));
-    defaultSettings.push_back(CreateSetting(true, 0, "offset"));
+    defaultSettings.push_back(CreateSetting(false, 0, "downscroll", true));
+    defaultSettings.push_back(CreateSetting(true, 1100, "scrollspeed", false));
+    defaultSettings.push_back(CreateSetting(true, 0, "offset", false));
 
-    std::ifstream ifs("settings.pack");
+    std::ifstream ifs("settings.avg");
     if (!ifs.good())
     {
         CreateNewFile();
@@ -55,7 +55,7 @@ void SaveFile::CreateNewFile()
 
 void SaveFile::Save()
 {
-    std::ofstream of("settings.pack");
+    std::ofstream of("settings.avg");
 
     std::stringstream bitch;
 
@@ -104,10 +104,11 @@ bool SaveFile::GetBool(std::string sett)
     return false;
 }
 
-setting SaveFile::CreateSetting(bool defaultActive, double defaultValue, std::string defaultName)
+setting SaveFile::CreateSetting(bool defaultActive, double defaultValue, std::string defaultName, bool tA)
 {
     setting set;
     set.active = defaultActive;
+    set.takesActive = tA;
     set.value = defaultValue;
     memcpy_s(set.name, 128, defaultName.c_str(), 128);
     return set;

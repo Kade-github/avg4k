@@ -5,6 +5,7 @@
 #include "Game.h"
 #include "MainMenu.h"
 #include "MultiplayerLobbies.h"
+#include "Gameplay.h"
 
 struct person {
     Text* display;
@@ -15,7 +16,9 @@ class MultiplayerLobby :
     public Menu
 {
     public:
-        lobby CurrentLobby;
+        static bool inLobby;
+        static lobby CurrentLobby;
+        static bool isHost;
 
         Text* helpDisplay;
 
@@ -24,7 +27,7 @@ class MultiplayerLobby :
         void refreshLobby(lobby l);
         void onPacket(PacketType pt, char* data, int32_t length);
 
-        MultiplayerLobby(lobby l);
+        MultiplayerLobby(lobby l, bool hosted);
         void keyDown(SDL_KeyboardEvent event) override;
         void update(Events::updateEvent event) override;
 };

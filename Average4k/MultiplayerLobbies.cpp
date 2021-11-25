@@ -80,7 +80,7 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 			updateList(fuck.Lobbies);
 			break;
 		case eSPacketJoinServerReply:
-			Game::currentMenu = new MultiplayerLobby(Lobbies[selectedIndex]);
+			Game::currentMenu = new MultiplayerLobby(Lobbies[selectedIndex], false);
 			for (Text* t : lobbyTexts)
 				t->die();
 
@@ -94,7 +94,7 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 			std::cout << "you joined!" << std::endl;
 			break;
 		case eSPacketHostServerReply:
-			Game::currentMenu = new MultiplayerLobby(Lobbies[selectedIndex]);
+			Game::currentMenu = new MultiplayerLobby(Lobbies[selectedIndex], true);
 			for (Text* t : lobbyTexts)
 				t->die();
 

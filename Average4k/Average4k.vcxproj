@@ -185,6 +185,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="QuaverFile.cpp" />
     <ClCompile Include="SaveFile.cpp" />
+    <ClCompile Include="SettingsMenu.cpp" />
     <ClCompile Include="SMFile.cpp" />
     <ClCompile Include="Steam.cpp" />
     <ClCompile Include="Text.cpp" />
@@ -223,12 +224,14 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="pch.h" />
     <ClInclude Include="QuaverFile.h" />
     <ClInclude Include="SaveFile.h" />
+    <ClInclude Include="SettingsMenu.h" />
     <ClInclude Include="SMFile.h" />
     <ClInclude Include="SPacketFinalizeChart.h" />
     <ClInclude Include="SPacketHello.h" />
     <ClInclude Include="SPacketHostServerReply.h" />
     <ClInclude Include="SPacketInvalidPacket.h" />
     <ClInclude Include="SPacketJoinServerReply.h" />
+    <ClInclude Include="SPacketPlayerSongFinished.h" />
     <ClInclude Include="SPacketServerListReply.h" />
     <ClInclude Include="SPacketStartLobbyGame.h" />
     <ClInclude Include="SPacketStatus.h" />

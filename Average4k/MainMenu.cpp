@@ -13,7 +13,6 @@
 #include <windows.h>
 #include <stdio.h>
 
-
 MainMenu* MainMenu::instance;
 Chart* MainMenu::currentChart;
 float MainMenu::offset = 0;
@@ -153,7 +152,7 @@ MainMenu::MainMenu()
 {
 	instance = this;
 	selectedDiffIndex = 0;
-	mainMenuText = new Text(0, 0, "Average 4k (F1 for lobby list)", 100, 50);
+	mainMenuText = new Text(0, 0, "Average 4k (F1 for lobby list, F2 for settings)", 100, 50);
 	mainMenuText->setX((Game::gameWidth / 2) - (mainMenuText->surfW / 2));
 	mainMenuText->setY((Game::gameHeight / 2) - 250);
 	mainMenuText->create();
@@ -201,12 +200,12 @@ void MainMenu::keyDown(SDL_KeyboardEvent event)
 		diffSelected->die();
 	}
 
-	// downscroll toggle
-
-	if (event.keysym.sym == SDLK_1)
+	if (event.keysym.sym == SDLK_F2)
 	{
-		Game::save->SetBool("downscroll", !Game::save->GetBool("downscroll"));
-		std::cout << "downscroll is now " << Game::save->GetBool("downscroll") << std::endl;
+		Game::currentMenu = new SettingsMenu();
+		mainMenuText->die();
+		songSelect->die();
+		diffSelected->die();
 	}
 
 	if (event.keysym.sym == SDLK_RIGHT)

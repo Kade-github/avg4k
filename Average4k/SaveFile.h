@@ -8,8 +8,9 @@ struct setting {
 	bool active;
 	double value;
 	char name[128];
+	bool takesActive;
 
-	MSGPACK_DEFINE(active, value, name);
+	MSGPACK_DEFINE(active, value, name, takesActive);
 };
 
 class SaveFile
@@ -29,7 +30,7 @@ class SaveFile
 		double GetDouble(std::string setting);
 		bool GetBool(std::string setting);
 
-		setting CreateSetting(bool defaultActive, double defaultValue, std::string defaultName);
+		setting CreateSetting(bool defaultActive, double defaultValue, std::string defaultName, bool tA);
 
 		std::vector<setting> settings;
 		std::vector<setting> defaultSettings;

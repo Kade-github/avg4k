@@ -12,6 +12,11 @@
 #include <algorithm>
 #include "bass_fx.h"
 #include <SDL_image.h>
+#include "SPacketUpdateLeaderboard.h"
+#include "SPacketFinalizeChart.h"
+#include "CPacketSongFinished.h"
+#include "MultiplayerLobby.h"
+#include "CPacketNoteHit.h"
 
 struct gameplayControl {
 	int lane;
@@ -22,16 +27,24 @@ struct Receptor {
 	SDL_FRect rect;
 };
 
+struct leaderboardSpot {
+	SDL_FRect rect;
+	Text* t;
+	PlayerScore score;
+};
+
 class Gameplay :
 	public Menu
 {
 	public:
-
+		static Gameplay* instance;
 		std::vector<gameplayControl> controls;
 
 		std::vector<Receptor> receptors;
 
 		std::vector<note> notesToPlay;
+
+		std::vector<leaderboardSpot> leaderboard;
 
 		SDL_Texture* background;
 
@@ -88,9 +101,9 @@ class Gameplay :
 		void removeNote(NoteObject* object);
 
 		void updateAccuracy(double hitWorth);
-
+		
 		void miss(NoteObject* object);
-
+		void onPacket(PacketType pt, char* data, int32_t length);
 		void update(Events::updateEvent event) override;
 		void keyDown(SDL_KeyboardEvent event) override;
 		void keyUp(SDL_KeyboardEvent ev) override;

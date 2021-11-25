@@ -2,6 +2,8 @@
 
 noteskin_asset* Gameplay::noteskin;
 
+Gameplay* Gameplay::instance = NULL;
+
 float Gameplay::rate = 1;
 
 void CALLBACK bruh(HSYNC handle, DWORD channel, DWORD data, void* user)
@@ -86,8 +88,104 @@ void Gameplay::miss(NoteObject* object)
 	Combo->setY((Game::gameHeight / 2) + 40);
 }
 
+void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
+{
+	if (!MultiplayerLobby::inLobby)
+		return;
+
+	SPacketUpdateLeaderboard pack;
+	SPacketFinalizeChart ch;
+
+	msgpack::unpacked result;
+
+	msgpack::object obj;
+
+	switch (pt)
+	{
+	case eSPacketUpdateLeaderboard:
+		msgpack::unpack(result, data, length);
+
+		obj = msgpack::object(result.get());
+
+		obj.convert(pack);
+
+		for (leaderboardSpot p : leaderboard)
+			p.t->die();
+
+		leaderboard.clear();
+
+		for (int i = 0; i < pack.orderedScores.size(); i++)
+		{
+			PlayerScore score = pack.orderedScores[i];
+			leaderboardSpot spot;
+			spot.score = score;
+			leaderboard.push_back(spot);
+		}
+
+		break;
+	case eSPacketFinalizeChart:
+		MainMenu::currentChart->destroy();
+		Judgement->die();
+		Combo->die();
+		Accuracy->die();
+		positionAndBeats->die();
+		for (int i = 0; i < spawnedNotes.size(); i++)
+		{
+			spawnedNotes[i]->destroy();
+		}
+
+		BASS_ChannelStop(tempostream);
+		BASS_ChannelFree(tempostream);
+		if (background)
+			SDL_DestroyTexture(background);
+
+		Game::currentMenu = new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost);
+		delete this;
+		break;
+	}
+}
+
+void CALLBACK sync(HSYNC handle, DWORD channel, DWORD data, void* user)
+{
+	if (!MultiplayerLobby::inLobby)
+	{
+		if (!MainMenu::instance)
+			delete MainMenu::instance;
+		MainMenu::currentChart->destroy();
+		Gameplay::instance->Judgement->die();
+		Gameplay::instance->Combo->die();
+		Gameplay::instance->Accuracy->die();
+		Gameplay::instance->positionAndBeats->die();
+		for (int i = 0; i < Gameplay::instance->spawnedNotes.size(); i++)
+		{
+			Gameplay::instance->spawnedNotes[i]->destroy();
+		}
+
+		BASS_ChannelStop(Gameplay::instance->tempostream);
+		BASS_ChannelFree(Gameplay::instance->tempostream);
+		if (Gameplay::instance->background)
+			SDL_DestroyTexture(Gameplay::instance->background);
+
+		Game::currentMenu = new MainMenu();
+		delete Gameplay::instance;
+	}
+	else
+	{
+		CPacketSongFinished song;
+		song.Order = 0;
+		song.PacketType = eCPacketSongFinished;
+
+		Multiplayer::sendMessage<CPacketSongFinished>(song);
+
+		Gameplay::instance->Combo->setText("Waiting for others to finish (" + std::to_string(Gameplay::instance->combo) + ")");
+		Gameplay::instance->Combo->setX((Game::gameWidth / 2) - (Gameplay::instance->Combo->surfW / 2));
+		Gameplay::instance->Combo->setY((Game::gameHeight / 2) + 40);
+	}
+}
+
 Gameplay::Gameplay()
 {
+	instance = this;
 	initControls();
 
 	downscroll = Game::save->GetBool("downscroll");
@@ -110,10 +208,17 @@ Gameplay::Gameplay()
 
 	tempostream = BASS_FX_TempoCreate(channel, BASS_FX_FREESOURCE);
 
+	BASS_ChannelSetSync(tempostream, BASS_SYNC_END, NULL, sync, 0);
+
 	BASS_ChannelSetAttribute(tempostream, BASS_ATTRIB_TEMPO, bassRate);
 
+	int diff = MainMenu::selectedDiffIndex;
+
+	if (MultiplayerLobby::inLobby)
+		diff = 0; // for now
+
 	noteskin = Noteskin::getNoteskin();
-	notesToPlay = *(*MainMenu::currentChart->meta.difficulties)[MainMenu::selectedDiffIndex].notes;
+	notesToPlay = *(*MainMenu::currentChart->meta.difficulties)[diff].notes;
 
 	positionAndBeats = new Text(0, 20, "Time: 0 | Beat: 0 | Offset: 0", 60, 40);
 	positionAndBeats->create();
@@ -124,7 +229,7 @@ Gameplay::Gameplay()
 	Combo = new Text(Game::gameWidth / 2, Game::gameHeight / 2 + 40, " ", 100, 100);
 	Combo->create();
 
-	Accuracy = new Text(0, Game::gameHeight / 2, "N/A\n\nMarvelous: " + std::to_string(Marvelous) + "\nPerfect: " + std::to_string(Perfect) + "\nGreat: " + std::to_string(Great) + "\nEh: " + std::to_string(Eh) + "\nYikes: " + std::to_string(Yikes) + "\nCombo Breaks: " + std::to_string(Misses), 100, 40);
+	Accuracy = new Text(145, Game::gameHeight / 2, "N/A\n\nMarvelous: " + std::to_string(Marvelous) + "\nPerfect: " + std::to_string(Perfect) + "\nGreat: " + std::to_string(Great) + "\nEh: " + std::to_string(Eh) + "\nYikes: " + std::to_string(Yikes) + "\nCombo Breaks: " + std::to_string(Misses), 100, 40);
 	Accuracy->create();
 
 	for (int i = 0; i < 4; i++)
@@ -187,7 +292,7 @@ void Gameplay::update(Events::updateEvent event)
 	if (background)
 	{
 		SDL_SetTextureBlendMode(background, SDL_BLENDMODE_BLEND);
-		SDL_SetTextureAlphaMod(background, 84);
+		SDL_SetTextureAlphaMod(background, 60);
 		SDL_RenderCopyF(Game::renderer, background, NULL, &bruh);
 	}
 
@@ -220,6 +325,31 @@ void Gameplay::update(Events::updateEvent event)
 			case 3:
 				SDL_RenderCopyExF(Game::renderer, noteskin->receptor, NULL, &receptors[i].rect, -90, NULL, SDL_FLIP_NONE);
 				break;
+		}
+	}
+
+	// multiplayer shit
+
+	if (MultiplayerLobby::inLobby)
+	{
+		for (int i = 0; i < leaderboard.size(); i++)
+		{
+			leaderboardSpot& spot = leaderboard[i];
+			spot.rect.w = 100;
+			spot.rect.h = 85;
+			spot.rect.x = 0;
+			spot.rect.y = Game::gameHeight / 2;
+
+			if (!spot.t)
+			{
+				spot.t = new Text(4, spot.rect.y + 4, spot.score.Username + " - " + std::to_string(spot.score.score), 10, 10);
+				spot.t->create();
+			}
+
+			spot.rect.w = spot.t->surfW + 12;
+			SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 128);
+			SDL_RenderFillRectF(Game::renderer, &spot.rect);
+			SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
 		}
 	}
 
@@ -532,6 +662,8 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			NoteObject* closestObject = nullptr;
 			float currentDiff = Judge::hitWindows[4] + 1;
 
+			int id = 0;
+
 			for (int n = 0; n < spawnedNotes.size(); n++)
 			{
 				NoteObject* object = spawnedNotes[n];
@@ -542,6 +674,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 				if (diff <= Judge::hitWindows[4] && diff < currentDiff && object->lane == control.lane)
 				{
+					id = n;
 					closestObject = object;
 					currentDiff = diff;
 				}
@@ -564,6 +697,17 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 				std::string format = std::to_string(diff - fmod(diff, 0.01));
 				format.erase(format.find_last_not_of('0') + 1, std::string::npos);
+
+				if (MultiplayerLobby::inLobby)
+				{
+					CPacketNoteHit hit;
+					hit.NoteID = id;
+					hit.NoteTiming = diff;
+					hit.Order = 0;
+					hit.PacketType = eCPacketNoteHit;
+
+					Multiplayer::sendMessage<CPacketNoteHit>(hit);
+				}
 
 				switch (judge)
 				{

@@ -187,25 +187,25 @@ void MainMenu::keyDown(SDL_KeyboardEvent event)
 	if (event.keysym.sym == SDLK_RETURN)
 	{
 		Game::currentMenu = new Gameplay();
-		mainMenuText->die();
-		songSelect->die();
-		diffSelected->die();
+		mainMenuText->destroy();
+		songSelect->destroy();
+		diffSelected->destroy();
 	}
 
 	if (event.keysym.sym == SDLK_F1 && Multiplayer::loggedIn)
 	{
 		Game::currentMenu = new MultiplayerLobbies();
-		mainMenuText->die();
-		songSelect->die();
-		diffSelected->die();
+		mainMenuText->destroy();
+		songSelect->destroy();
+		diffSelected->destroy();
 	}
 
 	if (event.keysym.sym == SDLK_F2)
 	{
 		Game::currentMenu = new SettingsMenu();
-		mainMenuText->die();
-		songSelect->die();
-		diffSelected->die();
+		mainMenuText->destroy();
+		songSelect->destroy();
+		diffSelected->destroy();
 	}
 
 	if (event.keysym.sym == SDLK_RIGHT)

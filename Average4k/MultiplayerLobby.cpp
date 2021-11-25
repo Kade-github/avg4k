@@ -13,7 +13,7 @@ void MultiplayerLobby::refreshLobby(lobby l)
 
 	for (person p : people)
 	{
-		p.display->die();
+		p.display->destroy();
 		SDL_DestroyTexture(p.avatar);
 	}
 
@@ -101,11 +101,11 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		chartMeta meta = file->returnChart("assets/charts/Rozebud - Philly Nice [B-Side Remix] - 53269");
 		MainMenu::currentChart = new Chart(meta);
 		Game::currentMenu = new Gameplay();
-		helpDisplay->die();
+		helpDisplay->destroy();
 
 		for (person p : people)
 		{
-			p.display->die();
+			p.display->destroy();
 			SDL_DestroyTexture(p.avatar);
 		}
 
@@ -139,12 +139,12 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 
 			Multiplayer::sendMessage<CPacketLeave>(leave);
 
-			helpDisplay->die();
+			helpDisplay->destroy();
 
 			Game::currentMenu = new MultiplayerLobbies();
 			for (person p : people)
 			{
-				p.display->die();
+				p.display->destroy();
 				SDL_DestroyTexture(p.avatar);
 			}
 

@@ -12,6 +12,8 @@ class Game
 public:
 	void createGame();
 
+	Menu* menuToDelete;
+
 	void update(Events::updateEvent updateEvent);
 	void keyDown(SDL_KeyboardEvent event);
 	void keyUp(SDL_KeyboardEvent event);
@@ -34,6 +36,8 @@ public:
 	static std::map<int, bool> controls;
 
 	void weGotPacket(Events::packetEvent p);
+
+	void switchMenu(Menu* m);
 
 	static std::vector<Object*>* getGlobalObjects();
 	static void addGlobalObject(Object* obj);

@@ -2,7 +2,7 @@
 
 noteskin_asset* Gameplay::noteskin;
 
-Gameplay* Gameplay::instance = NULL;
+std::map<std::string, SDL_Texture*> avatars;
 
 float Gameplay::rate = 1;
 
@@ -122,7 +122,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 		obj.convert(pack);
 
 		for (leaderboardSpot p : leaderboard)
-			p.t->die();
+			p.t->destroy();
 
 		leaderboard.clear();
 
@@ -144,56 +144,47 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 	case eSPacketFinalizeChart:
 
 		for (leaderboardSpot p : leaderboard)
-			p.t->die();
+			p.t->destroy();
 
 		leaderboard.clear();
 
-		MainMenu::currentChart->destroy();
-		Judgement->die();
-		Combo->die();
-		Accuracy->die();
-		positionAndBeats->die();
-		for (int i = 0; i < spawnedNotes.size(); i++)
-		{
-			spawnedNotes[i]->destroy();
-		}
-
-		BASS_ChannelStop(tempostream);
-		BASS_ChannelFree(tempostream);
-		if (background)
-			SDL_DestroyTexture(background);
-
+		cleanUp();
 		std::cout << "go back" << std::endl;
 
 		Game::currentMenu = new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost);
-		delete this;
 		break;
 	}
 }
 
 void CALLBACK sync(HSYNC handle, DWORD channel, DWORD data, void* user)
 {
+	Gameplay* inst = (Gameplay*)Game::currentMenu;
+	if (!inst)
+		return;
 	if (!MultiplayerLobby::inLobby)
 	{
-		if (!MainMenu::instance)
-			delete MainMenu::instance;
 		MainMenu::currentChart->destroy();
-		Gameplay::instance->Judgement->die();
-		Gameplay::instance->Combo->die();
-		Gameplay::instance->Accuracy->die();
-		Gameplay::instance->positionAndBeats->die();
-		for (int i = 0; i < Gameplay::instance->spawnedNotes.size(); i++)
+		inst->Judgement->destroy();
+		inst->Combo->destroy();
+		inst->Accuracy->destroy();
+		inst->positionAndBeats->destroy();
+		for (int i = 0; i < inst->spawnedNotes.size(); i++)
 		{
-			Gameplay::instance->spawnedNotes[i]->destroy();
+			inst->spawnedNotes[i]->destroy();
 		}
 
-		BASS_ChannelStop(Gameplay::instance->tempostream);
-		BASS_ChannelFree(Gameplay::instance->tempostream);
-		if (Gameplay::instance->background)
-			SDL_DestroyTexture(Gameplay::instance->background);
+		BASS_ChannelStop(inst->tempostream);
+		BASS_ChannelFree(inst->tempostream);
+		if (inst->background)
+			SDL_DestroyTexture(inst->background);
+
+		for (std::map<std::string, SDL_Texture*>::iterator iter = avatars.begin(); iter != avatars.end(); ++iter)
+		{
+			std::string k = iter->first;
+			SDL_DestroyTexture(avatars[k]);
+		}
 
 		Game::currentMenu = new MainMenu();
-		delete Gameplay::instance;
 	}
 	else
 	{
@@ -203,16 +194,17 @@ void CALLBACK sync(HSYNC handle, DWORD channel, DWORD data, void* user)
 
 		Multiplayer::sendMessage<CPacketSongFinished>(song);
 
-		Gameplay::instance->Combo->setText("Waiting for others to finish (" + std::to_string(Gameplay::instance->combo) + ")");
-		Gameplay::instance->Combo->setX((Game::gameWidth / 2) - (Gameplay::instance->Combo->surfW / 2));
-		Gameplay::instance->Combo->setY((Game::gameHeight / 2) + 40);
+		inst->Combo->setText("Waiting for others to finish (" + std::to_string(inst->combo) + ")");
+		inst->Combo->setX((Game::gameWidth / 2) - (inst->Combo->surfW / 2));
+		inst->Combo->setY((Game::gameHeight / 2) + 40);
 	}
 }
 
 Gameplay::Gameplay()
 {
-	instance = this;
 	initControls();
+
+	avatars.clear();
 
 	downscroll = Game::save->GetBool("downscroll");
 
@@ -300,7 +292,7 @@ void Gameplay::update(Events::updateEvent event)
 			std::cout << "offset time: " << stuff << " = " << startTime << std::endl;
 			BASS_ChannelSetPosition(tempostream, stuff, BASS_POS_BYTE);
 			BASS_ChannelPlay(tempostream, false);
-			BASS_ChannelSetSync(tempostream, BASS_SYNC_END, NULL, sync, 0);
+			BASS_ChannelSetSync(tempostream, BASS_SYNC_END, NULL,sync, 0);
 			play = true;
 		}
 
@@ -656,7 +648,34 @@ void Gameplay::update(Events::updateEvent event)
 	}
 
 }
+void Gameplay::cleanUp()
+{
+	MainMenu::currentChart->destroy();
+	Judgement->destroy();
+	Combo->destroy();
+	Accuracy->destroy();
+	positionAndBeats->destroy();
 
+	for (int i = 0; i < spawnedNotes.size(); i++)
+	{
+		spawnedNotes[i]->destroy();
+	}
+
+	spawnedNotes.clear();
+	notesToPlay.clear();
+
+	for (std::map<std::string, SDL_Texture*>::iterator iter = avatars.begin(); iter != avatars.end(); ++iter)
+	{
+		std::string k = iter->first;
+		SDL_DestroyTexture(avatars[k]);
+	}
+
+	BASS_ChannelFree(channel);
+	BASS_ChannelStop(tempostream);
+	BASS_ChannelFree(tempostream);
+	if (background)
+		SDL_DestroyTexture(background);
+}
 
 void Gameplay::keyDown(SDL_KeyboardEvent event)
 {
@@ -665,24 +684,8 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 		case SDLK_ESCAPE:
 			if (MultiplayerLobby::inLobby)
 				return;
-			if (!MainMenu::instance)
-				delete MainMenu::instance;
-			MainMenu::currentChart->destroy();
-			Judgement->die();
-			Combo->die();
-			Accuracy->die();
-			positionAndBeats->die();
-			for (int i = 0; i < spawnedNotes.size(); i++)
-			{
-				spawnedNotes[i]->destroy();
-			}
-
-			BASS_ChannelStop(tempostream);
-			BASS_ChannelFree(tempostream);
-			if (background)
-				SDL_DestroyTexture(background);
-
-			Game::currentMenu = new MainMenu();
+			cleanUp();
+			Game::instance->switchMenu(new MainMenu());
 			return;
 		case SDLK_F1:
 			if (MultiplayerLobby::inLobby)
@@ -692,22 +695,8 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 		case SDLK_BACKQUOTE:
 			if (MultiplayerLobby::inLobby)
 				return;
-			Game::currentMenu = new Gameplay();
-			Judgement->die();
-			Combo->die();
-			Accuracy->die();
-			positionAndBeats->die();
-			for (int i = 0; i < spawnedNotes.size(); i++)
-			{
-				spawnedNotes[i]->destroy();
-			}
-
-			BASS_ChannelStop(tempostream);
-			BASS_ChannelFree(tempostream);
-
-			if (background)
-				SDL_DestroyTexture(background);
-
+			cleanUp();
+			Game::instance->switchMenu(new MainMenu());
 			return;
 	}
 

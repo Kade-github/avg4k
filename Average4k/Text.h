@@ -39,7 +39,7 @@ public:
 
 	~Text() = default;
 	void update(Events::updateEvent event) override;
-
+	void destroy();
 	Color color;
 
 	SDL_Texture* message;

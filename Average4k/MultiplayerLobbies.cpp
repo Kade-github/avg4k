@@ -30,7 +30,7 @@ void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
 	Lobbies = lobs;
 
 	for (Text* t : lobbyTexts)
-		t->die();
+		t->destroy();
 
 	lobbyTexts.clear();
 
@@ -82,28 +82,28 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 		case eSPacketJoinServerReply:
 			Game::currentMenu = new MultiplayerLobby(Lobbies[selectedIndex], false);
 			for (Text* t : lobbyTexts)
-				t->die();
+				t->destroy();
 
 			for (bruh t : avatars)
 				SDL_DestroyTexture(t.avatar);
 
 			avatars.clear();
 
-			helpText->die();
+			helpText->destroy();
 
 			std::cout << "you joined!" << std::endl;
 			break;
 		case eSPacketHostServerReply:
 			Game::currentMenu = new MultiplayerLobby(Lobbies[selectedIndex], true);
 			for (Text* t : lobbyTexts)
-				t->die();
+				t->destroy();
 
 			for (bruh t : avatars)
 				SDL_DestroyTexture(t.avatar);
 
 			avatars.clear();
 
-			helpText->die();
+			helpText->destroy();
 
 			std::cout << "you hosted and joined!" << std::endl;
 			break;
@@ -199,14 +199,14 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 		case SDLK_ESCAPE:
 			Game::currentMenu = new MainMenu();
 			for (Text* t : lobbyTexts)
-				t->die();
+				t->destroy();
 
 			for (bruh t : avatars)
 				SDL_DestroyTexture(t.avatar);
 
 			avatars.clear();
 
-			helpText->die();
+			helpText->destroy();
 			break;
 		case SDLK_F5:
 			refreshLobbies();

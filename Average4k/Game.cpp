@@ -44,6 +44,11 @@ int Game::gameHeight = 0;
 
 HANDLE multiThreadHandle;
 
+void Game::switchMenu(Menu* m)
+{
+	currentMenu = m;
+}
+
 void Game::createGame()
 {
 	objects = new std::vector<Object*>();

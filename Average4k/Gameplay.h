@@ -37,10 +37,7 @@ class Gameplay :
 	public Menu
 {
 	public:
-		static Gameplay* instance;
 		std::vector<gameplayControl> controls;
-
-		std::map<std::string, SDL_Texture*> avatars;
 
 		std::vector<Receptor> receptors;
 
@@ -62,7 +59,7 @@ class Gameplay :
 
 		std::vector<float> clapped;
 
-		bool keys[3];
+		bool keys[4];
 
 		float startTime = 0;
 
@@ -81,7 +78,7 @@ class Gameplay :
 		int Yikes = 0;
 		int Misses = 0;
 
-		float heldEnd[3];
+		float heldEnd[4];
 
 		float positionInSong = 0;
 
@@ -92,6 +89,8 @@ class Gameplay :
 		Text* Accuracy;
 
 		bool downscroll;
+
+		void cleanUp();
 
 		unsigned long channel;
 		unsigned long tempostream;

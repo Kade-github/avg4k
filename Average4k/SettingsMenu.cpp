@@ -3,7 +3,7 @@
 void SettingsMenu::refreshList() {
 	selectedIndex = 0;
 	for (bruhhh t : settings)
-		t.display->die();
+		t.display->destroy();
 	settings.clear();
 	for (int i = 0; i < Game::save->settings.size(); i++)
 	{
@@ -71,7 +71,7 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 	{
 	case SDLK_ESCAPE:
 		for (bruhhh t : settings)
-			t.display->die();
+			t.display->destroy();
 		settings.clear();
 		Game::currentMenu = new MainMenu();
 		delete this;

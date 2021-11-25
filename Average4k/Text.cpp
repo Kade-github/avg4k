@@ -29,3 +29,13 @@ void Text::update(Events::updateEvent ev)
 
 	SDL_RenderCopyF(ev.renderer, message, NULL, &message_Rect);
 }
+
+void Text::destroy()
+{
+	isDead = true;
+	SDL_DestroyTexture(message);
+	if (isCreated)
+		Game::removeGlobalObject(this);
+	if (!this)
+		delete this;
+}

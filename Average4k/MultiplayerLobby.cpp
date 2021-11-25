@@ -1,4 +1,5 @@
 #include "MultiplayerLobby.h"
+#include "CPacketHostStartGame.h"
 
 bool MultiplayerLobby::inLobby = false;
 lobby MultiplayerLobby::CurrentLobby;
@@ -38,6 +39,8 @@ void MultiplayerLobby::refreshLobby(lobby l)
 
 void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 {
+	if (!this)
+		return;
 	SPacketUpdateLobbyData update;
 	SPacketWtfAmInReply reply;
 	SPacketUpdateLobbyChart cc;
@@ -90,13 +93,13 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		// tell the server we aint got it lol (if we dont :))
 		break;
 	case eSPacketStartLobbyGame:
+		std::cout << "start!" << std::endl;
 		QuaverFile* file = new QuaverFile();
 		chartMeta meta = file->returnChart("assets/charts/Rozebud - Philly Nice [B-Side Remix] - 53269");
 		MainMenu::currentChart = new Chart(meta);
 		Game::currentMenu = new Gameplay();
 		helpDisplay->die();
 
-		Game::currentMenu = new MultiplayerLobbies();
 		for (person p : people)
 		{
 			p.display->die();
@@ -123,7 +126,7 @@ MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted)
 
 void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 {
-	SPacketStartLobbyGame start;
+	CPacketHostStartGame start;
 	switch (event.keysym.sym)
 	{
 		case SDLK_ESCAPE:
@@ -148,10 +151,13 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 		case SDLK_RETURN:
 			if (!isHost)
 				return;
-			start.Order = 0;
-			start.PacketType = eSPacketStartLobbyGame;
 
-			Multiplayer::sendMessage<SPacketStartLobbyGame>(start);
+			std::cout << "hello" << std::endl;
+
+			start.Order = 0;
+			start.PacketType = eCPacketHostStartGame;
+
+			Multiplayer::sendMessage<CPacketHostStartGame>(start);
 			break;
 	}
 }

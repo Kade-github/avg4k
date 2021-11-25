@@ -4,14 +4,14 @@
 
 struct paramPlayer {
 	std::string* Name;
-	unsigned long SteamID64;
+	std::string SteamID64;
 	std::string* AvatarURL;
 };
 
 class player {
 	public:
 		std::string Name;
-		unsigned long SteamID64;
+		std::string SteamID64;
 		std::string AvatarURL;
 		MSGPACK_DEFINE_MAP(Name, SteamID64, AvatarURL);
 };

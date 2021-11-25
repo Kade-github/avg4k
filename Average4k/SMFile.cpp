@@ -113,6 +113,8 @@ SMFile::SMFile(std::string path) {
                             diff.name = "n/a";
                             meta.difficulties->push_back(diff);
                         }
+                        if (stuff[0] == "#BACKGROUND")
+                            meta.background = stuff[1];
 
                         if (stuff[0] == "#TITLE")
                             meta.songName = stuff[1];

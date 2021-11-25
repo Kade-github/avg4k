@@ -15,7 +15,7 @@ SaveFile::SaveFile()
 {
     // default settings
     defaultSettings.push_back(CreateSetting(false, 0, "downscroll"));
-    defaultSettings.push_back(CreateSetting(true, 2.4, "scrollspeed"));
+    defaultSettings.push_back(CreateSetting(true, 1100, "scrollspeed"));
     defaultSettings.push_back(CreateSetting(true, 0, "offset"));
 
     std::ifstream ifs("settings.pack");
@@ -44,8 +44,6 @@ SaveFile::SaveFile()
         }
         Save();
     }
-
-    SetDouble("scrollspeed", 1100);
 }
 
 void SaveFile::CreateNewFile()

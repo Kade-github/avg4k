@@ -11,7 +11,7 @@
 #include "Judge.h"
 #include <algorithm>
 #include "bass_fx.h"
-
+#include <SDL_image.h>
 
 struct gameplayControl {
 	int lane;
@@ -32,6 +32,8 @@ class Gameplay :
 		std::vector<Receptor> receptors;
 
 		std::vector<note> notesToPlay;
+
+		SDL_Texture* background;
 
 		static float rate;
 

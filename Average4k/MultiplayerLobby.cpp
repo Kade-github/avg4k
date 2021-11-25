@@ -77,8 +77,6 @@ MultiplayerLobby::MultiplayerLobby(lobby l)
 	fuck.PacketType = eCPacketWtfAmIn;
 
 	Multiplayer::sendMessage<CPacketWtfAmIn>(fuck);
-
-	refreshLobby(l);
 }
 
 void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)

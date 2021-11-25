@@ -142,6 +142,12 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 
 		break;
 	case eSPacketFinalizeChart:
+
+		for (leaderboardSpot p : leaderboard)
+			p.t->die();
+
+		leaderboard.clear();
+
 		MainMenu::currentChart->destroy();
 		Judgement->die();
 		Combo->die();
@@ -631,6 +637,8 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 	switch (event.keysym.sym)
 	{
 		case SDLK_ESCAPE:
+			if (MultiplayerLobby::inLobby)
+				return;
 			if (!MainMenu::instance)
 				delete MainMenu::instance;
 			MainMenu::currentChart->destroy();
@@ -652,9 +660,13 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			delete this;
 			return;
 		case SDLK_F1:
+			if (MultiplayerLobby::inLobby)
+				return;
 			botplay = !botplay;
 			return;
 		case SDLK_BACKQUOTE:
+			if (MultiplayerLobby::inLobby)
+				return;
 			Game::currentMenu = new Gameplay();
 			Judgement->die();
 			Combo->die();

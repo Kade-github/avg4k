@@ -13,9 +13,9 @@ void Judge::initJudge()
 	scoreWindows = { 300,250, 100, 50, 0 };
 }
 
-int Judge::scoreNote(float diff)
+int Judge::scoreNote(float difff)
 {
-	float diff = std::abs(diff);
+	float diff = std::abs(difff);
 
 	for (int i = 0; i < 5; i++)
 	{

@@ -216,13 +216,11 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 			Multiplayer::sendMessage<CPacketJoinServer>(list);
 			break;
 		case SDLK_UP:
-			selected->setText(l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")");
-			selected->setX((Game::gameWidth / 2) - (selected->surfW / 2));
+			refreshLobbies();
 			selectedIndex--;
 			break;
 		case SDLK_DOWN:
-			selected->setText(l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")");
-			selected->setX((Game::gameWidth / 2) - (selected->surfW / 2));
+			refreshLobbies();
 			selectedIndex++;
 			break;
 	}

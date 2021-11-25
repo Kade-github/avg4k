@@ -161,6 +161,8 @@ chartMeta QuaverFile::returnChart(std::string path)
                         name = split[1];
                     }
                 }
+                if (split[0] == "BackgroundFile")
+                    meta.background = split[1];
                 if (split[0] == "Creator")
                     meta.difficulties->back().charter = split[1];
                 if (split[0] == "DifficultyName")

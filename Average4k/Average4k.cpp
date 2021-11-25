@@ -114,8 +114,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
-	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-
 	Game* game = new Game();
 
 	Game::instance = game;
@@ -146,6 +144,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	bool create = false;
 	while (run)
 	{
+		SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 		const Uint32 startTime = SDL_GetTicks();
 		LAST = NOW;
 		NOW = SDL_GetPerformanceCounter();

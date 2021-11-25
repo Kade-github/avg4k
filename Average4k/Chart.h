@@ -37,6 +37,7 @@ class chartMeta {
 		std::string songName;
 		std::string audio;
 		std::string folder;
+		std::string background;
 		std::vector<bpmSegment>* bpms;
 		std::vector<difficulty>* difficulties;
 		float chartOffset;

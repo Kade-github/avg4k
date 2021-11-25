@@ -7,101 +7,55 @@ Calling run
 trying to login cuz unauthorized
 awaiting auth ticket from steam
 got auth ticket
-encoded ticket: CAEQjcGU2A0YBSA/KnCl/UNWZzPwCVZFmd6YGyu7JWtNnUwGtoLneAPVOzxk1xtQUqnaj34gBRBMebDkeDBUcAJT3nVsC3QQEYe9/M1MY8hKJcYc33+XQxbKn/0M6UQkDycyj6o5Bf+nAKRbkU07x/zCSzYuSldGDmYP2+sZ
+encoded ticket: CAEQ0r/jvgsYBSA/KnCHS/tFRcEM7uL80PSeyz5iKQjEzhK3b1BfwJDNjdIr9HahMorBKvCCX2F3PllSsgv+nlm+NXkcA0j+sZzqCbs2b6FKd926IMSAyWyKCxDz6jTggnxd6SAKmhCdMihafZLL1pgtTc5yvze4ORKoNJKq
+playing assets/charts/1-l forest funk/dB soundworks - Super Meat Boy! Soundtrack - 03 Forest Funk (Ch 1 Light World).ogg
 fuckyou Kade. hello server, fuck you too! 
-refreshing lobbies
-updating lobbies
-trying to join 1361207474
-you joined!
-refresh lobby
-loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/bb/bb0268d5a1fa6fb54f5e8ba57c3367cd46557687_full.jpg
-downloading avatar
-downloaded! 7087
-trying to texture bruh
-textured 
-refresh lobby
-loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/bb/bb0268d5a1fa6fb54f5e8ba57c3367cd46557687_full.jpg
-downloading avatar
-downloaded! 7087
-trying to texture bruh
-textured 
-refresh lobby
-loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/bb/bb0268d5a1fa6fb54f5e8ba57c3367cd46557687_full.jpg
-downloading avatar
-downloaded! 7087
-trying to texture bruh
-textured 
-loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/71/71548a19d2b8d469bb49428f749bd46d5a569ed2_full.jpg
-downloading avatar
-downloaded! 11303
-trying to texture bruh
-textured 
-refreshing lobbies
-updating lobbies
-loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/71/71548a19d2b8d469bb49428f749bd46d5a569ed2_full.jpg
-downloading avatar
-downloaded! 11303
-trying to texture bruh
-textured 
-trying to join 1361207474
-you joined!
-refresh lobby
-loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/71/71548a19d2b8d469bb49428f749bd46d5a569ed2_full.jpg
-downloading avatar
-downloaded! 11303
-trying to texture bruh
-textured 
-loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/bb/bb0268d5a1fa6fb54f5e8ba57c3367cd46557687_full.jpg
-downloading avatar
-downloaded! 7087
-trying to texture bruh
-textured 
-refresh lobby
-loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/71/71548a19d2b8d469bb49428f749bd46d5a569ed2_full.jpg
-downloading avatar
-downloaded! 11303
-trying to texture bruh
-textured 
-loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/bb/bb0268d5a1fa6fb54f5e8ba57c3367cd46557687_full.jpg
-downloading avatar
-downloaded! 7087
-trying to texture bruh
-textured 
-refreshing lobbies
-updating lobbies
-loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/71/71548a19d2b8d469bb49428f749bd46d5a569ed2_full.jpg
-downloading avatar
-downloaded! 11303
-trying to texture bruh
-textured 
-trying to join 1361207474
-you joined!
-refresh lobby
-loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/71/71548a19d2b8d469bb49428f749bd46d5a569ed2_full.jpg
-downloading avatar
-downloaded! 11303
-trying to texture bruh
-textured 
-loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/bb/bb0268d5a1fa6fb54f5e8ba57c3367cd46557687_full.jpg
-downloading avatar
-downloaded! 7087
-trying to texture bruh
-textured 
-refresh lobby
-loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/71/71548a19d2b8d469bb49428f749bd46d5a569ed2_full.jpg
-downloading avatar
-downloaded! 11303
-trying to texture bruh
-textured 
-loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/bb/bb0268d5a1fa6fb54f5e8ba57c3367cd46557687_full.jpg
-downloading avatar
-downloaded! 7087
-trying to texture bruh
-textured 
-refreshing lobbies
-updating lobbies
-loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/71/71548a19d2b8d469bb49428f749bd46d5a569ed2_full.jpg
-downloading avatar
-downloaded! 11303
-trying to texture bruh
-textured 
+offset time: 0 = 0
+pressing 2
+pressing 3
+pressing 0
+pressing 3
+playing assets/charts/1-l forest funk/dB soundworks - Super Meat Boy! Soundtrack - 03 Forest Funk (Ch 1 Light World).ogg
+offset time: 0 = 0
+pressing 3
+pressing 2
+pressing 0
+pressing 3
+pressing 0
+pressing 1
+pressing 2
+pressing 0
+pressing 1
+pressing 2
+pressing 1
+pressing 2
+pressing 3
+pressing 1
+pressing 2
+pressing 1
+pressing 2
+pressing 1
+pressing 0
+pressing 1
+pressing 3
+pressing 0
+pressing 3
+pressing 2
+pressing 3
+pressing 0
+pressing 2
+pressing 3
+pressing 2
+pressing 1
+pressing 0
+pressing 1
+pressing 3
+pressing 0
+pressing 2
+pressing 1
+pressing 3
+pressing 1
+pressing 2
+pressing 1
+pressing 2
+pressing 0

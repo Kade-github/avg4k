@@ -96,6 +96,10 @@ Gameplay::Gameplay()
 
 	Judge::judgeNote(174);
 
+	std::string bg = MainMenu::currentChart->meta.folder + "/" + MainMenu::currentChart->meta.background;
+
+	background = IMG_LoadTexture(Game::renderer,bg.c_str());
+
 	float bassRate = (rate * 100) - 100;
 
 	std::string path = MainMenu::currentChart->meta.folder + "/" + MainMenu::currentChart->meta.audio;
@@ -166,6 +170,30 @@ void Gameplay::update(Events::updateEvent event)
 	}
 	else
 		positionInSong += Game::deltaTime;
+
+	SDL_FRect bruh;
+	bruh.x = 0;
+	bruh.y = -200;
+	bruh.h = 1280;
+	bruh.w = 1280;
+
+	SDL_FRect laneUnderway;
+
+	laneUnderway.x = receptors[0].rect.x - 4;
+	laneUnderway.y = -200;
+	laneUnderway.w = (receptors[3].rect.x - laneUnderway.x) + 68;
+	laneUnderway.h = 1280;
+
+	if (background)
+	{
+		SDL_SetTextureBlendMode(background, SDL_BLENDMODE_BLEND);
+		SDL_SetTextureAlphaMod(background, 84);
+		SDL_RenderCopyF(Game::renderer, background, NULL, &bruh);
+	}
+
+	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 128);
+	SDL_RenderFillRectF(Game::renderer, &laneUnderway);
+	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
 
 	curSeg = MainMenu::currentChart->getSegmentFromTime(positionInSong);
 	beat = MainMenu::currentChart->getBeatFromTimeOffset(positionInSong, curSeg);
@@ -456,6 +484,8 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 			BASS_ChannelStop(tempostream);
 			BASS_ChannelFree(tempostream);
+			if (background)
+				SDL_DestroyTexture(background);
 
 			Game::currentMenu = new MainMenu();
 			delete this;
@@ -476,6 +506,10 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 			BASS_ChannelStop(tempostream);
 			BASS_ChannelFree(tempostream);
+
+			if (background)
+				SDL_DestroyTexture(background);
+
 			delete this;
 			return;
 	}

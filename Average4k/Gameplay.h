@@ -33,6 +33,8 @@ class Gameplay :
 
 		std::vector<note> notesToPlay;
 
+		static float rate;
+
 		bpmSegment curSeg;
 		double beat;
 		bool play = false;

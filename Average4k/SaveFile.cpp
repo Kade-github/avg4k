@@ -44,6 +44,8 @@ SaveFile::SaveFile()
         }
         Save();
     }
+
+    SetDouble("scrollspeed", 1100);
 }
 
 void SaveFile::CreateNewFile()

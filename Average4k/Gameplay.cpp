@@ -2,6 +2,8 @@
 
 noteskin_asset* Gameplay::noteskin;
 
+float Gameplay::rate = 1;
+
 void CALLBACK bruh(HSYNC handle, DWORD channel, DWORD data, void* user)
 {
 	BASS_ChannelStop(channel);
@@ -220,6 +222,13 @@ void Gameplay::update(Events::updateEvent event)
 
 			note tail;
 
+			bpmSegment bruh = MainMenu::currentChart->getSegmentFromBeat(object->beat);
+
+			float wh = MainMenu::currentChart->getTimeFromBeat(beat, bruh);
+
+			float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
+
+
 			if (object->type == Note_Head)
 			{
 				for (int i = 0; i < notesToPlay.size(); i++)
@@ -253,26 +262,30 @@ void Gameplay::update(Events::updateEvent event)
 					if (beat >= object->endBeat - 0.4)
 						break;
 
-					auto whHold = MainMenu::currentChart->getTimeFromBeat(beat, holdSeg) * 1000;
-					float diff = whHold - object->time;
+					float whHold = MainMenu::currentChart->getTimeFromBeat(beat, holdSeg);
+
+					float diff = whHold - (object->time / 1000);
+
+					float noteOffset = (bps * diff) * 64;
+
 					if (object->heldTilings.size() != 0)
-						diff = whHold - object->heldTilings.back().time;
+						diff = whHold - (object->heldTilings.back().time / 1000);
 					float y = 0;
 					float yDiff = 0;
 					if (object->heldTilings.size() != 0)
 					{
 						if (downscroll)
-							y = object->heldTilings.back().rect.y - (diff * noteOffset);
+							y = object->rect.y - noteOffset;
 						else
-							y = object->heldTilings.back().rect.y + (diff * noteOffset);
+							y = object->rect.y + noteOffset;
 						yDiff = y - object->heldTilings.back().rect.y;
 					}
 					else
 					{
 						if (downscroll)
-							y = (object->rect.y - (diff * noteOffset));
+							y = object->rect.y - noteOffset;
 						else
-							y = (object->rect.y + (diff * noteOffset));
+							y = object->rect.y + noteOffset;
 						yDiff = y - object->rect.y;
 					}
 
@@ -301,6 +314,7 @@ void Gameplay::update(Events::updateEvent event)
 				}
 			}
 			std::sort(object->heldTilings.begin(), object->heldTilings.end());
+			std::cout << "pushed " << object->heldTilings.size() << " tiles" << std::endl;
 			spawnedNotes.push_back(object);
 		}
 	}

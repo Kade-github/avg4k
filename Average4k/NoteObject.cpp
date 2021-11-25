@@ -13,19 +13,24 @@ void NoteObject::destroy()
 
 void NoteObject::draw(float position, double b, SDL_FRect receptor)
 {
-		float noteOffset = (0.45 * Game::save->GetDouble("scrollspeed")) + MainMenu::offset;
-
 		bpmSegment bruh = MainMenu::currentChart->getSegmentFromBeat(beat);
 
-		float wh = MainMenu::currentChart->getTimeFromBeat(beat, bruh) * 1000;
+		float wh = MainMenu::currentChart->getTimeFromBeat(beat, bruh);
 
-		
+		float diff = wh - (position / 1000);
+
+		float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
+
+		float noteOffset = (bps * diff) * 64;
+
 		bool downscroll = Game::save->GetBool("downscroll");
 
+
+
 		if (downscroll)
-			rect.y = (receptor.y - (wh - position) * noteOffset);
+			rect.y = (receptor.y - noteOffset);
 		else
-			rect.y = (receptor.y + (wh - position) * noteOffset);
+			rect.y = (receptor.y + noteOffset);
 
 		SDL_Texture* texture;
 
@@ -35,7 +40,7 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 
 		if (MainMenu::currentChart->meta.chartType == 1) // osu/quaver
 		{
-			float pos = (wh / 1000) - bruh.startTime;
+			float pos = wh - bruh.startTime;
 			float bps = 60 / bruh.bpm;
 
 			beatRow = std::roundf(48 * (pos / bps));
@@ -58,15 +63,18 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 			for (int i = 0; i < heldTilings.size(); i++)
 			{
 				holdTile& tile = heldTilings[i];
-				auto whHold = MainMenu::currentChart->getTimeFromBeat(tile.beat, MainMenu::currentChart->getSegmentFromBeat(tile.beat)) * 1000;
-				
-				float diff = whHold - wh;
+				auto whHold = MainMenu::currentChart->getTimeFromBeat(tile.beat, MainMenu::currentChart->getSegmentFromBeat(tile.beat));
+			
+
+				float diff2 = whHold - wh;
 				tile.rect.x = rect.x;
 
+				noteOffset = (bps * diff2) * 64;
+
 				if (downscroll)
-					tile.rect.y = (rect.y - (diff * noteOffset)) - 96;
+					tile.rect.y = (rect.y - noteOffset) - 96;
 				else
-					tile.rect.y = (rect.y + (diff * noteOffset)) + 96;
+					tile.rect.y = (rect.y + noteOffset) + 96;
 
 				if (tile.fucked)
 					SDL_SetTextureAlphaMod(Gameplay::noteskin->hold, 60);

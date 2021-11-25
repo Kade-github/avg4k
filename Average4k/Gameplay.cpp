@@ -391,6 +391,8 @@ void Gameplay::update(Events::updateEvent event)
 			avatar.h = 46;
 
 			spot.rect.w = 345;
+			if (spot.t->surfW > 345)
+				spot.rect.w = spot.t->surfW;
 			spot.rect.h = 46;
 			spot.rect.y = spot.rect.y + (48 * i);
 			avatar.y = spot.rect.y;

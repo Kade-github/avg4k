@@ -156,8 +156,11 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 	}
 }
 
+std::mutex weirdChamp;
+
 void CALLBACK sync(HSYNC handle, DWORD channel, DWORD data, void* user)
 {
+	std::lock_guard bruh(weirdChamp);
 	Gameplay* inst = (Gameplay*)Game::currentMenu;
 	if (!inst)
 		return;
@@ -213,8 +216,9 @@ Gameplay::Gameplay()
 	Judge::judgeNote(174);
 
 	if (MultiplayerLobby::inLobby)
-		for (player& pp : MultiplayerLobby::CurrentLobby.PlayerList)
+		for(int i = 0; i < MultiplayerLobby::CurrentLobby.PlayerList.size(); i++)
 		{
+			player pp = MultiplayerLobby::CurrentLobby.PlayerList[i];
 			const char* pog = pp.AvatarURL.c_str();
 			SDL_Texture* s = Steam::getAvatar(pog);
 			avatars[pp.SteamID64] = s;
@@ -383,14 +387,13 @@ void Gameplay::update(Events::updateEvent event)
 
 			SDL_FRect avatar;
 			avatar.x = 0;
-			avatar.y = spot.rect.y;
 			avatar.w = 46;
 			avatar.h = 46;
 
-
-			spot.rect.w = 50 + (spot.t->surfW + 4);
+			spot.rect.w = 345;
 			spot.rect.h = 46;
 			spot.rect.y = spot.rect.y + (48 * i);
+			avatar.y = spot.rect.y;
 			spot.t->y = spot.rect.y + 10;
 			spot.t->x = 50;
 

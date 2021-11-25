@@ -149,9 +149,28 @@ void MultiplayerLobbies::update(Events::updateEvent event)
 	selected->setText("> " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")");
 	selected->setX((Game::gameWidth / 2) - (selected->surfW / 2));
 
+	std::vector<player> playersToShow;
+
+	for (player& p : l.PlayerList)
+		playersToShow.push_back(p);
+
 	for (int i = 0; i < avatars.size(); i++)
 	{
 		bruh& b = avatars[i];
+
+		bool showAvatar = false;
+
+		for (player& p : playersToShow)
+		{
+			if (p.AvatarURL == b.p.AvatarURL)
+			{
+				showAvatar = true;
+				break;
+			}
+		}
+
+		if (!showAvatar)
+			continue;
 
 		SDL_Texture* t = b.avatar;
 		SDL_FRect rect;
@@ -216,11 +235,13 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 			Multiplayer::sendMessage<CPacketJoinServer>(list);
 			break;
 		case SDLK_UP:
-			refreshLobbies();
+			selected->setText(l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")");
+			selected->setX((Game::gameWidth / 2) - (selected->surfW / 2));
 			selectedIndex--;
 			break;
 		case SDLK_DOWN:
-			refreshLobbies();
+			selected->setText(l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")");
+			selected->setX((Game::gameWidth / 2) - (selected->surfW / 2));
 			selectedIndex++;
 			break;
 	}

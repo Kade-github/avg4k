@@ -40,6 +40,8 @@ class Gameplay :
 		static Gameplay* instance;
 		std::vector<gameplayControl> controls;
 
+		std::map<std::string, SDL_Texture*> avatars;
+
 		std::vector<Receptor> receptors;
 
 		std::vector<note> notesToPlay;

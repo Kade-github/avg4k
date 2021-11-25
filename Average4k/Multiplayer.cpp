@@ -35,6 +35,8 @@ void Multiplayer::SendPacket(std::string data, PacketType packet) {
     memcpy(writeTo, dataStr.c_str(), dataStr.length());
 
     c.send(connectionHdl, std::string(sendData, dataStr.length() + 8), websocketpp::frame::opcode::BINARY, ec);
+
+    free(sendData);
 }
 
 DWORD WINAPI NewThread(LPVOID param) {

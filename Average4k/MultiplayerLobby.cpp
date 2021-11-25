@@ -61,6 +61,7 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		{
 		case 803:
 			// we host pog
+			std::cout << "host me" << std::endl;
 			isHost = true;
 			refreshLobby(CurrentLobby);
 			break;

@@ -8,7 +8,7 @@ public:
 	float meanTiming;
 	std::string Username;
 	std::string SteamAvatar;
-	unsigned long SteamID64;
+	std::string SteamID64;
 	unsigned short Ranking;
 	MSGPACK_DEFINE_MAP(score, meanTiming, Username, SteamAvatar, SteamID64, Ranking);
 };

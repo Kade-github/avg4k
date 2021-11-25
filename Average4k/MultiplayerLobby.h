@@ -3,6 +3,8 @@
 #include "Lobby.h"
 #include "Text.h"
 #include "Game.h"
+#include "MainMenu.h"
+#include "MultiplayerLobbies.h"
 
 struct person {
     Text* display;

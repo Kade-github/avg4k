@@ -2,6 +2,7 @@
 #include "SPacketUpdateLobbyData.h"
 #include "SPacketWtfAmInReply.h"
 #include "CPacketWtfAmIn.h"
+#include "CPacketLeave.h"
 
 
 void MultiplayerLobby::refreshLobby(lobby l)
@@ -83,6 +84,27 @@ MultiplayerLobby::MultiplayerLobby(lobby l)
 
 void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 {
+	switch (event.keysym.sym)
+	{
+		case SDLK_ESCAPE:
+			CPacketLeave leave;
+			leave.Order = 0;
+			leave.PacketType = eCPacketLeave;
+
+			Multiplayer::sendMessage<CPacketLeave>(leave);
+
+			helpDisplay->die();
+
+			Game::currentMenu = new MultiplayerLobbies();
+			for (person p : people)
+			{
+				p.display->die();
+				SDL_DestroyTexture(p.avatar);
+			}
+
+			people.clear();
+			break;
+	}
 }
 
 void MultiplayerLobby::update(Events::updateEvent event)

@@ -278,5 +278,8 @@
     <ClInclude Include="SPacketWtfAmInReply.h">
       <Filter>Source Files\Average4k\Multiplayer\Packets\Server</Filter>
     </ClInclude>
+    <ClInclude Include="CPacketLeave.h">
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

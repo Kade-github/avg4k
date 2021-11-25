@@ -19,7 +19,7 @@ void MultiplayerLobbies::refreshLobbies() {
 
 MultiplayerLobbies::MultiplayerLobbies()
 {
-	helpText = new Text(0, 46, "F1 to host a lobby, enter to join", 10, 10);
+	helpText = new Text(0, 46, "F1 to host a lobby, enter to join (F5 To refresh)", 10, 10);
 	helpText->create();
 	refreshLobbies();
 }
@@ -132,6 +132,7 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 
 void MultiplayerLobbies::update(Events::updateEvent event)
 {
+
 	if (lobbyTexts.size() == 0)
 		return;
 
@@ -176,6 +177,18 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 	Text* selected = lobbyTexts[selectedIndex];
 	switch (event.keysym.sym)
 	{
+		case SDLK_ESCAPE:
+			Game::currentMenu = new MainMenu();
+			for (Text* t : lobbyTexts)
+				t->die();
+
+			for (bruh t : avatars)
+				SDL_DestroyTexture(t.avatar);
+
+			avatars.clear();
+
+			helpText->die();
+			break;
 		case SDLK_F5:
 			refreshLobbies();
 			break;

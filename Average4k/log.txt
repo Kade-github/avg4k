@@ -4,81 +4,104 @@ handlers set
 got connection
 connected
 Calling run
+trying to login cuz unauthorized
 awaiting auth ticket from steam
 got auth ticket
-encoded ticket: CAEQgcvxkQgYBSA/KnDf8gvZwCZHrFAHHWcJXZJEau1x+gUWrc/E1uw4UIontaCh9wNqbCs7Y4xv4txB/cV7fOfpZ3Lne0oBOnDQ4a7AULLLAoGzSJ6Saddm6Gesry0KOkuj0q8TAtzym1+ZQi0GwVGL7ITdN+DTAN9qXBIi
-done run
-exc: invalid state
-got connection
-connected
-Calling run
-done run
-awaiting auth ticket from steam
-got auth ticket
-encoded ticket: CAEQgcvxkQgYBSA/KnDf8gvZwCZHrFAHHWcJXZJEau1x+gUWrc/E1uw4UIontaCh9wNqbCs7Y4xv4txB/cV7fOfpZ3Lne0oBOnDQ4a7AULLLAoGzSJ6Saddm6Gesry0KOkuj0q8TAtzym1+ZQi0GwVGL7ITdN+DTAN9qXBIi
-playing assets/charts/2-x c.h.a.d.'s broken wind/dB soundworks - Super Meat Boy! Soundtrack - 07 C.H.A.D.'s Broken Wind (Ch 2 Dark World).ogg
-offset time: 0 = 0
-pressing 2
-pressing 3
-3 fucked
-playing assets/charts/2-x c.h.a.d.'s broken wind/dB soundworks - Super Meat Boy! Soundtrack - 07 C.H.A.D.'s Broken Wind (Ch 2 Dark World).ogg
-offset time: 0 = 0
-pressing 3
-3 fucked
-playing assets/charts/2-x c.h.a.d.'s broken wind/dB soundworks - Super Meat Boy! Soundtrack - 07 C.H.A.D.'s Broken Wind (Ch 2 Dark World).ogg
-pressing 3
-offset time: 0 = 0
-3 fucked
-playing assets/charts/2-x c.h.a.d.'s broken wind/dB soundworks - Super Meat Boy! Soundtrack - 07 C.H.A.D.'s Broken Wind (Ch 2 Dark World).ogg
-pressing 3
-pressing 3
-pressing 3
-offset time: 0 = 0
-pressing 3
-pressing 3
-pressing 3
-playing assets/charts/2-x c.h.a.d.'s broken wind/dB soundworks - Super Meat Boy! Soundtrack - 07 C.H.A.D.'s Broken Wind (Ch 2 Dark World).ogg
-pressing 3
-pressing 3
-pressing 3
-offset time: 0 = 0
-pressing 3
-pressing 3
-pressing 3
-pressing 3
-playing assets/charts/2-x c.h.a.d.'s broken wind/dB soundworks - Super Meat Boy! Soundtrack - 07 C.H.A.D.'s Broken Wind (Ch 2 Dark World).ogg
-pressing 3
-pressing 3
-pressing 3
-pressing 3
-offset time: 0 = 0
-pressing 3
-pressing 3
-pressing 3
-playing assets/charts/2-x c.h.a.d.'s broken wind/dB soundworks - Super Meat Boy! Soundtrack - 07 C.H.A.D.'s Broken Wind (Ch 2 Dark World).ogg
-pressing 3
-pressing 3
-pressing 3
-pressing 3
-offset time: 0 = 0
-pressing 3
-pressing 3
-playing assets/charts/2-x c.h.a.d.'s broken wind/dB soundworks - Super Meat Boy! Soundtrack - 07 C.H.A.D.'s Broken Wind (Ch 2 Dark World).ogg
-pressing 3
-pressing 3
-pressing 3
-pressing 3
-offset time: 0 = 0
-pressing 3
-pressing 3
-pressing 3
-playing assets/charts/2-x c.h.a.d.'s broken wind/dB soundworks - Super Meat Boy! Soundtrack - 07 C.H.A.D.'s Broken Wind (Ch 2 Dark World).ogg
-pressing 3
-pressing 3
-pressing 3
-offset time: 0 = 0
-pressing 3
-pressing 3
-playing assets/charts/2-x c.h.a.d.'s broken wind/dB soundworks - Super Meat Boy! Soundtrack - 07 C.H.A.D.'s Broken Wind (Ch 2 Dark World).ogg
-offset time: 0 = 0
-3 fucked
+encoded ticket: CAEQjcGU2A0YBSA/KnCl/UNWZzPwCVZFmd6YGyu7JWtNnUwGtoLneAPVOzxk1xtQUqnaj34gBRBMebDkeDBUcAJT3nVsC3QQEYe9/M1MY8hKJcYc33+XQxbKn/0M6UQkDycyj6o5Bf+nAKRbkU07x/zCSzYuSldGDmYP2+sZ
+fuckyou Kade. hello server, fuck you too! 
+refreshing lobbies
+updating lobbies
+trying to join 1361207474
+you joined!
+refresh lobby
+loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/bb/bb0268d5a1fa6fb54f5e8ba57c3367cd46557687_full.jpg
+downloading avatar
+downloaded! 7087
+trying to texture bruh
+textured 
+refresh lobby
+loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/bb/bb0268d5a1fa6fb54f5e8ba57c3367cd46557687_full.jpg
+downloading avatar
+downloaded! 7087
+trying to texture bruh
+textured 
+refresh lobby
+loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/bb/bb0268d5a1fa6fb54f5e8ba57c3367cd46557687_full.jpg
+downloading avatar
+downloaded! 7087
+trying to texture bruh
+textured 
+loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/71/71548a19d2b8d469bb49428f749bd46d5a569ed2_full.jpg
+downloading avatar
+downloaded! 11303
+trying to texture bruh
+textured 
+refreshing lobbies
+updating lobbies
+loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/71/71548a19d2b8d469bb49428f749bd46d5a569ed2_full.jpg
+downloading avatar
+downloaded! 11303
+trying to texture bruh
+textured 
+trying to join 1361207474
+you joined!
+refresh lobby
+loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/71/71548a19d2b8d469bb49428f749bd46d5a569ed2_full.jpg
+downloading avatar
+downloaded! 11303
+trying to texture bruh
+textured 
+loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/bb/bb0268d5a1fa6fb54f5e8ba57c3367cd46557687_full.jpg
+downloading avatar
+downloaded! 7087
+trying to texture bruh
+textured 
+refresh lobby
+loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/71/71548a19d2b8d469bb49428f749bd46d5a569ed2_full.jpg
+downloading avatar
+downloaded! 11303
+trying to texture bruh
+textured 
+loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/bb/bb0268d5a1fa6fb54f5e8ba57c3367cd46557687_full.jpg
+downloading avatar
+downloaded! 7087
+trying to texture bruh
+textured 
+refreshing lobbies
+updating lobbies
+loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/71/71548a19d2b8d469bb49428f749bd46d5a569ed2_full.jpg
+downloading avatar
+downloaded! 11303
+trying to texture bruh
+textured 
+trying to join 1361207474
+you joined!
+refresh lobby
+loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/71/71548a19d2b8d469bb49428f749bd46d5a569ed2_full.jpg
+downloading avatar
+downloaded! 11303
+trying to texture bruh
+textured 
+loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/bb/bb0268d5a1fa6fb54f5e8ba57c3367cd46557687_full.jpg
+downloading avatar
+downloaded! 7087
+trying to texture bruh
+textured 
+refresh lobby
+loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/71/71548a19d2b8d469bb49428f749bd46d5a569ed2_full.jpg
+downloading avatar
+downloaded! 11303
+trying to texture bruh
+textured 
+loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/bb/bb0268d5a1fa6fb54f5e8ba57c3367cd46557687_full.jpg
+downloading avatar
+downloaded! 7087
+trying to texture bruh
+textured 
+refreshing lobbies
+updating lobbies
+loading https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/71/71548a19d2b8d469bb49428f749bd46d5a569ed2_full.jpg
+downloading avatar
+downloaded! 11303
+trying to texture bruh
+textured 

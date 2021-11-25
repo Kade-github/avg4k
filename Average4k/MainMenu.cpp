@@ -193,7 +193,7 @@ void MainMenu::keyDown(SDL_KeyboardEvent event)
 		diffSelected->die();
 	}
 
-	if (event.keysym.sym == SDLK_F1)
+	if (event.keysym.sym == SDLK_F1 && Multiplayer::loggedIn)
 	{
 		Game::currentMenu = new MultiplayerLobbies();
 		mainMenuText->die();

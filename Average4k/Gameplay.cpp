@@ -683,8 +683,6 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				SDL_DestroyTexture(background);
 
 			Game::currentMenu = new MainMenu();
-			if (this)
-				delete this;
 			return;
 		case SDLK_F1:
 			if (MultiplayerLobby::inLobby)
@@ -710,8 +708,6 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			if (background)
 				SDL_DestroyTexture(background);
 
-			if (this)
-				delete this;
 			return;
 	}
 

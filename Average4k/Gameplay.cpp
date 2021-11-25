@@ -220,6 +220,14 @@ Gameplay::Gameplay()
 
 	Judge::judgeNote(174);
 
+	if (MultiplayerLobby::inLobby)
+		for (player& pp : MultiplayerLobby::CurrentLobby.PlayerList)
+		{
+			const char* pog = pp.AvatarURL.c_str();
+			SDL_Texture* s = Steam::getAvatar(pog);
+			avatars[pp.SteamID64] = s;
+		}
+
 	std::string bg = MainMenu::currentChart->meta.folder + "/" + MainMenu::currentChart->meta.background;
 
 	background = IMG_LoadTexture(Game::renderer,bg.c_str());
@@ -253,7 +261,7 @@ Gameplay::Gameplay()
 	Combo = new Text(Game::gameWidth / 2, Game::gameHeight / 2 + 40, " ", 100, 100);
 	Combo->create();
 
-	Accuracy = new Text(230, Game::gameHeight / 2, "N/A\n\nMarvelous: " + std::to_string(Marvelous) + "\nPerfect: " + std::to_string(Perfect) + "\nGreat: " + std::to_string(Great) + "\nEh: " + std::to_string(Eh) + "\nYikes: " + std::to_string(Yikes) + "\nCombo Breaks: " + std::to_string(Misses), 100, 40);
+	Accuracy = new Text(230, (Game::gameHeight / 2) - 300, "N/A\n\nMarvelous: " + std::to_string(Marvelous) + "\nPerfect: " + std::to_string(Perfect) + "\nGreat: " + std::to_string(Great) + "\nEh: " + std::to_string(Eh) + "\nYikes: " + std::to_string(Yikes) + "\nCombo Breaks: " + std::to_string(Misses), 100, 40);
 	Accuracy->create();
 
 	for (int i = 0; i < 4; i++)
@@ -362,7 +370,7 @@ void Gameplay::update(Events::updateEvent event)
 	SDL_FRect overlayForAccuracy;
 
 	overlayForAccuracy.x = Accuracy->x - 4;
-	overlayForAccuracy.y = (Game::gameHeight / 2) - 2;
+	overlayForAccuracy.y = (Game::gameHeight / 2) - 302;
 	overlayForAccuracy.w = Accuracy->surfH;
 	overlayForAccuracy.h = Accuracy->surfH;
 
@@ -381,11 +389,29 @@ void Gameplay::update(Events::updateEvent event)
 			spot.rect.x = 0;
 			spot.rect.y = (Game::gameHeight / 2) + 2;
 
-			spot.rect.w = spot.t->surfW + 4;
-			spot.rect.h = spot.t->surfH + 4;
-			spot.rect.y = spot.rect.y + (spot.t->surfH * i);
+			SDL_FRect avatar;
+			avatar.x = 0;
+			avatar.y = spot.rect.y;
+			avatar.w = 46;
+			avatar.h = 46;
+
+
+			spot.rect.w = 50 + (spot.t->surfW + 4);
+			spot.rect.h = 46;
+			spot.rect.y = spot.rect.y + (48 * i);
+			spot.t->y = spot.rect.y + 10;
+			spot.t->x = 50;
+
 			SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 128);
 			SDL_RenderFillRectF(Game::renderer, &spot.rect);
+			SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
+
+			SDL_RenderCopyF(Game::renderer, avatars[spot.score.SteamID64], NULL, &avatar);
+
+			SDL_SetRenderDrawColor(Game::renderer, 255, 255, 255, 255);
+
+			SDL_RenderDrawRectF(Game::renderer, &avatar);
+
 			SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
 		}
 	}
@@ -657,7 +683,6 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				SDL_DestroyTexture(background);
 
 			Game::currentMenu = new MainMenu();
-			delete this;
 			return;
 		case SDLK_F1:
 			if (MultiplayerLobby::inLobby)
@@ -683,7 +708,6 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			if (background)
 				SDL_DestroyTexture(background);
 
-			delete this;
 			return;
 	}
 

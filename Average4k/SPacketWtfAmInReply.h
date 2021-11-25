@@ -5,6 +5,7 @@ class SPacketWtfAmInReply : public Packet
 {
 public:
 	lobby Lobby;
+	bool isHost;
 
-	MSGPACK_DEFINE_MAP(Lobby);
+	MSGPACK_DEFINE_MAP(Lobby, isHost);
 };

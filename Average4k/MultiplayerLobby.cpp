@@ -87,6 +87,8 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 
 		std::cout << "refresh lobby" << std::endl;
 
+		isHost = reply.isHost;
+
 		refreshLobby(reply.Lobby);
 		break;
 	case eSPacketUpdateLobbyChart:

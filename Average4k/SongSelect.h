@@ -26,6 +26,25 @@ public:
 
 	static int selectedDiffIndex;
 
+	bool ends_with(std::string const& value, std::string const& ending)
+	{
+		if (ending.size() > value.size()) return false;
+		return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
+	}
+
+	std::wstring s2ws(const std::string& s) // helper for converting std::string's to LPCWSTR
+	{
+		int len;
+		int slength = (int)s.length() + 1;
+		len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0);
+		wchar_t* buf = new wchar_t[len];
+		MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
+		std::wstring r(buf);
+		delete[] buf;
+		return r;
+	}
+
+
 	std::vector<song> listOfCharts;
 
 	void switchChart(song s);

@@ -2,27 +2,6 @@
 int SongSelect::selectedDiffIndex = 0;
 Chart* SongSelect::currentChart = NULL;
 
-// lol im not gonna put this in its own file
-// CRY, COPE, SEETH, MALDDDDDDD
-bool ends_with(std::string const& value, std::string const& ending)
-{
-	if (ending.size() > value.size()) return false;
-	return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
-}
-
-std::wstring s2ws(const std::string& s) // helper for converting std::string's to LPCWSTR
-{
-	int len;
-	int slength = (int)s.length() + 1;
-	len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0);
-	wchar_t* buf = new wchar_t[len];
-	MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
-	std::wstring r(buf);
-	delete[] buf;
-	return r;
-}
-
-
 void SongSelect::updateList() {
 	listOfCharts.clear();
 	for (const auto& entry : std::filesystem::directory_iterator("assets/charts/"))
@@ -125,7 +104,7 @@ void SongSelect::switchChart(song s)
 	// cannot do switch due to "YOU CANNOT DEFINE VARIABLES IN SWITCHES OR SOMETHING"
 	if (s.type == StepMania)
 	{
-		SMFile* filee = new SMFile(s.path);
+		SMFile* filee = new SMFile(s.path, s.path, true);
 		currentChart = new Chart(filee->meta);
 		delete filee;
 	}

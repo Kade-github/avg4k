@@ -1,15 +1,21 @@
 #include "SMFile.h"
 
-SMFile::SMFile(std::string path) {
+SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
 
-    path.replace(path.find("\\"), sizeof("\\") - 1, "/");
+    if(doReplace)
+        path.replace(path.find("\\"), sizeof("\\") - 1, "/");
 
     std::ifstream infile(path);
 
     meta.bpms = new std::vector < bpmSegment >();
     meta.difficulties = new std::vector < difficulty >();
     auto pathSplit = Chart::split(path, '/');
-    meta.folder = "assets/charts/" + pathSplit[pathSplit.size() - 2];
+    meta.folder = folder;
+
+    if (doReplace) {
+        auto pathSplit = Chart::split(path, '/');
+        meta.folder = "assets/charts/" + pathSplit[pathSplit.size() - 2];
+    }
 
     std::string line;
 

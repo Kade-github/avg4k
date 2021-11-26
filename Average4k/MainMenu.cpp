@@ -134,7 +134,7 @@ void MainMenu::switchChart(song s)
 	// cannot do switch due to "YOU CANNOT DEFINE VARIABLES IN SWITCHES OR SOMETHING"
 	if (s.type == StepMania)
 	{
-		SMFile* filee = new SMFile(s.path);
+		SMFile* filee = new SMFile(s.path, s.path, true);
 		currentChart = new Chart(filee->meta);
 		delete filee;
 	}

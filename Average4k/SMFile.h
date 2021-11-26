@@ -8,6 +8,6 @@ class SMFile
 {
 	public:
 		chartMeta meta;
-		SMFile(std::string path);
+		SMFile(std::string path, std::string folder, bool doReplace);
 };
 

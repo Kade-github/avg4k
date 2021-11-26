@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "Menu.h"
 #include "Multiplayer.h"
+#include "Chart.h"
 
 class Game
 {
@@ -25,6 +26,7 @@ public:
 	static SaveFile* save;
 	static Steam* steam;
 	static Multiplayer* multi;
+	static chartMeta loadedChart;
 
 	static Game* instance;
 

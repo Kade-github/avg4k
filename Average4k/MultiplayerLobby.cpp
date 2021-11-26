@@ -45,6 +45,7 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 	SPacketWtfAmInReply reply;
 	SPacketUpdateLobbyChart cc;
 	SPacketStatus f;
+	
 	msgpack::unpacked result;
 
 	msgpack::object obj;
@@ -93,16 +94,25 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		refreshLobby(reply.Lobby);
 		break;
 	case eSPacketUpdateLobbyChart:
+		msgpack::unpack(result, data, length);
+
+		obj = msgpack::object(result.get());
+
+		obj.convert(cc);
+
+		MainMenu::selectedDiffIndex = cc.diff;
+
+		Game::steam->LoadWorkshopChart(cc.chartID);
+
 		// tell the server we aint got it lol (if we dont :))
 		break;
 	case eSPacketStartLobbyGame:
 		std::cout << "start!" << std::endl;
-		QuaverFile* file = new QuaverFile();
-		chartMeta meta = file->returnChart("assets/charts/Rozebud - Philly Nice [B-Side Remix] - 53269");
-		MainMenu::currentChart = new Chart(meta);
+		
+		MainMenu::currentChart = new Chart(Game::loadedChart);
 		Game::currentMenu = new Gameplay();
 		helpDisplay->destroy();
-
+		
 		for (person p : people)
 		{
 			p.display->destroy();

@@ -5,6 +5,9 @@
 #include <SDL_image.h>
 #include "Game.h"
 #include "Chart.h"
+#include "QuaverFile.h"
+#include "SMFile.h"
+#include <regex>
 
 void Steam::InitSteam()
 {
@@ -90,4 +93,107 @@ SDL_Texture* Steam::getAvatar(const char* url)
     free(chunk.memory);
 
     return tex;
+}
+
+void Steam::LoadWorkshopChart(unsigned long publishedFileID) {
+
+    PublishedFileId_t file = publishedFileID;
+
+    SteamUGC()->DownloadItem(file, true);
+
+}
+
+void Steam::CallbackDownload(DownloadItemResult_t* res) {
+
+    if (res->m_eResult != k_EResultOK) {
+        std::cout << "Steam download callback error." << std::endl;
+        return;
+   }
+ 
+    uint64 sizeOnDisk;
+    char directory[512];
+    uint32 timestamp;
+
+    bool infoSuccess = SteamUGC()->GetItemInstallInfo(res->m_nPublishedFileId, &sizeOnDisk, this->chartWorkshop, sizeof(this->chartWorkshop), &timestamp);
+
+    if (!infoSuccess) {
+        std::cout << "Error while getting item install information." << std::endl;
+        return;
+    }
+
+    std::cout << "Chart is " << sizeOnDisk << " bytes" << std::endl;
+
+    UGCQueryHandle_t req = SteamUGC()->CreateQueryUGCDetailsRequest(&res->m_nPublishedFileId, 1);
+
+    SteamUGC()->SetReturnKeyValueTags(req, true);
+
+    auto handle = SteamUGC()->SendQueryUGCRequest(req);
+
+    UGCQueryCallback.Set(handle, this, &Steam::OnUGCQueryCallback);
+
+    SteamUGC()->ReleaseQueryUGCRequest(req);
+}
+//haha stackoverflow go brrr (shut the fuck up i can hear you laughing)
+std::string ReplaceString(std::string subject, const std::string& search,
+    const std::string& replace) {
+    size_t pos = 0;
+    while ((pos = subject.find(search, pos)) != std::string::npos) {
+        subject.replace(pos, search.length(), replace);
+        pos += replace.length();
+    }
+    return subject;
+}
+
+void Steam::OnUGCQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFailure)
+{
+    if (result->m_unNumResultsReturned != 1) {
+        std::cout << "We got something other than 1 result, this shouldn't happen" << std::endl;
+        return;
+    }
+
+    char* chartType = (char*)malloc(512);
+    char* chartFile = (char*)malloc(512);
+    SteamUGC()->GetQueryUGCKeyValueTag(result->m_handle, 0, "chartType", chartType, 512);
+    SteamUGC()->GetQueryUGCKeyValueTag(result->m_handle, 0, "chartFile", chartFile, 512);
+
+    
+    chartMeta meta;
+    bool parsed{};
+
+
+    std::string chartTypestd(chartType);
+    std::string chartFilestd(chartFile);
+    std::string path(this->chartWorkshop);
+
+    if (chartTypestd == "qv") {
+        QuaverFile* file = new QuaverFile();
+        meta = file->returnChart(path);
+        delete file;
+        parsed = true;
+    }
+    if (chartTypestd == "sm") {
+        std::cout << "gay sex 1" << std::endl;
+        std::string fullPath = path + "\\" + chartFilestd;
+
+        std::string replaced = ReplaceString(fullPath, "\\", "/");
+        std::string replaced2 = ReplaceString(path, "\\", "/");
+     
+        std::cout << "gay sex 2" << std::endl;
+        SMFile* smFile = new SMFile(replaced, replaced2, false);
+        meta = smFile->meta;
+        delete smFile;
+        parsed = true;
+    }
+
+    if (parsed) {
+        Game::loadedChart = meta;
+
+        CPacketClientChartAcquired acquired;
+        acquired.PacketType = eCPacketClientChartAcquired;
+        acquired.Order = 0;
+
+        Multiplayer::sendMessage<CPacketClientChartAcquired>(acquired);
+
+    }
+
 }

@@ -188,7 +188,7 @@
     <ClInclude Include="Object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CPacketClientMissingChart.h">
+    <ClInclude Include="CPacketChartAcquired.h">
       <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
     </ClInclude>
     <ClInclude Include="Packet.h">

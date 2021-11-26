@@ -4,7 +4,7 @@
 class SPacketUpdateLobbyChart : public Packet
 {
 public:
-	std::string chartID;
+	unsigned long chartID;
 	int diff;
 	MSGPACK_DEFINE_MAP(chartID, diff);
 };

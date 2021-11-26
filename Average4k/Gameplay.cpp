@@ -199,8 +199,6 @@ Gameplay::Gameplay()
 
 	int diff = MainMenu::selectedDiffIndex;
 
-	if (MultiplayerLobby::inLobby)
-		diff = 3; // for now
 
 	noteskin = Noteskin::getNoteskin();
 	notesToPlay = *(*MainMenu::currentChart->meta.difficulties)[diff].notes;

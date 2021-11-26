@@ -19,6 +19,8 @@ SaveFile* Game::save = NULL;
 Steam* Game::steam = NULL;
 Multiplayer* Game::multi = NULL;
 Game* Game::instance = NULL;
+chartMeta Game::loadedChart;
+
 
 map<int, bool> Game::controls = {
 	{SDLK_d, false},

@@ -19,5 +19,5 @@
 #include "CPacketLeave.h"
 #include "SPacketStartLobbyGame.h"
 #include "SPacketUpdateLobbyChart.h"
-#include "CPacketClientMissingChart.h"
+#include "CPacketChartAcquired.h"
 #include "CPacketHostChangeChart.h"

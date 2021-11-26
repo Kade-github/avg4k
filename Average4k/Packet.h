@@ -9,7 +9,7 @@ enum PacketType
     eCPacketJoinServer = 3,
     eCPacketHostServer = 4,
     eCPacketHostChangeChart = 5,
-    eCPacketClientMissingChart = 6,
+    eCPacketClientChartAcquired = 6,
     eCPacketHostStartGame = 7,
     eCPacketNoteHit = 8,
     eCPacketSongFinished = 9,

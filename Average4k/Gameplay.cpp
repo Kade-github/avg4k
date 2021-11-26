@@ -495,7 +495,7 @@ void Gameplay::update(Events::updateEvent event)
 	}
 	else
 	{
-		if (!ended)
+		if (!ended && spawnedNotes.size() == 0)
 		{
 			ended = true;
 			if (!MultiplayerLobby::inLobby)

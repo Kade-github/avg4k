@@ -500,27 +500,7 @@ void Gameplay::update(Events::updateEvent event)
 			ended = true;
 			if (!MultiplayerLobby::inLobby)
 			{
-				MainMenu::currentChart->destroy();
-				Judgement->destroy();
-				Combo->destroy();
-				Accuracy->destroy();
-				positionAndBeats->destroy();
-				for (int i = 0; i < spawnedNotes.size(); i++)
-				{
-					spawnedNotes[i]->destroy();
-				}
-
-				BASS_ChannelStop(tempostream);
-				BASS_ChannelFree(tempostream);
-				if (background)
-					SDL_DestroyTexture(background);
-
-				for (std::map<std::string, SDL_Texture*>::iterator iter = avatars.begin(); iter != avatars.end(); ++iter)
-				{
-					std::string k = iter->first;
-					SDL_DestroyTexture(avatars[k]);
-				}
-
+				cleanUp();
 				Game::currentMenu = new MainMenu();
 			}
 			else

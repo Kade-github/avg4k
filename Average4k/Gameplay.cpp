@@ -193,6 +193,10 @@ Gameplay::Gameplay()
 
 	BASS_ChannelSetAttribute(tempostream, BASS_ATTRIB_TEMPO, bassRate);
 
+	QWORD word = BASS_ChannelGetLength(tempostream, BASS_POS_BYTE);
+
+	songLength = BASS_ChannelBytes2Seconds(tempostream, word);
+
 	int diff = MainMenu::selectedDiffIndex;
 
 	if (MultiplayerLobby::inLobby)
@@ -276,7 +280,7 @@ void Gameplay::update(Events::updateEvent event)
 		SDL_RenderCopyF(Game::renderer, background, NULL, &bruh);
 	}
 
-	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 128);
+	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 150);
 	SDL_RenderFillRectF(Game::renderer, &laneUnderway);
 	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
 
@@ -495,7 +499,7 @@ void Gameplay::update(Events::updateEvent event)
 	}
 	else
 	{
-		if (!ended && spawnedNotes.size() == 0)
+		if (!ended && spawnedNotes.size() == 0 && positionInSong > (songLength * 1000) - 450)
 		{
 			ended = true;
 			if (!MultiplayerLobby::inLobby)

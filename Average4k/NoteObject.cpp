@@ -17,14 +17,13 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 
 		float wh = MainMenu::currentChart->getTimeFromBeat(beat, bruh);
 
-		float diff = wh - (position / 1000);
+		float diff = wh - ((position + (Game::save->GetDouble("offset") / 1000)) / 1000);
 
 		float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
 
 		float noteOffset = (bps * diff) * 64;
 
 		bool downscroll = Game::save->GetBool("downscroll");
-
 
 
 		if (downscroll)
@@ -66,7 +65,7 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 				auto whHold = MainMenu::currentChart->getTimeFromBeat(tile.beat, MainMenu::currentChart->getSegmentFromBeat(tile.beat));
 			
 
-				float diff2 = whHold - wh;
+				float diff2 = (whHold + (Game::save->GetDouble("offset") / 1000)) - wh;
 				tile.rect.x = rect.x;
 
 				noteOffset = (bps * diff2) * 64;

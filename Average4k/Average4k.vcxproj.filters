@@ -138,6 +138,9 @@
     <ClCompile Include="SettingsMenu.cpp">
       <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
     </ClCompile>
+    <ClCompile Include="SongSelect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes.h">
@@ -289,6 +292,9 @@
     </ClInclude>
     <ClInclude Include="SPacketPlayerSongFinished.h">
       <Filter>Source Files\Average4k\Multiplayer\Packets\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SongSelect.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

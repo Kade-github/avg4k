@@ -187,6 +187,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="SaveFile.cpp" />
     <ClCompile Include="SettingsMenu.cpp" />
     <ClCompile Include="SMFile.cpp" />
+    <ClCompile Include="SongSelect.cpp" />
     <ClCompile Include="Steam.cpp" />
     <ClCompile Include="Text.cpp" />
   </ItemGroup>
@@ -226,6 +227,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="SaveFile.h" />
     <ClInclude Include="SettingsMenu.h" />
     <ClInclude Include="SMFile.h" />
+    <ClInclude Include="SongSelect.h" />
     <ClInclude Include="SPacketFinalizeChart.h" />
     <ClInclude Include="SPacketHello.h" />
     <ClInclude Include="SPacketHostServerReply.h" />

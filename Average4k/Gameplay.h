@@ -51,6 +51,8 @@ class Gameplay :
 
 		int noteId;
 
+		double songLength = 0;
+
 		bool ended = false;
 
 		bpmSegment curSeg;

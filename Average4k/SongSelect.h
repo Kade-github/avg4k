@@ -1,7 +1,40 @@
 #pragma once
+#include "SMFile.h"
+#include "QuaverFile.h"
 #include "Menu.h"
+#include "Chart.h"
+#include <zip.h>
+
+enum chartType {
+	StepMania = 0,
+	Quaver = 1,
+	Osu = 2
+};
+
+struct song {
+	chartType type;
+	std::string path;
+};
+
 class SongSelect :
     public Menu
 {
+public:
+	SongSelect();
+
+    static Chart* currentChart;
+
+	static int selectedDiffIndex;
+
+	std::vector<song> listOfCharts;
+
+	void switchChart(song s);
+
+	int selectedIndex;
+
+	void updateList();
+
+	void update(Events::updateEvent event) override;
+	void keyDown(SDL_KeyboardEvent event) override;
 };
 

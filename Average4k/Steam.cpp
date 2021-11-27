@@ -134,6 +134,7 @@ void Steam::CallbackDownload(DownloadItemResult_t* res) {
     SteamUGC()->ReleaseQueryUGCRequest(req);
 }
 //haha stackoverflow go brrr (shut the fuck up i can hear you laughing)
+// dw I do it too :)
 std::string ReplaceString(std::string subject, const std::string& search,
     const std::string& replace) {
     size_t pos = 0;

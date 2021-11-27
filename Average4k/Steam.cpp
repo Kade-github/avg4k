@@ -99,7 +99,9 @@ void Steam::LoadWorkshopChart(unsigned long publishedFileID) {
 
     PublishedFileId_t file = publishedFileID;
 
-    SteamUGC()->DownloadItem(file, true);
+    bool success = SteamUGC()->DownloadItem(file, true);
+
+    std::cout << "Started steam download: " << success << std::endl;
 
 }
 

@@ -106,7 +106,7 @@ void Steam::LoadWorkshopChart(unsigned long publishedFileID) {
 void Steam::CallbackDownload(DownloadItemResult_t* res) {
 
     if (res->m_eResult != k_EResultOK) {
-        std::cout << "Steam download callback error." << std::endl;
+        std::cout << "Steam download callback error: " << res->m_eResult << std::endl;
         return;
    }
  

@@ -27,6 +27,8 @@ noteskin_asset* Noteskin::getNoteskin()
 		asset->hold = getAsset("assets/noteskin/" + type + "/hold.png", Game::renderer);
 		asset->none = getAsset("assets/noteskin/" + type + "/idfk.png", Game::renderer);
 		asset->receptor = getAsset("assets/noteskin/" + type + "/Receptor.png", Game::renderer);
+		asset->holdend = getAsset("assets/noteskin/" + type + "/holdend.png", Game::renderer);
+		asset->light = getAsset("assets/noteskin/" + type + "/lit.png", Game::renderer);
 		std::cout << "done noteskin" << std::endl;
 	}
 	return asset;

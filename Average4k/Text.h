@@ -2,6 +2,7 @@
 #include "Object.h"
 #include "includes.h"
 #include "Game.h"
+#include "Font.h"
 
 struct Color {
 	unsigned char r;
@@ -12,36 +13,32 @@ struct Color {
 class Text : public Object
 {
 public:
+	TTF_Font* Arial;
 
-	TTF_Font* GetFont() {
-		static TTF_Font* Sans = nullptr;
-
-		if (!Sans)
-			Sans = TTF_OpenFont("C:\\Windows\\Fonts\\Arial.ttf", 24); // we support linux :)
-		return Sans;
-	}
-
-	Text(int x, int y, std::string temp, int w, int h) : Object(x, y) {
-
+	Text(int x, int y, std::string temp, int _size) : Object(x, y) {
+		Arial = Font::getFont(_size);
 		this->text = temp;
 		this->w = w;
 		this->h = h;
 		this->rW = w;
 		this->rH = h;
-
-		SDL_Surface* screen = SDL_GetWindowSurface(Game::window);
+		size = _size;
 
 		color = { 255,255,255 };
 		
 		setText(temp);
 	};
 
+	int size;
 
 	~Text() = default;
 	void update(Events::updateEvent event) override;
 	void destroy();
+	void centerX();
+	void centerY();
 	Color color;
 
+	SDL_Texture* outline;
 	SDL_Texture* message;
 	SDL_FRect message_Rect;
 
@@ -54,6 +51,9 @@ public:
 
 	int rW;
 	int rH;
+
+	double scale;
+	void forceDraw();
 
 	void setText(std::string _text);
 };

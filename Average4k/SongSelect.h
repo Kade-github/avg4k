@@ -1,9 +1,12 @@
 #pragma once
+#include "includes.h"
 #include "SMFile.h"
 #include "QuaverFile.h"
 #include "Menu.h"
 #include "Chart.h"
-#include <zip.h>
+#include "Game.h"
+#include "Text.h"
+
 
 enum chartType {
 	StepMania = 0,
@@ -13,6 +16,8 @@ enum chartType {
 
 struct song {
 	chartType type;
+	bool steam;
+	PublishedFileId_t steamHandle;
 	std::string path;
 };
 
@@ -22,7 +27,13 @@ class SongSelect :
 public:
 	SongSelect();
 
+	static song* selectedSong;
+
     static Chart* currentChart;
+
+	Text* infoText;
+
+	static int lastChecked;
 
 	static int selectedDiffIndex;
 
@@ -46,6 +57,8 @@ public:
 
 
 	std::vector<song> listOfCharts;
+
+	Text* songName;
 
 	void switchChart(song s);
 

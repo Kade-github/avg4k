@@ -1,5 +1,5 @@
 #include "MultiplayerLobby.h"
-#include "CPacketHostStartGame.h"
+#include "AvgSprite.h"
 
 bool MultiplayerLobby::inLobby = false;
 lobby MultiplayerLobby::CurrentLobby;
@@ -23,7 +23,7 @@ void MultiplayerLobby::refreshLobby(lobby l)
 	{
 		player& p = l.PlayerList[i];
 		person per;
-		per.display = new Text(82, 192 + (46 * i), p.Name, 10, 10);
+		per.display = new Text(82, 192 + (46 * i), p.Name, 24);
 		per.display->create();
 		SDL_Texture* t = Steam::getAvatar(p.AvatarURL.c_str());
 		if (t)
@@ -45,7 +45,7 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 	SPacketWtfAmInReply reply;
 	SPacketUpdateLobbyChart cc;
 	SPacketStatus f;
-	
+	CPacketHostStartGame start;
 	msgpack::unpacked result;
 
 	msgpack::object obj;
@@ -65,6 +65,9 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 			std::cout << "host me" << std::endl;
 			isHost = true;
 			refreshLobby(CurrentLobby);
+			break;
+		case 8876:
+			warningDisplay->setText("Unable to start, some players do not have the chart! press enter to start when they do, press shift to reselect.");
 			break;
 		}
 
@@ -92,6 +95,14 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		isHost = reply.isHost;
 
 		refreshLobby(reply.Lobby);
+
+		if (waitingForStart)
+		{
+			start.Order = 0;
+			start.PacketType = eCPacketHostStartGame;
+
+			Multiplayer::sendMessage<CPacketHostStartGame>(start);
+		}
 		break;
 	case eSPacketUpdateLobbyChart:
 		msgpack::unpack(result, data, length);
@@ -100,7 +111,7 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 
 		obj.convert(cc);
 
-		MainMenu::selectedDiffIndex = cc.diff;
+		SongSelect::selectedDiffIndex = cc.diff;
 
 		Game::steam->LoadWorkshopChart(cc.chartID);
 
@@ -109,8 +120,8 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 	case eSPacketStartLobbyGame:
 		std::cout << "start!" << std::endl;
 		
-		MainMenu::currentChart = new Chart(Game::loadedChart);
 		Game::currentMenu = new Gameplay();
+		SongSelect::currentChart = Game::steam->downloadedChart;
 		helpDisplay->destroy();
 		
 		for (person p : people)
@@ -120,21 +131,46 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		}
 
 		people.clear();
+		removeAll();
 		break;
 	}
 }
 
-MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted)
+MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted, bool backFromSelect = false)
 {
+	AvgSprite* sprite = new AvgSprite(0, 0, "assets/graphical/menu/bg.png");
+	sprite->create();
+	add(sprite);
 	isHost = hosted;
-	helpDisplay = new Text(24, 100, "Lobby: " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")", 10, 10);
+	helpDisplay = new Text(24, 100, "Lobby: " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")", 24);
 	helpDisplay->create();
+
+	warningDisplay = new Text(24, 125, "", 16);
+	Color c;
+	c.r = 255;
+	c.g = 0;
+	c.b = 0;
+	warningDisplay->color = c;
+	warningDisplay->create();
 
 	CPacketWtfAmIn fuck;
 	fuck.Order = 0;
 	fuck.PacketType = eCPacketWtfAmIn;
 
 	Multiplayer::sendMessage<CPacketWtfAmIn>(fuck);
+
+	waitingForStart = backFromSelect && hosted;
+
+	if (waitingForStart)
+	{
+		CPacketHostChangeChart chart;
+		chart.chartID = SongSelect::selectedSong->steamHandle;
+		std::cout << "telling the server to start " << SongSelect::selectedSong->steamHandle << std::endl;
+		chart.diff = SongSelect::selectedDiffIndex;
+		chart.Order = 0;
+		chart.PacketType = eCPacketHostChangeChart;
+		Multiplayer::sendMessage<CPacketHostChangeChart>(chart);
+	}
 }
 
 void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
@@ -159,23 +195,62 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 			}
 
 			people.clear();
+			removeAll();
 			inLobby = false;
 			break;
 		case SDLK_RETURN:
 			if (!isHost)
 				return;
 
-			std::cout << "hello" << std::endl;
+			if (waitingForStart)
+			{
+				start.Order = 0;
+				start.PacketType = eCPacketHostStartGame;
 
-			start.Order = 0;
-			start.PacketType = eCPacketHostStartGame;
+				Multiplayer::sendMessage<CPacketHostStartGame>(start);
+			}
+			else
+			{
 
-			Multiplayer::sendMessage<CPacketHostStartGame>(start);
+				Game::currentMenu = new SongSelect();
+				helpDisplay->destroy();
+
+				for (person p : people)
+				{
+					p.display->destroy();
+					SDL_DestroyTexture(p.avatar);
+				}
+
+				people.clear();
+				removeAll();
+
+			}
+			break;
+		case SDLK_LSHIFT:
+			if (!isHost && !waitingForStart)
+				return;
+			Game::currentMenu = new SongSelect();
+			helpDisplay->destroy();
+
+			for (person p : people)
+			{
+				p.display->destroy();
+				SDL_DestroyTexture(p.avatar);
+			}
+
+			people.clear();
+			removeAll();
+
 			break;
 	}
 }
 
 void MultiplayerLobby::update(Events::updateEvent event)
+{
+	
+}
+
+void MultiplayerLobby::postUpdate(Events::updateEvent event)
 {
 	for (person p : people)
 	{
@@ -184,6 +259,8 @@ void MultiplayerLobby::update(Events::updateEvent event)
 		avat.y = p.display->y - 8;
 		avat.w = 46;
 		avat.h = 46;
+
+		SDL_SetTextureAlphaMod(p.avatar, 255);
 
 		SDL_RenderCopyF(Game::renderer, p.avatar, NULL, &avat);
 

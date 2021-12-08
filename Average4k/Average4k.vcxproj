@@ -172,6 +172,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="Average4k.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Chart.cpp" />
+    <ClCompile Include="Font.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Gameplay.cpp" />
     <ClCompile Include="Judge.cpp" />
@@ -184,6 +185,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="QuaverFile.cpp" />
+    <ClCompile Include="ReceptorObject.cpp" />
     <ClCompile Include="SaveFile.cpp" />
     <ClCompile Include="SettingsMenu.cpp" />
     <ClCompile Include="SMFile.cpp" />
@@ -193,6 +195,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioManager.h" />
+    <ClInclude Include="AvgSprite.h" />
     <ClInclude Include="Base64.h" />
     <ClInclude Include="Chart.h" />
     <ClInclude Include="CPacketChartAcquired.h" />
@@ -207,6 +210,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="CPacketSongFinished.h" />
     <ClInclude Include="CPacketStatus.h" />
     <ClInclude Include="CPacketWtfAmIn.h" />
+    <ClInclude Include="Font.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Gameplay.h" />
@@ -224,6 +228,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="Packet.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="QuaverFile.h" />
+    <ClInclude Include="ReceptorObject.h" />
     <ClInclude Include="SaveFile.h" />
     <ClInclude Include="SettingsMenu.h" />
     <ClInclude Include="SMFile.h" />

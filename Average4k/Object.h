@@ -12,7 +12,7 @@ public:
 	virtual void update(Events::updateEvent ev) = 0;
 	virtual void keyDown(SDL_KeyboardEvent ev) {};
 	virtual void textInput(SDL_TextInputEvent ev) {};
-
+	virtual void beforeDeath() {};
 	float alpha = 255;
 	float x = 0;
 	float y = 0;

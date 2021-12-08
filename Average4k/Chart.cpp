@@ -31,14 +31,14 @@ float Chart::getBeatFromTimeOffset(float timestamp, bpmSegment seg) {
 
 bpmSegment Chart::getSegmentFromTime(float time) {
     bpmSegment seg;
-    seg.bpm = (*meta.bpms)[0].bpm;
+    seg.bpm = meta.bpms[0].bpm;
     seg.startBeat = 0;
     seg.startTime = 0;
     seg.endBeat = INT_MAX;
     seg.length = INT_MAX;
 
-    for (int i = 0; i < meta.bpms->size(); i++) {
-        bpmSegment segment = (*meta.bpms)[i];
+    for (int i = 0; i < meta.bpms.size(); i++) {
+        bpmSegment segment = meta.bpms[i];
         if (time >= segment.startTime * 1000.f && time < (segment.startTime + segment.length) * 1000.f)
             seg = segment;
     }
@@ -50,14 +50,14 @@ bpmSegment Chart::getSegmentFromTime(float time) {
 bpmSegment Chart::getSegmentFromBeat(float beat)
 {
     bpmSegment seg;
-    seg.bpm = (*meta.bpms)[0].bpm;
+    seg.bpm = meta.bpms[0].bpm;
     seg.startBeat = 0;
     seg.startTime = 0;
     seg.endBeat = INT_MAX;
     seg.length = INT_MAX;
 
-    for (int i = 0; i < meta.bpms->size(); i++) {
-        bpmSegment segment = (*meta.bpms)[i];
+    for (int i = 0; i < meta.bpms.size(); i++) {
+        bpmSegment segment = meta.bpms[i];
         if (beat >= segment.startBeat && beat < segment.endBeat)
             seg = segment;
     }
@@ -68,5 +68,6 @@ bpmSegment Chart::getSegmentFromBeat(float beat)
 
 void Chart::destroy() {
     // free memory
-    delete this;
+    if (!this)
+        return;
 }

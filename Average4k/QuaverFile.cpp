@@ -13,8 +13,6 @@ bool note_sort(note const& lhs, note const& rhs) {
 
 chartMeta QuaverFile::returnChart(std::string path)
 {
-    meta.bpms = new std::vector < bpmSegment >();
-    meta.difficulties = new std::vector < difficulty >();
     meta.folder = path;
     meta.chartType = 1;
 
@@ -30,11 +28,12 @@ chartMeta QuaverFile::returnChart(std::string path)
         std::string line;
 
         difficulty diff;
-        diff.notes = new std::vector<note>();
         diff.name = "unknown";
         diff.charter = "unknown";
 
-        meta.difficulties->push_back(diff);
+        meta.difficulties.push_back(diff);
+
+        difficulty& ddiff = meta.difficulties.back();
 
         bpmSegment seg;
 
@@ -64,14 +63,14 @@ chartMeta QuaverFile::returnChart(std::string path)
             {
                 if (split.size() != 2)
                 {
-                    if (meta.bpms->size() != 0)
+                    if (meta.bpms.size() != 0)
                     {
-                        bpmSegment& prevSeg = meta.bpms->back();
+                        bpmSegment& prevSeg = meta.bpms.back();
                         float endBeat = getBeatFromTimeOffset(seg.startTime * 1000, prevSeg);
                         prevSeg.endBeat = endBeat;
                         prevSeg.length = (prevSeg.endBeat - prevSeg.startBeat) / (prevSeg.bpm / 60);
                     }
-                    meta.bpms->push_back(seg); // last seg
+                    meta.bpms.push_back(seg); // last seg
                     bpm = false;
                     generatedBPMS = true;
                 }
@@ -82,7 +81,7 @@ chartMeta QuaverFile::returnChart(std::string path)
                         float endBeat = getBeatFromTimeOffset(std::stod(split[1]), seg);
                         seg.endBeat = endBeat;
                         seg.length = (seg.endBeat - seg.startBeat) / (seg.bpm / 60);
-                        meta.bpms->push_back(seg);
+                        meta.bpms.push_back(seg);
                         bpmSegment storage = seg;
                         seg = storage; // create a copy in another variable lol
                         seg.bpm = 0;
@@ -116,15 +115,15 @@ chartMeta QuaverFile::returnChart(std::string path)
                 if (split[0] == "- StartTime")
                 {
                     float time = std::stod(split[1]);
-                    float beat = getBeatFromTimeOffset(time, getSegmentFromTime(time, *meta.bpms));
+                    float beat = getBeatFromTimeOffset(time, getSegmentFromTime(time, meta.bpms));
 
                     if (currentWorkingNote.beat != -1)
                     {
-                        diff.notes->push_back(currentWorkingNote);
+                        ddiff.notes.push_back(currentWorkingNote);
                         currentWorkingNote = {};
                     }
                     currentWorkingNote.type = Note_Normal;
-                    currentWorkingNote.beat = getBeatFromTimeOffset(time, getSegmentFromTime(time, *meta.bpms));
+                    currentWorkingNote.beat = getBeatFromTimeOffset(time, getSegmentFromTime(time, meta.bpms));
                 }
                 if (split[0] == "  Lane")
                 {
@@ -134,7 +133,7 @@ chartMeta QuaverFile::returnChart(std::string path)
                 if (split[0] == "  EndTime")
                 {
                     float time = std::stod(split[1]);
-                    float beat = getBeatFromTimeOffset(time, getSegmentFromTime(time, *meta.bpms));
+                    float beat = getBeatFromTimeOffset(time, getSegmentFromTime(time, meta.bpms));
 
                     currentWorkingNote.type = Note_Head;
 
@@ -142,7 +141,7 @@ chartMeta QuaverFile::returnChart(std::string path)
                     tail.beat = beat;
                     tail.lane = currentWorkingNote.lane;
                     tail.type = Note_Tail;
-                    diff.notes->push_back(tail);
+                    ddiff.notes.push_back(tail);
                 }
             }
             else
@@ -164,9 +163,9 @@ chartMeta QuaverFile::returnChart(std::string path)
                 if (split[0] == "BackgroundFile")
                     meta.background = split[1];
                 if (split[0] == "Creator")
-                    meta.difficulties->back().charter = split[1];
+                    meta.difficulties.back().charter = split[1];
                 if (split[0] == "DifficultyName")
-                    meta.difficulties->back().name = split[1];
+                    meta.difficulties.back().name = split[1];
                 if (split[0] == "Mode")
                     if (split[1] != "Keys4")
                         conti = true;
@@ -178,9 +177,9 @@ chartMeta QuaverFile::returnChart(std::string path)
         }
         infile.close();
     }
-    for (difficulty& diff : (*meta.difficulties))
+    for (difficulty& diff : meta.difficulties)
     {
-        std::sort(diff.notes->begin(), diff.notes->end(), &note_sort);
+        std::sort(diff.notes.begin(), diff.notes.end(), &note_sort);
     }
     
     return meta;

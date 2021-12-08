@@ -7,8 +7,6 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
 
     std::ifstream infile(path);
 
-    meta.bpms = new std::vector < bpmSegment >();
-    meta.difficulties = new std::vector < difficulty >();
     auto pathSplit = Chart::split(path, '/');
     meta.folder = folder;
 
@@ -67,13 +65,13 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
 
                         if (bpmIndex != 0) // previous lol
                         {
-                            bpmSegment& prevSeg = (*meta.bpms)[bpmIndex - 1];
+                            bpmSegment& prevSeg = meta.bpms[bpmIndex - 1];
                             prevSeg.endBeat = seg.startBeat;
                             prevSeg.length = (prevSeg.endBeat - prevSeg.startBeat) / (prevSeg.bpm / 60);
                             seg.startTime = prevSeg.startTime + prevSeg.length;
                         }
 
-                        meta.bpms->push_back(seg);
+                        meta.bpms.push_back(seg);
                         bpmIndex++;
                     }
                 }
@@ -99,13 +97,13 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
 
                                     if (bpmIndex != 0) // previous lol
                                     {
-                                        bpmSegment& prevSeg = (*meta.bpms)[bpmIndex - 1];
+                                        bpmSegment& prevSeg = meta.bpms[bpmIndex - 1];
                                         prevSeg.endBeat = seg.startBeat;
                                         prevSeg.length = (prevSeg.endBeat - prevSeg.startBeat) / (prevSeg.bpm / 60);
                                         seg.startTime = prevSeg.startTime + prevSeg.length;
                                     }
 
-                                    meta.bpms->push_back(seg);
+                                    meta.bpms.push_back(seg);
                                     bpmIndex++;
                                 }
                             }
@@ -114,20 +112,22 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                         if (stuff[0] == "#NOTES") {
                             readingNotes = true;
                             difficulty diff;
-                            diff.notes = new std::vector < note >();
                             diff.charter = "n/a";
                             diff.name = "n/a";
-                            meta.difficulties->push_back(diff);
+                            meta.difficulties.push_back(diff);
                         }
-                        if (stuff[0] == "#BACKGROUND")
-                            meta.background = stuff[1];
+                        if (stuff.size() != 1)
+                        {
+                            if (stuff[0] == "#BACKGROUND")
+                                meta.background = stuff[1];
 
-                        if (stuff[0] == "#TITLE")
-                            meta.songName = stuff[1];
-                        if (stuff[0] == "#MUSIC")
-                            meta.audio = stuff[1];
-                        if (stuff[0] == "#OFFSET")
-                            meta.chartOffset = std::stof(stuff[1]);
+                            if (stuff[0] == "#TITLE")
+                                meta.songName = stuff[1];
+                            if (stuff[0] == "#MUSIC")
+                                meta.audio = stuff[1];
+                            if (stuff[0] == "#OFFSET")
+                                meta.chartOffset = std::stof(stuff[1]);
+                        }
                     }
                 }
             }
@@ -138,10 +138,10 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                     stuff[0].erase(std::remove(stuff[0].begin(), stuff[0].end(), ' '), stuff[0].end());
                     switch (diffIndex) {
                     case 1:
-                        meta.difficulties->back().charter = stuff[0];
+                        meta.difficulties.back().charter = stuff[0];
                         break;
                     case 2:
-                        meta.difficulties->back().name = stuff[0];
+                        meta.difficulties.back().name = stuff[0];
                         break;
                     }
                     diffIndex++;
@@ -194,7 +194,7 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                                 else
                                     note.type = Note_Mine;
 
-                                meta.difficulties->back().notes->push_back(note);
+                                meta.difficulties.back().notes.push_back(note);
                             }
                             rowIndex++;
                         }

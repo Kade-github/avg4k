@@ -4,6 +4,7 @@
 #include "CPacketJoinServer.h"
 #include "MultiplayerLobby.h"
 #include "CPacketHostServer.h"
+#include "AvgSprite.h"
 
 void MultiplayerLobbies::refreshLobbies() {
 	if (refreshTimer < 2999)
@@ -19,7 +20,13 @@ void MultiplayerLobbies::refreshLobbies() {
 
 MultiplayerLobbies::MultiplayerLobbies()
 {
-	helpText = new Text(0, 46, "F1 to host a lobby, enter to join (F5 To refresh)", 10, 10);
+	if (Multiplayer::loggedIn)
+		Game::steam->populateSubscribedItems();
+
+	AvgSprite* sprite = new AvgSprite(0, 0, "assets/graphical/menu/bg.png");
+	sprite->create();
+	add(sprite);
+	helpText = new Text(0, 46, "F1 to host a lobby, enter to join (F5 To refresh)", 24);
 	helpText->create();
 	refreshLobbies();
 }
@@ -42,7 +49,7 @@ void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
 	for (int i = 0; i < Lobbies.size(); i++)
 	{
 		lobby& l = Lobbies[i];
-		Text* t = new Text(Game::gameWidth / 2, 100 + (135 * i), l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")", 10, 10);
+		Text* t = new Text(Game::gameWidth / 2, 100 + (135 * i), l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")", 24);
 		t->setX((Game::gameWidth / 2) - (t->surfW / 2));
 		t->create();
 		for (int p = 0; p < l.PlayerList.size(); p++)
@@ -80,7 +87,7 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 			updateList(fuck.Lobbies);
 			break;
 		case eSPacketJoinServerReply:
-			Game::currentMenu = new MultiplayerLobby(Lobbies[selectedIndex], false);
+			Game::currentMenu = new MultiplayerLobby(Lobbies[selectedIndex], false, false);
 			for (Text* t : lobbyTexts)
 				t->destroy();
 
@@ -90,11 +97,13 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 			avatars.clear();
 
 			helpText->destroy();
+
+			removeAll();
 
 			std::cout << "you joined!" << std::endl;
 			break;
 		case eSPacketHostServerReply:
-			Game::currentMenu = new MultiplayerLobby(Lobbies[selectedIndex], true);
+			Game::currentMenu = new MultiplayerLobby(Lobbies[selectedIndex], true, false);
 			for (Text* t : lobbyTexts)
 				t->destroy();
 
@@ -104,6 +113,8 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 			avatars.clear();
 
 			helpText->destroy();
+
+			removeAll();
 
 			std::cout << "you hosted and joined!" << std::endl;
 			break;
@@ -143,6 +154,73 @@ void MultiplayerLobbies::update(Events::updateEvent event)
 
 	if (refreshTimer < 3000)
 		refreshTimer += Game::deltaTime;
+}
+
+void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
+{
+	CPacketHostServer host;
+	lobby& l = Lobbies[selectedIndex];
+	Text* selected = lobbyTexts[selectedIndex];
+	switch (event.keysym.sym)
+	{
+		case SDLK_ESCAPE:
+			Game::currentMenu = new MainMenu();
+			for (Text* t : lobbyTexts)
+				t->destroy();
+
+			for (bruh t : avatars)
+				SDL_DestroyTexture(t.avatar);
+
+			avatars.clear();
+
+			helpText->destroy();
+			removeAll();
+
+			break;
+		case SDLK_F5:
+			refreshLobbies();
+			break;
+		case SDLK_F1:
+			host.LobbyName = "bruh moment";
+			host.Order = 0;
+			host.PacketType = eCPacketHostServer;
+
+			std::cout << "bruh" << std::endl;
+
+			Multiplayer::sendMessage<CPacketHostServer>(host);
+			break;
+		case SDLK_RETURN:
+			if (joiningServer)
+				break;
+			joiningServer = true;
+
+			CPacketJoinServer list;
+			list.Order = 0;
+			list.PacketType = eCPacketJoinServer;
+			list.LobbyID = Lobbies[selectedIndex].LobbyID;
+
+			std::cout << "trying to join " << list.LobbyID << std::endl;
+
+			Multiplayer::sendMessage<CPacketJoinServer>(list);
+			break;
+		case SDLK_UP:
+			selected->setText(l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")");
+			selected->setX((Game::gameWidth / 2) - (selected->surfW / 2));
+			selectedIndex--;
+			break;
+		case SDLK_DOWN:
+			selected->setText(l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")");
+			selected->setX((Game::gameWidth / 2) - (selected->surfW / 2));
+			selectedIndex++;
+			break;
+	}
+}
+
+
+void MultiplayerLobbies::postUpdate(Events::updateEvent event)
+{
+	if (lobbyTexts.size() == 0)
+		return;
 
 	lobby& l = Lobbies[selectedIndex];
 	Text* selected = lobbyTexts[selectedIndex];
@@ -186,63 +264,5 @@ void MultiplayerLobbies::update(Events::updateEvent event)
 		SDL_RenderDrawRectF(Game::renderer, &rect);
 
 		SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
-	}
-}
-
-void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
-{
-	CPacketHostServer host;
-	lobby& l = Lobbies[selectedIndex];
-	Text* selected = lobbyTexts[selectedIndex];
-	switch (event.keysym.sym)
-	{
-		case SDLK_ESCAPE:
-			Game::currentMenu = new MainMenu();
-			for (Text* t : lobbyTexts)
-				t->destroy();
-
-			for (bruh t : avatars)
-				SDL_DestroyTexture(t.avatar);
-
-			avatars.clear();
-
-			helpText->destroy();
-			break;
-		case SDLK_F5:
-			refreshLobbies();
-			break;
-		case SDLK_F1:
-			host.LobbyName = "bruh moment";
-			host.Order = 0;
-			host.PacketType = eCPacketHostServer;
-
-			std::cout << "bruh" << std::endl;
-
-			Multiplayer::sendMessage<CPacketHostServer>(host);
-			break;
-		case SDLK_RETURN:
-			if (joiningServer)
-				break;
-			joiningServer = true;
-
-			CPacketJoinServer list;
-			list.Order = 0;
-			list.PacketType = eCPacketJoinServer;
-			list.LobbyID = Lobbies[selectedIndex].LobbyID;
-
-			std::cout << "trying to join " << list.LobbyID << std::endl;
-
-			Multiplayer::sendMessage<CPacketJoinServer>(list);
-			break;
-		case SDLK_UP:
-			selected->setText(l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")");
-			selected->setX((Game::gameWidth / 2) - (selected->surfW / 2));
-			selectedIndex--;
-			break;
-		case SDLK_DOWN:
-			selected->setText(l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")");
-			selected->setX((Game::gameWidth / 2) - (selected->surfW / 2));
-			selectedIndex++;
-			break;
 	}
 }

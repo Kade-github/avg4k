@@ -17,6 +17,7 @@ SaveFile::SaveFile()
     defaultSettings.push_back(CreateSetting(false, 0, "downscroll", true));
     defaultSettings.push_back(CreateSetting(true, 1100, "scrollspeed", false));
     defaultSettings.push_back(CreateSetting(true, 0, "offset", false));
+    defaultSettings.push_back(CreateSetting(false, 0, "hitsounds", false));
 
     std::ifstream ifs("settings.avg");
     if (!ifs.good())

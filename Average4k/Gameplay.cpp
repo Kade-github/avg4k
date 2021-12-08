@@ -521,7 +521,8 @@ void Gameplay::update(Events::updateEvent event)
 
 			if ((wh + Game::save->GetDouble("offset")) - positionInSong < 2 && note->active && botplay)
 			{
-				BASS_ChannelPlay(clap, true);
+				if (Game::save->GetBool("hitsounds"))
+					BASS_ChannelPlay(clap, true);
 				receptors[note->lane]->lightUpTimer = 100;
 
 				float diff = (wh - positionInSong) - Game::save->GetDouble("offset");
@@ -754,7 +755,8 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 			if (closestObject->active && diff <= Judge::hitWindows[4] && diff > -Judge::hitWindows[4])
 			{
-				BASS_ChannelPlay(clap, true);
+				if (Game::save->GetBool("hitsounds"))
+					BASS_ChannelPlay(clap, true);
 				
 
 				closestObject->active = false;

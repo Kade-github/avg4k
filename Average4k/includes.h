@@ -1,8 +1,6 @@
 #pragma once
 #include "pch.h"
 
-bool patched = false;
-
 class Events
 {
 	public:

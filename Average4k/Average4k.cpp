@@ -96,7 +96,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	if (test != 6969) {
 
-		patched = true;
+		Game::patched = true;
 		//FUCK SHIT WE PATCHED
 	}
 

@@ -49,7 +49,7 @@ DWORD WINAPI NewThread(LPVOID param) {
         heartbeat.Order = 0;
         heartbeat.code = 200;
 
-        if (patched)
+        if (Game::patched)
             heartbeat.code = 7393;
 
         heartbeat.Status = "hello";

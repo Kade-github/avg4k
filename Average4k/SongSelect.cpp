@@ -62,7 +62,7 @@ void SongSelect::updateList() {
 					song s;
 					s.type = Quaver;
 					s.steam = false;
-					s.path = newDir;
+					strcpy_s(s.path, newDir.c_str());
 					listOfCharts.push_back(s);
 				}
 
@@ -80,7 +80,7 @@ void SongSelect::updateList() {
 						song s;
 						s.type = StepMania;
 						s.steam = false;
-						s.path = bruh;
+						strcpy_s(s.path, bruh.c_str());
 						listOfCharts.push_back(s);
 					}
 					if (ends_with(bruh, ".qua"))
@@ -88,7 +88,7 @@ void SongSelect::updateList() {
 						song s;
 						s.type = Quaver;
 						s.steam = false;
-						s.path = entry.path().string();
+						strcpy_s(s.path, entry.path().string().c_str());
 						listOfCharts.push_back(s);
 						break;
 					}
@@ -100,7 +100,7 @@ void SongSelect::updateList() {
 	if (Multiplayer::loggedIn)
 		for (int i = 0; i < Game::steam->subscribedList.size(); i++)
 		{
-			steamItem& st = Game::steam->subscribedList[i];
+			steamItem st = Game::steam->subscribedList[i];
 
 			song s;
 			
@@ -122,10 +122,10 @@ void SongSelect::updateList() {
 
 				std::string replaced = Steam::ReplaceString(fullPath, "\\", "/");
 				std::string replaced2 = Steam::ReplaceString(path, "\\", "/");
-				s.path = replaced;
+				strcpy_s(s.path, replaced.c_str());
 			}
 			else
-				s.path = path;
+				strcpy_s(s.path, path.c_str());
 			listOfCharts.push_back(s);
 		}
 
@@ -257,8 +257,11 @@ void SongSelect::keyDown(SDL_KeyboardEvent event)
 		case SDLK_RETURN:
 			if (MultiplayerLobby::inLobby && currentChart)
 			{
+				strcpy_s(selectedSong->path, listOfCharts[selectedIndex].path);
+				selectedSong->steam = true;
+				selectedSong->steamHandle = listOfCharts[selectedIndex].steamHandle;
+				selectedSong->type = listOfCharts[selectedIndex].type;
 				Game::instance->switchMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, true));
-				selectedSong = &listOfCharts[selectedIndex];
 			}
 			else if (currentChart)
 			{

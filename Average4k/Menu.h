@@ -10,6 +10,7 @@ public:
 	std::vector<Object*> children;
 
 	virtual void onPacket(PacketType pt, char* data, int32_t length) {};
+	virtual void onSteam(std::string s) {};
 
 	void add(Object* obj) 
 	{

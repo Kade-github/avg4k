@@ -37,6 +37,17 @@ void MultiplayerLobby::refreshLobby(lobby l)
 	
 }
 
+void MultiplayerLobby::onSteam(std::string s) {
+	if (s == "chartAquired")
+	{
+		CPacketClientChartAcquired acquired;
+		acquired.PacketType = eCPacketClientChartAcquired;
+		acquired.Order = 0;
+
+		Multiplayer::sendMessage<CPacketClientChartAcquired>(acquired);
+	}
+}
+
 void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 {
 	if (!this)
@@ -170,6 +181,12 @@ MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted, bool backFromSelect = f
 		chart.Order = 0;
 		chart.PacketType = eCPacketHostChangeChart;
 		Multiplayer::sendMessage<CPacketHostChangeChart>(chart);
+
+		CPacketClientChartAcquired acquired;
+		acquired.PacketType = eCPacketClientChartAcquired;
+		acquired.Order = 1;
+
+		Multiplayer::sendMessage<CPacketClientChartAcquired>(acquired);
 	}
 }
 
@@ -193,7 +210,7 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 				p.display->destroy();
 				SDL_DestroyTexture(p.avatar);
 			}
-
+			warningDisplay->destroy();
 			people.clear();
 			removeAll();
 			inLobby = false;
@@ -221,6 +238,8 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 					SDL_DestroyTexture(p.avatar);
 				}
 
+				warningDisplay->destroy();
+
 				people.clear();
 				removeAll();
 
@@ -237,6 +256,8 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 				p.display->destroy();
 				SDL_DestroyTexture(p.avatar);
 			}
+
+			warningDisplay->destroy();
 
 			people.clear();
 			removeAll();

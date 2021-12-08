@@ -18,7 +18,7 @@ struct song {
 	chartType type;
 	bool steam;
 	PublishedFileId_t steamHandle;
-	std::string path;
+	char path[512];
 };
 
 class SongSelect :

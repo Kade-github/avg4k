@@ -295,11 +295,8 @@ void Steam::OnUGCQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFailure
     if (parsed) {
         Steam::downloadedChart = new Chart(meta);
 
-        CPacketClientChartAcquired acquired;
-        acquired.PacketType = eCPacketClientChartAcquired;
-        acquired.Order = 0;
-
-        Multiplayer::sendMessage<CPacketClientChartAcquired>(acquired);
+        if (Game::currentMenu != nullptr)
+            Game::currentMenu->onSteam("chartAquired");
 
     }
 

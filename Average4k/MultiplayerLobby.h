@@ -29,7 +29,7 @@ class MultiplayerLobby :
 
         void refreshLobby(lobby l);
         void onPacket(PacketType pt, char* data, int32_t length);
-
+        void onSteam(std::string s) override;
         MultiplayerLobby(lobby l, bool hosted, bool backFromSelect);
         void keyDown(SDL_KeyboardEvent event) override;
         void update(Events::updateEvent event) override;

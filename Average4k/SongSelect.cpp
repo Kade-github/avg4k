@@ -120,7 +120,7 @@ void SongSelect::updateList() {
 
 				std::string replaced = Steam::ReplaceString(fullPath, "\\", "/");
 				std::string replaced2 = Steam::ReplaceString(path, "\\", "/");
-				s.path = replaced2;
+				s.path = replaced;
 			}
 			else
 				s.path = path;

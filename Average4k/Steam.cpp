@@ -175,8 +175,6 @@ void Steam::OnUGCSubscribedQueryCallback(SteamUGCQueryCompleted_t* result, bool 
             SteamUGC()->GetQueryUGCKeyValueTag(result->m_handle, i, "chartType", chartType, 512);
             SteamUGC()->GetQueryUGCKeyValueTag(result->m_handle, i, "chartFile", chartFile, 512);
 
-            std::string chartTypestd(chartType);
-            std::string chartFilestd(chartFile);
 
             steamItem i;
             i.details = id;

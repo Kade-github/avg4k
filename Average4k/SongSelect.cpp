@@ -110,6 +110,8 @@ void SongSelect::updateList() {
 				s.type = Quaver;
 
 			s.steam = true;
+			
+			std::cout << "steam something" << std::endl;
 			s.steamHandle = st.details.m_nPublishedFileId;
 
 			std::string path(st.folder);

@@ -4,9 +4,6 @@
 #include <curl/curl.h>
 #include <SDL_image.h>
 #include "Game.h"
-#include "Chart.h"
-#include "QuaverFile.h"
-#include "SMFile.h"
 #include <regex>
 
 void Steam::InitSteam()
@@ -95,9 +92,116 @@ SDL_Texture* Steam::getAvatar(const char* url)
     return tex;
 }
 
-void Steam::LoadWorkshopChart(unsigned long publishedFileID) {
+
+// show me the money
+
+void Steam::populateWorkshopItems(int page) {
+    UGCQueryHandle_t h = SteamUGC()->CreateQueryAllUGCRequest(k_EUGCQuery_RankedByVote, k_EUGCMatchingUGCType_Items_ReadyToUse, 1828580, 1828580, page);
+    
+    SteamUGC()->SetReturnKeyValueTags(h, true);
+
+    auto handle = SteamUGC()->SendQueryUGCRequest(h);
+
+    UGCQueryCallback.Set(handle, this, &Steam::OnUGCAllQueryCallback);
+
+    SteamUGC()->ReleaseQueryUGCRequest(h);
+}
+
+void Steam::OnUGCAllQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFailure)
+{
+    downloadedList.clear();
+    for (int i = 0; i < result->m_unNumResultsReturned; i++)
+    {
+        SteamUGCDetails_t id;
+        bool yes = SteamUGC()->GetQueryUGCResult(result->m_handle, i, &id);
+        if (yes)
+        {
+            char* chartType = (char*)malloc(512);
+            char* chartFile = (char*)malloc(512);
+            SteamUGC()->GetQueryUGCKeyValueTag(result->m_handle, i, "chartType", chartType, 512);
+            SteamUGC()->GetQueryUGCKeyValueTag(result->m_handle, i, "chartFile", chartFile, 512);
+
+            std::string chartTypestd(chartType);
+            std::string chartFilestd(chartFile);
+
+
+            steamItem i;
+            i.details = id;
+            i.chartType = std::string(chartType);
+            i.chartFile = std::string(chartFile);
+            uint64 sizeOnDisk;
+            uint32 timestamp;
+            SteamUGC()->GetItemInstallInfo(id.m_nPublishedFileId, &sizeOnDisk, i.folder, sizeof(i.folder), &timestamp);
+
+            subscribedList.push_back(i);
+        }
+    }
+}
+
+// get subscribe
+
+void Steam::populateSubscribedItems()
+{
+    const int ahg = SteamUGC()->GetNumSubscribedItems();
+
+    PublishedFileId_t* subscribed = (PublishedFileId_t*)malloc(sizeof(PublishedFileId_t) * ahg);
+
+    SteamUGC()->GetSubscribedItems(subscribed, ahg);
+
+    UGCQueryHandle_t h = SteamUGC()->CreateQueryUGCDetailsRequest(subscribed,ahg);
+
+    SteamUGC()->SetReturnKeyValueTags(h, true);
+
+    auto handle = SteamUGC()->SendQueryUGCRequest(h);
+
+    UGCQueryCallback.Set(handle, this, &Steam::OnUGCSubscribedQueryCallback);
+
+    SteamUGC()->ReleaseQueryUGCRequest(h);
+
+    free(subscribed);
+}
+
+void Steam::OnUGCSubscribedQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFailure)
+{
+    subscribedList.clear();
+    for (int i = 0; i < result->m_unNumResultsReturned; i++)
+    {
+        SteamUGCDetails_t id;
+        bool yes = SteamUGC()->GetQueryUGCResult(result->m_handle, i, &id);
+        if (yes)
+        {
+            char* chartType = (char*)malloc(512);
+            char* chartFile = (char*)malloc(512);
+            SteamUGC()->GetQueryUGCKeyValueTag(result->m_handle, i, "chartType", chartType, 512);
+            SteamUGC()->GetQueryUGCKeyValueTag(result->m_handle, i, "chartFile", chartFile, 512);
+
+            std::string chartTypestd(chartType);
+            std::string chartFilestd(chartFile);
+
+            steamItem i;
+            i.details = id;
+            i.chartType = std::string(chartType);
+            i.chartFile = std::string(chartFile);
+            uint64 sizeOnDisk;
+            uint32 timestamp;
+            SteamUGC()->GetItemInstallInfo(id.m_nPublishedFileId, &sizeOnDisk, i.folder, sizeof(i.folder), &timestamp);
+            subscribedList.push_back(i);
+        }
+        else
+        {
+            std::cout << "failed to fuck wit item #" << i << std::endl;
+        }
+    }
+}
+
+
+// loading and downloading I got orkshop charts
+
+void Steam::LoadWorkshopChart(uint64_t publishedFileID) {
 
     PublishedFileId_t file = publishedFileID;
+
+    std::cout << "downloading " << file << std::endl;
 
     bool success = SteamUGC()->DownloadItem(file, true);
 
@@ -140,7 +244,7 @@ void Steam::CallbackDownload(DownloadItemResult_t* res) {
 }
 //haha stackoverflow go brrr (shut the fuck up i can hear you laughing)
 // dw I do it too :)
-std::string ReplaceString(std::string subject, const std::string& search,
+std::string Steam::ReplaceString(std::string subject, const std::string& search,
     const std::string& replace) {
     size_t pos = 0;
     while ((pos = subject.find(search, pos)) != std::string::npos) {
@@ -178,13 +282,12 @@ void Steam::OnUGCQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFailure
         parsed = true;
     }
     if (chartTypestd == "sm") {
-        std::cout << "gay sex 1" << std::endl;
+
         std::string fullPath = path + "\\" + chartFilestd;
 
         std::string replaced = ReplaceString(fullPath, "\\", "/");
         std::string replaced2 = ReplaceString(path, "\\", "/");
      
-        std::cout << "gay sex 2" << std::endl;
         SMFile* smFile = new SMFile(replaced, replaced2, false);
         meta = smFile->meta;
         delete smFile;
@@ -192,7 +295,7 @@ void Steam::OnUGCQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFailure
     }
 
     if (parsed) {
-        Game::loadedChart = meta;
+        Steam::downloadedChart = new Chart(meta);
 
         CPacketClientChartAcquired acquired;
         acquired.PacketType = eCPacketClientChartAcquired;

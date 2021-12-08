@@ -4,7 +4,7 @@
 class CPacketHostChangeChart : public Packet
 {
 public:
-	std::string chartID;
+	uint64_t chartID;
 	int diff;
 	MSGPACK_DEFINE_MAP(chartID, diff);
 };

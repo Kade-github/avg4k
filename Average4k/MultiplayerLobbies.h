@@ -35,5 +35,6 @@ public:
 
     void update(Events::updateEvent event) override;
     void keyDown(SDL_KeyboardEvent event) override;
+    void postUpdate(Events::updateEvent event) override;
 };
 

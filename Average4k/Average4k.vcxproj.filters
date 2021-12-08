@@ -76,6 +76,9 @@
     <Filter Include="Source Files\Average4k\Objects\UIObjects">
       <UniqueIdentifier>{32ad7e70-1c57-4b41-a225-9067bab9f56a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="FontStuff">
+      <UniqueIdentifier>{6db03054-40d0-435e-96a0-29bcf631f0c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Average4k.cpp">
@@ -139,7 +142,13 @@
       <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
     </ClCompile>
     <ClCompile Include="SongSelect.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
+    </ClCompile>
+    <ClCompile Include="Font.cpp">
+      <Filter>FontStuff</Filter>
+    </ClCompile>
+    <ClCompile Include="ReceptorObject.cpp">
+      <Filter>Source Files\Average4k\Objects\Renderers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -294,7 +303,16 @@
       <Filter>Source Files\Average4k\Multiplayer\Packets\Server</Filter>
     </ClInclude>
     <ClInclude Include="SongSelect.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
+    </ClInclude>
+    <ClInclude Include="AvgSprite.h">
+      <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>FontStuff</Filter>
+    </ClInclude>
+    <ClInclude Include="ReceptorObject.h">
+      <Filter>Source Files\Average4k\Objects\Renderers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

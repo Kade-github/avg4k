@@ -48,6 +48,7 @@ HANDLE multiThreadHandle;
 
 void Game::switchMenu(Menu* m)
 {
+	currentMenu->removeAll();
 	currentMenu = m;
 }
 
@@ -90,7 +91,7 @@ void Game::update(Events::updateEvent update)
 	static Text* fpsText = nullptr;
 	if (!fpsText)
 	{
-		fpsText = new Text(0, 0, "FPS: 0", 60, 40);
+		fpsText = new Text(0, 0, "FPS: 0", 16);
 		fpsText->create();
 	}
 
@@ -98,7 +99,7 @@ void Game::update(Events::updateEvent update)
 
 	currentMenu->update(update);
 
-	fpsText->setText("FPS: " + std::to_string(gameFPS) + " | Delta Time: " + std::to_string(deltaTime));
+	fpsText->setText("FPS: " + std::to_string(gameFPS) + " - Avg4k 0.1a - Visuals are subject to change - " + (Multiplayer::loggedIn ? "You are logged in" : "You are logged out"));
 
 	for (int i = 0; i < objects->size(); i++)
 	{
@@ -112,6 +113,8 @@ void Game::update(Events::updateEvent update)
 
 		}
 	}
+
+	currentMenu->postUpdate(update);
 
 	SDL_Rect DestR;
 
@@ -136,6 +139,8 @@ void Game::update(Events::updateEvent update)
 		free(p.ogPtr);
 	}
 
+	if (fpsText)
+		fpsText->forceDraw();
 
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 

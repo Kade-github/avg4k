@@ -10,6 +10,8 @@ struct noteskin_asset {
 	SDL_Texture* none;
 	SDL_Texture* hold;
 	SDL_Texture* receptor;
+	SDL_Texture* holdend;
+	SDL_Texture* light;
 };
 
 class Noteskin

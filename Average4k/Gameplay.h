@@ -12,19 +12,10 @@
 #include <algorithm>
 #include "bass_fx.h"
 #include <SDL_image.h>
-#include "SPacketUpdateLeaderboard.h"
-#include "SPacketFinalizeChart.h"
-#include "CPacketSongFinished.h"
-#include "MultiplayerLobby.h"
-#include "CPacketNoteHit.h"
-
+#include "ReceptorObject.h"
 struct gameplayControl {
 	int lane;
 	SDL_Keycode code;
-};
-
-struct Receptor {
-	SDL_FRect rect;
 };
 
 struct leaderboardSpot {
@@ -39,7 +30,7 @@ class Gameplay :
 	public:
 		std::vector<gameplayControl> controls;
 
-		std::vector<Receptor> receptors;
+		std::vector<ReceptorObject*> receptors;
 
 		std::vector<note> notesToPlay;
 
@@ -98,6 +89,8 @@ class Gameplay :
 
 		unsigned long channel;
 		unsigned long tempostream;
+
+		unsigned long clap;
 
 		static noteskin_asset* noteskin;
 

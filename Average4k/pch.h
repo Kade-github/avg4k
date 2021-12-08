@@ -4,6 +4,11 @@
 #include <SDL_ttf.h>
 #include <vector>
 #include <string>
+#include <filesystem>
+#include <limits.h>
+#include <zip.h>
+#include <fstream>
+#include <stdio.h>
 #include "steam/steam_api.h"
 #include <Themida/ThemidaSDK.h>
 #include <msgpack.hpp>
@@ -13,6 +18,10 @@
 #include <websocketpp/client.hpp>
 
 #include "Packet.h"
+#include "SPacketUpdateLeaderboard.h"
+#include "SPacketFinalizeChart.h"
+#include "CPacketSongFinished.h"
+#include "CPacketNoteHit.h"
 #include "SPacketUpdateLobbyData.h"
 #include "SPacketWtfAmInReply.h"
 #include "CPacketWtfAmIn.h"
@@ -21,3 +30,4 @@
 #include "SPacketUpdateLobbyChart.h"
 #include "CPacketChartAcquired.h"
 #include "CPacketHostChangeChart.h"
+#include "CPacketHostStartGame.h"

@@ -17,18 +17,22 @@ class MultiplayerLobby :
 {
     public:
         static bool inLobby;
+        bool waitingForStart;
         static lobby CurrentLobby;
         static bool isHost;
 
         Text* helpDisplay;
+
+        Text* warningDisplay;
 
         std::vector<person> people;
 
         void refreshLobby(lobby l);
         void onPacket(PacketType pt, char* data, int32_t length);
 
-        MultiplayerLobby(lobby l, bool hosted);
+        MultiplayerLobby(lobby l, bool hosted, bool backFromSelect);
         void keyDown(SDL_KeyboardEvent event) override;
         void update(Events::updateEvent event) override;
+        void postUpdate(Events::updateEvent event) override;
 };
 

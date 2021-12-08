@@ -2,6 +2,7 @@
 #include "Gameplay.h"
 #include <mutex>
 #include "Judge.h"
+#include "SongSelect.h"
 
 NoteObject::NoteObject(){}
 
@@ -13,11 +14,11 @@ void NoteObject::destroy()
 
 void NoteObject::draw(float position, double b, SDL_FRect receptor)
 {
-		bpmSegment bruh = MainMenu::currentChart->getSegmentFromBeat(beat);
+		bpmSegment bruh = SongSelect::currentChart->getSegmentFromBeat(beat);
 
-		float wh = MainMenu::currentChart->getTimeFromBeat(beat, bruh);
+		float wh = SongSelect::currentChart->getTimeFromBeat(beat, bruh);
 
-		float diff = wh - ((position + (Game::save->GetDouble("offset") / 1000)) / 1000);
+		float diff = wh - (((position + (Game::save->GetDouble("offset")) / 1000)) / 1000);
 
 		float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
 
@@ -37,7 +38,7 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 
 		float beatRow = beat * 48;
 
-		if (MainMenu::currentChart->meta.chartType == 1) // osu/quaver
+		if (SongSelect::currentChart->meta.chartType == 1) // osu/quaver
 		{
 			float pos = wh - bruh.startTime;
 			float bps = 60 / bruh.bpm;
@@ -59,21 +60,43 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 
 		if (type == Note_Head)
 		{
+
 			for (int i = 0; i < heldTilings.size(); i++)
 			{
 				holdTile& tile = heldTilings[i];
-				auto whHold = MainMenu::currentChart->getTimeFromBeat(tile.beat, MainMenu::currentChart->getSegmentFromBeat(tile.beat));
+				auto whHold = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat));
 			
-
-				float diff2 = (whHold + (Game::save->GetDouble("offset") / 1000)) - wh;
+				float diff2 = ((whHold + (Game::save->GetDouble("offset")) / 1000)) - wh;
 				tile.rect.x = rect.x;
 
 				noteOffset = (bps * diff2) * 64;
-
+				
 				if (downscroll)
-					tile.rect.y = (rect.y - noteOffset) - 96;
+					tile.rect.y = (rect.y - noteOffset);
 				else
-					tile.rect.y = (rect.y + noteOffset) + 96;
+					tile.rect.y = (rect.y + noteOffset);
+
+
+				/*if (downscroll)
+				{
+					if (i != 0)
+						tile.rect.y = heldTilings[i - 1].rect.y - 45;
+					else
+						tile.rect.y = (rect.y - noteOffset) - 45;
+					if (i == heldTilings.size() - 1 && i != 0)
+						tile.rect.y = tile.rect.y - 25;
+				}
+				else
+				{
+					if (i != 0)
+						tile.rect.y = heldTilings[i - 1].rect.y + 45;
+					else
+						tile.rect.y = (rect.y + noteOffset) + 45;
+
+					if (i == heldTilings.size() - 1 && i != 0)
+						tile.rect.y = tile.rect.y + 25;
+					
+				}*/
 
 				if (tile.fucked)
 					SDL_SetTextureAlphaMod(Gameplay::noteskin->hold, 60);
@@ -88,7 +111,24 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 					condition = tile.rect.y > receptor.y;
 
 				if (tile.active || tile.fucked || condition)
-					SDL_RenderCopyF(Game::renderer, Gameplay::noteskin->hold, NULL, &tile.rect);
+				{
+					if (i == heldTilings.size() - 1)
+					{
+
+						if (!downscroll)
+						{
+							SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->holdend, NULL, &tile.rect, 0, NULL, SDL_FLIP_VERTICAL);
+						}
+						else
+						{
+							SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->holdend, NULL, &tile.rect, 0, NULL, SDL_FLIP_NONE);
+						}
+					}
+					else
+					{
+						SDL_RenderCopyF(Game::renderer, Gameplay::noteskin->hold, NULL, &tile.rect);
+					}
+				}
 			}
 		}
 

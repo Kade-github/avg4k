@@ -29,7 +29,7 @@ struct difficulty
 {
 	std::string name;
 	std::string charter;
-	std::vector<note>* notes;
+	std::vector<note> notes;
 };
 
 class chartMeta {
@@ -38,8 +38,8 @@ class chartMeta {
 		std::string audio;
 		std::string folder;
 		std::string background;
-		std::vector<bpmSegment>* bpms;
-		std::vector<difficulty>* difficulties;
+		std::vector<bpmSegment> bpms;
+		std::vector<difficulty> difficulties;
 		float chartOffset;
 		int chartType = 0;
 };

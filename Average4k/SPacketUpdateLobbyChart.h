@@ -4,7 +4,7 @@
 class SPacketUpdateLobbyChart : public Packet
 {
 public:
-	unsigned long chartID;
+	uint64_t chartID;
 	int diff;
 	MSGPACK_DEFINE_MAP(chartID, diff);
 };

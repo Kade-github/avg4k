@@ -1,4 +1,5 @@
 #include "SettingsMenu.h"
+#include "AvgSprite.h"
 
 void SettingsMenu::refreshList() {
 	selectedIndex = 0;
@@ -16,12 +17,14 @@ void SettingsMenu::refreshList() {
 
 		bruhhh h;
 
-		Text* t = new Text(0, 100 + (64 * i), set.name + value, 10, 10);
+		Text* t = new Text(0, 100 + (64 * i), set.name + value, 24);
 		t->setX((Game::gameWidth / 2) - (t->surfW / 2));
 		t->create();
 
 		h.display = t;
 		h.set = &set;
+
+		add(t);
 
 		settings.push_back(h);
 	}
@@ -29,6 +32,9 @@ void SettingsMenu::refreshList() {
 
 SettingsMenu::SettingsMenu()
 {
+	AvgSprite* sprite = new AvgSprite(0, 0, "assets/graphical/menu/bg.png");
+	sprite->create();
+	add(sprite);
 	refreshList();
 }
 
@@ -70,8 +76,7 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 	switch (event.keysym.sym)
 	{
 	case SDLK_ESCAPE:
-		for (bruhhh& t : settings)
-			t.display->destroy();
+		removeAll();
 		settings.clear();
 		Game::currentMenu = new MainMenu();
 		delete this;

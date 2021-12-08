@@ -34,7 +34,7 @@ void MultiplayerLobby::refreshLobby(lobby l)
 	}
 
 	helpDisplay->setText("Lobby: " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ") " + (isHost ? "You are the host!" : ""));
-	
+	warningDisplay->setText("");
 }
 
 void MultiplayerLobby::onSteam(std::string s) {

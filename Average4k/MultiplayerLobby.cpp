@@ -40,6 +40,7 @@ void MultiplayerLobby::refreshLobby(lobby l)
 void MultiplayerLobby::onSteam(std::string s) {
 	if (s == "chartAquired")
 	{
+		SongSelect::currentChart = Game::steam->downloadedChart;
 		CPacketClientChartAcquired acquired;
 		acquired.PacketType = eCPacketClientChartAcquired;
 		acquired.Order = 0;

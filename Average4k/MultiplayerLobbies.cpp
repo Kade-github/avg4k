@@ -158,11 +158,36 @@ void MultiplayerLobbies::update(Events::updateEvent event)
 
 void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 {
-	CPacketHostServer host;
-	lobby& l = Lobbies[selectedIndex];
-	Text* selected = lobbyTexts[selectedIndex];
-	switch (event.keysym.sym)
+	if (Lobbies.size() == 0)
 	{
+		switch (event.keysym.sym)
+		{
+		case SDLK_ESCAPE:
+			Game::currentMenu = new MainMenu();
+			for (Text* t : lobbyTexts)
+				t->destroy();
+
+			for (bruh t : avatars)
+				SDL_DestroyTexture(t.avatar);
+
+			avatars.clear();
+
+			helpText->destroy();
+			removeAll();
+
+			break;
+		case SDLK_F5:
+			refreshLobbies();
+			break;
+		}
+	}
+	else
+	{
+		CPacketHostServer host;
+		lobby& l = Lobbies[selectedIndex];
+		Text* selected = lobbyTexts[selectedIndex];
+		switch (event.keysym.sym)
+		{
 		case SDLK_ESCAPE:
 			Game::currentMenu = new MainMenu();
 			for (Text* t : lobbyTexts)
@@ -213,6 +238,7 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 			selected->setX((Game::gameWidth / 2) - (selected->surfW / 2));
 			selectedIndex++;
 			break;
+		}
 	}
 }
 

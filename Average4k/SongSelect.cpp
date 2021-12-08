@@ -314,7 +314,7 @@ void SongSelect::switchChart(song s)
 
 	if (s.type == StepMania)
 	{
-		SMFile* filee = new SMFile(s.path, s.path, true);
+		SMFile* filee = new SMFile(s.path, s.path, false);
 		currentChart = new Chart(filee->meta);
 		delete filee;
 	}

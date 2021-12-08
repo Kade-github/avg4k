@@ -78,7 +78,21 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 			isHost = true;
 			refreshLobby(CurrentLobby);
 			break;
+		case 1337:
+			Color c;
+			c.r = 0;
+			c.g = 255;
+			c.b = 0;
+
+			warningDisplay->color = c;
+			warningDisplay->setText("Everyone has the chart, you can now start.");
+			break;
 		case 8876:
+			Color cc;
+			cc.r = 255;
+			cc.g = 0;
+			cc.b = 0;
+			warningDisplay->color = cc;
 			warningDisplay->setText("Unable to start, some players do not have the chart! press enter to start when they do, press shift to reselect.");
 			break;
 		}
@@ -107,14 +121,6 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		isHost = reply.isHost;
 
 		refreshLobby(reply.Lobby);
-
-		if (waitingForStart)
-		{
-			start.Order = 0;
-			start.PacketType = eCPacketHostStartGame;
-
-			Multiplayer::sendMessage<CPacketHostStartGame>(start);
-		}
 		break;
 	case eSPacketUpdateLobbyChart:
 		msgpack::unpack(result, data, length);
@@ -141,6 +147,8 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 			p.display->destroy();
 			SDL_DestroyTexture(p.avatar);
 		}
+
+		warningDisplay->destroy();
 
 		people.clear();
 		removeAll();

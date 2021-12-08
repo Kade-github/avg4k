@@ -206,7 +206,7 @@ void Steam::LoadWorkshopChart(uint64_t publishedFileID) {
     bool success = SteamUGC()->DownloadItem(file, true);
 
     std::cout << "Started steam download: " << success << std::endl;
-
+    
 }
 
 void Steam::CallbackDownload(DownloadItemResult_t* res) {

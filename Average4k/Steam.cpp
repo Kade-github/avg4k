@@ -197,7 +197,7 @@ void Steam::OnUGCSubscribedQueryCallback(SteamUGCQueryCompleted_t* result, bool 
 
 // loading and downloading I got orkshop charts
 
-void Steam::LoadWorkshopChart(unsigned long publishedFileID) {
+void Steam::LoadWorkshopChart(uint64_t publishedFileID) {
 
     PublishedFileId_t file = publishedFileID;
 

@@ -113,7 +113,7 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 
 		SongSelect::selectedDiffIndex = cc.diff;
 
-		Game::steam->LoadWorkshopChart(cc.chartID);
+		Game::steam->LoadWorkshopChart((uint64_t)cc.chartID);
 
 		// tell the server we aint got it lol (if we dont :))
 		break;
@@ -164,7 +164,7 @@ MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted, bool backFromSelect = f
 	if (waitingForStart)
 	{
 		CPacketHostChangeChart chart;
-		chart.chartID = SongSelect::selectedSong->steamHandle;
+		chart.chartID = (uint64_t) SongSelect::selectedSong->steamHandle;
 		std::cout << "telling the server to start " << SongSelect::selectedSong->steamHandle << std::endl;
 		chart.diff = SongSelect::selectedDiffIndex;
 		chart.Order = 0;

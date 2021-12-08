@@ -32,7 +32,7 @@ public:
 	void populateWorkshopItems(int page);
 	void populateSubscribedItems();
 
-	static void LoadWorkshopChart(unsigned long publishedFileId);
+	static void LoadWorkshopChart(uint64_t publishedFileId);
 	char chartWorkshop[512];
 	static std::string ReplaceString(std::string subject, const std::string& search, const std::string& replace);
 private:

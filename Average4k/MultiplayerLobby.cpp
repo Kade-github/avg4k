@@ -84,8 +84,11 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 			c.g = 255;
 			c.b = 0;
 
+			if (!isHost)
+				return;
+
 			warningDisplay->color = c;
-			warningDisplay->setText("Everyone has the chart, you can now start.");
+			warningDisplay->setText("Everyone has the chart, you can now start. (Press enter to start, LSHIFT to reselect chart)");
 			break;
 		case 8876:
 			Color cc;
@@ -93,7 +96,11 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 			cc.g = 0;
 			cc.b = 0;
 			warningDisplay->color = cc;
-			warningDisplay->setText("Unable to start, some players do not have the chart! press enter to start when they do, press shift to reselect.");
+
+			if (!isHost)
+				warningDisplay->setText("Unable to start, some players do not have the chart! " + std::string((SongSelect::currentChart != NULL ? "You have it!" : "You do not have it!")));
+			else
+				warningDisplay->setText("Unable to start, some players do not have the chart! press enter to start when they do, press shift to reselect.");
 			break;
 		}
 

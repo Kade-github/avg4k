@@ -11,7 +11,7 @@ void SettingsMenu::refreshList() {
 		setting& set = Game::save->settings[i];
 		std::string value = "";
 		if (set.takesActive)
-			value = ": " + set.active;
+			value = ": " + std::string((set.active ? " true" : " false"));
 		else
 			value = ": " + std::to_string(set.value);
 
@@ -85,7 +85,7 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 		if (b.set->takesActive)
 		{
 			std::cout << "toggle" << std::endl;
-			Game::save->SetBool("downscroll", !Game::save->GetBool("downscroll"));
+			Game::save->SetBool(b.set->name, !Game::save->GetBool(b.set->name));
 			Game::save->Save();
 		}
 		break;

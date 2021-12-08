@@ -189,7 +189,9 @@ Gameplay::Gameplay()
 	std::string path = SongSelect::currentChart->meta.folder + "/" + SongSelect::currentChart->meta.audio;
 
 	std::cout << "playing " << path << std::endl;
+
 	
+
 	channel = BASS_StreamCreateFile(false, path.c_str(), 0, 0, BASS_STREAM_DECODE);
 
 	clap = BASS_StreamCreateFile(false, "assets/sounds/hitSound.mp3", 0, 0, NULL);
@@ -264,6 +266,10 @@ void Gameplay::update(Events::updateEvent event)
 	bruh.y = -200;
 	bruh.h = 1280;
 	bruh.w = 1280;
+
+
+	if (BASS_ErrorGetCode() != 0)
+		Combo->setText(std::to_string(BASS_ErrorGetCode()) + "_bassError");
 
 	SDL_FRect laneUnderway;
 

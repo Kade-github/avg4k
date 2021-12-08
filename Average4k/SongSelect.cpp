@@ -165,104 +165,115 @@ void SongSelect::update(Events::updateEvent event)
 
 void SongSelect::keyDown(SDL_KeyboardEvent event)
 {
-	song selectedChart = listOfCharts[selectedIndex];
-	std::string name = currentChart->meta.songName;
-	std::string diff = currentChart->meta.difficulties[selectedDiffIndex].name;
-	switch (event.keysym.sym)
+	if (listOfCharts.size() == 0)
 	{
-	case SDLK_DOWN:
-		selectedIndex++;
-		selectedDiffIndex = 0;
-
-		if (selectedIndex > listOfCharts.size() - 1)
-			selectedIndex = 0;
-
-		if (currentChart)
-			currentChart->destroy();
-
-		selectedChart = listOfCharts[selectedIndex];
-
-		switchChart(selectedChart);
-
-		diff = currentChart->meta.difficulties[selectedDiffIndex].name;
-
-		songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
-		songName->centerX();
-
-		break;
-	case SDLK_UP:
-		selectedIndex--;
-		selectedDiffIndex = 0;
-
-		if (selectedIndex < 0)
-			selectedIndex = listOfCharts.size() - 1;
-
-		selectedChart = listOfCharts[selectedIndex];
-
-
-		if (currentChart)
-			currentChart->destroy();
-
-		switchChart(selectedChart);
-
-		diff = currentChart->meta.difficulties[selectedDiffIndex].name;
-
-		songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
-		songName->centerX();
-
-		break;
-	case SDLK_LEFT:
-		if (!currentChart)
-			return;
-		selectedDiffIndex--;
-		if (selectedDiffIndex < 0)
-			selectedDiffIndex = currentChart->meta.difficulties.size() - 1;
-
-		diff = currentChart->meta.difficulties[selectedDiffIndex].name;
-
-		songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
-		songName->centerX();
-
-		break;
-	case SDLK_RIGHT:
-		if (!currentChart)
-			return;
-		selectedDiffIndex++;
-		if (selectedDiffIndex > currentChart->meta.difficulties.size() - 1)
-			selectedDiffIndex = 0;
-
-		diff = currentChart->meta.difficulties[selectedDiffIndex].name;
-
-		songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
-		songName->centerX();
-
-		break;
-	case SDLK_F5:
 		currentChart = NULL;
 
 		if (Multiplayer::loggedIn)
 			Game::steam->populateSubscribedItems();
 		updateList();
-		break;
-	case SDLK_RETURN:
-		if (MultiplayerLobby::inLobby && currentChart)
+	}
+	else
+	{
+		song selectedChart = listOfCharts[selectedIndex];
+		std::string name = currentChart->meta.songName;
+		std::string diff = currentChart->meta.difficulties[selectedDiffIndex].name;
+		switch (event.keysym.sym)
 		{
-			Game::instance->switchMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, true));
-			selectedSong = &listOfCharts[selectedIndex];
-		}
-		else if (currentChart)
-		{
-			Game::instance->switchMenu(new Gameplay());
+		case SDLK_DOWN:
+			selectedIndex++;
+			selectedDiffIndex = 0;
+
+			if (selectedIndex > listOfCharts.size() - 1)
+				selectedIndex = 0;
+
+			if (currentChart)
+				currentChart->destroy();
+
+			selectedChart = listOfCharts[selectedIndex];
+
+			switchChart(selectedChart);
+
+			diff = currentChart->meta.difficulties[selectedDiffIndex].name;
+
+			songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
+			songName->centerX();
+
+			break;
+		case SDLK_UP:
+			selectedIndex--;
+			selectedDiffIndex = 0;
+
+			if (selectedIndex < 0)
+				selectedIndex = listOfCharts.size() - 1;
+
+			selectedChart = listOfCharts[selectedIndex];
+
+
+			if (currentChart)
+				currentChart->destroy();
+
+			switchChart(selectedChart);
+
+			diff = currentChart->meta.difficulties[selectedDiffIndex].name;
+
+			songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
+			songName->centerX();
+
+			break;
+		case SDLK_LEFT:
+			if (!currentChart)
+				return;
+			selectedDiffIndex--;
+			if (selectedDiffIndex < 0)
+				selectedDiffIndex = currentChart->meta.difficulties.size() - 1;
+
+			diff = currentChart->meta.difficulties[selectedDiffIndex].name;
+
+			songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
+			songName->centerX();
+
+			break;
+		case SDLK_RIGHT:
+			if (!currentChart)
+				return;
+			selectedDiffIndex++;
+			if (selectedDiffIndex > currentChart->meta.difficulties.size() - 1)
+				selectedDiffIndex = 0;
+
+			diff = currentChart->meta.difficulties[selectedDiffIndex].name;
+
+			songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
+			songName->centerX();
+
+			break;
+		case SDLK_F5:
+			currentChart = NULL;
+
+			if (Multiplayer::loggedIn)
+				Game::steam->populateSubscribedItems();
+			updateList();
+			break;
+		case SDLK_RETURN:
+			if (MultiplayerLobby::inLobby && currentChart)
+			{
+				Game::instance->switchMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, true));
+				selectedSong = &listOfCharts[selectedIndex];
+			}
+			else if (currentChart)
+			{
+				Game::instance->switchMenu(new Gameplay());
+				free(selectedSong);
+			}
+			break;
+		case SDLK_ESCAPE:
+			if (MultiplayerLobby::inLobby)
+				Game::instance->switchMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, false));
+			else
+				Game::instance->switchMenu(new MainMenu());
 			free(selectedSong);
+			break;
 		}
-		break;
-	case SDLK_ESCAPE:
-		if (MultiplayerLobby::inLobby)
-			Game::instance->switchMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, false));
-		else
-			Game::instance->switchMenu(new MainMenu());
-		free(selectedSong);
-		break;
 	}
 }
 

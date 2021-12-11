@@ -20,7 +20,7 @@ Steam* Game::steam = NULL;
 Multiplayer* Game::multi = NULL;
 Game* Game::instance = NULL;
 chartMeta Game::loadedChart;
-
+bool Game::patched = false;
 
 map<int, bool> Game::controls = {
 	{SDLK_d, false},

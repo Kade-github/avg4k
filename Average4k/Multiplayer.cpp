@@ -41,15 +41,21 @@ void Multiplayer::SendPacket(std::string data, PacketType packet) {
 
 DWORD WINAPI NewThread(LPVOID param) {
     for (;;) {
+        VM_START
         Sleep(1000);
 
         CPacketStatus heartbeat;
         heartbeat.PacketType = eCPacketStatus;
         heartbeat.Order = 0;
         heartbeat.code = 200;
+
+        if (Game::patched)
+            heartbeat.code = 7393;
+
         heartbeat.Status = "hello";
 
         Multiplayer::sendMessage<CPacketStatus>(heartbeat);
+        VM_END
     }
 }
 

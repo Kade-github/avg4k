@@ -29,6 +29,7 @@ public:
 	static chartMeta loadedChart;
 
 	static Game* instance;
+	static bool patched;
 
 	bool fullscreen = false;
 

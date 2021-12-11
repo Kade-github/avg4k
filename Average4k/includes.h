@@ -1,7 +1,6 @@
 #pragma once
 #include "pch.h"
 
-
 class Events
 {
 	public:

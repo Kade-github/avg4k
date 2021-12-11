@@ -18,7 +18,7 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 
 		float wh = SongSelect::currentChart->getTimeFromBeat(beat, bruh);
 
-		float diff = wh - (((position + (Game::save->GetDouble("offset")) / 1000)) / 1000);
+		float diff = (wh + (Game::save->GetDouble("offset")) - (position / 1000));
 
 		float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
 

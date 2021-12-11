@@ -432,7 +432,7 @@ void Gameplay::update(Events::updateEvent event)
 					if (SongSelect::currentChart->meta.chartType == 1)
 						diff = whHold - object->time;
 
-					float noteOffset = (bps * diff) * 64;
+					noteOffset = (bps * diff) * 64;
 
 					if (object->heldTilings.size() != 0)
 					{
@@ -597,7 +597,7 @@ void Gameplay::update(Events::updateEvent event)
 								}),
 							note->heldTilings.end());
 				}
-				auto whHold = SongSelect::currentChart->getTimeFromBeatOffset(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat)) * 1000;
+				auto whHold = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat)) * 1000;
 				float diff = whHold - positionInSong;
 
 				if (diff < -Judge::hitWindows[4] && tile.active && !tile.fucked)

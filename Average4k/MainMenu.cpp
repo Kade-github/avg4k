@@ -29,11 +29,15 @@ MainMenu::MainMenu()
 	bruh->create();
 	add(bruh);
 
-
 	MenuItem.push_back(multiplayer);
 	MenuItem.push_back(singleplayer);
 	MenuItem.push_back(settings);
 	MenuItem.push_back(bruh);
+}
+
+void MainMenu::postUpdate(Events::updateEvent event)
+{
+
 }
 
 void MainMenu::update(Events::updateEvent event)

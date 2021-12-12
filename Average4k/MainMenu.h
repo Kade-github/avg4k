@@ -11,11 +11,14 @@ class MainMenu :
 {
 	public:
 		MainMenu();
-		
+
+
 		std::vector<Text*> MenuItem;
 
 
 		int selectedIndex;
+
+		void postUpdate(Events::updateEvent event) override;
 
 		void update(Events::updateEvent event) override;
 		void keyDown(SDL_KeyboardEvent event) override;

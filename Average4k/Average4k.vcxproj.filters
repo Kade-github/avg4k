@@ -79,6 +79,9 @@
     <Filter Include="FontStuff">
       <UniqueIdentifier>{6db03054-40d0-435e-96a0-29bcf631f0c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Average4k\Objects\Special">
+      <UniqueIdentifier>{3d583b0f-0079-4700-a559-8b3aecfcb0ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Average4k.cpp">
@@ -149,6 +152,9 @@
     </ClCompile>
     <ClCompile Include="ReceptorObject.cpp">
       <Filter>Source Files\Average4k\Objects\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="pugixml.cpp">
+      <Filter>Source Files\Average4k\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -313,6 +319,15 @@
     </ClInclude>
     <ClInclude Include="ReceptorObject.h">
       <Filter>Source Files\Average4k\Objects\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="SparrowAtlas.h">
+      <Filter>Source Files\Average4k\Objects\Special</Filter>
+    </ClInclude>
+    <ClInclude Include="pugiconfig.hpp">
+      <Filter>Source Files\Average4k\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="pugixml.hpp">
+      <Filter>Source Files\Average4k\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

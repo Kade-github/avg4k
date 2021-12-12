@@ -184,6 +184,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="Noteskin.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="pch.cpp" />
+    <ClCompile Include="pugixml.cpp" />
     <ClCompile Include="QuaverFile.cpp" />
     <ClCompile Include="ReceptorObject.cpp" />
     <ClCompile Include="SaveFile.cpp" />
@@ -227,6 +228,8 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="Object.h" />
     <ClInclude Include="Packet.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="pugiconfig.hpp" />
+    <ClInclude Include="pugixml.hpp" />
     <ClInclude Include="QuaverFile.h" />
     <ClInclude Include="ReceptorObject.h" />
     <ClInclude Include="SaveFile.h" />
@@ -246,6 +249,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="SPacketUpdateLobbyChart.h" />
     <ClInclude Include="SPacketUpdateLobbyData.h" />
     <ClInclude Include="SPacketWtfAmInReply.h" />
+    <ClInclude Include="SparrowAtlas.h" />
     <ClInclude Include="Steam.h" />
     <ClInclude Include="Text.h" />
   </ItemGroup>

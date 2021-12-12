@@ -13,6 +13,7 @@
 #include "bass_fx.h"
 #include <SDL_image.h>
 #include "ReceptorObject.h"
+#include "SparrowAtlas.h"
 struct gameplayControl {
 	int lane;
 	SDL_Keycode code;
@@ -31,6 +32,9 @@ class Gameplay :
 		std::vector<gameplayControl> controls;
 
 		std::vector<ReceptorObject*> receptors;
+
+		SparrowAtlas* gf;
+		SparrowAtlas* bf;
 
 		std::vector<note> notesToPlay;
 

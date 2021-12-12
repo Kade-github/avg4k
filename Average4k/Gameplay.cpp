@@ -2,6 +2,7 @@
 #include "SongSelect.h"
 #include "MultiplayerLobby.h"
 
+
 noteskin_asset* Gameplay::noteskin;
 
 std::map<std::string, SDL_Texture*> avatars;
@@ -159,6 +160,10 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 	}
 }
 
+void endGF() {
+
+}
+
 Gameplay::Gameplay()
 {
 	initControls();
@@ -166,6 +171,18 @@ Gameplay::Gameplay()
 	avatars.clear();
 
 	downscroll = Game::save->GetBool("downscroll");
+
+	gf = new SparrowAtlas("assets/holiday/gf.webp", "assets/holiday/gf.xml", 24, "GF Dancing Beat");
+	gf->x = (Game::gameWidth / 2) - 120;
+	gf->y = 200;
+	gf->loop = true;
+
+	gf->w = gf->w * 0.8;
+	gf->h = gf->h * 0.8;
+
+	//bf = new SparrowAtlas("assets/holiday/BOYFRIEND.png", "assets/holiday/BOYFRIEND.xml", 24, "BF idle dance");
+
+
 
 	Judge::initJudge();
 
@@ -271,6 +288,7 @@ void Gameplay::update(Events::updateEvent event)
 	if (BASS_ErrorGetCode() != 0)
 		Combo->setText(std::to_string(BASS_ErrorGetCode()) + "_bassError");
 
+
 	SDL_FRect laneUnderway;
 
 	laneUnderway.x = receptors[0]->x - 4;
@@ -284,6 +302,14 @@ void Gameplay::update(Events::updateEvent event)
 		SDL_SetTextureAlphaMod(background, 60);
 		SDL_RenderCopyF(Game::renderer, background, NULL, &bruh);
 	}
+
+	if (gf->finished)
+	{
+		gf->loop = true;
+		gf->play("GF Dancing Beat", 24);
+	}
+
+	gf->draw();
 
 	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 150);
 	SDL_RenderFillRectF(Game::renderer, &laneUnderway);
@@ -351,7 +377,6 @@ void Gameplay::update(Events::updateEvent event)
 			SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
 		}
 	}
-
 
 	// spawning shit
 
@@ -533,6 +558,23 @@ void Gameplay::update(Events::updateEvent event)
 
 				float diff = (wh - positionInSong) - Game::save->GetDouble("offset");
 
+				gf->loop = false;
+				switch (note->lane)
+				{
+				case 0:
+					gf->play("GF left note", 24);
+					break;
+				case 1:
+					gf->play("GF Down Note", 24);
+					break;
+				case 2:
+					gf->play("GF Up Note", 24);
+					break;
+				case 3:
+					gf->play("GF Right Note", 24);
+					break;
+				}
+
 				std::string format = std::to_string(diff - fmod(diff, 0.01));
 				format.erase(format.find_last_not_of('0') + 1, std::string::npos);
 
@@ -660,6 +702,8 @@ void Gameplay::update(Events::updateEvent event)
 }
 void Gameplay::cleanUp()
 {
+	gf->destroy();
+	delete gf;
 	Judgement->destroy();
 	Combo->destroy();
 	Accuracy->destroy();
@@ -764,6 +808,22 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				if (Game::save->GetBool("hitsounds"))
 					BASS_ChannelPlay(clap, true);
 				
+				gf->loop = false;
+				switch (closestObject->lane)
+				{
+				case 0:
+					gf->play("GF left note", 24);
+					break;
+				case 1:
+					gf->play("GF Down Note", 24);
+					break;
+				case 2:
+					gf->play("GF Up Note", 24);
+					break;
+				case 3:
+					gf->play("GF Right Note", 24);
+					break;
+				}
 
 				closestObject->active = false;
 				if (closestObject->type != Note_Head)

@@ -2,6 +2,7 @@
 #include "MainMenu.h"
 #include <windows.h>
 #include "AvgSprite.h"
+#include "OffsetTester.h"
 
 MainMenu::MainMenu()
 {
@@ -91,6 +92,11 @@ void MainMenu::keyDown(SDL_KeyboardEvent event)
 			Game::currentMenu = new SettingsMenu();
 			break;
 		}
+	}
+	if (event.keysym.sym == SDLK_0)
+	{
+		removeAll();
+		Game::currentMenu = new OffsetTester();
 	}
 	if (event.keysym.sym == SDLK_UP)
 	{

@@ -105,6 +105,7 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 
 				bool condition = false;
 
+
 				if (downscroll)
 					condition = tile.rect.y < receptor.y;
 				else
@@ -134,7 +135,7 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 
 
 		if (active)
-			switch (lane)
+			switch (lane % 4)
 			{
 			case 0:
 				SDL_RenderCopyExF(Game::renderer, texture, NULL, &rect, 90, NULL, SDL_FLIP_NONE);

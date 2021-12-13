@@ -15,6 +15,9 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
 
     bool readingNotes = false;
     bool readingBPMS = false;
+
+    bool danceDouble = false;
+
     int bpmIndex = 0;
 
     int diffIndex = 0;
@@ -32,7 +35,14 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
         bool cont = true;
 
         if (iss.str().find("//") != std::string::npos)
+        {
             cont = false;
+        }
+        if (iss.str().find("dance-double") && meta.difficulties.size() != 0)
+        {
+            danceDouble = true;
+            meta.difficulties.back().isDouble = danceDouble;
+        }
 
         if (iss.str().find(",") != std::string::npos)
             cont = true;
@@ -111,6 +121,7 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                             diff.charter = "n/a";
                             diff.name = "n/a";
                             meta.difficulties.push_back(diff);
+                            danceDouble = false;
                         }
                         if (stuff.size() != 1)
                         {

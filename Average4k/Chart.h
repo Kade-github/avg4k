@@ -27,6 +27,7 @@ struct note {
 
 struct difficulty
 {
+	bool isDouble;
 	std::string name;
 	std::string charter;
 	std::vector<note> notes;

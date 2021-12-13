@@ -329,5 +329,8 @@
     <ClInclude Include="pugixml.hpp">
       <Filter>Source Files\Average4k\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="OffsetTester.h">
+      <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

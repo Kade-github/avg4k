@@ -12,7 +12,7 @@ void ReceptorObject::draw() {
 	rect.y = y;
 
 
-	switch (type)
+	switch (type % 4)
 	{
 	case 0:
 		SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->receptor, NULL, &rect, 90, NULL, SDL_FLIP_NONE);

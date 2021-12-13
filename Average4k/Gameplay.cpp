@@ -22,16 +22,16 @@ void Gameplay::initControls()
 
 	gameplayControl left;
 	left.code = SDLK_d;
-	left.lane = 0;
+	left.lane = 4;
 	gameplayControl down;
 	down.code = SDLK_f;
-	down.lane = 1;
+	down.lane = 5;
 	gameplayControl up;
 	up.code = SDLK_j;
-	up.lane = 2;
+	up.lane = 6;
 	gameplayControl right;
 	right.code = SDLK_k;
-	right.lane = 3;
+	right.lane = 7;
 
 	controls.push_back(left);
 	controls.push_back(down);
@@ -58,7 +58,7 @@ void Gameplay::updateAccuracy(double hitWorth)
 	if (floor(accuracy) == accuracy)
 		format.erase(format.find_last_not_of('.') + 1, std::string::npos);
 
-	Accuracy->setText(format + "%\n\nMarvelous: " + std::to_string(Marvelous) + "\nPerfect : " + std::to_string(Perfect) + "\nGreat : " + std::to_string(Great) + "\nEh : " + std::to_string(Eh) + "\nYikes: " + std::to_string(Yikes) + "\nCombo Breaks: " + std::to_string(Misses));
+	//Accuracy->setText(format + "%\n\nMarvelous: " + std::to_string(Marvelous) + "\nPerfect : " + std::to_string(Perfect) + "\nGreat : " + std::to_string(Great) + "\nEh : " + std::to_string(Eh) + "\nYikes: " + std::to_string(Yikes) + "\nCombo Breaks: " + std::to_string(Misses));
 }
 
 void Gameplay::removeNote(NoteObject* object)
@@ -160,10 +160,6 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 	}
 }
 
-void endGF() {
-
-}
-
 Gameplay::Gameplay()
 {
 	initControls();
@@ -172,13 +168,19 @@ Gameplay::Gameplay()
 
 	downscroll = Game::save->GetBool("downscroll");
 
-	gf = new SparrowAtlas("assets/holiday/gf.webp", "assets/holiday/gf.xml", 24, "GF Dancing Beat");
-	gf->x = (Game::gameWidth / 2) - 120;
-	gf->y = 200;
+	gf = new SparrowAtlas("assets/holiday/GF_assets.png", "assets/holiday/GF_assets.xml", 24, "GF Dancing Beat");
+	gf->x = (Game::gameWidth / 2) - 300;
+	gf->y = 135;
 	gf->loop = true;
 
-	gf->w = gf->w * 0.8;
-	gf->h = gf->h * 0.8;
+	bf = new SparrowAtlas("assets/holiday/BOYFRIEND.png", "assets/holiday/BOYFRIEND.xml",24,"BF idle dance");
+	bf->x = (Game::gameWidth / 2) + 185;
+	bf->y = 400;
+	bf->loop = true;
+
+	bf->scale = 0.8;
+
+	gf->scale = 0.8;
 
 	//bf = new SparrowAtlas("assets/holiday/BOYFRIEND.png", "assets/holiday/BOYFRIEND.xml", 24, "BF idle dance");
 
@@ -199,7 +201,7 @@ Gameplay::Gameplay()
 
 	std::string bg = SongSelect::currentChart->meta.folder + "/" + SongSelect::currentChart->meta.background;
 
-	background = IMG_LoadTexture(Game::renderer,bg.c_str());
+	background = IMG_LoadTexture(Game::renderer,"assets/holiday/bg.png");
 
 	float bassRate = (rate * 100) - 100;
 
@@ -234,18 +236,31 @@ Gameplay::Gameplay()
 	Combo = new Text(Game::gameWidth / 2, Game::gameHeight / 2 + 40, " ", 24);
 	Combo->create();
 
-	Accuracy = new Text(230, (Game::gameHeight / 2) - 300, "N/A\n\nMarvelous: " + std::to_string(Marvelous) + "\nPerfect: " + std::to_string(Perfect) + "\nGreat: " + std::to_string(Great) + "\nEh: " + std::to_string(Eh) + "\nYikes: " + std::to_string(Yikes) + "\nCombo Breaks: " + std::to_string(Misses), 24);
-	Accuracy->create();
+	//Accuracy = new Text(230, (Game::gameHeight / 2) - 300, "N/A\n\nMarvelous: " + std::to_string(Marvelous) + "\nPerfect: " + std::to_string(Perfect) + "\nGreat: " + std::to_string(Great) + "\nEh: " + std::to_string(Eh) + "\nYikes: " + std::to_string(Yikes) + "\nCombo Breaks: " + std::to_string(Misses), 24);
+	//Accuracy->create();
 
 	for (int i = 0; i < 4; i++)
 	{
 		ReceptorObject* r;
 		if (downscroll)
 			r = new ReceptorObject(
-				(Game::gameWidth / 2) - 146 + ((76) * i),(Game::gameHeight / 2) + 250, i);
+				((Game::gameWidth / 2) - 146 + ((76) * i)) - 300,(Game::gameHeight / 2) + 250, i);
 		else
 			r = new ReceptorObject(
-				(Game::gameWidth / 2) - 146 + ((76) * i), (Game::gameHeight / 2) - 300, i);
+				((Game::gameWidth / 2) - 146 + ((76) * i)) - 300, (Game::gameHeight / 2) - 300, i);
+
+		receptors.push_back(r);
+	}
+
+	for (int i = 4; i < 8; i++)
+	{
+		ReceptorObject* r;
+		if (downscroll)
+			r = new ReceptorObject(
+				((Game::gameWidth / 2) - 146 + ((76) * (i % 4))) + 245, (Game::gameHeight / 2) + 250, i);
+		else
+			r = new ReceptorObject(
+				((Game::gameWidth / 2) - 146 + ((76) * (i % 4))) + 245, (Game::gameHeight / 2) - 300, i);
 
 		receptors.push_back(r);
 	}
@@ -280,8 +295,8 @@ void Gameplay::update(Events::updateEvent event)
 
 	SDL_FRect bruh;
 	bruh.x = 0;
-	bruh.y = -200;
-	bruh.h = 1280;
+	bruh.y = 0;
+	bruh.h = 720;
 	bruh.w = 1280;
 
 
@@ -299,21 +314,28 @@ void Gameplay::update(Events::updateEvent event)
 	if (background)
 	{
 		SDL_SetTextureBlendMode(background, SDL_BLENDMODE_BLEND);
-		SDL_SetTextureAlphaMod(background, 60);
 		SDL_RenderCopyF(Game::renderer, background, NULL, &bruh);
 	}
 
-	if (gf->finished)
+	if (gf->finished && SDL_GetTicks() - gf->startTime > 500)
 	{
 		gf->loop = true;
-		gf->play("GF Dancing Beat", 24);
+		gf->play("GF Dancing Beat", 24,0,0);
+	}
+
+	if (bf->finished)
+	{
+		bf->loop = true;
+		bf->play("BF idle dance", 24,0,0);
 	}
 
 	gf->draw();
 
-	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 150);
+	bf->draw();
+
+	/*SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 150);
 	SDL_RenderFillRectF(Game::renderer, &laneUnderway);
-	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
+	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);*/
 
 
 	if (!SongSelect::currentChart)
@@ -332,9 +354,9 @@ void Gameplay::update(Events::updateEvent event)
 	overlayForAccuracy.h = Accuracy->surfH;
 
 
-	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 128);
+	/*SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 128);
 	SDL_RenderFillRectF(Game::renderer, &overlayForAccuracy);
-	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
+	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);*/
 
 	// multiplayer shit
 
@@ -444,11 +466,8 @@ void Gameplay::update(Events::updateEvent event)
 
 					double beat = SongSelect::currentChart->getBeatFromTime(i, holdSeg);
 
-					if (beat <= object->beat + 0.08)
+					if (beat <= object->beat + 0.04)
 						continue;
-
-					if (beat >= object->endBeat - 0.4)
-						break;
 
 					float whHold = SongSelect::currentChart->getTimeFromBeat(beat, holdSeg);
 
@@ -550,7 +569,7 @@ void Gameplay::update(Events::updateEvent event)
 		{
 			float wh = SongSelect::currentChart->getTimeFromBeat(note->beat, SongSelect::currentChart->getSegmentFromBeat(note->beat)) * 1000;
 
-			if ((wh + Game::save->GetDouble("offset")) - positionInSong < 2 && note->active && botplay)
+			if ((wh + Game::save->GetDouble("offset")) - positionInSong < 2 && note->active && note->lane < 4)
 			{
 				if (Game::save->GetBool("hitsounds"))
 					BASS_ChannelPlay(clap, true);
@@ -562,20 +581,22 @@ void Gameplay::update(Events::updateEvent event)
 				switch (note->lane)
 				{
 				case 0:
-					gf->play("GF left note", 24);
+					gf->play("GF left note", 24, 0, 0);
 					break;
 				case 1:
-					gf->play("GF Down Note", 24);
+					gf->play("GF Down Note", 24, 0, -8);
 					break;
 				case 2:
-					gf->play("GF Up Note", 24);
+					gf->play("GF Up Note", 24, 0, 14);
 					break;
 				case 3:
-					gf->play("GF Right Note", 24);
+					gf->play("GF Right Note", 24, 0, -17);
 					break;
 				}
 
-				std::string format = std::to_string(diff - fmod(diff, 0.01));
+				note->active = false;
+
+				/*std::string format = std::to_string(diff - fmod(diff, 0.01));
 				format.erase(format.find_last_not_of('0') + 1, std::string::npos);
 
 				Judgement->setText("Botplay (" + format + "ms)");
@@ -584,7 +605,6 @@ void Gameplay::update(Events::updateEvent event)
 				(*Judgement).color.b = 255;
 				Marvelous++;
 				updateAccuracy(1);
-				note->active = false;
 
 				combo++;
 
@@ -594,7 +614,7 @@ void Gameplay::update(Events::updateEvent event)
 
 				Combo->setText(std::to_string(combo));
 				Combo->setX((Game::gameWidth / 2) - (Combo->surfW / 2));
-				Combo->setY((Game::gameHeight / 2) + 40);
+				Combo->setY((Game::gameHeight / 2) + 40);*/
 
 			}
 
@@ -602,18 +622,36 @@ void Gameplay::update(Events::updateEvent event)
 
 			if (note->type == Note_Head)
 			{
-				if (keys[note->lane] || botplay) // holding that lane!
+				if (keys[note->lane] || note->lane < 4) // holding that lane!
 				{
 					for (int i = 0; i < note->heldTilings.size(); i++)
 					{
 						holdTile& tile = note->heldTilings[i];
 						float wh = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat)) * 1000;
-						if ((wh + Game::save->GetDouble("offset")) - positionInSong <= Judge::hitWindows[4] && !tile.fucked)
+						if ((wh + Game::save->GetDouble("offset")) - positionInSong <= Judge::hitWindows[1] && !tile.fucked)
 						{
 							tile.active = false;
+							if (note->lane < 4)
+							{
+								receptors[note->lane]->lightUpTimer = 100;
+								switch (note->lane)
+								{
+								case 0:
+									gf->play("GF left note", 24, 0, 0);
+									break;
+								case 1:
+									gf->play("GF Down Note", 24, 0, -8);
+									break;
+								case 2:
+									gf->play("GF Up Note", 24, 0, 14);
+									break;
+								case 3:
+									gf->play("GF Right Note", 24, 0, -17);
+									break;
+								}
+							}
 						}
-						if (botplay && ((wh + Game::save->GetDouble("offset")) - positionInSong < 2))
-							receptors[note->lane]->lightUpTimer = 100;
+						
 					}
 				}
 			}
@@ -668,7 +706,7 @@ void Gameplay::update(Events::updateEvent event)
 					tile.fucked = true;
 			}
 
-			if (note->lane < 4 && note->lane >= 0)
+			if (note->lane >= 0)
 			{
 				SDL_FRect receptorRect;
 				receptorRect.w = 64;
@@ -703,10 +741,12 @@ void Gameplay::update(Events::updateEvent event)
 void Gameplay::cleanUp()
 {
 	gf->destroy();
+	bf->destroy();
+	delete bf;
 	delete gf;
 	Judgement->destroy();
 	Combo->destroy();
-	Accuracy->destroy();
+	//Accuracy->destroy();
 	positionAndBeats->destroy();
 
 	for (int i = 0; i < spawnedNotes.size(); i++)
@@ -808,20 +848,20 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				if (Game::save->GetBool("hitsounds"))
 					BASS_ChannelPlay(clap, true);
 				
-				gf->loop = false;
-				switch (closestObject->lane)
+				bf->loop = false;
+				switch (closestObject->lane % 4)
 				{
 				case 0:
-					gf->play("GF left note", 24);
+					bf->play("BF NOTE LEFT", 24, 9, -7);
 					break;
 				case 1:
-					gf->play("GF Down Note", 24);
+					bf->play("BF NOTE DOWN", 24, -16, -40);
 					break;
 				case 2:
-					gf->play("GF Up Note", 24);
+					bf->play("BF NOTE UP", 24, -31, 23);
 					break;
 				case 3:
-					gf->play("GF Right Note", 24);
+					bf->play("BF NOTE RIGHT", 24, -34, -5);
 					break;
 				}
 

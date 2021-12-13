@@ -3,8 +3,15 @@
 #include "pugixml.hpp"
 #include <SDL_image.h>
 #include "Game.h"
+
+struct sframe {
+	SDL_FRect rect;
+	int offsetX;
+	int offsetY;
+};
+
 struct sparrowFrame {
-	std::map<std::string, SDL_FRect> frameVector;
+	std::map<std::string, sframe> frameVector;
 	
 };
 
@@ -16,13 +23,24 @@ public:
 	std::map<std::string,sparrowFrame> frames;
 
 	std::string currentAnim;
+	std::string startingAnim;
 
 	float x;
 	float y;
 	int w;
 	int h;
 
+
+	bool visible;
+
+	bool showOnion;
+
+	float scale;
+
 	int startTime;
+
+	int _offsetx;
+	int _offsety;
 
 	bool loop;
 
@@ -38,6 +56,9 @@ public:
 		t = IMG_LoadTexture(Game::renderer, path.c_str());
 		pugi::xml_document doc;
 		doc.load_file(xmlPath.c_str());
+		startingAnim = startAnim;
+		showOnion = false;
+		visible = true;
 
 		for (pugi::xml_node node : doc.child("TextureAtlas").children())
 		{
@@ -53,29 +74,43 @@ public:
 			SDL_FRect rect;
 			rect.x = node.attribute("x").as_int();
 			rect.y = node.attribute("y").as_int();
-			rect.w = node.attribute("width").as_int();
-			rect.h = node.attribute("height").as_int();
+
+			if (node.attribute("frameWidth").as_int() != 0)
+				rect.w = node.attribute("frameWidth").as_int();
+			if (node.attribute("frameHeight").as_int() != 0)
+				rect.h = node.attribute("frameHeight").as_int();
 
 
-			sf.frameVector[name.substr(name.size() - 4, 4)] = rect;
+			sframe f;
+
+			f.rect = rect;
+			f.offsetX = node.attribute("frameX").as_int();
+			f.offsetY = node.attribute("frameY").as_int();
+
+
+			sf.frameVector[name.substr(name.size() - 4, 4)] = f;
 
 
 			frames[firstPart] = sf;
 		}
 
 		currentAnim = startAnim;
-		w = frames[currentAnim].frameVector["0000"].w;
-		h = frames[currentAnim].frameVector["0000"].h;
+		w = frames[currentAnim].frameVector["0000"].rect.w;
+		h = frames[currentAnim].frameVector["0000"].rect.h;
 
-		play(currentAnim, _fps);
+		scale = 1;
+
+		play(currentAnim, _fps,0,0);
 	}
 
-	void play(std::string name, int newFPS)
+	void play(std::string name, int newFPS, int offsetX, int offsetY)
 	{
 		startTime = SDL_GetTicks();
 		currentAnim = name;
 		fps = newFPS;
 		finished = false;
+		_offsetx = offsetX;
+		_offsety = offsetY;
 		frame = 0;
 	}
 
@@ -107,19 +142,47 @@ public:
 				frame = frame % (frames[currentAnim].frameVector.size() - 1);
 		}
 
+		int onionFrame = ((SDL_GetTicks() - startTime) * fps / 1000);
+		onionFrame = onionFrame % (frames[startingAnim].frameVector.size() - 1);
 
-		SDL_Rect source;
-		source.x = frames[currentAnim].frameVector[buffer].x;
-		source.y = frames[currentAnim].frameVector[buffer].y;
-		source.w = frames[currentAnim].frameVector[buffer].w;
-		source.h = frames[currentAnim].frameVector[buffer].h;
-		SDL_FRect dest;
-		dest.w = source.w != w ? w : source.w;
-		dest.h = source.h != h ? h : source.h;
-		dest.x = x;
-		dest.y = y;
+		char obuffer[4];
+		left_fill_zeros(obuffer, std::to_string(onionFrame).c_str(), 4);
 
-		SDL_RenderCopyF(Game::renderer, t, &source, &dest);
+		if (showOnion && visible)
+		{
+			sframe f = frames[startingAnim].frameVector[obuffer];
+
+			SDL_Rect source;
+			source.x = f.rect.x;
+			source.y = f.rect.y;
+			source.w = f.rect.w;
+			source.h = f.rect.h;
+			SDL_FRect dest;
+			dest.w = source.w * scale;
+			dest.h = source.h * scale;
+			dest.x = x - f.offsetX;
+			dest.y = y - f.offsetY;
+
+			SDL_SetTextureAlphaMod(t, 128);
+			SDL_RenderCopyF(Game::renderer, t, &source, &dest);
+			SDL_SetTextureAlphaMod(t, 255);
+		}
+
+		{
+			SDL_Rect source;
+			source.x = frames[currentAnim].frameVector[buffer].rect.x;
+			source.y = frames[currentAnim].frameVector[buffer].rect.y;
+			source.w = frames[currentAnim].frameVector[buffer].rect.w;
+			source.h = frames[currentAnim].frameVector[buffer].rect.h;
+			SDL_FRect dest;
+			dest.w = source.w * scale;
+			dest.h = source.h * scale;
+			dest.x = (x - _offsetx) - frames[currentAnim].frameVector[buffer].offsetX;
+			dest.y = (y - _offsety) - frames[currentAnim].frameVector[buffer].offsetY;
+
+			if (visible)
+				SDL_RenderCopyF(Game::renderer, t, &source, &dest);
+		}
 	}
 
 

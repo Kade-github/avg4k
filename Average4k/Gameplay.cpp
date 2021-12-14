@@ -464,7 +464,7 @@ void Gameplay::update(Events::updateEvent event)
 						rect.y = y;
 						rect.x = object->rect.x;
 						rect.w = 64;
-						rect.h = 65;
+						rect.h = 68;
 						tile.rect = rect;
 						tile.beat = beat;
 						tile.time = i;

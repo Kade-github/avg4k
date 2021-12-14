@@ -411,8 +411,6 @@ void Gameplay::update(Events::updateEvent event)
 
 			if (object->type == Note_Head)
 			{
-				float noteOffset = (0.45 * Game::save->GetDouble("scrollspeed")) + Game::save->GetDouble("offset");
-
 				for (int i = std::floorf(object->time); i < std::floorf(object->endTime); i++)
 				{
 					bpmSegment holdSeg = SongSelect::currentChart->getSegmentFromTime(i);
@@ -429,15 +427,7 @@ void Gameplay::update(Events::updateEvent event)
 					if (SongSelect::currentChart->meta.chartType == 1)
 						diff = whHold - object->time;
 
-					noteOffset = (bps * diff) * 64;
-
-					if (object->heldTilings.size() != 0)
-					{
-						diff = whHold - (object->heldTilings.back().time / 1000);
-
-						if (SongSelect::currentChart->meta.chartType == 1)
-							diff = whHold - object->heldTilings.back().time;
-					}
+					float noteOffset = (bps * diff) * 64;
 
 					float y = 0;
 					float yDiff = 0;
@@ -579,7 +569,6 @@ void Gameplay::update(Events::updateEvent event)
 			for (int i = 0; i < note->heldTilings.size(); i++)
 			{
 				holdTile& tile = note->heldTilings[i];
-
 
 				auto whHold = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat)) * 1000;
 				float diff = whHold - positionInSong;

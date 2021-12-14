@@ -120,7 +120,7 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 
 				bool condition = false;
 
-
+				// pov you're clipping
 
 				SDL_Rect source;
 				source.x = 0;
@@ -139,7 +139,7 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 				if (downscroll)
 					condition = copy.y < l.h + 64;
 				else
-					condition = copy.y > l.h - 64;
+					condition = copy.y > l.y - 64;
 
 				SDL_RenderSetClipRect(Game::renderer, &l);
 

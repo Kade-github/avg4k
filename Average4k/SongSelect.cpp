@@ -147,6 +147,9 @@ void SongSelect::updateList() {
 
 		songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
 		songName->centerX();
+
+		steam->setText(listOfCharts[selectedIndex].steam ? "Steam Workshop" : "Local Storage");
+		steam->centerX();
 	}
 }
 
@@ -199,6 +202,9 @@ void SongSelect::keyDown(SDL_KeyboardEvent event)
 			songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
 			songName->centerX();
 
+			steam->setText(listOfCharts[selectedIndex].steam ? "Steam Workshop" : "Local Storage");
+			steam->centerX();
+
 			break;
 		case SDLK_UP:
 			selectedIndex--;
@@ -220,6 +226,9 @@ void SongSelect::keyDown(SDL_KeyboardEvent event)
 			songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
 			songName->centerX();
 
+			steam->setText(listOfCharts[selectedIndex].steam ? "Steam Workshop" : "Local Storage");
+			steam->centerX();
+
 			break;
 		case SDLK_LEFT:
 			if (!currentChart)
@@ -232,6 +241,7 @@ void SongSelect::keyDown(SDL_KeyboardEvent event)
 
 			songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
 			songName->centerX();
+
 
 			break;
 		case SDLK_RIGHT:
@@ -299,7 +309,9 @@ SongSelect::SongSelect()
 	infoText = new Text(Game::gameWidth / 2, (Game::gameHeight / 2) - 275, "", 24);
 	infoText->create();
 	add(infoText);
-
+	steam = new Text(Game::gameWidth / 2, (Game::gameHeight / 2) - 170, "", 24);
+	steam->create();
+	add(steam);
 
 	selectedSong = (song*)malloc(sizeof(song)); // REMEMBER TO FREE THIS KADE PLEASE (- kade from the past)
 

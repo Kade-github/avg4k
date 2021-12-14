@@ -229,7 +229,7 @@ Gameplay::Gameplay()
 		else
 			r = new ReceptorObject(
 				(Game::gameWidth / 2) - 146 + ((76) * i), (Game::gameHeight / 2) - 300, i);
-
+		r->lightUpTimer = 0;
 		receptors.push_back(r);
 	}
 
@@ -263,8 +263,8 @@ void Gameplay::update(Events::updateEvent event)
 
 	SDL_FRect bruh;
 	bruh.x = 0;
-	bruh.y = -200;
-	bruh.h = 1280;
+	bruh.y = 0;
+	bruh.h = 720;
 	bruh.w = 1280;
 
 
@@ -563,11 +563,12 @@ void Gameplay::update(Events::updateEvent event)
 					{
 						holdTile& tile = note->heldTilings[i];
 						float wh = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat)) * 1000;
-						if ((wh + Game::save->GetDouble("offset")) - positionInSong <= Judge::hitWindows[4] && !tile.fucked)
+						float offset = (wh + Game::save->GetDouble("offset"));
+						if (offset - positionInSong <= Judge::hitWindows[4] && !tile.fucked)
 						{
 							tile.active = false;
 						}
-						if (botplay && ((wh + Game::save->GetDouble("offset")) - positionInSong < 2))
+						if (botplay && offset - positionInSong < 2)
 							receptors[note->lane]->lightUpTimer = 100;
 					}
 				}
@@ -582,27 +583,27 @@ void Gameplay::update(Events::updateEvent event)
 				bool condition = false;
 
 				if (downscroll)
-					condition = tile.rect.y > receptors[note->lane]->y - 15;
+					condition = tile.rect.y > receptors[note->lane]->y + 32;
 				else
-					condition = tile.rect.y < receptors[note->lane]->y + 15;
+					condition = tile.rect.y < receptors[note->lane]->y - 32;
 
-				if (!tile.active && condition)
-				{
-					note->heldTilings.erase(
-							std::remove_if(note->heldTilings.begin(), note->heldTilings.end(), [&](holdTile& const nn) {
-								return nn.beat == tile.beat;
-								}),
-							note->heldTilings.end());
-				}
 				auto whHold = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat)) * 1000;
 				float diff = whHold - positionInSong;
 
-				if (diff < -Judge::hitWindows[4] && tile.active && !tile.fucked)
+				if (diff < -Judge::hitWindows[2] && tile.active && !tile.fucked)
 				{
 					std::cout << note->lane << " fucked" << std::endl;
 					miss(note);
 					fuckOver = true;
 					tile.fucked = true;
+				}
+				if (diff < -(Judge::hitWindows[2] + 5))
+				{
+					note->heldTilings.erase(
+						std::remove_if(note->heldTilings.begin(), note->heldTilings.end(), [&](holdTile& const nn) {
+							return nn.beat == tile.beat;
+							}),
+						note->heldTilings.end());
 				}
 
 				if (diff < -200 && tile.fucked)

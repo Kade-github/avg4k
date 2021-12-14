@@ -1,6 +1,7 @@
 #include "NoteObject.h"
 #include "Gameplay.h"
 #include <mutex>
+#include <boost/algorithm/clamp.hpp>
 #include "Judge.h"
 #include "SongSelect.h"
 
@@ -106,9 +107,33 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 				bool condition = false;
 
 				if (downscroll)
-					condition = tile.rect.y < receptor.y;
+					condition = tile.rect.y < receptor.y + 32;
 				else
-					condition = tile.rect.y > receptor.y;
+					condition = tile.rect.y > receptor.y - 32;
+
+				SDL_Rect source;
+				source.x = 0;
+				source.y = 0;
+				source.w = 64;
+				source.h = 64;
+
+				SDL_FRect copy = tile.rect;
+
+				float cla = ((receptor.y + 32) - tile.rect.y) / 64;
+
+				float clip = boost::algorithm::clamp(cla, 0, 1);
+				source.y += source.h * clip;
+				source.h *= (1.0f - clip);
+				copy.y += copy.h * clip;
+				copy.h *= (1.0f - clip);
+
+				SDL_Rect l;
+				l.x = 0;
+				l.y = (receptor.y + 32);
+				l.w = Game::gameWidth;
+				l.h = Game::gameHeight - (receptor.y + 32);
+
+				SDL_RenderSetClipRect(Game::renderer, &l);
 
 				if (tile.active || tile.fucked || condition)
 				{
@@ -117,18 +142,20 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 
 						if (!downscroll)
 						{
-							SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->holdend, NULL, &tile.rect, 0, NULL, SDL_FLIP_VERTICAL);
+							SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->holdend, NULL, &copy, 0, NULL, SDL_FLIP_VERTICAL);
 						}
 						else
 						{
-							SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->holdend, NULL, &tile.rect, 0, NULL, SDL_FLIP_NONE);
+							SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->holdend, NULL, &copy, 0, NULL, SDL_FLIP_NONE);
 						}
 					}
 					else
 					{
-						SDL_RenderCopyF(Game::renderer, Gameplay::noteskin->hold, NULL, &tile.rect);
+						SDL_RenderCopyF(Game::renderer, Gameplay::noteskin->hold, &source, &copy);
 					}
 				}
+
+				SDL_RenderSetClipRect(Game::renderer, NULL);
 			}
 		}
 

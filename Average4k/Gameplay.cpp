@@ -419,11 +419,8 @@ void Gameplay::update(Events::updateEvent event)
 
 					double beat = SongSelect::currentChart->getBeatFromTime(i, holdSeg);
 
-					if (beat <= object->beat + 0.08)
+					if (beat <= object->beat + 0.04)
 						continue;
-
-					if (beat >= object->endBeat - 0.4)
-						break;
 
 					float whHold = SongSelect::currentChart->getTimeFromBeat(beat, holdSeg);
 

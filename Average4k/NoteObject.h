@@ -22,6 +22,10 @@ class NoteObject
 	public:
 		NoteObject();
 		~NoteObject() {};
+
+		Text* debugText;
+
+		bool debug = false;
 		double beat = 0;
 		float endTime = 0;
 		double endBeat = 0;

@@ -580,12 +580,6 @@ void Gameplay::update(Events::updateEvent event)
 			{
 				holdTile& tile = note->heldTilings[i];
 
-				bool condition = false;
-
-				if (downscroll)
-					condition = tile.rect.y > receptors[note->lane]->y + 32;
-				else
-					condition = tile.rect.y < receptors[note->lane]->y - 32;
 
 				auto whHold = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat)) * 1000;
 				float diff = whHold - positionInSong;
@@ -597,7 +591,7 @@ void Gameplay::update(Events::updateEvent event)
 					fuckOver = true;
 					tile.fucked = true;
 				}
-				if (diff < -(Judge::hitWindows[2] + 5))
+				if (diff < -(Judge::hitWindows[4]))
 				{
 					note->heldTilings.erase(
 						std::remove_if(note->heldTilings.begin(), note->heldTilings.end(), [&](holdTile& const nn) {
@@ -605,16 +599,6 @@ void Gameplay::update(Events::updateEvent event)
 							}),
 						note->heldTilings.end());
 				}
-
-				if (diff < -200 && tile.fucked)
-				{
-					note->heldTilings.erase(
-						std::remove_if(note->heldTilings.begin(), note->heldTilings.end(), [&](holdTile& const nn) {
-							return nn.beat == tile.beat;
-							}),
-						note->heldTilings.end());
-				}
-
 			}
 
 			for (int i = 0; i < note->heldTilings.size(); i++)
@@ -631,6 +615,7 @@ void Gameplay::update(Events::updateEvent event)
 				receptorRect.h = 64;
 				receptorRect.x = receptors[note->lane]->x;
 				receptorRect.y = receptors[note->lane]->y;
+				note->debug = debug;
 				note->draw(positionInSong, beat, receptorRect);
 			}
 			
@@ -706,6 +691,9 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				return;
 			botplay = !botplay;
 			return;
+		case SDLK_F2:
+			debug = !debug;
+			break;
 		case SDLK_BACKQUOTE:
 			if (MultiplayerLobby::inLobby)
 				return;

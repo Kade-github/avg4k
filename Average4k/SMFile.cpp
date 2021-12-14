@@ -21,7 +21,7 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
     float beat = 0;
     int measureIndex = 0;
 
-    std::vector < std::string >* measure = new std::vector < std::string >();
+    std::unique_ptr<std::vector < std::string >> measure = std::make_unique<std::vector<std::string>>();
 
     // I don't want to talk about this code >:(
 
@@ -182,7 +182,7 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                                         note.type = Note_Tail;
                                         break;
                                     case '4':
-                                        note.type == Note_Head;
+                                        note.type = Note_Head;
                                         break;
 
                                     }
@@ -195,8 +195,8 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                             rowIndex++;
                         }
 
-                        delete measure; // oh boy I love memory!
-                        measure = new std::vector < std::string >();
+
+                        measure = std::make_unique<std::vector<std::string>>();
                         measureIndex++;
                     }
 
@@ -206,8 +206,7 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                     readingNotes = false;
                     measureIndex = 0;
                     beat = 0;
-                    if (!measure)
-                        delete measure; // memory!!!
+                    
                 }
             }
         }

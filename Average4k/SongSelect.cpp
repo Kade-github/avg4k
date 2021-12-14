@@ -296,7 +296,7 @@ SongSelect::SongSelect()
 
 	currentChart = NULL;
 
-	infoText = new Text(Game::gameWidth / 2, (Game::gameHeight / 2) - 350, "", 24);
+	infoText = new Text(Game::gameWidth / 2, (Game::gameHeight / 2) - 275, "", 24);
 	infoText->create();
 	add(infoText);
 

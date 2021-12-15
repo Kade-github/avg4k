@@ -32,6 +32,7 @@ public:
     static Chart* currentChart;
 
 	Text* infoText;
+	Text* steam;
 
 	static int lastChecked;
 

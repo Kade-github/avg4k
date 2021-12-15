@@ -66,6 +66,8 @@ class Gameplay :
 
 		bool botplay = false;
 
+		bool debug = false;
+
 		int Marvelous = 0;
 		int Perfect = 0;
 		int Great = 0;

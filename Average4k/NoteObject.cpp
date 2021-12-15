@@ -1,6 +1,7 @@
 #include "NoteObject.h"
 #include "Gameplay.h"
 #include <mutex>
+#include <boost/algorithm/clamp.hpp>
 #include "Judge.h"
 #include "SongSelect.h"
 
@@ -8,12 +9,19 @@ NoteObject::NoteObject(){}
 
 void NoteObject::destroy()
 {
+	if (debugText)
+		debugText->die();
 	destroyed = true;
 	delete this;
 }
 
 void NoteObject::draw(float position, double b, SDL_FRect receptor)
 {
+	if (debug && !debugText)
+	{
+		debugText = new Text(0, 0, "", 18);
+		debugText->create();
+	}
 		bpmSegment bruh = SongSelect::currentChart->getSegmentFromBeat(beat);
 
 		float wh = SongSelect::currentChart->getTimeFromBeat(beat, bruh);
@@ -57,6 +65,13 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 			texture = Gameplay::noteskin->thirty2nd;
 		else
 			texture = Gameplay::noteskin->none;
+
+
+		SDL_Rect l;
+		l.x = 0;
+		l.y = (receptor.y + 32);
+		l.w = Game::gameWidth;
+		l.h = Game::gameHeight - (receptor.y + 32);
 
 		if (type == Note_Head)
 		{
@@ -105,30 +120,49 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 
 				bool condition = false;
 
-				if (downscroll)
-					condition = tile.rect.y < receptor.y;
-				else
-					condition = tile.rect.y > receptor.y;
+				// pov you're clipping
 
-				if (tile.active || tile.fucked || condition)
+				SDL_Rect source;
+				source.x = 0;
+				source.y = 0;
+				source.w = 64;
+				source.h = 64;
+
+				SDL_FRect copy = tile.rect;
+
+				if (downscroll)
+				{
+					l.y = 0;
+					l.h = receptor.y + 32;
+				}
+
+				if (downscroll)
+					condition = copy.y < l.h + 64;
+				else
+					condition = copy.y > l.y - 64;
+
+				SDL_RenderSetClipRect(Game::renderer, &l);
+
+				if (tile.active || condition)
 				{
 					if (i == heldTilings.size() - 1)
 					{
 
 						if (!downscroll)
-						{
-							SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->holdend, NULL, &tile.rect, 0, NULL, SDL_FLIP_VERTICAL);
-						}
+							SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->holdend, NULL, &copy, 0, NULL, SDL_FLIP_VERTICAL);
 						else
-						{
-							SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->holdend, NULL, &tile.rect, 0, NULL, SDL_FLIP_NONE);
-						}
+							SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->holdend, NULL, &copy, 0, NULL, SDL_FLIP_NONE);
 					}
 					else
 					{
-						SDL_RenderCopyF(Game::renderer, Gameplay::noteskin->hold, NULL, &tile.rect);
+						if (!downscroll)
+							SDL_RenderCopyF(Game::renderer, Gameplay::noteskin->hold, &source, &copy);
+						else
+							SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->hold, &source, &copy, 0, NULL, SDL_FLIP_VERTICAL);
 					}
 				}
+
+				SDL_RenderSetClipRect(Game::renderer, NULL);
 			}
 		}
 
@@ -149,5 +183,18 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 				SDL_RenderCopyExF(Game::renderer, texture, NULL, &rect, -90, NULL, SDL_FLIP_NONE);
 				break;
 			}
+
+		if (debug)
+		{
+			debugText->x = rect.x - 64;
+			debugText->y = rect.y - 32;
+			if (downscroll)
+				debugText->y = rect.y + 32;
+			debugText->setText(std::to_string(diff));
+
+			SDL_SetRenderDrawColor(Game::renderer, 255, 255, 255, 255);
+
+			SDL_RenderDrawRect(Game::renderer, &l);
+		}
 
 }

@@ -229,7 +229,7 @@ Gameplay::Gameplay()
 		else
 			r = new ReceptorObject(
 				(Game::gameWidth / 2) - 146 + ((76) * i), (Game::gameHeight / 2) - 300, i);
-
+		r->lightUpTimer = 0;
 		receptors.push_back(r);
 	}
 
@@ -263,8 +263,8 @@ void Gameplay::update(Events::updateEvent event)
 
 	SDL_FRect bruh;
 	bruh.x = 0;
-	bruh.y = -200;
-	bruh.h = 1280;
+	bruh.y = 0;
+	bruh.h = 720;
 	bruh.w = 1280;
 
 
@@ -411,19 +411,14 @@ void Gameplay::update(Events::updateEvent event)
 
 			if (object->type == Note_Head)
 			{
-				float noteOffset = (0.45 * Game::save->GetDouble("scrollspeed")) + Game::save->GetDouble("offset");
-
 				for (int i = std::floorf(object->time); i < std::floorf(object->endTime); i++)
 				{
 					bpmSegment holdSeg = SongSelect::currentChart->getSegmentFromTime(i);
 
 					double beat = SongSelect::currentChart->getBeatFromTime(i, holdSeg);
 
-					if (beat <= object->beat + 0.08)
+					if (beat <= object->beat + 0.05)
 						continue;
-
-					if (beat >= object->endBeat - 0.4)
-						break;
 
 					float whHold = SongSelect::currentChart->getTimeFromBeat(beat, holdSeg);
 
@@ -432,15 +427,7 @@ void Gameplay::update(Events::updateEvent event)
 					if (SongSelect::currentChart->meta.chartType == 1)
 						diff = whHold - object->time;
 
-					noteOffset = (bps * diff) * 64;
-
-					if (object->heldTilings.size() != 0)
-					{
-						diff = whHold - (object->heldTilings.back().time / 1000);
-
-						if (SongSelect::currentChart->meta.chartType == 1)
-							diff = whHold - object->heldTilings.back().time;
-					}
+					float noteOffset = (bps * diff) * 64;
 
 					float y = 0;
 					float yDiff = 0;
@@ -477,7 +464,7 @@ void Gameplay::update(Events::updateEvent event)
 						rect.y = y;
 						rect.x = object->rect.x;
 						rect.w = 64;
-						rect.h = 65;
+						rect.h = 68;
 						tile.rect = rect;
 						tile.beat = beat;
 						tile.time = i;
@@ -566,11 +553,12 @@ void Gameplay::update(Events::updateEvent event)
 					{
 						holdTile& tile = note->heldTilings[i];
 						float wh = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat)) * 1000;
-						if ((wh + Game::save->GetDouble("offset")) - positionInSong <= Judge::hitWindows[4] && !tile.fucked)
+						float offset = (wh + Game::save->GetDouble("offset"));
+						if (offset - positionInSong <= Judge::hitWindows[4] && !tile.fucked)
 						{
 							tile.active = false;
 						}
-						if (botplay && ((wh + Game::save->GetDouble("offset")) - positionInSong < 2))
+						if (botplay && offset - positionInSong < 2)
 							receptors[note->lane]->lightUpTimer = 100;
 					}
 				}
@@ -582,33 +570,17 @@ void Gameplay::update(Events::updateEvent event)
 			{
 				holdTile& tile = note->heldTilings[i];
 
-				bool condition = false;
-
-				if (downscroll)
-					condition = tile.rect.y > receptors[note->lane]->y - 15;
-				else
-					condition = tile.rect.y < receptors[note->lane]->y + 15;
-
-				if (!tile.active && condition)
-				{
-					note->heldTilings.erase(
-							std::remove_if(note->heldTilings.begin(), note->heldTilings.end(), [&](holdTile& const nn) {
-								return nn.beat == tile.beat;
-								}),
-							note->heldTilings.end());
-				}
 				auto whHold = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat)) * 1000;
 				float diff = whHold - positionInSong;
 
-				if (diff < -Judge::hitWindows[4] && tile.active && !tile.fucked)
+				if (diff < -Judge::hitWindows[2] && tile.active && !tile.fucked)
 				{
 					std::cout << note->lane << " fucked" << std::endl;
 					miss(note);
 					fuckOver = true;
 					tile.fucked = true;
 				}
-
-				if (diff < -200 && tile.fucked)
+				if (diff < -(Judge::hitWindows[4]))
 				{
 					note->heldTilings.erase(
 						std::remove_if(note->heldTilings.begin(), note->heldTilings.end(), [&](holdTile& const nn) {
@@ -616,7 +588,6 @@ void Gameplay::update(Events::updateEvent event)
 							}),
 						note->heldTilings.end());
 				}
-
 			}
 
 			for (int i = 0; i < note->heldTilings.size(); i++)
@@ -633,6 +604,7 @@ void Gameplay::update(Events::updateEvent event)
 				receptorRect.h = 64;
 				receptorRect.x = receptors[note->lane]->x;
 				receptorRect.y = receptors[note->lane]->y;
+				note->debug = debug;
 				note->draw(positionInSong, beat, receptorRect);
 			}
 			
@@ -708,6 +680,9 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				return;
 			botplay = !botplay;
 			return;
+		case SDLK_F2:
+			debug = !debug;
+			break;
 		case SDLK_BACKQUOTE:
 			if (MultiplayerLobby::inLobby)
 				return;

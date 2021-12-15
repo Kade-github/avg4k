@@ -44,6 +44,8 @@ float Game::startTick = 0;
 int Game::gameWidth = 0;
 int Game::gameHeight = 0;
 
+bool Game::startConnect = false;
+
 HANDLE multiThreadHandle;
 
 void Game::switchMenu(Menu* m)
@@ -76,7 +78,7 @@ void Game::update(Events::updateEvent update)
 	if (Multiplayer::connectedToServer)
 		SteamAPI_RunCallbacks();
 
-	if (!Multiplayer::connectedToServer)
+	if (!Multiplayer::connectedToServer && startConnect)
 	{
 		CloseHandle(multiThreadHandle);
 		multiThreadHandle = CreateThread(NULL, NULL, Multiplayer::connect, NULL, NULL, NULL);

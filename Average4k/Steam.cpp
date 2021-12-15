@@ -192,9 +192,7 @@ void Steam::uploadToItem(Chart* c, PublishedFileId_t id, std::string fileName)
 
     std::cout << "first tag: " << p->m_ppStrings[0] << std::endl;
 
-    SteamAPICall_t callT = SteamUGC()->SubmitItemUpdate(handle, "Upload");
-
-    UploadedItemCallback.Set(callT, this, &Steam::OnUploadedItemCallback);
+    SteamUGC()->SubmitItemUpdate(handle, "Upload");
 
     free(p);
 }

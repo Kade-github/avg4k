@@ -177,6 +177,8 @@ context_ptr on_tls_init(const char* hostname, websocketpp::connection_hdl) {
     return ctx;
 }
 
+bool firstConnection = false;
+
 DWORD WINAPI Multiplayer::connect(LPVOID agh)
 {
     connectedToServer = true;
@@ -191,20 +193,24 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
         while (true)
         {
            
-            c.set_access_channels(websocketpp::log::alevel::none);
-            c.clear_access_channels(websocketpp::log::alevel::all);
-            c.set_error_channels(websocketpp::log::elevel::none);
+            if (!firstConnection)
+            {
+                c.set_access_channels(websocketpp::log::alevel::none);
+                c.clear_access_channels(websocketpp::log::alevel::all);
+                c.set_error_channels(websocketpp::log::elevel::none);
 
-            // Initialize ASIO
-            c.init_asio();
+                // Initialize ASIO
+                c.init_asio();
 
-            // Register our message handler
-            std::cout << "Setting handlers" << std::endl;
-            c.set_message_handler(bind(&on_message, &c, ::_1, ::_2));
+                // Register our message handler
+                std::cout << "Setting handlers" << std::endl;
+                c.set_message_handler(bind(&on_message, &c, ::_1, ::_2));
 
-            c.set_tls_init_handler(bind(&on_tls_init, "titnoas.xyz", ::_1));
+                c.set_tls_init_handler(bind(&on_tls_init, "titnoas.xyz", ::_1));
 
-            std::cout << "handlers set" << std::endl;
+                std::cout << "handlers set" << std::endl;
+                firstConnection = true;
+            }
             websocketpp::lib::error_code ec;
             client::connection_ptr con = c.get_connection(url, ec);
             if (ec) {
@@ -276,8 +282,6 @@ void Multiplayer::OnSteamAuthTicket(EncryptedAppTicketResponse_t* pEncryptedAppT
     std::string bruh = std::string(buf,ticketLength);
 
     std::string encoded = macaron::Base64::Encode(bruh);
-
-    std::cout << "encoded ticket: " << encoded << std::endl;
 
     hello.SteamTicket = encoded;
 

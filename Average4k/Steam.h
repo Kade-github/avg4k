@@ -52,7 +52,8 @@ private:
 	void OnCreateItemCallback(CreateItemResult_t* result, bool bIOFailure);
 	CCallResult<Steam, SteamUGCQueryCompleted_t> Name;
 	void OnName(SteamUGCQueryCompleted_t* result, bool bIOFailure);
-	STEAM_CALLBACK(Steam, OnUploadedItemCallback, SubmitItemUpdateResult_t);
+	CCallResult<Steam, SubmitItemUpdateResult_t> UploadedItemCallback;
+
 	void OnUploadedItemCallback(SubmitItemUpdateResult_t* result, bool bIOFailure);
 	CCallResult<Steam, SteamUGCQueryCompleted_t> UGCAllQueryCallback;
 	void OnUGCAllQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFailure);

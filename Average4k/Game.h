@@ -15,6 +15,8 @@ public:
 
 	Menu* menuToDelete;
 
+	static bool startConnect;
+
 	void update(Events::updateEvent updateEvent);
 	void keyDown(SDL_KeyboardEvent event);
 	void keyUp(SDL_KeyboardEvent event);

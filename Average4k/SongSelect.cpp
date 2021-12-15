@@ -112,7 +112,6 @@ void SongSelect::updateList() {
 
 			s.steam = true;
 			
-			std::cout << "steam something" << std::endl;
 			s.steamHandle = st.details.m_nPublishedFileId;
 
 			std::string path(st.folder);

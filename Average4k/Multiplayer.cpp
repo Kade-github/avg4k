@@ -307,6 +307,7 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
     }
     catch (websocketpp::exception const& e) {
         std::cout << "exc: " << e.what() << std::endl;
+        Game::startConnect = true;
         loggedIn = false;
         connectedToServer = false;
     }

@@ -73,8 +73,8 @@ void Game::createGame()
 
 void Game::update(Events::updateEvent update)
 {
-
-	SteamAPI_RunCallbacks();
+	if (Multiplayer::connectedToServer)
+		SteamAPI_RunCallbacks();
 
 	if (!Multiplayer::connectedToServer)
 	{

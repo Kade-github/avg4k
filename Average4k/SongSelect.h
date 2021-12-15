@@ -18,6 +18,7 @@ struct song {
 	chartType type;
 	bool steam;
 	PublishedFileId_t steamHandle;
+	char folder[512];
 	char path[512];
 };
 
@@ -28,6 +29,8 @@ public:
 	SongSelect();
 
 	static song* selectedSong;
+
+	bool allowMove = true;
 
     static Chart* currentChart;
 
@@ -66,6 +69,8 @@ public:
 	int selectedIndex;
 
 	void updateList();
+
+	void onSteam(std::string s) override;
 
 	void update(Events::updateEvent event) override;
 	void keyDown(SDL_KeyboardEvent event) override;

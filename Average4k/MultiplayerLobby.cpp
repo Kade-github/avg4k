@@ -33,6 +33,16 @@ void MultiplayerLobby::refreshLobby(lobby l)
 		people.push_back(per);
 	}
 
+	for (person& p : people)
+	{
+		Color c;
+		c.r = 255;
+		c.g = 128;
+		c.b = 128;
+		p.display->color = c;
+		p.display->setText(p.display->text);
+	}
+
 	helpDisplay->setText("Lobby: " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ") " + (isHost ? "You are the host!" : ""));
 	warningDisplay->setText("");
 }
@@ -104,6 +114,26 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 			break;
 		}
 
+		if (f.code >= 9000)
+		{
+			std::cout << "got status for " << f.code << std::endl;
+			int p = f.code - 9000;
+			if (p < people.size())
+			{
+				std::cout << "player " << p << " is now green!" << std::endl;
+
+				Color c;
+				c.r = 128;
+				c.g = 255;
+				c.b = 128;
+
+				person& pe = people[p];
+
+				pe.display->color = c;
+				pe.display->setText(pe.display->text);
+			}
+		}
+
 		break;
 	case eSPacketUpdateLobbyData:
 		msgpack::unpack(result, data, length);
@@ -139,6 +169,16 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		SongSelect::selectedDiffIndex = cc.diff;
 
 		Game::steam->LoadWorkshopChart((uint64_t)cc.chartID);
+
+		for (person& p : people)
+		{
+			Color c;
+			c.r = 255;
+			c.g = 128;
+			c.b = 128;
+			p.display->color = c;
+			p.display->setText(p.display->text);
+		}
 
 		// tell the server we aint got it lol (if we dont :))
 		break;

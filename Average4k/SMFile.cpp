@@ -9,7 +9,7 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
 
     auto pathSplit = Chart::split(path, '/');
 
-    meta.folder = "assets/charts/" + pathSplit[pathSplit.size() - 2];
+    meta.folder = folder;
 
     std::string line;
 

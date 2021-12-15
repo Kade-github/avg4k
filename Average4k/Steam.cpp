@@ -92,6 +92,133 @@ SDL_Texture* Steam::getAvatar(const char* url)
     return tex;
 }
 
+void Steam::doesWorkshopItemExist(std::string name)
+{
+    UGCQueryHandle_t h = SteamUGC()->CreateQueryAllUGCRequest(k_EUGCQuery_RankedByVote, k_EUGCMatchingUGCType_Items_ReadyToUse, 1828580, 0);
+
+    searchName = name;
+
+    SteamUGC()->SetSearchText(h, name.c_str());
+
+    auto handle = SteamUGC()->SendQueryUGCRequest(h);
+
+    Name.Set(handle, this, &Steam::OnName);
+
+    SteamUGC()->ReleaseQueryUGCRequest(h);
+}
+
+void Steam::OnName(SteamUGCQueryCompleted_t* result, bool bIOFailure)
+{
+    for (int i = 0; i < result->m_unNumResultsReturned; i++)
+    {
+        SteamUGCDetails_t id;
+        bool yes = SteamUGC()->GetQueryUGCResult(result->m_handle, i, &id);
+        if (yes)
+        {
+            if (id.m_rgchTitle == searchName)
+            {
+                if (Game::currentMenu != nullptr)
+                    Game::currentMenu->onSteam("resultExists");
+                return;
+            }
+        }
+    }
+    Game::currentMenu->onSteam("resultDoesntExist");
+}
+
+
+void Steam::createWorkshopItem()
+{
+    SteamAPICall_t call = SteamUGC()->CreateItem(1828580, k_EWorkshopFileTypeCommunity);
+    CreateItemCallback.Set(call, this, &Steam::OnCreateItemCallback);
+}
+
+long GetFileSize(std::string filename)
+{
+    struct stat stat_buf;
+    int rc = stat(filename.c_str(), &stat_buf);
+    return rc == 0 ? stat_buf.st_size : -1;
+}
+
+void Steam::uploadToItem(Chart* c, PublishedFileId_t id, std::string fileName)
+{
+    std::cout << "wassup homie " << id << std::endl;
+    std::vector<std::string> b = Chart::split(c->meta.folder, '/');
+
+    std::cout << "meta: " << b[b.size() - 1] << std::endl;
+    std::cout << "file with folder: " << c->meta.folder + "/" + fileName << std::endl;
+
+    auto handle = SteamUGC()->StartItemUpdate(1828580, id);
+    SteamUGC()->SetItemTitle(handle, c->meta.songName.c_str());
+    std::string desc = "Uploaded from in game.\nDiffs:\n";
+    for (difficulty& diff : c->meta.difficulties)
+    {
+        desc += diff.name + " - Charted by " + diff.charter + "\n";
+    }
+    SteamUGC()->SetItemDescription(handle, desc.c_str());
+    SteamUGC()->SetItemUpdateLanguage(handle, "english");
+    SteamUGC()->SetItemMetadata(handle, b[b.size() - 2].c_str());
+    SteamUGC()->SetItemVisibility(handle, k_ERemoteStoragePublishedFileVisibilityPublic);
+    SteamParamStringArray_t* p = (SteamParamStringArray_t*)malloc(sizeof(SteamParamStringArray_t));
+    p->m_nNumStrings = 1;
+    p->m_ppStrings = const_cast<const char**>((char**)malloc(sizeof(char*)));
+    
+    char* bruh = (char*)malloc(6 * sizeof(char*));
+
+    strcpy_s(bruh, 6, "chart");
+
+    p->m_ppStrings[0] = bruh;
+
+    SteamUGC()->SetItemTags(handle, p);
+    SteamUGC()->AddItemKeyValueTag(handle, "chartType", c->meta.chartType == 0 ? "sm" : "qp");
+    SteamUGC()->AddItemKeyValueTag(handle, "chartFile", fileName.c_str());
+
+    SteamUGC()->SetItemContent(handle, (std::filesystem::current_path().string() + "/" + c->meta.folder).c_str());
+    SteamUGC()->SetItemPreview(handle, (std::filesystem::current_path().string() + "/" + c->meta.folder + "/" + c->meta.background).c_str());
+
+    std::cout << "item metadata: " << b[b.size() - 2].c_str() << std::endl;
+
+    std::cout << "folder to upload: " << std::filesystem::current_path().string() + "/" + c->meta.folder << std::endl;
+
+    std::cout << "item preview: " << std::filesystem::current_path().string() + "/" + c->meta.folder + "/" + c->meta.background << std::endl;
+
+    long size = GetFileSize(std::filesystem::current_path().string() + "/" + c->meta.folder + "/" + c->meta.background);
+
+    if (size == -1 || size > 1000000)
+    {
+        SteamUGC()->SetItemPreview(handle, (std::filesystem::current_path().string() + std::string("/assets/graphical/menu/bg.png")).c_str());
+        std::cout << "item preview (cuz the other one was too big " + std::to_string(size) + "): assets / graphical / menu / bg.png" << std::endl;
+    }
+
+    std::cout << "first tag: " << p->m_ppStrings[0] << std::endl;
+
+    SteamAPICall_t callT = SteamUGC()->SubmitItemUpdate(handle, "Upload");
+
+    UploadedItemCallback.Set(callT, this, &Steam::OnUploadedItemCallback);
+
+    free(p);
+}
+
+void Steam::OnCreateItemCallback(CreateItemResult_t* result, bool bIOFailure)
+{
+    createdId = result->m_nPublishedFileId;
+    SteamUGC()->SubscribeItem(createdId);
+
+    std::cout << "created item " << createdId << std::endl;
+
+    if (Game::currentMenu != nullptr)
+        Game::currentMenu->onSteam("createdItem");
+}
+
+void Steam::OnUploadedItemCallback(SubmitItemUpdateResult_t* result, bool bIOFailure)
+{
+    std::cout << "Result: " << result->m_eResult << " on " << result->m_nPublishedFileId << std::endl;
+
+    if (Game::currentMenu != nullptr)
+    {
+        Game::currentMenu->onSteam("uploadItem");
+    }
+}
 
 // show me the money
 
@@ -154,7 +281,7 @@ void Steam::populateSubscribedItems()
 
     auto handle = SteamUGC()->SendQueryUGCRequest(h);
 
-    UGCQueryCallback.Set(handle, this, &Steam::OnUGCSubscribedQueryCallback);
+    UGCSubscribedQueryCallback.Set(handle, this, &Steam::OnUGCSubscribedQueryCallback);
 
     SteamUGC()->ReleaseQueryUGCRequest(h);
 

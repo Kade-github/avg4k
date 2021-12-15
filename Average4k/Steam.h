@@ -23,11 +23,20 @@ public:
 
 	void ShutdownSteam();
 
+	std::string searchName;
+
 	Chart* downloadedChart;
+
+	PublishedFileId_t createdId;
 
 	std::vector<steamItem> downloadedList;
 	std::vector<steamItem> subscribedList;
 	static SDL_Texture* getAvatar(const char* url);
+
+	void doesWorkshopItemExist(std::string name);
+
+	void createWorkshopItem();
+	void uploadToItem(Chart* c, PublishedFileId_t id, std::string fileName);
 
 	void populateWorkshopItems(int page);
 	void populateSubscribedItems();
@@ -39,6 +48,12 @@ private:
 	STEAM_CALLBACK(Steam, CallbackDownload, DownloadItemResult_t);
 	CCallResult<Steam, SteamUGCQueryCompleted_t> UGCQueryCallback;
 	void OnUGCQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFailure);
+	CCallResult<Steam, CreateItemResult_t> CreateItemCallback;
+	void OnCreateItemCallback(CreateItemResult_t* result, bool bIOFailure);
+	CCallResult<Steam, SteamUGCQueryCompleted_t> Name;
+	void OnName(SteamUGCQueryCompleted_t* result, bool bIOFailure);
+	CCallResult<Steam, SubmitItemUpdateResult_t> UploadedItemCallback;
+	void OnUploadedItemCallback(SubmitItemUpdateResult_t* result, bool bIOFailure);
 	CCallResult<Steam, SteamUGCQueryCompleted_t> UGCAllQueryCallback;
 	void OnUGCAllQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFailure);
 	CCallResult<Steam, SteamUGCQueryCompleted_t> UGCSubscribedQueryCallback;

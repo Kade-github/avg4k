@@ -12,9 +12,9 @@ void Text::setText(std::string temp)
 		SDL_DestroyTexture(outline);
 
 	SDL_Surface* surfaceMessage =
-		TTF_RenderText_Blended_Wrapped(Arial, text.c_str(), { color.r, color.g,color.b }, Game::gameWidth);
+		TTF_RenderUTF8_Blended_Wrapped(Arial, text.c_str(), { color.r, color.g,color.b }, Game::gameWidth);
 	SDL_Surface* outlineMsg =
-		TTF_RenderText_Blended_Wrapped(Arial, text.c_str(), { 0,0,0 }, Game::gameWidth);
+		TTF_RenderUTF8_Blended_Wrapped(Arial, text.c_str(), { 0,0,0 }, Game::gameWidth);
 
 	if (surfaceMessage != nullptr && outlineMsg != nullptr)
 	{

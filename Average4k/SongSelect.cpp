@@ -80,6 +80,7 @@ void SongSelect::updateList() {
 						song s;
 						s.type = StepMania;
 						s.steam = false;
+						strcpy_s(s.folder, entry.path().string().c_str());
 						strcpy_s(s.path, bruh.c_str());
 						listOfCharts.push_back(s);
 					}
@@ -116,12 +117,16 @@ void SongSelect::updateList() {
 
 			std::string path(st.folder);
 
+			if (path == "")
+				continue;
+
 			if (s.type == StepMania)
 			{
 				std::string fullPath = path + "\\" + st.chartFile;
 
 				std::string replaced = Steam::ReplaceString(fullPath, "\\", "/");
 				std::string replaced2 = Steam::ReplaceString(path, "\\", "/");
+				strcpy_s(s.folder, replaced2.c_str());
 				strcpy_s(s.path, replaced.c_str());
 			}
 			else
@@ -148,7 +153,22 @@ void SongSelect::updateList() {
 		songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
 		songName->centerX();
 
-		steam->setText(listOfCharts[selectedIndex].steam ? "Steam Workshop" : "Local Storage");
+		Color c;
+		if (listOfCharts[selectedIndex].steam)
+		{
+			c.r = 128;
+			c.g = 128;
+			c.b = 255;
+		}
+		else
+		{
+			c.r = 128;
+			c.g = 255;
+			c.b = 128;
+		}
+		steam->color = c;
+
+		steam->setText(listOfCharts[selectedIndex].steam ? "Steam Workshop" : "Local Storage (Press shift to upload)");
 		steam->centerX();
 	}
 }
@@ -178,12 +198,31 @@ void SongSelect::keyDown(SDL_KeyboardEvent event)
 	}
 	else
 	{
+		Color c;
 		song selectedChart = listOfCharts[selectedIndex];
 		std::string name = currentChart->meta.songName;
 		std::string diff = currentChart->meta.difficulties[selectedDiffIndex].name;
 		switch (event.keysym.sym)
 		{
+		case SDLK_LSHIFT:
+			if (!currentChart || !allowMove)
+				return;
+			if (selectedSong->steam)
+				return;
+			allowMove = false;
+			Color c;
+			c.r = 128;
+			c.g = 128;
+			c.b = 128;
+			steam->color = c;
+
+			steam->setText("Checking, hold on...");
+			steam->centerX();
+			Game::steam->doesWorkshopItemExist(currentChart->meta.songName);
+			break;
 		case SDLK_DOWN:
+			if (!allowMove)
+				return;
 			selectedIndex++;
 			selectedDiffIndex = 0;
 
@@ -202,11 +241,28 @@ void SongSelect::keyDown(SDL_KeyboardEvent event)
 			songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
 			songName->centerX();
 
-			steam->setText(listOfCharts[selectedIndex].steam ? "Steam Workshop" : "Local Storage");
+			if (listOfCharts[selectedIndex].steam)
+			{
+				c.r = 128;
+				c.g = 128;
+				c.b = 255;
+			}
+			else
+			{
+				c.r = 128;
+				c.g = 255;
+				c.b = 128;
+			}
+
+			steam->color = c;
+
+			steam->setText(listOfCharts[selectedIndex].steam ? "Steam Workshop" : "Local Storage (Press shift to upload)");
 			steam->centerX();
 
 			break;
 		case SDLK_UP:
+			if (!allowMove)
+				return;
 			selectedIndex--;
 			selectedDiffIndex = 0;
 
@@ -226,12 +282,28 @@ void SongSelect::keyDown(SDL_KeyboardEvent event)
 			songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
 			songName->centerX();
 
-			steam->setText(listOfCharts[selectedIndex].steam ? "Steam Workshop" : "Local Storage");
+			if (listOfCharts[selectedIndex].steam)
+			{
+				c.r = 128;
+				c.g = 128;
+				c.b = 255;
+			}
+			else
+			{
+				c.r = 128;
+				c.g = 255;
+				c.b = 128;
+			}
+
+			steam->color = c;
+
+			steam->setText(listOfCharts[selectedIndex].steam ? "Steam Workshop" : "Local Storage (Press shift to upload)");
 			steam->centerX();
+
 
 			break;
 		case SDLK_LEFT:
-			if (!currentChart)
+			if (!currentChart || !allowMove)
 				return;
 			selectedDiffIndex--;
 			if (selectedDiffIndex < 0)
@@ -245,7 +317,7 @@ void SongSelect::keyDown(SDL_KeyboardEvent event)
 
 			break;
 		case SDLK_RIGHT:
-			if (!currentChart)
+			if (!currentChart || !allowMove)
 				return;
 			selectedDiffIndex++;
 			if (selectedDiffIndex > currentChart->meta.difficulties.size() - 1)
@@ -258,6 +330,8 @@ void SongSelect::keyDown(SDL_KeyboardEvent event)
 
 			break;
 		case SDLK_F5:
+			if (!allowMove)
+				return;
 			currentChart = NULL;
 
 			if (Multiplayer::loggedIn)
@@ -265,12 +339,10 @@ void SongSelect::keyDown(SDL_KeyboardEvent event)
 			updateList();
 			break;
 		case SDLK_RETURN:
+			if (!allowMove)
+				return;
 			if (MultiplayerLobby::inLobby && currentChart)
 			{
-				strcpy_s(selectedSong->path, listOfCharts[selectedIndex].path);
-				selectedSong->steam = true;
-				selectedSong->steamHandle = listOfCharts[selectedIndex].steamHandle;
-				selectedSong->type = listOfCharts[selectedIndex].type;
 				Game::instance->switchMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, true));
 			}
 			else if (currentChart)
@@ -287,6 +359,79 @@ void SongSelect::keyDown(SDL_KeyboardEvent event)
 			free(selectedSong);
 			break;
 		}
+	}
+}
+
+void SongSelect::onSteam(std::string s)
+{
+	if (s == "createdItem")
+	{
+		// ok then lets fuckin do it lol!
+
+		std::string fullPath = selectedSong->path;
+
+		std::string replaced2 = Steam::ReplaceString(selectedSong->path, "\\", "/");
+
+		std::vector<std::string> split = Chart::split(replaced2, '/');
+
+		std::cout << "uploading to " << Game::steam->createdId << std::endl;
+
+		Game::steam->uploadToItem(currentChart, Game::steam->createdId, split[split.size() - 1]);
+
+		Color c;
+		c.r = 128;
+		c.g = 128;
+		c.b = 255;
+		steam->color = c;
+
+		steam->setText("Uploading please wait...");
+		steam->centerX();
+
+	}
+
+	if (s == "failedItem")
+	{
+		allowMove = true;
+		Color c;
+		c.r = 255;
+		c.g = 128;
+		c.b = 128;
+		steam->color = c;
+
+		steam->setText("Failed to upload! (please give ur log.txt to lemon or kade)");
+		steam->centerX();
+	}
+
+	if (s == "uploadItem")
+	{
+		allowMove = true;
+
+		Color c;
+		c.r = 128;
+		c.g = 255;
+		c.b = 128;
+		steam->color = c;
+
+		steam->setText("Uploaded! (should be at the bottom of the list, press F5 if it isn't)");
+		steam->centerX();
+	}
+
+	if (s == "resultDoesntExist")
+	{
+		Game::steam->createWorkshopItem();
+	}
+
+	if (s == "resultExists")
+	{
+		allowMove = true;
+		Color c;
+		c.r = 255;
+		c.g = 128;
+		c.b = 128;
+		steam->color = c;
+
+		steam->setText("That song has already been uploaded! Change the name of the song.");
+		steam->centerX();
 	}
 }
 
@@ -329,7 +474,7 @@ void SongSelect::switchChart(song s)
 
 	if (s.type == StepMania)
 	{
-		SMFile* filee = new SMFile(s.path, s.path, false);
+		SMFile* filee = new SMFile(s.path, s.folder, false);
 		currentChart = new Chart(filee->meta);
 		delete filee;
 	}
@@ -341,6 +486,18 @@ void SongSelect::switchChart(song s)
 		currentChart = new Chart(meta);
 		delete file;
 	}
+
+	if (selectedSong)
+	{
+		free(selectedSong);
+		selectedSong = (song*)malloc(sizeof(song));
+	}
+
+	strcpy_s(selectedSong->path, listOfCharts[selectedIndex].path);
+	selectedSong->steam = s.steam;
+	if (s.steam)
+		selectedSong->steamHandle = listOfCharts[selectedIndex].steamHandle;
+	selectedSong->type = listOfCharts[selectedIndex].type;
 
 	std::cout << "took " << (SDL_GetTicks() - time) << "ms for " << s.type << std::endl;
 }

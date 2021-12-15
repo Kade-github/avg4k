@@ -113,7 +113,7 @@ void Steam::OnName(SteamUGCQueryCompleted_t* result, bool bIOFailure)
     {
         SteamUGCDetails_t id;
         bool yes = SteamUGC()->GetQueryUGCResult(result->m_handle, i, &id);
-        if (yes)
+        if (yes || id.m_rgchTitle != "")
         {
             if (id.m_rgchTitle == searchName)
             {

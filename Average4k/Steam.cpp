@@ -342,7 +342,7 @@ void Steam::CallbackDownload(DownloadItemResult_t* res) {
     if (res->m_eResult != k_EResultOK) {
         std::cout << "Steam download callback error: " << res->m_eResult << std::endl;
         return;
-   }
+    }
  
     uint64 sizeOnDisk;
     char directory[512];

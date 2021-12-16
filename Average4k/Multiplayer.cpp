@@ -282,6 +282,10 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
                 std::cout << "handlers set" << std::endl;
                 firstConnection = true;
             }
+            else {
+                //please dont ddos my webserver thanks
+                Sleep(1000);
+            }
             websocketpp::lib::error_code ec;
             client::connection_ptr con = c.get_connection(url, ec);
             if (ec) {

@@ -13,7 +13,6 @@
 #include <Themida/ThemidaSDK.h>
 #include <msgpack.hpp>
 #include <openssl/opensslconf.h>
-
 #include <websocketpp/config/asio_client.hpp>
 #include <websocketpp/client.hpp>
 

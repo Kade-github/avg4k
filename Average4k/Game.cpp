@@ -80,6 +80,7 @@ void Game::update(Events::updateEvent update)
 
 	if (!Multiplayer::connectedToServer && startConnect)
 	{
+		startConnect = false;
 		CloseHandle(multiThreadHandle);
 		multiThreadHandle = CreateThread(NULL, NULL, Multiplayer::connect, NULL, NULL, NULL);
 	}

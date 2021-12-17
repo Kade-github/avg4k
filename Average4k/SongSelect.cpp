@@ -107,7 +107,7 @@ void SongSelect::updateList() {
 			
 			if (st.chartType == "sm")
 				s.type = StepMania;
-			if (st.chartType == "qv")
+			if (st.chartType == "qv" || st.chartType == "qp")
 				s.type = Quaver;
 
 			s.steam = true;

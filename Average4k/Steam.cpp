@@ -170,7 +170,7 @@ void Steam::uploadToItem(Chart* c, PublishedFileId_t id, std::string fileName)
     p->m_ppStrings[0] = bruh;
 
     SteamUGC()->SetItemTags(handle, p);
-    SteamUGC()->AddItemKeyValueTag(handle, "chartType", c->meta.chartType == 0 ? "sm" : "qp");
+    SteamUGC()->AddItemKeyValueTag(handle, "chartType", c->meta.chartType == 0 ? "sm" : "qv");
     SteamUGC()->AddItemKeyValueTag(handle, "chartFile", fileName.c_str());
 
     SteamUGC()->SetItemContent(handle, (std::filesystem::current_path().string() + "/" + c->meta.folder).c_str());
@@ -192,7 +192,9 @@ void Steam::uploadToItem(Chart* c, PublishedFileId_t id, std::string fileName)
 
     std::cout << "first tag: " << p->m_ppStrings[0] << std::endl;
 
-    SteamUGC()->SubmitItemUpdate(handle, "Upload");
+    SteamAPICall_t call = SteamUGC()->SubmitItemUpdate(handle, "Upload");
+
+    UploadedItemCallback.Set(call, this, &Steam::OnUploadedItemCallback);
 
     free(p);
 }
@@ -214,7 +216,14 @@ void Steam::OnUploadedItemCallback(SubmitItemUpdateResult_t* result, bool bIOFai
 
     if (Game::currentMenu != nullptr)
     {
-        Game::currentMenu->onSteam("uploadItem");
+        if (result->m_eResult != k_EResultOK)
+        {
+            Game::currentMenu->onSteam("failedItem");
+            SteamUGC()->UnsubscribeItem(createdId);
+            SteamUGC()->DeleteItem(createdId);
+        }
+        else
+            Game::currentMenu->onSteam("uploadItem");
     }
 }
 

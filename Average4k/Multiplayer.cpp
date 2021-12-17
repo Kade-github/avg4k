@@ -258,7 +258,6 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
     std::string url = "wss://titnoas.xyz/ballsandsex/";
    
     std::cout << "Creating things" << std::endl;
-
     try {
 
         while (true)
@@ -266,6 +265,7 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
            
             if (!firstConnection)
             {
+               
                 c.set_access_channels(websocketpp::log::alevel::none);
                 c.clear_access_channels(websocketpp::log::alevel::all);
                 c.set_error_channels(websocketpp::log::elevel::none);
@@ -279,8 +279,11 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
 
                 c.set_tls_init_handler(bind(&on_tls_init, "titnoas.xyz", ::_1));
 
+            
+
                 std::cout << "handlers set" << std::endl;
                 firstConnection = true;
+                
             }
             else {
                 //please dont ddos my webserver thanks
@@ -296,17 +299,19 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
 
             // Note that connect here only requests a connection. No network messages are
             // exchanged until the event loop starts running in the next line.
-            connectionHdl = c.connect(con);
+             connectionHdl = c.connect(con);
+            
             std::cout << "connected" << std::endl;
             // Start the ASIO io_service run loop
             // this will cause a single connection to be made to the server. c.run()
             // will exit when this connection is closed.
-
+            
 
             std::cout << "Calling run" << std::endl;
-
             c.run();
             std::cout << "done run" << std::endl;
+            Multiplayer::loggedIn = false;
+            connectedToServer = false;
         }
     }
     catch (websocketpp::exception const& e) {

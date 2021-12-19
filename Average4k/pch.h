@@ -1,5 +1,7 @@
 #pragma once
 #include <iostream>
+#include <algorithm>
+
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <vector>
@@ -15,6 +17,16 @@
 #include <openssl/opensslconf.h>
 #include <websocketpp/config/asio_client.hpp>
 #include <websocketpp/client.hpp>
+#include <stdlib.h>
+#include <SDL_image.h>
+#include <regex>
+#include <SDL_sound.h>
+#include <bass.h>
+#include <curl/curl.h>
+#include <sstream>
+#include <string>
+#include <fstream>
+#include <filesystem>
 
 #include "Packet.h"
 #include "SPacketUpdateLeaderboard.h"

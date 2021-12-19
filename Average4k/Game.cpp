@@ -1,7 +1,6 @@
 #include "includes.h"
 #include <algorithm>
-#include "MultiplayerLobby.h"
-#include "CPacketHostUpdateLobby.h"
+
 #include "Game.h"
 #include "MainMenu.h"
 #include "Text.h"

@@ -1,10 +1,7 @@
 #include "Steam.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <curl/curl.h>
-#include <SDL_image.h>
+
 #include "Game.h"
-#include <regex>
+
 
 void Steam::InitSteam()
 {

@@ -1,8 +1,4 @@
 #pragma once
-#include <sstream>
-#include <string>
-#include <fstream>
-#include <filesystem>
 #include "Chart.h"
 
 class QuaverFile

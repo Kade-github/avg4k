@@ -16,6 +16,7 @@ enum PacketType
     eCPacketStatus = 10,
     eCPacketWtfAmIn = 11,
     eCPacketLeave = 12,
+    eCPacketHostUpdateLobby = 13,
 
     //Server Packets
     eSPacketHello = -1,

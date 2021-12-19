@@ -1,9 +1,10 @@
 #include "includes.h"
-
+#include <algorithm>
 
 #include "Game.h"
 #include "MainMenu.h"
 #include "Text.h"
+#include "BufferRestore.h"
 
 using namespace std;
 
@@ -21,6 +22,15 @@ Multiplayer* Game::multi = NULL;
 Game* Game::instance = NULL;
 chartMeta Game::loadedChart;
 bool Game::patched = false;
+
+bool debug_takingInput;
+
+std::string debug_string;
+
+bool debugConsole;
+Text* debugText;
+Text* consoleLog;
+Text* cmdPrompt;
 
 map<int, bool> Game::controls = {
 	{SDLK_d, false},
@@ -95,7 +105,6 @@ void Game::update(Events::updateEvent update)
 	if (!fpsText)
 	{
 		fpsText = new Text(0, 0, "FPS: 0", 16);
-		fpsText->create();
 	}
 
 	mainCamera->update(update);
@@ -118,6 +127,8 @@ void Game::update(Events::updateEvent update)
 	}
 
 	currentMenu->postUpdate(update);
+
+
 
 	SDL_Rect DestR;
 
@@ -142,8 +153,64 @@ void Game::update(Events::updateEvent update)
 		free(p.ogPtr);
 	}
 
-	if (fpsText)
-		fpsText->forceDraw();
+	if (fpsText && !debugConsole)
+		fpsText->update(update);
+
+	if (debugConsole)
+	{
+		SDL_FRect topBar;
+		topBar.x = 0;
+		topBar.y = 0;
+		topBar.w = Game::gameWidth;
+		topBar.h = 25;
+		if (!debugText)
+		{
+			debugText = new Text(0, 0, "Debug Console", 16);
+			consoleLog = new Text(0, 195, "", 16);
+			cmdPrompt = new Text(0, 220, ">", 16);
+		}
+
+		debugText->setText("Debug Console | FPS: " + std::to_string(gameFPS) + " (CTRL to start typing, F11 again to close it)");
+
+		if (debug_takingInput)
+			cmdPrompt->setText(">" + debug_string + "_");
+		else
+			cmdPrompt->setText(">");
+
+		SDL_FRect bg;
+		bg.x = 0;
+		bg.y = 0;
+		bg.w = Game::gameWidth;
+		bg.h = 220;
+
+		SDL_FRect bottomBar;
+		bottomBar.x = 0;
+		bottomBar.y = 220;
+		bottomBar.w = Game::gameWidth;
+		bottomBar.h = 25;
+		SDL_SetRenderDrawColor(renderer, 128, 128, 128, 64);
+		SDL_RenderFillRectF(renderer, &bg);
+		SDL_RenderFillRectF(renderer, &topBar);
+		SDL_SetRenderDrawColor(renderer, 128, 128, 128, 128);
+		SDL_RenderFillRectF(renderer, &bottomBar);
+		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+		SDL_Rect clip;
+
+		clip.x = 0;
+		clip.y = 25;
+		clip.w = Game::gameWidth;
+		clip.h = 220;
+
+		SDL_RenderSetClipRect(Game::renderer, &clip);
+
+		consoleLog->update(update);
+
+		SDL_RenderSetClipRect(Game::renderer, NULL);
+
+		debugText->update(update);
+		cmdPrompt->update(update);
+	}
 
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
@@ -154,8 +221,101 @@ void Game::update(Events::updateEvent update)
 	SDL_RenderPresent(renderer);
 }
 
+void db_addLine(std::string s) {
+	consoleLog->setText(consoleLog->text + s + "\n");
+	consoleLog->setY(220 - consoleLog->surfH);
+}
+
 void Game::keyDown(SDL_KeyboardEvent ev)
 {
+	if (ev.keysym.sym == SDLK_ESCAPE && debug_takingInput)
+	{
+		debug_takingInput = false;
+		return;
+	}
+	if (ev.keysym.sym == SDLK_RETURN && debug_takingInput)
+	{
+		debug_takingInput = false;
+		// cmds
+
+
+		db_addLine(">" + debug_string);
+
+		if (debug_string == "help")
+		{
+			db_addLine("checkConnection - Check's your connection and shows some other details\nxg - hacks\nchangeName - change the lobby name");
+		}
+		else if (debug_string == "checkConnection")
+		{
+			std::string res = (Multiplayer::loggedIn ? "fuck you" : "bitch ass (not logged in)");
+			db_addLine(res + " - also cock: " + std::to_string(Multiplayer::connectedToServer));
+		}
+		else if (debug_string == "xg")
+		{
+			db_addLine("xg is a dumbass lol! (jkjkjkjk 187384089228214273)");
+		}
+		else if (debug_string.starts_with("changeName"))
+		{
+			if (!MultiplayerLobby::inLobby)
+			{
+				db_addLine("u aint in a lobby dumbfuck");
+				debug_string = "";
+				return;
+			}
+			if (!MultiplayerLobby::isHost)
+			{
+				db_addLine("u aint a host dumbfuck");
+				debug_string = "";
+				return;
+			}
+
+			std::string titleName = "";
+
+			int index = 0;
+			for (std::string s : Chart::split(debug_string, ' '))
+			{
+				if (index != 0)
+					titleName += s + " ";
+				index++;
+			}
+
+			db_addLine("changing it to " + titleName);
+
+			lobby l = MultiplayerLobby::CurrentLobby;
+			l.LobbyName = titleName;
+
+			CPacketHostUpdateLobby change;
+			change.Order = 0;
+			change.PacketType = eCPacketHostUpdateLobby;
+			change.Lobby = l;
+			Multiplayer::sendMessage<CPacketHostUpdateLobby>(change);
+
+		}
+		else
+		{
+			db_addLine("No command found");
+		}
+
+		debug_string = "";
+
+		return;
+	}
+
+	if (ev.keysym.sym == SDLK_BACKSPACE && debug_takingInput)
+	{
+		if (debug_string.size() > 0)
+			debug_string.pop_back();
+	}
+	if (debug_takingInput)
+		return;
+
+	if (ev.keysym.sym == SDLK_LCTRL && debugConsole)
+	{
+		debug_string = "";
+		debug_takingInput = true;
+		return;
+	}
+
 	if (controls.count(ev.keysym.sym) == 1)
 		controls[ev.keysym.sym] = true;
 
@@ -189,6 +349,12 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 			mainCamera->h = 720;
 		}
 	}
+
+	if (ev.keysym.sym == SDLK_F11)
+	{
+		debugConsole = !debugConsole;
+	}
+
 
 	for (int i = 0; i < objects->size(); i++)
 	{
@@ -242,6 +408,11 @@ bool Game::getKey(int code)
 
 void Game::textInput(SDL_TextInputEvent event)
 {
+	if (debug_takingInput)
+	{
+		debug_string += event.text;
+		return;
+	}
 	for (int i = 0; i < objects->size(); i++)
 	{
 		Object* btuh = (*objects)[i];

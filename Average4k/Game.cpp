@@ -5,6 +5,8 @@
 #include "MainMenu.h"
 #include "Text.h"
 #include "BufferRestore.h"
+#include "MultiplayerLobby.h"
+#include "CPacketHostUpdateLobby.h"
 
 using namespace std;
 

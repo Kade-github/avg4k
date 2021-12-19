@@ -93,7 +93,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	CHECK_CODE_INTEGRITY(test, 6969);
 
-
 	if (test != 6969) {
 
 		Game::patched = true;

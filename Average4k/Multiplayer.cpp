@@ -287,7 +287,7 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
             }
             else {
                 //please dont ddos my webserver thanks
-                Sleep(1000);
+                Sleep(5000);
             }
             websocketpp::lib::error_code ec;
             client::connection_ptr con = c.get_connection(url, ec);

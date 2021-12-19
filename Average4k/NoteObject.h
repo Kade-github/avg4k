@@ -25,6 +25,11 @@ class NoteObject
 
 		Text* debugText;
 
+		int holdHeight;
+
+
+		SDL_Texture* holdTexture;
+
 		bool debug = false;
 		double beat = 0;
 		float endTime = 0;

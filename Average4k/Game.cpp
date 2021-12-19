@@ -5,8 +5,6 @@
 #include "Game.h"
 #include "MainMenu.h"
 #include "Text.h"
-#include "BufferRestore.h"
-
 using namespace std;
 
 mutex pog;
@@ -95,6 +93,8 @@ void Game::update(Events::updateEvent update)
 		CloseHandle(multiThreadHandle);
 		multiThreadHandle = CreateThread(NULL, NULL, Multiplayer::connect, NULL, NULL, NULL);
 	}
+
+	SDL_SetRenderTarget(renderer, NULL);
 
 	SDL_RenderClear(update.renderer);
 

@@ -9,24 +9,17 @@ NoteObject::NoteObject(){}
 
 void NoteObject::destroy()
 {
-	if (debugText)
-		debugText->die();
 	destroyed = true;
 	delete this;
 }
 
 void NoteObject::draw(float position, double b, SDL_FRect receptor)
 {
-	if (debug && !debugText)
-	{
-		debugText = new Text(0, 0, "", 18);
-		debugText->create();
-	}
 		bpmSegment bruh = SongSelect::currentChart->getSegmentFromBeat(beat);
 
 		float wh = SongSelect::currentChart->getTimeFromBeat(beat, bruh);
 
-		float diff = (wh + (Game::save->GetDouble("offset")) - (position / 1000));
+		float diff = (wh + (Game::save->GetDouble("offset") / 1000) - (position / 1000));
 
 		float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
 
@@ -73,24 +66,35 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 		l.w = Game::gameWidth;
 		l.h = Game::gameHeight - (receptor.y + 32);
 
+		int heightForBruh = 0;
+
+
+		SDL_Rect clipThingy;
+
+		SDL_Texture* holdTexture = SDL_CreateTexture(Game::renderer,NULL,SDL_TEXTUREACCESS_TARGET,64, holdHeight);
+
 		if (type == Note_Head)
 		{
-
-			for (int i = 0; i < heldTilings.size(); i++)
+			int size = heldTilings.size();
+			SDL_SetRenderTarget(Game::renderer, holdTexture);
+			SDL_SetTextureBlendMode(holdTexture, SDL_BLENDMODE_BLEND);
+			SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 0);
+			SDL_RenderFillRect(Game::renderer, NULL);
+			clipThingy.x = 0;
+			clipThingy.y = 32;
+			clipThingy.w = 64;
+			clipThingy.h = holdHeight;
+			for (int i = 0; i < size; i++)
 			{
 				holdTile& tile = heldTilings[i];
 				auto whHold = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat));
 			
-				float diff2 = ((whHold + (Game::save->GetDouble("offset")) / 1000)) - wh;
-				tile.rect.x = rect.x;
+				float diff2 = ((whHold + (Game::save->GetDouble("offset")) / 1000)) - position / 1000;
+				tile.rect.x = 0;
 
 				noteOffset = (bps * diff2) * 64;
 				
-				if (downscroll)
-					tile.rect.y = (rect.y - noteOffset);
-				else
-					tile.rect.y = (rect.y + noteOffset);
-
+				tile.rect.y = noteOffset;
 
 				/*if (downscroll)
 				{
@@ -113,57 +117,68 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 					
 				}*/
 
-				if (tile.fucked)
-					SDL_SetTextureAlphaMod(Gameplay::noteskin->hold, 60);
-				else
-					SDL_SetTextureAlphaMod(Gameplay::noteskin->hold, 255);
-
-				bool condition = false;
-
 				// pov you're clipping
-
-				SDL_Rect source;
-				source.x = 0;
-				source.y = 0;
-				source.w = 64;
-				source.h = 64;
-
-				SDL_FRect copy = tile.rect;
 
 				if (downscroll)
 				{
 					l.y = 0;
 					l.h = receptor.y + 32;
 				}
-
-				if (downscroll)
-					condition = copy.y < l.h + 64;
-				else
-					condition = copy.y > l.y - 64;
-
-				SDL_RenderSetClipRect(Game::renderer, &l);
-
-				if (tile.active || condition)
+			}
+			SDL_RenderSetClipRect(Game::renderer, &clipThingy);
+			if (size != 0)
+			{
+				int nomr = heldTilings[0].rect.y;
+				for (int i = 0; i < size; i++)
 				{
-					if (i == heldTilings.size() - 1)
-					{
+					holdTile& tile = heldTilings[i];
+					tile.rect.y = tile.rect.y - nomr;
+				}
+			}
 
-						if (!downscroll)
-							SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->holdend, NULL, &copy, 0, NULL, SDL_FLIP_VERTICAL);
-						else
-							SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->holdend, NULL, &copy, 0, NULL, SDL_FLIP_NONE);
-					}
-					else
+			for (int i = 0; i < size; i++)
+			{
+				holdTile& tile = heldTilings[i];
+
+				if (tile.active)
+				{
+					if (i != size - 1)
 					{
 						if (!downscroll)
-							SDL_RenderCopyF(Game::renderer, Gameplay::noteskin->hold, &source, &copy);
+							SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->hold, NULL, &tile.rect, 0, NULL, SDL_FLIP_NONE);
 						else
-							SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->hold, &source, &copy, 0, NULL, SDL_FLIP_VERTICAL);
+							SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->hold, NULL, &tile.rect, 0, NULL, SDL_FLIP_VERTICAL);
 					}
 				}
-
-				SDL_RenderSetClipRect(Game::renderer, NULL);
 			}
+
+			if (size > 1)
+			{
+				holdTile tile = heldTilings.back();
+
+				
+				SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->holdend, NULL, &tile.rect, 0, NULL, SDL_FLIP_VERTICAL);
+				
+			}
+
+			SDL_RenderSetClipRect(Game::renderer, NULL);
+			SDL_SetRenderTarget(Game::renderer, Game::mainCamera->cameraTexture);
+		}
+
+		if (heldTilings.size() != 0)
+		{
+			SDL_RenderSetClipRect(Game::renderer, &l);
+
+			SDL_Rect copy = clipThingy;
+			copy.x = rect.x;
+			copy.y = rect.y;
+			if (downscroll)
+				copy.y -= (holdHeight - 64);
+
+			SDL_SetRenderDrawBlendMode(Game::renderer, SDL_BLENDMODE_BLEND);
+			SDL_RenderCopyEx(Game::renderer, holdTexture, NULL, &copy,0,NULL,downscroll ? SDL_FLIP_VERTICAL : SDL_FLIP_NONE);
+
+			SDL_RenderSetClipRect(Game::renderer, NULL);
 		}
 
 
@@ -186,15 +201,21 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 
 		if (debug)
 		{
-			debugText->x = rect.x - 64;
-			debugText->y = rect.y - 32;
-			if (downscroll)
-				debugText->y = rect.y + 32;
-			debugText->setText(std::to_string(diff));
 
 			SDL_SetRenderDrawColor(Game::renderer, 255, 255, 255, 255);
 
 			SDL_RenderDrawRect(Game::renderer, &l);
+			if (holdTexture && heldTilings.size() != 0)
+			{
+				SDL_Rect copy = clipThingy;
+				copy.x = rect.x;
+				copy.y = rect.y + copy.y;
+				if (downscroll)
+					copy.y -= (holdHeight - 64);
+				SDL_RenderDrawRect(Game::renderer, &copy);
+			}
 		}
+		if (holdTexture)
+			SDL_DestroyTexture(holdTexture);
 
 }

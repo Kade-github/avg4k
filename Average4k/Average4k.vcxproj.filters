@@ -314,9 +314,6 @@
     <ClInclude Include="ReceptorObject.h">
       <Filter>Source Files\Average4k\Objects\Renderers</Filter>
     </ClInclude>
-    <ClInclude Include="BufferRestore.h">
-      <Filter>Source Files\Average4k\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="CPacketHostUpdateLobby.h">
       <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
     </ClInclude>

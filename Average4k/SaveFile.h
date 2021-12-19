@@ -7,6 +7,8 @@
 struct setting {
 	bool active;
 	double value;
+	double lowestValue;
+	double highestValue;
 	char name[128];
 	bool takesActive;
 
@@ -30,7 +32,7 @@ class SaveFile
 		double GetDouble(std::string setting);
 		bool GetBool(std::string setting);
 
-		setting CreateSetting(bool defaultActive, double defaultValue, std::string defaultName, bool tA);
+		setting CreateSetting(bool defaultActive, double defaultValue, std::string defaultName, bool tA, double lowest, double highest);
 
 		std::vector<setting> settings;
 		std::vector<setting> defaultSettings;

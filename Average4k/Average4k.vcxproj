@@ -202,7 +202,6 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="AvgSprite.h" />
     <ClInclude Include="Base64.h" />
-    <ClInclude Include="BufferRestore.h" />
     <ClInclude Include="Chart.h" />
     <ClInclude Include="CPacketChartAcquired.h" />
     <ClInclude Include="CPacketHello.h" />

@@ -48,7 +48,7 @@ void MainMenu::update(Events::updateEvent event)
 		MenuItem[2]->centerX();
 		MenuItem[1]->setText("Singleplayer");
 		MenuItem[1]->centerX();
-		MenuItem[0]->setText("> Mulitplayer");
+		MenuItem[0]->setText("> Multiplayer");
 		MenuItem[0]->centerX();
 		break;
 	case 1:
@@ -56,7 +56,7 @@ void MainMenu::update(Events::updateEvent event)
 		MenuItem[2]->centerX();
 		MenuItem[1]->setText("> Singleplayer");
 		MenuItem[1]->centerX();
-		MenuItem[0]->setText("Mulitplayer");
+		MenuItem[0]->setText("Multiplayer");
 		MenuItem[0]->centerX();
 		break;
 	case 2:
@@ -64,7 +64,7 @@ void MainMenu::update(Events::updateEvent event)
 		MenuItem[2]->centerX();
 		MenuItem[1]->setText("Singleplayer");
 		MenuItem[1]->centerX();
-		MenuItem[0]->setText("Mulitplayer");
+		MenuItem[0]->setText("Multiplayer");
 		MenuItem[0]->centerX();
 		break;
 	}

@@ -115,6 +115,8 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 		if (!b.set->takesActive)
 		{
 			b.set->value--;
+			if (b.set->value < b.set->lowestValue)
+				b.set->value++;
 			Game::save->Save();
 		}
 		break;
@@ -122,6 +124,8 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 		if (!b.set->takesActive)
 		{
 			b.set->value++;
+			if (b.set->value > b.set->highestValue)
+				b.set->value--;
 			Game::save->Save();
 		}
 		break;

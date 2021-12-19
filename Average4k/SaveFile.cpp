@@ -112,7 +112,7 @@ setting SaveFile::CreateSetting(bool defaultActive, double defaultValue, std::st
     set.takesActive = tA;
     set.value = defaultValue;
     set.highestValue = highest;
-    set.lowestValue = highest;
+    set.lowestValue = lowest;
     memcpy_s(set.name, 128, defaultName.c_str(), 128);
     return set;
 }

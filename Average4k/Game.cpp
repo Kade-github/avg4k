@@ -4,6 +4,8 @@
 #include "Game.h"
 #include "MainMenu.h"
 #include "Text.h"
+#include "CPacketHostUpdateLobby.h"
+#include "MultiplayerLobby.h"
 using namespace std;
 
 mutex pog;

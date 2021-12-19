@@ -1,9 +1,6 @@
 #include "includes.h"
 #include "Steam.h"
 #include "Game.h"
-#include <SDL_sound.h>
-#include <bass.h>
-#include <curl/curl.h>
 using namespace std;
 
 #undef main
@@ -66,14 +63,23 @@ void fpsthink() {
 	Game::gameFPS = std::floorf(1000.f / Game::gameFPS);
 }
 
+LONG PvectoredExceptionHandler(
+	_EXCEPTION_POINTERS* ExceptionInfo
+)
+{
+	
+	return 0;
+}
+
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	PSTR lpCmdLine, INT nCmdShow)
 {
 	VM_START
-	STR_ENCRYPT_START
-	STR_ENCRYPTW_START
+		STR_ENCRYPT_START
+		STR_ENCRYPTW_START
 
 
+	AddVectoredExceptionHandler(1, &PvectoredExceptionHandler);
 	SDL_Init(SDL_INIT_EVERYTHING);
 	
 	curl_global_init(CURL_GLOBAL_ALL);
@@ -92,6 +98,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	int test = 123;
 
 	CHECK_CODE_INTEGRITY(test, 6969);
+
+	//Game::patched = true;
 
 	if (test != 6969) {
 

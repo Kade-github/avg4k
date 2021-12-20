@@ -9,5 +9,7 @@ public:
 
 	int ErrorCode;
 
-	MSGPACK_DEFINE_MAP(Message, Error, ErrorCode);
+	std::string reauth;
+
+	MSGPACK_DEFINE_MAP(Message, Error, ErrorCode, reauth);
 };

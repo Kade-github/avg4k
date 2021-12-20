@@ -8,6 +8,13 @@
 #include "Base64.h"
 #include <iostream>
 
+typedef websocketpp::client<websocketpp::config::asio_tls_client> client;
+typedef websocketpp::lib::shared_ptr<websocketpp::lib::asio::ssl::context> context_ptr;
+
+using websocketpp::lib::placeholders::_1;
+using websocketpp::lib::placeholders::_2;
+using websocketpp::lib::bind;
+
 class Multiplayer
 {
 public:
@@ -42,3 +49,8 @@ public:
 	void login();
 };
 
+class ConnectionData {
+public:
+	client c;
+	websocketpp::connection_hdl connectionHdl;
+};

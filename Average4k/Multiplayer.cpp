@@ -271,7 +271,7 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
             }
             else {
                 //please dont ddos my webserver thanks
-                Sleep(5000);
+                Sleep(1000);
             }
 
             connectionData->c.set_access_channels(websocketpp::log::alevel::none);
@@ -304,8 +304,10 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
             }
             std::cout << "got connection" << std::endl;
 
-            if(reauth)
+            if (reauth) {
                 con->append_header("Reauth", *reauth);
+                Multiplayer::loggedIn = true;
+            }
             // Note that connect here only requests a connection. No network messages are
             // exchanged until the event loop starts running in the next line.
             connectionData->connectionHdl = connectionData->c.connect(con);

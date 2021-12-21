@@ -27,8 +27,7 @@ class NoteObject
 
 		int holdHeight;
 
-
-		SDL_Texture* holdTexture;
+		int holdsActive = 0;
 
 		bool debug = false;
 		double beat = 0;
@@ -44,6 +43,6 @@ class NoteObject
 
 		void destroy();
 
-		void draw(float position, double beat, SDL_FRect receptor);
+		void draw(float position, double beat, SDL_FRect receptor, bool clipHold);
 };
 

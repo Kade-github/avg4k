@@ -66,9 +66,9 @@ chartMeta QuaverFile::returnChart(std::string path)
                     if (meta.bpms.size() != 0)
                     {
                         bpmSegment& prevSeg = meta.bpms.back();
-                        float endBeat = getBeatFromTimeOffset(seg.startTime * 1000, prevSeg);
+                        float endBeat = getBeatFromTimeOffset(seg.startTime, prevSeg);
                         prevSeg.endBeat = endBeat;
-                        prevSeg.length = (prevSeg.endBeat - prevSeg.startBeat) / (prevSeg.bpm / 60);
+                        prevSeg.length = ((prevSeg.endBeat - prevSeg.startBeat) / (prevSeg.bpm / 60));
                     }
                     meta.bpms.push_back(seg); // last seg
                     bpm = false;
@@ -80,7 +80,7 @@ chartMeta QuaverFile::returnChart(std::string path)
                     {
                         float endBeat = getBeatFromTimeOffset(std::stod(split[1]), seg);
                         seg.endBeat = endBeat;
-                        seg.length = (seg.endBeat - seg.startBeat) / (seg.bpm / 60);
+                        seg.length = ((seg.endBeat - seg.startBeat) / (seg.bpm / 60));
                         meta.bpms.push_back(seg);
                         bpmSegment storage = seg;
                         seg = storage; // create a copy in another variable lol
@@ -97,14 +97,14 @@ chartMeta QuaverFile::returnChart(std::string path)
                             firstBruh = std::stod(split[1]);
                             meta.chartOffset = 0;
                         }
-                        seg.startTime = (std::stod(split[1])) / 1000;
+                        seg.startTime = (std::stod(split[1]));
                         bpmIndex++;
                     }
                     if (split[0] == "  Bpm")
                     {
                         seg.bpm = std::stod(split[1]);
                         if (bpmIndex == 1)
-                            seg.startBeat = seg.startTime * (seg.bpm / 60); // we can guess this cuz its the first bpm segment, we dont have to worry about bpm changes.
+                            seg.startBeat = (seg.startTime / 1000) * (seg.bpm / 60); // we can guess this cuz its the first bpm segment, we dont have to worry about bpm changes.
                     }
                 }
             }

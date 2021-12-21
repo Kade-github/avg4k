@@ -373,7 +373,7 @@ void Gameplay::update(Events::updateEvent event)
 
 			bpmSegment noteSeg = SongSelect::currentChart->getSegmentFromBeat(object->beat);
 
-			object->time = SongSelect::currentChart->getTimeFromBeatOffset(object->beat, noteSeg) * 1000;
+			object->time = SongSelect::currentChart->getTimeFromBeatOffset(object->beat, noteSeg);
 			rect.y = Game::gameHeight + 400;
 			rect.x = receptors[object->lane]->x;
 			rect.w = 64;
@@ -401,7 +401,7 @@ void Gameplay::update(Events::updateEvent event)
 					object->endBeat = nn.beat;
 					bpmSegment heldSeg = SongSelect::currentChart->getSegmentFromBeat(nn.beat);
 
-					object->endTime = SongSelect::currentChart->getTimeFromBeatOffset(nn.beat, noteSeg) * 1000;
+					object->endTime = SongSelect::currentChart->getTimeFromBeatOffset(nn.beat, noteSeg);
 					tail = nn;
 					break;
 				}
@@ -409,19 +409,22 @@ void Gameplay::update(Events::updateEvent event)
 
 			notesToPlay.erase(notesToPlay.begin());
 
+			float time = SDL_GetTicks();
+
 			if (object->type == Note_Head)
 			{
+
 				for (int i = std::floorf(object->time); i < std::floorf(object->endTime); i++)
 				{
 					bpmSegment holdSeg = SongSelect::currentChart->getSegmentFromTime(i);
 
-					double beat = SongSelect::currentChart->getBeatFromTime(i, holdSeg);
+					double beat = SongSelect::currentChart->getBeatFromTimeOffset(i, holdSeg);
 
-					float whHold = SongSelect::currentChart->getTimeFromBeat(beat, holdSeg);
+					float whHold = SongSelect::currentChart->getTimeFromBeatOffset(beat, holdSeg);
 
-					float diff = whHold - (object->time / 1000);
+					float diff = whHold - (object->time);
 
-					float noteOffset = (bps * diff) * 64;
+					float noteOffset = (bps * (diff / 1000)) * 64;
 
 					float y = 0;
 					float yDiff = 0;
@@ -468,6 +471,7 @@ void Gameplay::update(Events::updateEvent event)
 				}
 			}
 			std::sort(object->heldTilings.begin(), object->heldTilings.end());
+			
 			spawnedNotes.push_back(object);
 		}
 	}
@@ -498,21 +502,20 @@ void Gameplay::update(Events::updateEvent event)
 	}
 	// ok lets draw all of them now
 
-
 	for (int i = 0; i < spawnedNotes.size(); i++)
 	{
 		NoteObject* note = spawnedNotes[i];
 
 		if (!note->destroyed)
 		{
-			float wh = SongSelect::currentChart->getTimeFromBeat(note->beat, SongSelect::currentChart->getSegmentFromBeat(note->beat)) * 1000;
+			float wh = SongSelect::currentChart->getTimeFromBeat(note->beat, SongSelect::currentChart->getSegmentFromBeat(note->beat));
 
-			if ((wh + Game::save->GetDouble("offset")) - positionInSong < 2 && note->active && botplay)
+			if (wh - positionInSong < 2 && note->active && botplay)
 			{
 				if (Game::save->GetBool("hitsounds"))
 					BASS_ChannelPlay(clap, true);
 
-				float diff = (wh - positionInSong) - Game::save->GetDouble("offset");
+				float diff = (wh - positionInSong);
 
 				std::string format = std::to_string(diff - fmod(diff, 0.01));
 				format.erase(format.find_last_not_of('0') + 1, std::string::npos);
@@ -546,9 +549,9 @@ void Gameplay::update(Events::updateEvent event)
 					for (int i = 0; i < note->heldTilings.size(); i++)
 					{
 						holdTile& tile = note->heldTilings[i];
-						float wh = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat)) * 1000;
-						float offset = (wh + Game::save->GetDouble("offset"));
-						if (offset - positionInSong <= Judge::hitWindows[4] && !tile.fucked)
+						float wh = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat));
+						float offset = wh;
+						if (offset - positionInSong <= Judge::hitWindows[3] && !tile.fucked)
 						{
 							tile.active = false;
 						}
@@ -557,22 +560,6 @@ void Gameplay::update(Events::updateEvent event)
 			}
 
 			bool fuckOver = false;
-
-			for (int i = 0; i < note->heldTilings.size(); i++)
-			{
-				holdTile& tile = note->heldTilings[i];
-
-				auto whHold = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat)) * 1000;
-				float diff = whHold - (positionInSong / 1000);
-
-				if (diff < -Judge::hitWindows[2] && tile.active && !tile.fucked)
-				{
-					std::cout << note->lane << " fucked" << std::endl;
-					miss(note);
-					fuckOver = true;
-					tile.fucked = true;
-				}
-			}
 
 			for (int i = 0; i < note->heldTilings.size(); i++)
 			{
@@ -589,7 +576,7 @@ void Gameplay::update(Events::updateEvent event)
 				receptorRect.x = receptors[note->lane]->x;
 				receptorRect.y = receptors[note->lane]->y;
 				note->debug = debug;
-				note->draw(positionInSong, beat, receptorRect);
+				note->draw(positionInSong, beat, receptorRect, true);
 			}
 			
 			if (wh - positionInSong <= -Judge::hitWindows[4] && note->active)
@@ -600,18 +587,26 @@ void Gameplay::update(Events::updateEvent event)
 
 			bool condition = true;
 
-			if (note->heldTilings.size() != 0)
-			{
-				holdTile tile = note->heldTilings.back();
-				auto whHold = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat)) * 1000;
-				float diff = whHold - positionInSong;
-				if (diff > -Judge::hitWindows[4])
-					condition = false;
-			}
 
-			if ((wh - positionInSong <= -200 && !note->active) && condition)
+			if ((wh - positionInSong <= -200 && !note->active) && note->holdsActive == 0)
 			{
 				removeNote(note);
+			}
+
+			for (int i = 0; i < note->heldTilings.size(); i++)
+			{
+				holdTile& tile = note->heldTilings[i];
+
+				float whHold = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat));
+				float diff = whHold - positionInSong;
+
+				if (diff < -Judge::hitWindows[1] && tile.active)
+				{
+					std::cout << note->lane << " fucked " << diff << std::endl;
+					miss(note);
+					removeNote(note);
+					break;
+				}
 			}
 		}
 	}
@@ -699,8 +694,6 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			else
 				return;
 
-			std::cout << "pressing " << control.lane << std::endl;
-
 			// note lol
 
 			NoteObject* closestObject = nullptr;
@@ -711,7 +704,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			{
 				NoteObject* object = spawnedNotes[n];
 
-				const auto wh = SongSelect::currentChart->getTimeFromBeat(object->beat, SongSelect::currentChart->getSegmentFromBeat(object->beat)) * 1000;
+				const auto wh = SongSelect::currentChart->getTimeFromBeat(object->beat, SongSelect::currentChart->getSegmentFromBeat(object->beat));
 
 				float diff = std::abs(wh - positionInSong);
 
@@ -725,9 +718,9 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			if (!closestObject)
 				continue;
 
-			float wh = SongSelect::currentChart->getTimeFromBeat(closestObject->beat, SongSelect::currentChart->getSegmentFromBeat(closestObject->beat)) * 1000;
+			float wh = SongSelect::currentChart->getTimeFromBeat(closestObject->beat, SongSelect::currentChart->getSegmentFromBeat(closestObject->beat));
 
-			float diff = (wh - (positionInSong - Game::save->GetDouble("offset")));
+			float diff = (wh - (positionInSong ));
 
 			if (closestObject->active && diff <= Judge::hitWindows[4] && diff > -Judge::hitWindows[4])
 			{

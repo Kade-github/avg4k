@@ -14,19 +14,22 @@ std::vector<std::string> Chart::split(std::string str, char delimiter)
 }
 
 float Chart::getTimeFromBeat(float beat, bpmSegment seg) {
-    return seg.startTime + ((beat - seg.startBeat) / (seg.bpm / 60)) - meta.chartOffset;
+    float beatThing = (beat - seg.startBeat) / (seg.bpm / 60);
+    return seg.startTime + (beatThing * 1000) - (meta.chartOffset * 1000);
 }
 
 float Chart::getTimeFromBeatOffset(float beat, bpmSegment seg) {
-    return seg.startTime + ((beat - seg.startBeat) / (seg.bpm / 60));
+    float beatThing = (beat - seg.startBeat) / (seg.bpm / 60);
+    return seg.startTime + (beatThing * 1000);
 }
 
 float Chart::getBeatFromTime(float timestamp, bpmSegment seg) {
-    return seg.startBeat + (((timestamp / 1000) - (seg.startTime - meta.chartOffset)) * (seg.bpm / 60));
+    float result = seg.startBeat + ((((timestamp / 1000) - ((seg.startTime / 1000) - (meta.chartOffset))) * (seg.bpm / 60)));
+    return result;
 }
 
 float Chart::getBeatFromTimeOffset(float timestamp, bpmSegment seg) {
-    return seg.startBeat + (((timestamp / 1000) - (seg.startTime)) * (seg.bpm / 60));
+    return seg.startBeat + ((((timestamp / 1000) - ((seg.startTime / 1000))) * (seg.bpm / 60)));
 }
 
 bpmSegment Chart::getSegmentFromTime(float time) {

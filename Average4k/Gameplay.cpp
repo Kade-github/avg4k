@@ -62,7 +62,6 @@ void Gameplay::updateAccuracy(double hitWorth)
 
 void Gameplay::removeNote(NoteObject* object)
 {
-	std::cout << "removed note " << object->beat << std::endl;
 	spawnedNotes.erase(
 		std::remove_if(spawnedNotes.begin(), spawnedNotes.end(), [&](NoteObject* const nn) {
 			return nn->beat == object->beat && nn->lane == object->lane;
@@ -472,7 +471,7 @@ void Gameplay::update(Events::updateEvent event)
 				}
 			}
 			std::sort(object->heldTilings.begin(), object->heldTilings.end());
-			std::cout << "spawing " << object->heldTilings.size() << " tiles. took " << (SDL_GetTicks() - time) << "ms" << std::endl;
+			
 			spawnedNotes.push_back(object);
 		}
 	}
@@ -588,16 +587,8 @@ void Gameplay::update(Events::updateEvent event)
 
 			bool condition = true;
 
-			if (note->heldTilings.size() != 0)
-			{
-				holdTile tile = note->heldTilings.back();
-				auto whHold = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat));
-				float diff = whHold - positionInSong;
-				if (diff > -Judge::hitWindows[4])
-					condition = false;
-			}
 
-			if ((wh - positionInSong <= -200 && !note->active) && condition)
+			if ((wh - positionInSong <= -200 && !note->active) && note->holdsActive == 0)
 			{
 				removeNote(note);
 			}
@@ -702,8 +693,6 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				keys[control.lane] = true;
 			else
 				return;
-
-			std::cout << "pressing " << control.lane << std::endl;
 
 			// note lol
 

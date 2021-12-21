@@ -67,6 +67,21 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor, bool clipHol
 
 		int heightForBruh = 0;
 
+		int activeH = 0;
+
+		for (int i = 0; i < heldTilings.size(); i++)
+		{
+			bool condition = (
+				downscroll ?
+				heldTilings[i].rect.y > (receptor.y - 32)
+				: heldTilings[i].rect.y < (receptor.y + 32));
+
+			if (heldTilings[i].active || condition)
+				activeH++;
+		}
+		if (activeH != holdsActive)
+			holdsActive = activeH;
+
 
 		SDL_Rect clipThingy;
 
@@ -83,6 +98,11 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor, bool clipHol
 			clipThingy.y = 32;
 			clipThingy.w = 64;
 			clipThingy.h = holdHeight;
+			if (downscroll)
+			{
+				clipThingy.y -= 32;
+				clipThingy.h += 32;
+			}
 			for (int i = 0; i < size; i++)
 			{
 				holdTile& tile = heldTilings[i];

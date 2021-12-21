@@ -17,11 +17,11 @@ class QuaverFile
 		}
 
 		float getTimeFromBeatOffset(float beat, bpmSegment seg) {
-			return seg.startTime + ((beat - seg.startBeat) / (seg.bpm / 60));
+			return (seg.startTime / 1000) + ((beat - seg.startBeat) / (seg.bpm / 60));
 		}
 
 		float getBeatFromTimeOffset(float timestamp, bpmSegment seg) {
-			return seg.startBeat + (((timestamp / 1000) - (seg.startTime)) * (seg.bpm / 60));
+			return seg.startBeat + (((timestamp / 1000) - (seg.startTime / 1000)) * (seg.bpm / 60));
 		}
 
         bpmSegment getSegmentFromTime(float time, std::vector<bpmSegment>& toSearch) {

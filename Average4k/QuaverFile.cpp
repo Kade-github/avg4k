@@ -132,7 +132,7 @@ chartMeta QuaverFile::returnChart(std::string path)
 
                 if (split[0] == "  EndTime")
                 {
-                    float time = std::stod(split[1]) / 1000;
+                    float time = std::stod(split[1]);
                     float beat = getBeatFromTimeOffset(time, getSegmentFromTime(time, meta.bpms));
 
                     currentWorkingNote.type = Note_Head;

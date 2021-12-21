@@ -27,8 +27,7 @@ class NoteObject
 
 		int holdHeight;
 
-
-		SDL_Texture* holdTexture;
+		int holdsActive = 0;
 
 		bool debug = false;
 		double beat = 0;

@@ -24,11 +24,12 @@ float Chart::getTimeFromBeatOffset(float beat, bpmSegment seg) {
 }
 
 float Chart::getBeatFromTime(float timestamp, bpmSegment seg) {
-    return seg.startBeat + (((timestamp / 1000) - ((seg.startTime / 1000) - (meta.chartOffset))) * (seg.bpm / 60));
+    float result = seg.startBeat + ((((timestamp / 1000) - ((seg.startTime / 1000) - (meta.chartOffset))) * (seg.bpm / 60)));
+    return result;
 }
 
 float Chart::getBeatFromTimeOffset(float timestamp, bpmSegment seg) {
-    return seg.startBeat + (((timestamp / 1000) - ((seg.startTime / 1000))) * (seg.bpm / 60));
+    return seg.startBeat + ((((timestamp / 1000) - ((seg.startTime / 1000))) * (seg.bpm / 60)));
 }
 
 bpmSegment Chart::getSegmentFromTime(float time) {

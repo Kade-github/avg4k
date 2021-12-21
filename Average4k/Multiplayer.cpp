@@ -2,21 +2,17 @@
 #include "Game.h"
 #include "Gameplay.h"
 
-typedef websocketpp::client<websocketpp::config::asio_tls_client> client;
-typedef websocketpp::lib::shared_ptr<websocketpp::lib::asio::ssl::context> context_ptr;
 
-using websocketpp::lib::placeholders::_1;
-using websocketpp::lib::placeholders::_2;
-using websocketpp::lib::bind;
 
 bool Multiplayer::connectedToServer = false;
 
 bool Multiplayer::loggedIn = false;
 
-client c;
-websocketpp::connection_hdl connectionHdl;
+ConnectionData* connectionData;
 
 std::string username;
+
+std::string* reauth;
 
 void Multiplayer::SendPacket(std::string data, PacketType packet) {
 
@@ -34,7 +30,8 @@ void Multiplayer::SendPacket(std::string data, PacketType packet) {
 
     memcpy(writeTo, dataStr.c_str(), dataStr.length());
 
-    c.send(connectionHdl, std::string(sendData, dataStr.length() + 8), websocketpp::frame::opcode::BINARY, ec);
+    if(connectionData)
+        connectionData->c.send(connectionData->connectionHdl, std::string(sendData, dataStr.length() + 8), websocketpp::frame::opcode::BINARY, ec);
 
     free(sendData);
 }
@@ -108,11 +105,10 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
             switch (status.code)
             {
                 case 403:
-                    if (!Multiplayer::loggedIn)
-                    {
+                   
                         std::cout << "trying to login cuz unauthorized" << std::endl;
                         CreateThread(NULL, NULL, pleaseLogin, NULL, NULL, NULL);
-                    }
+                   
                     break;
                 case 409:
                     std::cout << "conflict" << std::endl;
@@ -137,6 +133,11 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
 
             CreateThread(NULL, NULL, NewThread, NULL, NULL, NULL);
             Multiplayer::loggedIn = true;
+
+            if (reauth)
+                delete reauth;
+
+            reauth = new std::string(helloBack.reauth);
 
             std::cout << helloBack.Message << ". hello server, fuck you too! " << std::endl;
         break;
@@ -263,43 +264,59 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
         while (true)
         {
            
+          
+
             if (!firstConnection)
             {
-               
-                c.set_access_channels(websocketpp::log::alevel::none);
-                c.clear_access_channels(websocketpp::log::alevel::all);
-                c.set_error_channels(websocketpp::log::elevel::none);
+                connectionData = new ConnectionData();
+                connectionData->c.set_access_channels(websocketpp::log::alevel::none);
+                connectionData->c.clear_access_channels(websocketpp::log::alevel::all);
+                connectionData->c.set_error_channels(websocketpp::log::elevel::none);
 
                 // Initialize ASIO
-                c.init_asio();
+                connectionData->c.init_asio();
 
                 // Register our message handler
                 std::cout << "Setting handlers" << std::endl;
-                c.set_message_handler(bind(&on_message, &c, ::_1, ::_2));
 
-                c.set_tls_init_handler(bind(&on_tls_init, "titnoas.xyz", ::_1));
+                // Register our message handler
+                std::cout << "Setting handlers" << std::endl;
 
-            
 
-                std::cout << "handlers set" << std::endl;
+
+
+
                 firstConnection = true;
                 
             }
             else {
                 //please dont ddos my webserver thanks
-                Sleep(5000);
+                Sleep(1000);
             }
+
+
+            std::cout << "handlers set" << std::endl;
+
+            connectionData->c.set_message_handler(bind(&on_message, &connectionData->c, ::_1, ::_2));
+
+            connectionData->c.set_tls_init_handler(bind(&on_tls_init, "titnoas.xyz", ::_1));
+           
+
             websocketpp::lib::error_code ec;
-            client::connection_ptr con = c.get_connection(url, ec);
+            client::connection_ptr con = connectionData->c.get_connection(url, ec);
             if (ec) {
                 std::cout << "could not create connection because: " << ec.message() << std::endl;
                 return 0;
             }
             std::cout << "got connection" << std::endl;
 
+            if (reauth) {
+                con->append_header("Reauth", *reauth);
+                Multiplayer::loggedIn = true;
+            }
             // Note that connect here only requests a connection. No network messages are
             // exchanged until the event loop starts running in the next line.
-             connectionHdl = c.connect(con);
+            connectionData->connectionHdl = connectionData->c.connect(con);
             
             std::cout << "connected" << std::endl;
             // Start the ASIO io_service run loop
@@ -308,10 +325,12 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
             
 
             std::cout << "Calling run" << std::endl;
-            c.run();
+            connectedToServer = true;
+            connectionData->c.run();
             std::cout << "done run" << std::endl;
             Multiplayer::loggedIn = false;
             connectedToServer = false;
+            connectionData->c.reset();
         }
     }
     catch (websocketpp::exception const& e) {
@@ -371,5 +390,5 @@ void Multiplayer::OnSteamAuthTicket(EncryptedAppTicketResponse_t* pEncryptedAppT
 
 void Multiplayer::inQuotesGracefullyDisconnect()
 {
-    c.close(connectionHdl, 1000, "no you");
+    connectionData->c.close(connectionData->connectionHdl, 1000, "no you");
 }

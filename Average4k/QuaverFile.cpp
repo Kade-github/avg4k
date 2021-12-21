@@ -66,7 +66,7 @@ chartMeta QuaverFile::returnChart(std::string path)
                     if (meta.bpms.size() != 0)
                     {
                         bpmSegment& prevSeg = meta.bpms.back();
-                        float endBeat = getBeatFromTimeOffset(seg.startTime * 1000, prevSeg);
+                        float endBeat = getBeatFromTimeOffset(seg.startTime, prevSeg);
                         prevSeg.endBeat = endBeat;
                         prevSeg.length = (prevSeg.endBeat - prevSeg.startBeat) / (prevSeg.bpm / 60);
                     }
@@ -94,7 +94,7 @@ chartMeta QuaverFile::returnChart(std::string path)
                     {
                         if (bpmIndex == 0)
                         {
-                            firstBruh = std::stod(split[1]);
+                            firstBruh = std::stod(split[1]) / 1000;
                             meta.chartOffset = 0;
                         }
                         seg.startTime = (std::stod(split[1])) / 1000;
@@ -132,7 +132,7 @@ chartMeta QuaverFile::returnChart(std::string path)
 
                 if (split[0] == "  EndTime")
                 {
-                    float time = std::stod(split[1]);
+                    float time = std::stod(split[1]) / 1000;
                     float beat = getBeatFromTimeOffset(time, getSegmentFromTime(time, meta.bpms));
 
                     currentWorkingNote.type = Note_Head;

@@ -105,7 +105,7 @@ bool SaveFile::GetBool(std::string sett)
     return false;
 }
 
-setting SaveFile::CreateSetting(bool defaultActive, double defaultValue, std::string defaultName, bool tA, double lowest, double highest)
+setting SaveFile::CreateSetting(bool defaultActive, double defaultValue, std::string defaultName, bool tA, int lowest, int highest)
 {
     setting set;
     set.active = defaultActive;

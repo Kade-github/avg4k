@@ -13,20 +13,19 @@ void NoteObject::destroy()
 	delete this;
 }
 
-void NoteObject::draw(float position, double b, SDL_FRect receptor)
+void NoteObject::draw(float position, double b, SDL_FRect receptor, bool clipHold)
 {
 		bpmSegment bruh = SongSelect::currentChart->getSegmentFromBeat(beat);
 
 		float wh = SongSelect::currentChart->getTimeFromBeat(beat, bruh);
 
-		float diff = (wh + (Game::save->GetDouble("offset") / 1000) - (position / 1000));
+		float diff = (wh) - (position);
 
 		float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
 
-		float noteOffset = (bps * diff) * 64;
+		float noteOffset = (bps * (diff / 1000)) * 64;
 
 		bool downscroll = Game::save->GetBool("downscroll");
-
 
 		if (downscroll)
 			rect.y = (receptor.y - noteOffset);
@@ -89,10 +88,10 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 				holdTile& tile = heldTilings[i];
 				auto whHold = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat));
 			
-				float diff2 = ((whHold + (Game::save->GetDouble("offset")) / 1000)) - position / 1000;
+				float diff2 = ((whHold)) - position;
 				tile.rect.x = 0;
 
-				noteOffset = (bps * diff2) * 64;
+				noteOffset = (bps * (diff2 / 1000)) * 64;
 				
 				tile.rect.y = noteOffset;
 
@@ -167,7 +166,8 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 
 		if (heldTilings.size() != 0)
 		{
-			SDL_RenderSetClipRect(Game::renderer, &l);
+			if (clipHold)
+				SDL_RenderSetClipRect(Game::renderer, &l);
 
 			SDL_Rect copy = clipThingy;
 			copy.x = rect.x;
@@ -178,7 +178,8 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor)
 			SDL_SetRenderDrawBlendMode(Game::renderer, SDL_BLENDMODE_BLEND);
 			SDL_RenderCopyEx(Game::renderer, holdTexture, NULL, &copy,0,NULL,downscroll ? SDL_FLIP_VERTICAL : SDL_FLIP_NONE);
 
-			SDL_RenderSetClipRect(Game::renderer, NULL);
+			if (clipHold)
+				SDL_RenderSetClipRect(Game::renderer, NULL);
 		}
 
 

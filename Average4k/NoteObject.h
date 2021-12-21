@@ -44,6 +44,6 @@ class NoteObject
 
 		void destroy();
 
-		void draw(float position, double beat, SDL_FRect receptor);
+		void draw(float position, double beat, SDL_FRect receptor, bool clipHold);
 };
 

@@ -57,13 +57,13 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                         seg.endBeat = INT_MAX;
                         seg.length = INT_MAX;
                         seg.bpm = std::stof(bpmSeg[1]);
-                        seg.startTime = -(meta.chartOffset);
+                        seg.startTime = -(meta.chartOffset) * 1000;
 
                         if (bpmIndex != 0) // previous lol
                         {
                             bpmSegment& prevSeg = meta.bpms[bpmIndex - 1];
                             prevSeg.endBeat = seg.startBeat;
-                            prevSeg.length = (prevSeg.endBeat - prevSeg.startBeat) / (prevSeg.bpm / 60);
+                            prevSeg.length = ((prevSeg.endBeat - prevSeg.startBeat) / (prevSeg.bpm / 60)) * 1000;
                             seg.startTime = prevSeg.startTime + prevSeg.length;
                         }
 

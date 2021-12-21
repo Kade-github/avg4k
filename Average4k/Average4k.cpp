@@ -66,6 +66,10 @@ void fpsthink() {
 }
 
 void CrashDmp(_EXCEPTION_POINTERS* ExceptionInfo) {
+
+#ifdef _DEBUG
+	return;
+#endif
 	OFSTRUCT data;
 	HANDLE file = CreateFile(L"crash.dmp", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 

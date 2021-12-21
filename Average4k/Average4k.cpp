@@ -1,6 +1,7 @@
 #include "includes.h"
 #include "Steam.h"
 #include "Game.h"
+#include <DbgHelp.h>
 using namespace std;
 
 #undef main
@@ -18,6 +19,7 @@ using namespace std;
 #pragma comment(lib,"x64\\zip.lib")
 #pragma comment(lib,"x64\\libcurl.lib")
 #pragma comment(lib,"x64\\boost_random-vc140-mt.lib")
+#pragma comment(lib, "dbghelp.lib")
 #define FRAME_VALUES 60
 
 Uint32 frametimes[FRAME_VALUES];
@@ -63,11 +65,35 @@ void fpsthink() {
 	Game::gameFPS = std::floorf(1000.f / Game::gameFPS);
 }
 
+void CrashDmp(_EXCEPTION_POINTERS* ExceptionInfo) {
+
+#ifdef _DEBUG
+	return;
+#endif
+	OFSTRUCT data;
+	HANDLE file = CreateFile(L"crash.dmp", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
+
+	MINIDUMP_EXCEPTION_INFORMATION info;;
+	info.ClientPointers = false;
+	info.ExceptionPointers = ExceptionInfo;
+	info.ThreadId = GetCurrentThreadId();
+
+	MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), file, MiniDumpWithFullMemory, &info, NULL, NULL);
+	CloseHandle(file);
+}
+
 LONG PvectoredExceptionHandler(
 	_EXCEPTION_POINTERS* ExceptionInfo
 )
 {
-	
+	CrashDmp(ExceptionInfo);
+	return 0;
+}
+
+long WINAPI UnhandledExceptionFilterHandler(LPEXCEPTION_POINTERS ex) {
+
+	CrashDmp(ex);
 	return 0;
 }
 
@@ -78,8 +104,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		STR_ENCRYPT_START
 		STR_ENCRYPTW_START
 
-
-	AddVectoredExceptionHandler(1, &PvectoredExceptionHandler);
+	SetUnhandledExceptionFilter(UnhandledExceptionFilterHandler);
+	//AddVectoredExceptionHandler(1, &PvectoredExceptionHandler);
 	SDL_Init(SDL_INIT_EVERYTHING);
 	
 	curl_global_init(CURL_GLOBAL_ALL);

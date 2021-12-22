@@ -1,6 +1,7 @@
 #include "Gameplay.h"
 #include "SongSelect.h"
 #include "MultiplayerLobby.h"
+#include "CPacketHostEndChart.h"
 
 noteskin_asset* Gameplay::noteskin;
 
@@ -664,8 +665,14 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 	switch (event.keysym.sym)
 	{
 		case SDLK_ESCAPE:
-			if (MultiplayerLobby::inLobby)
+			if (MultiplayerLobby::inLobby) {
+				CPacketHostEndChart end;
+				end.Order = 0;
+				end.PacketType = eCPacketHostEndChart;
+
+				Multiplayer::sendMessage<CPacketHostEndChart>(end);
 				return;
+			}
 			SongSelect::currentChart->destroy();
 			cleanUp();
 			Game::instance->switchMenu(new MainMenu());

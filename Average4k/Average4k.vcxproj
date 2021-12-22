@@ -206,6 +206,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="CPacketChartAcquired.h" />
     <ClInclude Include="CPacketHello.h" />
     <ClInclude Include="CPacketHostChangeChart.h" />
+    <ClInclude Include="CPacketHostEndChart.h" />
     <ClInclude Include="CPacketHostServer.h" />
     <ClInclude Include="CPacketHostStartGame.h" />
     <ClInclude Include="CPacketHostUpdateLobby.h" />

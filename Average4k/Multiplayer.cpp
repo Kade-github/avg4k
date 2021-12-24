@@ -14,6 +14,47 @@ std::string username;
 
 std::string* reauth;
 
+RSA* rsa;
+EVP_PKEY_CTX* cryptoCtx;
+ENGINE* engine;
+
+EVP_CIPHER_CTX* aesCtx;
+
+unsigned char* key;
+
+unsigned char iv[] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+
+void Multiplayer::InitCrypto() {
+    VM_START
+        STR_ENCRYPT_START
+
+        const char* publicKey = "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3wrvv/ba9xIvSeguoYHj\noLdkXr2++5+Vs8tA0HoBxFiezVvRstr+SC9tFT5Rw3zfjpZupwsu1jxt1sV1VBgH\nnDr7TWbru266mdggvDvqVO6q01l0lBKabWfWgeJroPMM9VINB/4uQdBzNt4xVgRN\nkIqiBHHVM3yU6RliXEbAsyDc/IdsTXMlotN9V3o49iJf+BabJWQ5SFPvsnr2jvhA\nh3XnCxqoMzj03hmzqGJ+UpJxFm7AaQ7YpVf7gb2qqTDuJXBBzqD7jpINNOrKMWCf\nqqYQVswCjJxYhQ2SNij36BwgoTEA9Rx72fMeOkTUoZ8k4CkFEy0IRxuEMVoyKbUh\nwQIDAQAB\n-----END PUBLIC KEY-----";
+    BIO* bo = BIO_new(BIO_s_mem());
+    BIO_write(bo, publicKey, strlen(publicKey));
+    PEM_read_bio_RSA_PUBKEY(bo, &rsa, 0, 0);
+    BIO_free(bo);
+
+
+    EVP_PKEY* pKey = EVP_PKEY_new();
+
+    EVP_PKEY_assign_RSA(pKey, rsa);
+
+    engine = NULL;
+
+    cryptoCtx = EVP_PKEY_CTX_new(pKey, engine);
+
+    EVP_PKEY_encrypt_init(cryptoCtx);
+
+    EVP_PKEY_CTX_set_rsa_padding(cryptoCtx, RSA_PKCS1_OAEP_PADDING);
+
+    key = (unsigned char*)malloc(32);
+
+    RAND_bytes(key, 32);
+
+    STR_ENCRYPT_END
+    VM_END
+}
+
 void Multiplayer::SendPacket(std::string data, PacketType packet) {
 
     websocketpp::lib::error_code ec;
@@ -30,9 +71,33 @@ void Multiplayer::SendPacket(std::string data, PacketType packet) {
 
     memcpy(writeTo, dataStr.c_str(), dataStr.length());
 
-    if(connectionData)
-        connectionData->c.send(connectionData->connectionHdl, std::string(sendData, dataStr.length() + 8), websocketpp::frame::opcode::BINARY, ec);
+    unsigned char* ciphertext = (unsigned char*)malloc(dataStr.length() + 256);
 
+    int len;
+    int ciphertext_len;
+
+    aesCtx = EVP_CIPHER_CTX_new();
+
+    EVP_EncryptInit_ex(aesCtx, EVP_aes_256_cbc(), NULL, NULL, NULL);
+
+    EVP_CIPHER_CTX_ctrl(aesCtx, EVP_CTRL_CCM_SET_IVLEN, 16, NULL);
+    EVP_CIPHER_CTX_set_padding(aesCtx, EVP_PADDING_PKCS7);
+
+    EVP_EncryptInit_ex(aesCtx, NULL, NULL, key, iv);
+
+    EVP_EncryptUpdate(aesCtx, ciphertext, &len, (unsigned char*)sendData, dataStr.length() + 8);
+
+    ciphertext_len = len;
+
+    EVP_EncryptFinal_ex(aesCtx, ciphertext + len, &len);
+    ciphertext_len += len;
+
+    EVP_CIPHER_CTX_free(aesCtx);
+
+    if(connectionData)
+        connectionData->c.send(connectionData->connectionHdl, std::string((char*)ciphertext, ciphertext_len), websocketpp::frame::opcode::BINARY, ec);
+
+    free(ciphertext);
     free(sendData);
 }
 
@@ -67,34 +132,88 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
 
     if (msg->get_opcode() != websocketpp::frame::opcode::BINARY)
         return;
+    try {
+        std::string strData = msg->get_raw_payload();
 
-    std::string string = msg->get_raw_payload();
 
-    char* ptr = (char*)malloc(string.length());
 
-    memcpy(ptr, string.c_str(), string.length());
 
-    int32_t* ints = (int32_t*)ptr;
 
-    int32_t packetType = ints[0];
-    int32_t length = ints[1];
+        char* ciphertext = (char*)malloc(strData.length());
 
-    size_t size = (size_t)length;
+        char* plaintext = (char*)malloc(strData.length() + 256);
 
-    char* data = (char*)((__int64)(ptr)+8);
+        memcpy(ciphertext, strData.c_str(), strData.length());
 
-    PacketType type = (PacketType)packetType;
+        int len;
+        int plaintext_len;
 
-    SPacketStatus status;
-    SPacketHello helloBack;
-    Events::packetEvent p;
+        //std::cout << "buffers allocated" << std::endl;
 
-    msgpack::unpacked result;
+        EVP_CIPHER_CTX* ctx = NULL;
 
-    msgpack::object obj;
+        ctx = EVP_CIPHER_CTX_new();
 
-    switch (type)
-    {
+
+
+        EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, NULL, NULL);
+
+        //std::cout << "cxt created " << std::endl;
+
+        EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, 16, NULL);
+        EVP_CIPHER_CTX_set_padding(ctx, EVP_PADDING_PKCS7);
+
+       // std::cout << "padding shit set" << std::endl;
+
+        EVP_DecryptInit_ex(ctx, NULL, NULL, key, iv);
+
+       // std::cout << "decrypt inited" << std::endl;
+
+        EVP_DecryptUpdate(ctx, (unsigned char*)plaintext, &len, (unsigned char*)ciphertext, strData.length());
+       // std::cout << "first update done" << std::endl;
+
+        plaintext_len = len;
+
+        EVP_DecryptFinal_ex(ctx, (unsigned char*)plaintext + len, &len);
+       // std::cout << "done decrypt" << std::endl;
+        plaintext_len += len;
+
+        EVP_CIPHER_CTX_free(ctx);
+       // std::cout << "freed cxt" << std::endl;
+        free(ciphertext);
+        //std::cout << "freed ciphertext" << std::endl;
+
+        std::string plaintex = std::string(plaintext, plaintext_len);
+
+        std::string encoded = macaron::Base64::Encode(plaintex);
+
+        //std::cout << "Decrypted message: " << encoded << std::endl;
+
+
+        int32_t* ints = (int32_t*)plaintext;
+
+        int32_t packetType = ints[0];
+        int32_t length = ints[1];
+
+        //std::cout << "Packet length: " << length << std::endl;
+       // std::cout << "packet type: " << packetType << std::endl;
+
+        size_t size = (size_t)length;
+
+        char* data = (char*)((__int64)(plaintext)+8);
+
+        PacketType type = (PacketType)packetType;
+
+        SPacketStatus status;
+        SPacketHello helloBack;
+        Events::packetEvent p;
+
+        msgpack::unpacked result;
+
+        msgpack::object obj;
+
+        switch (type)
+        {
         case eSPacketStatus:
             unpack(result, data, length);
 
@@ -104,25 +223,25 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
 
             switch (status.code)
             {
-                case 403:
-                   
-                        std::cout << "trying to login cuz unauthorized" << std::endl;
-                        CreateThread(NULL, NULL, pleaseLogin, NULL, NULL, NULL);
-                   
-                    break;
-                case 409:
-                    std::cout << "conflict" << std::endl;
-                    break;
-                case 404:
-                    std::cout << "not found" << std::endl;
-                    break;
+            case 403:
+
+                std::cout << "trying to login cuz unauthorized" << std::endl;
+                CreateThread(NULL, NULL, pleaseLogin, NULL, NULL, NULL);
+
+                break;
+            case 409:
+                std::cout << "conflict" << std::endl;
+                break;
+            case 404:
+                std::cout << "not found" << std::endl;
+                break;
             }
             p.data = data;
             p.length = length;
             p.type = type;
-            p.ogPtr = ptr;
+            p.ogPtr = plaintext;
             Game::instance->weGotPacket(p);
-        break;
+            break;
         case eSPacketHello:
             unpack(result, data, length);
 
@@ -140,14 +259,18 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
             reauth = new std::string(helloBack.reauth);
 
             std::cout << helloBack.Message << ". hello server, fuck you too! " << std::endl;
-        break;
+            break;
         default:
             p.data = data;
             p.length = length;
             p.type = type;
-            p.ogPtr = ptr;
+            p.ogPtr = plaintext;
             Game::instance->weGotPacket(p);
             break;
+        }
+    }
+    catch (std::exception e) {
+        std::cout << "shit " << e.what() << std::endl;
     }
 }
 
@@ -264,8 +387,7 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
         while (true)
         {
            
-          
-
+         
             if (!firstConnection)
             {
                 connectionData = new ConnectionData();
@@ -281,9 +403,6 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
 
                 // Register our message handler
                 std::cout << "Setting handlers" << std::endl;
-
-
-
 
 
                 firstConnection = true;
@@ -314,6 +433,23 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
                 con->append_header("Reauth", *reauth);
                 Multiplayer::loggedIn = true;
             }
+            con->append_header("Encrypted", "1");
+
+            size_t outLen;
+
+            EVP_PKEY_encrypt(cryptoCtx, NULL, &outLen, key, 32);
+
+
+            unsigned char* out = (unsigned char*)OPENSSL_malloc(outLen);
+
+            EVP_PKEY_encrypt(cryptoCtx, out, &outLen, key, 32);
+
+            std::string encryptedData = std::string((char*)out, outLen);
+
+            std::string base64Encoded = macaron::Base64::Encode(encryptedData);
+            std::cout << "Base64: " << base64Encoded << std::endl;
+            con->append_header("Key", base64Encoded);
+
             // Note that connect here only requests a connection. No network messages are
             // exchanged until the event loop starts running in the next line.
             connectionData->connectionHdl = connectionData->c.connect(con);

@@ -105,7 +105,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	SDL_Init(SDL_INIT_EVERYTHING);
 	
 	curl_global_init(CURL_GLOBAL_ALL);
-
+	Multiplayer::InitCrypto();
 
 	#ifdef  _DEBUG
 	AllocConsole();

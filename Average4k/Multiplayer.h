@@ -22,6 +22,8 @@ public:
 
 	static DWORD WINAPI connect(LPVOID agh);
 
+	static void InitCrypto();
+
 	static void SendPacket(std::string data, PacketType packet);
 
 	template<typename T>

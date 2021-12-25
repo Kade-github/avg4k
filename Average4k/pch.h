@@ -15,6 +15,9 @@
 #include <Themida/ThemidaSDK.h>
 #include <msgpack.hpp>
 #include <openssl/opensslconf.h>
+#include <openssl/evp.h>
+#include <openssl/rsa.h>
+#include <openssl/engine.h>
 #include <websocketpp/config/asio_client.hpp>
 #include <websocketpp/client.hpp>
 #include <stdlib.h>
@@ -42,3 +45,4 @@
 #include "CPacketChartAcquired.h"
 #include "CPacketHostChangeChart.h"
 #include "CPacketHostStartGame.h"
+#include <io.h>

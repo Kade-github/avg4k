@@ -24,7 +24,8 @@ class Multiplayer
 {
 public:
 	static bool connectedToServer;
-
+	static std::queue<PacketData> sendQueue;
+	static std::mutex sendQueueLock;
 	static DWORD WINAPI connect(LPVOID agh);
 
 	static void InitCrypto();

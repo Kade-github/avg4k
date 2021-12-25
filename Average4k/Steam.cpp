@@ -139,6 +139,7 @@ long GetFileSize(std::string filename)
 
 void Steam::uploadToItem(Chart* c, PublishedFileId_t id, std::string fileName)
 {
+    VM_START
     std::cout << "wassup homie " << id << std::endl;
     std::vector<std::string> b = Chart::split(c->meta.folder, '/');
 
@@ -194,6 +195,7 @@ void Steam::uploadToItem(Chart* c, PublishedFileId_t id, std::string fileName)
     UploadedItemCallback.Set(call, this, &Steam::OnUploadedItemCallback);
 
     free(p);
+    VM_END
 }
 
 void Steam::OnCreateItemCallback(CreateItemResult_t* result, bool bIOFailure)
@@ -385,6 +387,7 @@ std::string Steam::ReplaceString(std::string subject, const std::string& search,
 
 void Steam::OnUGCQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFailure)
 {
+    VM_START
     if (result->m_unNumResultsReturned != 1) {
         std::cout << "We got something other than 1 result, this shouldn't happen" << std::endl;
         return;
@@ -430,5 +433,5 @@ void Steam::OnUGCQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFailure
             Game::currentMenu->onSteam("chartAquired");
 
     }
-
+    VM_END
 }

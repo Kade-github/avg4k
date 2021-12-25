@@ -29,6 +29,7 @@ public:
 	static Steam* steam;
 	static Multiplayer* multi;
 	static chartMeta loadedChart;
+	static std::string version;
 
 	static Game* instance;
 	static bool patched;

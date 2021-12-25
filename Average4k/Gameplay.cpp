@@ -2,6 +2,7 @@
 #include "SongSelect.h"
 #include "MultiplayerLobby.h"
 #include "CPacketHostEndChart.h"
+#include <chrono>
 
 noteskin_asset* Gameplay::noteskin;
 
@@ -21,16 +22,16 @@ void Gameplay::initControls()
 	controls.clear();
 
 	gameplayControl left;
-	left.code = SDLK_d;
+	left.code = Game::save->GetDouble("Left Key");
 	left.lane = 0;
 	gameplayControl down;
-	down.code = SDLK_f;
+	down.code = Game::save->GetDouble("Down Key");
 	down.lane = 1;
 	gameplayControl up;
-	up.code = SDLK_j;
+	up.code = Game::save->GetDouble("Up Key");
 	up.lane = 2;
 	gameplayControl right;
-	right.code = SDLK_k;
+	right.code = Game::save->GetDouble("Right Key");
 	right.lane = 3;
 
 	controls.push_back(left);
@@ -193,8 +194,6 @@ Gameplay::Gameplay()
 
 	std::cout << "playing " << path << std::endl;
 
-	
-
 	channel = BASS_StreamCreateFile(false, path.c_str(), 0, 0, BASS_STREAM_DECODE);
 
 	clap = BASS_StreamCreateFile(false, "assets/sounds/hitSound.mp3", 0, 0, NULL);
@@ -243,6 +242,7 @@ Gameplay::Gameplay()
 	positionInSong = -500;
 	MUTATE_END
 }
+
 
 
 float lerp(float a, float b, float f)
@@ -363,6 +363,29 @@ void Gameplay::update(Events::updateEvent event)
 		}
 	}
 
+	SDL_FRect posBar;
+
+	posBar.x = receptors[0]->x;
+	posBar.y = 24;
+	posBar.h = 16;
+	posBar.w = ((receptors[3]->x + 64) - receptors[0]->x) * (positionInSong / (songLength * 1000));
+
+	if (downscroll)
+		posBar.y = (receptors[0]->y + 64) + 12;
+
+
+	SDL_FRect outline;
+
+	outline.x = posBar.x;
+	outline.y = posBar.y;
+	outline.h = posBar.h;
+	outline.w = (receptors[3]->x + 64) - receptors[0]->x;
+
+	SDL_SetRenderDrawColor(Game::renderer, 255, 255, 255, 255);
+
+	SDL_RenderFillRectF(Game::renderer, &posBar);
+
+	SDL_RenderDrawRectF(Game::renderer, &outline);
 
 	// spawning shit
 

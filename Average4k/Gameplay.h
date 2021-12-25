@@ -81,6 +81,8 @@ class Gameplay :
 
 		float positionInSong = 0;
 
+		Text* songLengthText;
+
 		Text* positionAndBeats;
 
 		Text* Judgement;

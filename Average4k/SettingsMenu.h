@@ -21,6 +21,8 @@ public:
 
 	int selectedIndex;
 
+	bool waitingKey = false;
+
 	void refreshList();
 
 	SettingsMenu();

@@ -15,6 +15,9 @@ void SettingsMenu::refreshList() {
 		else
 			value = ": " + std::to_string(set.value);
 
+		if (set.isKeybind)
+			value = ": " + std::string(SDL_GetKeyName((SDL_Keycode)set.value));
+
 		bruhhh h;
 
 		Text* t = new Text(0, 100 + (64 * i), set.name + value, 24);
@@ -62,8 +65,16 @@ void SettingsMenu::update(Events::updateEvent event)
 	else
 		value = ": " + std::to_string(set->value);
 
-	t->setText("> " + std::string(set->name) + value);
-	t->setX((Game::gameWidth / 2) - (t->surfW / 2));
+	if (set->isKeybind)
+		value = ": " + std::string(SDL_GetKeyName((SDL_Keycode)set->value));
+
+	std::string newText = "> " + std::string(set->name) + value;
+
+	if (t->text != newText)
+	{
+		t->setText(newText);
+		t->setX((Game::gameWidth / 2) - (t->surfW / 2));
+	}
 }
 
 void SettingsMenu::keyDown(SDL_KeyboardEvent event)
@@ -73,6 +84,13 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 	bruhhh& b = settings[selectedIndex];
 	Text* t = b.display;
 	std::string value = "";
+	if (waitingKey)
+	{
+		Game::save->SetDouble(b.set->name, event.keysym.sym);
+		Game::save->Save();
+		waitingKey = false;
+		return;
+	}
 	switch (event.keysym.sym)
 	{
 	case SDLK_ESCAPE:
@@ -82,14 +100,24 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 		delete this;
 		break;
 	case SDLK_RETURN:
-		if (b.set->takesActive)
+		if (b.set->isKeybind && !waitingKey)
 		{
-			std::cout << "toggle" << std::endl;
-			Game::save->SetBool(b.set->name, !Game::save->GetBool(b.set->name));
-			Game::save->Save();
+			waitingKey = true;
+			return;
+		}
+		else
+		{
+			if (b.set->takesActive)
+			{
+				std::cout << "toggle" << std::endl;
+				Game::save->SetBool(b.set->name, !Game::save->GetBool(b.set->name));
+				Game::save->Save();
+			}
 		}
 		break;
 	case SDLK_UP:
+		if (waitingKey)
+			return;
 		selectedIndex--;
 
 		if (b.set->takesActive)
@@ -97,10 +125,15 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 		else
 			value = ": " + std::to_string(b.set->value);
 
+		if (b.set->isKeybind)
+			value = ": " + std::string(SDL_GetKeyName((SDL_Keycode)b.set->value));
+
 		t->setText(std::string(b.set->name) + value);
 		t->setX((Game::gameWidth / 2) - (t->surfW / 2));
 		break;
 	case SDLK_DOWN:
+		if (waitingKey)
+			return;
 		selectedIndex++;
 
 		if (b.set->takesActive)
@@ -108,10 +141,15 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 		else
 			value = ": " + std::to_string(b.set->value);
 
+		if (b.set->isKeybind)
+			value = ": " + std::string(SDL_GetKeyName((SDL_Keycode)b.set->value));
+
 		t->setText(std::string(b.set->name) + value);
 		t->setX((Game::gameWidth / 2) - (t->surfW / 2));
 		break;
 	case SDLK_LEFT:
+		if (waitingKey || b.set->isKeybind)
+			return;
 		if (!b.set->takesActive)
 		{
 			b.set->value--;
@@ -121,6 +159,8 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 		}
 		break;
 	case SDLK_RIGHT:
+		if (waitingKey || b.set->isKeybind)
+			return;
 		if (!b.set->takesActive)
 		{
 			b.set->value++;

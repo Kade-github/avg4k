@@ -326,7 +326,8 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 	if (controls.count(ev.keysym.sym) == 1)
 		controls[ev.keysym.sym] = true;
 
-	currentMenu->keyDown(ev);
+	if (currentMenu != NULL)
+		currentMenu->keyDown(ev);
 
 	if (ev.keysym.sym == SDLK_F4)
 	{

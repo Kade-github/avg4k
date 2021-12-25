@@ -103,6 +103,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	//AddVectoredExceptionHandler(1, &PvectoredExceptionHandler);
 	SDL_Init(SDL_INIT_EVERYTHING);
 	
+	Game::version = "b1";
+
 	curl_global_init(CURL_GLOBAL_ALL);
 	Multiplayer::InitCrypto();
 

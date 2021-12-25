@@ -23,6 +23,8 @@ Game* Game::instance = NULL;
 chartMeta Game::loadedChart;
 bool Game::patched = false;
 
+std::string Game::version;
+
 bool debug_takingInput;
 
 std::string debug_string;

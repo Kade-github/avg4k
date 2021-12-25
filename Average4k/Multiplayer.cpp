@@ -24,6 +24,8 @@ unsigned char* key;
 
 unsigned char iv[] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 
+std::mutex unfuckPlease;
+
 void Multiplayer::InitCrypto() {
     
 
@@ -102,55 +104,65 @@ DWORD WINAPI SendPacketT(LPVOID param) {
     int len;
     int ciphertext_len;
 
+    unfuckPlease.lock();
+
     aesCtx = EVP_CIPHER_CTX_new();
 
     if (!aesCtx) {
         std::cout << "Crypto error 1 (Packet Dropped)" << std::endl;
-        return 1;
+        unfuckPlease.unlock();
+        return 0;
     }
 
     if (EVP_EncryptInit_ex(aesCtx, EVP_aes_256_cbc(), NULL, NULL, NULL) != 1) {
         std::cout << "Crypto error 2 (Packet Dropped)" << std::endl;
-        return 1;
+        unfuckPlease.unlock();
+        return 0;
      }
 
 
     if (EVP_CIPHER_CTX_set_padding(aesCtx, EVP_PADDING_PKCS7) != 1) {
         std::cout << "Crypto error 4 (Packet Dropped)" << std::endl;
-        return 1;
+        unfuckPlease.unlock();
+        return 0;
     }
 
 
 
     if (RAND_bytes(cipherplusIV, 16) != 1) {
         std::cout << "Crypto error 5 (Packet Dropped)" << std::endl;
-        return 1;
+        unfuckPlease.unlock();
+        return 0;
     }
 
     if (EVP_EncryptInit_ex(aesCtx, NULL, NULL, key, cipherplusIV) != 1) {
         std::cout << "Crypto error 6 (Packet Dropped)" << std::endl;
-        return 1;
+        unfuckPlease.unlock();
+        return 0;
     }
 
     if (EVP_EncryptUpdate(aesCtx, ciphertext, &len, (unsigned char*)sendData, dataStr.length() + 8) != 1) {
         std::cout << "Crypto error 7 (Packet Dropped)" << std::endl;
-        return 1;
+        unfuckPlease.unlock();
+        return 0;
     }
 
     ciphertext_len = len;
 
     if (EVP_EncryptFinal_ex(aesCtx, ciphertext + len, &len) != 1) {
         std::cout << "Crypto error 8 (Packet Dropped)" << std::endl;
-        return 1;
+        unfuckPlease.unlock();
+        return 0;
     }
 
     ciphertext_len += len;
 
     EVP_CIPHER_CTX_free(aesCtx);
 
+   
     if (connectionData)
         connectionData->c.send(connectionData->connectionHdl, std::string((char*)cipherplusIV, ciphertext_len + 16), websocketpp::frame::opcode::BINARY);
-
+    unfuckPlease.unlock();
     free(cipherplusIV);
     free(sendData);
 
@@ -167,7 +179,7 @@ void Multiplayer::SendPacket(std::string data, PacketType packet) {
     packetData->packetType = packet;
 
     CreateThread(NULL, NULL, SendPacketT, packetData, NULL, NULL);
-    
+      
 }
 
 DWORD WINAPI NewThread(LPVOID param) {
@@ -547,6 +559,7 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
             }
             con->append_header("Encrypted", "1");
             con->append_header("IV", "dynamic");
+            con->append_header("Version", Game::version);
             size_t outLen;
 
             EVP_PKEY_encrypt(cryptoCtx, NULL, &outLen, key, 32);

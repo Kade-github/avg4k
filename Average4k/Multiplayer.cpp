@@ -64,24 +64,38 @@ void Multiplayer::InitCrypto() {
     
 }
 
-void Multiplayer::SendPacket(std::string data, PacketType packet) {
+DWORD WINAPI SendPacketT(LPVOID param) {
 
     VM_START
-    websocketpp::lib::error_code ec;
 
-    std::string dataStr = data;
+        PacketData* packetData = (PacketData*)param;
+
+        websocketpp::lib::error_code ec;
+
+    std::string dataStr = packetData->data;
 
     char* sendData = (char*)malloc(dataStr.length() + 8);
+
+    if (!sendData) {
+        std::cout << "Alloc error 1 (Packet Dropped)" << std::endl;
+        return 1;
+    }
 
     char* writeTo = (char*)(((__int64)sendData) + 8);
 
     __int32* dataPtrs = (__int32*)sendData;
-    dataPtrs[0] = packet;
+    dataPtrs[0] = packetData->packetType;
     dataPtrs[1] = (__int32)dataStr.length();
 
     memcpy(writeTo, dataStr.c_str(), dataStr.length());
 
     unsigned char* cipherplusIV = (unsigned char*)malloc(dataStr.length() + 256);
+    
+    if (!cipherplusIV) {
+        std::cout << "Alloc error 2 (Packet Dropped)" << std::endl;
+        return 1;
+    }
+    
     unsigned char* ciphertext = cipherplusIV + 16;
 
 
@@ -90,32 +104,70 @@ void Multiplayer::SendPacket(std::string data, PacketType packet) {
 
     aesCtx = EVP_CIPHER_CTX_new();
 
-    EVP_EncryptInit_ex(aesCtx, EVP_aes_256_cbc(), NULL, NULL, NULL);
+    if (!aesCtx) {
+        std::cout << "Crypto error 1 (Packet Dropped)" << std::endl;
+        return 1;
+    }
 
-    EVP_CIPHER_CTX_ctrl(aesCtx, EVP_CTRL_CCM_SET_IVLEN, 16, NULL);
-    EVP_CIPHER_CTX_set_padding(aesCtx, EVP_PADDING_PKCS7);
+    if (EVP_EncryptInit_ex(aesCtx, EVP_aes_256_cbc(), NULL, NULL, NULL) != 1) {
+        std::cout << "Crypto error 2 (Packet Dropped)" << std::endl;
+        return 1;
+     }
 
- 
 
-    RAND_bytes(cipherplusIV, 16);
+    if (EVP_CIPHER_CTX_set_padding(aesCtx, EVP_PADDING_PKCS7) != 1) {
+        std::cout << "Crypto error 4 (Packet Dropped)" << std::endl;
+        return 1;
+    }
 
-    EVP_EncryptInit_ex(aesCtx, NULL, NULL, key, cipherplusIV);
 
-    EVP_EncryptUpdate(aesCtx, ciphertext, &len, (unsigned char*)sendData, dataStr.length() + 8);
+
+    if (RAND_bytes(cipherplusIV, 16) != 1) {
+        std::cout << "Crypto error 5 (Packet Dropped)" << std::endl;
+        return 1;
+    }
+
+    if (EVP_EncryptInit_ex(aesCtx, NULL, NULL, key, cipherplusIV) != 1) {
+        std::cout << "Crypto error 6 (Packet Dropped)" << std::endl;
+        return 1;
+    }
+
+    if (EVP_EncryptUpdate(aesCtx, ciphertext, &len, (unsigned char*)sendData, dataStr.length() + 8) != 1) {
+        std::cout << "Crypto error 7 (Packet Dropped)" << std::endl;
+        return 1;
+    }
 
     ciphertext_len = len;
 
-    EVP_EncryptFinal_ex(aesCtx, ciphertext + len, &len);
+    if (EVP_EncryptFinal_ex(aesCtx, ciphertext + len, &len) != 1) {
+        std::cout << "Crypto error 8 (Packet Dropped)" << std::endl;
+        return 1;
+    }
+
     ciphertext_len += len;
 
     EVP_CIPHER_CTX_free(aesCtx);
 
-    if(connectionData)
-        connectionData->c.send(connectionData->connectionHdl, std::string((char*)cipherplusIV, ciphertext_len + 16), websocketpp::frame::opcode::BINARY, ec);
+    if (connectionData)
+        connectionData->c.send(connectionData->connectionHdl, std::string((char*)cipherplusIV, ciphertext_len + 16), websocketpp::frame::opcode::BINARY);
 
     free(cipherplusIV);
     free(sendData);
+
+    delete packetData;
     VM_END
+    return 0;
+   
+}
+void Multiplayer::SendPacket(std::string data, PacketType packet) {
+
+     
+    PacketData* packetData = new PacketData();
+    packetData->data = data;
+    packetData->packetType = packet;
+
+    CreateThread(NULL, NULL, SendPacketT, packetData, NULL, NULL);
+    
 }
 
 DWORD WINAPI NewThread(LPVOID param) {

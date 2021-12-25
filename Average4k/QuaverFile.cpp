@@ -68,7 +68,7 @@ chartMeta QuaverFile::returnChart(std::string path)
                         bpmSegment& prevSeg = meta.bpms.back();
                         float endBeat = getBeatFromTimeOffset(seg.startTime, prevSeg);
                         prevSeg.endBeat = endBeat;
-                        prevSeg.length = ((prevSeg.endBeat - prevSeg.startBeat) / (prevSeg.bpm / 60));
+                        prevSeg.length = ((prevSeg.endBeat - prevSeg.startBeat) / (prevSeg.bpm / 60)) * 1000;
                     }
                     meta.bpms.push_back(seg); // last seg
                     bpm = false;
@@ -80,7 +80,7 @@ chartMeta QuaverFile::returnChart(std::string path)
                     {
                         float endBeat = getBeatFromTimeOffset(std::stod(split[1]), seg);
                         seg.endBeat = endBeat;
-                        seg.length = ((seg.endBeat - seg.startBeat) / (seg.bpm / 60));
+                        seg.length = ((seg.endBeat - seg.startBeat) / (seg.bpm / 60)) * 1000;
                         meta.bpms.push_back(seg);
                         bpmSegment storage = seg;
                         seg = storage; // create a copy in another variable lol

@@ -42,7 +42,7 @@ bpmSegment Chart::getSegmentFromTime(float time) {
 
     for (int i = 0; i < meta.bpms.size(); i++) {
         bpmSegment segment = meta.bpms[i];
-        if (time >= segment.startTime * 1000.f && time < (segment.startTime + segment.length) * 1000.f)
+        if (time >= segment.startTime && time < (segment.startTime + segment.length))
             seg = segment;
     }
 

@@ -95,7 +95,7 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                                     {
                                         bpmSegment& prevSeg = meta.bpms[bpmIndex - 1];
                                         prevSeg.endBeat = seg.startBeat;
-                                        prevSeg.length = (prevSeg.endBeat - prevSeg.startBeat) / (prevSeg.bpm / 60);
+                                        prevSeg.length = ((prevSeg.endBeat - prevSeg.startBeat) / (prevSeg.bpm / 60)) * 1000;
                                         seg.startTime = prevSeg.startTime + prevSeg.length;
                                     }
 

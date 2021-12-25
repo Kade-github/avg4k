@@ -24,6 +24,10 @@ unsigned char* key;
 
 unsigned char iv[] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 
+std::queue<PacketData> Multiplayer::sendQueue;
+std::mutex Multiplayer::sendQueueLock;
+
+
 std::mutex unfuckPlease;
 
 void Multiplayer::InitCrypto() {
@@ -66,107 +70,127 @@ void Multiplayer::InitCrypto() {
     
 }
 
+
 DWORD WINAPI SendPacketT(LPVOID param) {
 
     VM_EAGLE_RED_START
-
-        PacketData* packetData = (PacketData*)param;
-
-        websocketpp::lib::error_code ec;
-
-    std::string dataStr = packetData->data;
-
-    char* sendData = (char*)malloc(dataStr.length() + 8);
-
-    if (!sendData) {
-        std::cout << "Alloc error 1 (Packet Dropped)" << std::endl;
-        return 1;
-    }
-
-    char* writeTo = (char*)(((__int64)sendData) + 8);
-
-    __int32* dataPtrs = (__int32*)sendData;
-    dataPtrs[0] = packetData->packetType;
-    dataPtrs[1] = (__int32)dataStr.length();
-
-    memcpy(writeTo, dataStr.c_str(), dataStr.length());
-
-    unsigned char* cipherplusIV = (unsigned char*)malloc(dataStr.length() + 256);
-    
-    if (!cipherplusIV) {
-        std::cout << "Alloc error 2 (Packet Dropped)" << std::endl;
-        return 1;
-    }
-    
-    unsigned char* ciphertext = cipherplusIV + 16;
+        while (true) {
+            Sleep(1);
 
 
-    int len;
-    int ciphertext_len;
+            if (!connectionData)
+                continue;
 
-    unfuckPlease.lock();
+            if (!Multiplayer::sendQueueLock.try_lock())
+                continue;
 
-    aesCtx = EVP_CIPHER_CTX_new();
+            if (Multiplayer::sendQueue.empty()) {
+                Multiplayer::sendQueueLock.unlock();
+                continue;
+            }
 
-    if (!aesCtx) {
-        std::cout << "Crypto error 1 (Packet Dropped)" << std::endl;
-        unfuckPlease.unlock();
-        return 0;
-    }
+            PacketData packetData = Multiplayer::sendQueue.front();
 
-    if (EVP_EncryptInit_ex(aesCtx, EVP_aes_256_cbc(), NULL, NULL, NULL) != 1) {
-        std::cout << "Crypto error 2 (Packet Dropped)" << std::endl;
-        unfuckPlease.unlock();
-        return 0;
-     }
+            Multiplayer::sendQueue.pop();
+
+            Multiplayer::sendQueueLock.unlock();
+
+            websocketpp::lib::error_code ec;
+
+            std::string dataStr = packetData.data;
+
+            char* sendData = (char*)malloc(dataStr.length() + 8);
+
+            if (!sendData) {
+                std::cout << "Alloc error 1 (Packet Dropped)" << std::endl;
+                return 1;
+            }
+
+            char* writeTo = (char*)(((__int64)sendData) + 8);
+
+            __int32* dataPtrs = (__int32*)sendData;
+            dataPtrs[0] = packetData.packetType;
+            dataPtrs[1] = (__int32)dataStr.length();
+
+            memcpy(writeTo, dataStr.c_str(), dataStr.length());
+
+            unsigned char* cipherplusIV = (unsigned char*)malloc(dataStr.length() + 256);
+
+            if (!cipherplusIV) {
+                std::cout << "Alloc error 2 (Packet Dropped)" << std::endl;
+                return 1;
+            }
+
+            unsigned char* ciphertext = cipherplusIV + 16;
 
 
-    if (EVP_CIPHER_CTX_set_padding(aesCtx, EVP_PADDING_PKCS7) != 1) {
-        std::cout << "Crypto error 4 (Packet Dropped)" << std::endl;
-        unfuckPlease.unlock();
-        return 0;
-    }
+            int len;
+            int ciphertext_len;
+
+            unfuckPlease.lock();
+
+            aesCtx = EVP_CIPHER_CTX_new();
+
+            if (!aesCtx) {
+                std::cout << "Crypto error 1 (Packet Dropped)" << std::endl;
+                unfuckPlease.unlock();
+                return 0;
+            }
+
+            if (EVP_EncryptInit_ex(aesCtx, EVP_aes_256_cbc(), NULL, NULL, NULL) != 1) {
+                std::cout << "Crypto error 2 (Packet Dropped)" << std::endl;
+                unfuckPlease.unlock();
+                return 0;
+            }
+
+
+            if (EVP_CIPHER_CTX_set_padding(aesCtx, EVP_PADDING_PKCS7) != 1) {
+                std::cout << "Crypto error 4 (Packet Dropped)" << std::endl;
+                unfuckPlease.unlock();
+                return 0;
+            }
 
 
 
-    if (RAND_bytes(cipherplusIV, 16) != 1) {
-        std::cout << "Crypto error 5 (Packet Dropped)" << std::endl;
-        unfuckPlease.unlock();
-        return 0;
-    }
+            if (RAND_bytes(cipherplusIV, 16) != 1) {
+                std::cout << "Crypto error 5 (Packet Dropped)" << std::endl;
+                unfuckPlease.unlock();
+                return 0;
+            }
 
-    if (EVP_EncryptInit_ex(aesCtx, NULL, NULL, key, cipherplusIV) != 1) {
-        std::cout << "Crypto error 6 (Packet Dropped)" << std::endl;
-        unfuckPlease.unlock();
-        return 0;
-    }
+            if (EVP_EncryptInit_ex(aesCtx, NULL, NULL, key, cipherplusIV) != 1) {
+                std::cout << "Crypto error 6 (Packet Dropped)" << std::endl;
+                unfuckPlease.unlock();
+                return 0;
+            }
 
-    if (EVP_EncryptUpdate(aesCtx, ciphertext, &len, (unsigned char*)sendData, dataStr.length() + 8) != 1) {
-        std::cout << "Crypto error 7 (Packet Dropped)" << std::endl;
-        unfuckPlease.unlock();
-        return 0;
-    }
+            if (EVP_EncryptUpdate(aesCtx, ciphertext, &len, (unsigned char*)sendData, dataStr.length() + 8) != 1) {
+                std::cout << "Crypto error 7 (Packet Dropped)" << std::endl;
+                unfuckPlease.unlock();
+                return 0;
+            }
 
-    ciphertext_len = len;
+            ciphertext_len = len;
 
-    if (EVP_EncryptFinal_ex(aesCtx, ciphertext + len, &len) != 1) {
-        std::cout << "Crypto error 8 (Packet Dropped)" << std::endl;
-        unfuckPlease.unlock();
-        return 0;
-    }
+            if (EVP_EncryptFinal_ex(aesCtx, ciphertext + len, &len) != 1) {
+                std::cout << "Crypto error 8 (Packet Dropped)" << std::endl;
+                unfuckPlease.unlock();
+                return 0;
+            }
 
-    ciphertext_len += len;
+            ciphertext_len += len;
 
-    EVP_CIPHER_CTX_free(aesCtx);
+            EVP_CIPHER_CTX_free(aesCtx);
 
-   
-    if (connectionData)
-        connectionData->c.send(connectionData->connectionHdl, std::string((char*)cipherplusIV, ciphertext_len + 16), websocketpp::frame::opcode::BINARY);
-    unfuckPlease.unlock();
-    free(cipherplusIV);
-    free(sendData);
 
-    delete packetData;
+            if (connectionData)
+                connectionData->c.send(connectionData->connectionHdl, std::string((char*)cipherplusIV, ciphertext_len + 16), websocketpp::frame::opcode::BINARY);
+            unfuckPlease.unlock();
+            free(cipherplusIV);
+            free(sendData);
+
+          
+        }
     VM_EAGLE_RED_END
     return 0;
    
@@ -174,12 +198,14 @@ DWORD WINAPI SendPacketT(LPVOID param) {
 void Multiplayer::SendPacket(std::string data, PacketType packet) {
 
      VM_START
-    PacketData* packetData = new PacketData();
-    packetData->data = data;
-    packetData->packetType = packet;
+    PacketData packetData = PacketData();
+    packetData.data = data;
+    packetData.packetType = packet;
 
-    CreateThread(NULL, NULL, SendPacketT, packetData, NULL, NULL);
-    VM_END      
+    Multiplayer::sendQueueLock.lock();
+    Multiplayer::sendQueue.push(packetData);
+    Multiplayer::sendQueueLock.unlock();
+    VM_END
 }
 
 DWORD WINAPI NewThread(LPVOID param) {
@@ -526,6 +552,8 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
     std::string url = "wss://titnoas.xyz/ballsandsex/";
    
     std::cout << "Creating things" << std::endl;
+    CreateThread(NULL, NULL, SendPacketT, NULL, NULL, NULL);
+
     try {
 
         while (true)

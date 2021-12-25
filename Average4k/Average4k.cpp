@@ -101,15 +101,16 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	PSTR lpCmdLine, INT nCmdShow)
 {
 	VM_START
-		STR_ENCRYPT_START
-		STR_ENCRYPTW_START
+		
 
 	SetUnhandledExceptionFilter(UnhandledExceptionFilterHandler);
 	//AddVectoredExceptionHandler(1, &PvectoredExceptionHandler);
 	SDL_Init(SDL_INIT_EVERYTHING);
 	
-	curl_global_init(CURL_GLOBAL_ALL);
+	Game::version = "b1";
 
+	curl_global_init(CURL_GLOBAL_ALL);
+	Multiplayer::InitCrypto();
 
 	#ifdef  _DEBUG
 	AllocConsole();
@@ -253,8 +254,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	if (Game::steam != nullptr)
 		Game::steam->ShutdownSteam();
 
-	STR_ENCRYPT_END
-	STR_ENCRYPTW_END
+	
 	VM_END
 		
 	return 0;

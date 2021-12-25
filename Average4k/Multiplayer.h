@@ -15,12 +15,19 @@ using websocketpp::lib::placeholders::_1;
 using websocketpp::lib::placeholders::_2;
 using websocketpp::lib::bind;
 
+struct PacketData {
+	std::string data;
+	PacketType packetType;
+};
+
 class Multiplayer
 {
 public:
 	static bool connectedToServer;
 
 	static DWORD WINAPI connect(LPVOID agh);
+
+	static void InitCrypto();
 
 	static void SendPacket(std::string data, PacketType packet);
 

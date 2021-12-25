@@ -23,6 +23,8 @@ Game* Game::instance = NULL;
 chartMeta Game::loadedChart;
 bool Game::patched = false;
 
+std::string Game::version;
+
 bool debug_takingInput;
 
 std::string debug_string;
@@ -85,6 +87,7 @@ void Game::createGame()
 
 void Game::update(Events::updateEvent update)
 {
+	MUTATE_START
 	if (Multiplayer::connectedToServer)
 		SteamAPI_RunCallbacks();
 
@@ -221,6 +224,7 @@ void Game::update(Events::updateEvent update)
 	SDL_RenderCopyEx(renderer, mainCamera->cameraTexture, NULL, &DestR, mainCamera->angle, NULL, SDL_FLIP_NONE);
 
 	SDL_RenderPresent(renderer);
+	MUTATE_END
 }
 
 void db_addLine(std::string s) {
@@ -230,6 +234,7 @@ void db_addLine(std::string s) {
 
 void Game::keyDown(SDL_KeyboardEvent ev)
 {
+	MUTATE_START
 	if (ev.keysym.sym == SDLK_ESCAPE && debug_takingInput)
 	{
 		debug_takingInput = false;
@@ -363,7 +368,7 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 		Object* bruh = (*objects)[i];
 		bruh->keyDown(ev);
 	}
-
+	MUTATE_END
 }
 
 void Game::keyUp(SDL_KeyboardEvent ev)
@@ -382,8 +387,10 @@ void Game::keyUp(SDL_KeyboardEvent ev)
 //asd
 void Game::weGotPacket(Events::packetEvent p)
 {
+	MUTATE_START
 	std::lock_guard<std::mutex> s(pog);
 	packetsToBeHandeld.push_back(p);
+	MUTATE_END
 }
 
 std::vector<Object*>* Game::getGlobalObjects()

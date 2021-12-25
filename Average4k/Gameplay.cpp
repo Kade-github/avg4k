@@ -260,7 +260,7 @@ void Gameplay::update(Events::updateEvent event)
 			play = true;
 		}
 
-		positionInSong = BASS_ChannelBytes2Seconds(tempostream, BASS_ChannelGetPosition(tempostream, BASS_POS_BYTE)) * 1000;
+		positionInSong = (BASS_ChannelBytes2Seconds(tempostream, BASS_ChannelGetPosition(tempostream, BASS_POS_BYTE)) * 1000) - Game::save->GetDouble("offset");
 	}
 	else
 		positionInSong += Game::deltaTime;
@@ -770,7 +770,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 			float wh = SongSelect::currentChart->getTimeFromBeat(closestObject->beat, SongSelect::currentChart->getSegmentFromBeat(closestObject->beat));
 
-			float diff = (wh - (positionInSong ));
+			float diff = (wh - positionInSong);
 
 			if (closestObject->active && diff <= Judge::hitWindows[4] && diff > -Judge::hitWindows[4])
 			{

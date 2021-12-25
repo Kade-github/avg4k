@@ -20,6 +20,7 @@ void MultiplayerLobbies::refreshLobbies() {
 
 MultiplayerLobbies::MultiplayerLobbies()
 {
+	MUTATE_START
 	if (Multiplayer::loggedIn)
 		Game::steam->populateSubscribedItems();
 
@@ -29,6 +30,7 @@ MultiplayerLobbies::MultiplayerLobbies()
 	helpText = new Text(0, 46, "F1 to host a lobby, enter to join (F5 To refresh)", 24);
 	helpText->create();
 	refreshLobbies();
+	MUTATE_END
 }
 
 void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
@@ -68,6 +70,7 @@ void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
 
 void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 {
+	VM_START
 	SPacketServerListReply fuck;
 	SPacketStatus f;
 	msgpack::unpacked result;
@@ -75,7 +78,7 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 	msgpack::object obj;
 	switch (pt)
 	{
-		case eSPacketServerListReply:
+	case eSPacketServerListReply: {
 			msgpack::unpack(result, data, length);
 
 			obj = msgpack::object(result.get());
@@ -86,8 +89,9 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 
 			updateList(fuck.Lobbies);
 			break;
-		case eSPacketJoinServerReply:
-			Game::currentMenu = new MultiplayerLobby(Lobbies[selectedIndex], false, false);
+	}
+		case eSPacketJoinServerReply: {
+				Game::currentMenu = new MultiplayerLobby(Lobbies[selectedIndex], false, false);
 			for (Text* t : lobbyTexts)
 				t->destroy();
 
@@ -101,9 +105,10 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 			removeAll();
 
 			std::cout << "you joined!" << std::endl;
-			break;
-		case eSPacketHostServerReply:
-			Game::currentMenu = new MultiplayerLobby(Lobbies[selectedIndex], true, false);
+				break;
+		}
+		case eSPacketHostServerReply: {
+				Game::currentMenu = new MultiplayerLobby(Lobbies[selectedIndex], true, false);
 			for (Text* t : lobbyTexts)
 				t->destroy();
 
@@ -117,33 +122,37 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 			removeAll();
 
 			std::cout << "you hosted and joined!" << std::endl;
-			break;
-		case eSPacketStatus:
-			msgpack::unpack(result, data, length);
+				break;
+		}
+		case eSPacketStatus: {
+				msgpack::unpack(result, data, length);
 
 			obj = msgpack::object(result.get());
 
 			obj.convert(f);
-
-			switch (f.code)
-			{
-			case 403:
-				std::cout << "not allowed to join that!" << std::endl;
-				joiningServer = false;
-				break;
-			case 404:
-				std::cout << "dawg that lobby aint found" << std::endl;
-				joiningServer = false;
-				break;
-			}
-
+			
+				switch (f.code)
+				{
+				case 403: {
+					std::cout << "not allowed to join that!" << std::endl;
+					joiningServer = false;
+					break;
+				}
+				case 404: {
+					std::cout << "dawg that lobby aint found" << std::endl;
+					joiningServer = false;
+					break;
+				}
+				}
 			break;
+		}
 	}
+	VM_END
 }
 
 void MultiplayerLobbies::update(Events::updateEvent event)
 {
-
+	
 	if (lobbyTexts.size() == 0)
 		return;
 
@@ -154,6 +163,7 @@ void MultiplayerLobbies::update(Events::updateEvent event)
 
 	if (refreshTimer < 3000)
 		refreshTimer += Game::deltaTime;
+	
 }
 
 void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
@@ -215,6 +225,7 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 			Multiplayer::sendMessage<CPacketHostServer>(host);
 			break;
 		case SDLK_RETURN:
+			VM_START
 			if (joiningServer)
 				break;
 			joiningServer = true;
@@ -227,6 +238,7 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 			std::cout << "trying to join " << list.LobbyID << std::endl;
 
 			Multiplayer::sendMessage<CPacketJoinServer>(list);
+			VM_END
 			break;
 		case SDLK_UP:
 			selected->setText(l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")");
@@ -245,6 +257,7 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 
 void MultiplayerLobbies::postUpdate(Events::updateEvent event)
 {
+	
 	if (lobbyTexts.size() == 0)
 		return;
 
@@ -290,5 +303,6 @@ void MultiplayerLobbies::postUpdate(Events::updateEvent event)
 		SDL_RenderDrawRectF(Game::renderer, &rect);
 
 		SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
+		
 	}
 }

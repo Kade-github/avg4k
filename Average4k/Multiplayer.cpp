@@ -68,7 +68,7 @@ void Multiplayer::InitCrypto() {
 
 DWORD WINAPI SendPacketT(LPVOID param) {
 
-    VM_START
+    VM_EAGLE_RED_START
 
         PacketData* packetData = (PacketData*)param;
 
@@ -167,19 +167,19 @@ DWORD WINAPI SendPacketT(LPVOID param) {
     free(sendData);
 
     delete packetData;
-    VM_END
+    VM_EAGLE_RED_END
     return 0;
    
 }
 void Multiplayer::SendPacket(std::string data, PacketType packet) {
 
-     
+     VM_START
     PacketData* packetData = new PacketData();
     packetData->data = data;
     packetData->packetType = packet;
 
     CreateThread(NULL, NULL, SendPacketT, packetData, NULL, NULL);
-      
+    VM_END      
 }
 
 DWORD WINAPI NewThread(LPVOID param) {
@@ -302,6 +302,8 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
         CPacketStatus send;
         int monkey = 32;
         int cock = 46;
+        int cockmonkey = 567;
+        int monkeysexCock = 7372;
         
         switch (type)
         {
@@ -326,9 +328,7 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
             case 404:
                 std::cout << "not found" << std::endl;
                 break;
-            case 3301:
-                //VM_START
-                
+            case 3301:             
                 CHECK_CODE_INTEGRITY(monkey, 64);
                 
                 if (monkey != 64) {
@@ -339,11 +339,8 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
                     send.Status = "ok";
                     Multiplayer::sendMessage<CPacketStatus>(send);
                 }
-
-               // VM_END
                 break;
             case 3302:
-               // VM_START
                    
                 CHECK_PROTECTION(cock, 76);
 
@@ -354,8 +351,31 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
                     send.Status = "ok";
                     Multiplayer::sendMessage<CPacketStatus>(send);
                 }
+                break;
 
-               // VM_END
+            case 3303:
+
+                CHECK_DEBUGGER(cockmonkey, 878);
+
+                if (cockmonkey != 878) {
+                    send.code = 6745;
+                    send.Order = 0;
+                    send.PacketType = eCPacketStatus;
+                    send.Status = "ok";
+                    Multiplayer::sendMessage<CPacketStatus>(send);
+                }
+                break;
+
+            case 3304:
+
+                CHECK_VIRTUAL_PC(monkeysexCock, 4234);
+                if (cockmonkey != 4234) {
+                    send.code = 6746;
+                    send.Order = 0;
+                    send.PacketType = eCPacketStatus;
+                    send.Status = "ok";
+                    Multiplayer::sendMessage<CPacketStatus>(send);
+                }
                 break;
             }
             p.data = data;
@@ -605,6 +625,7 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
 
 void Multiplayer::login()
 {
+    VM_START
     if (!connectedToServer)
     {
         std::cout << "not connected!" << std::endl;
@@ -616,6 +637,7 @@ void Multiplayer::login()
     SteamAPICall_t call = SteamUser()->RequestEncryptedAppTicket(&c, 5);
     steamEncryptedAppTicketCall.Set(call, this, &Multiplayer::OnSteamAuthTicket);
     std::cout << "awaiting auth ticket from steam" << std::endl;
+    VM_END
 }
 
 void Multiplayer::OnSteamAuthTicket(EncryptedAppTicketResponse_t* pEncryptedAppTicketResponse, bool bIOFailure)

@@ -162,6 +162,8 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 
 Gameplay::Gameplay()
 {
+
+	MUTATE_START
 	initControls();
 
 	avatars.clear();
@@ -235,6 +237,7 @@ Gameplay::Gameplay()
 	}
 
 	positionInSong = -500;
+	MUTATE_END
 }
 
 
@@ -245,6 +248,9 @@ float lerp(float a, float b, float f)
 
 void Gameplay::update(Events::updateEvent event)
 {
+
+	MUTATE_START
+
 	if (positionInSong >= startTime)
 	{
 		if (!play)
@@ -624,7 +630,7 @@ void Gameplay::update(Events::updateEvent event)
 
 		receptors[i]->draw();
 	}
-
+	MUTATE_END
 }
 void Gameplay::cleanUp()
 {
@@ -665,6 +671,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 	switch (event.keysym.sym)
 	{
 		case SDLK_ESCAPE:
+			VM_START
 			if (MultiplayerLobby::inLobby) {
 				CPacketHostEndChart end;
 				end.Order = 0;
@@ -676,6 +683,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			SongSelect::currentChart->destroy();
 			cleanUp();
 			Game::instance->switchMenu(new MainMenu());
+			VM_END
 			return;
 		case SDLK_F1:
 			if (MultiplayerLobby::inLobby)

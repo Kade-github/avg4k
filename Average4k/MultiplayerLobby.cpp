@@ -8,6 +8,7 @@ bool MultiplayerLobby::isHost = false;
 
 void MultiplayerLobby::refreshLobby(lobby l)
 {
+	MUTATE_START
 	CurrentLobby = l;
 	inLobby = true;
 
@@ -45,9 +46,11 @@ void MultiplayerLobby::refreshLobby(lobby l)
 
 	helpDisplay->setText("Lobby: " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ") " + (isHost ? "You are the host!" : ""));
 	//warningDisplay->setText("");
+	MUTATE_END
 }
 
 void MultiplayerLobby::onSteam(std::string s) {
+	VM_START
 	if (s == "chartAquired")
 	{
 		SongSelect::currentChart = Game::steam->downloadedChart;
@@ -57,12 +60,15 @@ void MultiplayerLobby::onSteam(std::string s) {
 
 		Multiplayer::sendMessage<CPacketClientChartAcquired>(acquired);
 	}
+	VM_END
 }
 
 void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 {
 	if (!this)
 		return;
+	VM_START
+	//MUTATE_START
 	SPacketUpdateLobbyData update;
 	SPacketWtfAmInReply reply;
 	SPacketUpdateLobbyChart cc;
@@ -79,7 +85,6 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		obj = msgpack::object(result.get());
 
 		obj.convert(f);
-
 		switch (f.code)
 		{
 		case 803:
@@ -201,10 +206,14 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		removeAll();
 		break;
 	}
+	VM_END
+	//MUTATE_END
+	
 }
 
 MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted, bool backFromSelect = false)
 {
+	VM_START
 	AvgSprite* sprite = new AvgSprite(0, 0, "assets/graphical/menu/bg.png");
 	sprite->create();
 	add(sprite);
@@ -244,6 +253,7 @@ MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted, bool backFromSelect = f
 
 		Multiplayer::sendMessage<CPacketClientChartAcquired>(acquired);
 	}
+	VM_END
 }
 
 void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
@@ -329,6 +339,7 @@ void MultiplayerLobby::update(Events::updateEvent event)
 
 void MultiplayerLobby::postUpdate(Events::updateEvent event)
 {
+	MUTATE_START
 	for (person p : people)
 	{
 		SDL_FRect avat;
@@ -347,4 +358,5 @@ void MultiplayerLobby::postUpdate(Events::updateEvent event)
 
 		SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
 	}
+	MUTATE_END
 }

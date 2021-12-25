@@ -664,8 +664,6 @@ void Gameplay::update(Events::updateEvent event)
 
 			if ((wh - positionInSong <= -200 && !note->active) && note->holdsActive == 0)
 			{
-				if (note->type == Note_Head && note->holdsActive == 0)
-					std::cout << "removed hold lane cuz active is 0" << std::endl;
 				removeNote(note);
 			}
 

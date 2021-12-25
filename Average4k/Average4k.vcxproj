@@ -160,6 +160,8 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -25,11 +25,20 @@ unsigned char* key;
 unsigned char iv[] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 
 void Multiplayer::InitCrypto() {
-    VM_START
-        STR_ENCRYPT_START
+    
 
-        const char* publicKey = "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3wrvv/ba9xIvSeguoYHj\noLdkXr2++5+Vs8tA0HoBxFiezVvRstr+SC9tFT5Rw3zfjpZupwsu1jxt1sV1VBgH\nnDr7TWbru266mdggvDvqVO6q01l0lBKabWfWgeJroPMM9VINB/4uQdBzNt4xVgRN\nkIqiBHHVM3yU6RliXEbAsyDc/IdsTXMlotN9V3o49iJf+BabJWQ5SFPvsnr2jvhA\nh3XnCxqoMzj03hmzqGJ+UpJxFm7AaQ7YpVf7gb2qqTDuJXBBzqD7jpINNOrKMWCf\nqqYQVswCjJxYhQ2SNij36BwgoTEA9Rx72fMeOkTUoZ8k4CkFEy0IRxuEMVoyKbUh\nwQIDAQAB\n-----END PUBLIC KEY-----";
-    BIO* bo = BIO_new(BIO_s_mem());
+    VM_START
+        //  STR_ENCRYPT_START
+           // STR_ENCRYPT_START
+        const char* publicKeyBase64 = "LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUEzd3J2di9iYTl4SXZTZWd1b1lIagpvTGRrWHIyKys1K1ZzOHRBMEhvQnhGaWV6VnZSc3RyK1NDOXRGVDVSdzN6ZmpwWnVwd3N1MWp4dDFzVjFWQmdICm5EcjdUV2JydTI2Nm1kZ2d2RHZxVk82cTAxbDBsQkthYldmV2dlSnJvUE1NOVZJTkIvNHVRZEJ6TnQ0eFZnUk4Ka0lxaUJISFZNM3lVNlJsaVhFYkFzeURjL0lkc1RYTWxvdE45VjNvNDlpSmYrQmFiSldRNVNGUHZzbnIyanZoQQpoM1huQ3hxb016ajAzaG16cUdKK1VwSnhGbTdBYVE3WXBWZjdnYjJxcVREdUpYQkJ6cUQ3anBJTk5PcktNV0NmCnFxWVFWc3dDakp4WWhRMlNOaWozNkJ3Z29URUE5Ung3MmZNZU9rVFVvWjhrNENrRkV5MElSeHVFTVZveUtiVWgKd1FJREFRQUIKLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0t";
+       
+    std::string publicKeyStr;
+
+    std::string error = macaron::Base64::Decode(publicKeyBase64, publicKeyStr);
+
+    const char* publicKey = publicKeyStr.c_str();
+
+        BIO* bo = BIO_new(BIO_s_mem());
     BIO_write(bo, publicKey, strlen(publicKey));
     PEM_read_bio_RSA_PUBKEY(bo, &rsa, 0, 0);
     BIO_free(bo);
@@ -50,13 +59,14 @@ void Multiplayer::InitCrypto() {
     key = (unsigned char*)malloc(32);
 
     RAND_bytes(key, 32);
-
-    STR_ENCRYPT_END
-    VM_END
+        VM_END
+    //STR_ENCRYPT_END
+    
 }
 
 void Multiplayer::SendPacket(std::string data, PacketType packet) {
 
+    VM_START
     websocketpp::lib::error_code ec;
 
     std::string dataStr = data;
@@ -71,7 +81,9 @@ void Multiplayer::SendPacket(std::string data, PacketType packet) {
 
     memcpy(writeTo, dataStr.c_str(), dataStr.length());
 
-    unsigned char* ciphertext = (unsigned char*)malloc(dataStr.length() + 256);
+    unsigned char* cipherplusIV = (unsigned char*)malloc(dataStr.length() + 256);
+    unsigned char* ciphertext = cipherplusIV + 16;
+
 
     int len;
     int ciphertext_len;
@@ -83,7 +95,11 @@ void Multiplayer::SendPacket(std::string data, PacketType packet) {
     EVP_CIPHER_CTX_ctrl(aesCtx, EVP_CTRL_CCM_SET_IVLEN, 16, NULL);
     EVP_CIPHER_CTX_set_padding(aesCtx, EVP_PADDING_PKCS7);
 
-    EVP_EncryptInit_ex(aesCtx, NULL, NULL, key, iv);
+ 
+
+    RAND_bytes(cipherplusIV, 16);
+
+    EVP_EncryptInit_ex(aesCtx, NULL, NULL, key, cipherplusIV);
 
     EVP_EncryptUpdate(aesCtx, ciphertext, &len, (unsigned char*)sendData, dataStr.length() + 8);
 
@@ -95,10 +111,11 @@ void Multiplayer::SendPacket(std::string data, PacketType packet) {
     EVP_CIPHER_CTX_free(aesCtx);
 
     if(connectionData)
-        connectionData->c.send(connectionData->connectionHdl, std::string((char*)ciphertext, ciphertext_len), websocketpp::frame::opcode::BINARY, ec);
+        connectionData->c.send(connectionData->connectionHdl, std::string((char*)cipherplusIV, ciphertext_len + 16), websocketpp::frame::opcode::BINARY, ec);
 
-    free(ciphertext);
+    free(cipherplusIV);
     free(sendData);
+    VM_END
 }
 
 DWORD WINAPI NewThread(LPVOID param) {
@@ -129,21 +146,27 @@ DWORD WINAPI pleaseLogin(LPVOID agh)
 }
 
 void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr msg) {
-
+    VM_START
     if (msg->get_opcode() != websocketpp::frame::opcode::BINARY)
         return;
     try {
+       
         std::string strData = msg->get_raw_payload();
 
 
-
+        if (strData.length() <= 16)
+            return;
 
 
         char* ciphertext = (char*)malloc(strData.length());
+        char iv[16];
+
 
         char* plaintext = (char*)malloc(strData.length() + 256);
 
-        memcpy(ciphertext, strData.c_str(), strData.length());
+        memcpy(ciphertext, strData.c_str() + 16, strData.length() - 16);
+
+        memcpy(iv, strData.c_str(), 16);
 
         int len;
         int plaintext_len;
@@ -165,7 +188,7 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
 
        // std::cout << "padding shit set" << std::endl;
 
-        EVP_DecryptInit_ex(ctx, NULL, NULL, key, iv);
+        EVP_DecryptInit_ex(ctx, NULL, NULL, key, (unsigned char*)iv);
 
        // std::cout << "decrypt inited" << std::endl;
 
@@ -212,6 +235,10 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
 
         msgpack::object obj;
 
+        CPacketStatus send;
+        int monkey = 32;
+        int cock = 46;
+        
         switch (type)
         {
         case eSPacketStatus:
@@ -234,6 +261,37 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
                 break;
             case 404:
                 std::cout << "not found" << std::endl;
+                break;
+            case 3301:
+                //VM_START
+                
+                CHECK_CODE_INTEGRITY(monkey, 64);
+                
+                if (monkey != 64) {
+
+                    send.code = 6743;
+                    send.Order = 0;
+                    send.PacketType = eCPacketStatus;
+                    send.Status = "ok";
+                    Multiplayer::sendMessage<CPacketStatus>(send);
+                }
+
+               // VM_END
+                break;
+            case 3302:
+               // VM_START
+                   
+                CHECK_PROTECTION(cock, 76);
+
+                if (cock != 76) {
+                    send.code = 6744;
+                    send.Order = 0;
+                    send.PacketType = eCPacketStatus;
+                    send.Status = "ok";
+                    Multiplayer::sendMessage<CPacketStatus>(send);
+                }
+
+               // VM_END
                 break;
             }
             p.data = data;
@@ -272,6 +330,7 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
     catch (std::exception e) {
         std::cout << "shit " << e.what() << std::endl;
     }
+    VM_END
 }
 
 
@@ -376,6 +435,7 @@ bool firstConnection = false;
 
 DWORD WINAPI Multiplayer::connect(LPVOID agh)
 {
+    VM_START
     connectedToServer = true;
 
    
@@ -434,7 +494,7 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
                 Multiplayer::loggedIn = true;
             }
             con->append_header("Encrypted", "1");
-
+            con->append_header("IV", "dynamic");
             size_t outLen;
 
             EVP_PKEY_encrypt(cryptoCtx, NULL, &outLen, key, 32);
@@ -475,7 +535,7 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
         loggedIn = false;
         connectedToServer = false;
     }
-    
+    VM_END
 }
 
 void Multiplayer::login()
@@ -495,6 +555,7 @@ void Multiplayer::login()
 
 void Multiplayer::OnSteamAuthTicket(EncryptedAppTicketResponse_t* pEncryptedAppTicketResponse, bool bIOFailure)
 {
+    VM_START
     CPacketHello hello;
 
     hello.PacketType = eCPacketHello;
@@ -522,6 +583,7 @@ void Multiplayer::OnSteamAuthTicket(EncryptedAppTicketResponse_t* pEncryptedAppT
     hello.SteamTicket = encoded;
 
     sendMessage<CPacketHello>(hello);
+    VM_END
 }
 
 void Multiplayer::inQuotesGracefullyDisconnect()

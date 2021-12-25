@@ -68,6 +68,8 @@ class Gameplay :
 
 		bool debug = false;
 
+		std::vector<SDL_Texture*> colTexture;
+
 		int Marvelous = 0;
 		int Perfect = 0;
 		int Great = 0;

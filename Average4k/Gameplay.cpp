@@ -206,6 +206,9 @@ Gameplay::Gameplay()
 
 	int diff = SongSelect::selectedDiffIndex;
 
+	positionAndBeats = new Text(0, 40, "", 16);
+	positionAndBeats->create();
+
 
 	noteskin = Noteskin::getNoteskin();
 	notesToPlay = SongSelect::currentChart->meta.difficulties[diff].notes;
@@ -231,6 +234,7 @@ Gameplay::Gameplay()
 				(Game::gameWidth / 2) - 146 + ((76) * i), (Game::gameHeight / 2) - 300, i);
 		r->lightUpTimer = 0;
 		receptors.push_back(r);
+		colTexture.push_back(SDL_CreateTexture(Game::renderer, SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_TARGET,64,720));
 	}
 
 	positionInSong = -500;
@@ -375,7 +379,7 @@ void Gameplay::update(Events::updateEvent event)
 
 			object->time = SongSelect::currentChart->getTimeFromBeatOffset(object->beat, noteSeg);
 			rect.y = Game::gameHeight + 400;
-			rect.x = receptors[object->lane]->x;
+			rect.x = 0;
 			rect.w = 64;
 			rect.h = 64;
 			object->rect = rect;
@@ -460,7 +464,7 @@ void Gameplay::update(Events::updateEvent event)
 						tile.active = true;
 						tile.fucked = false;
 						rect.y = y;
-						rect.x = object->rect.x;
+						rect.x = 0;
 						rect.w = 64;
 						rect.h = 68;
 						tile.rect = rect;
@@ -576,7 +580,47 @@ void Gameplay::update(Events::updateEvent event)
 				receptorRect.x = receptors[note->lane]->x;
 				receptorRect.y = receptors[note->lane]->y;
 				note->debug = debug;
+
+
+				SDL_Rect l;
+				l.x = 0;
+				l.y = (receptorRect.y + 32);
+				l.w = Game::gameWidth;
+				l.h = Game::gameHeight - (receptorRect.y + 32);
+				if (downscroll)
+				{
+					l.y = 0;
+					l.h = receptorRect.y + 32;
+				}
+
+				SDL_SetRenderTarget(Game::renderer, colTexture[note->lane]);
+
+				SDL_SetTextureBlendMode(colTexture[note->lane], SDL_BLENDMODE_BLEND);
+
+				SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 0);
+				SDL_RenderClear(Game::renderer);
+
 				note->draw(positionInSong, beat, receptorRect, true);
+
+				SDL_SetRenderTarget(Game::renderer, Game::mainCamera->cameraTexture);
+
+				if (note->holdsActive > 0 && !note->active)
+				{
+					SDL_RenderSetClipRect(Game::renderer, &l);
+				}
+
+				SDL_FRect dstRect;
+
+				dstRect.x = receptorRect.x;
+				dstRect.y = 0;
+				dstRect.h = 720;
+				dstRect.w = 64;
+
+				SDL_RenderCopyF(Game::renderer, colTexture[note->lane], NULL, &dstRect);
+
+				SDL_RenderSetClipRect(Game::renderer, NULL);
+
+				
 			}
 			
 			if (wh - positionInSong <= -Judge::hitWindows[4] && note->active)
@@ -600,7 +644,7 @@ void Gameplay::update(Events::updateEvent event)
 				float whHold = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat));
 				float diff = whHold - positionInSong;
 
-				if (diff < -Judge::hitWindows[1] && tile.active)
+				if (diff < -Judge::hitWindows[2] && tile.active)
 				{
 					std::cout << note->lane << " fucked " << diff << std::endl;
 					miss(note);
@@ -625,7 +669,13 @@ void Gameplay::cleanUp()
 	Judgement->destroy();
 	Combo->destroy();
 	Accuracy->destroy();
-	positionAndBeats->destroy();
+	if (positionAndBeats)
+		positionAndBeats->destroy();
+
+	for (int i = 0; i < colTexture.size(); i++)
+	{
+		SDL_DestroyTexture(colTexture[i]);
+	}
 
 	for (int i = 0; i < spawnedNotes.size(); i++)
 	{

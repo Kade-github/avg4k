@@ -41,6 +41,7 @@ class NoteObject
 		SDL_FRect rect;
 		std::vector<holdTile> heldTilings;
 
+
 		void destroy();
 
 		void draw(float position, double beat, SDL_FRect receptor, bool clipHold);

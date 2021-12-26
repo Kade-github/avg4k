@@ -228,7 +228,6 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 			Multiplayer::sendMessage<CPacketHostServer>(host);
 			break;
 		case SDLK_RETURN:
-			VM_START
 			if (joiningServer)
 				break;
 			joiningServer = true;
@@ -241,7 +240,6 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 			std::cout << "trying to join " << list.LobbyID << std::endl;
 
 			Multiplayer::sendMessage<CPacketJoinServer>(list);
-			VM_END
 			break;
 		case SDLK_UP:
 			selected->setText(l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")");

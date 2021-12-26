@@ -75,9 +75,9 @@ void Gameplay::removeNote(NoteObject* object)
 
 void Gameplay::miss(NoteObject* object)
 {
-	MUTATE_START
 	if (MultiplayerLobby::inLobby)
 	{
+		MUTATE_START
 		noteId++;
 		CPacketNoteHit hit;
 		hit.NoteID = noteId;
@@ -86,14 +86,15 @@ void Gameplay::miss(NoteObject* object)
 		hit.PacketType = eCPacketNoteHit;
 
 		Multiplayer::sendMessage<CPacketNoteHit>(hit);
+		MUTATE_END
 	}
 
 	Misses++;
 	updateAccuracy(-0.4);
 	combo = 0;
-	(*Judgement).color.r = 255;
-	(*Judgement).color.g = 0;
-	(*Judgement).color.b = 0;
+	Judgement->color.r = 255;
+	Judgement->color.g = 0;
+	Judgement->color.b = 0;
 	Judgement->setText("MISS");
 
 	Judgement->setX((Game::gameWidth / 2) - (Judgement->surfW / 2));
@@ -102,8 +103,7 @@ void Gameplay::miss(NoteObject* object)
 
 	Combo->setText(" ");
 	Combo->setX((Game::gameWidth / 2) - (Combo->surfW / 2));
-	Combo->setY((Game::gameHeight / 2) + 40);
-	MUTATE_END
+	Combo->setY((Game::gameHeight / 2) + 40);	
 }
 
 void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
@@ -259,9 +259,7 @@ float lerp(float a, float b, float f)
 
 void Gameplay::update(Events::updateEvent event)
 {
-
 	MUTATE_START
-
 	if (positionInSong >= startTime)
 	{
 		if (!play)

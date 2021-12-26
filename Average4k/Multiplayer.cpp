@@ -82,10 +82,9 @@ DWORD WINAPI SendPacketT(LPVOID param) {
         if (!connectionData) {
             continue;
         }
-        ConnectionLock.unlock();
+        
 
-            if (!Multiplayer::sendQueueLock.try_lock())
-                continue;
+        Multiplayer::sendQueueLock.lock();
 
             if (Multiplayer::sendQueue.empty()) {
                 Multiplayer::sendQueueLock.unlock();

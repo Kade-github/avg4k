@@ -258,6 +258,7 @@ MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted, bool backFromSelect = f
 
 void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 {
+	MUTATE_START
 	CPacketHostStartGame start;
 	switch (event.keysym.sym)
 	{
@@ -330,6 +331,7 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 
 			break;
 	}
+	MUTATE_END
 }
 
 void MultiplayerLobby::update(Events::updateEvent event)

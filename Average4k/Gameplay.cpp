@@ -75,6 +75,7 @@ void Gameplay::removeNote(NoteObject* object)
 
 void Gameplay::miss(NoteObject* object)
 {
+	MUTATE_START
 	if (MultiplayerLobby::inLobby)
 	{
 		noteId++;
@@ -102,10 +103,13 @@ void Gameplay::miss(NoteObject* object)
 	Combo->setText(" ");
 	Combo->setX((Game::gameWidth / 2) - (Combo->surfW / 2));
 	Combo->setY((Game::gameHeight / 2) + 40);
+	MUTATE_END
 }
 
 void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 {
+	MUTATE_START
+
 	if (!MultiplayerLobby::inLobby)
 		return;
 
@@ -159,6 +163,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 		Game::currentMenu = new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, false);
 		break;
 	}
+	MUTATE_END
 }
 
 Gameplay::Gameplay()
@@ -740,6 +745,8 @@ void Gameplay::cleanUp()
 
 void Gameplay::keyDown(SDL_KeyboardEvent event)
 {
+	MUTATE_START
+
 	switch (event.keysym.sym)
 	{
 		case SDLK_ESCAPE:
@@ -904,6 +911,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				}
 		}
 	}
+	MUTATE_END
 }
 
 void Gameplay::keyUp(SDL_KeyboardEvent ev)

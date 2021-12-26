@@ -7,6 +7,7 @@
 #include "AvgSprite.h"
 
 void MultiplayerLobbies::refreshLobbies() {
+	VM_START
 	if (refreshTimer < 2999)
 		return;
 	refreshTimer = 0;
@@ -16,6 +17,7 @@ void MultiplayerLobbies::refreshLobbies() {
 	list.PacketType = eCPacketServerList;
 
 	Multiplayer::sendMessage<CPacketServerList>(list);
+	VM_END
 }
 
 MultiplayerLobbies::MultiplayerLobbies()
@@ -168,6 +170,7 @@ void MultiplayerLobbies::update(Events::updateEvent event)
 
 void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 {
+	MUTATE_START
 	if (Lobbies.size() == 0)
 	{
 		switch (event.keysym.sym)
@@ -252,12 +255,13 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 			break;
 		}
 	}
+	MUTATE_END
 }
 
 
 void MultiplayerLobbies::postUpdate(Events::updateEvent event)
 {
-	
+	MUTATE_START
 	if (lobbyTexts.size() == 0)
 		return;
 
@@ -305,4 +309,5 @@ void MultiplayerLobbies::postUpdate(Events::updateEvent event)
 		SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
 		
 	}
+	MUTATE_END
 }

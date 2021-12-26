@@ -27,6 +27,7 @@ unsigned char iv[] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 std::queue<PacketData> Multiplayer::sendQueue;
 std::mutex Multiplayer::sendQueueLock;
 
+std::mutex ConnectionLock;
 
 std::mutex unfuckPlease;
 
@@ -73,13 +74,15 @@ void Multiplayer::InitCrypto() {
 
 DWORD WINAPI SendPacketT(LPVOID param) {
 
-    VM_EAGLE_RED_START
+    
         while (true) {
+        VM_START
             Sleep(1);
 
-
-            if (!connectionData)
-                continue;
+        if (!connectionData) {
+            continue;
+        }
+        ConnectionLock.unlock();
 
             if (!Multiplayer::sendQueueLock.try_lock())
                 continue;
@@ -91,8 +94,6 @@ DWORD WINAPI SendPacketT(LPVOID param) {
 
             PacketData packetData = Multiplayer::sendQueue.front();
 
-            Multiplayer::sendQueue.pop();
-
             Multiplayer::sendQueueLock.unlock();
 
             websocketpp::lib::error_code ec;
@@ -103,7 +104,7 @@ DWORD WINAPI SendPacketT(LPVOID param) {
 
             if (!sendData) {
                 std::cout << "Alloc error 1 (Packet Dropped)" << std::endl;
-                return 1;
+                return 0;
             }
 
             char* writeTo = (char*)(((__int64)sendData) + 8);
@@ -118,7 +119,7 @@ DWORD WINAPI SendPacketT(LPVOID param) {
 
             if (!cipherplusIV) {
                 std::cout << "Alloc error 2 (Packet Dropped)" << std::endl;
-                return 1;
+                return 0;
             }
 
             unsigned char* ciphertext = cipherplusIV + 16;
@@ -182,16 +183,28 @@ DWORD WINAPI SendPacketT(LPVOID param) {
 
             EVP_CIPHER_CTX_free(aesCtx);
 
+            bool success = false;
 
-            if (connectionData)
-                connectionData->c.send(connectionData->connectionHdl, std::string((char*)cipherplusIV, ciphertext_len + 16), websocketpp::frame::opcode::BINARY);
+            try {
+                if (connectionData) {
+                    connectionData->c.send(connectionData->connectionHdl, std::string((char*)cipherplusIV, ciphertext_len + 16), websocketpp::frame::opcode::BINARY, ec);
+                    success = true;
+                }
+            }
+            catch (std::exception ex) {
+                std::cout << "something something problem send: " << ex.what() << std::endl;
+            }
+            if (success) {
+                Multiplayer::sendQueueLock.lock();
+                Multiplayer::sendQueue.pop();
+                Multiplayer::sendQueueLock.unlock();
+            }
             unfuckPlease.unlock();
             free(cipherplusIV);
             free(sendData);
 
-          
+            VM_END
         }
-    VM_EAGLE_RED_END
     return 0;
    
 }
@@ -546,7 +559,7 @@ bool firstConnection = false;
 DWORD WINAPI Multiplayer::connect(LPVOID agh)
 {
     VM_START
-    connectedToServer = true;
+    connectedToServer = false;
 
    
     std::string url = "wss://titnoas.xyz/ballsandsex/";

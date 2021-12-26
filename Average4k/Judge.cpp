@@ -21,11 +21,8 @@ int Judge::scoreNote(float difff)
 	{
 		double window = hitWindows[i];
 		double nextWindow = 0;
-		if (i == 0)
-			nextWindow = 0;
-		else
+		if (i != 0)
 			nextWindow = hitWindows[i - 1];
-
 
 		if (diff >= nextWindow && diff <= window)
 			return scoreWindows[i];
@@ -41,12 +38,9 @@ judgement Judge::judgeNote(float difference) {
 	{
 		double window = hitWindows[i];
 		double nextWindow = 0;
-		if (i == 0)
-			nextWindow = 0;
-		else
+		if (i != 0)
 			nextWindow = hitWindows[i - 1];
 		
-
 		if (diff >= nextWindow && diff <= window)
 			return (judgement)i;
 	}

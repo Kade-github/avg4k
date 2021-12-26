@@ -73,8 +73,9 @@ void Multiplayer::InitCrypto() {
 
 DWORD WINAPI SendPacketT(LPVOID param) {
 
-    VM_EAGLE_RED_START
+    
         while (true) {
+        VM_START
             Sleep(1);
 
 
@@ -189,9 +190,8 @@ DWORD WINAPI SendPacketT(LPVOID param) {
             free(cipherplusIV);
             free(sendData);
 
-          
+            VM_END
         }
-    VM_EAGLE_RED_END
     return 0;
    
 }

@@ -4,13 +4,14 @@
 struct setting {
 	bool active;
 	double value;
-	int lowestValue;
-	int highestValue;
+	double lowestValue;
+	double highestValue;
 	char name[128];
 	bool takesActive;
 	bool isKeybind;
+	double increm;
 
-	MSGPACK_DEFINE(active, value, name, takesActive, lowestValue, highestValue, isKeybind);
+	MSGPACK_DEFINE(active, value, name, takesActive, lowestValue, highestValue, isKeybind, increm);
 };
 
 class SaveFile
@@ -30,7 +31,7 @@ class SaveFile
 		double GetDouble(std::string setting);
 		bool GetBool(std::string setting);
 
-		setting CreateSetting(bool defaultActive, double defaultValue, std::string defaultName, bool tA, int lowest, int highest, bool isKeybind);
+		setting CreateSetting(bool defaultActive, double defaultValue, std::string defaultName, bool tA, double lowest, double highest, bool isKeybind, double increm);
 
 		std::vector<setting> settings;
 		std::vector<setting> defaultSettings;

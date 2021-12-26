@@ -14,14 +14,15 @@ bool contains(std::vector<T> vec, const T& elem)
 SaveFile::SaveFile()
 {
     // default settings
-    defaultSettings.push_back(CreateSetting(false, 0, "downscroll", true, 0,1, false));
-    defaultSettings.push_back(CreateSetting(true, 1100, "scrollspeed", false, 1,5000, false));
-    defaultSettings.push_back(CreateSetting(true, 0, "offset", false,-1000,1000,false));
-    defaultSettings.push_back(CreateSetting(false, 0, "hitsounds", true,0,1,false));
-    defaultSettings.push_back(CreateSetting(false, SDLK_d, "Left Key", true, 0, 1, true));
-    defaultSettings.push_back(CreateSetting(false, SDLK_f, "Down Key", true, 0, 1, true));
-    defaultSettings.push_back(CreateSetting(false, SDLK_j, "Up Key", true, 0, 1, true));
-    defaultSettings.push_back(CreateSetting(false, SDLK_k, "Right Key", true, 0, 1, true));
+    defaultSettings.push_back(CreateSetting(false, 0, "downscroll", true, 0,1, false, 0));
+    defaultSettings.push_back(CreateSetting(true, 1100, "scrollspeed", false, 1,5000, false, 1));
+    defaultSettings.push_back(CreateSetting(true, 0, "offset", false,-1000,1000,false, 1));
+    defaultSettings.push_back(CreateSetting(false, 0, "hitsounds", true,0,1,false, 0));
+    defaultSettings.push_back(CreateSetting(true, 1, "Note Size", false, 0.9, 1.3, false, 0.01));
+    defaultSettings.push_back(CreateSetting(false, SDLK_d, "Left Key", true, 0, 1, true, 0));
+    defaultSettings.push_back(CreateSetting(false, SDLK_f, "Down Key", true, 0, 1, true,0));
+    defaultSettings.push_back(CreateSetting(false, SDLK_j, "Up Key", true, 0, 1, true,0));
+    defaultSettings.push_back(CreateSetting(false, SDLK_k, "Right Key", true, 0, 1, true,0));
     std::ifstream ifs("settings.avg");
     if (!ifs.good())
     {
@@ -108,7 +109,7 @@ bool SaveFile::GetBool(std::string sett)
     return false;
 }
 
-setting SaveFile::CreateSetting(bool defaultActive, double defaultValue, std::string defaultName, bool tA, int lowest, int highest, bool isKeybind)
+setting SaveFile::CreateSetting(bool defaultActive, double defaultValue, std::string defaultName, bool tA, double lowest, double highest, bool isKeybind, double increm)
 {
     setting set;
     set.active = defaultActive;
@@ -117,6 +118,7 @@ setting SaveFile::CreateSetting(bool defaultActive, double defaultValue, std::st
     set.highestValue = highest;
     set.lowestValue = lowest;
     set.isKeybind = isKeybind;
+    set.increm = increm;
     memcpy_s(set.name, 128, defaultName.c_str(), 128);
     return set;
 }

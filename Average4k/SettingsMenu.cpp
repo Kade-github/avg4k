@@ -152,9 +152,16 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 			return;
 		if (!b.set->takesActive)
 		{
-			b.set->value--;
+			double prev = b.set->value;
+			if (b.set->increm == 0)
+				b.set->value--;
+			else
+				b.set->value -= b.set->increm;
+
+			std::cout << b.set->increm << std::endl;
+
 			if (b.set->value < b.set->lowestValue)
-				b.set->value++;
+				b.set->value = prev;
 			Game::save->Save();
 		}
 		break;
@@ -163,9 +170,16 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 			return;
 		if (!b.set->takesActive)
 		{
-			b.set->value++;
+			double prev = b.set->value;
+			if (b.set->increm == 0)
+				b.set->value++;
+			else
+				b.set->value += b.set->increm;
+
+			std::cout << b.set->increm << std::endl;
+
 			if (b.set->value > b.set->highestValue)
-				b.set->value--;
+				b.set->value = prev;
 			Game::save->Save();
 		}
 		break;

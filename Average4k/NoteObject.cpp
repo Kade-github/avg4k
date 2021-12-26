@@ -23,7 +23,7 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor, bool clipHol
 
 		float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
 
-		float noteOffset = (bps * (diff / 1000)) * 64;
+		float noteOffset = (bps * (diff / 1000)) * (64 * Game::save->GetDouble("Note Size"));
 
 		bool downscroll = Game::save->GetBool("downscroll");
 
@@ -62,7 +62,7 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor, bool clipHol
 
 		clipThingy.x = 0;
 		clipThingy.y = rect.y + 32;
-		clipThingy.w = 64;
+		clipThingy.w = 64 * Game::save->GetDouble("Note Size");
 		clipThingy.h = holdHeight;
 		if (downscroll)
 		{
@@ -78,7 +78,7 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor, bool clipHol
 
 			float diff2 = time - position;
 
-			float offsetFromY = (bps * (diff2 / 1000)) * 64;
+			float offsetFromY = (bps * (diff2 / 1000)) * (64 * Game::save->GetDouble("Note Size"));
 			tile.rect.y = receptor.y + offsetFromY;
 			if (downscroll)
 				tile.rect.y = receptor.y - offsetFromY;

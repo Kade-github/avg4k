@@ -228,15 +228,17 @@ Gameplay::Gameplay()
 	for (int i = 0; i < 4; i++)
 	{
 		ReceptorObject* r;
+
+		int index = i + 1;
 		if (downscroll)
 			r = new ReceptorObject(
-				(Game::gameWidth / 2) - 146 + ((76) * i),(Game::gameHeight / 2) + 250, i);
+				((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * i), (Game::gameHeight / 2) + 250, i);
 		else
 			r = new ReceptorObject(
-				(Game::gameWidth / 2) - 146 + ((76) * i), (Game::gameHeight / 2) - 300, i);
+				((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * i), (Game::gameHeight / 2) - 300, i);
 		r->lightUpTimer = 0;
 		receptors.push_back(r);
-		colTexture.push_back(SDL_CreateTexture(Game::renderer, SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_TARGET,64,720));
+		colTexture.push_back(SDL_CreateTexture(Game::renderer, SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_TARGET,64 * Game::save->GetDouble("Note Size"), 720));
 	}
 
 	positionInSong = -500;
@@ -286,7 +288,7 @@ void Gameplay::update(Events::updateEvent event)
 
 	laneUnderway.x = receptors[0]->x - 4;
 	laneUnderway.y = -200;
-	laneUnderway.w = (receptors[3]->x - laneUnderway.x) + 68;
+	laneUnderway.w = (receptors[3]->x - laneUnderway.x) + (68 * Game::save->GetDouble("Note Size"));
 	laneUnderway.h = 1280;
 
 	if (background)
@@ -310,6 +312,8 @@ void Gameplay::update(Events::updateEvent event)
 	// underlay for accuracy
 
 	SDL_FRect overlayForAccuracy;
+
+	Accuracy->x = (receptors[0]->x - Accuracy->surfH) - 12;
 
 	overlayForAccuracy.x = Accuracy->x - 4;
 	overlayForAccuracy.y = (Game::gameHeight / 2) - 302;
@@ -368,10 +372,10 @@ void Gameplay::update(Events::updateEvent event)
 	posBar.x = receptors[0]->x;
 	posBar.y = 24;
 	posBar.h = 16;
-	posBar.w = ((receptors[3]->x + 64) - receptors[0]->x) * (positionInSong / (songLength * 1000));
+	posBar.w = ((receptors[3]->x + (64 * Game::save->GetDouble("Note Size"))) - receptors[0]->x) * (positionInSong / (songLength * 1000));
 
 	if (downscroll)
-		posBar.y = (receptors[0]->y + 64) + 12;
+		posBar.y = (receptors[0]->y + (64 * Game::save->GetDouble("Note Size"))) + 12;
 
 
 	SDL_FRect outline;
@@ -379,7 +383,7 @@ void Gameplay::update(Events::updateEvent event)
 	outline.x = posBar.x;
 	outline.y = posBar.y;
 	outline.h = posBar.h;
-	outline.w = (receptors[3]->x + 64) - receptors[0]->x;
+	outline.w = (receptors[3]->x + (64 * Game::save->GetDouble("Note Size"))) - receptors[0]->x;
 
 	SDL_SetRenderDrawColor(Game::renderer, 255, 255, 255, 255);
 
@@ -410,8 +414,8 @@ void Gameplay::update(Events::updateEvent event)
 			object->time = SongSelect::currentChart->getTimeFromBeatOffset(object->beat, noteSeg);
 			rect.y = Game::gameHeight + 400;
 			rect.x = 0;
-			rect.w = 64;
-			rect.h = 64;
+			rect.w = 64 * Game::save->GetDouble("Note Size");
+			rect.h = 64 * Game::save->GetDouble("Note Size");
 			object->rect = rect;
 
 			note tail;
@@ -458,7 +462,7 @@ void Gameplay::update(Events::updateEvent event)
 
 					float diff = whHold - (object->time);
 
-					float noteOffset = (bps * (diff / 1000)) * 64;
+					float noteOffset = (bps * (diff / 1000)) * (64 * Game::save->GetDouble("Note Size"));
 
 					float y = 0;
 					float yDiff = 0;
@@ -482,21 +486,21 @@ void Gameplay::update(Events::updateEvent event)
 					bool otherOne = false;
 
 					if (downscroll)
-						otherOne = yDiff <= -64;
+						otherOne = yDiff <= -(64 * Game::save->GetDouble("Note Size"));
 					else
-						otherOne = yDiff >= 64;
+						otherOne = yDiff >= 64 * Game::save->GetDouble("Note Size");
 
 					if (otherOne || object->heldTilings.size() == 0)
 					{
-						object->holdHeight += 64;
+						object->holdHeight += 64 * Game::save->GetDouble("Note Size");
 						holdTile tile;
 						SDL_FRect rect;
 						tile.active = true;
 						tile.fucked = false;
 						rect.y = y;
 						rect.x = 0;
-						rect.w = 64;
-						rect.h = 68;
+						rect.w = 64 * Game::save->GetDouble("Note Size");
+						rect.h = 68 * Game::save->GetDouble("Note Size");
 						tile.rect = rect;
 						tile.beat = beat;
 						tile.time = i;
@@ -605,8 +609,8 @@ void Gameplay::update(Events::updateEvent event)
 			if (note->lane < 4 && note->lane >= 0)
 			{
 				SDL_FRect receptorRect;
-				receptorRect.w = 64;
-				receptorRect.h = 64;
+				receptorRect.w = 64 * Game::save->GetDouble("Note Size");
+				receptorRect.h = 64 * Game::save->GetDouble("Note Size");
 				receptorRect.x = receptors[note->lane]->x;
 				receptorRect.y = receptors[note->lane]->y;
 				note->debug = debug;
@@ -644,7 +648,7 @@ void Gameplay::update(Events::updateEvent event)
 				dstRect.x = receptorRect.x;
 				dstRect.y = 0;
 				dstRect.h = 720;
-				dstRect.w = 64;
+				dstRect.w = 64 * Game::save->GetDouble("Note Size");
 
 				SDL_RenderCopyF(Game::renderer, colTexture[note->lane], NULL, &dstRect);
 

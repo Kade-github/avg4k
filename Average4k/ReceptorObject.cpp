@@ -6,8 +6,8 @@ void ReceptorObject::draw() {
 
 	SDL_FRect rect;
 
-	rect.w = 64;
-	rect.h = 64;
+	rect.w = (64 * Game::save->GetDouble("Note Size"));
+	rect.h = (64 * Game::save->GetDouble("Note Size"));
 	rect.x = x;
 	rect.y = y;
 

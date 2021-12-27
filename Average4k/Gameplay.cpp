@@ -241,7 +241,7 @@ Gameplay::Gameplay()
 		colTexture.push_back(SDL_CreateTexture(Game::renderer, SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_TARGET,64 * Game::save->GetDouble("Note Size"), 720));
 	}
 
-	positionInSong = -500;
+	positionInSong = -1500;
 	MUTATE_END
 }
 

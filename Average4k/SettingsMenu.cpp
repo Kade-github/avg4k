@@ -1,11 +1,22 @@
 #include "SettingsMenu.h"
 #include "AvgSprite.h"
+#include "Noteskin.h"
+
+
 
 void SettingsMenu::refreshList() {
 	selectedIndex = 0;
 	for (bruhhh t : settings)
 		t.display->destroy();
 	settings.clear();
+	noteskins.clear();
+	for (const auto& entry : std::filesystem::directory_iterator("assets/noteskin/"))
+	{
+		std::vector<std::string> spl = Chart::split(entry.path().string(), '/');
+		std::string skinName = spl[spl.size() - 1];
+		noteskins.push_back(skinName);
+	}
+
 	for (int i = 0; i < Game::save->settings.size(); i++)
 	{
 		setting& set = Game::save->settings[i];
@@ -31,6 +42,74 @@ void SettingsMenu::refreshList() {
 
 		settings.push_back(h);
 	}
+
+
+	for (int i = 0; i < noteskins.size(); i++)
+	{
+		std::vector<std::string> spl = Chart::split(std::string(noteskins[i]), '/');
+		std::string skinName = spl[spl.size() - 1];
+		for (int s = 0; s < settings.size(); s++)
+		{
+			bruhhh& b = settings[s];
+			std::cout << b.set->name << " " << b.set->stringValue << " vs " << skinName << std::endl;
+			if (std::string(b.set->name) == "Noteskin" && std::string(b.set->stringValue) == skinName)
+			{
+				selectedNoteskinIndex = i;
+				std::cout << "selected noteskin " << skinName << std::endl;
+				std::string value = ": " + std::string(b.set->stringValue);
+				b.display->setText(std::string(b.set->name) + value);
+				b.display->setX((Game::gameWidth / 2) - (b.display->surfW / 2));
+			}
+		}
+	}
+}
+
+void SettingsMenu::setSelect(bruhhh& b)
+{
+	Text* t = b.display;
+
+	setting* set = b.set;
+
+	std::string value = "";
+
+	if (set->takesActive)
+		value = ": " + std::string((set->active ? " true" : " false"));
+	else
+		value = ": " + std::to_string(set->value);
+
+	if (set->isKeybind)
+		value = ": " + std::string(SDL_GetKeyName((SDL_Keycode)set->value));
+
+	if (std::string(b.set->name) == "Noteskin")
+		value = ": " + std::string(b.set->stringValue);
+
+	std::string newText = "> " + std::string(set->name) + value;
+	t->setText(newText);
+	t->setX((Game::gameWidth / 2) - (t->surfW / 2));
+}
+
+void SettingsMenu::updateText(bruhhh& b)
+{
+	Text* t = b.display;
+
+	setting* set = b.set;
+
+	std::string value = "";
+
+	if (set->takesActive)
+		value = ": " + std::string((set->active ? " true" : " false"));
+	else
+		value = ": " + std::to_string(set->value);
+
+	if (set->isKeybind)
+		value = ": " + std::string(SDL_GetKeyName((SDL_Keycode)set->value));
+
+	if (std::string(b.set->name) == "Noteskin")
+		value = ": " + std::string(b.set->stringValue);
+
+	std::string newText = std::string(set->name) + value;
+	t->setText(newText);
+	t->setX((Game::gameWidth / 2) - (t->surfW / 2));
 }
 
 SettingsMenu::SettingsMenu()
@@ -52,29 +131,7 @@ void SettingsMenu::update(Events::updateEvent event)
 	if (selectedIndex < 0)
 		selectedIndex = settings.size() - 1;
 
-	bruhhh& b = settings[selectedIndex];
-
-	Text* t = b.display;
-
-	setting* set = b.set;
-
-	std::string value = "";
-
-	if (set->takesActive)
-		value = ": " + std::string((set->active ? " true" : " false"));
-	else
-		value = ": " + std::to_string(set->value);
-
-	if (set->isKeybind)
-		value = ": " + std::string(SDL_GetKeyName((SDL_Keycode)set->value));
-
-	std::string newText = "> " + std::string(set->name) + value;
-
-	if (t->text != newText)
-	{
-		t->setText(newText);
-		t->setX((Game::gameWidth / 2) - (t->surfW / 2));
-	}
+	setSelect(settings[selectedIndex]);
 }
 
 void SettingsMenu::keyDown(SDL_KeyboardEvent event)
@@ -88,6 +145,7 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 	{
 		Game::save->SetDouble(b.set->name, event.keysym.sym);
 		Game::save->Save();
+		updateText(b);
 		waitingKey = false;
 		return;
 	}
@@ -112,6 +170,7 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 				std::cout << "toggle" << std::endl;
 				Game::save->SetBool(b.set->name, !Game::save->GetBool(b.set->name));
 				Game::save->Save();
+				updateText(b);
 			}
 		}
 		break;
@@ -127,6 +186,10 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 
 		if (b.set->isKeybind)
 			value = ": " + std::string(SDL_GetKeyName((SDL_Keycode)b.set->value));
+
+
+		if (std::string(b.set->name) == "Noteskin")
+			value = ": " + std::string(b.set->stringValue);
 
 		t->setText(std::string(b.set->name) + value);
 		t->setX((Game::gameWidth / 2) - (t->surfW / 2));
@@ -144,12 +207,27 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 		if (b.set->isKeybind)
 			value = ": " + std::string(SDL_GetKeyName((SDL_Keycode)b.set->value));
 
+
+		if (std::string(b.set->name) == "Noteskin")
+			value = ": " + std::string(b.set->stringValue);
+
 		t->setText(std::string(b.set->name) + value);
 		t->setX((Game::gameWidth / 2) - (t->surfW / 2));
 		break;
 	case SDLK_LEFT:
 		if (waitingKey || b.set->isKeybind)
 			return;
+		if (std::string(b.set->name) == "Noteskin")
+		{
+			selectedNoteskinIndex--;
+			if (selectedNoteskinIndex < 0)
+				selectedNoteskinIndex = noteskins.size() - 1;
+
+			Game::save->SetString("Noteskin", noteskins[selectedNoteskinIndex]);
+
+			updateText(b);
+			return;
+		}
 		if (!b.set->takesActive)
 		{
 			double prev = b.set->value;
@@ -163,11 +241,24 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 			if (b.set->value < b.set->lowestValue)
 				b.set->value = prev;
 			Game::save->Save();
+
+			updateText(b);
 		}
 		break;
 	case SDLK_RIGHT:
 		if (waitingKey || b.set->isKeybind)
 			return;
+		if (std::string(b.set->name) == "Noteskin")
+		{
+			selectedNoteskinIndex++;
+			if (selectedNoteskinIndex > noteskins.size() - 1)
+				selectedNoteskinIndex = 0;
+
+			Game::save->SetString("Noteskin", noteskins[selectedNoteskinIndex]);
+
+			updateText(b);
+			return;
+		}
 		if (!b.set->takesActive)
 		{
 			double prev = b.set->value;
@@ -181,6 +272,8 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 			if (b.set->value > b.set->highestValue)
 				b.set->value = prev;
 			Game::save->Save();
+
+			updateText(b);
 		}
 		break;
 	}

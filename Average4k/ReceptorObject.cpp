@@ -11,42 +11,53 @@ void ReceptorObject::draw() {
 	rect.x = x;
 	rect.y = y;
 
-
-	switch (type)
+	if (Gameplay::noteskin->rotate)
 	{
-	case 0:
-		SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->receptor, NULL, &rect, 90, NULL, SDL_FLIP_NONE);
-		if (lightUpTimer > 0)
+		switch (type)
 		{
-			SDL_SetTextureAlphaMod(Gameplay::noteskin->receptor, std::lerp(255, 0, lightUpTimer / 1000));
-			SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->light, NULL, &rect, 90, NULL, SDL_FLIP_NONE);
-		}
+		case 0:
+			SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->receptor, NULL, &rect, 90, NULL, SDL_FLIP_NONE);
+			if (lightUpTimer > 0)
+			{
+				SDL_SetTextureAlphaMod(Gameplay::noteskin->receptor, std::lerp(255, 0, lightUpTimer / 1000));
+				SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->light, NULL, &rect, 90, NULL, SDL_FLIP_NONE);
+			}
 
-		break;
-	case 1:
-		SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->receptor, NULL, &rect, 0, NULL, SDL_FLIP_NONE);
+			break;
+		case 1:
+			SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->receptor, NULL, &rect, 0, NULL, SDL_FLIP_NONE);
+			if (lightUpTimer > 0)
+			{
+				SDL_SetTextureAlphaMod(Gameplay::noteskin->receptor, std::lerp(255, 0, lightUpTimer / 1000));
+				SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->light, NULL, &rect, 0, NULL, SDL_FLIP_NONE);
+			}
+			break;
+		case 2:
+			SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->receptor, NULL, &rect, 180, NULL, SDL_FLIP_NONE);
+			if (lightUpTimer > 0)
+			{
+				SDL_SetTextureAlphaMod(Gameplay::noteskin->receptor, std::lerp(255, 0, lightUpTimer / 1000));
+				SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->light, NULL, &rect, 180, NULL, SDL_FLIP_NONE);
+			}
+			break;
+		case 3:
+			SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->receptor, NULL, &rect, -90, NULL, SDL_FLIP_NONE);
+			if (lightUpTimer > 0)
+			{
+				SDL_SetTextureAlphaMod(Gameplay::noteskin->receptor, std::lerp(255, 0, lightUpTimer / 1000));
+				SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->light, NULL, &rect, -90, NULL, SDL_FLIP_NONE);
+			}
+			break;
+		}
+	}
+	else
+	{
+		SDL_RenderCopyF(Game::renderer, Gameplay::noteskin->receptor, NULL, &rect);
 		if (lightUpTimer > 0)
 		{
 			SDL_SetTextureAlphaMod(Gameplay::noteskin->receptor, std::lerp(255, 0, lightUpTimer / 1000));
-			SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->light, NULL, &rect, 0, NULL, SDL_FLIP_NONE);
+			SDL_RenderCopyF(Game::renderer, Gameplay::noteskin->light, NULL, &rect);
 		}
-		break;
-	case 2:
-		SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->receptor, NULL, &rect, 180, NULL, SDL_FLIP_NONE);
-		if (lightUpTimer > 0)
-		{
-			SDL_SetTextureAlphaMod(Gameplay::noteskin->receptor, std::lerp(255, 0, lightUpTimer / 1000));
-			SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->light, NULL, &rect, 180, NULL, SDL_FLIP_NONE);
-		}
-		break;
-	case 3:
-		SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->receptor, NULL, &rect, -90, NULL, SDL_FLIP_NONE);
-		if (lightUpTimer > 0)
-		{
-			SDL_SetTextureAlphaMod(Gameplay::noteskin->receptor, std::lerp(255, 0, lightUpTimer / 1000));
-			SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->light, NULL, &rect, -90, NULL, SDL_FLIP_NONE);
-		}
-		break;
 	}
 
 	if (lightUpTimer > 0)

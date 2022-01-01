@@ -14,15 +14,16 @@ bool contains(std::vector<T> vec, const T& elem)
 SaveFile::SaveFile()
 {
     // default settings
-    defaultSettings.push_back(CreateSetting(false, 0, "downscroll", true, 0,1, false, 0));
-    defaultSettings.push_back(CreateSetting(true, 1100, "scrollspeed", false, 1,5000, false, 1));
-    defaultSettings.push_back(CreateSetting(true, 0, "offset", false,-1000,1000,false, 1));
-    defaultSettings.push_back(CreateSetting(false, 0, "hitsounds", true,0,1,false, 0));
-    defaultSettings.push_back(CreateSetting(true, 1, "Note Size", false, 0.9, 1.3, false, 0.01));
-    defaultSettings.push_back(CreateSetting(false, SDLK_d, "Left Key", true, 0, 1, true, 0));
-    defaultSettings.push_back(CreateSetting(false, SDLK_f, "Down Key", true, 0, 1, true,0));
-    defaultSettings.push_back(CreateSetting(false, SDLK_j, "Up Key", true, 0, 1, true,0));
-    defaultSettings.push_back(CreateSetting(false, SDLK_k, "Right Key", true, 0, 1, true,0));
+    defaultSettings.push_back(CreateSetting(false, 0, "downscroll", true, 0,1, false, 0, ""));
+    defaultSettings.push_back(CreateSetting(true, 1100, "scrollspeed", false, 1,5000, false, 1, ""));
+    defaultSettings.push_back(CreateSetting(true, 0, "offset", false,-1000,1000,false, 1, ""));
+    defaultSettings.push_back(CreateSetting(false, 0, "hitsounds", true,0,1,false, 0, ""));
+    defaultSettings.push_back(CreateSetting(true, 1, "Note Size", false, 0.9, 1.3, false, 0.01, ""));
+    defaultSettings.push_back(CreateSetting(false, SDLK_d, "Left Key", true, 0, 1, true, 0, ""));
+    defaultSettings.push_back(CreateSetting(false, SDLK_f, "Down Key", true, 0, 1, true,0, ""));
+    defaultSettings.push_back(CreateSetting(false, SDLK_j, "Up Key", true, 0, 1, true,0, ""));
+    defaultSettings.push_back(CreateSetting(false, SDLK_k, "Right Key", true, 0, 1, true,0, ""));
+    defaultSettings.push_back(CreateSetting(false, 0, "Noteskin", false, 0, 1, false, 0, "arrow"));
     std::ifstream ifs("settings.avg");
     if (!ifs.good())
     {
@@ -71,6 +72,21 @@ void SaveFile::Save()
     of.close();
 }
 
+void SaveFile::SetString(std::string sett, std::string value)
+{
+    int size = value.size();
+    if (size > 248)
+        size = 248;
+    for (setting& set : settings)
+    {
+        if (set.name == sett)
+        {
+            memset(set.stringValue, 0, 248);
+            memcpy_s(set.stringValue, size, value.c_str(), size);
+        }
+    }
+}
+
 void SaveFile::SetDouble(std::string sett, double value)
 {
     for (setting& set : settings)
@@ -87,6 +103,16 @@ void SaveFile::SetBool(std::string sett, bool value)
         if (set.name == sett)
             set.active = value;
     }
+}
+
+std::string SaveFile::GetString(std::string sett)
+{
+    for (setting& set : settings)
+    {
+        if (set.name == sett)
+            return set.stringValue;
+    }
+    return "";
 }
 
 double SaveFile::GetDouble(std::string sett)
@@ -109,7 +135,7 @@ bool SaveFile::GetBool(std::string sett)
     return false;
 }
 
-setting SaveFile::CreateSetting(bool defaultActive, double defaultValue, std::string defaultName, bool tA, double lowest, double highest, bool isKeybind, double increm)
+setting SaveFile::CreateSetting(bool defaultActive, double defaultValue, std::string defaultName, bool tA, double lowest, double highest, bool isKeybind, double increm, std::string defaultStringValue)
 {
     setting set;
     set.active = defaultActive;
@@ -119,6 +145,7 @@ setting SaveFile::CreateSetting(bool defaultActive, double defaultValue, std::st
     set.lowestValue = lowest;
     set.isKeybind = isKeybind;
     set.increm = increm;
+    memcpy_s(set.stringValue, 248, defaultStringValue.c_str(), 248);
     memcpy_s(set.name, 128, defaultName.c_str(), 128);
     return set;
 }

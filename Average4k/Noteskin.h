@@ -12,6 +12,7 @@ struct noteskin_asset {
 	SDL_Texture* receptor;
 	SDL_Texture* holdend;
 	SDL_Texture* light;
+	bool rotate;
 };
 
 class Noteskin
@@ -19,7 +20,8 @@ class Noteskin
 	public:
 
 		static std::string type;
-
+		static noteskin_asset* asset;
+		static void resetNoteskin(noteskin_asset* as);
 		static noteskin_asset* getNoteskin();
 };
 

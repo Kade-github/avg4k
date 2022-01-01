@@ -124,21 +124,30 @@ void NoteObject::draw(float position, double b, SDL_FRect receptor, bool clipHol
 		
 
 		if (active)
-			switch (lane)
+		{
+			if (Gameplay::noteskin->rotate)
 			{
-			case 0:
-				SDL_RenderCopyExF(Game::renderer, texture, NULL, &rect, 90, NULL, SDL_FLIP_NONE);
-				break;
-			case 1:
-				SDL_RenderCopyExF(Game::renderer, texture, NULL, &rect, 0, NULL, SDL_FLIP_NONE);
-				break;
-			case 2:
-				SDL_RenderCopyExF(Game::renderer, texture, NULL, &rect, 180, NULL, SDL_FLIP_NONE);
-				break;
-			case 3:
-				SDL_RenderCopyExF(Game::renderer, texture, NULL, &rect, -90, NULL, SDL_FLIP_NONE);
-				break;
+				switch (lane)
+				{
+				case 0:
+					SDL_RenderCopyExF(Game::renderer, texture, NULL, &rect, 90, NULL, SDL_FLIP_NONE);
+					break;
+				case 1:
+					SDL_RenderCopyExF(Game::renderer, texture, NULL, &rect, 0, NULL, SDL_FLIP_NONE);
+					break;
+				case 2:
+					SDL_RenderCopyExF(Game::renderer, texture, NULL, &rect, 180, NULL, SDL_FLIP_NONE);
+					break;
+				case 3:
+					SDL_RenderCopyExF(Game::renderer, texture, NULL, &rect, -90, NULL, SDL_FLIP_NONE);
+					break;
+				}
 			}
+			else
+			{
+				SDL_RenderCopyF(Game::renderer, texture, NULL, &rect);
+			}
+		}
 
 		if (debug)
 		{

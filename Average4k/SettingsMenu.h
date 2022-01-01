@@ -16,7 +16,9 @@ public:
 		setting* set;
 	};
 
+	int selectedNoteskinIndex;
 
+	std::vector<std::string> noteskins;
 	std::vector<bruhhh> settings;
 
 	int selectedIndex;
@@ -24,6 +26,9 @@ public:
 	bool waitingKey = false;
 
 	void refreshList();
+
+	void setSelect(bruhhh& b);
+	void updateText(bruhhh& b);
 
 	SettingsMenu();
 

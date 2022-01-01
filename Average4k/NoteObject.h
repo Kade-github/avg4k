@@ -28,6 +28,8 @@ class NoteObject
 		int holdHeight;
 
 		int holdsActive = 0;
+		bool wasHit;
+		bool clapped;
 
 		bool debug = false;
 		double beat = 0;

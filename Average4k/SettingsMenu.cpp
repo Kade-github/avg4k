@@ -224,7 +224,7 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 				selectedNoteskinIndex = noteskins.size() - 1;
 
 			Game::save->SetString("Noteskin", noteskins[selectedNoteskinIndex]);
-
+			Game::save->Save();
 			updateText(b);
 			return;
 		}
@@ -255,7 +255,7 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 				selectedNoteskinIndex = 0;
 
 			Game::save->SetString("Noteskin", noteskins[selectedNoteskinIndex]);
-
+			Game::save->Save();
 			updateText(b);
 			return;
 		}

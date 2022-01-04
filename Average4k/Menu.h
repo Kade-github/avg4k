@@ -20,6 +20,8 @@ public:
 	void removeObj(Object* obj)
 	{
 		children.erase(std::remove(children.begin(), children.end(), obj), children.end());
+		obj->beforeDeath();
+		obj->die();
 	}
 
 	void removeAll()

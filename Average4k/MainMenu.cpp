@@ -74,17 +74,16 @@ void MainMenu::keyDown(SDL_KeyboardEvent event)
 {
 	if (event.keysym.sym == SDLK_RETURN)
 	{
-		removeAll();
 		switch (selectedIndex)
 		{
 		case 0:
-			Game::currentMenu = new MultiplayerLobbies();
+			Game::instance->switchMenu(new MultiplayerLobbies());
 			break;
 		case 1:
-			Game::currentMenu = new SongSelect();
+			Game::instance->switchMenu(new SongSelect());
 			break;
 		case 2:
-			Game::currentMenu = new SettingsMenu();
+			Game::instance->switchMenu(new SettingsMenu());
 			break;
 		}
 	}

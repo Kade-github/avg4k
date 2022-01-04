@@ -206,7 +206,6 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="Text.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AudioManager.h" />
     <ClInclude Include="AvgSprite.h" />
     <ClInclude Include="Base64.h" />
     <ClInclude Include="Chart.h" />

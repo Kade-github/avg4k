@@ -161,6 +161,15 @@ void Game::update(Events::updateEvent update)
 	if (fpsText && !debugConsole)
 		fpsText->update(update);
 
+	for (int i = 0; i < currentMenu->children.size(); i++)
+	{
+		Object* obj = currentMenu->children[i];
+		obj->draw();
+		// TODO: PUT THIS IN A DIFFERENT THREAD
+	}
+	if (fpsText && !debugConsole)
+		fpsText->draw();
+
 	if (debugConsole)
 	{
 		SDL_FRect topBar;
@@ -209,12 +218,12 @@ void Game::update(Events::updateEvent update)
 
 		SDL_RenderSetClipRect(Game::renderer, &clip);
 
-		consoleLog->update(update);
+		consoleLog->draw();
 
 		SDL_RenderSetClipRect(Game::renderer, NULL);
 
-		debugText->update(update);
-		cmdPrompt->update(update);
+		debugText->draw();
+		cmdPrompt->draw();
 	}
 
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);

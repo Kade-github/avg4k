@@ -16,7 +16,7 @@ public:
 		SDL_QueryTexture(tex, NULL, NULL, &w, &h);
 	};
 
-	void update(Events::updateEvent event) {
+	void draw() {
 		SDL_FRect rect;
 
 		rect.x = x;
@@ -25,7 +25,7 @@ public:
 		rect.h = h;
 
 		SDL_RenderCopyF(Game::renderer, tex, NULL, &rect);
-	};
+	}
 
 	void beforeDeath() {
 		SDL_DestroyTexture(tex);

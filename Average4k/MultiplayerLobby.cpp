@@ -14,7 +14,7 @@ void MultiplayerLobby::refreshLobby(lobby l)
 
 	for (person p : people)
 	{
-		p.display->destroy();
+		removeObj(p.display);
 		SDL_DestroyTexture(p.avatar);
 	}
 
@@ -31,6 +31,7 @@ void MultiplayerLobby::refreshLobby(lobby l)
 			per.avatar = t;
 		else
 			per.avatar = NULL;
+		add(per.display);
 		people.push_back(per);
 	}
 
@@ -192,15 +193,11 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		
 		Game::currentMenu = new Gameplay();
 		SongSelect::currentChart = Game::steam->downloadedChart;
-		helpDisplay->destroy();
-		
+
 		for (person p : people)
 		{
-			p.display->destroy();
 			SDL_DestroyTexture(p.avatar);
 		}
-
-		warningDisplay->destroy();
 
 		people.clear();
 		removeAll();
@@ -269,15 +266,11 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 
 			Multiplayer::sendMessage<CPacketLeave>(leave);
 
-			helpDisplay->destroy();
-
 			Game::currentMenu = new MultiplayerLobbies();
 			for (person p : people)
 			{
-				p.display->destroy();
 				SDL_DestroyTexture(p.avatar);
 			}
-			warningDisplay->destroy();
 			people.clear();
 			removeAll();
 			inLobby = false;
@@ -297,15 +290,11 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 			{
 
 				Game::currentMenu = new SongSelect();
-				helpDisplay->destroy();
 
 				for (person p : people)
 				{
-					p.display->destroy();
 					SDL_DestroyTexture(p.avatar);
 				}
-
-				warningDisplay->destroy();
 
 				people.clear();
 				removeAll();
@@ -316,15 +305,11 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 			if (!isHost && !waitingForStart)
 				return;
 			Game::currentMenu = new SongSelect();
-			helpDisplay->destroy();
 
 			for (person p : people)
 			{
-				p.display->destroy();
 				SDL_DestroyTexture(p.avatar);
 			}
-
-			warningDisplay->destroy();
 
 			people.clear();
 			removeAll();

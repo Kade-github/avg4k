@@ -31,10 +31,8 @@ void Text::setText(std::string temp)
 		SDL_FreeSurface(surfaceMessage);
 	}
 }
-
-void Text::update(Events::updateEvent ev)
+void Text::draw()
 {
-
 	message_Rect.x = x;
 	message_Rect.y = y;
 	message_Rect.w = rW;
@@ -45,9 +43,9 @@ void Text::update(Events::updateEvent ev)
 	rect.y = message_Rect.y;
 	rect.w = rW;
 	rect.h = rH;
-	SDL_RenderCopyF(ev.renderer, outline, NULL, &rect);
+	SDL_RenderCopyF(Game::renderer, outline, NULL, &rect);
 
-	SDL_RenderCopyF(ev.renderer, message, NULL, &message_Rect);
+	SDL_RenderCopyF(Game::renderer, message, NULL, &message_Rect);
 }
 
 void Text::forceDraw()
@@ -60,7 +58,7 @@ void Text::forceDraw()
 	SDL_RenderCopyF(Game::renderer, message, NULL, &message_Rect);
 }
 
-void Text::destroy()
+void Text::die()
 {
 	if (!this)
 		return;

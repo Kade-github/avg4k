@@ -222,7 +222,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			create = true;
 		}
 		game->update(updateEvent);
-		Game::deltaTime = 0;
+
 		Game::deltaTime = (double)((NOW - LAST) * 1000 / (double)SDL_GetPerformanceFrequency());
 
 		fpsthink();

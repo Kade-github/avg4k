@@ -32,8 +32,8 @@ public:
 	int size;
 
 	~Text() = default;
-	void update(Events::updateEvent event) override;
-	void destroy();
+	void draw() override;
+	void die() override;
 	void centerX();
 	void centerY();
 	Color color;

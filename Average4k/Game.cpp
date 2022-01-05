@@ -1,20 +1,25 @@
 #include "includes.h"
 #include <algorithm>
-
 #include "Game.h"
 #include "MainMenu.h"
+#include "TweenManager.h"
 #include "Text.h"
 #include "CPacketHostUpdateLobby.h"
 #include "MultiplayerLobby.h"
+#include "AvgRect.h"
+
 using namespace std;
 
 mutex pog;
+
+AvgRect* __transRect;
 
 vector<Object*>* objects;
 
 std::vector<Events::packetEvent> packetsToBeHandeld;
 
 Menu* Game::currentMenu = NULL;
+Menu* Game::toGoTo = NULL;
 Camera* Game::mainCamera = NULL;
 SaveFile* Game::save = NULL;
 Steam* Game::steam = NULL;
@@ -58,7 +63,24 @@ int Game::gameHeight = 0;
 
 bool Game::startConnect = false;
 
+bool transCompleted = false;
+
 HANDLE multiThreadHandle;
+
+void transCall() {
+	Game::currentMenu->removeAll();
+	Game::currentMenu = Game::toGoTo;
+	transCompleted = true;
+}
+
+void Game::transitionToMenu(Menu* m)
+{
+	transCompleted = false;
+	toGoTo = m;
+	Tweening::tweenCallback callback = (Tweening::tweenCallback)transCall;
+	transitioning = true;
+	Tweening::TweenManager::createNewTween("_trans", __transRect, Tweening::tt_Alpha, 235, 0, 255, callback, Easing::EaseInSine);
+}
 
 void Game::switchMenu(Menu* m)
 {
@@ -72,6 +94,8 @@ void Game::createGame()
 	steam = new Steam();
 	steam->InitSteam();
 
+	__transRect = new AvgRect(0,0,Game::gameWidth, Game::gameHeight);
+	__transRect->create();
 
 	// to start
 	currentMenu = new MainMenu();
@@ -106,6 +130,15 @@ void Game::update(Events::updateEvent update)
 
 	SDL_RenderClear(update.renderer);
 
+	if (transitioning && transCompleted)
+	{
+		transCompleted = false;
+		Tweening::TweenManager::createNewTween("_trans", __transRect, Tweening::tt_Alpha, 235, 255, 0, []()->void* {
+			Game::instance->transitioning = false;
+			return 0;
+		}, Easing::EaseInSine);
+	}
+
 	static Text* fpsText = nullptr;
 	if (!fpsText)
 	{
@@ -113,25 +146,23 @@ void Game::update(Events::updateEvent update)
 	}
 
 	mainCamera->update(update);
-
 	currentMenu->update(update);
 
 	fpsText->setText("FPS: " + std::to_string(gameFPS) + " - Avg4k 0.1a - Visuals are subject to change - " + (Multiplayer::loggedIn ? "You are logged in" : "You are logged out"));
 
-	for (int i = 0; i < objects->size(); i++)
-	{
-		try
+		for (int i = 0; i < objects->size(); i++)
 		{
-			Object* bruh = (*objects)[i];
-			bruh->update(update);
-		}
-		catch (...)
-		{
+			try
+			{
+				Object* bruh = (*objects)[i];
+				bruh->update(update);
+			}
+			catch (...)
+			{
 
+			}
 		}
-	}
-
-	currentMenu->postUpdate(update);
+		currentMenu->postUpdate(update);
 
 
 
@@ -154,12 +185,30 @@ void Game::update(Events::updateEvent update)
 	{
 		// uh
 		Events::packetEvent& p = bruh[i];
-		currentMenu->onPacket(p.type, p.data, p.length);
+		if (currentMenu != NULL)
+			currentMenu->onPacket(p.type, p.data, p.length);
 		free(p.ogPtr);
 	}
 
-	if (fpsText && !debugConsole)
+	if (fpsText && !debugConsole )
 		fpsText->update(update);
+
+	if (SDL_GetTicks() > 1000)
+		for (int i = 0; i < Tweening::TweenManager::activeTweens.size(); i++)
+		{
+			Tweening::Tween& tw = Tweening::TweenManager::activeTweens[i];
+			Tweening::TweenManager::updateTween(tw, Game::deltaTime);
+		}
+	if (currentMenu != NULL)
+		for (int i = 0; i < currentMenu->children.size(); i++)
+		{
+			Object* obj = currentMenu->children[i];
+			obj->draw();
+			// TODO: PUT THIS IN A DIFFERENT THREAD
+		}
+	if (fpsText && !debugConsole)
+		fpsText->draw();
+
 
 	if (debugConsole)
 	{
@@ -209,12 +258,12 @@ void Game::update(Events::updateEvent update)
 
 		SDL_RenderSetClipRect(Game::renderer, &clip);
 
-		consoleLog->update(update);
+		consoleLog->draw();
 
 		SDL_RenderSetClipRect(Game::renderer, NULL);
 
-		debugText->update(update);
-		cmdPrompt->update(update);
+		debugText->draw();
+		cmdPrompt->draw();
 	}
 
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -222,6 +271,11 @@ void Game::update(Events::updateEvent update)
 	SDL_SetRenderTarget(renderer, NULL);
 
 	SDL_RenderCopyEx(renderer, mainCamera->cameraTexture, NULL, &DestR, mainCamera->angle, NULL, SDL_FLIP_NONE);
+
+	if (transitioning)
+	{
+		__transRect->draw();
+	}
 
 	SDL_RenderPresent(renderer);
 	MUTATE_END

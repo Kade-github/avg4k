@@ -9,7 +9,8 @@ public:
 	~Object() = default;
 	bool isCreated;
 	void create();
-	virtual void update(Events::updateEvent ev) = 0;
+	virtual void update(Events::updateEvent ev) {};
+	virtual void draw() {};
 	virtual void keyDown(SDL_KeyboardEvent ev) {};
 	virtual void textInput(SDL_TextInputEvent ev) {};
 	virtual void beforeDeath() {};
@@ -24,7 +25,7 @@ public:
 	bool isDead = false;
 
 
-	void die();
+	virtual void die();
 
 
 

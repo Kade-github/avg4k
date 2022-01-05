@@ -7,7 +7,7 @@
 void SettingsMenu::refreshList() {
 	selectedIndex = 0;
 	for (bruhhh t : settings)
-		t.display->destroy();
+		removeObj(t.display);
 	settings.clear();
 	noteskins.clear();
 	for (const auto& entry : std::filesystem::directory_iterator("assets/noteskin/"))
@@ -109,7 +109,7 @@ void SettingsMenu::updateText(bruhhh& b)
 
 	std::string newText = std::string(set->name) + value;
 	t->setText(newText);
-	t->setX((Game::gameWidth / 2) - (t->surfW / 2));
+	t->centerX();
 }
 
 SettingsMenu::SettingsMenu()
@@ -152,10 +152,8 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 	switch (event.keysym.sym)
 	{
 	case SDLK_ESCAPE:
-		removeAll();
 		settings.clear();
-		Game::currentMenu = new MainMenu();
-		delete this;
+		Game::instance->transitionToMenu(new MainMenu());
 		break;
 	case SDLK_RETURN:
 		if (b.set->isKeybind && !waitingKey)

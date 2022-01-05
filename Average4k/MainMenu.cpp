@@ -2,6 +2,7 @@
 #include "MainMenu.h"
 #include <windows.h>
 #include "AvgSprite.h"
+#include "TweenManager.h"
 
 MainMenu::MainMenu()
 {
@@ -29,7 +30,6 @@ MainMenu::MainMenu()
 	bruh->create();
 	add(bruh);
 
-
 	MenuItem.push_back(multiplayer);
 	MenuItem.push_back(singleplayer);
 	MenuItem.push_back(settings);
@@ -44,6 +44,7 @@ void MainMenu::update(Events::updateEvent event)
 	switch (selectedIndex) // does this contradict what we are doing? yes. do I care? no
 	{
 	case 0:
+		
 		MenuItem[2]->setText("Settings");
 		MenuItem[2]->centerX();
 		MenuItem[1]->setText("Singleplayer");
@@ -74,17 +75,16 @@ void MainMenu::keyDown(SDL_KeyboardEvent event)
 {
 	if (event.keysym.sym == SDLK_RETURN)
 	{
-		removeAll();
 		switch (selectedIndex)
 		{
 		case 0:
-			Game::currentMenu = new MultiplayerLobbies();
+			Game::instance->transitionToMenu(new MultiplayerLobbies());
 			break;
 		case 1:
-			Game::currentMenu = new SongSelect();
+			Game::instance->transitionToMenu(new SongSelect());
 			break;
 		case 2:
-			Game::currentMenu = new SettingsMenu();
+			Game::instance->transitionToMenu(new SettingsMenu());
 			break;
 		}
 	}

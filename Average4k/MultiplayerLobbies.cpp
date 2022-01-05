@@ -41,7 +41,7 @@ void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
 	Lobbies = lobs;
 
 	for (Text* t : lobbyTexts)
-		t->destroy();
+		removeObj(t);
 
 	lobbyTexts.clear();
 
@@ -66,6 +66,7 @@ void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
 			avatars.push_back(b);
 		}
 		lobbyTexts.push_back(t);
+		add(t);
 	}
 }
 
@@ -80,7 +81,7 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 	msgpack::object obj;
 	switch (pt)
 	{
-	case eSPacketServerListReply: {
+		case eSPacketServerListReply: {
 			msgpack::unpack(result, data, length);
 
 			obj = msgpack::object(result.get());
@@ -91,50 +92,38 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 
 			updateList(fuck.Lobbies);
 			break;
-	}
+		}
 		case eSPacketJoinServerReply: {
-				Game::currentMenu = new MultiplayerLobby(Lobbies[selectedIndex], false, false);
-			for (Text* t : lobbyTexts)
-				t->destroy();
+			Game::instance->transitionToMenu(new MultiplayerLobby(Lobbies[selectedIndex], false, false));
 
 			for (bruh t : avatars)
 				SDL_DestroyTexture(t.avatar);
 
 			avatars.clear();
-
-			helpText->destroy();
-
-			removeAll();
 
 			std::cout << "you joined!" << std::endl;
-				break;
+			break;
 		}
 		case eSPacketHostServerReply: {
-				Game::currentMenu = new MultiplayerLobby(Lobbies[selectedIndex], true, false);
-			for (Text* t : lobbyTexts)
-				t->destroy();
+			Game::instance->transitionToMenu(new MultiplayerLobby(Lobbies[selectedIndex], true, false));
 
 			for (bruh t : avatars)
 				SDL_DestroyTexture(t.avatar);
 
 			avatars.clear();
 
-			helpText->destroy();
-
-			removeAll();
-
 			std::cout << "you hosted and joined!" << std::endl;
-				break;
+			break;
 		}
 		case eSPacketStatus: {
-				msgpack::unpack(result, data, length);
+			msgpack::unpack(result, data, length);
 
 			obj = msgpack::object(result.get());
 
 			obj.convert(f);
 			
-				switch (f.code)
-				{
+			switch (f.code)
+			{
 				case 403: {
 					std::cout << "not allowed to join that!" << std::endl;
 					joiningServer = false;
@@ -145,7 +134,7 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 					joiningServer = false;
 					break;
 				}
-				}
+			}
 			break;
 		}
 	}
@@ -176,16 +165,13 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 		switch (event.keysym.sym)
 		{
 		case SDLK_ESCAPE:
-			Game::currentMenu = new MainMenu();
-			for (Text* t : lobbyTexts)
-				t->destroy();
+			Game::instance->transitionToMenu(new MainMenu());
 
 			for (bruh t : avatars)
 				SDL_DestroyTexture(t.avatar);
 
 			avatars.clear();
 
-			helpText->destroy();
 			removeAll();
 
 			break;
@@ -203,15 +189,12 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 		{
 		case SDLK_ESCAPE:
 			Game::currentMenu = new MainMenu();
-			for (Text* t : lobbyTexts)
-				t->destroy();
 
 			for (bruh t : avatars)
 				SDL_DestroyTexture(t.avatar);
 
 			avatars.clear();
 
-			helpText->destroy();
 			removeAll();
 
 			break;
@@ -266,7 +249,7 @@ void MultiplayerLobbies::postUpdate(Events::updateEvent event)
 	lobby& l = Lobbies[selectedIndex];
 	Text* selected = lobbyTexts[selectedIndex];
 	selected->setText("> " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")");
-	selected->setX((Game::gameWidth / 2) - (selected->surfW / 2));
+	selected->centerX();
 
 	std::vector<player> playersToShow;
 

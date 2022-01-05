@@ -8,15 +8,13 @@ public:
 
 	int w = 0;
 	int h = 0;
-	int x = 0;
-	int y = 0;
 
 	AvgSprite(int _x, int _y, std::string path) : Object(x, y) {
 		tex = IMG_LoadTexture(Game::renderer, path.c_str());
 		SDL_QueryTexture(tex, NULL, NULL, &w, &h);
 	};
 
-	void update(Events::updateEvent event) {
+	void draw() {
 		SDL_FRect rect;
 
 		rect.x = x;
@@ -24,8 +22,10 @@ public:
 		rect.w = w;
 		rect.h = h;
 
+		SDL_SetTextureAlphaMod(tex, alpha);
+
 		SDL_RenderCopyF(Game::renderer, tex, NULL, &rect);
-	};
+	}
 
 	void beforeDeath() {
 		SDL_DestroyTexture(tex);

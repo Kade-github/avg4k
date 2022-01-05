@@ -5,15 +5,8 @@
 #include "Judge.h"
 #include "SongSelect.h"
 
-NoteObject::NoteObject(){}
 
-void NoteObject::destroy()
-{
-	destroyed = true;
-	delete this;
-}
-
-void NoteObject::draw(float position, double b, SDL_FRect receptor, bool clipHold)
+void NoteObject::specializedDraw(float position, double b, SDL_FRect receptor, bool clipHold)
 {
 		bpmSegment bruh = SongSelect::currentChart->getSegmentFromBeat(beat);
 

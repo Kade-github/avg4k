@@ -70,7 +70,7 @@ void Gameplay::removeNote(NoteObject* object)
 			}),
 		spawnedNotes.end());
 
-	object->destroy();
+	removeObj(object);
 }
 
 void Gameplay::miss(NoteObject* object)
@@ -130,7 +130,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 		obj.convert(pack);
 
 		for (leaderboardSpot p : leaderboard)
-			p.t->destroy();
+			removeObj(p.t);
 
 		leaderboard.clear();
 
@@ -146,13 +146,14 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 			spot.t->y = spot.t->y + (spot.t->surfH * i);
 			leaderboard.push_back(spot);
 			spot.t->create();
+			add(spot.t);
 		}
 
 		break;
 	case eSPacketFinalizeChart:
 
 		for (leaderboardSpot p : leaderboard)
-			p.t->destroy();
+			removeObj(p.t);
 
 		leaderboard.clear();
 
@@ -215,6 +216,7 @@ Gameplay::Gameplay()
 
 	positionAndBeats = new Text(0, 40, "", 16);
 	positionAndBeats->create();
+	add(positionAndBeats);
 
 
 	noteskin = Noteskin::getNoteskin();
@@ -223,12 +225,15 @@ Gameplay::Gameplay()
 
 	Judgement = new Text(Game::gameWidth / 2, Game::gameHeight / 2, " ", 24);
 	Judgement->create();
+	add(Judgement);
 
 	Combo = new Text(Game::gameWidth / 2, Game::gameHeight / 2 + 40, " ", 24);
 	Combo->create();
+	add(Combo);
 
 	Accuracy = new Text(230, (Game::gameHeight / 2) - 300, "N/A\n\nMarvelous: " + std::to_string(Marvelous) + "\nPerfect: " + std::to_string(Perfect) + "\nGreat: " + std::to_string(Great) + "\nEh: " + std::to_string(Eh) + "\nYikes: " + std::to_string(Yikes) + "\nCombo Breaks: " + std::to_string(Misses), 24);
 	Accuracy->create();
+	add(Accuracy);
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -242,6 +247,8 @@ Gameplay::Gameplay()
 			r = new ReceptorObject(
 				((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * i), (Game::gameHeight / 2) - 300, i);
 		r->lightUpTimer = 0;
+		add(r);
+		r->create();
 		receptors.push_back(r);
 		colTexture.push_back(SDL_CreateTexture(Game::renderer, SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_TARGET,64 * Game::save->GetDouble("Note Size"), 720));
 	}
@@ -516,6 +523,8 @@ void Gameplay::update(Events::updateEvent event)
 			std::sort(object->heldTilings.begin(), object->heldTilings.end());
 			
 			spawnedNotes.push_back(object);
+			object->create();
+			add(object);
 		}
 	}
 	else
@@ -645,7 +654,7 @@ void Gameplay::update(Events::updateEvent event)
 					SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 0);
 					SDL_RenderClear(Game::renderer);
 
-					note->draw(positionInSong, beat, receptorRect, true);
+					note->specializedDraw(positionInSong, beat, receptorRect, true);
 
 					SDL_SetRenderTarget(Game::renderer, Game::mainCamera->cameraTexture);
 
@@ -705,32 +714,14 @@ void Gameplay::update(Events::updateEvent event)
 	{
 		if (keys[i])
 			receptors[i]->light();
-
-		receptors[i]->draw();
 	}
 	MUTATE_END
 }
 void Gameplay::cleanUp()
 {
-	Judgement->destroy();
-	Combo->destroy();
-	Accuracy->destroy();
-	if (positionAndBeats)
-		positionAndBeats->destroy();
-
 	for (int i = 0; i < colTexture.size(); i++)
 	{
 		SDL_DestroyTexture(colTexture[i]);
-	}
-
-	for (int i = 0; i < spawnedNotes.size(); i++)
-	{
-		spawnedNotes[i]->destroy();
-	}
-
-	for (int i = 0; i < receptors.size(); i++)
-	{
-		delete receptors[i];
 	}
 
 	spawnedNotes.clear();
@@ -768,7 +759,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			}
 			SongSelect::currentChart->destroy();
 			cleanUp();
-			Game::instance->switchMenu(new MainMenu());
+			Game::instance->transitionToMenu(new MainMenu());
 			VM_END
 			return;
 		case SDLK_F1:
@@ -783,7 +774,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			if (MultiplayerLobby::inLobby)
 				return;
 			cleanUp();
-			Game::instance->switchMenu(new Gameplay());
+			Game::instance->transitionToMenu(new Gameplay());
 			return;
 	}
 

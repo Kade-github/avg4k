@@ -7,7 +7,6 @@
 #include "Menu.h"
 #include "Multiplayer.h"
 #include "Chart.h"
-
 class Game
 {
 public:
@@ -15,7 +14,10 @@ public:
 
 	Menu* menuToDelete;
 
+	bool transitioning;
+
 	static bool startConnect;
+	static Menu* toGoTo;
 
 	void update(Events::updateEvent updateEvent);
 	void keyDown(SDL_KeyboardEvent event);
@@ -43,6 +45,7 @@ public:
 
 	void weGotPacket(Events::packetEvent p);
 
+	void transitionToMenu(Menu* m);
 	void switchMenu(Menu* m);
 
 	static std::vector<Object*>* getGlobalObjects();

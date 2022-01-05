@@ -17,10 +17,13 @@ struct holdTile {
 	}
 };
 
-class NoteObject
+class NoteObject : public Object
 {
 	public:
-		NoteObject();
+		NoteObject() {
+			setX(0);
+			setY(0);
+		};
 		~NoteObject() {};
 
 		Text* debugText;
@@ -39,13 +42,11 @@ class NoteObject
 		bool active = true;
 		bool destroyed = false;
 		int lane = 0;
-		noteType type = Note_Normal;
+		noteType type = noteType::Note_Normal;
 		SDL_FRect rect;
 		std::vector<holdTile> heldTilings;
 
 
-		void destroy();
-
-		void draw(float position, double beat, SDL_FRect receptor, bool clipHold);
+		void specializedDraw(float position, double beat, SDL_FRect receptor, bool clipHold);
 };
 

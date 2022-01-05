@@ -759,7 +759,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			}
 			SongSelect::currentChart->destroy();
 			cleanUp();
-			Game::instance->switchMenu(new MainMenu());
+			Game::instance->transitionToMenu(new MainMenu());
 			VM_END
 			return;
 		case SDLK_F1:
@@ -774,7 +774,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			if (MultiplayerLobby::inLobby)
 				return;
 			cleanUp();
-			Game::instance->switchMenu(new Gameplay());
+			Game::instance->transitionToMenu(new Gameplay());
 			return;
 	}
 

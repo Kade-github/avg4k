@@ -79,6 +79,12 @@
     <Filter Include="FontStuff">
       <UniqueIdentifier>{6db03054-40d0-435e-96a0-29bcf631f0c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Average4k\Utils\Easing">
+      <UniqueIdentifier>{a80dd974-cb76-43db-8b73-3070d4c3a31f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Average4k\Utils\Tweening">
+      <UniqueIdentifier>{63e1e72e-90df-4eb9-8e8d-6da62c350621}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Average4k.cpp">
@@ -149,6 +155,12 @@
     </ClCompile>
     <ClCompile Include="ReceptorObject.cpp">
       <Filter>Source Files\Average4k\Objects\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="Easing.cpp">
+      <Filter>Source Files\Average4k\Utils\Easing</Filter>
+    </ClCompile>
+    <ClCompile Include="TweenManager.cpp">
+      <Filter>Source Files\Average4k\Utils\Tweening</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -316,6 +328,15 @@
     </ClInclude>
     <ClInclude Include="CPacketHostEndChart.h">
       <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Easing.h">
+      <Filter>Source Files\Average4k\Utils\Easing</Filter>
+    </ClInclude>
+    <ClInclude Include="TweenManager.h">
+      <Filter>Source Files\Average4k\Utils\Tweening</Filter>
+    </ClInclude>
+    <ClInclude Include="AvgRect.h">
+      <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

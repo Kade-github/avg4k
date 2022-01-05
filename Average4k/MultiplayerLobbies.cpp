@@ -94,27 +94,23 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 			break;
 		}
 		case eSPacketJoinServerReply: {
-			Game::currentMenu = new MultiplayerLobby(Lobbies[selectedIndex], false, false);
+			Game::instance->transitionToMenu(new MultiplayerLobby(Lobbies[selectedIndex], false, false));
 
 			for (bruh t : avatars)
 				SDL_DestroyTexture(t.avatar);
 
 			avatars.clear();
-
-			removeAll();
 
 			std::cout << "you joined!" << std::endl;
-				break;
+			break;
 		}
 		case eSPacketHostServerReply: {
-			Game::currentMenu = new MultiplayerLobby(Lobbies[selectedIndex], true, false);
+			Game::instance->transitionToMenu(new MultiplayerLobby(Lobbies[selectedIndex], true, false));
 
 			for (bruh t : avatars)
 				SDL_DestroyTexture(t.avatar);
 
 			avatars.clear();
-
-			removeAll();
 
 			std::cout << "you hosted and joined!" << std::endl;
 			break;
@@ -169,7 +165,7 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 		switch (event.keysym.sym)
 		{
 		case SDLK_ESCAPE:
-			Game::currentMenu = new MainMenu();
+			Game::instance->transitionToMenu(new MainMenu());
 
 			for (bruh t : avatars)
 				SDL_DestroyTexture(t.avatar);

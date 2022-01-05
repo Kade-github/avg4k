@@ -342,19 +342,19 @@ void SongSelect::keyDown(SDL_KeyboardEvent event)
 				return;
 			if (MultiplayerLobby::inLobby && currentChart)
 			{
-				Game::instance->switchMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, true));
+				Game::instance->transitionToMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, true));
 			}
 			else if (currentChart)
 			{
-				Game::instance->switchMenu(new Gameplay());
+				Game::instance->transitionToMenu(new Gameplay());
 				free(selectedSong);
 			}
 			break;
 		case SDLK_ESCAPE:
 			if (MultiplayerLobby::inLobby)
-				Game::instance->switchMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, false));
+				Game::instance->transitionToMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, false));
 			else
-				Game::instance->switchMenu(new MainMenu());
+				Game::instance->transitionToMenu(new MainMenu());
 			free(selectedSong);
 			break;
 		}

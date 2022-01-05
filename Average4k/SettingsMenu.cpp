@@ -153,8 +153,7 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 	{
 	case SDLK_ESCAPE:
 		settings.clear();
-		Game::instance->switchMenu(new MainMenu());
-		delete this;
+		Game::instance->transitionToMenu(new MainMenu());
 		break;
 	case SDLK_RETURN:
 		if (b.set->isKeybind && !waitingKey)

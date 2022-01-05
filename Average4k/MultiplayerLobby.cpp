@@ -191,7 +191,7 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 	case eSPacketStartLobbyGame:
 		std::cout << "start!" << std::endl;
 		
-		Game::currentMenu = new Gameplay();
+		Game::instance->transitionToMenu(new Gameplay());
 		SongSelect::currentChart = Game::steam->downloadedChart;
 
 		for (person p : people)
@@ -200,7 +200,6 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		}
 
 		people.clear();
-		removeAll();
 		break;
 	}
 	VM_END
@@ -266,13 +265,12 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 
 			Multiplayer::sendMessage<CPacketLeave>(leave);
 
-			Game::currentMenu = new MultiplayerLobbies();
+			Game::instance->transitionToMenu(new MultiplayerLobbies());
 			for (person p : people)
 			{
 				SDL_DestroyTexture(p.avatar);
 			}
 			people.clear();
-			removeAll();
 			inLobby = false;
 			break;
 		case SDLK_RETURN:
@@ -289,7 +287,7 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 			else
 			{
 
-				Game::currentMenu = new SongSelect();
+				Game::instance->transitionToMenu(new SongSelect());
 
 				for (person p : people)
 				{
@@ -297,14 +295,13 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 				}
 
 				people.clear();
-				removeAll();
 
 			}
 			break;
 		case SDLK_LSHIFT:
 			if (!isHost && !waitingForStart)
 				return;
-			Game::currentMenu = new SongSelect();
+			Game::instance->transitionToMenu(new SongSelect());
 
 			for (person p : people)
 			{
@@ -312,7 +309,6 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 			}
 
 			people.clear();
-			removeAll();
 
 			break;
 	}

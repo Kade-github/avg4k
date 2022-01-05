@@ -8,8 +8,6 @@ public:
 
 	int w = 0;
 	int h = 0;
-	int x = 0;
-	int y = 0;
 
 	AvgSprite(int _x, int _y, std::string path) : Object(x, y) {
 		tex = IMG_LoadTexture(Game::renderer, path.c_str());
@@ -23,6 +21,8 @@ public:
 		rect.y = y;
 		rect.w = w;
 		rect.h = h;
+
+		SDL_SetTextureAlphaMod(tex, alpha);
 
 		SDL_RenderCopyF(Game::renderer, tex, NULL, &rect);
 	}

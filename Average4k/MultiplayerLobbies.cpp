@@ -23,6 +23,7 @@ void MultiplayerLobbies::refreshLobbies() {
 MultiplayerLobbies::MultiplayerLobbies()
 {
 	MUTATE_START
+	refreshTimer = 3000;
 	if (Multiplayer::loggedIn)
 		Game::steam->populateSubscribedItems();
 
@@ -146,7 +147,10 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 
 void MultiplayerLobbies::update(Events::updateEvent event)
 {
-
+	if (refreshTimer >= 500 && Lobbies.size() == 0)
+	{
+		refreshLobbies();
+	}
 	if (refreshTimer < 3000)
 		refreshTimer += Game::deltaTime;
 
@@ -176,8 +180,6 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 
 			avatars.clear();
 
-			removeAll();
-
 			break;
 		case SDLK_F5:
 			refreshLobbies();
@@ -192,14 +194,12 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 		switch (event.keysym.sym)
 		{
 		case SDLK_ESCAPE:
-			Game::currentMenu = new MainMenu();
+			Game::instance->transitionToMenu(new MainMenu());
 
 			for (bruh t : avatars)
 				SDL_DestroyTexture(t.avatar);
 
 			avatars.clear();
-
-			removeAll();
 
 			break;
 		case SDLK_F5:

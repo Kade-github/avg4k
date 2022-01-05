@@ -388,6 +388,7 @@ std::string Steam::ReplaceString(std::string subject, const std::string& search,
 void Steam::OnUGCQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFailure)
 {
     MUTATE_START
+
     if (result->m_unNumResultsReturned != 1) {
         std::cout << "We got something other than 1 result, this shouldn't happen" << std::endl;
         return;

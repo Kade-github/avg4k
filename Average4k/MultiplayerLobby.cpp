@@ -216,6 +216,7 @@ MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted, bool backFromSelect = f
 	isHost = hosted;
 	helpDisplay = new Text(24, 100, "Lobby: " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")", 24);
 	helpDisplay->create();
+	add(helpDisplay);
 
 	warningDisplay = new Text(24, 125, "", 16);
 	Color c;
@@ -224,6 +225,7 @@ MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted, bool backFromSelect = f
 	c.b = 0;
 	warningDisplay->color = c;
 	warningDisplay->create();
+	add(warningDisplay);
 
 	CPacketWtfAmIn fuck;
 	fuck.Order = 0;

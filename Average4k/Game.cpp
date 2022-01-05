@@ -135,6 +135,7 @@ void Game::update(Events::updateEvent update)
 		transCompleted = false;
 		Tweening::TweenManager::createNewTween("_trans", __transRect, Tweening::tt_Alpha, 235, 255, 0, []()->void* {
 			Game::instance->transitioning = false;
+			std::cout << "no more" << std::endl;
 			return 0;
 		}, Easing::EaseInSine);
 	}
@@ -146,7 +147,10 @@ void Game::update(Events::updateEvent update)
 	}
 
 	mainCamera->update(update);
-	currentMenu->update(update);
+	if (!transitioning)
+	{
+		currentMenu->update(update);
+	}
 
 	fpsText->setText("FPS: " + std::to_string(gameFPS) + " - Avg4k 0.1a - Visuals are subject to change - " + (Multiplayer::loggedIn ? "You are logged in" : "You are logged out"));
 
@@ -288,6 +292,8 @@ void db_addLine(std::string s) {
 
 void Game::keyDown(SDL_KeyboardEvent ev)
 {
+	if (transitioning)
+		return;
 	MUTATE_START
 	if (ev.keysym.sym == SDLK_ESCAPE && debug_takingInput)
 	{
@@ -417,17 +423,21 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 		debugConsole = !debugConsole;
 	}
 
-
-	for (int i = 0; i < objects->size(); i++)
+	if (objects != nullptr)
 	{
-		Object* bruh = (*objects)[i];
-		bruh->keyDown(ev);
+		for (int i = 0; i < objects->size(); i++)
+		{
+			Object* bruh = (*objects)[i];
+			bruh->keyDown(ev);
+		}
 	}
 	MUTATE_END
 }
 
 void Game::keyUp(SDL_KeyboardEvent ev)
 {
+	if (transitioning)
+		return;
 	if (controls.count(ev.keysym.sym) == 1)
 		controls[ev.keysym.sym] = false;
 

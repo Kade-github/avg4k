@@ -85,6 +85,9 @@
     <Filter Include="Source Files\Average4k\Utils\Tweening">
       <UniqueIdentifier>{63e1e72e-90df-4eb9-8e8d-6da62c350621}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Average4k\Lua">
+      <UniqueIdentifier>{369d31f2-f1c2-45ea-893a-70ecafbb473a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Average4k.cpp">
@@ -337,6 +340,12 @@
     </ClInclude>
     <ClInclude Include="AvgRect.h">
       <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="luaaa.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AvgLua.h">
+      <Filter>Source Files\Average4k\Lua</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

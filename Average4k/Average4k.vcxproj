@@ -234,6 +234,8 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="includes.h" />
     <ClInclude Include="Judge.h" />
     <ClInclude Include="Lobby.h" />
+    <ClInclude Include="luaaa.h" />
+    <ClInclude Include="AvgLua.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Multiplayer.h" />

@@ -19,6 +19,7 @@ using namespace std;
 #pragma comment(lib,"x64\\zip.lib")
 #pragma comment(lib,"x64\\libcurl.lib")
 #pragma comment(lib,"x64\\boost_random-vc140-mt.lib")
+#pragma comment(lib,"x64\\lua54.lib")
 #pragma comment(lib, "dbghelp.lib")
 #define FRAME_VALUES 60
 

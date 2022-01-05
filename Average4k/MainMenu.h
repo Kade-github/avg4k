@@ -11,6 +11,8 @@ class MainMenu :
 {
 	public:
 		MainMenu();
+
+		static MainMenu* instance;
 		
 		std::vector<Text*> MenuItem;
 

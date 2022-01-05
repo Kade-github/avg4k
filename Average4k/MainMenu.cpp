@@ -4,8 +4,11 @@
 #include "AvgSprite.h"
 #include "TweenManager.h"
 
+MainMenu* MainMenu::instance = NULL;
+
 MainMenu::MainMenu()
 {
+	instance = this;
 	AvgSprite* sprite = new AvgSprite(0, 0, "assets/graphical/menu/bg.png");
 	sprite->create();
 	add(sprite);

@@ -31,6 +31,7 @@ MultiplayerLobbies::MultiplayerLobbies()
 	add(sprite);
 	helpText = new Text(0, 46, "F1 to host a lobby, enter to join (F5 To refresh)", 24);
 	helpText->create();
+	add(helpText);
 	refreshLobbies();
 	MUTATE_END
 }
@@ -39,6 +40,8 @@ void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
 {
 	Lobbies.clear();
 	Lobbies = lobs;
+
+	std::cout << "current lobs: " << lobs.size() << std::endl;
 
 	for (Text* t : lobbyTexts)
 		removeObj(t);
@@ -143,17 +146,18 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 
 void MultiplayerLobbies::update(Events::updateEvent event)
 {
-	
+
+	if (refreshTimer < 3000)
+		refreshTimer += Game::deltaTime;
+
 	if (lobbyTexts.size() == 0)
 		return;
+
 
 	if (selectedIndex > lobbyTexts.size() - 1)
 		selectedIndex = 0;
 	if (selectedIndex < 0)
 		selectedIndex = lobbyTexts.size() - 1;
-
-	if (refreshTimer < 3000)
-		refreshTimer += Game::deltaTime;
 	
 }
 

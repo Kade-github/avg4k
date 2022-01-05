@@ -84,7 +84,6 @@ namespace Tweening
 			if (t.percnt >= 1)
 			{
 				// finished
-				std::cout << "callback" << std::endl;
 				if (t.callback != nullptr)
 					t.callback();
 				activeTweens.erase(std::remove(activeTweens.begin(), activeTweens.end(), t), activeTweens.end());

@@ -18,6 +18,8 @@ chartMeta QuaverFile::returnChart(std::string path)
 
     bool generatedBPMS = false;
 
+    bool noteStarted = false;
+
     for (const auto& e : std::filesystem::directory_iterator(path))
     {
         if (!ends_with(e.path().string(), ".qua"))
@@ -100,7 +102,15 @@ chartMeta QuaverFile::returnChart(std::string path)
                         seg.startTime = (std::stod(split[1]));
                         bpmIndex++;
                     }
-                    if (split[0] == "  Bpm")
+                    if (split[0] == "- Bpm") // for weird charts
+                    {
+                        seg.bpm = std::stod(split[1]);
+                        seg.startBeat = 0;
+                        seg.startTime = 0;
+                        seg.endBeat = INT_MAX;
+                        seg.length = INT_MAX;
+                    }
+                    else if (split[0] == "  Bpm")
                     {
                         seg.bpm = std::stod(split[1]);
                         if (bpmIndex == 1)
@@ -123,25 +133,40 @@ chartMeta QuaverFile::returnChart(std::string path)
                         currentWorkingNote = {};
                     }
                     currentWorkingNote.type = Note_Normal;
-                    currentWorkingNote.beat = getBeatFromTimeOffset(time, getSegmentFromTime(time, meta.bpms));
+                    currentWorkingNote.beat = beat;
                 }
-                if (split[0] == "  Lane")
+                else if (split[0] == "- Lane") // wtf quaver, why are you so weird
                 {
-                    currentWorkingNote.lane = std::stod(split[1]) - 1;
+                    currentWorkingNote = {};
+                    currentWorkingNote.beat = -1;
+
                 }
-
-                if (split[0] == "  EndTime")
+                else if (split[0] == "- EndTime") // wtf quaver, why are you so weird
                 {
-                    float time = std::stod(split[1]);
-                    float beat = getBeatFromTimeOffset(time, getSegmentFromTime(time, meta.bpms));
+                    currentWorkingNote = {};
+                    currentWorkingNote.beat = -1;
 
-                    currentWorkingNote.type = Note_Head;
+                }
+                else
+                {
+                    if (split[0] == "  Lane")
+                    {
+                        currentWorkingNote.lane = std::stod(split[1]) - 1;
+                    }
 
-                    note tail;
-                    tail.beat = beat;
-                    tail.lane = currentWorkingNote.lane;
-                    tail.type = Note_Tail;
-                    ddiff.notes.push_back(tail);
+                    if (split[0] == "  EndTime")
+                    {
+                        float time = std::stod(split[1]);
+                        float beat = getBeatFromTimeOffset(time, getSegmentFromTime(time, meta.bpms));
+
+                        currentWorkingNote.type = Note_Head;
+
+                        note tail;
+                        tail.beat = beat;
+                        tail.lane = currentWorkingNote.lane;
+                        tail.type = Note_Tail;
+                        ddiff.notes.push_back(tail);
+                    }
                 }
             }
             else

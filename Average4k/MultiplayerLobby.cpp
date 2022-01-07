@@ -227,6 +227,8 @@ MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted, bool backFromSelect = f
 	warningDisplay->create();
 	add(warningDisplay);
 
+	refreshLobby(l);
+
 	CPacketWtfAmIn fuck;
 	fuck.Order = 0;
 	fuck.PacketType = eCPacketWtfAmIn;

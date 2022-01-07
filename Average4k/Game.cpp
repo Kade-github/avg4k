@@ -7,10 +7,12 @@
 #include "CPacketHostUpdateLobby.h"
 #include "MultiplayerLobby.h"
 #include "AvgRect.h"
-
+#include "msgpack.hpp"
 using namespace std;
 
 mutex pog;
+
+bool printPackets_DB = false;
 
 AvgRect* __transRect;
 
@@ -66,6 +68,11 @@ bool Game::startConnect = false;
 bool transCompleted = false;
 
 HANDLE multiThreadHandle;
+
+void db_addLine(std::string s) {
+	consoleLog->setText(consoleLog->text + s + "\n");
+	consoleLog->setY(220 - consoleLog->surfH);
+}
 
 void transCall() {
 	Game::currentMenu->removeAll();
@@ -147,10 +154,8 @@ void Game::update(Events::updateEvent update)
 	}
 
 	mainCamera->update(update);
-	if (!transitioning)
-	{
-		currentMenu->update(update);
-	}
+
+	currentMenu->update(update);
 
 	fpsText->setText("FPS: " + std::to_string(gameFPS) + " - Avg4k 0.1a - Visuals are subject to change - " + (Multiplayer::loggedIn ? "You are logged in" : "You are logged out"));
 
@@ -166,7 +171,6 @@ void Game::update(Events::updateEvent update)
 
 			}
 		}
-		currentMenu->postUpdate(update);
 
 
 
@@ -176,26 +180,30 @@ void Game::update(Events::updateEvent update)
 	DestR.y = mainCamera->y;
 	DestR.w = mainCamera->w;
 	DestR.h = mainCamera->h;
-
-	std::vector<Events::packetEvent> bruh;
+	if (!transitioning)
 	{
-		std::lock_guard cock(pog);
-		// copy shit
-		bruh = packetsToBeHandeld;
-		packetsToBeHandeld.clear();
-	}
+		std::vector<Events::packetEvent> bruh;
+		{
+			std::lock_guard cock(pog);
+			// copy shit
+			bruh = packetsToBeHandeld;
+			packetsToBeHandeld.clear();
+		}
 
-	for (int i = 0; i < bruh.size(); i++)
-	{
-		// uh
-		Events::packetEvent& p = bruh[i];
-		if (currentMenu != NULL)
-			currentMenu->onPacket(p.type, p.data, p.length);
-		free(p.ogPtr);
+		for (int i = 0; i < bruh.size(); i++)
+		{
+			// uh
+			Events::packetEvent& p = bruh[i];
+			if (printPackets_DB)
+			{
+				if (p.type != -42) // status packets
+					db_addLine("recieved " + std::to_string(p.type));
+			}
+			if (currentMenu != NULL)
+				currentMenu->onPacket(p.type, p.data, p.length);
+			free(p.ogPtr);
+		}
 	}
-
-	if (fpsText && !debugConsole )
-		fpsText->update(update);
 
 	if (SDL_GetTicks() > 1000)
 		for (int i = 0; i < Tweening::TweenManager::activeTweens.size(); i++)
@@ -210,6 +218,9 @@ void Game::update(Events::updateEvent update)
 			obj->draw();
 			// TODO: PUT THIS IN A DIFFERENT THREAD
 		}
+
+	currentMenu->postUpdate(update);
+
 	if (fpsText && !debugConsole)
 		fpsText->draw();
 
@@ -285,10 +296,6 @@ void Game::update(Events::updateEvent update)
 	MUTATE_END
 }
 
-void db_addLine(std::string s) {
-	consoleLog->setText(consoleLog->text + s + "\n");
-	consoleLog->setY(220 - consoleLog->surfH);
-}
 
 void Game::keyDown(SDL_KeyboardEvent ev)
 {
@@ -310,7 +317,7 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 
 		if (debug_string == "help")
 		{
-			db_addLine("checkConnection - Check's your connection and shows some other details\nxg - hacks\nchangeName - change the lobby name");
+			db_addLine("checkConnection - Check's your connection and shows some other details\ndumpVar - dumps a lot of variables\npackets - Prints incoming packets\nxg - hacks\nchangeName - change the lobby name");
 		}
 		else if (debug_string == "checkConnection")
 		{
@@ -320,6 +327,14 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 		else if (debug_string == "xg")
 		{
 			db_addLine("xg is a dumbass lol! (jkjkjkjk 187384089228214273)");
+		}
+		else if (debug_string == "dumpVar")
+		{
+			db_addLine("Menu Variables:\nTransitioning: " + std::to_string(transitioning) + "\nChildren: " + std::to_string(currentMenu->children.size()));
+		}
+		else if (debug_string == "packets")
+		{
+			printPackets_DB = !printPackets_DB;
 		}
 		else if (debug_string.starts_with("changeName"))
 		{

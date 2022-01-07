@@ -3,8 +3,14 @@
 #include <windows.h>
 #include "AvgSprite.h"
 #include "TweenManager.h"
+#include "AvgLua.h"
 
 MainMenu* MainMenu::instance = NULL;
+
+inline bool fileExists(const std::string& name) {
+	std::ifstream f(name.c_str());
+	return f.good();
+}
 
 MainMenu::MainMenu()
 {

@@ -40,9 +40,9 @@ public:
 
 	static int gameWidth;
 	static int gameHeight;
-
+	static bool gameplayEvents_DB;
 	static std::map<int, bool> controls;
-
+	void db_addLine(std::string s);
 	void weGotPacket(Events::packetEvent p);
 
 	void transitionToMenu(Menu* m);

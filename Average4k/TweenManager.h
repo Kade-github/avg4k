@@ -2,10 +2,11 @@
 #include "pch.h"
 #include "Object.h"
 #include "Easing.h"
+#include "Text.h"
 
 namespace Tweening
 {
-	typedef void*(*tweenCallback)();
+	typedef void (__cdecl *tweenCallback)();
 	enum TweenType {
 		tt_Alpha = 0, // alpha tween
 		tt_X = 1, // just x tween
@@ -15,6 +16,7 @@ namespace Tweening
 	struct Tween {
 		tweenCallback callback;
 		std::string name;
+		bool call;
 		double duration;
 		double time;
 		double percnt;
@@ -23,6 +25,7 @@ namespace Tweening
 		double end;
 		double start;
 		Easing::easingFunction easeFunc;
+		std::map<std::string, int> vars;
 
 		friend bool operator==(const Tween& lhs, const Tween& rhs)
 		{
@@ -38,10 +41,13 @@ namespace Tweening
 			for (int i = 0; i < activeTweens.size(); i++)
 			{
 				Tween& t = activeTweens[i];
-				if (t.name == identity)
+				if (t.name == identity && !t.call)
 				{
 					if (t.callback != nullptr)
+					{
+						t.call = true;
 						t.callback();
+					}
 					activeTweens.erase(std::remove(activeTweens.begin(), activeTweens.end(), t), activeTweens.end());
 				}
 			}
@@ -51,6 +57,7 @@ namespace Tweening
 			tw.type = type;
 			tw.obj = toTween;
 			tw.end = e;
+			tw.call = false;
 			tw.start = s;
 			Easing::easingFunction ease = Easing::getEasingFunction(easeType);
 			tw.easeFunc = ease;
@@ -84,9 +91,12 @@ namespace Tweening
 			if (t.percnt >= 1)
 			{
 				// finished
-				if (t.callback != nullptr)
-					t.callback();
 				activeTweens.erase(std::remove(activeTweens.begin(), activeTweens.end(), t), activeTweens.end());
+				if (t.callback != nullptr && !t.call)
+				{
+					t.call = true;
+					t.callback();
+				}
 			}
 		}
 	};

@@ -13,6 +13,7 @@ using namespace std;
 mutex pog;
 
 bool printPackets_DB = false;
+bool Game::gameplayEvents_DB = false;
 
 AvgRect* __transRect;
 
@@ -69,7 +70,7 @@ bool transCompleted = false;
 
 HANDLE multiThreadHandle;
 
-void db_addLine(std::string s) {
+void Game::db_addLine(std::string s) {
 	consoleLog->setText(consoleLog->text + s + "\n");
 	consoleLog->setY(220 - consoleLog->surfH);
 }
@@ -140,10 +141,9 @@ void Game::update(Events::updateEvent update)
 	if (transitioning && transCompleted)
 	{
 		transCompleted = false;
-		Tweening::TweenManager::createNewTween("_trans", __transRect, Tweening::tt_Alpha, 235, 255, 0, []()->void* {
+		Tweening::TweenManager::createNewTween("_trans", __transRect, Tweening::tt_Alpha, 235, 255, 0, []()->void {
 			Game::instance->transitioning = false;
 			std::cout << "no more" << std::endl;
-			return 0;
 		}, Easing::EaseInSine);
 	}
 
@@ -206,11 +206,13 @@ void Game::update(Events::updateEvent update)
 	}
 
 	if (SDL_GetTicks() > 1000)
+	{
 		for (int i = 0; i < Tweening::TweenManager::activeTweens.size(); i++)
 		{
 			Tweening::Tween& tw = Tweening::TweenManager::activeTweens[i];
 			Tweening::TweenManager::updateTween(tw, Game::deltaTime);
 		}
+	}
 	if (currentMenu != NULL)
 		for (int i = 0; i < currentMenu->children.size(); i++)
 		{
@@ -317,7 +319,7 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 
 		if (debug_string == "help")
 		{
-			db_addLine("checkConnection - Check's your connection and shows some other details\ndumpVar - dumps a lot of variables\npackets - Prints incoming packets\nxg - hacks\nchangeName - change the lobby name");
+			db_addLine("checkConnection - Check's your connection and shows some other details\ndumpVar - dumps a lot of variables\npackets - Prints incoming packets\ngameplayEvents - prints out gameplay events when they happen\nxg - hacks\nchangeName - change the lobby name");
 		}
 		else if (debug_string == "checkConnection")
 		{
@@ -331,6 +333,11 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 		else if (debug_string == "dumpVar")
 		{
 			db_addLine("Menu Variables:\nTransitioning: " + std::to_string(transitioning) + "\nChildren: " + std::to_string(currentMenu->children.size()));
+		}
+		else if (debug_string == "gameplayEvents")
+		{
+			gameplayEvents_DB = !gameplayEvents_DB;
+			db_addLine("set to " + std::to_string(gameplayEvents_DB));
 		}
 		else if (debug_string == "packets")
 		{

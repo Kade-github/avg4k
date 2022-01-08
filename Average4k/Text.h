@@ -46,6 +46,9 @@ public:
 	int w;
 	int h;
 
+	int addW;
+	int addH;
+
 	int surfW;
 	int surfH;
 

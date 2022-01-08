@@ -35,8 +35,8 @@ void Text::draw()
 {
 	message_Rect.x = x;
 	message_Rect.y = y;
-	message_Rect.w = rW;
-	message_Rect.h = rH;
+	message_Rect.w = rW + addW;
+	message_Rect.h = rH + addH;
 
 	SDL_FRect rect;
 	rect.x = message_Rect.x - (size / 8);

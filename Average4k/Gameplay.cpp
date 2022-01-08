@@ -3,6 +3,7 @@
 #include "MultiplayerLobby.h"
 #include "CPacketHostEndChart.h"
 #include <chrono>
+#include "TweenManager.h"
 
 std::mutex weirdPog;
 
@@ -266,6 +267,8 @@ float lerp(float a, float b, float f)
 	return a + f * (b - a);
 }
 
+float lastBPM = 0;
+
 void Gameplay::update(Events::updateEvent event)
 {
 	MUTATE_START
@@ -279,9 +282,10 @@ void Gameplay::update(Events::updateEvent event)
 			BASS_ChannelSetAttribute(tempostream, BASS_ATTRIB_VOL, 0.6);
 			BASS_ChannelPlay(tempostream, false);
 			play = true;
+			lastBPM = 0;
 		}
 
-		positionInSong = (BASS_ChannelBytes2Seconds(tempostream, BASS_ChannelGetPosition(tempostream, BASS_POS_BYTE)) * 1000) - Game::save->GetDouble("offset");
+		positionInSong = (BASS_ChannelBytes2Seconds(tempostream, BASS_ChannelGetPosition(tempostream, BASS_POS_BYTE)) * 1000);
 	}
 	else
 		positionInSong += Game::deltaTime;
@@ -318,8 +322,14 @@ void Gameplay::update(Events::updateEvent event)
 	if (!SongSelect::currentChart)
 		return;
 
-	curSeg = SongSelect::currentChart->getSegmentFromTime(positionInSong);
-	beat = SongSelect::currentChart->getBeatFromTimeOffset(positionInSong, curSeg);
+	curSeg = SongSelect::currentChart->getSegmentFromTime(positionInSong - Game::save->GetDouble("offset"));
+	beat = SongSelect::currentChart->getBeatFromTimeOffset(positionInSong - Game::save->GetDouble("offset"), curSeg);
+
+	if (lastBPM != curSeg.bpm && Game::gameplayEvents_DB)
+	{
+		Game::instance->db_addLine("bpm change to " + std::to_string(curSeg.bpm));
+		lastBPM = curSeg.bpm;
+	}
 
 	// underlay for accuracy
 
@@ -823,8 +833,6 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 			if (closestObject->active && diff <= Judge::hitWindows[4] && diff > -Judge::hitWindows[4])
 			{
-				
-
 				closestObject->active = false;
 				closestObject->wasHit = true;
 
@@ -864,7 +872,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 						(*Judgement).color.b = 0;
 						Judgement->setText("Perfect (" + format + "ms)");
 						Perfect++;
-						updateAccuracy(0.88);
+						updateAccuracy(0.925);
 						break;
 					case judgement::Judge_great:
 						(*Judgement).color.r = 0;

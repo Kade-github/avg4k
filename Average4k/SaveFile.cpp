@@ -18,7 +18,7 @@ SaveFile::SaveFile()
     defaultSettings.push_back(CreateSetting(true, 1100, "scrollspeed", false, 1,5000, false, 1, ""));
     defaultSettings.push_back(CreateSetting(true, 0, "offset", false,-1000,1000,false, 1, ""));
     defaultSettings.push_back(CreateSetting(false, 0, "hitsounds", true,0,1,false, 0, ""));
-    defaultSettings.push_back(CreateSetting(true, 1, "Note Size", false, 0.9, 1.3, false, 0.01, ""));
+    defaultSettings.push_back(CreateSetting(true, 1, "Note Size", false, 0.9, 1.5, false, 0.01, ""));
     defaultSettings.push_back(CreateSetting(false, SDLK_d, "Left Key", true, 0, 1, true, 0, ""));
     defaultSettings.push_back(CreateSetting(false, SDLK_f, "Down Key", true, 0, 1, true,0, ""));
     defaultSettings.push_back(CreateSetting(false, SDLK_j, "Up Key", true, 0, 1, true,0, ""));
@@ -50,6 +50,22 @@ SaveFile::SaveFile()
         }
         Save();
     }
+
+    // check for defaults/max/min's
+    for (int i = 0; i < settings.size(); i++)
+    {
+        setting& set = settings[i];
+        setting& dSet = defaultSettings[i];
+        if (set.highestValue != dSet.highestValue)
+            set.highestValue = dSet.highestValue;
+        if (set.lowestValue != dSet.lowestValue)
+            set.lowestValue = dSet.lowestValue;
+        if (set.takesActive != dSet.takesActive)
+            set.takesActive == dSet.takesActive;
+        if (set.isKeybind != dSet.isKeybind)
+            set.isKeybind == dSet.isKeybind;
+    }
+
 }
 
 void SaveFile::CreateNewFile()

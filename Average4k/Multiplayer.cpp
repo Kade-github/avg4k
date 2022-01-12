@@ -9,6 +9,7 @@ bool Multiplayer::connectedToServer = false;
 bool Multiplayer::loggedIn = false;
 
 ConnectionData* connectionData;
+std::string Multiplayer::currentUserAvatar = "";
 
 std::string username;
 
@@ -437,6 +438,8 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
                 delete reauth;
 
             reauth = new std::string(helloBack.reauth);
+
+            Multiplayer::currentUserAvatar = helloBack.avatarURL;
 
             std::cout << helloBack.Message << ". hello server, fuck you too! " << std::endl;
             break;

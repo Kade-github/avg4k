@@ -150,7 +150,7 @@ void Game::update(Events::updateEvent update)
 	static Text* fpsText = nullptr;
 	if (!fpsText)
 	{
-		fpsText = new Text(0, 0, "FPS: 0", 16);
+		fpsText = new Text(0, 0, "FPS: 0", 16, "NotoSans-Regular");
 	}
 
 	mainCamera->update(update);
@@ -214,12 +214,15 @@ void Game::update(Events::updateEvent update)
 		}
 	}
 	if (currentMenu != NULL)
+	{
+		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 		for (int i = 0; i < currentMenu->children.size(); i++)
 		{
 			Object* obj = currentMenu->children[i];
 			obj->draw();
 			// TODO: PUT THIS IN A DIFFERENT THREAD
 		}
+	}
 
 	currentMenu->postUpdate(update);
 
@@ -236,9 +239,9 @@ void Game::update(Events::updateEvent update)
 		topBar.h = 25;
 		if (!debugText)
 		{
-			debugText = new Text(0, 0, "Debug Console", 16);
-			consoleLog = new Text(0, 195, "", 16);
-			cmdPrompt = new Text(0, 220, ">", 16);
+			debugText = new Text(0, 0, "Debug Console", 16, "NotoSans-Regular");
+			consoleLog = new Text(0, 195, "", 16, "NotoSans-Regular");
+			cmdPrompt = new Text(0, 220, ">", 16, "NotoSans-Regular");
 		}
 
 		debugText->setText("Debug Console | FPS: " + std::to_string(gameFPS) + " (CTRL to start typing, F11 again to close it)");

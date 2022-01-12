@@ -18,6 +18,7 @@ enum PacketType
     eCPacketLeave = 12,
     eCPacketHostUpdateLobby = 13,
     eCPacketHostEndChart = 14,
+    eCPacketRequestAvatar = 15,
 
     //Server Packets
     eSPacketHello = -1,
@@ -31,6 +32,7 @@ enum PacketType
     eSPacketPlayerSongFinished = -9,
     eSPacketFinalizeChart = -10,
     eSPacketWtfAmInReply = -11,
+    eSPacketAvatarRequestResponse = -12,
 
 
     //Other Server Packets

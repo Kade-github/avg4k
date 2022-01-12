@@ -122,8 +122,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	BASS_Init(-1,44100,0,NULL,NULL);
 
-
-
 	int test = 123;
 
 	CHECK_CODE_INTEGRITY(test, 6969);
@@ -142,7 +140,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	fpsinit();
 
-	SDL_Window* window = SDL_CreateWindow("Da window", SDL_WINDOWPOS_UNDEFINED,
+	SDL_Window* window = SDL_CreateWindow("Average4k", SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL_WINDOW_SHOWN);
 
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);

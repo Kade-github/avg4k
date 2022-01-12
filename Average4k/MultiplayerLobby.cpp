@@ -24,7 +24,7 @@ void MultiplayerLobby::refreshLobby(lobby l)
 	{
 		player& p = l.PlayerList[i];
 		person per;
-		per.display = new Text(82, 192 + (46 * i), p.Name, 24);
+		per.display = new Text(82, 192 + (46 * i), p.Name, 24, "NotoSans-Regular");
 		per.display->create();
 		SDL_Texture* t = Steam::getAvatar(p.AvatarURL.c_str());
 		if (t)
@@ -214,11 +214,11 @@ MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted, bool backFromSelect = f
 	sprite->create();
 	add(sprite);
 	isHost = hosted;
-	helpDisplay = new Text(24, 100, "Lobby: " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")", 24);
+	helpDisplay = new Text(24, 100, "Lobby: " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")", 24, "NotoSans-Regular");
 	helpDisplay->create();
 	add(helpDisplay);
 
-	warningDisplay = new Text(24, 125, "", 16);
+	warningDisplay = new Text(24, 125, "", 16, "NotoSans-Regular");
 	Color c;
 	c.r = 255;
 	c.g = 0;

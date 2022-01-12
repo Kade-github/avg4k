@@ -10,6 +10,7 @@ public:
 	int ErrorCode;
 
 	std::string reauth;
+	std::string avatarURL;
 
-	MSGPACK_DEFINE_MAP(Message, Error, ErrorCode, reauth);
+	MSGPACK_DEFINE_MAP(Message, Error, ErrorCode, reauth, avatarURL);
 };

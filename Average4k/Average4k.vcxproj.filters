@@ -88,6 +88,9 @@
     <Filter Include="Source Files\Average4k\Lua">
       <UniqueIdentifier>{369d31f2-f1c2-45ea-893a-70ecafbb473a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Average4k\Screens\Menus\CreatingShit">
+      <UniqueIdentifier>{631c23dd-33ca-4ce2-8468-9b13b08da477}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Average4k.cpp">
@@ -164,6 +167,12 @@
     </ClCompile>
     <ClCompile Include="TweenManager.cpp">
       <Filter>Source Files\Average4k\Utils\Tweening</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuCreator.cpp">
+      <Filter>Source Files\Average4k\Screens\Menus\CreatingShit</Filter>
+    </ClCompile>
+    <ClCompile Include="SDL2_gfxPrimitives.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -347,5 +356,33 @@
     <ClInclude Include="AvgLua.h">
       <Filter>Source Files\Average4k\Lua</Filter>
     </ClInclude>
+    <ClInclude Include="MenuCreator.h">
+      <Filter>Source Files\Average4k\Screens\Menus\CreatingShit</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketRequestAvatar.h">
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketAvatarRequestResponse.h">
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AvgButton.h">
+      <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Average4k.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="icon2.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

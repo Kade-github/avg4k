@@ -86,6 +86,8 @@ SDL_Texture* Steam::getAvatar(const char* url)
 
     free(chunk.memory);
 
+    Game::currentMenu->onSteam("profileDownloaded");
+
     return tex;
 }
 

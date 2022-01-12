@@ -31,7 +31,7 @@ void SettingsMenu::refreshList() {
 
 		bruhhh h;
 
-		Text* t = new Text(0, 100 + (64 * i), set.name + value, 24);
+		Text* t = new Text(0, 100 + (64 * i), set.name + value, 24, "NotoSans-Regular");
 		t->setX((Game::gameWidth / 2) - (t->surfW / 2));
 		t->create();
 

@@ -440,7 +440,7 @@ SongSelect::SongSelect()
 	sprite->create();
 	add(sprite);
 
-	songName = new Text(Game::gameWidth / 2,(Game::gameHeight / 2) - 200,"No songs loaded",24);
+	songName = new Text(Game::gameWidth / 2,(Game::gameHeight / 2) - 200,"No songs loaded",24, "NotoSans-Regular");
 	songName->centerX();
 	songName->centerY();
 
@@ -450,10 +450,10 @@ SongSelect::SongSelect()
 
 	currentChart = NULL;
 
-	infoText = new Text(Game::gameWidth / 2, (Game::gameHeight / 2) - 275, "", 24);
+	infoText = new Text(Game::gameWidth / 2, (Game::gameHeight / 2) - 275, "", 24, "NotoSans-Regular");
 	infoText->create();
 	add(infoText);
-	steam = new Text(Game::gameWidth / 2, (Game::gameHeight / 2) - 170, "", 24);
+	steam = new Text(Game::gameWidth / 2, (Game::gameHeight / 2) - 170, "", 24, "NotoSans-Regular");
 	steam->create();
 	add(steam);
 

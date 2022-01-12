@@ -1,2 +1,2 @@
 #include "Font.h"
-std::map<int, TTF_Font*>* Font::mapOfFonts = new std::map<int, TTF_Font*>();
+std::map<std::string, TTF_Font*>* Font::mapOfFonts = new std::map<std::string, TTF_Font*>();

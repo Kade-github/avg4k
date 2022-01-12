@@ -143,7 +143,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 			std::string format = std::to_string((double)((int)(spot.score.meanTiming * 100)) / 100);
 			format.erase(format.find_last_not_of('0') + 1, std::string::npos);
 
-			spot.t = new Text(4, (Game::gameHeight / 2) + 4, spot.score.Username + " - (" + std::to_string(spot.score.score) + "/" + format + "ms)", 24);
+			spot.t = new Text(4, (Game::gameHeight / 2) + 4, spot.score.Username + " - (" + std::to_string(spot.score.score) + "/" + format + "ms)", 24, "NotoSans-Regular");
 			spot.t->y = spot.t->y + (spot.t->surfH * i);
 			leaderboard.push_back(spot);
 			spot.t->create();
@@ -215,7 +215,7 @@ Gameplay::Gameplay()
 
 	int diff = SongSelect::selectedDiffIndex;
 
-	positionAndBeats = new Text(0, 40, "", 16);
+	positionAndBeats = new Text(0, 40, "", 16, "NotoSans-Regular");
 	positionAndBeats->create();
 	add(positionAndBeats);
 
@@ -224,15 +224,15 @@ Gameplay::Gameplay()
 	notesToPlay = SongSelect::currentChart->meta.difficulties[diff].notes;
 
 
-	Judgement = new Text(Game::gameWidth / 2, Game::gameHeight / 2, " ", 24);
+	Judgement = new Text(Game::gameWidth / 2, Game::gameHeight / 2, " ", 24, "NotoSans-Regular");
 	Judgement->create();
 	add(Judgement);
 
-	Combo = new Text(Game::gameWidth / 2, Game::gameHeight / 2 + 40, " ", 24);
+	Combo = new Text(Game::gameWidth / 2, Game::gameHeight / 2 + 40, " ", 24, "NotoSans-Regular");
 	Combo->create();
 	add(Combo);
 
-	Accuracy = new Text(230, (Game::gameHeight / 2) - 300, "N/A\n\nMarvelous: " + std::to_string(Marvelous) + "\nPerfect: " + std::to_string(Perfect) + "\nGreat: " + std::to_string(Great) + "\nEh: " + std::to_string(Eh) + "\nYikes: " + std::to_string(Yikes) + "\nCombo Breaks: " + std::to_string(Misses), 24);
+	Accuracy = new Text(230, (Game::gameHeight / 2) - 300, "N/A\n\nMarvelous: " + std::to_string(Marvelous) + "\nPerfect: " + std::to_string(Perfect) + "\nGreat: " + std::to_string(Great) + "\nEh: " + std::to_string(Eh) + "\nYikes: " + std::to_string(Yikes) + "\nCombo Breaks: " + std::to_string(Misses), 24, "NotoSans-Regular");
 	Accuracy->create();
 	add(Accuracy);
 

@@ -30,7 +30,7 @@ MultiplayerLobbies::MultiplayerLobbies()
 	AvgSprite* sprite = new AvgSprite(0, 0, "assets/graphical/menu/bg.png");
 	sprite->create();
 	add(sprite);
-	helpText = new Text(0, 46, "F1 to host a lobby, enter to join (F5 To refresh)", 24);
+	helpText = new Text(0, 46, "F1 to host a lobby, enter to join (F5 To refresh)", 24, "NotoSans-Regular");
 	helpText->create();
 	add(helpText);
 	refreshLobbies();
@@ -57,7 +57,7 @@ void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
 	for (int i = 0; i < Lobbies.size(); i++)
 	{
 		lobby& l = Lobbies[i];
-		Text* t = new Text(Game::gameWidth / 2, 100 + (135 * i), l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")", 24);
+		Text* t = new Text(Game::gameWidth / 2, 100 + (135 * i), l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")", 24, "NotoSans-Regular");
 		t->setX((Game::gameWidth / 2) - (t->surfW / 2));
 		t->create();
 		for (int p = 0; p < l.PlayerList.size(); p++)

@@ -15,14 +15,15 @@ class Text : public Object
 public:
 	TTF_Font* Arial;
 
-	Text(int x, int y, std::string temp, int _size) : Object(x, y) {
-		Arial = Font::getFont(_size);
+	Text(int x, int y, std::string temp, int _size, std::string fontName) : Object(x, y) {
+		Arial = Font::getFontByName(fontName,_size);
 		this->text = temp;
 		this->w = w;
 		this->h = h;
 		this->rW = w;
 		this->rH = h;
 		size = _size;
+		border = true;
 
 		color = { 255,255,255 };
 		
@@ -49,6 +50,8 @@ public:
 	int addW;
 	int addH;
 
+	bool border;
+
 	int surfW;
 	int surfH;
 
@@ -56,6 +59,7 @@ public:
 	int rH;
 
 	double scale;
+	void setFont(std::string name);
 	void forceDraw();
 
 	void setText(std::string _text);

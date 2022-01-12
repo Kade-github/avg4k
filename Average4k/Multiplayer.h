@@ -28,6 +28,8 @@ public:
 	static std::mutex sendQueueLock;
 	static DWORD WINAPI connect(LPVOID agh);
 
+	static std::string currentUserAvatar;
+
 	static void InitCrypto();
 
 	static void SendPacket(std::string data, PacketType packet);

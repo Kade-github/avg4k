@@ -3,13 +3,16 @@
 
 class Font {
 public:
-	static std::map<int, TTF_Font*>* mapOfFonts;
+	static std::map<std::string, TTF_Font*>* mapOfFonts;
 
-	static TTF_Font* getFont(int size)
+	static TTF_Font* getFontByName(std::string name, int size)
 	{
-		if ((*mapOfFonts).contains(size))
-			return (*mapOfFonts)[size];
-		(*mapOfFonts)[size] = TTF_OpenFont("assets/graphical/fonts/NotoSans-Regular.ttf",size);
-		return (*mapOfFonts)[size];
+		std::cout << "loading " << ("assets/graphical/fonts/" + name + ".ttf") << std::endl;
+		if ((*mapOfFonts).contains(name))
+		{
+			TTF_CloseFont((*mapOfFonts)[name]);
+		}
+		(*mapOfFonts)[name] = TTF_OpenFont(("assets/graphical/fonts/" + name + ".ttf").c_str(), size);
+		return (*mapOfFonts)[name];
 	}
 };

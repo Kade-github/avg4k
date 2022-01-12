@@ -4,6 +4,8 @@ void Text::setText(std::string temp)
 {
 	this->text = temp;
 
+	//std::cout << TTF_FontFaceFamilyName(Arial) << std::endl;
+
 	//SDL_Surface* screen = SDL_GetWindowSurface(Game::window);
 
 	if (message != nullptr)
@@ -46,6 +48,12 @@ void Text::draw()
 	SDL_RenderCopyF(Game::renderer, outline, NULL, &rect);
 
 	SDL_RenderCopyF(Game::renderer, message, NULL, &message_Rect);
+}
+
+void Text::setFont(std::string name)
+{
+	Arial = Font::getFontByName(name, size);
+	setText(text);
 }
 
 void Text::forceDraw()

@@ -5,6 +5,8 @@
 #include "SPacketAvatarRequestResponse.h"
 #include "CPacketRequestAvatar.h"
 
+bool MainMenu::tweened = false;
+
 inline bool fileExists(const std::string& name) {
 	std::ifstream f(name.c_str());
 	return f.good();
@@ -34,6 +36,15 @@ void changeMenu() {
 void callback()
 {
 	MainMenu* instance = (MainMenu*)Game::currentMenu;
+	SDL_Texture* tex = Steam::getAvatar(Multiplayer::currentUserAvatar.c_str());
+	if (tex)
+	{
+		instance->icon->changeOutTexture(tex);
+		instance->icon->h = 47;
+		instance->icon->w = 47;
+	}
+	Tweening::TweenManager::createNewTween("border", instance->border, Tweening::tt_Alpha, 600, 0, 255, NULL, Easing::EaseInSine);
+	Tweening::TweenManager::createNewTween("icon", instance->icon, Tweening::tt_Alpha, 600, 0, 255, NULL, Easing::EaseInSine);
 	std::cout << "spwan buttons" << std::endl;
 	// Colors
 	Color c;
@@ -137,7 +148,6 @@ MainMenu::MainMenu()
 	border = new AvgSprite(32, 32, "assets/graphical/menu/border.png");
 	border->create();
 	add(border);
-
 	/*Text* multiplayer = new Text(Game::gameWidth / 2, (Game::gameHeight / 2), "Multiplayer", 24);
 	multiplayer->centerX();
 	multiplayer->create();
@@ -181,17 +191,29 @@ void MainMenu::update(Events::updateEvent event)
 	bg->setX(-(1.32 * mPercX));
 	bg->setY(-(1.32 * mPercY));
 
+
+	if (!Multiplayer::loggedIn && !started)
+		tweened = false;
+
+	if (tweened && !started)
+	{
+		icon->alpha = 0;
+		border->alpha = 0;
+		hello->alpha = 0;
+		thing->setY(thing->y - 100);
+		thing->alpha = 255;
+		started = true;
+		callback();
+	}
+
+
 	if (!started && Multiplayer::loggedIn)
 	{
+		tweened = true;
 		started = true;
 		Tweening::TweenManager::createNewTween("hello", hello, Tweening::tt_Alpha, 800, 255, 0, NULL, Easing::EaseInSine);
-		SDL_Texture* tex = Steam::getAvatar(Multiplayer::currentUserAvatar.c_str());
-		if (tex)
-		{
-			icon->changeOutTexture(tex);
-			icon->h = 47;
-			icon->w = 47;
-		}
+		Tweening::TweenManager::createNewTween("border", border, Tweening::tt_Alpha, 800, 255, 0, NULL, Easing::EaseInSine);
+		Tweening::TweenManager::createNewTween("icon", icon, Tweening::tt_Alpha, 800, 255, 0, NULL, Easing::EaseInSine);
 		Tweening::TweenManager::createNewTween("menuAlpha", thing, Tweening::tt_Alpha, 1000, 0, 255, NULL, Easing::EaseInSine);
 		Tweening::TweenManager::createNewTween("menu", thing, Tweening::tt_Y, 1000, thing->y + 200, thing->y - 100, (Tweening::tweenCallback)callback, Easing::EaseInSine);
 	}

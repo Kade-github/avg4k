@@ -12,6 +12,7 @@ class MainMenu :
     public Menu
 {
 	public:
+		static bool tweened;
 		bool started = false;
 		AvgSprite* thing;
 		AvgSprite* icon;

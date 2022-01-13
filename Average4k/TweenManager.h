@@ -168,7 +168,7 @@ namespace Tweening
 
 		void clicked()
 		{
-			if (callback != NULL)
+			if (callback != NULL && hovered)
 				callback();
 		}
 	

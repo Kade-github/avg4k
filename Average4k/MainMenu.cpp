@@ -7,7 +7,7 @@
 
 bool MainMenu::tweened = false;
 
-inline bool fileExists(const std::string& name) {
+bool fileExists(const std::string& name) {
 	std::ifstream f(name.c_str());
 	return f.good();
 }
@@ -35,6 +35,7 @@ void changeMenu() {
 
 void callback()
 {
+	VM_START
 	MainMenu* instance = (MainMenu*)Game::currentMenu;
 	SDL_Texture* tex = Steam::getAvatar(Multiplayer::currentUserAvatar.c_str());
 	if (tex)
@@ -106,6 +107,7 @@ void callback()
 		Tweening::TweenManager::createNewTween("buttonY" + index, b, Tweening::tt_Y, 600, b->y + 100, b->y, NULL, Easing::EaseInSine);
 		index++;
 	}
+	VM_END
 }
 
 MainMenu::MainMenu()
@@ -181,6 +183,7 @@ void MainMenu::onSteam(std::string s)
 
 void MainMenu::update(Events::updateEvent event)
 {
+	MUTATE_START
 	// I made this math myself
 	// it sucks
 	// parallax though
@@ -225,6 +228,7 @@ void MainMenu::update(Events::updateEvent event)
 			selectedIndex = index;
 		index++;
 	}
+	MUTATE_END
 }
 
 void MainMenu::keyDown(SDL_KeyboardEvent event)

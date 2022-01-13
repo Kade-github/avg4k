@@ -23,7 +23,6 @@ class MainMenu :
 		AvgSprite* border;
 		MainMenu();
 
-		static MainMenu* instance;
 		
 		std::vector<Text*> MenuItem;
 

@@ -5,15 +5,19 @@
 #include "SPacketAvatarRequestResponse.h"
 #include "CPacketRequestAvatar.h"
 
-MainMenu* MainMenu::instance = NULL;
-
 inline bool fileExists(const std::string& name) {
 	std::ifstream f(name.c_str());
 	return f.good();
 }
 
 void changeMenu() {
-	switch (MainMenu::instance->selectedIndex)
+	MainMenu* instance = (MainMenu*)Game::currentMenu;
+	for (Tweening::AvgButtonTweenable* b : instance->buttons)
+	{
+		b->beforeDeath();
+		b->die();
+	}
+	switch (instance->selectedIndex)
 	{
 	case 1:
 		Game::instance->transitionToMenu(new MultiplayerLobbies());
@@ -29,6 +33,7 @@ void changeMenu() {
 
 void callback()
 {
+	MainMenu* instance = (MainMenu*)Game::currentMenu;
 	std::cout << "spwan buttons" << std::endl;
 	// Colors
 	Color c;
@@ -56,8 +61,8 @@ void callback()
 	but->borderColor = c;
 	but->hoverColor = hovered;
 	but->fillColor = filC;
-	MainMenu::instance->add(but);
-	MainMenu::instance->buttons.push_back(but);
+	instance->add(but);
+	instance->buttons.push_back(but);
 	Tweening::AvgButtonTweenable* but2 = new Tweening::AvgButtonTweenable(532, 500, 250, 45, "multiplayer", 18, "arial", (clickCallback)changeMenu);
 	but2->create();
 	but2->text->border = false;
@@ -66,8 +71,8 @@ void callback()
 	but2->borderColor = c;
 	but2->hoverColor = hovered;
 	but2->fillColor = filC;
-	MainMenu::instance->add(but2);
-	MainMenu::instance->buttons.push_back(but2);
+	instance->add(but2);
+	instance->buttons.push_back(but2);
 	Tweening::AvgButtonTweenable* but3 = new Tweening::AvgButtonTweenable(832, 500, 250, 45, "settings", 18, "arial", (clickCallback)changeMenu);
 	but3->create();
 	but3->text->border = false;
@@ -76,14 +81,14 @@ void callback()
 	but3->hoverColor = hovered;
 	but3->borderColor = c;
 	but3->fillColor = filC;
-	MainMenu::instance->add(but3);
-	MainMenu::instance->buttons.push_back(but3);
-	MainMenu::instance->hello->setText("Hi " + std::string(SteamFriends()->GetPersonaName()));
-	MainMenu::instance->bottom->setText("Avg4k indev-" + Game::version);
-	Tweening::TweenManager::createNewTween("hello", MainMenu::instance->hello, Tweening::tt_Alpha, 600, 0, 255, NULL, Easing::EaseInSine);
-	Tweening::TweenManager::createNewTween("bottom", MainMenu::instance->bottom, Tweening::tt_Alpha, 600, 0, 255, NULL, Easing::EaseInSine);
+	instance->add(but3);
+	instance->buttons.push_back(but3);
+	instance->hello->setText("Hi " + std::string(SteamFriends()->GetPersonaName()));
+	instance->bottom->setText("Avg4k indev-" + Game::version);
+	Tweening::TweenManager::createNewTween("hello", instance->hello, Tweening::tt_Alpha, 600, 0, 255, NULL, Easing::EaseInSine);
+	Tweening::TweenManager::createNewTween("bottom", instance->bottom, Tweening::tt_Alpha, 600, 0, 255, NULL, Easing::EaseInSine);
 	int index = 0;
-	for (Tweening::AvgButtonTweenable* b : MainMenu::instance->buttons)
+	for (Tweening::AvgButtonTweenable* b : instance->buttons)
 	{
 		b->alpha = 0;
 		Tweening::TweenManager::createNewTween("button" + index, b, Tweening::tt_Alpha, 600, 0, 255, NULL, Easing::EaseInSine);
@@ -94,7 +99,6 @@ void callback()
 
 MainMenu::MainMenu()
 {
-	instance = this;
 	bg = new AvgSprite(0, 0, "assets/graphical/menu/mm/bg.png");
 	bg->create();
 	add(bg);
@@ -193,7 +197,7 @@ void MainMenu::update(Events::updateEvent event)
 	}
 
 	int index = 0;
-	for (Tweening::AvgButtonTweenable* b : MainMenu::instance->buttons)
+	for (Tweening::AvgButtonTweenable* b : buttons)
 	{
 		if (b->mouse && b->hovered)
 			selectedIndex = index;

@@ -30,6 +30,12 @@ public:
 		setText(temp);
 	};
 
+	~Text()
+	{
+		beforeDeath();
+		die();
+	}
+
 	int size;
 
 	~Text() = default;

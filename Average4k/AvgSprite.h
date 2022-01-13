@@ -23,6 +23,12 @@ public:
 		SDL_QueryTexture(tex, NULL, NULL, &w, &h);
 	};
 
+	~AvgSprite()
+	{
+		beforeDeath();
+		die();
+	}
+
 	void changeOutTexture(SDL_Texture* n)
 	{
 		SDL_DestroyTexture(tex);

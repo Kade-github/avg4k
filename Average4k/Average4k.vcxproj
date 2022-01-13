@@ -185,7 +185,6 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Chart.cpp" />
     <ClCompile Include="Easing.cpp" />
-    <ClCompile Include="Font.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Gameplay.cpp" />
     <ClCompile Include="Judge.cpp" />

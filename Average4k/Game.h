@@ -20,7 +20,7 @@ public:
 	static bool startConnect;
 	static Menu* toGoTo;
 
-
+	void mouseButtonDown();
 	void update(Events::updateEvent updateEvent);
 	void keyDown(SDL_KeyboardEvent event);
 	void keyUp(SDL_KeyboardEvent event);

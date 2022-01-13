@@ -156,9 +156,6 @@
     <ClCompile Include="SongSelect.cpp">
       <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
     </ClCompile>
-    <ClCompile Include="Font.cpp">
-      <Filter>FontStuff</Filter>
-    </ClCompile>
     <ClCompile Include="ReceptorObject.cpp">
       <Filter>Source Files\Average4k\Objects\Renderers</Filter>
     </ClCompile>

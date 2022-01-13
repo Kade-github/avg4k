@@ -14,11 +14,15 @@ public:
 
 	void add(Object* obj) 
 	{
+		if (obj == NULL)
+			return;
 		children.push_back(obj);
 	}
 
 	void removeObj(Object* obj)
 	{
+		if (obj == NULL)
+			return;
 		children.erase(std::remove(children.begin(), children.end(), obj), children.end());
 		obj->beforeDeath();
 		obj->die();

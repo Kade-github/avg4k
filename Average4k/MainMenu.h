@@ -6,7 +6,7 @@
 #include "MultiplayerLobbies.h"
 #include "SongSelect.h"
 #include "AvgSprite.h"
-#include "AvgButton.h"
+#include "TweenManager.h"
 
 class MainMenu :
     public Menu
@@ -16,7 +16,7 @@ class MainMenu :
 		AvgSprite* thing;
 		AvgSprite* icon;
 		AvgSprite* bg;
-		std::vector<AvgButton*> buttons;
+		std::vector<Tweening::AvgButtonTweenable*> buttons;
 		Text* hello;
 		Text* bottom;
 		SDL_Texture* avatar;
@@ -28,7 +28,7 @@ class MainMenu :
 		std::vector<Text*> MenuItem;
 
 
-		int selectedIndex;
+		int selectedIndex = 0;
 	
 		void onSteam(std::string s) override;
 		void update(Events::updateEvent event) override;

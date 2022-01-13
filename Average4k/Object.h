@@ -22,6 +22,7 @@ public:
 	void create();
 	virtual void update(Events::updateEvent ev) {};
 	virtual void draw() {};
+	virtual void mouseDown() {};
 	virtual void keyDown(SDL_KeyboardEvent ev) {};
 	virtual void textInput(SDL_TextInputEvent ev) {};
 	virtual void beforeDeath() {};

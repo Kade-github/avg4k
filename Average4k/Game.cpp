@@ -117,6 +117,18 @@ void Game::createGame()
 }
 
 
+void Game::mouseButtonDown()
+{
+	if (objects != nullptr)
+	{
+		for (int i = 0; i < objects->size(); i++)
+		{
+			Object* bruh = (*objects)[i];
+			bruh->mouseDown();
+		}
+	}
+}
+
 void Game::update(Events::updateEvent update)
 {
 	MUTATE_START
@@ -157,7 +169,8 @@ void Game::update(Events::updateEvent update)
 
 	currentMenu->update(update);
 
-	fpsText->setText("FPS: " + std::to_string(gameFPS) + " - Visuals are subject to change");
+	if (!transitioning)
+		fpsText->setText("FPS: " + std::to_string(gameFPS) + " - Visuals are subject to change");
 
 		for (int i = 0; i < objects->size(); i++)
 		{

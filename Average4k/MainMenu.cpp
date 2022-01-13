@@ -1,7 +1,6 @@
 #pragma once
 #include "MainMenu.h"
 #include <windows.h>
-#include "TweenManager.h"
 #include "AvgLua.h"
 #include "SPacketAvatarRequestResponse.h"
 #include "CPacketRequestAvatar.h"
@@ -11,6 +10,21 @@ MainMenu* MainMenu::instance = NULL;
 inline bool fileExists(const std::string& name) {
 	std::ifstream f(name.c_str());
 	return f.good();
+}
+
+void changeMenu() {
+	switch (MainMenu::instance->selectedIndex)
+	{
+	case 1:
+		Game::instance->transitionToMenu(new MultiplayerLobbies());
+		break;
+	case 0:
+		Game::instance->transitionToMenu(new SongSelect());
+		break;
+	case 2:
+		Game::instance->transitionToMenu(new SettingsMenu());
+		break;
+	}
 }
 
 void callback()
@@ -25,34 +39,41 @@ void callback()
 	filC.r = 255;
 	filC.g = 255;
 	filC.b = 255;
+	Color hovered;
+	hovered.r = 230;
+	hovered.g = 230;
+	hovered.b = 230;
 	Color font;
 	font.r = 255;
 	font.g = 0;
 	font.b = 142;
 
-	AvgButton* but = new AvgButton(250, 500, 250, 45, "solo", 18, "arial");
+	Tweening::AvgButtonTweenable* but = new Tweening::AvgButtonTweenable(250, 500, 250, 45, "solo", 18, "arial", (clickCallback)changeMenu);
 	but->create();
 	but->text->border = false;
 	but->fontColor = font;
 	but->borderSize = 2;
 	but->borderColor = c;
+	but->hoverColor = hovered;
 	but->fillColor = filC;
 	MainMenu::instance->add(but);
 	MainMenu::instance->buttons.push_back(but);
-	AvgButton* but2 = new AvgButton(532, 500, 250, 45, "multiplayer", 18, "arial");
+	Tweening::AvgButtonTweenable* but2 = new Tweening::AvgButtonTweenable(532, 500, 250, 45, "multiplayer", 18, "arial", (clickCallback)changeMenu);
 	but2->create();
 	but2->text->border = false;
 	but2->fontColor = font;
 	but2->borderSize = 2;
 	but2->borderColor = c;
+	but2->hoverColor = hovered;
 	but2->fillColor = filC;
 	MainMenu::instance->add(but2);
 	MainMenu::instance->buttons.push_back(but2);
-	AvgButton* but3 = new AvgButton(832, 500, 250, 45, "settings", 18, "arial");
+	Tweening::AvgButtonTweenable* but3 = new Tweening::AvgButtonTweenable(832, 500, 250, 45, "settings", 18, "arial", (clickCallback)changeMenu);
 	but3->create();
 	but3->text->border = false;
 	but3->fontColor = font;
 	but3->borderSize = 2;
+	but3->hoverColor = hovered;
 	but3->borderColor = c;
 	but3->fillColor = filC;
 	MainMenu::instance->add(but3);
@@ -62,7 +83,7 @@ void callback()
 	Tweening::TweenManager::createNewTween("hello", MainMenu::instance->hello, Tweening::tt_Alpha, 600, 0, 255, NULL, Easing::EaseInSine);
 	Tweening::TweenManager::createNewTween("bottom", MainMenu::instance->bottom, Tweening::tt_Alpha, 600, 0, 255, NULL, Easing::EaseInSine);
 	int index = 0;
-	for (AvgButton* b : MainMenu::instance->buttons)
+	for (Tweening::AvgButtonTweenable* b : MainMenu::instance->buttons)
 	{
 		b->alpha = 0;
 		Tweening::TweenManager::createNewTween("button" + index, b, Tweening::tt_Alpha, 600, 0, 255, NULL, Easing::EaseInSine);
@@ -170,36 +191,39 @@ void MainMenu::update(Events::updateEvent event)
 		Tweening::TweenManager::createNewTween("menuAlpha", thing, Tweening::tt_Alpha, 1000, 0, 255, NULL, Easing::EaseInSine);
 		Tweening::TweenManager::createNewTween("menu", thing, Tweening::tt_Y, 1000, thing->y + 200, thing->y - 100, (Tweening::tweenCallback)callback, Easing::EaseInSine);
 	}
+
+	int index = 0;
+	for (Tweening::AvgButtonTweenable* b : MainMenu::instance->buttons)
+	{
+		if (b->mouse && b->hovered)
+			selectedIndex = index;
+		index++;
+	}
 }
 
 void MainMenu::keyDown(SDL_KeyboardEvent event)
 {
 	if (event.keysym.sym == SDLK_RETURN)
 	{
-		switch (selectedIndex)
-		{
-		case 0:
-			Game::instance->transitionToMenu(new MultiplayerLobbies());
-			break;
-		case 1:
-			Game::instance->transitionToMenu(new SongSelect());
-			break;
-		case 2:
-			Game::instance->transitionToMenu(new SettingsMenu());
-			break;
-		}
+		changeMenu();
 	}
 	if (event.keysym.sym == SDLK_LEFT)
 	{
+		buttons[selectedIndex]->selected = false;
 		selectedIndex--;
 		if (selectedIndex < 0)
-			selectedIndex = MenuItem.size() - 2;
+			selectedIndex = buttons.size() - 1;
+		buttons[selectedIndex]->mouse = false;
+		buttons[selectedIndex]->selected = true;
 	}
 
 	if (event.keysym.sym == SDLK_RIGHT)
 	{
+		buttons[selectedIndex]->selected = false;
 		selectedIndex++;
-		if (selectedIndex > MenuItem.size() - 2)
+		if (selectedIndex > buttons.size() - 1)
 			selectedIndex = 0;
+		buttons[selectedIndex]->mouse = false;
+		buttons[selectedIndex]->selected = true;
 	}
 }

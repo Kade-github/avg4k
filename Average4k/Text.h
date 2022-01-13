@@ -30,7 +30,7 @@ public:
 		setText(temp);
 	};
 
-	~Text()
+	virtual ~Text()
 	{
 		beforeDeath();
 		die();
@@ -38,7 +38,6 @@ public:
 
 	int size;
 
-	~Text() = default;
 	void draw() override;
 	void die() override;
 	void centerX();

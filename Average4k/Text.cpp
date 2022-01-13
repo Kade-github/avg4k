@@ -15,9 +15,9 @@ void Text::setText(std::string temp)
 		SDL_DestroyTexture(outline);
 
 	SDL_Surface* surfaceMessage =
-		TTF_RenderUTF8_Blended(Arial, text.c_str(), { color.r, color.g,color.b });
+		TTF_RenderUTF8_Blended_Wrapped(Arial, text.c_str(), { color.r, color.g,color.b }, Game::gameWidth);
 	SDL_Surface* outlineMsg =
-		TTF_RenderUTF8_Blended(Arial, text.c_str(), { 0,0,0 });
+		TTF_RenderUTF8_Blended_Wrapped(Arial, text.c_str(), { 0,0,0 }, Game::gameWidth);
 
 
 	if (surfaceMessage != nullptr && outlineMsg != nullptr)
@@ -83,7 +83,6 @@ void Text::die()
 	SDL_DestroyTexture(message);
 	if (isCreated)
 		Game::removeGlobalObject(this);
-	delete this;
 }
 
 void Text::centerX()

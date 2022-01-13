@@ -354,7 +354,10 @@ void SongSelect::keyDown(SDL_KeyboardEvent event)
 			if (MultiplayerLobby::inLobby)
 				Game::instance->transitionToMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, false));
 			else
+			{
 				Game::instance->transitionToMenu(new MainMenu());
+			}
+			delete currentChart;
 			free(selectedSong);
 			break;
 		}
@@ -447,6 +450,8 @@ SongSelect::SongSelect()
 	songName->create();
 	add(songName);
 
+	if (!currentChart)
+		delete currentChart;
 
 	currentChart = NULL;
 

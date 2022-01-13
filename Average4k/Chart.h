@@ -50,6 +50,10 @@ class Chart
 		Chart(chartMeta m) { meta = m; };
 		chartMeta meta;
 
+		~Chart()
+		{
+			// not much lol
+		}
 		static std::vector < std::string > split(std::string str, char delimiter);
 
 		float getTimeFromBeat(float beat, bpmSegment seg);

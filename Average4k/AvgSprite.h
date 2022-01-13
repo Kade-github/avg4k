@@ -23,8 +23,12 @@ public:
 		SDL_QueryTexture(tex, NULL, NULL, &w, &h);
 	};
 
-	~AvgSprite()
+	virtual ~AvgSprite()
 	{
+		for (Object* obj : children)
+		{
+			delete obj;
+		}
 		beforeDeath();
 		die();
 	}
@@ -36,7 +40,7 @@ public:
 		SDL_QueryTexture(tex, NULL, NULL, &w, &h);
 	}
 
-	void draw() {
+	virtual void draw() {
 		SDL_FRect rect;
 
 		rect.x = x;
@@ -65,7 +69,7 @@ public:
 
 	}
 
-	void beforeDeath() {
+	virtual void beforeDeath() {
 		SDL_DestroyTexture(tex);
 	}
 };

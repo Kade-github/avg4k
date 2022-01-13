@@ -6,15 +6,14 @@ class Object
 public:
 	Object(float x, float y);
 	Object() = default;
-	~Object() {
+	virtual ~Object() {
 		for (Object* obj : children)
 		{
-			obj->beforeDeath();
-			obj->die();
+			delete obj;
 		}
 		beforeDeath();
 		die();
-	};
+	}
 
 	std::vector<Object*> children;
 
@@ -34,8 +33,7 @@ public:
 	void removeObj(Object* obj)
 	{
 		children.erase(std::remove(children.begin(), children.end(), obj), children.end());
-		obj->beforeDeath();
-		obj->die();
+		delete obj;
 	}
 
 	float alpha = 255;

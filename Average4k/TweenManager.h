@@ -159,6 +159,13 @@ namespace Tweening
 			callback = _callback;
 			add(text);
 		};
+
+		virtual ~AvgButtonTweenable()
+		{
+			text->beforeDeath();
+			text->die();
+		}
+
 		void clicked()
 		{
 			if (callback != NULL)

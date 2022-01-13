@@ -18,23 +18,20 @@ public:
 		static std::vector<avgFont>* mapOfFonts;
 		if (!mapOfFonts)
 			mapOfFonts = new std::vector<avgFont>();
-		std::cout << "loading " << ("assets/graphical/fonts/" + name + ".ttf") << std::endl;
 		avgFont* found = NULL; 
 		for (avgFont& font : (*mapOfFonts))
 		{
 			if (font.name == name && font.size == size)
 			{
-				TTF_CloseFont(font.font);
-				found = &font;
+				return font.font;
 			}
 		}
-		if (found)
-			mapOfFonts->erase(std::remove(mapOfFonts->begin(), mapOfFonts->end(), (*found)));
+		std::cout << "creating new font " << name << " with size of " << size << std::endl;
 		avgFont f;
 		f.font = TTF_OpenFont(("assets/graphical/fonts/" + name + ".ttf").c_str(), size);
 		f.name = name;
 		f.size = size;
 		mapOfFonts->push_back(f);
-		return TTF_OpenFont(("assets/graphical/fonts/" + name + ".ttf").c_str(), size);
+		return f.font;
 	}
 };

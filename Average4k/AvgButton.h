@@ -27,6 +27,10 @@ public:
 
 	};
 
+	virtual ~AvgButton()
+	{
+		
+	}
 
 	virtual void clicked()
 	{

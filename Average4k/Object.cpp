@@ -36,8 +36,6 @@ void Object::die()
 	isDead = true;
 	if (isCreated)
 		Game::removeGlobalObject(this);
-	if (!this)
-		delete this;
 }
 
 

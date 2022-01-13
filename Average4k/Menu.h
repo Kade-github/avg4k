@@ -6,7 +6,9 @@ class Menu
 {
 public:
 	Menu() {};
-
+	virtual ~Menu()
+	{
+	}
 	std::vector<Object*> children;
 
 	virtual void onPacket(PacketType pt, char* data, int32_t length) {};
@@ -24,17 +26,16 @@ public:
 		if (obj == NULL)
 			return;
 		children.erase(std::remove(children.begin(), children.end(), obj), children.end());
-		obj->beforeDeath();
-		obj->die();
+		delete obj;
 	}
 
 	void removeAll()
 	{
 		for (Object* obj : children)
 		{
-			obj->beforeDeath();
-			obj->die();
+			delete obj;
 		}
+		std::cout << "removed all " << children.size() << std::endl;
 		children.clear();
 	}
 

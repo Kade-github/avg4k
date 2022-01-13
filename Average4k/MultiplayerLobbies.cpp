@@ -22,7 +22,7 @@ void MultiplayerLobbies::refreshLobbies() {
 
 MultiplayerLobbies::MultiplayerLobbies()
 {
-	MUTATE_START
+	MUTATE_START;
 	refreshTimer = 3000;
 	if (Multiplayer::loggedIn)
 		Game::steam->populateSubscribedItems();

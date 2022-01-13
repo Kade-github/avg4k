@@ -27,6 +27,9 @@ class MainMenu :
 		
 		std::vector<Text*> MenuItem;
 
+		virtual ~MainMenu()
+		{
+		}
 
 		int selectedIndex = 0;
 	

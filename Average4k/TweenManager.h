@@ -35,6 +35,8 @@ namespace Tweening
 
 	class TweenManager {
 	public:
+
+		static std::vector<Tweening::Tween> tweenRemove;
 		static std::vector<Tween> activeTweens;
 		static Tween createNewTween(std::string identity, Object* toTween, TweenType type, double dur, double s, double e, tweenCallback callbackFunc, Easing::easing_functions easeType)
 		{
@@ -43,11 +45,7 @@ namespace Tweening
 				Tween& t = activeTweens[i];
 				if (t.name == identity && !t.call)
 				{
-					if (t.callback != nullptr)
-					{
-						t.call = true;
-						t.callback();
-					}
+					t.call = true;
 					activeTweens.erase(std::remove(activeTweens.begin(), activeTweens.end(), t), activeTweens.end());
 				}
 			}
@@ -88,13 +86,14 @@ namespace Tweening
 				t.obj->setY(start + ((end - start) * value));
 				break;
 			}
-			if (t.percnt >= 1)
+			if (t.percnt >= 1.0)
 			{
 				// finished
-				activeTweens.erase(std::remove(activeTweens.begin(), activeTweens.end(), t), activeTweens.end());
+				tweenRemove.push_back(t);
 				if (t.callback != nullptr && !t.call)
 				{
 					t.call = true;
+					std::cout << "finished tween!" << std::endl;
 					t.callback();
 				}
 			}

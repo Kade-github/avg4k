@@ -7,6 +7,7 @@
 #include "Menu.h"
 #include "Multiplayer.h"
 #include "Chart.h"
+
 class Game
 {
 public:
@@ -18,6 +19,7 @@ public:
 
 	static bool startConnect;
 	static Menu* toGoTo;
+
 
 	void update(Events::updateEvent updateEvent);
 	void keyDown(SDL_KeyboardEvent event);

@@ -210,6 +210,15 @@ int hlineRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 x2, Sint16 y, Uint8 r, 
 	result |= SDL_RenderDrawLine(renderer, x1, y, x2, y);
 	return result;
 }
+int hlineRGBASize(SDL_Renderer* renderer, Sint16 x1, Sint16 x2, Sint16 y, Uint8 r, Uint8 g, Uint8 b, Uint8 a, Sint16 borderSize)
+{
+	SDL_Rect rect;
+	rect.x = x1;
+	rect.y = y;
+	rect.w = (x2 - x1) + borderSize;
+	rect.h = borderSize;
+	return SDL_RenderFillRect(renderer, &rect);
+}
 
 /* ---- Vline */
 
@@ -266,6 +275,16 @@ int vlineRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y1, Sint16 y2, Uint8 r, 
 	result |= SDL_SetRenderDrawColor(renderer, r, g, b, a);
 	result |= SDL_RenderDrawLine(renderer, x, y1, x, y2);
 	return result;
+}
+
+int vlineRGBASize(SDL_Renderer* renderer, Sint16 x, Sint16 y1, Sint16 y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a, Sint16 borderSize)
+{
+	SDL_Rect rect;
+	rect.x = x;
+	rect.y = y1;
+	rect.w = borderSize;
+	rect.h = (y2 - y1) + borderSize;
+	return SDL_RenderFillRect(renderer, &rect);
 }
 
 /* ---- Rectangle */
@@ -434,11 +453,11 @@ int roundedRectangleRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x
 		if (y1 == y2) {
 			return (pixelRGBA(renderer, x1, y1, r, g, b, a));
 		} else {
-			return (vlineRGBA(renderer, x1, y1, y2, r, g, b, a));
+			return (vlineRGBASize(renderer, x1, y1, y2, r, g, b, a, borderSize));
 		}
 	} else {
 		if (y1 == y2) {
-			return (hlineRGBA(renderer, x1, x2, y1, r, g, b, a));
+			return (hlineRGBASize(renderer, x1, x2, y1, r, g, b, a, borderSize));
 		}
 	}
 
@@ -487,19 +506,18 @@ int roundedRectangleRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x
 	yy2 = y2 - rad;
 	result |= arcRGBA(renderer, xx1, yy1, rad, 180, 270, r, g, b, a, borderSize);
 	result |= arcRGBA(renderer, xx2, yy1, rad, 270, 360, r, g, b, a, borderSize);
-	result |= arcRGBA(renderer, xx1, yy2, rad,  90, 180, r, g, b, a, borderSize);
-	result |= arcRGBA(renderer, xx2, yy2, rad,   0,  90, r, g, b, a, borderSize);
-
+	result |= arcRGBA(renderer, xx1, yy2, rad, 90, 180, r, g, b, a, borderSize);
+	result |= arcRGBA(renderer, xx2, yy2, rad, 0,  90, r, g, b, a, borderSize);
 	/*
 	* Draw lines
 	*/
 	if (xx1 <= xx2) {
-		result |= hlineRGBA(renderer, xx1, xx2, y1, r, g, b, a);
-		result |= hlineRGBA(renderer, xx1, xx2, y2, r, g, b, a);
+		result |= hlineRGBASize(renderer, xx1, xx2, y1, r, g, b, a, borderSize);
+		result |= hlineRGBASize(renderer, xx1, xx2, y2, r, g, b, a, borderSize);
 	}
 	if (yy1 <= yy2) {
-		result |= vlineRGBA(renderer, x1, yy1, yy2, r, g, b, a);
-		result |= vlineRGBA(renderer, x2, yy1, yy2, r, g, b, a);
+		result |= vlineRGBASize(renderer, x1, yy1, yy2, r, g, b, a, borderSize);
+		result |= vlineRGBASize(renderer, x2, yy1, yy2, r, g, b, a, borderSize);
 	}
 	return result;
 }
@@ -1204,7 +1222,7 @@ int arcColor(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Sint16 sta
 \returns Returns 0 on success, -1 on failure.
 */
 /* TODO: rewrite algorithm; arc endpoints are not always drawn */
-int arcRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Sint16 start, Sint16 end, Uint8 r, Uint8 g, Uint8 b, Uint8 a, Sint16 size)
+int arcRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Sint16 start, Sint16 end, Uint8 r, Uint8 g, Uint8 b, Uint8 a, Sint16 size )
 {
 	int result;
 	Sint16 cx = 0;
@@ -1445,6 +1463,286 @@ int aacircleColor(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Uint3
 	return aaellipseRGBA(renderer, x, y, rad, rad, c[0], c[1], c[2], c[3]);
 }
 
+
+static int _gfxPrimitivesCompareFloat2(const char* a, const char* b)
+{
+	float diff = *(float*)(a + sizeof(float)) - *(float*)(b + sizeof(float));
+	if (diff != 0.0) return (diff > 0) - (diff < 0);
+	diff = *(float*)a - *(float*)b;
+	return (diff > 0) - (diff < 0);
+}
+
+
+static int renderdrawline(SDL_Renderer* renderer, int x1, int y1, int x2, int y2)
+{
+	int result;
+#ifndef __EMSCRIPTEN__
+	if ((x1 == x2) && (y1 == y2))
+		result = SDL_RenderDrawPoint(renderer, x1, y1);
+	else if (y1 == y2)
+	{
+		int x;
+		if (x1 > x2) { x = x1; x1 = x2; x2 = x; }
+		SDL_Point* points = (SDL_Point*)malloc((x2 - x1 + 1) * sizeof(SDL_Point));
+		if (points == NULL) return -1;
+		for (x = x1; x <= x2; x++)
+		{
+			points[x - x1].x = x;
+			points[x - x1].y = y1;
+		}
+		result = SDL_RenderDrawPoints(renderer, points, x2 - x1 + 1);
+		free(points);
+	}
+	else if (x1 == x2)
+	{
+		int y;
+		if (y1 > y2) { y = y1; y1 = y2; y2 = y; }
+		SDL_Point* points = (SDL_Point*)malloc((y2 - y1 + 1) * sizeof(SDL_Point));
+		if (points == NULL) return -1;
+		for (y = y1; y <= y2; y++)
+		{
+			points[y - y1].x = x1;
+			points[y - y1].y = y;
+		}
+		result = SDL_RenderDrawPoints(renderer, points, y2 - y1 + 1);
+		free(points);
+	}
+	else
+#endif
+		result = SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+	return result;
+}
+
+
+// This constant determines the maximum size and/or complexity of polygon that can be
+// drawn. Set to 16K the maximum aaArc height is approximately 1100 lines.
+#define POLYSIZE 16384
+
+/*!
+\brief Draw anti-aliased filled polygon with alpha blending.
+\param renderer The renderer to draw on.
+\param vx Vertex array containing X coordinates of the points of the filled polygon.
+\param vy Vertex array containing Y coordinates of the points of the filled polygon.
+\param n Number of points in the vertex array. Minimum number is 3.
+\param r The red value of the filled polygon to draw.
+\param g The green value of the filled polygon to draw.
+\param b The blue value of the filed polygon to draw.
+\param a The alpha value of the filled polygon to draw.
+\returns Returns 0 on success, -1 on failure, or -2 if the polygon is too large and/or complex.
+*/
+int aaFilledPolygonRGBA(SDL_Renderer* renderer, const double* vx, const double* vy, int n, Uint8 r, Uint8 g, Uint8 b, Uint8 a, int borderSize)
+{
+	int i, j, xi, yi, result;
+	double x1, x2, y0, y1, y2, minx, maxx, prec;
+	float* list, * strip;
+
+	if (n < 3)
+		return -1;
+
+	result = SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
+	// Find extrema:
+	minx = 99999.0;
+	maxx = -99999.0;
+	prec = 0.00001;
+	for (i = 0; i < n; i++)
+	{
+		double x = vx[i];
+		double y = fabs(vy[i]);
+		if (x < minx) minx = x;
+		if (x > maxx) maxx = x;
+		if (y > prec) prec = y;
+	}
+	minx = floor(minx);
+	maxx = floor(maxx);
+	prec = floor(pow(2, 19) / prec);
+
+	// Allocate main array, this determines the maximum polygon size and complexity:
+	list = (float*)malloc(POLYSIZE * sizeof(float));
+	if (list == NULL)
+		return -2;
+
+	// Build vertex list.  Special x-values used to indicate vertex type:
+	// x = -100001.0 indicates /\, x = -100003.0 indicates \/, x = -100002.0 neither
+	yi = 0;
+	y0 = floor(vy[n - 1] * prec) / prec;
+	y1 = floor(vy[0] * prec) / prec;
+	for (i = 1; i <= n; i++)
+	{
+		if (yi > POLYSIZE - 4)
+		{
+			free(list);
+			return -2;
+		}
+		y2 = floor(vy[i % n] * prec) / prec;
+		if (((y1 < y2) - (y1 > y2)) == ((y0 < y1) - (y0 > y1)))
+		{
+			list[yi++] = -100002.0;
+			list[yi++] = y1;
+			list[yi++] = -100002.0;
+			list[yi++] = y1;
+		}
+		else
+		{
+			if (y0 != y1)
+			{
+				list[yi++] = (y1 < y0) - (y1 > y0) - 100002.0;
+				list[yi++] = y1;
+			}
+			if (y1 != y2)
+			{
+				list[yi++] = (y1 < y2) - (y1 > y2) - 100002.0;
+				list[yi++] = y1;
+			}
+		}
+		y0 = y1;
+		y1 = y2;
+	}
+	xi = yi;
+
+	// Sort vertex list:
+	qsort(list, yi / 2, sizeof(float) * 2, _gfxPrimitivesCompareFloat2);
+
+	// Append line list to vertex list:
+	for (i = 1; i <= n; i++)
+	{
+		double x, y;
+		double d = 0.5 / prec;
+
+		x1 = vx[i - 1];
+		y1 = floor(vy[i - 1] * prec) / prec;
+		x2 = vx[i % n];
+		y2 = floor(vy[i % n] * prec) / prec;
+
+		if (y2 < y1)
+		{
+			double tmp;
+			tmp = x1; x1 = x2; x2 = tmp;
+			tmp = y1; y1 = y2; y2 = tmp;
+		}
+		if (y2 != y1)
+			y0 = (x2 - x1) / (y2 - y1);
+
+		for (j = 1; j < xi; j += 4)
+		{
+			y = list[j];
+			if (((y + d) <= y1) || (y == list[j + 4]))
+				continue;
+			if ((y -= d) >= y2)
+				break;
+			if (yi > POLYSIZE - 4)
+			{
+				free(list);
+				return -2;
+			}
+			if (y > y1)
+			{
+				list[yi++] = x1 + y0 * (y - y1);
+				list[yi++] = y;
+			}
+			y += d * 2.0;
+			if (y < y2)
+			{
+				list[yi++] = x1 + y0 * (y - y1);
+				list[yi++] = y;
+			}
+		}
+
+		y = floor(y1) + 1.0;
+		while (y <= y2)
+		{
+			x = x1 + y0 * (y - y1);
+			if (yi > POLYSIZE - 2)
+			{
+				free(list);
+				return -2;
+			}
+			list[yi++] = x;
+			list[yi++] = y;
+			y += 1.0;
+		}
+	}
+
+	// Sort combined list:
+	qsort(list, yi / 2, sizeof(float) * 2, _gfxPrimitivesCompareFloat2);
+
+	// Plot lines:
+	strip = (float*)malloc((maxx - minx + 2) * sizeof(float));
+	if (strip == NULL)
+	{
+		free(list);
+		return -1;
+	}
+	memset(strip, 0, (maxx - minx + 2) * sizeof(float));
+	n = yi;
+	yi = list[1];
+	j = 0;
+
+	for (i = 0; i < n - 7; i += 4)
+	{
+		float x1 = list[i + 0];
+		float y1 = list[i + 1];
+		float x3 = list[i + 2];
+		float x2 = list[i + j + 0];
+		float y2 = list[i + j + 1];
+		float x4 = list[i + j + 2];
+
+		if (x1 + x3 == -200002.0)
+			j += 4;
+		else if (x1 + x3 == -200006.0)
+			j -= 4;
+		else if ((x1 >= minx) && (x2 >= minx))
+		{
+			if (x1 > x2) { float tmp = x1; x1 = x2; x2 = tmp; }
+			if (x3 > x4) { float tmp = x3; x3 = x4; x4 = tmp; }
+
+			for (xi = x1 - minx; xi <= x4 - minx; xi++)
+			{
+				float u, v;
+				float x = minx + xi;
+				if (x < x2)  u = (x - x1 + 1) / (x2 - x1 + 1); else u = 1.0;
+				if (x >= x3 - 1) v = (x4 - x) / (x4 - x3 + 1); else v = 1.0;
+				if ((u > 0.0) && (v > 0.0))
+					strip[xi] += (y2 - y1) * (u + v - 1.0);
+			}
+		}
+
+		if ((yi == (list[i + 5] - 1.0)) || (i == n - 8))
+		{
+			for (xi = 0; xi <= maxx - minx; xi++)
+			{
+				if (strip[xi] != 0.0)
+				{
+					if (strip[xi] >= 0.996)
+					{
+						int x0 = xi;
+						while (strip[++xi] >= 0.996);
+						xi--;
+						result |= SDL_SetRenderDrawColor(renderer, r, g, b, a);
+						result |= renderdrawline(renderer, minx + x0, yi, minx + xi, yi);
+						printf("after renderLine %i\n", result);
+					}
+					else
+					{
+						result |= SDL_SetRenderDrawColor(renderer, r, g, b, a * strip[xi]);
+						result |= SDL_RenderDrawPoint(renderer, minx + xi, yi);
+						printf("after render Point %i\n", result);
+					}
+				}
+			}
+			memset(strip, 0, (maxx - minx + 2) * sizeof(float));
+			yi++;
+
+		}
+	}
+
+	// Free arrays:
+	free(list);
+	free(strip);
+	return result;
+}
+
+
 /*!
 \brief Draw anti-aliased circle with blending.
 
@@ -1465,6 +1763,84 @@ int aacircleRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Uint8 
 	* Draw 
 	*/
 	return aaellipseRGBA(renderer, x, y, rad, rad, r, g, b, a);
+}
+
+
+
+/*!
+\brief Draw anti-aliased ellipical arc with alpha blending.
+\param renderer The renderer to draw on.
+\param cx X coordinate of the center of the filled pie.
+\param cy Y coordinate of the center of the filled pie.
+\param rx Horizontal radius in pixels of the filled pie.
+\param ry Vertical radius in pixels of the filled pie.
+\param start Starting angle in degrees of the filled pie; zero is right, increasing clockwise.
+\param end Ending angle in degrees of the filled pie; zero is right, increasing clockwise.
+\param thick The thickness of the line in pixels.
+\param r The red value of the filled pie to draw.
+\param g The green value of the filled pie to draw.
+\param b The blue value of the filled pie to draw.
+\param a The alpha value of the filled pie to draw.
+/
+\returns Returns 0 on success, -1 on failure.
+*/
+int aaArcRGBA(SDL_Renderer* renderer, float cx, float cy, float rx, float ry,
+	float start, float end, float thick, Uint8 r, Uint8 g, Uint8 b, Uint8 a, int borderSize)
+{
+	int nverts, i, result;
+	double* vx, * vy;
+
+	// Sanity check radii and thickness
+	if ((rx <= 0) || (ry <= 0) || (start == end) || (thick <= 0))
+		return -1;
+
+	// Convert degrees to radians
+	start = fmod(start, 360.0) * 2.0 * M_PI / 360.0;
+	end = fmod(end, 360.0) * 2.0 * M_PI / 360.0;
+	while (start >= end)
+		end += 2.0 * M_PI;
+
+	// Calculate number of vertices
+	nverts = 2 * floor((end - start) * sqrt(rx * ry) / M_PI);
+	if (nverts < 2)
+		nverts = 2;
+	if (nverts > 360)
+		nverts = 360;
+
+	// Allocate combined vertex array 
+	vx = vy = (double*)malloc(2 * sizeof(double) * nverts);
+	if (vx == NULL)
+		return (-1);
+
+	// Update pointer to start of vy
+	vy += nverts;
+
+	// Calculate vertices:
+	for (i = 0; i < nverts / 2; i++)
+	{
+		double angle = start + (end - start) * (double)i / (double)(nverts / 2 - 1);
+		vx[i] = cx + (rx + thick / 2) * cos(angle);
+		vy[i] = cy + (ry + thick / 2) * sin(angle);
+		vx[nverts - 1 - i] = cx + (rx - thick / 2) * cos(angle);
+		vy[nverts - 1 - i] = cy + (ry - thick / 2) * sin(angle);
+
+	}
+
+	result = aaFilledPolygonRGBA(renderer, vx, vy, nverts, r, g, b, a, borderSize);
+	printf("after all %i\n", result);
+
+	// Free combined vertex array
+	free(vx);
+
+	return (result);
+}
+
+
+// returns Returns 0 on success, -1 on failure.
+int aaArcColor(SDL_Renderer* renderer, float cx, float cy, float rx, float ry, float start, float end, float thick, Uint32 color)
+{
+	Uint8* c = (Uint8*)&color;
+	return aaArcRGBA(renderer, cx, cy, rx, ry, start, end, thick, c[0], c[1], c[2], c[3], 1);
 }
 
 /* ----- Ellipse */

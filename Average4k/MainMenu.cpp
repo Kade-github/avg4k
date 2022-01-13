@@ -15,13 +15,66 @@ inline bool fileExists(const std::string& name) {
 
 void callback()
 {
-	
+	std::cout << "spwan buttons" << std::endl;
+	// Colors
+	Color c;
+	c.r = 255;
+	c.g = 136;
+	c.b = 0;
+	Color filC;
+	filC.r = 255;
+	filC.g = 255;
+	filC.b = 255;
+	Color font;
+	font.r = 255;
+	font.g = 0;
+	font.b = 142;
+
+	AvgButton* but = new AvgButton(250, 500, 250, 45, "solo", 18, "arial");
+	but->create();
+	but->text->border = false;
+	but->fontColor = font;
+	but->borderSize = 2;
+	but->borderColor = c;
+	but->fillColor = filC;
+	MainMenu::instance->add(but);
+	MainMenu::instance->buttons.push_back(but);
+	AvgButton* but2 = new AvgButton(532, 500, 250, 45, "multiplayer", 18, "arial");
+	but2->create();
+	but2->text->border = false;
+	but2->fontColor = font;
+	but2->borderSize = 2;
+	but2->borderColor = c;
+	but2->fillColor = filC;
+	MainMenu::instance->add(but2);
+	MainMenu::instance->buttons.push_back(but2);
+	AvgButton* but3 = new AvgButton(832, 500, 250, 45, "settings", 18, "arial");
+	but3->create();
+	but3->text->border = false;
+	but3->fontColor = font;
+	but3->borderSize = 2;
+	but3->borderColor = c;
+	but3->fillColor = filC;
+	MainMenu::instance->add(but3);
+	MainMenu::instance->buttons.push_back(but3);
+	MainMenu::instance->hello->setText("Hi " + std::string(SteamFriends()->GetPersonaName()));
+	MainMenu::instance->bottom->setText("Avg4k indev-" + Game::version);
+	Tweening::TweenManager::createNewTween("hello", MainMenu::instance->hello, Tweening::tt_Alpha, 600, 0, 255, NULL, Easing::EaseInSine);
+	Tweening::TweenManager::createNewTween("bottom", MainMenu::instance->bottom, Tweening::tt_Alpha, 600, 0, 255, NULL, Easing::EaseInSine);
+	int index = 0;
+	for (AvgButton* b : MainMenu::instance->buttons)
+	{
+		b->alpha = 0;
+		Tweening::TweenManager::createNewTween("button" + index, b, Tweening::tt_Alpha, 600, 0, 255, NULL, Easing::EaseInSine);
+		Tweening::TweenManager::createNewTween("buttonY" + index, b, Tweening::tt_Y, 600, b->y + 100, b->y, NULL, Easing::EaseInSine);
+		index++;
+	}
 }
 
 MainMenu::MainMenu()
 {
 	instance = this;
-	AvgSprite* bg = new AvgSprite(0, 0, "assets/graphical/menu/mm/bg.png");
+	bg = new AvgSprite(0, 0, "assets/graphical/menu/mm/bg.png");
 	bg->create();
 	add(bg);
 
@@ -34,35 +87,27 @@ MainMenu::MainMenu()
 	thing->h = thing->h * 0.18;
 	thing->x -= thing->w / 2;
 	thing->y -= thing->h / 2;
+	thing->alpha = 0;
 	thing->create();
 	add(thing);
 
-	AvgButton* but = new AvgButton(100, 100, 100, 24, "hello!");
-	but->create();
-	Color c;
-	c.r = 255;
-	c.g = 136;
-	c.b = 0;
-	Color filC;
-	filC.r = 255;
-	filC.g = 255;
-	filC.b = 255;
-	but->borderColor = c;
-	but->fillColor = filC;
-	add(but);
 	
 	SDL_Rect clip;
 	clip.x = 34;
 	clip.y = 34;
-	clip.w = 42;
-	clip.h = 42;
+	clip.w = 43;
+	clip.h = 43;
 	icon->clipRect = clip;
 
 	hello = new Text(32 + ((icon->w / 2) * 2.6), 36, "Refreshing avatar data...", 16, "arialbd");
+	hello->border = false;
 	hello->create();
 	add(hello);
-	std::cout << "setting font" << std::endl;
-	hello->setFont("arialbd");
+
+	bottom = new Text(32 + ((icon->w / 2) * 2.6), 54, "", 16, "arialbd");
+	bottom->border = false;
+	bottom->create();
+	add(bottom);
 
 	border = new AvgSprite(32, 32, "assets/graphical/menu/border.png");
 	border->create();
@@ -101,9 +146,20 @@ void MainMenu::onSteam(std::string s)
 
 void MainMenu::update(Events::updateEvent event)
 {
-	if (!hello->text.starts_with("Hi") && Multiplayer::loggedIn)
+	// I made this math myself
+	// it sucks
+	// parallax though
+	int mx, my;
+	SDL_GetMouseState(&mx, &my);
+	float mPercX = ((float)mx / (float)(Game::gameWidth / 2));
+	float mPercY = ((float)my / (float)(Game::gameHeight / 2));
+	bg->setX(-(1.32 * mPercX));
+	bg->setY(-(1.32 * mPercY));
+
+	if (!started && Multiplayer::loggedIn)
 	{
-		hello->setText("Hi " + std::string(SteamFriends()->GetPersonaName()));
+		started = true;
+		Tweening::TweenManager::createNewTween("hello", hello, Tweening::tt_Alpha, 800, 255, 0, NULL, Easing::EaseInSine);
 		SDL_Texture* tex = Steam::getAvatar(Multiplayer::currentUserAvatar.c_str());
 		if (tex)
 		{
@@ -111,7 +167,8 @@ void MainMenu::update(Events::updateEvent event)
 			icon->h = 47;
 			icon->w = 47;
 		}
-		Tweening::TweenManager::createNewTween("menu", thing, Tweening::tt_Y, 750, thing->y, thing->y - 100, (Tweening::tweenCallback)callback, Easing::EaseInSine);
+		Tweening::TweenManager::createNewTween("menuAlpha", thing, Tweening::tt_Alpha, 1000, 0, 255, NULL, Easing::EaseInSine);
+		Tweening::TweenManager::createNewTween("menu", thing, Tweening::tt_Y, 1000, thing->y + 200, thing->y - 100, (Tweening::tweenCallback)callback, Easing::EaseInSine);
 	}
 }
 

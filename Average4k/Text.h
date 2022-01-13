@@ -50,7 +50,7 @@ public:
 	int addW;
 	int addH;
 
-	bool border;
+	bool border = true;
 
 	int surfW;
 	int surfH;

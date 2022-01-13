@@ -3,7 +3,8 @@
 void Text::setText(std::string temp)
 {
 	this->text = temp;
-
+	if (temp == "")
+		return;
 	//std::cout << TTF_FontFaceFamilyName(Arial) << std::endl;
 
 	//SDL_Surface* screen = SDL_GetWindowSurface(Game::window);
@@ -14,9 +15,10 @@ void Text::setText(std::string temp)
 		SDL_DestroyTexture(outline);
 
 	SDL_Surface* surfaceMessage =
-		TTF_RenderUTF8_Blended_Wrapped(Arial, text.c_str(), { color.r, color.g,color.b }, Game::gameWidth);
+		TTF_RenderUTF8_Blended(Arial, text.c_str(), { color.r, color.g,color.b });
 	SDL_Surface* outlineMsg =
-		TTF_RenderUTF8_Blended_Wrapped(Arial, text.c_str(), { 0,0,0 }, Game::gameWidth);
+		TTF_RenderUTF8_Blended(Arial, text.c_str(), { 0,0,0 });
+
 
 	if (surfaceMessage != nullptr && outlineMsg != nullptr)
 	{
@@ -45,7 +47,13 @@ void Text::draw()
 	rect.y = message_Rect.y;
 	rect.w = rW;
 	rect.h = rH;
-	SDL_RenderCopyF(Game::renderer, outline, NULL, &rect);
+	
+	SDL_SetTextureAlphaMod(message, alpha);
+	if (border)
+	{
+		SDL_SetTextureAlphaMod(outline, alpha);
+		SDL_RenderCopyF(Game::renderer, outline, NULL, &rect);
+	}
 
 	SDL_RenderCopyF(Game::renderer, message, NULL, &message_Rect);
 }

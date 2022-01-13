@@ -12,10 +12,13 @@ class MainMenu :
     public Menu
 {
 	public:
+		bool started = false;
 		AvgSprite* thing;
 		AvgSprite* icon;
+		AvgSprite* bg;
 		std::vector<AvgButton*> buttons;
 		Text* hello;
+		Text* bottom;
 		SDL_Texture* avatar;
 		AvgSprite* border;
 		MainMenu();

@@ -108,7 +108,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	//AddVectoredExceptionHandler(1, &PvectoredExceptionHandler);
 	SDL_Init(SDL_INIT_EVERYTHING);
 	
-	Game::version = "b7";
+	Game::version = "b8";
 
 	curl_global_init(CURL_GLOBAL_ALL);
 	Multiplayer::InitCrypto();
@@ -145,7 +145,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
 
 	Game* game = new Game();
 

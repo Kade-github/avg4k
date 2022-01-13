@@ -2,12 +2,12 @@
 #include <algorithm>
 #include "Game.h"
 #include "MainMenu.h"
-#include "TweenManager.h"
 #include "Text.h"
 #include "CPacketHostUpdateLobby.h"
 #include "MultiplayerLobby.h"
 #include "AvgRect.h"
 #include "msgpack.hpp"
+#include "TweenManager.h"
 using namespace std;
 
 mutex pog;
@@ -157,7 +157,7 @@ void Game::update(Events::updateEvent update)
 
 	currentMenu->update(update);
 
-	fpsText->setText("FPS: " + std::to_string(gameFPS) + " - Avg4k 0.1a - Visuals are subject to change - " + (Multiplayer::loggedIn ? "You are logged in" : "You are logged out"));
+	fpsText->setText("FPS: " + std::to_string(gameFPS) + " - Visuals are subject to change");
 
 		for (int i = 0; i < objects->size(); i++)
 		{
@@ -207,19 +207,25 @@ void Game::update(Events::updateEvent update)
 
 	if (SDL_GetTicks() > 1000)
 	{
-		for (int i = 0; i < Tweening::TweenManager::activeTweens.size(); i++)
+		for (Tweening::Tween& tw : Tweening::TweenManager::activeTweens)
 		{
-			Tweening::Tween& tw = Tweening::TweenManager::activeTweens[i];
 			Tweening::TweenManager::updateTween(tw, Game::deltaTime);
 		}
+
+		for (Tweening::Tween& tw : Tweening::TweenManager::tweenRemove)
+		{
+			Tweening::TweenManager::activeTweens.erase(std::remove(Tweening::TweenManager::activeTweens.begin(), Tweening::TweenManager::activeTweens.end(), tw), Tweening::TweenManager::activeTweens.end());
+		}
+		Tweening::TweenManager::tweenRemove.clear();
 	}
 	if (currentMenu != NULL)
 	{
-		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 		for (int i = 0; i < currentMenu->children.size(); i++)
 		{
 			Object* obj = currentMenu->children[i];
 			obj->draw();
+			if (obj->children.size() != 0)
+				obj->drawChildren();
 			// TODO: PUT THIS IN A DIFFERENT THREAD
 		}
 	}

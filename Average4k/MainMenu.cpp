@@ -112,6 +112,8 @@ MainMenu::MainMenu()
 {
 	bg = new AvgSprite(0, 0, "assets/graphical/menu/mm/bg.png");
 	bg->create();
+	bg->w = 1286;
+	bg->h = 726;
 	add(bg);
 
 	icon = new AvgSprite(32, 32, "assets/graphical/menu/genericAvatar.png");
@@ -185,11 +187,11 @@ void MainMenu::update(Events::updateEvent event)
 	// it sucks
 	// parallax though
 	int mx, my;
-	SDL_GetMouseState(&mx, &my);
+	Game::GetMousePos(&mx, &my);
 	float mPercX = ((float)mx / (float)(Game::gameWidth / 2));
 	float mPercY = ((float)my / (float)(Game::gameHeight / 2));
-	bg->setX(-(1.32 * mPercX));
-	bg->setY(-(1.32 * mPercY));
+	bg->setX(-4 - (-(1.5 * mPercX)));
+	bg->setY(-4 - (-(1.5 * mPercY)));
 
 
 	if (!Multiplayer::loggedIn && !started)

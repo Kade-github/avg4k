@@ -12,6 +12,9 @@ using namespace std;
 
 mutex pog;
 
+float Game::multiplierx = 1;
+float Game::multipliery = 1;
+
 bool printPackets_DB = false;
 bool Game::gameplayEvents_DB = false;
 
@@ -69,6 +72,13 @@ bool Game::startConnect = false;
 bool transCompleted = false;
 
 HANDLE multiThreadHandle;
+
+void Game::GetMousePos(int* mx, int* my)
+{
+	SDL_GetMouseState(mx, my);
+	(*mx) *= multiplierx;
+	(*my) *= multipliery;
+}
 
 void Game::db_addLine(std::string s) {
 	consoleLog->setText(consoleLog->text + s + "\n");
@@ -441,29 +451,35 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 	{
 		fullscreen = !fullscreen;
 
+		auto w = 0;
+		auto h = 0;
+
 		if (fullscreen)
 		{
-			int idx = SDL_GetWindowDisplayIndex(Game::window);
-			SDL_Rect bounds;
-			SDL_GetDisplayBounds(idx, &bounds);
-			SDL_SetWindowBordered(Game::window, SDL_FALSE);
-			SDL_SetWindowPosition(Game::window, bounds.x, bounds.y);
-			SDL_SetWindowSize(Game::window, bounds.w, bounds.h);
-
-			mainCamera->w = bounds.w;
-			mainCamera->h = bounds.h;
+			SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+			SDL_DisplayMode DM;
+			SDL_GetCurrentDisplayMode(0, &DM);
+			w = DM.w;
+			h = DM.h;
 		}
 		else
 		{
-			int idx = SDL_GetWindowDisplayIndex(Game::window);
-			SDL_Rect bounds;
-			SDL_GetDisplayBounds(idx, &bounds);
-			SDL_SetWindowBordered(Game::window, SDL_TRUE);
-			SDL_SetWindowPosition(Game::window, bounds.w / 2, bounds.h / 2);
-			SDL_SetWindowSize(Game::window, 1280, 720);
-			mainCamera->w = 1280;
-			mainCamera->h = 720;
+			SDL_SetWindowFullscreen(Game::window, 0);
+			w = 1280;
+			h = 720;
 		}
+
+		std::cout << "bruh " << w << " " << h << std::endl;
+
+		multiplierx = (float)1280 / (float)w;
+		multipliery = (float)720 / (float)h;
+
+		std::cout << "FULLSCREEN MULTIPLIERS: " << multiplierx << " " << multipliery << std::endl;
+
+		__transRect->w = w;
+		__transRect->h = h;
+		mainCamera->w = w;
+		mainCamera->h = h;
 	}
 
 	if (ev.keysym.sym == SDLK_F11)

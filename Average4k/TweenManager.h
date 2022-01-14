@@ -179,7 +179,7 @@ namespace Tweening
 
 		void draw() {
 			int mx, my;
-			SDL_GetMouseState(&mx, &my);
+			Game::GetMousePos(&mx, &my);
 
 			if (!mouse)
 			{

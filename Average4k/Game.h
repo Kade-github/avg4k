@@ -13,12 +13,17 @@ class Game
 public:
 	void createGame();
 
+	static float multiplierx;
+	static float multipliery;
+
 	Menu* menuToDelete;
 
 	bool transitioning;
 
 	static bool startConnect;
 	static Menu* toGoTo;
+
+	static void GetMousePos(int* mx, int* my);
 
 	void mouseButtonDown();
 	void update(Events::updateEvent updateEvent);

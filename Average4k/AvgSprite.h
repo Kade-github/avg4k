@@ -7,8 +7,6 @@ class AvgSprite : public Object
 public:
 	SDL_Texture* tex;
 
-	int w = 0;
-	int h = 0;
 	int borderSize = 4;
 	Color borderColor;
 	bool border = false;
@@ -43,10 +41,12 @@ public:
 	virtual void draw() {
 		SDL_FRect rect;
 
-		rect.x = x;
-		rect.y = y;
-		rect.w = w;
-		rect.h = h;
+		float mpx = (w * (1 - scale)) / 2;
+		float mpy = (h * (1 - scale)) / 2;
+		rect.x = x + mpx;
+		rect.y = y + mpy;
+		rect.w = w * scale;
+		rect.h = h * scale;
 
 		if (clipRect.x != 0 || clipRect.y != 0)
 			SDL_RenderSetClipRect(Game::renderer, &clipRect);

@@ -11,6 +11,7 @@
 #include "Judge.h"
 #include <algorithm>
 #include "bass_fx.h"
+#include "SoundManager.h"
 #include <SDL_image.h>
 #include "ReceptorObject.h"
 struct gameplayControl {
@@ -55,7 +56,7 @@ class Gameplay :
 		std::vector<float> clapped;
 
 		bool keys[4];
-
+		bool holding[4];
 		float startTime = 0;
 
 		int combo = 0;
@@ -91,12 +92,12 @@ class Gameplay :
 
 		bool downscroll;
 
+
+
 		void cleanUp();
-
-		unsigned long channel;
-		unsigned long tempostream;
-
-		unsigned long clap;
+		
+		Channel* song;
+		Channel* clap;
 
 		static noteskin_asset* noteskin;
 

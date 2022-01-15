@@ -357,7 +357,6 @@ void SongSelect::keyDown(SDL_KeyboardEvent event)
 			{
 				Game::instance->transitionToMenu(new MainMenu());
 			}
-			delete currentChart;
 			free(selectedSong);
 			break;
 		}
@@ -502,6 +501,18 @@ void SongSelect::switchChart(song s)
 	if (s.steam)
 		selectedSong->steamHandle = listOfCharts[selectedIndex].steamHandle;
 	selectedSong->type = listOfCharts[selectedIndex].type;
-
+	std::string path = currentChart->meta.folder + "/" + currentChart->meta.audio;
+	std::cout << "playing " << path << std::endl;
+	if (songPrev != NULL)
+	{
+		songPrev->stop();
+		songPrev->free();
+		SoundManager::removeChannel("prevSong");
+	}
+	if (SoundManager::getChannelByName("prevSong") == NULL)
+		songPrev = SoundManager::createChannel(path, "prevSong");
+	else
+		songPrev = SoundManager::getChannelByName("prevSong");
+	songPrev->play();
 	std::cout << "took " << (SDL_GetTicks() - time) << "ms for " << s.type << std::endl;
 }

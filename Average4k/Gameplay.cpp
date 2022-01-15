@@ -176,6 +176,14 @@ Gameplay::Gameplay()
 
 	avatars.clear();
 
+	if (SoundManager::getChannelByName("prevSong") != NULL)
+	{
+		Channel* c = SoundManager::getChannelByName("prevSong");
+		c->stop();
+		c->free();
+		SoundManager::removeChannel("prevSong");
+	}
+
 	downscroll = Game::save->GetBool("downscroll");
 
 	Judge::initJudge();
@@ -201,17 +209,12 @@ Gameplay::Gameplay()
 
 	std::cout << "playing " << path << std::endl;
 
-	channel = BASS_StreamCreateFile(false, path.c_str(), 0, 0, BASS_STREAM_DECODE);
+	song = SoundManager::createChannel(path.c_str(), "gameplaySong");
+	clap = SoundManager::createChannel("assets/sounds/hitSound.mp3", "clapFx");
 
-	clap = BASS_StreamCreateFile(false, "assets/sounds/hitSound.mp3", 0, 0, NULL);
+	song->createFXStream();
 
-	tempostream = BASS_FX_TempoCreate(channel, BASS_FX_FREESOURCE);
-
-	BASS_ChannelSetAttribute(tempostream, BASS_ATTRIB_TEMPO, bassRate);
-
-	QWORD word = BASS_ChannelGetLength(tempostream, BASS_POS_BYTE);
-
-	songLength = BASS_ChannelBytes2Seconds(tempostream, word);
+	songLength = song->length;
 
 	int diff = SongSelect::selectedDiffIndex;
 
@@ -254,8 +257,6 @@ Gameplay::Gameplay()
 		colTexture.push_back(SDL_CreateTexture(Game::renderer, SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_TARGET,64 * Game::save->GetDouble("Note Size"), 720));
 	}
 
-	BASS_ChannelPlay(tempostream, false);
-	BASS_ChannelStop(tempostream);
 	positionInSong = -1500;
 	MUTATE_END
 }
@@ -276,16 +277,14 @@ void Gameplay::update(Events::updateEvent event)
 	{
 		if (!play)
 		{
-			auto stuff = BASS_ChannelSeconds2Bytes(tempostream, startTime);
-			std::cout << "offset time: " << stuff << " = " << startTime << std::endl;
-			BASS_ChannelSetPosition(tempostream, stuff, BASS_POS_BYTE);
-			BASS_ChannelSetAttribute(tempostream, BASS_ATTRIB_VOL, 0.6);
-			BASS_ChannelPlay(tempostream, false);
+			song->setPos(0);
+			song->setVolume(0.6);
+			song->play();
 			play = true;
 			lastBPM = 0;
 		}
 
-		positionInSong = (BASS_ChannelBytes2Seconds(tempostream, BASS_ChannelGetPosition(tempostream, BASS_POS_BYTE)) * 1000);
+		positionInSong = song->getPos();
 	}
 	else
 		positionInSong += Game::deltaTime;
@@ -324,10 +323,10 @@ void Gameplay::update(Events::updateEvent event)
 
 	curSeg = SongSelect::currentChart->getSegmentFromTime(positionInSong - Game::save->GetDouble("offset"));
 	beat = SongSelect::currentChart->getBeatFromTimeOffset(positionInSong - Game::save->GetDouble("offset"), curSeg);
-
 	if (lastBPM != curSeg.bpm && Game::gameplayEvents_DB)
 	{
 		Game::instance->db_addLine("bpm change to " + std::to_string(curSeg.bpm));
+		song->bpm = curSeg.bpm;
 		lastBPM = curSeg.bpm;
 	}
 
@@ -541,7 +540,7 @@ void Gameplay::update(Events::updateEvent event)
 	}
 	else
 	{
-		if (!ended && spawnedNotes.size() == 0 && positionInSong > (songLength * 1000) - 450)
+		if (!ended && spawnedNotes.size() == 0 && positionInSong > (songLength * 1000) - 1000)
 		{
 			ended = true;
 			if (!MultiplayerLobby::inLobby)
@@ -566,6 +565,24 @@ void Gameplay::update(Events::updateEvent event)
 	}
 	// ok lets draw all of them now
 
+	for (int i = 0; i < receptors.size(); i++)
+	{
+		if (keys[i] || holding[i])
+		{
+			receptors[i]->light();
+			receptors[i]->scale = 0.85;
+		}
+		else
+		{
+			if (receptors[i]->scale < 1.0)
+			{
+				receptors[i]->scale += Game::deltaTime * 0.04;
+				if (receptors[i]->scale > 1.0)
+					receptors[i]->scale = 1;
+			}
+		}
+	}
+
 	{
 		for (int i = 0; i < spawnedNotes.size(); i++)
 		{
@@ -580,7 +597,7 @@ void Gameplay::update(Events::updateEvent event)
 					if (Game::save->GetBool("hitsounds") && !note->clapped)
 					{
 						note->clapped = true;
-						BASS_ChannelPlay(clap, true);
+						clap->play();
 					}
 					if (botplay && note->active)
 					{
@@ -614,7 +631,7 @@ void Gameplay::update(Events::updateEvent event)
 
 				if (note->type == Note_Head)
 				{
-					if (keys[note->lane] || botplay) // holding that lane!
+					if (holding[note->lane] || botplay) // holding that lane!
 					{
 						for (int i = 0; i < note->heldTilings.size(); i++)
 						{
@@ -641,8 +658,8 @@ void Gameplay::update(Events::updateEvent event)
 				if (note->lane < 4 && note->lane >= 0)
 				{
 					SDL_FRect receptorRect;
-					receptorRect.w = 64 * Game::save->GetDouble("Note Size");
-					receptorRect.h = 64 * Game::save->GetDouble("Note Size");
+					receptorRect.w = receptors[note->lane]->w;
+					receptorRect.h = receptors[note->lane]->h;
 					receptorRect.x = receptors[note->lane]->x;
 					receptorRect.y = receptors[note->lane]->y;
 					note->debug = debug;
@@ -721,12 +738,6 @@ void Gameplay::update(Events::updateEvent event)
 			}
 		}
 	}
-
-	for (int i = 0; i < receptors.size(); i++)
-	{
-		if (keys[i])
-			receptors[i]->light();
-	}
 	MUTATE_END
 }
 void Gameplay::cleanUp()
@@ -745,10 +756,13 @@ void Gameplay::cleanUp()
 		SDL_DestroyTexture(avatars[k]);
 	}
 
-	BASS_ChannelFree(channel);
-	BASS_ChannelStop(tempostream);
-	BASS_ChannelFree(tempostream);
-	BASS_ChannelFree(clap);
+	song->free();
+	clap->free();
+
+	SoundManager::removeChannel("gameplaySong");
+	SoundManager::removeChannel("clapFx");
+
+	
 	if (background)
 		SDL_DestroyTexture(background);
 }
@@ -798,11 +812,6 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 		if (control.code == event.keysym.sym)
 		{
-			if (!keys[control.lane])
-				keys[control.lane] = true;
-			else
-				return;
-
 			// note lol
 
 			NoteObject* closestObject = nullptr;
@@ -823,6 +832,18 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 					currentDiff = diff;
 				}
 			}
+
+			if (!keys[control.lane])
+			{
+				keys[control.lane] = true;
+				if (closestObject)
+					if (closestObject->holdsActive > 0)
+						holding[control.lane] = true;
+
+			}
+			else
+				continue;
+
 
 			if (!closestObject)
 				continue;
@@ -928,6 +949,7 @@ void Gameplay::keyUp(SDL_KeyboardEvent ev)
 		if (control.code == ev.keysym.sym)
 		{
 			keys[control.lane] = false;
+			holding[control.lane] = false;
 		}
 	}
 }

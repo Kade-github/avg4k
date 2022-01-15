@@ -91,6 +91,9 @@
     <Filter Include="Source Files\Average4k\Screens\Menus\CreatingShit">
       <UniqueIdentifier>{631c23dd-33ca-4ce2-8468-9b13b08da477}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Average4k\Sound">
+      <UniqueIdentifier>{55a80bb6-cf7a-467d-91c0-a285bc8abe7a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Average4k.cpp">
@@ -170,6 +173,9 @@
     </ClCompile>
     <ClCompile Include="SDL2_gfxPrimitives.c">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundManager.cpp">
+      <Filter>Source Files\Average4k\Sound</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -367,6 +373,9 @@
     </ClInclude>
     <ClInclude Include="AvgButton.h">
       <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundManager.h">
+      <Filter>Source Files\Average4k\Sound</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

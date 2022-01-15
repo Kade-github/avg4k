@@ -7,13 +7,17 @@
 #include "SongSelect.h"
 #include "AvgSprite.h"
 #include "TweenManager.h"
+#include "SoundManager.h"
 
 class MainMenu :
     public Menu
 {
 	public:
 		static bool tweened;
+		float lastBop = 0;
+		bool tweenDone = false;
 		bool started = false;
+		float lastBeat = 0;
 		AvgSprite* thing;
 		AvgSprite* icon;
 		AvgSprite* bg;

@@ -38,9 +38,13 @@ public:
 
 	float alpha = 255;
 	float x = 0;
+	float scale = 1.0;
+	int w = 0;
 	float y = 0;
-	virtual int* getW(int* defaultW);
-	virtual int* getH(int* defaultH);
+	int h = 0;
+
+	float offsetX = 0;
+	float offsetY = 0;
 
 	bool isLocal = false;
 

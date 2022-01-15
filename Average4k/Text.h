@@ -24,6 +24,7 @@ public:
 		this->rH = h;
 		size = _size;
 		border = true;
+		scale = 1;
 
 		color = { 255,255,255 };
 		
@@ -46,7 +47,6 @@ public:
 
 	SDL_Texture* outline;
 	SDL_Texture* message;
-	SDL_FRect message_Rect;
 
 	std::string text;
 	int w;

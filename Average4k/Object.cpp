@@ -37,20 +37,3 @@ void Object::die()
 	if (isCreated)
 		Game::removeGlobalObject(this);
 }
-
-
-int* Object::getW(int* defaultW)
-{
-	static int* w;
-	if (!w)
-		w = defaultW;
-	return w;
-}
-
-int* Object::getH(int* defaultH)
-{
-	static int* h;
-	if (!h)
-		h = defaultH;
-	return h;
-}

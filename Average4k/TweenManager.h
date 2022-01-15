@@ -12,6 +12,7 @@ namespace Tweening
 		tt_X = 1, // just x tween
 		tt_Y = 2, // just y tween
 		tt_butFill = 3,
+		tt_scale = 4,
 	};
 
 	struct Tween {
@@ -47,6 +48,7 @@ namespace Tweening
 				Tween& t = activeTweens[i];
 				if (t.name == identity && !t.call)
 				{
+					std::cout << "remove tween cuz its already goin on" << std::endl;
 					switch (t.type)
 					{
 					case tt_Alpha:
@@ -57,6 +59,9 @@ namespace Tweening
 						break;
 					case tt_Y:
 						t.obj->setY(t.end);
+						break;
+					case tt_scale:
+						t.obj->scale = t.end;
 						break;
 					case tt_butFill:
 						AvgButton* but = (AvgButton*)t.obj;
@@ -92,6 +97,12 @@ namespace Tweening
 			tw.time = 0;
 			tw.percnt = 0;
 
+			if (tw.type == tt_scale)
+			{
+				tw.vars["w"] = tw.obj->w;
+				tw.vars["h"] = tw.obj->h;
+			}
+
 			activeTweens.push_back(tw);
 			return tw;
 		}
@@ -114,6 +125,10 @@ namespace Tweening
 				break;
 			case tt_Y:
 				t.obj->setY(start + ((end - start) * value));
+				break;
+			case tt_scale:
+				t.obj->scale = start + ((end - start) * value);
+				std::cout << t.obj->scale << std::endl;
 				break;
 			case tt_butFill:
 				AvgButton* but = (AvgButton*)t.obj;
@@ -223,10 +238,19 @@ namespace Tweening
 
 			SDL_FRect rect;
 
-			rect.x = x;
-			rect.y = y;
-			rect.w = w;
-			rect.h = h;
+
+			float mpx = (w * (1 - scale)) / 2;
+			float mpy = (h * (1 - scale)) / 2;
+
+			float scaledX = x + mpx;
+			float scaledY = y + mpy;
+			float scaledWidth = w * scale;
+			float scaledHeight = h * scale;
+
+			rect.x = scaledX;
+			rect.y = scaledY;
+			rect.w = scaledWidth;
+			rect.h = scaledHeight;
 
 			if (text->text != "")
 			{
@@ -235,13 +259,13 @@ namespace Tweening
 					text->color = fontColor;
 					text->setText(text->text);
 				}
-				text->setX((x + (w / 2)) - (text->surfW / 2));
-				text->setY(y + (text->surfH / 2));
+				text->setX((scaledX + (scaledWidth / 2)) - (text->surfW / 2));
+				text->setY(scaledY + (text->surfH / 2));
 				text->alpha = alpha;
 			}
 
-			int r = roundedBoxRGBA(Game::renderer, (x + w), y, x, (y + h), 4, fillColor.r, fillColor.g, fillColor.b, alpha);
-			int rr = roundedRectangleRGBA(Game::renderer, (x + w), y, x, (y + h), 4, borderColor.r, borderColor.g, borderColor.b, alpha, borderSize);
+			int r = roundedBoxRGBA(Game::renderer, (scaledX + scaledWidth), scaledY, scaledX, (scaledY + scaledHeight), 4, fillColor.r, fillColor.g, fillColor.b, alpha);
+			int rr = roundedRectangleRGBA(Game::renderer, (scaledX + scaledWidth), scaledY, scaledX, (scaledY + scaledHeight), 4, borderColor.r, borderColor.g, borderColor.b, alpha, borderSize);
 		}
 	};
 }

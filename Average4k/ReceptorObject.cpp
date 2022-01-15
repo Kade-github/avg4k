@@ -6,10 +6,16 @@ void ReceptorObject::draw() {
 
 	SDL_FRect rect;
 
-	rect.w = (64 * Game::save->GetDouble("Note Size"));
-	rect.h = (64 * Game::save->GetDouble("Note Size"));
-	rect.x = x;
-	rect.y = y;
+	float mpx = (w * (1 - scale)) / 2;
+	float mpy = (h * (1 - scale)) / 2;
+
+	float scaledWidth = w * scale;
+	float scaledHeight = h * scale;
+
+	rect.w = scaledWidth;
+	rect.h = scaledHeight;
+	rect.x = x + mpx;
+	rect.y = y + mpy;
 
 	if (Gameplay::noteskin->rotate)
 	{

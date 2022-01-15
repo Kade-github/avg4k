@@ -100,6 +100,7 @@ void callback()
 	Tweening::TweenManager::createNewTween("hello", instance->hello, Tweening::tt_Alpha, 600, 0, 255, NULL, Easing::EaseInSine);
 	Tweening::TweenManager::createNewTween("bottom", instance->bottom, Tweening::tt_Alpha, 600, 0, 255, NULL, Easing::EaseInSine);
 	int index = 0;
+	instance->tweenDone = true;
 	for (Tweening::AvgButtonTweenable* b : instance->buttons)
 	{
 		b->alpha = 0;
@@ -130,7 +131,6 @@ MainMenu::MainMenu()
 	thing->alpha = 0;
 	thing->create();
 	add(thing);
-
 	
 	SDL_Rect clip;
 	clip.x = 34;
@@ -183,6 +183,13 @@ void MainMenu::onSteam(std::string s)
 {
 }
 
+void call() {
+	MainMenu* instance = (MainMenu*)Game::currentMenu;
+	Channel* ch = SoundManager::getChannelByName("prevSong");
+	Tweening::TweenManager::createNewTween("thingBeat",instance->thing, Tweening::tt_scale, 19750 / ch->bpm, 1.1, 1, NULL, Easing::EaseInSine);
+}
+
+
 void MainMenu::update(Events::updateEvent event)
 {
 	MUTATE_START
@@ -196,6 +203,24 @@ void MainMenu::update(Events::updateEvent event)
 	bg->setX(-4 - (-(1.5 * mPercX)));
 	bg->setY(-4 - (-(1.5 * mPercY)));
 
+	if (SoundManager::getChannelByName("prevSong") != NULL)
+	{
+		if (tweenDone)
+		{
+			Channel* ch = SoundManager::getChannelByName("prevSong");
+			bpmSegment seg = ch->getBPMSegmentFromChart(SongSelect::currentChart);
+			ch->bpm = seg.bpm;
+			float beat = SongSelect::currentChart->getBeatFromTime(ch->getPos(), seg);
+			if (beat >= lastBeat + 1)
+			{
+				lastBeat = beat;
+				thing->scale = 1.1;
+			}
+			
+			if (thing->scale > 1.0)
+				thing->scale -= (Game::deltaTime * ((ch->bpm / 60) / 1000)) * 0.3;
+		}
+	}
 
 	if (!Multiplayer::loggedIn && !started)
 		tweened = false;

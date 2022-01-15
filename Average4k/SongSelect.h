@@ -5,6 +5,7 @@
 #include "Menu.h"
 #include "Chart.h"
 #include "Game.h"
+#include "SoundManager.h"
 #include "Text.h"
 
 
@@ -33,6 +34,8 @@ public:
 	bool allowMove = true;
 
     static Chart* currentChart;
+
+	Channel* songPrev;
 
 	Text* infoText;
 	Text* steam;

@@ -16,7 +16,10 @@ public:
 		// this does the same thing but im lazy and too lazy to check
 		setX(_x);
 		setY(_y);
+		w = (64 * Game::save->GetDouble("Note Size"));
+		h = (64 * Game::save->GetDouble("Note Size"));
 		type = _type;
+		scale = 1;
 	}
 
 	void light()

@@ -3,7 +3,7 @@
 void Text::setText(std::string temp)
 {
 	this->text = temp;
-	if (temp == "")
+	if (temp == "" || Arial == NULL)
 		return;
 	//std::cout << TTF_FontFaceFamilyName(Arial) << std::endl;
 
@@ -37,16 +37,17 @@ void Text::setText(std::string temp)
 }
 void Text::draw()
 {
+	SDL_FRect message_Rect;
 	message_Rect.x = x;
 	message_Rect.y = y;
-	message_Rect.w = rW + addW;
-	message_Rect.h = rH + addH;
+	message_Rect.w = rW * scale;
+	message_Rect.h = rH * scale;
 
 	SDL_FRect rect;
 	rect.x = message_Rect.x - (size / 8);
 	rect.y = message_Rect.y;
-	rect.w = rW;
-	rect.h = rH;
+	rect.w = rW * scale;
+	rect.h = rH * scale;
 	
 	SDL_SetTextureAlphaMod(message, alpha);
 	if (border)
@@ -66,10 +67,11 @@ void Text::setFont(std::string name)
 
 void Text::forceDraw()
 {
+	SDL_FRect message_Rect;
 	message_Rect.x = x;
 	message_Rect.y = y;
-	message_Rect.w = rW;
-	message_Rect.h = rH;
+	message_Rect.w = rW * scale;
+	message_Rect.h = rH * scale;
 
 	SDL_RenderCopyF(Game::renderer, message, NULL, &message_Rect);
 }

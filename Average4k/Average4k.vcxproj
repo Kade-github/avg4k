@@ -205,6 +205,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="SettingsMenu.cpp" />
     <ClCompile Include="SMFile.cpp" />
     <ClCompile Include="SongSelect.cpp" />
+    <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="Steam.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="TweenManager.cpp" />
@@ -258,6 +259,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="SettingsMenu.h" />
     <ClInclude Include="SMFile.h" />
     <ClInclude Include="SongSelect.h" />
+    <ClInclude Include="SoundManager.h" />
     <ClInclude Include="SPacketAvatarRequestResponse.h" />
     <ClInclude Include="SPacketFinalizeChart.h" />
     <ClInclude Include="SPacketHello.h" />

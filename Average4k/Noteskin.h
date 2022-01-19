@@ -1,17 +1,18 @@
 #pragma once
 #include "includes.h"
+#include "Texture.h"
 
 struct noteskin_asset {
-	SDL_Texture* fourth;
-	SDL_Texture* eighth;
-	SDL_Texture* twelfth;
-	SDL_Texture* sixteenth;
-	SDL_Texture* thirty2nd; // how do you actually write this??
-	SDL_Texture* none;
-	SDL_Texture* hold;
-	SDL_Texture* receptor;
-	SDL_Texture* holdend;
-	SDL_Texture* light;
+	Texture* fourth;
+	Texture* eighth;
+	Texture* twelfth;
+	Texture* sixteenth;
+	Texture* thirty2nd; // how do you actually write this??
+	Texture* none;
+	Texture* hold;
+	Texture* receptor;
+	Texture* holdend;
+	Texture* light;
 	bool rotate;
 };
 

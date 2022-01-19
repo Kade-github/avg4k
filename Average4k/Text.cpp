@@ -2,61 +2,65 @@
 
 void Text::setText(std::string temp)
 {
-	this->text = temp;
-	if (temp == "" || Arial == NULL)
+	if (temp.size() == 0 || temp == " " || Arial == NULL)
 		return;
-	//std::cout << TTF_FontFaceFamilyName(Arial) << std::endl;
 
-	//SDL_Surface* screen = SDL_GetWindowSurface(Game::window);
+	text = temp;
 
-	if (message != nullptr)
-		SDL_DestroyTexture(message);
-	if (outline != nullptr)
-		SDL_DestroyTexture(outline);
+	const char* c = text.c_str();
 
 	SDL_Surface* surfaceMessage =
-		TTF_RenderUTF8_Blended_Wrapped(Arial, text.c_str(), { color.r, color.g,color.b }, Game::gameWidth);
-	SDL_Surface* outlineMsg =
-		TTF_RenderUTF8_Blended_Wrapped(Arial, text.c_str(), { 0,0,0 }, Game::gameWidth);
-
-
-	if (surfaceMessage != nullptr && outlineMsg != nullptr)
+		TTF_RenderUTF8_Blended_Wrapped(Arial, c, { 255, 255,255 }, Game::gameWidth);
+	if (surfaceMessage != nullptr)
 	{
+		if (message)
+			delete message;
 
-		surfW = surfaceMessage->w;
-		surfH = surfaceMessage->h;
-
-		outline = SDL_CreateTextureFromSurface(Game::renderer, outlineMsg);
-		message = SDL_CreateTextureFromSurface(Game::renderer, surfaceMessage);
-
-		SDL_QueryTexture(message, NULL, NULL, &rW, &rH);
-
-		SDL_FreeSurface(outlineMsg);
-		SDL_FreeSurface(surfaceMessage);
+		message = Texture::createFromSurface(surfaceMessage, true);
+		w = message->width;
+		h = message->height;
+		surfW = message->width;
+		surfH = message->height;
 	}
 }
 void Text::draw()
 {
-	SDL_FRect message_Rect;
-	message_Rect.x = x;
-	message_Rect.y = y;
-	message_Rect.w = rW * scale;
-	message_Rect.h = rH * scale;
+	if (text.size() == 0 || text == " ")
+		return;
+	Rect dstRect;
+	Rect srcRect;
 
-	SDL_FRect rect;
-	rect.x = message_Rect.x - (size / 8);
-	rect.y = message_Rect.y;
-	rect.w = rW * scale;
-	rect.h = rH * scale;
-	
-	SDL_SetTextureAlphaMod(message, alpha);
+	srcRect.x = 0;
+	srcRect.y = 0;
+	srcRect.w = 1;
+	srcRect.h = 1;
+
 	if (border)
 	{
-		SDL_SetTextureAlphaMod(outline, alpha);
-		SDL_RenderCopyF(Game::renderer, outline, NULL, &rect);
+		dstRect.x = x - 1;
+		dstRect.y = y;
+
+		dstRect.w = w * scale;
+		dstRect.h = h * scale;
+		dstRect.r = 0;
+		dstRect.g = 0;
+		dstRect.b = 0;
+		dstRect.a = alpha;
+		Rendering::PushQuad(&dstRect, &srcRect, message, GL::genShader);
 	}
 
-	SDL_RenderCopyF(Game::renderer, message, NULL, &message_Rect);
+	dstRect.x = x;
+	dstRect.y = y;
+
+	dstRect.w = w * scale;
+	dstRect.h = h * scale;
+	dstRect.r = color.r;
+	dstRect.g = color.g;
+	dstRect.b = color.b;
+	dstRect.a = alpha;
+
+
+	Rendering::PushQuad(&dstRect, &srcRect, message, GL::genShader);
 }
 
 void Text::setFont(std::string name)
@@ -67,13 +71,6 @@ void Text::setFont(std::string name)
 
 void Text::forceDraw()
 {
-	SDL_FRect message_Rect;
-	message_Rect.x = x;
-	message_Rect.y = y;
-	message_Rect.w = rW * scale;
-	message_Rect.h = rH * scale;
-
-	SDL_RenderCopyF(Game::renderer, message, NULL, &message_Rect);
 }
 
 void Text::die()
@@ -81,8 +78,9 @@ void Text::die()
 	if (!this)
 		return;
 	isDead = true;
-	SDL_DestroyTexture(outline);
-	SDL_DestroyTexture(message);
+	if (message)
+		if (message->width > 0 && message->height > 0)
+			delete message;
 	if (isCreated)
 		Game::removeGlobalObject(this);
 }

@@ -15,7 +15,7 @@ void MultiplayerLobby::refreshLobby(lobby l)
 	for (person p : people)
 	{
 		removeObj(p.display);
-		SDL_DestroyTexture(p.avatar);
+		delete p.avatar;
 	}
 
 	people.clear();
@@ -26,12 +26,14 @@ void MultiplayerLobby::refreshLobby(lobby l)
 		person per;
 		per.display = new Text(82, 192 + (46 * i), p.Name, 24, "NotoSans-Regular");
 		per.display->create();
-		SDL_Texture* t = Steam::getAvatar(p.AvatarURL.c_str());
+		Texture* t = Steam::getAvatar(p.AvatarURL.c_str());
+		AvgSprite* spr = new AvgSprite(0, 0, t);
 		if (t)
-			per.avatar = t;
+			per.avatar = spr;
 		else
 			per.avatar = NULL;
 		add(per.display);
+		add(spr);
 		people.push_back(per);
 	}
 
@@ -194,9 +196,11 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		Game::instance->transitionToMenu(new Gameplay());
 		SongSelect::currentChart = Game::steam->downloadedChart;
 
+
 		for (person p : people)
 		{
-			SDL_DestroyTexture(p.avatar);
+			removeObj(p.display);
+			delete p.avatar;
 		}
 
 		people.clear();
@@ -210,11 +214,22 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted, bool backFromSelect = false)
 {
 	VM_START
-	AvgSprite* sprite = new AvgSprite(0, 0, "assets/graphical/menu/bg.png");
-	sprite->create();
-	add(sprite);
+	waitingForStart = backFromSelect && hosted;
 	isHost = hosted;
-	helpDisplay = new Text(24, 100, "Lobby: " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ")", 24, "NotoSans-Regular");
+	CurrentLobby = l;
+	VM_END
+}
+
+void MultiplayerLobby::create() {
+	addCamera(Game::mainCamera);
+
+	AvgSprite* sprite = new AvgSprite(0, 0, "assets/graphical/menu/mm/bg.png");
+	add(sprite);
+	AvgRect* rect = new AvgRect(0, 0, 1280, 720);
+	rect->alpha = 0.3;
+	add(rect);
+
+	helpDisplay = new Text(24, 100, "Lobby: " + CurrentLobby.LobbyName + " (" + std::to_string(CurrentLobby.Players) + "/" + std::to_string(CurrentLobby.MaxPlayers) + ")", 24, "NotoSans-Regular");
 	helpDisplay->create();
 	add(helpDisplay);
 
@@ -227,7 +242,7 @@ MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted, bool backFromSelect = f
 	warningDisplay->create();
 	add(warningDisplay);
 
-	refreshLobby(l);
+
 
 	CPacketWtfAmIn fuck;
 	fuck.Order = 0;
@@ -235,12 +250,12 @@ MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted, bool backFromSelect = f
 
 	Multiplayer::sendMessage<CPacketWtfAmIn>(fuck);
 
-	waitingForStart = backFromSelect && hosted;
+	refreshLobby(CurrentLobby);
 
 	if (waitingForStart)
 	{
 		CPacketHostChangeChart chart;
-		chart.chartID = (uint64_t) SongSelect::selectedSong->steamHandle;
+		chart.chartID = (uint64_t)SongSelect::selectedSong->steamHandle;
 		std::cout << "telling the server to start " << SongSelect::selectedSong->steamHandle << std::endl;
 		chart.diff = SongSelect::selectedDiffIndex;
 		chart.Order = 0;
@@ -253,7 +268,6 @@ MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted, bool backFromSelect = f
 
 		Multiplayer::sendMessage<CPacketClientChartAcquired>(acquired);
 	}
-	VM_END
 }
 
 void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
@@ -270,9 +284,11 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 			Multiplayer::sendMessage<CPacketLeave>(leave);
 
 			Game::instance->transitionToMenu(new MultiplayerLobbies());
+
 			for (person p : people)
 			{
-				SDL_DestroyTexture(p.avatar);
+				removeObj(p.display);
+				delete p.avatar;
 			}
 			people.clear();
 			inLobby = false;
@@ -293,9 +309,11 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 
 				Game::instance->transitionToMenu(new SongSelect());
 
+
 				for (person p : people)
 				{
-					SDL_DestroyTexture(p.avatar);
+					removeObj(p.display);
+					delete p.avatar;
 				}
 
 				people.clear();
@@ -307,9 +325,11 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 				return;
 			Game::instance->transitionToMenu(new SongSelect());
 
+
 			for (person p : people)
 			{
-				SDL_DestroyTexture(p.avatar);
+				removeObj(p.display);
+				delete p.avatar;
 			}
 
 			people.clear();
@@ -327,23 +347,13 @@ void MultiplayerLobby::update(Events::updateEvent event)
 void MultiplayerLobby::postUpdate(Events::updateEvent event)
 {
 	MUTATE_START
-	for (person p : people)
+	for (person& p : people)
 	{
-		SDL_FRect avat;
-		avat.x = p.display->x - 58;
-		avat.y = p.display->y - 8;
-		avat.w = 46;
-		avat.h = 46;
-
-		SDL_SetTextureAlphaMod(p.avatar, 255);
-
-		SDL_RenderCopyF(Game::renderer, p.avatar, NULL, &avat);
-
-		SDL_SetRenderDrawColor(Game::renderer, 255, 255, 255, 255);
-
-		SDL_RenderDrawRectF(Game::renderer, &avat);
-
-		SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
+		AvgSprite* spr = p.avatar;
+		spr->x = p.display->x - 58;
+		spr->y = p.display->y - 8;
+		spr->w = 46;
+		spr->h = 46;
 	}
 	MUTATE_END
 }

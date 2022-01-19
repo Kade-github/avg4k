@@ -7,6 +7,8 @@
 #include "Game.h"
 #include "SoundManager.h"
 #include "Text.h"
+#include "AvgSprite.h"
+#include "AvgRect.h"
 
 
 enum chartType {
@@ -36,6 +38,8 @@ public:
     static Chart* currentChart;
 
 	Channel* songPrev;
+
+	AvgRect* bgRect;
 
 	Text* infoText;
 	Text* steam;
@@ -68,6 +72,8 @@ public:
 	Text* songName;
 
 	void switchChart(song s);
+
+	virtual void create();
 
 	int selectedIndex;
 

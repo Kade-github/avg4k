@@ -36,7 +36,9 @@ public:
 		delete obj;
 	}
 
-	float alpha = 255;
+	bool handleDraw = false;
+
+	float alpha = 1;
 	float x = 0;
 	float scale = 1.0;
 	int w = 0;
@@ -58,6 +60,11 @@ public:
 	{
 		for (Object* obj : children)
 			obj->draw();
+	}
+
+	virtual void setAlpha(float _alpha)
+	{
+		alpha = _alpha;
 	}
 
 

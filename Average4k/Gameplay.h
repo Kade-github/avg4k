@@ -22,7 +22,13 @@ struct gameplayControl {
 struct leaderboardSpot {
 	SDL_FRect rect;
 	Text* t;
+	AvgRect* avgRect;
 	PlayerScore score;
+
+	friend bool operator==(const leaderboardSpot& lhs, const leaderboardSpot& rhs)
+	{
+		return lhs.score.SteamID64 == rhs.score.SteamID64;
+	}
 };
 
 class Gameplay :
@@ -37,9 +43,11 @@ class Gameplay :
 
 		std::vector<leaderboardSpot> leaderboard;
 
-		SDL_Texture* background;
+		AvgSprite* background;
 
 		static float rate;
+
+		virtual void create();
 
 		int noteId;
 
@@ -69,7 +77,7 @@ class Gameplay :
 
 		bool debug = false;
 
-		std::vector<SDL_Texture*> colTexture;
+		std::vector<AvgGroup*> colGroups;
 
 		int Marvelous = 0;
 		int Perfect = 0;
@@ -77,6 +85,9 @@ class Gameplay :
 		int Eh = 0;
 		int Yikes = 0;
 		int Misses = 0;
+
+		AvgRect* songPosOutline;
+		AvgRect* songPosBar;
 
 		float heldEnd[4];
 
@@ -88,7 +99,14 @@ class Gameplay :
 
 		Text* Judgement;
 		Text* Combo;
+
 		Text* Accuracy;
+
+		Text* Mrv;
+		Text* Prf;
+		Text* God;
+		Text* Ehh;
+		Text* Yke;
 
 		bool downscroll;
 

@@ -4,7 +4,9 @@
 #include "Chart.h"
 #include "QuaverFile.h"
 #include "SMFile.h"
+#include "stbi.h"
 #include <map>
+
 
 struct steamItem {
 	SteamUGCDetails_t details;
@@ -31,7 +33,7 @@ public:
 
 	std::vector<steamItem> downloadedList;
 	std::vector<steamItem> subscribedList;
-	static SDL_Texture* getAvatar(const char* url);
+	static Texture* getAvatar(const char* url);
 
 	void doesWorkshopItemExist(std::string name);
 

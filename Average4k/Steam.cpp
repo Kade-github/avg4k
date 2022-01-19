@@ -46,7 +46,7 @@ extern "C"
 }
 
 
-SDL_Texture* Steam::getAvatar(const char* url)
+Texture* Steam::getAvatar(const char* url)
 {
 	CURL* curlCtx = curl_easy_init();
 
@@ -71,13 +71,11 @@ SDL_Texture* Steam::getAvatar(const char* url)
 
     std::cout << "downloaded! " << chunk.size << std::endl;
 
-    SDL_RWops* rw = SDL_RWFromConstMem(chunk.memory, chunk.size);
-
     curl_easy_cleanup(curlCtx);
 
     std::cout << "trying to texture bruh" << std::endl;
 
-    SDL_Texture* tex = IMG_LoadTexture_RW(Game::renderer, rw, true);
+    Texture* tex = stbi_h::stbi_load_memory(chunk.memory, chunk.size);
 
     std::cout << "textured " << std::endl;
 
@@ -87,6 +85,8 @@ SDL_Texture* Steam::getAvatar(const char* url)
     free(chunk.memory);
 
     Game::currentMenu->onSteam("profileDownloaded");
+
+
 
     return tex;
 }

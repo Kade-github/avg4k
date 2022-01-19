@@ -1,10 +1,16 @@
 #pragma once
 #include "Object.h"
+#include "GL.h"
 class AvgRect : public Object
 {
 public:
 	int w = 0;
 	int h = 0;
+	bool border = false;
+
+	int thickness = 4;
+
+	Color c;
 
 
 	AvgRect(float _x, float _y, int _w, int _h) : Object(x, y) {
@@ -16,16 +22,24 @@ public:
 
 	void draw() {
 
-		SDL_FRect rect;
-
+		Rect rect;
+		Rect srcRect;
 		rect.x = x;
 		rect.y = y;
 		rect.w = w;
 		rect.h = h;
+		rect.r = c.r;
+		rect.g = c.g;
+		rect.b = c.b;
+		rect.a = alpha;
 
-		SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, alpha);
+		srcRect.x = 0;
+		srcRect.y = 0;
+		srcRect.w = 1;
+		srcRect.h = 1;
 
-		SDL_RenderFillRectF(Game::renderer, &rect);
+		
+		Rendering::PushQuad(&rect, &srcRect, NULL, GL::genShader);
 	}
 };
 

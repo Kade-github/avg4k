@@ -31,7 +31,7 @@ void SettingsMenu::refreshList() {
 
 		bruhhh h;
 
-		Text* t = new Text(0, 100 + (64 * i), set.name + value, 24, "NotoSans-Regular");
+		Text* t = new Text(0, 20 + (64 * i), set.name + value, 24, "NotoSans-Regular");
 		t->setX((Game::gameWidth / 2) - (t->surfW / 2));
 		t->create();
 
@@ -114,9 +114,16 @@ void SettingsMenu::updateText(bruhhh& b)
 
 SettingsMenu::SettingsMenu()
 {
-	AvgSprite* sprite = new AvgSprite(0, 0, "assets/graphical/menu/bg.png");
-	sprite->create();
+
+}
+
+void SettingsMenu::create() {
+	addCamera(Game::mainCamera);
+	AvgSprite* sprite = new AvgSprite(0, 0, "assets/graphical/menu/mm/bg.png");
 	add(sprite);
+	AvgRect* rect = new AvgRect(0, 0, 1280, 720);
+	rect->alpha = 0.3;
+	add(rect);
 	refreshList();
 }
 

@@ -24,9 +24,9 @@ vector<Object*>* objects;
 
 std::vector<Events::packetEvent> packetsToBeHandeld;
 
+AvgCamera* Game::mainCamera = NULL;
 Menu* Game::currentMenu = NULL;
 Menu* Game::toGoTo = NULL;
-Camera* Game::mainCamera = NULL;
 SaveFile* Game::save = NULL;
 Steam* Game::steam = NULL;
 Multiplayer* Game::multi = NULL;
@@ -44,6 +44,7 @@ bool debugConsole;
 Text* debugText;
 Text* consoleLog;
 Text* cmdPrompt;
+Text* fpsText;
 
 map<int, bool> Game::controls = {
 	{SDLK_d, false},
@@ -86,10 +87,18 @@ void Game::db_addLine(std::string s) {
 }
 
 void transCall() {
-	
+	for (Object* obj : Game::mainCamera->children)
+	{
+		if (obj != NULL)
+			if (obj->w >= 0 && obj->h >= 0)
+				delete obj;
+	}
+	Game::mainCamera->children.clear();
 	Game::currentMenu->removeAll();
 	delete Game::currentMenu;
 	Game::currentMenu = Game::toGoTo;
+	Game::currentMenu->create();
+	__transRect->alpha = 0;
 	transCompleted = true;
 }
 
@@ -100,11 +109,16 @@ void Game::transitionToMenu(Menu* m)
 	Tweening::tweenCallback callback = (Tweening::tweenCallback)transCall;
 	transitioning = true;
 	Tweening::TweenManager::activeTweens.clear();
-	Tweening::TweenManager::createNewTween("_trans", __transRect, Tweening::tt_Alpha, 235, 0, 255, callback, Easing::EaseInSine);
+	Tweening::TweenManager::createNewTween("_trans", __transRect, Tweening::tt_Alpha, 235, 0, 1, callback, Easing::EaseInSine);
 }
 
 void Game::switchMenu(Menu* m)
 {
+	for (Object* obj : Game::mainCamera->children)
+	{
+		delete obj;
+	}
+	Game::mainCamera->children.clear();
 	currentMenu->removeAll();
 	delete currentMenu;
 	currentMenu = m;
@@ -118,13 +132,17 @@ void Game::createGame()
 
 	__transRect = new AvgRect(0,0,Game::gameWidth, Game::gameHeight);
 	__transRect->create();
+	__transRect->alpha = 0;
+
+	mainCamera = new AvgCamera(0, 0, 1280, 720);
 
 	// to start
 	currentMenu = new MainMenu();
+	currentMenu->create();
 
-	mainCamera = new Camera(1280, 720);
-	mainCamera->cameraTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, Game::gameWidth, Game::gameHeight);
 	save = new SaveFile();
+
+	fpsText = new Text(0, 0, "FPS: 0", 16, "NotoSans-Regular");
 
 	multi = new Multiplayer();
 	multiThreadHandle = CreateThread(NULL, NULL, Multiplayer::connect, NULL, NULL, NULL);
@@ -156,13 +174,13 @@ void Game::update(Events::updateEvent update)
 		multiThreadHandle = CreateThread(NULL, NULL, Multiplayer::connect, NULL, NULL, NULL);
 	}
 
-	SDL_SetRenderTarget(renderer, NULL);
+	//SDL_SetRenderTarget(renderer, NULL);
 
-	SDL_RenderClear(update.renderer);
+	//SDL_RenderClear(update.renderer);
 
-	SDL_SetRenderTarget(renderer, mainCamera->cameraTexture);
+	//SDL_SetRenderTarget(renderer, mainCamera->cameraTexture);
 
-	SDL_RenderClear(update.renderer);
+	//SDL_RenderClear(update.renderer);
 
 	if (transitioning && transCompleted)
 	{
@@ -171,12 +189,6 @@ void Game::update(Events::updateEvent update)
 			Game::instance->transitioning = false;
 			std::cout << "no more" << std::endl;
 		}, Easing::EaseInSine);
-	}
-
-	static Text* fpsText = nullptr;
-	if (!fpsText)
-	{
-		fpsText = new Text(0, 0, "FPS: 0", 16, "NotoSans-Regular");
 	}
 
 	mainCamera->update(update);
@@ -251,9 +263,7 @@ void Game::update(Events::updateEvent update)
 		{
 			Object* obj = currentMenu->children[i];
 			obj->draw();
-			if (obj->children.size() != 0)
-				obj->drawChildren();
-			// TODO: PUT THIS IN A DIFFERENT THREAD
+
 		}
 	}
 
@@ -319,18 +329,18 @@ void Game::update(Events::updateEvent update)
 		cmdPrompt->draw();
 	}
 
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	//SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
-	SDL_SetRenderTarget(renderer, NULL);
+	//SDL_SetRenderTarget(renderer, NULL);
 
-	SDL_RenderCopyEx(renderer, mainCamera->cameraTexture, NULL, &DestR, mainCamera->angle, NULL, SDL_FLIP_NONE);
+	//SDL_RenderCopyEx(renderer, mainCamera->cameraTexture, NULL, &DestR, mainCamera->angle, NULL, SDL_FLIP_NONE);
+
 
 	if (transitioning)
-	{
 		__transRect->draw();
-	}
+	
 
-	SDL_RenderPresent(renderer);
+	//SDL_RenderPresent(renderer);
 	MUTATE_END
 }
 
@@ -474,12 +484,14 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 		multiplierx = (float)1280 / (float)w;
 		multipliery = (float)720 / (float)h;
 
+		glViewport(0, 0, w, h);
+
 		std::cout << "FULLSCREEN MULTIPLIERS: " << multiplierx << " " << multipliery << std::endl;
 
-		__transRect->w = w;
-		__transRect->h = h;
-		mainCamera->w = w;
-		mainCamera->h = h;
+		//__transRect->w = w;
+		//__transRect->h = h;
+		//mainCamera->w = w;
+		//mainCamera->h = h;
 	}
 
 	if (ev.keysym.sym == SDLK_F11)

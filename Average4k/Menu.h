@@ -2,6 +2,8 @@
 #include "includes.h"
 #include "Packet.h"
 #include "Object.h"
+#include "AvgCamera.h"
+
 class Menu
 {
 public:
@@ -9,34 +11,47 @@ public:
 	virtual ~Menu()
 	{
 	}
+	AvgCamera* cam;
+
 	std::vector<Object*> children;
 
 	virtual void onPacket(PacketType pt, char* data, int32_t length) {};
 	virtual void onSteam(std::string s) {};
 
+	void addCamera(AvgCamera* _cam)
+	{
+		cam = _cam;
+		children.push_back(_cam);
+	}
+
+	virtual void create()
+	{
+
+	}
+
 	void add(Object* obj) 
 	{
 		if (obj == NULL)
 			return;
-		children.push_back(obj);
+		cam->children.push_back(obj);
 	}
 
 	void removeObj(Object* obj)
 	{
 		if (obj == NULL)
 			return;
-		children.erase(std::remove(children.begin(), children.end(), obj), children.end());
+		cam->children.erase(std::remove(cam->children.begin(), cam->children.end(), obj), cam->children.end());
 		delete obj;
 	}
 
 	void removeAll()
 	{
-		for (Object* obj : children)
+		for (Object* obj : cam->children)
 		{
 			delete obj;
 		}
 		std::cout << "removed all " << children.size() << std::endl;
-		children.clear();
+		cam->children.clear();
 	}
 
 	virtual void update(Events::updateEvent ev) = 0;

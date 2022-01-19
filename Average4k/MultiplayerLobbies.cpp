@@ -4,7 +4,6 @@
 #include "CPacketJoinServer.h"
 #include "MultiplayerLobby.h"
 #include "CPacketHostServer.h"
-#include "AvgSprite.h"
 
 void MultiplayerLobbies::refreshLobbies() {
 	VM_START
@@ -22,14 +21,24 @@ void MultiplayerLobbies::refreshLobbies() {
 
 MultiplayerLobbies::MultiplayerLobbies()
 {
+	
+}
+
+void MultiplayerLobbies::create()
+{
 	MUTATE_START;
+	addCamera(Game::mainCamera);
+
+
 	refreshTimer = 3000;
 	if (Multiplayer::loggedIn)
 		Game::steam->populateSubscribedItems();
 
-	AvgSprite* sprite = new AvgSprite(0, 0, "assets/graphical/menu/bg.png");
-	sprite->create();
+	AvgSprite* sprite = new AvgSprite(0, 0, "assets/graphical/menu/mm/bg.png");
 	add(sprite);
+	AvgRect* rect = new AvgRect(0, 0, 1280, 720);
+	rect->alpha = 0.3;
+	add(rect);
 	helpText = new Text(0, 46, "F1 to host a lobby, enter to join (F5 To refresh)", 24, "NotoSans-Regular");
 	helpText->create();
 	add(helpText);
@@ -50,7 +59,10 @@ void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
 	lobbyTexts.clear();
 
 	for (bruh t : avatars)
-		SDL_DestroyTexture(t.avatar);
+	{
+		removeObj(t.avatar);
+		delete t.avatar;
+	}
 
 	avatars.clear();
 
@@ -63,11 +75,13 @@ void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
 		for (int p = 0; p < l.PlayerList.size(); p++)
 		{
 			player& pl = l.PlayerList[p];
-			SDL_Texture* t = Steam::getAvatar(pl.AvatarURL.c_str());
+			Texture* t = Steam::getAvatar(pl.AvatarURL.c_str());
 			bruh b;
 			b.p = pl;
-			b.avatar = t;
+			b.avatar = new AvgSprite(0,0,t);
+			b.avatar->alpha = 0;
 			avatars.push_back(b);
+			add(b.avatar);
 		}
 		lobbyTexts.push_back(t);
 		add(t);
@@ -99,9 +113,12 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 		}
 		case eSPacketJoinServerReply: {
 			Game::instance->transitionToMenu(new MultiplayerLobby(Lobbies[selectedIndex], false, false));
-
 			for (bruh t : avatars)
-				SDL_DestroyTexture(t.avatar);
+			{
+				removeObj(t.avatar);
+				if (t.avatar)
+					delete t.avatar;
+			}
 
 			avatars.clear();
 
@@ -112,7 +129,10 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 			Game::instance->transitionToMenu(new MultiplayerLobby(Lobbies[selectedIndex], true, false));
 
 			for (bruh t : avatars)
-				SDL_DestroyTexture(t.avatar);
+			{
+				removeObj(t.avatar);
+				delete t.avatar;
+			}
 
 			avatars.clear();
 
@@ -176,7 +196,7 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 			Game::instance->transitionToMenu(new MainMenu());
 
 			for (bruh t : avatars)
-				SDL_DestroyTexture(t.avatar);
+				delete t.avatar;
 
 			avatars.clear();
 
@@ -197,7 +217,10 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 			Game::instance->transitionToMenu(new MainMenu());
 
 			for (bruh t : avatars)
-				SDL_DestroyTexture(t.avatar);
+			{
+				removeObj(t.avatar);
+				delete t.avatar;
+			}
 
 			avatars.clear();
 
@@ -275,23 +298,19 @@ void MultiplayerLobbies::postUpdate(Events::updateEvent event)
 			}
 		}
 
+		AvgSprite* t = b.avatar;
+		t->alpha = 0;
 		if (!showAvatar)
 			continue;
 
-		SDL_Texture* t = b.avatar;
-		SDL_FRect rect;
-		rect.x = selected->x + (52 * i);
-		rect.y = selected->y + 46;
-		rect.w = 46;
-		rect.h = 46;
+		t->x = selected->x + (52 * i);
+		t->y = selected->y + 46;
+		t->w = 46;
+		t->h = 46;
 
-		SDL_RenderCopyF(Game::renderer, t, NULL, &rect);
+		t->alpha = 1;
 
-		SDL_SetRenderDrawColor(Game::renderer, 255, 255, 255, 255);
-
-		SDL_RenderDrawRectF(Game::renderer, &rect);
-
-		SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
+	
 		
 	}
 	MUTATE_END

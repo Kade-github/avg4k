@@ -183,11 +183,14 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Average4k.cpp" />
+    <ClCompile Include="AvgGroup.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Chart.cpp" />
     <ClCompile Include="Easing.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Gameplay.cpp" />
+    <ClCompile Include="GL.cpp" />
+    <ClCompile Include="glad.c" />
     <ClCompile Include="Judge.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="MenuCreator.cpp" />
@@ -200,18 +203,23 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="QuaverFile.cpp" />
     <ClCompile Include="ReceptorObject.cpp" />
+    <ClCompile Include="Rendering.cpp" />
     <ClCompile Include="SaveFile.cpp" />
     <ClCompile Include="SDL2_gfxPrimitives.c" />
     <ClCompile Include="SettingsMenu.cpp" />
     <ClCompile Include="SMFile.cpp" />
     <ClCompile Include="SongSelect.cpp" />
     <ClCompile Include="SoundManager.cpp" />
+    <ClCompile Include="stbi.cpp" />
     <ClCompile Include="Steam.cpp" />
     <ClCompile Include="Text.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TweenManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AvgButton.h" />
+    <ClInclude Include="AvgCamera.h" />
+    <ClInclude Include="AvgGroup.h" />
     <ClInclude Include="AvgRect.h" />
     <ClInclude Include="AvgSprite.h" />
     <ClInclude Include="Base64.h" />
@@ -236,6 +244,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="Game.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Gameplay.h" />
+    <ClInclude Include="GL.h" />
     <ClInclude Include="includes.h" />
     <ClInclude Include="Judge.h" />
     <ClInclude Include="Lobby.h" />
@@ -254,9 +263,11 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="pch.h" />
     <ClInclude Include="QuaverFile.h" />
     <ClInclude Include="ReceptorObject.h" />
+    <ClInclude Include="Rendering.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SaveFile.h" />
     <ClInclude Include="SettingsMenu.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="SMFile.h" />
     <ClInclude Include="SongSelect.h" />
     <ClInclude Include="SoundManager.h" />
@@ -274,8 +285,10 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="SPacketUpdateLobbyChart.h" />
     <ClInclude Include="SPacketUpdateLobbyData.h" />
     <ClInclude Include="SPacketWtfAmInReply.h" />
+    <ClInclude Include="stbi.h" />
     <ClInclude Include="Steam.h" />
     <ClInclude Include="Text.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="TweenManager.h" />
   </ItemGroup>
   <ItemGroup>

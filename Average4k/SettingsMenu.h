@@ -30,6 +30,8 @@ public:
 	void setSelect(bruhhh& b);
 	void updateText(bruhhh& b);
 
+	virtual void create();
+
 	SettingsMenu();
 
 

@@ -3,6 +3,7 @@
 #include "Object.h"
 #include "Easing.h"
 #include "AvgButton.h"
+#include "GL.h"
 
 namespace Tweening
 {
@@ -118,7 +119,7 @@ namespace Tweening
 			switch (t.type)
 			{
 			case tt_Alpha:
-				t.obj->alpha = start + ((end - start) * value);
+				t.obj->setAlpha(start + ((end - start) * value));
 				break;
 			case tt_X:
 				t.obj->setX(start + ((end - start) * value));
@@ -164,6 +165,10 @@ namespace Tweening
 	class AvgButtonTweenable : public AvgButton
 	{
 	public:
+
+		Texture* button;
+		Texture* select;
+
 		AvgButtonTweenable(float _x, float _y, int _w, int _h, std::string _text, int fontSize, std::string font, clickCallback _callback) : AvgButton(_x, y, _w, _h, _text, fontSize, font, callback) {
 			x = _x;
 			y = _y;
@@ -173,6 +178,8 @@ namespace Tweening
 			text->create();
 			callback = _callback;
 			add(text);
+			button = Texture::createWithImage("assets/graphical/menu/mm/button.png");
+			select = Texture::createWithImage("assets/graphical/menu/mm/button_selected.png");
 		};
 
 		virtual ~AvgButtonTweenable()
@@ -200,14 +207,10 @@ namespace Tweening
 			{
 				if (selected && !hovered)
 				{
-					if (defColor.r == 0)
-						defColor = fillColor;
 					hovered = true;
-					TweenManager::createNewTween("highlightButton", this, tt_butFill, 100, 0, 0.1, NULL, Easing::EaseInSine);
 				}
 				else if (!selected && hovered)
 				{
-					TweenManager::createNewTween("highlightButton", this, tt_butFill, 100, 0, 1, NULL, Easing::EaseInSine);
 					hovered = false;
 				}
 			}
@@ -215,28 +218,16 @@ namespace Tweening
 			if (mx >= x && my >= y && mx < x + w && my < y + h)
 			{
 				mouse = true;
-				if (defColor.r == 0)
-					defColor = fillColor;
-				if (!hovered)
-				{
-					TweenManager::createNewTween("highlightButton", this, tt_butFill, 100, 0, 0.1, NULL, Easing::EaseInSine);
-				}
 				hovered = true;
 				selected = false;
 			}
 			else
 			{
-				if (defColor.r == 0)
-					defColor = fillColor;
-				if (hovered && !selected)
-				{
-					TweenManager::createNewTween("highlightButton", this, tt_butFill, 100, 0, 1, NULL, Easing::EaseInSine);
-				}
 				if (!selected)
 					hovered = false;
 			}
 
-			SDL_FRect rect;
+			Rect rect;
 
 
 			float mpx = (w * (1 - scale)) / 2;
@@ -251,6 +242,16 @@ namespace Tweening
 			rect.y = scaledY;
 			rect.w = scaledWidth;
 			rect.h = scaledHeight;
+			rect.r = fillColor.r;
+			rect.g = fillColor.g;
+			rect.b = fillColor.b;
+			rect.a = alpha;
+
+			Rect srcRect;
+			srcRect.x = 0;
+			srcRect.y = 0;
+			srcRect.w = 1;
+			srcRect.h = 1;
 
 			if (text->text != "")
 			{
@@ -261,11 +262,15 @@ namespace Tweening
 				}
 				text->setX((scaledX + (scaledWidth / 2)) - (text->surfW / 2));
 				text->setY(scaledY + (text->surfH / 2));
-				text->alpha = alpha;
+				if (alpha != text->alpha)
+					text->setAlpha(alpha);
 			}
 
-			int r = roundedBoxRGBA(Game::renderer, (scaledX + scaledWidth), scaledY, scaledX, (scaledY + scaledHeight), 4, fillColor.r, fillColor.g, fillColor.b, alpha);
-			int rr = roundedRectangleRGBA(Game::renderer, (scaledX + scaledWidth), scaledY, scaledX, (scaledY + scaledHeight), 4, borderColor.r, borderColor.g, borderColor.b, alpha, borderSize);
+
+			if (hovered)
+				Rendering::PushQuad(&rect, &srcRect, select, GL::genShader);
+			else
+				Rendering::PushQuad(&rect, &srcRect, button, GL::genShader);
 		}
 	};
 }

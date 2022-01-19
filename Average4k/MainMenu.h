@@ -35,6 +35,8 @@ class MainMenu :
 		{
 		}
 
+		virtual void create();
+
 		int selectedIndex = 0;
 	
 		void onSteam(std::string s) override;

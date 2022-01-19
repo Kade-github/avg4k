@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include <algorithm>
-
+#include <glad/glad.h>
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <vector>

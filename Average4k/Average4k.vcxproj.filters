@@ -94,6 +94,12 @@
     <Filter Include="Source Files\Average4k\Sound">
       <UniqueIdentifier>{55a80bb6-cf7a-467d-91c0-a285bc8abe7a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\OpenGL">
+      <UniqueIdentifier>{7503560c-4a06-41f7-9c05-583099daf937}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\OpenGL\Renderer">
+      <UniqueIdentifier>{c74006df-4e09-47ce-9588-b10851a7111c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Average4k.cpp">
@@ -176,6 +182,24 @@
     </ClCompile>
     <ClCompile Include="SoundManager.cpp">
       <Filter>Source Files\Average4k\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="GL.cpp">
+      <Filter>Source Files\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\OpenGL\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
+      <Filter>Source Files\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering.cpp">
+      <Filter>Source Files\OpenGL\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="stbi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AvgGroup.cpp">
+      <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -376,6 +400,27 @@
     </ClInclude>
     <ClInclude Include="SoundManager.h">
       <Filter>Source Files\Average4k\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="GL.h">
+      <Filter>Source Files\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Source Files\OpenGL\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering.h">
+      <Filter>Source Files\OpenGL\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Source Files\OpenGL\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="stbi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AvgGroup.h">
+      <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="AvgCamera.h">
+      <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,150 +1,192 @@
 #include "NoteObject.h"
+
 #include "Gameplay.h"
+
 #include <mutex>
+
 #include <boost/algorithm/clamp.hpp>
+
 #include "Judge.h"
+
 #include "SongSelect.h"
 
 
-void NoteObject::specializedDraw(float position, double b, SDL_FRect receptor, bool clipHold)
-{
-		bpmSegment bruh = SongSelect::currentChart->getSegmentFromBeat(beat);
+void NoteObject::draw() {
+    Gameplay* instance = (Gameplay*)Game::currentMenu;
 
-		float wh = SongSelect::currentChart->getTimeFromBeat(beat, bruh);
+    float position = instance->positionInSong;
 
-		float diff = (wh) - (position);
+    Rect receptor;
 
-		float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
+    ReceptorObject* obj = instance->receptors[lane];
 
-		float noteOffset = (bps * (diff / 1000)) * (64 * Game::save->GetDouble("Note Size"));
+    receptor.x = obj->x;
+    receptor.y = obj->y;
+    receptor.w = obj->w;
+    receptor.h = obj->h;
 
-		bool downscroll = Game::save->GetBool("downscroll");
+    bpmSegment bruh = SongSelect::currentChart->getSegmentFromBeat(beat);
 
-		if (downscroll)
-			rect.y = (receptor.y - noteOffset);
-		else
-			rect.y = (receptor.y + noteOffset);
+    float wh = SongSelect::currentChart->getTimeFromBeat(beat, bruh);
 
-		SDL_Texture* texture;
+    float diff = (wh)-(position);
 
-		// get quant
+    float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
 
-		float beatRow = beat * 48;
+    float noteOffset = (bps * (diff / 1000)) * (64 * Game::save->GetDouble("Note Size"));
 
-		if (SongSelect::currentChart->meta.chartType == 1) // osu/quaver
-		{
-			float pos = wh - bruh.startTime;
-			float bps = 60 / bruh.bpm;
+    bool downscroll = Game::save->GetBool("downscroll");
 
-			beatRow = std::roundf(48 * (pos / bps));
-		}
-		if (fmod(beatRow, (192 / 4)) == 0)
-			texture = Gameplay::noteskin->fourth;
-		else if (fmod(beatRow, (192 / 8)) == 0)
-			texture = Gameplay::noteskin->eighth;
-		else if (fmod(beatRow, (192 / 12)) == 0)
-			texture = Gameplay::noteskin->twelfth;
-		else if (fmod(beatRow, (192 / 16)) == 0)
-			texture = Gameplay::noteskin->sixteenth;
-		else if (fmod(beatRow, (192 / 32)) == 0)
-			texture = Gameplay::noteskin->thirty2nd;
-		else
-			texture = Gameplay::noteskin->none;
+    if (downscroll)
+        rect.y = (receptor.y - noteOffset);
+    else
+        rect.y = (receptor.y + noteOffset);
 
-		SDL_Rect clipThingy;
+    Texture* texture;
 
-		clipThingy.x = 0;
-		clipThingy.y = rect.y + 32;
-		clipThingy.w = 64 * Game::save->GetDouble("Note Size");
-		clipThingy.h = holdHeight;
-		if (downscroll)
-		{
-			clipThingy.y -= holdHeight;
-		}
+    // get quant
 
-		SDL_RenderSetClipRect(Game::renderer, &clipThingy);
+    float beatRow = beat * 48;
 
-		for (int i = 0; i < heldTilings.size(); i++)
-		{
-			holdTile& tile = heldTilings[i];
-			float time = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat));
+    if (SongSelect::currentChart->meta.chartType == 1) // osu/quaver
+    {
+        float pos = (wh / 1000) - (bruh.startTime / 1000);
+        float bps = 60 / bruh.bpm;
 
-			float diff2 = time - position;
+        beatRow = std::roundf(48 * (pos / bps));
+    }
+    if (fmod(beatRow, (192 / 4)) == 0)
+        texture = Gameplay::noteskin->fourth;
+    else if (fmod(beatRow, (192 / 8)) == 0)
+        texture = Gameplay::noteskin->eighth;
+    else if (fmod(beatRow, (192 / 12)) == 0)
+        texture = Gameplay::noteskin->twelfth;
+    else if (fmod(beatRow, (192 / 16)) == 0)
+        texture = Gameplay::noteskin->sixteenth;
+    else if (fmod(beatRow, (192 / 32)) == 0)
+        texture = Gameplay::noteskin->thirty2nd;
+    else
+        texture = Gameplay::noteskin->none;
 
-			float offsetFromY = (bps * (diff2 / 1000)) * (64 * Game::save->GetDouble("Note Size"));
-			tile.rect.y = receptor.y + offsetFromY;
-			if (downscroll)
-				tile.rect.y = receptor.y - offsetFromY;
+    Rect clipThingy;
 
-			if (i != heldTilings.size() - 1)
-			{
-				if (!downscroll)
-					SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->hold, NULL, &tile.rect, 0, NULL, SDL_FLIP_NONE);
-				else
-					SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->hold, NULL, &tile.rect, 0, NULL, SDL_FLIP_VERTICAL);
-			}
-			else
-			{
-				if (downscroll)
-					SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->holdend, NULL, &tile.rect, 0, NULL, SDL_FLIP_NONE);
-				else
-					SDL_RenderCopyExF(Game::renderer, Gameplay::noteskin->holdend, NULL, &tile.rect, 0, NULL, SDL_FLIP_VERTICAL);
-			}
-			
-		}
+    clipThingy.x = 0;
+    clipThingy.y = rect.y + 32;
+    clipThingy.w = 64 * Game::save->GetDouble("Note Size");
+    clipThingy.h = holdHeight;
+    if (downscroll) {
+        clipThingy.y -= holdHeight;
+    }
 
+    Rect dstRect;
+    Rect srcRect;
 
-		SDL_RenderSetClipRect(Game::renderer, NULL);
+    dstRect.x = 0;
+    dstRect.y = rect.y;
+    dstRect.w = rect.w;
+    dstRect.h = rect.h;
+    dstRect.r = 255;
+    dstRect.g = 255;
+    dstRect.b = 255;
+    dstRect.a = alpha;
 
+    srcRect.x = 0;
+    srcRect.y = 0;
+    srcRect.w = 1;
+    srcRect.h = 1;
 
+    Rendering::SetClipRect(&clipThingy);
 
-		int activeH = 0;
+    for (int i = 0; i < heldTilings.size(); i++) {
+        holdTile& tile = heldTilings[i];
+        float time = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat));
 
+        float diff2 = time - position;
 
-		for (int i = 0; i < heldTilings.size(); i++)
-		{
-			holdTile& tile = heldTilings[i];
-			float time = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat));
+        float offsetFromY = (bps * (diff2 / 1000)) * (64 * Game::save->GetDouble("Note Size"));
+        tile.rect.y = receptor.y + offsetFromY;
+        if (downscroll)
+            tile.rect.y = receptor.y - offsetFromY;
 
-			float diff2 = time - position;
-			bool condition = diff2 > -Judge::hitWindows[4];
+        dstRect.h = tile.rect.h;
 
-			if (heldTilings[i].active || condition)
-				activeH++;
-		}
-		if (activeH != holdsActive)
-			holdsActive = activeH;
-		
+        dstRect.y = tile.rect.y;
 
-		if (active)
-		{
-			if (Gameplay::noteskin->rotate)
-			{
-				switch (lane)
-				{
-				case 0:
-					SDL_RenderCopyExF(Game::renderer, texture, NULL, &rect, 90, NULL, SDL_FLIP_NONE);
-					break;
-				case 1:
-					SDL_RenderCopyExF(Game::renderer, texture, NULL, &rect, 0, NULL, SDL_FLIP_NONE);
-					break;
-				case 2:
-					SDL_RenderCopyExF(Game::renderer, texture, NULL, &rect, 180, NULL, SDL_FLIP_NONE);
-					break;
-				case 3:
-					SDL_RenderCopyExF(Game::renderer, texture, NULL, &rect, -90, NULL, SDL_FLIP_NONE);
-					break;
-				}
-			}
-			else
-			{
-				SDL_RenderCopyF(Game::renderer, texture, NULL, &rect);
-			}
-		}
+        if (tile.rect.y < receptor.y - 32 && !tile.active)
+            continue;
 
-		if (debug)
-		{
-			SDL_SetRenderDrawColor(Game::renderer, 255, 255, 255, 255);
-			SDL_RenderDrawRect(Game::renderer, &clipThingy);
-		}
+        if (tile.rect.y > receptor.y + 32 && !tile.active && downscroll)
+            continue;
+
+        if (i != heldTilings.size() - 1) {
+            if (!downscroll)
+            {
+                srcRect.h = -1;
+                Rendering::PushQuad(&dstRect, &srcRect, Gameplay::noteskin->hold, GL::genShader);
+                srcRect.h = 1;
+            }
+            else
+            {
+                Rendering::PushQuad(&dstRect, &srcRect, Gameplay::noteskin->hold, GL::genShader);
+            }
+        }
+        else {
+            if (!downscroll)
+            {
+                srcRect.h = -1;
+                Rendering::PushQuad(&dstRect, &srcRect, Gameplay::noteskin->holdend, GL::genShader);
+                srcRect.h = 1;
+            }
+            else
+            {
+                Rendering::PushQuad(&dstRect, &srcRect, Gameplay::noteskin->holdend, GL::genShader);
+            }
+        }
+
+    }
+    dstRect.h = rect.h;
+
+    dstRect.y = rect.y;
+
+    Rendering::SetClipRect(NULL);
+
+    int activeH = 0;
+
+    for (int i = 0; i < heldTilings.size(); i++) {
+        holdTile& tile = heldTilings[i];
+        float time = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat));
+
+        float diff2 = time - position;
+        bool condition = diff2 > -Judge::hitWindows[4];
+
+        if (heldTilings[i].active || condition)
+            activeH++;
+    }
+    if (activeH != holdsActive)
+        holdsActive = activeH;
+
+    if (active) {
+        if (Gameplay::noteskin->rotate) {
+            switch (lane) {
+            case 0: // left
+                Rendering::PushQuad(&dstRect, &srcRect, texture, GL::genShader, 270);
+                break;
+            case 1: // down
+                Rendering::PushQuad(&dstRect, &srcRect, texture, GL::genShader);
+                break;
+            case 2: // up
+                srcRect.h = -1;
+                Rendering::PushQuad(&dstRect, &srcRect, texture, GL::genShader);
+                srcRect.h = 1;
+                break;
+            case 3: // right
+                Rendering::PushQuad(&dstRect, &srcRect, texture, GL::genShader, 90);
+                break;
+            }
+        }
+        else {
+            Rendering::PushQuad(&dstRect, &srcRect, texture, GL::genShader);
+        }
+    }
+
 }

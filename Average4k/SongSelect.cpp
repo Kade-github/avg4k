@@ -1,7 +1,7 @@
 #include "SongSelect.h"
 #include "Gameplay.h"
 #include "MultiplayerLobby.h"
-#include "AvgSprite.h"
+
 int SongSelect::selectedDiffIndex = 0;
 Chart* SongSelect::currentChart = NULL;
 song* SongSelect::selectedSong = NULL;
@@ -438,11 +438,20 @@ void SongSelect::onSteam(std::string s)
 
 SongSelect::SongSelect()
 {
-	AvgSprite* sprite = new AvgSprite(0, 0, "assets/graphical/menu/bg.png");
+	
+}
+
+void SongSelect::create() {
+	addCamera(Game::mainCamera);
+	AvgSprite* sprite = new AvgSprite(0, 0, "assets/graphical/menu/mm/bg.png");
 	sprite->create();
 	add(sprite);
 
-	songName = new Text(Game::gameWidth / 2,(Game::gameHeight / 2) - 200,"No songs loaded",24, "NotoSans-Regular");
+	AvgRect* rect = new AvgRect(0, 0, 1280, 720);
+	rect->alpha = 0.3;
+	add(rect);
+
+	songName = new Text(Game::gameWidth / 2, (Game::gameHeight / 2) - 200, "No songs loaded", 24, "NotoSans-Regular");
 	songName->centerX();
 	songName->centerY();
 
@@ -501,10 +510,13 @@ void SongSelect::switchChart(song s)
 	if (s.steam)
 		selectedSong->steamHandle = listOfCharts[selectedIndex].steamHandle;
 	selectedSong->type = listOfCharts[selectedIndex].type;
+	std::cout << "took " << (SDL_GetTicks() - time) << "ms for " << s.type << std::endl;
 	std::string path = currentChart->meta.folder + "/" + currentChart->meta.audio;
 	std::cout << "playing " << path << std::endl;
 	if (songPrev != NULL)
 	{
+		if (songPrev->path == path)
+			return;
 		songPrev->stop();
 		songPrev->free();
 		SoundManager::removeChannel("prevSong");
@@ -514,5 +526,5 @@ void SongSelect::switchChart(song s)
 	else
 		songPrev = SoundManager::getChannelByName("prevSong");
 	songPrev->play();
-	std::cout << "took " << (SDL_GetTicks() - time) << "ms for " << s.type << std::endl;
+
 }

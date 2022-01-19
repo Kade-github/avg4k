@@ -7,6 +7,7 @@
 #include "Menu.h"
 #include "Multiplayer.h"
 #include "Chart.h"
+#include "AvgCamera.h"
 
 class Game
 {
@@ -23,6 +24,7 @@ public:
 	static bool startConnect;
 	static Menu* toGoTo;
 
+
 	static void GetMousePos(int* mx, int* my);
 
 	void mouseButtonDown();
@@ -31,9 +33,8 @@ public:
 	void keyUp(SDL_KeyboardEvent event);
 
 	void textInput(SDL_TextInputEvent event);
-
+	static AvgCamera* mainCamera;
 	static Menu* currentMenu;
-	static Camera* mainCamera;
 	static SaveFile* save;
 	static Steam* steam;
 	static Multiplayer* multi;

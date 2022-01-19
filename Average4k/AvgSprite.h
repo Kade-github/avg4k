@@ -1,24 +1,45 @@
 #pragma once
 #include "includes.h"
-#include <SDL_image.h>
-#include <SDL2_gfxPrimitives.h>
+#include "Object.h"
+#include "GL.h"
+
 class AvgSprite : public Object
 {
 public:
-	SDL_Texture* tex;
+	Texture* tex;
 
 	int borderSize = 4;
-	Color borderColor;
+	//Color borderColor;
 	bool border = false;
 	bool round = false;
 
-	SDL_Rect clipRect;
+	Rect clipRect;
+
+	virtual void setAlpha(float _alpha)
+	{
+		alpha = _alpha;
+	}
 
 	AvgSprite(int _x, int _y, std::string path) : Object(x, y) {
 		x = _x;
 		y = _y;
-		tex = IMG_LoadTexture(Game::renderer, path.c_str());
-		SDL_QueryTexture(tex, NULL, NULL, &w, &h);
+		tex = Texture::createWithImage(path);
+		if (!tex)
+			std::cout << "failed to get texture!" << std::endl;
+		w = tex->width;
+		h = tex->height;
+		alpha = 1;
+	};
+
+	AvgSprite(int _x, int _y, Texture* data) : Object(x, y) {
+		x = _x;
+		y = _y;
+		tex = data;
+		if (!tex)
+			std::cout << "failed to get texture!" << std::endl;
+		w = tex->width;
+		h = tex->height;
+		alpha = 1;
 	};
 
 	virtual ~AvgSprite()
@@ -31,46 +52,46 @@ public:
 		die();
 	}
 
-	void changeOutTexture(SDL_Texture* n)
+	void changeOutTexture(std::string path)
 	{
-		SDL_DestroyTexture(tex);
-		tex = n;
-		SDL_QueryTexture(tex, NULL, NULL, &w, &h);
+		delete tex;
+		tex = Texture::createWithImage(path);
+		w = tex->width;
+		h = tex->height;
 	}
 
 	virtual void draw() {
-		SDL_FRect rect;
+		Rect dstRect;
+		Rect srcRect;
+
 
 		float mpx = (w * (1 - scale)) / 2;
 		float mpy = (h * (1 - scale)) / 2;
-		rect.x = x + mpx;
-		rect.y = y + mpy;
-		rect.w = w * scale;
-		rect.h = h * scale;
+		dstRect.x = x + mpx;
+		dstRect.y = y + mpy;
+		dstRect.w = w * scale;
+		dstRect.h = h * scale;
+		dstRect.r = 255;
+		dstRect.g = 255;
+		dstRect.b = 255;
+		dstRect.a = alpha;
 
-		if (clipRect.x != 0 || clipRect.y != 0)
-			SDL_RenderSetClipRect(Game::renderer, &clipRect);
+		srcRect.x = 0;
+		srcRect.y = 0;
+		srcRect.w = 1;
+		srcRect.h = 1;
 
-		SDL_SetTextureAlphaMod(tex, alpha);
+		if (clipRect.w > 0 || clipRect.h > 0)
+			Rendering::SetClipRect(&clipRect);
 
-		SDL_RenderCopyF(Game::renderer, tex, NULL, &rect);
+		Rendering::PushQuad(&dstRect, &srcRect, tex, GL::genShader);
 
-		if (clipRect.x != 0 || clipRect.y != 0)
-			SDL_RenderSetClipRect(Game::renderer, NULL);
-
-		if (border)
-		{
-			SDL_SetRenderDrawColor(Game::renderer, borderColor.r, borderColor.g, borderColor.b, 255);
-			if (!round)
-				SDL_RenderDrawRectF(Game::renderer, &rect);
-			else
-				roundedRectangleRGBA(Game::renderer, (x + w), y, x , (y + h), 4, borderColor.r, borderColor.g, borderColor.b, 255, 1);
-		}
-
+		if (clipRect.w > 0 || clipRect.h > 0)
+			Rendering::SetClipRect(NULL);
 	}
 
 	virtual void beforeDeath() {
-		SDL_DestroyTexture(tex);
+		delete tex;
 	}
 };
 

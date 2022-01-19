@@ -23,6 +23,8 @@ class NoteObject : public Object
 		NoteObject() {
 			setX(0);
 			setY(0);
+			w = 64;
+			h = 64;
 		};
 		~NoteObject() {};
 
@@ -47,6 +49,6 @@ class NoteObject : public Object
 		std::vector<holdTile> heldTilings;
 
 
-		void specializedDraw(float position, double beat, SDL_FRect receptor, bool clipHold);
+		virtual void draw();
 };
 

@@ -7,9 +7,10 @@ std::string Noteskin::type = "arrow";
 
 noteskin_asset* Noteskin::asset = NULL;
 
-SDL_Texture* getAsset(std::string path, SDL_Renderer* renderer)
+Texture* getAsset(std::string path)
 {
-	SDL_Texture* texture = IMG_LoadTexture(renderer, path.c_str());
+	// stbi cannot find these for some reason??
+	Texture* texture = Texture::createFromSurface(IMG_Load(path.c_str()), true);
 
 	return texture;
 }
@@ -18,15 +19,15 @@ void Noteskin::resetNoteskin(noteskin_asset* as)
 {
 	if (as)
 	{
-		SDL_DestroyTexture(as->fourth);
-		SDL_DestroyTexture(as->eighth);
-		SDL_DestroyTexture(as->hold);
-		SDL_DestroyTexture(as->sixteenth);
-		SDL_DestroyTexture(as->twelfth);
-		SDL_DestroyTexture(as->holdend);
-		SDL_DestroyTexture(as->receptor);
-		SDL_DestroyTexture(as->none);
-		SDL_DestroyTexture(as->thirty2nd);
+		delete as->fourth;
+		delete as->eighth;
+		delete as->hold;
+		delete as->sixteenth;
+		delete as->twelfth;
+		delete as->holdend;
+		delete as->receptor;
+		delete as->none;
+		delete as->thirty2nd;
 		free(as);
 		as = NULL;
 	}
@@ -40,16 +41,16 @@ char asciitolower(char in) {
 
 noteskin_asset* loadSkin(noteskin_asset* as, std::string type) {
 	as = new noteskin_asset();
-	as->fourth = getAsset("assets/noteskin/" + type + "/4th.png", Game::renderer);
-	as->eighth = getAsset("assets/noteskin/" + type + "/8th.png", Game::renderer);
-	as->twelfth = getAsset("assets/noteskin/" + type + "/12th.png", Game::renderer);
-	as->sixteenth = getAsset("assets/noteskin/" + type + "/16th.png", Game::renderer);
-	as->thirty2nd = getAsset("assets/noteskin/" + type + "/32nd.png", Game::renderer);
-	as->hold = getAsset("assets/noteskin/" + type + "/hold.png", Game::renderer);
-	as->none = getAsset("assets/noteskin/" + type + "/idfk.png", Game::renderer);
-	as->receptor = getAsset("assets/noteskin/" + type + "/Receptor.png", Game::renderer);
-	as->holdend = getAsset("assets/noteskin/" + type + "/holdend.png", Game::renderer);
-	as->light = getAsset("assets/noteskin/" + type + "/lit.png", Game::renderer);
+	as->fourth = getAsset("assets/noteskin/" + type + "/4th.png");
+	as->eighth = getAsset("assets/noteskin/" + type + "/8th.png");
+	as->twelfth = getAsset("assets/noteskin/" + type + "/12th.png");
+	as->sixteenth = getAsset("assets/noteskin/" + type + "/16th.png");
+	as->thirty2nd = getAsset("assets/noteskin/" + type + "/32nd.png");
+	as->hold = getAsset("assets/noteskin/" + type + "/hold.png");
+	as->none = getAsset("assets/noteskin/" + type + "/idfk.png");
+	as->receptor = getAsset("assets/noteskin/" + type + "/Receptor.png");
+	as->holdend = getAsset("assets/noteskin/" + type + "/holdend.png");
+	as->light = getAsset("assets/noteskin/" + type + "/lit.png");
 
 	std::ifstream config("assets/noteskin/" + type + "/config.skin");
 	std::string line;

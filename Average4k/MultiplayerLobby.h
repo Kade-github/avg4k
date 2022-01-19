@@ -9,7 +9,7 @@
 
 struct person {
     Text* display;
-    SDL_Texture* avatar;
+    AvgSprite* avatar;
 };
 
 class MultiplayerLobby :
@@ -27,6 +27,7 @@ class MultiplayerLobby :
 
         std::vector<person> people;
 
+        virtual void create();
         void refreshLobby(lobby l);
         void onPacket(PacketType pt, char* data, int32_t length);
         void onSteam(std::string s) override;

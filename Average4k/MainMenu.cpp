@@ -4,6 +4,7 @@
 #include "AvgLua.h"
 #include "SPacketAvatarRequestResponse.h"
 #include "CPacketRequestAvatar.h"
+#include "AvgGroup.h"
 
 bool MainMenu::tweened = false;
 
@@ -37,15 +38,16 @@ void callback()
 {
 	VM_START
 	MainMenu* instance = (MainMenu*)Game::currentMenu;
-	SDL_Texture* tex = Steam::getAvatar(Multiplayer::currentUserAvatar.c_str());
+	Texture* tex = Steam::getAvatar(Multiplayer::currentUserAvatar.c_str());
 	if (tex)
 	{
-		instance->icon->changeOutTexture(tex);
+		delete instance->icon->tex;
+		instance->icon->tex = tex;
 		instance->icon->h = 47;
 		instance->icon->w = 47;
 	}
 	Tweening::TweenManager::createNewTween("border", instance->border, Tweening::tt_Alpha, 600, 0, 255, NULL, Easing::EaseInSine);
-	Tweening::TweenManager::createNewTween("icon", instance->icon, Tweening::tt_Alpha, 600, 0, 255, NULL, Easing::EaseInSine);
+	Tweening::TweenManager::createNewTween("icon", instance->icon, Tweening::tt_Alpha, 600, 0, 1, NULL, Easing::EaseInSine);
 	std::cout << "spwan buttons" << std::endl;
 	// Colors
 	Color c;
@@ -97,14 +99,14 @@ void callback()
 	instance->buttons.push_back(but3);
 	instance->hello->setText("Hi " + std::string(SteamFriends()->GetPersonaName()));
 	instance->bottom->setText("Avg4k indev-" + Game::version);
-	Tweening::TweenManager::createNewTween("hello", instance->hello, Tweening::tt_Alpha, 600, 0, 255, NULL, Easing::EaseInSine);
-	Tweening::TweenManager::createNewTween("bottom", instance->bottom, Tweening::tt_Alpha, 600, 0, 255, NULL, Easing::EaseInSine);
+	Tweening::TweenManager::createNewTween("hello", instance->hello, Tweening::tt_Alpha, 600, 0, 1, NULL, Easing::EaseInSine);
+	Tweening::TweenManager::createNewTween("bottom", instance->bottom, Tweening::tt_Alpha, 600, 0, 1, NULL, Easing::EaseInSine);
 	int index = 0;
 	instance->tweenDone = true;
 	for (Tweening::AvgButtonTweenable* b : instance->buttons)
 	{
 		b->alpha = 0;
-		Tweening::TweenManager::createNewTween("button" + index, b, Tweening::tt_Alpha, 600, 0, 255, NULL, Easing::EaseInSine);
+		Tweening::TweenManager::createNewTween("button" + index, b, Tweening::tt_Alpha, 600, 0, 1, NULL, Easing::EaseInSine);
 		Tweening::TweenManager::createNewTween("buttonY" + index, b, Tweening::tt_Y, 600, b->y + 100, b->y, NULL, Easing::EaseInSine);
 		index++;
 	}
@@ -113,6 +115,12 @@ void callback()
 
 MainMenu::MainMenu()
 {
+
+}
+
+void MainMenu::create() {
+	addCamera(Game::mainCamera);
+
 	bg = new AvgSprite(0, 0, "assets/graphical/menu/mm/bg.png");
 	bg->create();
 	bg->w = 1286;
@@ -124,20 +132,18 @@ MainMenu::MainMenu()
 	add(icon);
 
 	thing = new AvgSprite(Game::gameWidth / 2, Game::gameHeight / 2, "assets/graphical/menu/mm/avg4k.png");
-	thing->w = thing->w * 0.18;
-	thing->h = thing->h * 0.18;
 	thing->x -= thing->w / 2;
 	thing->y -= thing->h / 2;
 	thing->alpha = 0;
 	thing->create();
 	add(thing);
-	
+
 	SDL_Rect clip;
 	clip.x = 34;
 	clip.y = 34;
 	clip.w = 43;
 	clip.h = 43;
-	icon->clipRect = clip;
+	//icon->clipRect = clip;
 
 	hello = new Text(32 + ((icon->w / 2) * 2.6), 36, "Refreshing avatar data...", 16, "arialbd");
 	hello->border = false;
@@ -152,31 +158,6 @@ MainMenu::MainMenu()
 	border = new AvgSprite(32, 32, "assets/graphical/menu/border.png");
 	border->create();
 	add(border);
-	/*Text* multiplayer = new Text(Game::gameWidth / 2, (Game::gameHeight / 2), "Multiplayer", 24);
-	multiplayer->centerX();
-	multiplayer->create();
-	add(multiplayer);
-
-	Text* singleplayer = new Text(Game::gameWidth / 2, (Game::gameHeight / 2) + 100, "Singleplayer", 24);
-	singleplayer->centerX();
-	singleplayer->create();
-	add(singleplayer);
-
-	Text* settings = new Text(Game::gameWidth / 2, (Game::gameHeight / 2) + 200, "Settings", 24);
-	settings->centerX();
-	settings->create();
-	add(settings);
-
-	Text* bruh = new Text(Game::gameWidth / 2, (Game::gameHeight / 2) - 155, "Average4k Alpha", 48);
-	bruh->centerX();
-	bruh->create();
-	add(bruh);
-
-	MenuItem.push_back(multiplayer);
-	MenuItem.push_back(singleplayer);
-	MenuItem.push_back(settings);
-	MenuItem.push_back(bruh);*/
-
 }
 
 void MainMenu::onSteam(std::string s)
@@ -219,6 +200,8 @@ void MainMenu::update(Events::updateEvent event)
 			
 			if (thing->scale > 1.0)
 				thing->scale -= (Game::deltaTime * ((ch->bpm / 60) / 1000)) * 0.3;
+
+			
 		}
 	}
 
@@ -231,7 +214,7 @@ void MainMenu::update(Events::updateEvent event)
 		border->alpha = 0;
 		hello->alpha = 0;
 		thing->setY(thing->y - 100);
-		thing->alpha = 255;
+		thing->alpha = 1;
 		started = true;
 		callback();
 	}
@@ -241,10 +224,10 @@ void MainMenu::update(Events::updateEvent event)
 	{
 		tweened = true;
 		started = true;
-		Tweening::TweenManager::createNewTween("hello", hello, Tweening::tt_Alpha, 800, 255, 0, NULL, Easing::EaseInSine);
-		Tweening::TweenManager::createNewTween("border", border, Tweening::tt_Alpha, 800, 255, 0, NULL, Easing::EaseInSine);
-		Tweening::TweenManager::createNewTween("icon", icon, Tweening::tt_Alpha, 800, 255, 0, NULL, Easing::EaseInSine);
-		Tweening::TweenManager::createNewTween("menuAlpha", thing, Tweening::tt_Alpha, 1000, 0, 255, NULL, Easing::EaseInSine);
+		Tweening::TweenManager::createNewTween("hello", hello, Tweening::tt_Alpha, 800, 1, 0, NULL, Easing::EaseInSine);
+		Tweening::TweenManager::createNewTween("border", border, Tweening::tt_Alpha, 800, 1, 0, NULL, Easing::EaseInSine);
+		Tweening::TweenManager::createNewTween("icon", icon, Tweening::tt_Alpha, 800, 1, 0, NULL, Easing::EaseInSine);
+		Tweening::TweenManager::createNewTween("menuAlpha", thing, Tweening::tt_Alpha, 1000, 0, 1, NULL, Easing::EaseInSine);
 		Tweening::TweenManager::createNewTween("menu", thing, Tweening::tt_Y, 1000, thing->y + 200, thing->y - 100, (Tweening::tweenCallback)callback, Easing::EaseInSine);
 	}
 

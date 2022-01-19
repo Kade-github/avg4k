@@ -4,10 +4,11 @@
 #include "Lobby.h"
 #include "Text.h"
 #include "Game.h"
+#include "AvgSprite.h"
 
 struct bruh {
     player p;
-    SDL_Texture* avatar;
+    AvgSprite* avatar;
 };
 
 class MultiplayerLobbies :
@@ -32,7 +33,7 @@ public:
     void refreshLobbies();
     void updateList(std::vector<lobby> lobs);
     void onPacket(PacketType pt, char* data, int32_t length);
-
+    virtual void create();
     void update(Events::updateEvent event) override;
     void keyDown(SDL_KeyboardEvent event) override;
     void postUpdate(Events::updateEvent event) override;

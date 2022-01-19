@@ -1,7 +1,9 @@
 #include "includes.h"
+#include "GL.h"
 #include "Steam.h"
 #include "Game.h"
 #include <DbgHelp.h>
+#include "AvgSprite.h"
 using namespace std;
 
 #undef main
@@ -106,8 +108,12 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	SetUnhandledExceptionFilter(UnhandledExceptionFilterHandler);
 	//AddVectoredExceptionHandler(1, &PvectoredExceptionHandler);
-	SDL_Init(SDL_INIT_EVERYTHING);
-	
+	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+		std::cerr << "SDL2 video subsystem couldn't be initialized. Error: "
+			<< SDL_GetError()
+			<< std::endl;
+		exit(1);
+	}
 	Game::version = "b8";
 
 	curl_global_init(CURL_GLOBAL_ALL);
@@ -141,11 +147,36 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	fpsinit();
 
 	SDL_Window* window = SDL_CreateWindow("Average4k", SDL_WINDOWPOS_UNDEFINED,
-		SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL_WINDOW_SHOWN);
+		SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+	// Create a OpenGL context on SDL2
+	SDL_GLContext gl_context = SDL_GL_CreateContext(window);
+
+	// Load GL extensions using glad
+	if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
+		std::cerr << "Failed to initialize the OpenGL context." << std::endl;
+		exit(1);
+	}
+
+	std::cout << "OpenGL version loaded: " << GLVersion.major << "."
+		<< GLVersion.minor << std::endl;
+
+	GL::projection = glm::ortho(0.0f, (float)1280, (float)720, 0.0f, -1.0f, 1.0f);
+
+	GL::genShader = new Shader();
+	GL::genShader->GL_CompileShader(NULL, NULL);
+	GL::genShader->GL_Use();
+	glUniformMatrix4fv(glGetUniformLocation(GL::genShader->program, "u_projection"), 1, GL_FALSE, &GL::projection[0][0]);
+
+	Rendering::Render_GLInit(GL::genShader);
+
+	glViewport(0, 0, 1280, 720);
 
 	Game* game = new Game();
 
@@ -175,81 +206,92 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	Uint64 LAST = 0;
 
 	bool create = false;
+	//SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+	float time = 0;
+	float bruh = 0;
+	SDL_GL_SetSwapInterval(0);
 	while (run)
 	{
-		SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-		const Uint32 startTime = SDL_GetTicks();
-		LAST = NOW;
-		NOW = SDL_GetPerformanceCounter();
-		Game::startTick = startTime;
-		SDL_Event event;
-		int wheel = 0;
-
-		while (SDL_PollEvent(&event) > 0)
+		time = SDL_GetTicks();
+		float delta = time - bruh;
+		if (delta > 1000 / 240)
 		{
-			switch (event.type) {
-			case SDL_QUIT:
-				run = false;
-				break;
-			case SDL_KEYDOWN:
-				game->keyDown(event.key);
-				break;
-			case SDL_KEYUP:
-				game->keyUp(event.key);
-				break;
-			case SDL_MOUSEBUTTONDOWN:
-				game->mouseButtonDown();
-				break;
-			case SDL_TEXTINPUT:
-				game->textInput(event.text);
-				break;
-			case SDL_MOUSEWHEEL:
-				wheel = event.wheel.y;
-				break;
+			bruh = time;
+			const Uint32 startTime = SDL_GetTicks();
+			LAST = NOW;
+			NOW = SDL_GetPerformanceCounter();
+			Game::startTick = startTime;
+			SDL_Event event;
+			int wheel = 0;
+
+			while (SDL_PollEvent(&event) > 0)
+			{
+				switch (event.type) {
+				case SDL_QUIT:
+					run = false;
+					break;
+				case SDL_KEYDOWN:
+					game->keyDown(event.key);
+					break;
+				case SDL_KEYUP:
+					game->keyUp(event.key);
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					game->mouseButtonDown();
+					break;
+				case SDL_TEXTINPUT:
+					game->textInput(event.text);
+					break;
+				case SDL_MOUSEWHEEL:
+					wheel = event.wheel.y;
+					break;
+				}
+
 			}
 
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			Events::updateEvent updateEvent;
+
+			updateEvent.renderer = renderer;
+			updateEvent.window = window;
+
+			if (!create)
+			{
+				Game::window = window;
+				game->createGame();
+				create = true;
+			}
+
+
+			game->update(updateEvent);
+
+
+			Rendering::drawBatch();
+
+			SDL_GL_SwapWindow(window);
+
+			Game::deltaTime = (double)((NOW - LAST) * 1000 / (double)SDL_GetPerformanceFrequency());
+
+			fpsthink();
+
+
+			frames++;
+
+			if (frames > 30)
+				frames = 0;
+
+			timestamps[frames] = frames;
+			fps[frames] = Game::gameFPS;
+			deltaTimes[frames] = Game::deltaTime;
 		}
-
-
-		Events::updateEvent updateEvent;
-
-		updateEvent.renderer = renderer;
-		updateEvent.window = window;
-
-		if (!create)
-		{
-			Game::renderer = renderer;
-			Game::window = window;
-			game->createGame();
-			create = true;
-		}
-		game->update(updateEvent);
-
-		Game::deltaTime = (double)((NOW - LAST) * 1000 / (double)SDL_GetPerformanceFrequency());
-
-		fpsthink();
-
-
-		if (1000 / 360 > SDL_GetTicks() - startTime) {
-			SDL_Delay(1000 / 360 - (SDL_GetTicks() - startTime));
-		}
-
-		frames++;
-
-		if (frames > 30)
-			frames = 0;
-
-		timestamps[frames] = frames;
-		fps[frames] = Game::gameFPS;
-		deltaTimes[frames] = Game::deltaTime;
-
 
 	}
 
 	SDL_StopTextInput();
 
+	SDL_GL_DeleteContext(gl_context);
 	SDL_DestroyRenderer(renderer);
-
 	SDL_DestroyWindow(window);
 
 	SDL_Quit();

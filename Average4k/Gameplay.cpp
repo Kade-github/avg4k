@@ -9,7 +9,7 @@ std::mutex weirdPog;
 
 noteskin_asset* Gameplay::noteskin;
 
-std::map<std::string, SDL_Texture*> avatars;
+std::map<std::string, AvgSprite*> avatars;
 
 float Gameplay::rate = 1;
 
@@ -60,7 +60,12 @@ void Gameplay::updateAccuracy(double hitWorth)
 	if (floor(accuracy) == accuracy)
 		format.erase(format.find_last_not_of('.') + 1, std::string::npos);
 
-	Accuracy->setText(format + "%\n\nMarvelous: " + std::to_string(Marvelous) + "\nPerfect : " + std::to_string(Perfect) + "\nGreat : " + std::to_string(Great) + "\nEh : " + std::to_string(Eh) + "\nYikes: " + std::to_string(Yikes) + "\nCombo Breaks: " + std::to_string(Misses));
+	Accuracy->setText("Accuracy: " + format + "%");
+	Mrv->setText("Marvelous: " + std::to_string(Marvelous));
+	Prf->setText("Perfect: " + std::to_string(Perfect));
+	God->setText("Great: " + std::to_string(Great));
+	Ehh->setText("Eh: " + std::to_string(Eh));
+	Yke->setText("Yikes: " + std::to_string(Yikes));
 }
 
 void Gameplay::removeNote(NoteObject* object)
@@ -71,7 +76,7 @@ void Gameplay::removeNote(NoteObject* object)
 			}),
 		spawnedNotes.end());
 
-	removeObj(object);
+	colGroups[object->lane]->removeObj(object);
 }
 
 void Gameplay::miss(NoteObject* object)
@@ -102,7 +107,7 @@ void Gameplay::miss(NoteObject* object)
 	Judgement->setY((Game::gameHeight / 2));
 
 
-	Combo->setText(" ");
+	Combo->setText("  ");
 	Combo->setX((Game::gameWidth / 2) - (Combo->surfW / 2));
 	Combo->setY((Game::gameHeight / 2) + 40);	
 }
@@ -120,6 +125,13 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 	msgpack::unpacked result;
 
 	msgpack::object obj;
+	std::map<std::string, AvgSprite*> sprites;
+	std::map<std::string, AvgSprite*>::iterator it;
+	leaderboardSpot cspot;
+	std::vector<std::string> ids = {};
+
+	std::vector<leaderboardSpot> copy = leaderboard;
+
 
 	switch (pt)
 	{
@@ -130,26 +142,77 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 
 		obj.convert(pack);
 
-		for (leaderboardSpot p : leaderboard)
-			removeObj(p.t);
 
-		leaderboard.clear();
-
-		for (int i = 0; i < pack.orderedScores.size(); i++)
+		for (PlayerScore score : pack.orderedScores)
 		{
-			PlayerScore score = pack.orderedScores[i];
-			leaderboardSpot spot;
-			spot.score = score;
-			std::string format = std::to_string((double)((int)(spot.score.meanTiming * 100)) / 100);
-			format.erase(format.find_last_not_of('0') + 1, std::string::npos);
-
-			spot.t = new Text(4, (Game::gameHeight / 2) + 4, spot.score.Username + " - (" + std::to_string(spot.score.score) + "/" + format + "ms)", 24, "NotoSans-Regular");
-			spot.t->y = spot.t->y + (spot.t->surfH * i);
-			leaderboard.push_back(spot);
-			spot.t->create();
-			add(spot.t);
+			ids.push_back(score.SteamID64);
 		}
 
+
+		for (leaderboardSpot& spot : leaderboard)
+		{
+			if (std::count(ids.begin(),ids.end(),spot.score.SteamID64) == 0)
+			{
+				removeObj(spot.t);
+				removeObj(spot.avgRect);
+				leaderboard.erase(std::remove(leaderboard.begin(), leaderboard.end(), spot), leaderboard.end());
+			}
+		}
+
+		for (PlayerScore score : pack.orderedScores)
+		{
+			bool found = false;
+			for (leaderboardSpot& spot : leaderboard)
+			{
+				if (spot.score.SteamID64 == score.SteamID64)
+				{
+
+					if (spot.score.Username.size() >= 6)
+						spot.score.Username = spot.score.Username.substr(0, 6) + "...";
+					int rank = spot.score.Ranking;
+					
+					spot.score = score; // copy it over
+					found = true;
+					if (spot.score.Ranking != rank)
+						spot.t->y = ((Game::gameHeight / 2) + (46 * spot.score.Ranking)) - 8;
+					spot.t->setText(spot.score.Username + ": " + std::to_string(spot.score.score));
+					spot.avgRect->w = 300;
+				}
+			}
+			if (!found)
+			{
+				int y = (Game::gameHeight / 2) + (46 * score.Ranking);
+				cspot.avgRect = new AvgRect(0, y, 1, 46);
+				add(cspot.avgRect);
+				if (cspot.score.Username.size() >= 6)
+					cspot.score.Username = cspot.score.Username.substr(0, 6) + "...";
+				cspot.score = score;
+				cspot.avgRect->alpha = 0.3;
+				cspot.t = new Text(46, y - 8, cspot.score.Username + ": " + std::to_string(cspot.score.score), 24, "NotoSans-Regular");
+				cspot.avgRect->w = 300;
+				leaderboard.push_back(cspot);
+				add(cspot.t);
+			}
+		}
+
+		for (PlayerScore score : pack.orderedScores)
+		{
+			sprites[score.SteamID64] = avatars[score.SteamID64];
+		}
+		for (it = avatars.begin(); it != avatars.end(); it++)
+		{
+			cam->children.erase(std::remove(cam->children.begin(), cam->children.end(), it->second), cam->children.end());
+		}
+
+		avatars.clear();
+
+		for (PlayerScore score : pack.orderedScores)
+		{
+			avatars[score.SteamID64] = sprites[score.SteamID64];
+			avatars[score.SteamID64]->y = (Game::gameHeight / 2) + (46 * score.Ranking);
+			avatars[score.SteamID64]->x = 0;
+			add(avatars[score.SteamID64]);
+		}
 		break;
 	case eSPacketFinalizeChart:
 
@@ -162,7 +225,9 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 		cleanUp();
 		std::cout << "go back" << std::endl;
 
-		Game::currentMenu = new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, false);
+		MultiplayerLobby* lob = new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, false);
+
+		Game::instance->transitionToMenu(lob);
 		break;
 	}
 	MUTATE_END
@@ -170,8 +235,12 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 
 Gameplay::Gameplay()
 {
+}
+
+void Gameplay::create() {
 
 	MUTATE_START
+	addCamera(Game::mainCamera);
 	initControls();
 
 	avatars.clear();
@@ -190,18 +259,25 @@ Gameplay::Gameplay()
 
 	Judge::judgeNote(174);
 
+	std::string bg = SongSelect::currentChart->meta.folder + "/" + SongSelect::currentChart->meta.background;
+
+	background = new AvgSprite(0, 0, bg);
+	background->w = Game::gameWidth;
+	background->h = Game::gameHeight;
+	add(background);
+
 	if (MultiplayerLobby::inLobby)
-		for(int i = 0; i < MultiplayerLobby::CurrentLobby.PlayerList.size(); i++)
+		for (int i = 0; i < MultiplayerLobby::CurrentLobby.PlayerList.size(); i++)
 		{
 			player pp = MultiplayerLobby::CurrentLobby.PlayerList[i];
 			const char* pog = pp.AvatarURL.c_str();
-			SDL_Texture* s = Steam::getAvatar(pog);
-			avatars[pp.SteamID64] = s;
+			Texture* s = Steam::getAvatar(pog);
+			avatars[pp.SteamID64] = new AvgSprite(0, 0, s);
+			avatars[pp.SteamID64]->w = 46;
+			avatars[pp.SteamID64]->h = 46;
+			add(avatars[pp.SteamID64]);
 		}
 
-	std::string bg = SongSelect::currentChart->meta.folder + "/" + SongSelect::currentChart->meta.background;
-
-	background = IMG_LoadTexture(Game::renderer,bg.c_str());
 
 	float bassRate = (rate * 100) - 100;
 
@@ -226,6 +302,17 @@ Gameplay::Gameplay()
 	noteskin = Noteskin::getNoteskin();
 	notesToPlay = SongSelect::currentChart->meta.difficulties[diff].notes;
 
+	Rect laneUnderway;
+
+	laneUnderway.x = ((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) - 4;
+	laneUnderway.y = -200;
+	laneUnderway.w = (((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * 3) - laneUnderway.x) + (68 * Game::save->GetDouble("Note Size"));
+	laneUnderway.h = 1280;
+
+	AvgRect* lunder = new AvgRect(laneUnderway.x, laneUnderway.y, laneUnderway.w, laneUnderway.h);
+	add(lunder);
+	lunder->alpha = 0.5;
+
 
 	Judgement = new Text(Game::gameWidth / 2, Game::gameHeight / 2, " ", 24, "NotoSans-Regular");
 	Judgement->create();
@@ -235,9 +322,35 @@ Gameplay::Gameplay()
 	Combo->create();
 	add(Combo);
 
-	Accuracy = new Text(230, (Game::gameHeight / 2) - 300, "N/A\n\nMarvelous: " + std::to_string(Marvelous) + "\nPerfect: " + std::to_string(Perfect) + "\nGreat: " + std::to_string(Great) + "\nEh: " + std::to_string(Eh) + "\nYikes: " + std::to_string(Yikes) + "\nCombo Breaks: " + std::to_string(Misses), 24, "NotoSans-Regular");
+	AvgRect* lAcc = new AvgRect(171, (Game::gameHeight / 2) - 304, 250, 295);
+	lAcc->alpha = 0.5;
+	add(lAcc);
+
+	Accuracy = new Text(175, (Game::gameHeight / 2) - 300, "Accuracy: N/A", 24, "NotoSans-Regular");
 	Accuracy->create();
 	add(Accuracy);
+
+	Mrv = new Text(175, (Game::gameHeight / 2) - 250, "Marvelous: " + std::to_string(Marvelous), 24, "NotoSans-Regular");
+	Mrv->create();
+	add(Mrv);
+
+	Prf = new Text(175, (Game::gameHeight / 2) - 200, "Perfect: " + std::to_string(Perfect), 24, "NotoSans-Regular");
+	Prf->create();
+	add(Prf);
+
+	God = new Text(175, (Game::gameHeight / 2) - 150, "Great: " + std::to_string(Great), 24, "NotoSans-Regular");
+	God->create();
+	add(God);
+
+	Ehh = new Text(175, (Game::gameHeight / 2) - 100, "Eh: " + std::to_string(Eh), 24, "NotoSans-Regular");
+	Ehh->create();
+	add(Ehh);
+
+	Yke = new Text(175, (Game::gameHeight / 2) - 50, "Yikes: " + std::to_string(Yikes), 24, "NotoSans-Regular");
+	Yke->create();
+	add(Yke);
+
+
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -251,17 +364,39 @@ Gameplay::Gameplay()
 			r = new ReceptorObject(
 				((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * i), (Game::gameHeight / 2) - 300, i);
 		r->lightUpTimer = 0;
-		add(r);
 		r->create();
 		receptors.push_back(r);
-		colTexture.push_back(SDL_CreateTexture(Game::renderer, SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_TARGET,64 * Game::save->GetDouble("Note Size"), 720));
+		add(r);
 	}
+
+	for (int i = 0; i < receptors.size(); i++)
+	{
+		// create a group
+		ReceptorObject* r = receptors[i];
+		AvgGroup* group = new AvgGroup(r->x, 0, r->w, Game::gameHeight);
+		colGroups.push_back(group);
+		add(group);
+	}
+
+	songPosBar = new AvgRect(receptors[0]->x, 24, ((receptors[3]->x + (64 * Game::save->GetDouble("Note Size"))) - receptors[0]->x) * (positionInSong / (songLength)), 24);
+	add(songPosBar);
+	songPosBar->c.r = 255;
+	songPosBar->c.g = 255;
+	songPosBar->c.b = 255;
+
+	if (downscroll)
+		songPosBar->y = (receptors[0]->y + (64 * Game::save->GetDouble("Note Size"))) + 12;
+
+	songPosOutline = new AvgRect(songPosBar->x,songPosBar->y, (receptors[3]->x + (64 * Game::save->GetDouble("Note Size"))) - receptors[0]->x, 24);
+	songPosOutline->border = true;
+	//add(songPosOutline);
+	songPosOutline->c.r = 255;
+	songPosOutline->c.g = 255;
+	songPosOutline->c.b = 255;
 
 	positionInSong = -1500;
 	MUTATE_END
 }
-
-
 
 float lerp(float a, float b, float f)
 {
@@ -295,6 +430,19 @@ void Gameplay::update(Events::updateEvent event)
 	bruh.h = 720;
 	bruh.w = 1280;
 
+	Rect ll;
+	ll.y = 0;
+	ll.w = 64 * Game::save->GetDouble("Note Size");
+	ll.h = Game::gameHeight;
+
+	int indexG = 0;
+	for (AvgGroup* group : colGroups) // rest clips
+	{
+		ll.x = receptors[indexG]->x;
+		group->clipRect = ll;
+		indexG++;
+	}
+
 
 	if (BASS_ErrorGetCode() != 0)
 		Combo->setText(std::to_string(BASS_ErrorGetCode()) + "_bassError");
@@ -306,16 +454,11 @@ void Gameplay::update(Events::updateEvent event)
 	laneUnderway.w = (receptors[3]->x - laneUnderway.x) + (68 * Game::save->GetDouble("Note Size"));
 	laneUnderway.h = 1280;
 
-	if (background)
-	{
-		SDL_SetTextureBlendMode(background, SDL_BLENDMODE_BLEND);
-		SDL_SetTextureAlphaMod(background, 60);
-		SDL_RenderCopyF(Game::renderer, background, NULL, &bruh);
-	}
+	
 
-	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 150);
-	SDL_RenderFillRectF(Game::renderer, &laneUnderway);
-	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
+	//SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 150);
+	//SDL_RenderFillRectF(Game::renderer, &laneUnderway);
+	//SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
 
 
 	if (!SongSelect::currentChart)
@@ -334,17 +477,15 @@ void Gameplay::update(Events::updateEvent event)
 
 	SDL_FRect overlayForAccuracy;
 
-	Accuracy->x = (receptors[0]->x - Accuracy->surfH) - 12;
-
 	overlayForAccuracy.x = Accuracy->x - 4;
 	overlayForAccuracy.y = (Game::gameHeight / 2) - 302;
 	overlayForAccuracy.w = Accuracy->surfH;
 	overlayForAccuracy.h = Accuracy->surfH;
 
 
-	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 128);
-	SDL_RenderFillRectF(Game::renderer, &overlayForAccuracy);
-	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
+	//SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 128);
+	//SDL_RenderFillRectF(Game::renderer, &overlayForAccuracy);
+	//SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
 
 	// multiplayer shit
 
@@ -360,57 +501,24 @@ void Gameplay::update(Events::updateEvent event)
 			spot.rect.x = 0;
 			spot.rect.y = (Game::gameHeight / 2) + 2;
 
-			SDL_FRect avatar;
-			avatar.x = 0;
-			avatar.w = 46;
-			avatar.h = 46;
-
 			spot.rect.w = 345;
 			if (spot.t->surfW > 345)
 				spot.rect.w = spot.t->surfW;
 			spot.rect.h = 46;
 			spot.rect.y = spot.rect.y + (48 * i);
-			avatar.y = spot.rect.y;
 			spot.t->y = spot.rect.y + 10;
 			spot.t->x = 50;
 
-			SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 128);
-			SDL_RenderFillRectF(Game::renderer, &spot.rect);
-			SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
-
-			SDL_RenderCopyF(Game::renderer, avatars[spot.score.SteamID64], NULL, &avatar);
-
-			SDL_SetRenderDrawColor(Game::renderer, 255, 255, 255, 255);
-
-			SDL_RenderDrawRectF(Game::renderer, &avatar);
-
-			SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
+			
 		}
 	}
 
-	SDL_FRect posBar;
 
-	posBar.x = receptors[0]->x;
-	posBar.y = 24;
-	posBar.h = 16;
-	posBar.w = ((receptors[3]->x + (64 * Game::save->GetDouble("Note Size"))) - receptors[0]->x) * (positionInSong / (songLength * 1000));
+	//SDL_SetRenderDrawColor(Game::renderer, 255, 255, 255, 255);
 
-	if (downscroll)
-		posBar.y = (receptors[0]->y + (64 * Game::save->GetDouble("Note Size"))) + 12;
+	//SDL_RenderFillRectF(Game::renderer, &posBar);
 
-
-	SDL_FRect outline;
-
-	outline.x = posBar.x;
-	outline.y = posBar.y;
-	outline.h = posBar.h;
-	outline.w = (receptors[3]->x + (64 * Game::save->GetDouble("Note Size"))) - receptors[0]->x;
-
-	SDL_SetRenderDrawColor(Game::renderer, 255, 255, 255, 255);
-
-	SDL_RenderFillRectF(Game::renderer, &posBar);
-
-	SDL_RenderDrawRectF(Game::renderer, &outline);
+	//SDL_RenderDrawRectF(Game::renderer, &outline);
 
 	// spawning shit
 
@@ -535,12 +643,12 @@ void Gameplay::update(Events::updateEvent event)
 			
 			spawnedNotes.push_back(object);
 			object->create();
-			add(object);
+			colGroups[object->lane]->add(object);
 		}
 	}
 	else
 	{
-		if (!ended && spawnedNotes.size() == 0 && positionInSong > (songLength * 1000) - 1000)
+		if (!ended && spawnedNotes.size() == 0 && positionInSong > (songLength) - 1000)
 		{
 			ended = true;
 			if (!MultiplayerLobby::inLobby)
@@ -563,7 +671,6 @@ void Gameplay::update(Events::updateEvent event)
 			}
 		}
 	}
-	// ok lets draw all of them now
 
 	for (int i = 0; i < receptors.size(); i++)
 	{
@@ -664,10 +771,9 @@ void Gameplay::update(Events::updateEvent event)
 					receptorRect.y = receptors[note->lane]->y;
 					note->debug = debug;
 
-
-					SDL_Rect l;
-					l.x = 0;
-					l.y = (receptorRect.y + 32);
+					Rect l;
+					l.x = receptorRect.x;
+					l.y = (receptorRect.y + 40);
 					l.w = Game::gameWidth;
 					l.h = Game::gameHeight - (receptorRect.y + 32);
 					if (downscroll)
@@ -676,33 +782,12 @@ void Gameplay::update(Events::updateEvent event)
 						l.h = receptorRect.y + 32;
 					}
 
-					SDL_SetRenderTarget(Game::renderer, colTexture[note->lane]);
+					//SDL_SetRenderTarget(Game::renderer, Game::mainCamera->cameraTexture);
 
-					SDL_SetTextureBlendMode(colTexture[note->lane], SDL_BLENDMODE_BLEND);
-
-					SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 0);
-					SDL_RenderClear(Game::renderer);
-
-					note->specializedDraw(positionInSong, beat, receptorRect, true);
-
-					SDL_SetRenderTarget(Game::renderer, Game::mainCamera->cameraTexture);
-
-					if (note->holdsActive > 0 && !note->active)
+					if (keys[note->lane] || botplay)
 					{
-						SDL_RenderSetClipRect(Game::renderer, &l);
+						colGroups[note->lane]->clipRect = l;
 					}
-
-					SDL_FRect dstRect;
-
-					dstRect.x = receptorRect.x;
-					dstRect.y = 0;
-					dstRect.h = 720;
-					dstRect.w = 64 * Game::save->GetDouble("Note Size");
-
-					SDL_RenderCopyF(Game::renderer, colTexture[note->lane], NULL, &dstRect);
-
-					SDL_RenderSetClipRect(Game::renderer, NULL);
-
 
 				}
 
@@ -742,19 +827,19 @@ void Gameplay::update(Events::updateEvent event)
 }
 void Gameplay::cleanUp()
 {
-	for (int i = 0; i < colTexture.size(); i++)
+	for (AvgGroup* grp : colGroups)
 	{
-		SDL_DestroyTexture(colTexture[i]);
+		delete grp;
 	}
-
+	colGroups.clear();
 	spawnedNotes.clear();
 	notesToPlay.clear();
 
-	for (std::map<std::string, SDL_Texture*>::iterator iter = avatars.begin(); iter != avatars.end(); ++iter)
-	{
-		std::string k = iter->first;
-		SDL_DestroyTexture(avatars[k]);
-	}
+	//for (std::map<std::string, SDL_Texture*>::iterator iter = avatars.begin(); iter != avatars.end(); ++iter)
+	//{
+	//	std::string k = iter->first;
+	//	SDL_DestroyTexture(avatars[k]);
+	//}
 
 	song->free();
 	clap->free();
@@ -763,8 +848,8 @@ void Gameplay::cleanUp()
 	SoundManager::removeChannel("clapFx");
 
 	
-	if (background)
-		SDL_DestroyTexture(background);
+	//if (background)
+	//	SDL_DestroyTexture(background);
 }
 
 void Gameplay::keyDown(SDL_KeyboardEvent event)

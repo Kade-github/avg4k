@@ -268,6 +268,7 @@ void MultiplayerLobby::create() {
 
 		Multiplayer::sendMessage<CPacketClientChartAcquired>(acquired);
 	}
+	created = true;
 }
 
 void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)

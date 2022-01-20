@@ -47,6 +47,8 @@ class Gameplay :
 
 		static float rate;
 
+		float scaleTime;
+
 		virtual void create();
 
 		int noteId;

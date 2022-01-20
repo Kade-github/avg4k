@@ -158,6 +158,7 @@ void MainMenu::create() {
 	border = new AvgSprite(32, 32, "assets/graphical/menu/border.png");
 	border->create();
 	add(border);
+	created = true;
 }
 
 void MainMenu::onSteam(std::string s)

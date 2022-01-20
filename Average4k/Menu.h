@@ -15,6 +15,8 @@ public:
 
 	std::vector<Object*> children;
 
+	bool created = false;
+
 	virtual void onPacket(PacketType pt, char* data, int32_t length) {};
 	virtual void onSteam(std::string s) {};
 
@@ -26,7 +28,7 @@ public:
 
 	virtual void create()
 	{
-
+		created = true;
 	}
 
 	void add(Object* obj) 

@@ -193,6 +193,7 @@ void Game::update(Events::updateEvent update)
 
 	mainCamera->update(update);
 
+	if (currentMenu->created)
 	currentMenu->update(update);
 
 	if (!transitioning)
@@ -259,14 +260,16 @@ void Game::update(Events::updateEvent update)
 	}
 	if (currentMenu != NULL)
 	{
-		for (int i = 0; i < currentMenu->children.size(); i++)
-		{
-			Object* obj = currentMenu->children[i];
-			obj->draw();
+		if (currentMenu->created)
+			for (int i = 0; i < currentMenu->children.size(); i++)
+			{
+				Object* obj = currentMenu->children[i];
+				obj->draw();
 
-		}
+			}
 	}
 
+	if (currentMenu->created)
 	currentMenu->postUpdate(update);
 
 	if (fpsText && !debugConsole)

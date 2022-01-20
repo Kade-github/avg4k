@@ -43,6 +43,7 @@ void MultiplayerLobbies::create()
 	helpText->create();
 	add(helpText);
 	refreshLobbies();
+	created = true;
 	MUTATE_END
 }
 

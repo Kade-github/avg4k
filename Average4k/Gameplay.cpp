@@ -166,16 +166,16 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 			{
 				if (spot.score.SteamID64 == score.SteamID64)
 				{
-
-					if (spot.score.Username.size() >= 6)
-						spot.score.Username = spot.score.Username.substr(0, 6) + "...";
+					std::string username = "";
+					if (score.Username.size() >= 6)
+						username = score.Username.substr(0, 6) + "...";
 					int rank = spot.score.Ranking;
 					
 					spot.score = score; // copy it over
 					found = true;
 					if (spot.score.Ranking != rank)
 						spot.t->y = ((Game::gameHeight / 2) + (46 * spot.score.Ranking)) - 8;
-					spot.t->setText(spot.score.Username + ": " + std::to_string(spot.score.score));
+					spot.t->setText(username + ": " + std::to_string(spot.score.score));
 					spot.avgRect->w = 300;
 				}
 			}
@@ -184,11 +184,12 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 				int y = (Game::gameHeight / 2) + (46 * score.Ranking);
 				cspot.avgRect = new AvgRect(0, y, 1, 46);
 				add(cspot.avgRect);
-				if (cspot.score.Username.size() >= 6)
-					cspot.score.Username = cspot.score.Username.substr(0, 6) + "...";
+				std::string username = "";
+				if (score.Username.size() >= 6)
+					username = score.Username.substr(0, 6) + "...";
 				cspot.score = score;
 				cspot.avgRect->alpha = 0.3;
-				cspot.t = new Text(46, y - 8, cspot.score.Username + ": " + std::to_string(cspot.score.score), 24, "NotoSans-Regular");
+				cspot.t = new Text(46, y - 8,username + ": " + std::to_string(cspot.score.score), 24, "NotoSans-Regular");
 				cspot.avgRect->w = 300;
 				leaderboard.push_back(cspot);
 				add(cspot.t);
@@ -393,6 +394,7 @@ void Gameplay::create() {
 	songPosOutline->c.r = 255;
 	songPosOutline->c.g = 255;
 	songPosOutline->c.b = 255;
+	created = true;
 
 	positionInSong = -1500;
 	MUTATE_END
@@ -443,6 +445,10 @@ void Gameplay::update(Events::updateEvent event)
 		indexG++;
 	}
 
+	if (Judgement->scale > 1.0)
+	{
+		Judgement->scale = lerp(1.1, 1, SDL_GetTicks() / scaleTime);
+	}
 
 	if (BASS_ErrorGetCode() != 0)
 		Combo->setText(std::to_string(BASS_ErrorGetCode()) + "_bassError");
@@ -722,6 +728,9 @@ void Gameplay::update(Events::updateEvent event)
 						note->active = false;
 
 						combo++;
+
+						Judgement->scale = 1.1;
+						scaleTime = SDL_GetTicks() + 450;
 
 						Judgement->setX((Game::gameWidth / 2) - (Judgement->surfW / 2));
 						Judgement->setY((Game::gameHeight / 2));
@@ -1008,7 +1017,8 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 					}
 
 					combo++;
-
+					Judgement->scale = 1.1;
+					scaleTime = SDL_GetTicks() + 450;
 					Judgement->setX((Game::gameWidth / 2) - (Judgement->surfW / 2));
 					Judgement->setY((Game::gameHeight / 2));
 

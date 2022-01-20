@@ -475,6 +475,8 @@ void SongSelect::create() {
 	if (Multiplayer::loggedIn)
 		Game::steam->populateSubscribedItems();
 
+	created = true;
+
 	updateList();
 }
 

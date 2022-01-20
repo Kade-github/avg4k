@@ -125,6 +125,7 @@ void SettingsMenu::create() {
 	rect->alpha = 0.3;
 	add(rect);
 	refreshList();
+	created = true;
 }
 
 void SettingsMenu::update(Events::updateEvent event)

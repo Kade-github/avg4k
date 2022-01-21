@@ -34,7 +34,6 @@ public:
 	void removeObj(Object* obj)
 	{
 		children.erase(std::remove(children.begin(), children.end(), obj), children.end());
-		delete obj;
 	}
 
 	bool handleDraw = false;

@@ -20,7 +20,7 @@ void changeMenu() {
 		b->beforeDeath();
 		b->die();
 	}
-	switch (instance->selectedIndex)
+	switch (instance->selectedIndex && Multiplayer::loggedIn)
 	{
 	case 1:
 		Game::instance->transitionToMenu(new MultiplayerLobbies());

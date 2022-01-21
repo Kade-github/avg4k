@@ -87,14 +87,8 @@ void Game::db_addLine(std::string s) {
 }
 
 void transCall() {
-	for (Object* obj : Game::mainCamera->children)
-	{
-		if (obj != NULL)
-			if (obj->w >= 0 && obj->h >= 0)
-				delete obj;
-	}
-	Game::mainCamera->children.clear();
 	Game::currentMenu->removeAll();
+	Game::mainCamera->children.clear();
 	delete Game::currentMenu;
 	Game::currentMenu = Game::toGoTo;
 	Game::currentMenu->create();

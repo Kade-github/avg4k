@@ -12,8 +12,9 @@ void MultiplayerLobby::refreshLobby(lobby l)
 	CurrentLobby = l;
 	inLobby = true;
 
-	for (person p : people)
+	for (person& p : people)
 	{
+		removeObj(p.avatar);
 		removeObj(p.display);
 		delete p.avatar;
 	}
@@ -32,6 +33,8 @@ void MultiplayerLobby::refreshLobby(lobby l)
 			per.avatar = spr;
 		else
 			per.avatar = NULL;
+		spr->w = 46;
+		spr->h = 46;
 		add(per.display);
 		add(spr);
 		people.push_back(per);
@@ -192,18 +195,11 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		break;
 	case eSPacketStartLobbyGame:
 		std::cout << "start!" << std::endl;
-		
-		Game::instance->transitionToMenu(new Gameplay());
+
 		SongSelect::currentChart = Game::steam->downloadedChart;
+		Game::instance->transitionToMenu(new Gameplay());
 
 
-		for (person p : people)
-		{
-			removeObj(p.display);
-			delete p.avatar;
-		}
-
-		people.clear();
 		break;
 	}
 	VM_END
@@ -286,11 +282,6 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 
 			Game::instance->transitionToMenu(new MultiplayerLobbies());
 
-			for (person p : people)
-			{
-				removeObj(p.display);
-				delete p.avatar;
-			}
 			people.clear();
 			inLobby = false;
 			break;
@@ -310,13 +301,6 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 
 				Game::instance->transitionToMenu(new SongSelect());
 
-
-				for (person p : people)
-				{
-					removeObj(p.display);
-					delete p.avatar;
-				}
-
 				people.clear();
 
 			}
@@ -327,12 +311,6 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 			Game::instance->transitionToMenu(new SongSelect());
 
 
-			for (person p : people)
-			{
-				removeObj(p.display);
-				delete p.avatar;
-			}
-
 			people.clear();
 
 			break;
@@ -342,12 +320,6 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 
 void MultiplayerLobby::update(Events::updateEvent event)
 {
-	
-}
-
-void MultiplayerLobby::postUpdate(Events::updateEvent event)
-{
-	MUTATE_START
 	for (person& p : people)
 	{
 		AvgSprite* spr = p.avatar;
@@ -356,5 +328,4 @@ void MultiplayerLobby::postUpdate(Events::updateEvent event)
 		spr->w = 46;
 		spr->h = 46;
 	}
-	MUTATE_END
 }

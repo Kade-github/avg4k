@@ -43,14 +43,15 @@ public:
 		if (obj == NULL)
 			return;
 		cam->children.erase(std::remove(cam->children.begin(), cam->children.end(), obj), cam->children.end());
-		delete obj;
 	}
 
 	void removeAll()
 	{
-		for (Object* obj : cam->children)
+		for(int i = 0; i < cam->children.size(); i++)
 		{
-			delete obj;
+			Object* obj = cam->children[i];
+			if (obj)
+				delete obj;
 		}
 		std::cout << "removed all " << children.size() << std::endl;
 		cam->children.clear();

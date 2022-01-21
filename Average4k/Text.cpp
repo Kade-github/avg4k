@@ -78,11 +78,11 @@ void Text::die()
 	if (!this)
 		return;
 	isDead = true;
-	if (message)
+	// this is a memory leak, but until I can figure out why the fuck deleting this causes a heap currupt.
+	// we cannot
+	/*if (message)
 		if (message->width > 0 && message->height > 0)
-			delete message;
-	if (isCreated)
-		Game::removeGlobalObject(this);
+			delete message;*/
 }
 
 void Text::centerX()

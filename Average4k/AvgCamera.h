@@ -40,41 +40,44 @@ public:
 				continue;
 			if (obj->w < 0 || obj->h < 0)
 				continue;
-			obj->draw();
-			if (obj->handleDraw) // because we binded to another
+			if (obj->children.size() < 9000)
 			{
-				glBindFramebuffer(GL_FRAMEBUFFER, fb);
-				AvgGroup* gr = (AvgGroup*)obj;
+				obj->draw();
+				if (obj->handleDraw) // because we binded to another
+				{
+					glBindFramebuffer(GL_FRAMEBUFFER, fb);
+					AvgGroup* gr = (AvgGroup*)obj;
 
-				Rect gdstRect;
-				Rect gsrcRect;
+					Rect gdstRect;
+					Rect gsrcRect;
 
-				gdstRect.x = gr->x;
-				gdstRect.y = gr->y;
+					gdstRect.x = gr->x;
+					gdstRect.y = gr->y;
 
-				gdstRect.w = gr->w * gr->scale;
-				gdstRect.h = gr->h * gr->scale;
-				gdstRect.r = 255;
-				gdstRect.g = 255;
-				gdstRect.b = 255;
-				gdstRect.a = 1;
+					gdstRect.w = gr->w * gr->scale;
+					gdstRect.h = gr->h * gr->scale;
+					gdstRect.r = 255;
+					gdstRect.g = 255;
+					gdstRect.b = 255;
+					gdstRect.a = 1;
 
-				gsrcRect.x = 0;
-				gsrcRect.y = 1;
-				gsrcRect.w = 1;
-				gsrcRect.h = -1;
+					gsrcRect.x = 0;
+					gsrcRect.y = 1;
+					gsrcRect.w = 1;
+					gsrcRect.h = -1;
 
-				if (gr->clipRect.w > 0 || gr->clipRect.h > 0)
-					Rendering::SetClipRect(&gr->clipRect);
+					if (gr->clipRect.w > 0 || gr->clipRect.h > 0)
+						Rendering::SetClipRect(&gr->clipRect);
 
-				Rendering::PushQuad(&gdstRect, &gsrcRect, gr->ctb, GL::genShader);
+					Rendering::PushQuad(&gdstRect, &gsrcRect, gr->ctb, GL::genShader);
 
-				if (gr->clipRect.w > 0 || gr->clipRect.h > 0)
-					Rendering::SetClipRect(NULL);
+					if (gr->clipRect.w > 0 || gr->clipRect.h > 0)
+						Rendering::SetClipRect(NULL);
+				}
+
+				if (obj->children.size() != 0 && !obj->handleDraw)
+					obj->drawChildren();
 			}
-		
-			if (obj->children.size() != 0 && !obj->handleDraw)
-				obj->drawChildren();
 		}
 
 

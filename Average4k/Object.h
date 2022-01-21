@@ -9,7 +9,8 @@ public:
 	virtual ~Object() {
 		for (Object* obj : children)
 		{
-			delete obj;
+			if (obj != NULL)
+				delete obj;
 		}
 		beforeDeath();
 		die();

@@ -169,6 +169,8 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 					std::string username = "";
 					if (score.Username.size() >= 6)
 						username = score.Username.substr(0, 6) + "...";
+					else
+						username = score.Username;
 					int rank = spot.score.Ranking;
 					
 					spot.score = score; // copy it over
@@ -187,9 +189,11 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 				std::string username = "";
 				if (score.Username.size() >= 6)
 					username = score.Username.substr(0, 6) + "...";
+				else
+					username = score.Username;
 				cspot.score = score;
 				cspot.avgRect->alpha = 0.3;
-				cspot.t = new Text(46, y - 8,username + ": " + std::to_string(cspot.score.score), 24, "NotoSans-Regular");
+				cspot.t = new Text(46, y - 8, username + ": " + std::to_string(cspot.score.score), 24, "NotoSans-Regular");
 				cspot.avgRect->w = 300;
 				leaderboard.push_back(cspot);
 				add(cspot.t);
@@ -478,6 +482,8 @@ void Gameplay::update(Events::updateEvent event)
 		song->bpm = curSeg.bpm;
 		lastBPM = curSeg.bpm;
 	}
+
+	songPosBar->w = ((receptors[3]->x + (64 * Game::save->GetDouble("Note Size"))) - receptors[0]->x) * (positionInSong / (songLength));
 
 	// underlay for accuracy
 
@@ -836,10 +842,6 @@ void Gameplay::update(Events::updateEvent event)
 }
 void Gameplay::cleanUp()
 {
-	for (AvgGroup* grp : colGroups)
-	{
-		delete grp;
-	}
 	colGroups.clear();
 	spawnedNotes.clear();
 	notesToPlay.clear();

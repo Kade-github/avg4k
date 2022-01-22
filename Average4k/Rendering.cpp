@@ -13,7 +13,7 @@ Texture* Rendering::white = NULL;
 
 
 void Rendering::Render_GLInit(Shader* shad) {
-	VM_START
+	MUTATE_START
 	shad->GL_Use();
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -32,7 +32,7 @@ void Rendering::Render_GLInit(Shader* shad) {
 
 
 	glGenBuffers(1, &batch_vbo);
-	VM_END
+	MUTATE_END
 }
 
 void Rendering::drawBatch()

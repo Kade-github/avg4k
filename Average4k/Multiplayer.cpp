@@ -625,9 +625,9 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
             con->append_header("IV", "dynamic");
             con->append_header("Version", Game::version);
 
-            UNPROTECTED_START
-                con->append_header("DebugBuild", "1");
-            UNPROTECTED_END
+           // UNPROTECTED_START
+           //     con->append_header("DebugBuild", "1");
+            //UNPROTECTED_END
 
             size_t outLen;
 

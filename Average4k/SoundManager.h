@@ -88,7 +88,7 @@ public:
 	{
 		if (id == -1)
 		{
-			bpmSegment seg;
+			bpmSegment seg = bpmSegment();
 			return seg;
 		}
 		float pos = getPos();

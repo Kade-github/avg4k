@@ -167,7 +167,7 @@ void Game::mouseButtonDown()
 	{
 		for (int i = 0; i < objects->size(); i++)
 		{
-			Object* bruh = (*objects)[i];
+			Object* bruh = objects->at(i);
 			bruh->mouseDown();
 		}
 	}
@@ -205,7 +205,7 @@ void Game::update(Events::updateEvent update)
 
 	mainCamera->update(update);
 
-	if (currentMenu->created)
+	if (currentMenu != nullptr && currentMenu->created)
 		currentMenu->update(update);
 
 	if (!transitioning)
@@ -281,7 +281,7 @@ void Game::update(Events::updateEvent update)
 			}
 	}
 
-	if (currentMenu->created)
+	if (currentMenu != nullptr && currentMenu->created)
 		currentMenu->postUpdate(update);
 
 	if (fpsText && !debugConsole)

@@ -48,6 +48,7 @@ judgement Judge::judgeNote(float difference) {
 		if (diff >= nextWindow && diff <= window)
 			return (judgement)i;
 	}
+	
 	return (judgement)-1;
 	VM_END
 }

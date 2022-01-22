@@ -560,6 +560,7 @@ bool firstConnection = false;
 
 DWORD WINAPI Multiplayer::connect(LPVOID agh)
 {
+
     VM_START
     connectedToServer = false;
 
@@ -623,6 +624,11 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
             con->append_header("Encrypted", "1");
             con->append_header("IV", "dynamic");
             con->append_header("Version", Game::version);
+
+            UNPROTECTED_START
+                con->append_header("DebugBuild", "1");
+            UNPROTECTED_END
+
             size_t outLen;
 
             EVP_PKEY_encrypt(cryptoCtx, NULL, &outLen, key, 32);

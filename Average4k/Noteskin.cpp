@@ -2,6 +2,7 @@
 #include "Game.h"
 #include <windows.h>
 #include <SDL_image.h>
+#include "Helpers.h"
 
 std::string Noteskin::type = "arrow";
 
@@ -33,11 +34,6 @@ void Noteskin::resetNoteskin(noteskin_asset* as)
 	}
 }
 
-char asciitolower(char in) {
-	if (in <= 'Z' && in >= 'A')
-		return in - ('Z' - 'z');
-	return in;
-}
 
 bool convertStringBool(std::string text) {
 	return text == "false" ? false : true;
@@ -67,8 +63,8 @@ noteskin_asset* loadSkin(noteskin_asset* as, std::string type) {
 			std::vector<std::string> split = Chart::split(line, ' ');
 			std::string first = split[0].substr(0,split[0].size() - 1);
 			std::string second = split[1];
-			std::transform(first.begin(), first.end(), first.begin(), asciitolower);
-			std::transform(second.begin(), second.end(), second.begin(), asciitolower);
+			std::transform(first.begin(), first.end(), first.begin(), Helpers::asciitolower);
+			std::transform(second.begin(), second.end(), second.begin(), Helpers::asciitolower);
 			if (first == "rotate")
 				as->rotate = convertStringBool(second);
 			if (first == "bounce")

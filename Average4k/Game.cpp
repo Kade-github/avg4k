@@ -8,6 +8,7 @@
 #include "AvgRect.h"
 #include "msgpack.hpp"
 #include "TweenManager.h"
+#include "Helpers.h"
 using namespace std;
 
 mutex pog;
@@ -171,8 +172,8 @@ void Game::mouseButtonDown()
 void Game::update(Events::updateEvent update)
 {
 	MUTATE_START
-	if (Multiplayer::connectedToServer)
-		SteamAPI_RunCallbacks();
+		if (Multiplayer::connectedToServer)
+			SteamAPI_RunCallbacks();
 
 	if (!Multiplayer::connectedToServer && startConnect)
 	{
@@ -195,29 +196,29 @@ void Game::update(Events::updateEvent update)
 		Tweening::TweenManager::createNewTween("_trans", __transRect, Tweening::tt_Alpha, 235, 255, 0, []()->void {
 			Game::instance->transitioning = false;
 			std::cout << "no more" << std::endl;
-		}, Easing::EaseInSine);
+			}, Easing::EaseInSine);
 	}
 
 	mainCamera->update(update);
 
 	if (currentMenu->created)
-	currentMenu->update(update);
+		currentMenu->update(update);
 
 	if (!transitioning)
 		fpsText->setText("FPS: " + std::to_string(gameFPS) + " - Visuals are subject to change");
 
-		for (int i = 0; i < objects->size(); i++)
+	for (int i = 0; i < objects->size(); i++)
+	{
+		try
 		{
-			try
-			{
-				Object* bruh = (*objects)[i];
-				bruh->update(update);
-			}
-			catch (...)
-			{
-
-			}
+			Object* bruh = (*objects)[i];
+			bruh->update(update);
 		}
+		catch (...)
+		{
+
+		}
+	}
 
 
 
@@ -277,7 +278,7 @@ void Game::update(Events::updateEvent update)
 	}
 
 	if (currentMenu->created)
-	currentMenu->postUpdate(update);
+		currentMenu->postUpdate(update);
 
 	if (fpsText && !debugConsole)
 		fpsText->draw();
@@ -336,12 +337,11 @@ void Game::update(Events::updateEvent update)
 
 	if (transitioning)
 		__transRect->draw();
-	
+
 
 	//SDL_RenderPresent(renderer);
 	MUTATE_END
 }
-
 
 void Game::keyDown(SDL_KeyboardEvent ev)
 {
@@ -358,7 +358,7 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 		debug_takingInput = false;
 		// cmds
 
-
+		std::transform(debug_string.begin(), debug_string.end(), debug_string.begin(), Helpers::asciitolower);
 		db_addLine(">" + debug_string);
 
 		if (debug_string == "help")
@@ -370,7 +370,7 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 			db_addLine("xg - hacks");
 			db_addLine("changeName - change the lobby name (you must be the host, and also in a lobby lol)");
 		}
-		else if (debug_string == "checkConnection")
+		else if (debug_string == "checkconnection")
 		{
 			std::string res = (Multiplayer::loggedIn ? "fuck you" : "bitch ass (not logged in)");
 			db_addLine(res + " - also cock: " + std::to_string(Multiplayer::connectedToServer));
@@ -379,13 +379,13 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 		{
 			db_addLine("xg is a dumbass lol! (jkjkjkjk 187384089228214273)");
 		}
-		else if (debug_string == "dumpVar")
+		else if (debug_string == "dumpvar")
 		{
 			db_addLine("Menu Variables:");
 			db_addLine("Transitioning: " + std::to_string(transitioning));
 			db_addLine("Children: " + std::to_string(currentMenu->cam->children.size()));
 		}
-		else if (debug_string == "gameplayEvents")
+		else if (debug_string == "gameplayevents")
 		{
 			gameplayEvents_DB = !gameplayEvents_DB;
 			db_addLine("set to " + std::to_string(gameplayEvents_DB));
@@ -394,7 +394,7 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 		{
 			printPackets_DB = !printPackets_DB;
 		}
-		else if (debug_string.starts_with("changeName"))
+		else if (debug_string.starts_with("changename"))
 		{
 			if (!MultiplayerLobby::inLobby)
 			{

@@ -80,6 +80,7 @@ void Gameplay::removeNote(NoteObject* object)
 		spawnedNotes.end());
 
 	colGroups[object->lane]->children.erase(colGroups[object->lane]->children.begin());
+
 }
 
 void Gameplay::miss(NoteObject* object)
@@ -196,7 +197,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 		{
 			avatars[spot.score.SteamID64]->y = spot.avgRect->y;
 			avatars[spot.score.SteamID64]->x = 0;
-			add(avatars[spot.score.SteamID64]);
+			//add(avatars[spot.score.SteamID64]);
 		}
 		break;
 	case eSPacketFinalizeChart:

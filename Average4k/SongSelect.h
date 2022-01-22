@@ -33,6 +33,7 @@ public:
 
 	static song* selectedSong;
 
+	bool uploading = false;
 	bool allowMove = true;
 
     static Chart* currentChart;

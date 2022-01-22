@@ -21,6 +21,10 @@ class MultiplayerLobby :
         static lobby CurrentLobby;
         static bool isHost;
 
+        bool downloading = true;
+
+        int diff = 0;
+
         Text* helpDisplay;
 
         Text* warningDisplay;

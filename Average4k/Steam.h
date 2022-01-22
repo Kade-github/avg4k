@@ -31,6 +31,10 @@ public:
 
 	PublishedFileId_t createdId;
 
+	UGCUpdateHandle_t updatehandle;
+
+	static uint64_t downloadId;
+
 	std::vector<steamItem> downloadedList;
 	std::vector<steamItem> subscribedList;
 	static Texture* getAvatar(const char* url);
@@ -42,7 +46,8 @@ public:
 
 	void populateWorkshopItems(int page);
 	void populateSubscribedItems();
-
+	float CheckWorkshopProgress();
+	static float CheckWorkshopDownload();
 	static void LoadWorkshopChart(uint64_t publishedFileId);
 	char chartWorkshop[512];
 	static std::string ReplaceString(std::string subject, const std::string& search, const std::string& replace);

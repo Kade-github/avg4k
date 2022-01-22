@@ -3,6 +3,8 @@
 #include "Game.h"
 
 
+
+
 void Steam::InitSteam()
 {
 	if (!SteamAPI_Init())
@@ -139,6 +141,8 @@ long GetFileSize(std::string filename)
     return rc == 0 ? stat_buf.st_size : -1;
 }
 
+
+
 void Steam::uploadToItem(Chart* c, PublishedFileId_t id, std::string fileName)
 {
     MUTATE_START
@@ -149,6 +153,7 @@ void Steam::uploadToItem(Chart* c, PublishedFileId_t id, std::string fileName)
     std::cout << "file with folder: " << c->meta.folder + "/" + fileName << std::endl;
 
     auto handle = SteamUGC()->StartItemUpdate(1828580, id);
+    updatehandle = handle;
     SteamUGC()->SetItemTitle(handle, c->meta.songName.c_str());
     std::string desc = "Uploaded from in game.\nDiffs:\n";
     for (difficulty& diff : c->meta.difficulties)
@@ -296,6 +301,31 @@ void Steam::populateSubscribedItems()
     free(subscribed);
 }
 
+float Steam::CheckWorkshopProgress()
+{
+    uint64 bytes;
+    uint64 totalBytes;
+    SteamUGC()->GetItemUpdateProgress(updatehandle, &bytes, &totalBytes);
+
+    if (bytes == 0 || totalBytes == 0) // dont divide by 0 lol
+        return 0;
+
+    return bytes / totalBytes;
+}
+
+float Steam::CheckWorkshopDownload()
+{
+    uint64 bytes;
+    uint64 totalBytes;
+
+    SteamUGC()->GetItemDownloadInfo(downloadId, &bytes, &totalBytes);
+
+    if (bytes == 0 || totalBytes == 0) // dont divide by 0 lol
+        return 0;
+
+    return bytes / totalBytes;
+}
+
 void Steam::OnUGCSubscribedQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFailure)
 {
     subscribedList.clear();
@@ -327,11 +357,13 @@ void Steam::OnUGCSubscribedQueryCallback(SteamUGCQueryCompleted_t* result, bool 
     }
 }
 
+uint64_t Steam::downloadId = 0;
 
 // loading and downloading I got orkshop charts
 
 void Steam::LoadWorkshopChart(uint64_t publishedFileID) {
 
+    downloadId = publishedFileID;
     PublishedFileId_t file = publishedFileID;
 
     std::cout << "downloading " << file << std::endl;

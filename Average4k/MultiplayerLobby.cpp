@@ -63,6 +63,8 @@ void MultiplayerLobby::onSteam(std::string s) {
 		CPacketClientChartAcquired acquired;
 		acquired.PacketType = eCPacketClientChartAcquired;
 		acquired.Order = 0;
+		downloading = false;
+		warningDisplay->setText("Chart downloaded! Current chart: " + SongSelect::currentChart->meta.songName + " (" + SongSelect::currentChart->meta.difficulties[diff].name + ")");
 
 		Multiplayer::sendMessage<CPacketClientChartAcquired>(acquired);
 	}
@@ -178,6 +180,9 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		obj.convert(cc);
 
 		SongSelect::selectedDiffIndex = cc.diff;
+		diff = cc.diff;
+		warningDisplay->setText("Obtaining chart...");
+		downloading = true;
 
 		Game::steam->LoadWorkshopChart((uint64_t)cc.chartID);
 
@@ -289,7 +294,7 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 			if (!isHost)
 				return;
 
-			if (waitingForStart)
+			if (waitingForStart && SongSelect::currentChart != nullptr)
 			{
 				start.Order = 0;
 				start.PacketType = eCPacketHostStartGame;
@@ -327,5 +332,12 @@ void MultiplayerLobby::update(Events::updateEvent event)
 		spr->y = p.display->y - 8;
 		spr->w = 46;
 		spr->h = 46;
+	}
+
+	if (downloading)
+	{
+		float prog = Steam::CheckWorkshopDownload();
+		if (prog != 0)
+			warningDisplay->setText("Obtaining chart... (" + std::to_string(prog * 100).substr(0,3) + ")");
 	}
 }

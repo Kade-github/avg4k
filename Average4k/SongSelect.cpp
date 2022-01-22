@@ -183,6 +183,16 @@ void SongSelect::update(Events::updateEvent event)
 		lastChecked = Game::steam->subscribedList.size();
 		updateList();
 	}
+
+	if (uploading)
+	{
+		float prog = Game::steam->CheckWorkshopProgress();
+		if (prog != 0)
+		{
+			steam->setText("Uploading please wait... (" + std::to_string(prog * 100).substr(0,3) + "%)");
+			steam->centerX();
+		}
+	}
 }
 
 void SongSelect::keyDown(SDL_KeyboardEvent event)
@@ -378,7 +388,7 @@ void SongSelect::onSteam(std::string s)
 		std::cout << "uploading to " << Game::steam->createdId << std::endl;
 
 		Game::steam->uploadToItem(currentChart, Game::steam->createdId, split[split.size() - 1]);
-
+		uploading = true;
 		Color c;
 		c.r = 128;
 		c.g = 128;
@@ -406,7 +416,7 @@ void SongSelect::onSteam(std::string s)
 	if (s == "uploadItem")
 	{
 		allowMove = true;
-
+		uploading = false;
 		Color c;
 		c.r = 128;
 		c.g = 255;

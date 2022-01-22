@@ -245,6 +245,8 @@ void MainMenu::update(Events::updateEvent event)
 
 void MainMenu::keyDown(SDL_KeyboardEvent event)
 {
+	if (!Multiplayer::loggedIn)
+		return;
 	if (event.keysym.sym == SDLK_RETURN)
 	{
 		changeMenu();

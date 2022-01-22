@@ -112,10 +112,10 @@ void NoteObject::draw() {
 
         dstRect.y = tile.rect.y;
 
-        if (tile.rect.y < receptor.y - 32 && !tile.active)
+        if (tile.rect.y < receptor.y - 32 && !tile.active && !downscroll)
             continue;
 
-        if (tile.rect.y > receptor.y + 32 && !tile.active && downscroll)
+        if (tile.rect.y > receptor.y + 48 && !tile.active && downscroll)
             continue;
 
         if (i != heldTilings.size() - 1) {

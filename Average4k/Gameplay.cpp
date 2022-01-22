@@ -417,7 +417,7 @@ void Gameplay::update(Events::updateEvent event)
 	ll.h = Game::gameHeight;
 
 	int indexG = 0;
-	for (AvgGroup* group : colGroups) // rest clips
+	for (AvgGroup* group : colGroups) // reset clips
 	{
 		ll.x = receptors[indexG]->x;
 		group->clipRect = ll;
@@ -738,7 +738,7 @@ void Gameplay::update(Events::updateEvent event)
 
 				if (note->lane < 4 && note->lane >= 0)
 				{
-					SDL_FRect receptorRect;
+					Rect receptorRect;
 					receptorRect.w = receptors[note->lane]->w;
 					receptorRect.h = receptors[note->lane]->h;
 					receptorRect.x = receptors[note->lane]->x;
@@ -753,7 +753,7 @@ void Gameplay::update(Events::updateEvent event)
 					if (downscroll)
 					{
 						l.y = 0;
-						l.h = receptorRect.y + 32;
+						l.h = receptorRect.y + 48;
 					}
 
 					//SDL_SetRenderTarget(Game::renderer, Game::mainCamera->cameraTexture);

@@ -80,6 +80,7 @@ void Gameplay::removeNote(NoteObject* object)
 		spawnedNotes.end());
 
 	colGroups[object->lane]->children.erase(colGroups[object->lane]->children.begin());
+
 }
 
 void Gameplay::miss(NoteObject* object)
@@ -164,6 +165,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 					spot.t->setText(username + ": " + std::to_string(spot.score.score));
 					spot.avgRect->w = 300;
 					spot.avgRect->y = ((Game::gameHeight / 2) + (46 * ranking));
+					std::cout << "updating previous" << std::endl;
 				}
 			}
 			if (!found)
@@ -181,6 +183,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 				cspot.t = new Text(50, y + 4, username + ": " + std::to_string(cspot.score.score), 24, "NotoSans-Regular");
 				cspot.avgRect->w = 300;
 				leaderboard.push_back(cspot);
+				std::cout << "adding new thing" << std::endl;
 				add(cspot.t);
 			}
 			ranking++;
@@ -196,7 +199,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 		{
 			avatars[spot.score.SteamID64]->y = spot.avgRect->y;
 			avatars[spot.score.SteamID64]->x = 0;
-			add(avatars[spot.score.SteamID64]);
+			//add(avatars[spot.score.SteamID64]);
 		}
 		break;
 	case eSPacketFinalizeChart:

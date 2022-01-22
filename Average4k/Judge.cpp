@@ -7,17 +7,17 @@ std::vector<int> Judge::scoreWindows;
 
 void Judge::initJudge()
 {
-	VM_START
+	MUTATE_START
 	// in ms btw!
 	hitWindows = {22.5, 45.0, 90.0, 135.0, 180.0};
 	// score
 	scoreWindows = { 300,250, 100, 50, 0 };
-	VM_END
+	MUTATE_END
 }
 
 int Judge::scoreNote(float difff)
 {
-	VM_START
+	MUTATE_START
 	float diff = std::abs(difff);
 
 	for (int i = 0; i < 5; i++)
@@ -31,11 +31,11 @@ int Judge::scoreNote(float difff)
 			return scoreWindows[i];
 	}
 	return -1;
-	VM_END
+	MUTATE_END
 }
 
 judgement Judge::judgeNote(float difference) {
-	VM_START
+	MUTATE_START
 	float diff = std::abs(difference);
 
 	for (int i = 0; i < 5; i++)
@@ -49,5 +49,5 @@ judgement Judge::judgeNote(float difference) {
 			return (judgement)i;
 	}
 	return (judgement)-1;
-	VM_END
+	MUTATE_END
 }

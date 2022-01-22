@@ -474,6 +474,7 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 			SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 			SDL_DisplayMode DM;
 			SDL_GetCurrentDisplayMode(0, &DM);
+		
 			w = DM.w;
 			h = DM.h;
 		}
@@ -486,17 +487,18 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 
 		std::cout << "bruh " << w << " " << h << std::endl;
 
-		multiplierx = (float)1280 / (float)w;
-		multipliery = (float)720 / (float)h;
+		multiplierx = 1280 / w;
+		multipliery = 720 / w;
+
+		GL::projection = glm::ortho(0.0f, (float)w, (float)h, 0.0f, -1.0f, 1.0f);
+		glUniformMatrix4fv(glGetUniformLocation(GL::genShader->program, "u_projection"), 1, GL_FALSE, &GL::projection[0][0]);
 
 		glViewport(0, 0, w, h);
+		
 
 		std::cout << "FULLSCREEN MULTIPLIERS: " << multiplierx << " " << multipliery << std::endl;
-
-		//__transRect->w = w;
-		//__transRect->h = h;
-		//mainCamera->w = w;
-		//mainCamera->h = h;
+		mainCamera->w = w;
+		mainCamera->h = h;
 	}
 
 	if (ev.keysym.sym == SDLK_F11)

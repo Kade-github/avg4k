@@ -465,20 +465,20 @@ void Gameplay::update(Events::updateEvent event)
 
 	if (Game::save->GetBool("Annoying bopping"))
 	{
-		if ((int)beat % 2 == 0 && lastbeat != (int)beat && beat > 0)
+		if ((int)beat % 1 == 0 && lastbeat != (int)beat && beat > 0)
 		{
 			lastbeat = (int)beat;
-			std::cout << "beat " << beat << std::endl;
 			drop = 20000 / curSeg.bpm;
-			cam->scale = 1.1;
+			cam->scale = 1.05;
 		}
 
 		if (cam->scale > 1.0)
 		{
 			drop -= Game::deltaTime * 0.6;
-			cam->scale = lerp(1.0, 1.1, drop / (20000 / curSeg.bpm));
+			cam->scale = lerp(1.0, 1.05, drop / (20000 / curSeg.bpm));
 		}
 	}
+
 	songPosBar->w = ((receptors[3]->x + (64 * Game::save->GetDouble("Note Size"))) - receptors[0]->x) * (positionInSong / (songLength));
 
 	// underlay for accuracy

@@ -39,6 +39,10 @@ char asciitolower(char in) {
 	return in;
 }
 
+bool convertStringBool(std::string text) {
+	return text == "false" ? false : true;
+}
+
 noteskin_asset* loadSkin(noteskin_asset* as, std::string type) {
 	as = new noteskin_asset();
 	as->fourth = getAsset("assets/noteskin/" + type + "/4th.png");
@@ -58,13 +62,19 @@ noteskin_asset* loadSkin(noteskin_asset* as, std::string type) {
 	{
 		while (getline(config, line))
 		{
+			if (line.find("#") != std::string::npos)
+				continue;
 			std::vector<std::string> split = Chart::split(line, ' ');
 			std::string first = split[0].substr(0,split[0].size() - 1);
 			std::string second = split[1];
 			std::transform(first.begin(), first.end(), first.begin(), asciitolower);
 			std::transform(second.begin(), second.end(), second.begin(), asciitolower);
 			if (first == "rotate")
-				as->rotate = (second == "false" ? false : true);
+				as->rotate = convertStringBool(second);
+			if (first == "bounce")
+				as->bounce = convertStringBool(second);
+			if (first == "shrink")
+				as->shrink = convertStringBool(second);
 		}
 		config.close();
 	}

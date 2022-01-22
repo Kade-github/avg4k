@@ -642,11 +642,12 @@ void Gameplay::update(Events::updateEvent event)
 		if (keys[i] || holding[i])
 		{
 			receptors[i]->light();
-			receptors[i]->scale = 0.85;
+			if (noteskin->shrink)
+				receptors[i]->scale = 0.85;
 		}
 		else
 		{
-			if (receptors[i]->scale < 1.0)
+			if (receptors[i]->scale < 1.0 && noteskin->shrink)
 			{
 				receptors[i]->scale += Game::deltaTime * 0.04;
 				if (receptors[i]->scale > 1.0)
@@ -687,11 +688,13 @@ void Gameplay::update(Events::updateEvent event)
 						note->active = false;
 
 						combo++;
-
-						Judgement->scale = 1.15;
-						Combo->scale = 1.15;
-						scaleTime = 350;
-						scaleStart = 0;
+						if (noteskin->bounce)
+						{
+							Judgement->scale = 1.15;
+							Combo->scale = 1.15;
+							scaleTime = 350;
+							scaleStart = 0;
+						}
 
 						Judgement->setX((Game::gameWidth / 2) - (Judgement->surfW / 2));
 						Judgement->setY((Game::gameHeight / 2));
@@ -974,10 +977,13 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 					}
 
 					combo++;
-					Judgement->scale = 1.15;
-					Combo->scale = 1.15;
-					scaleTime = 350;
-					scaleStart = 0;
+					if (noteskin->bounce)
+					{
+						Judgement->scale = 1.15;
+						Combo->scale = 1.15;
+						scaleTime = 350;
+						scaleStart = 0;
+					}
 					Judgement->setX((Game::gameWidth / 2) - (Judgement->surfW / 2));
 					Judgement->setY((Game::gameHeight / 2));
 

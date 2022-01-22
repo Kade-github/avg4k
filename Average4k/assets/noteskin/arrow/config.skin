@@ -1,1 +1,6 @@
+# Rotate the sprites orientation depending on direction
 rotate: true
+# Shrink the receptor's depending on if they're being held or not
+shrink: true
+# Make the combo and judgement text bounce when a note is played
+bounce: true

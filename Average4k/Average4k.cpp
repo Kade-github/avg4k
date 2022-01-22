@@ -209,12 +209,12 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	//SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 	float time = 0;
 	float bruh = 0;
+	double next_tick = (double)SDL_GetTicks();
 	SDL_GL_SetSwapInterval(0);
 	while (run)
 	{
-		time = SDL_GetTicks();
-		float delta = time - bruh;
-		if (delta > 1000 / 240)
+		double now_tick = (double)SDL_GetTicks();
+		if (now_tick >= next_tick)
 		{
 			bruh = time;
 			const Uint32 startTime = SDL_GetTicks();
@@ -284,7 +284,13 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			timestamps[frames] = frames;
 			fps[frames] = Game::gameFPS;
 			deltaTimes[frames] = Game::deltaTime;
+			next_tick += (1000.0 / 240.0);
 		}
+		else
+		{
+			SDL_Delay((int)(next_tick - now_tick));
+		}
+
 
 	}
 

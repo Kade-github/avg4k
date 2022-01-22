@@ -49,6 +49,7 @@ const float min(const float a, const float b)
 
 void Gameplay::updateAccuracy(double hitWorth)
 {
+	MUTATE_START
 	notesPlayed++;
 	notesHit += hitWorth;
 	accuracy = ((notesHit / notesPlayed) * 100);
@@ -67,6 +68,7 @@ void Gameplay::updateAccuracy(double hitWorth)
 	God->setText("Great: " + std::to_string(Great));
 	Ehh->setText("Eh: " + std::to_string(Eh));
 	Yke->setText("Yikes: " + std::to_string(Yikes));
+	MUTATE_END
 }
 
 void Gameplay::removeNote(NoteObject* object)

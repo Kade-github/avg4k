@@ -33,7 +33,12 @@ public:
 
 	void removeObj(Object* obj)
 	{
-		children.erase(std::remove(children.begin(), children.end(), obj), children.end());
+		children.erase(
+			std::remove_if(children.begin(), children.end(), [&](Object* const ob) {
+				return ob->id == obj->id;
+				}),
+			children.end());
+		delete obj;
 	}
 
 	bool handleDraw = false;
@@ -44,6 +49,10 @@ public:
 	int w = 0;
 	float y = 0;
 	int h = 0;
+
+
+	static float currentId;
+	float id = 0;
 
 	float offsetX = 0;
 	float offsetY = 0;

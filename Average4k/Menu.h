@@ -51,7 +51,8 @@ public:
 		{
 			Object* obj = cam->children[i];
 			if (obj)
-				delete obj;
+				if (!obj->isDead)
+					delete obj;
 		}
 		std::cout << "removed all " << children.size() << std::endl;
 		cam->children.clear();

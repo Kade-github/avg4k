@@ -80,9 +80,9 @@ void Text::die()
 	isDead = true;
 	// this is a memory leak, but until I can figure out why the fuck deleting this causes a heap currupt.
 	// we cannot
-	/*if (message)
+	if (message)
 		if (message->width > 0 && message->height > 0)
-			delete message;*/
+			delete message;
 }
 
 void Text::centerX()

@@ -76,7 +76,7 @@ void Gameplay::removeNote(NoteObject* object)
 			}),
 		spawnedNotes.end());
 
-	colGroups[object->lane]->removeObj(object);
+	colGroups[object->lane]->children.erase(colGroups[object->lane]->children.begin());
 }
 
 void Gameplay::miss(NoteObject* object)
@@ -197,9 +197,6 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 		}
 		break;
 	case eSPacketFinalizeChart:
-
-		for (leaderboardSpot p : leaderboard)
-			removeObj(p.t);
 
 		leaderboard.clear();
 

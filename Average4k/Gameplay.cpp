@@ -298,11 +298,9 @@ void Gameplay::create() {
 
 	Judgement = new Text(Game::gameWidth / 2, Game::gameHeight / 2, " ", 24, "NotoSans-Regular");
 	Judgement->create();
-	add(Judgement);
 
 	Combo = new Text(Game::gameWidth / 2, Game::gameHeight / 2 + 40, " ", 24, "NotoSans-Regular");
 	Combo->create();
-	add(Combo);
 
 	AvgRect* lAcc = new AvgRect(171, (Game::gameHeight / 2) - 304, 250, 295);
 	lAcc->alpha = 0.5;
@@ -359,6 +357,9 @@ void Gameplay::create() {
 		colGroups.push_back(group);
 		add(group);
 	}
+
+	add(Judgement);
+	add(Combo);
 
 	songPosBar = new AvgRect(receptors[0]->x, 24, ((receptors[3]->x + (64 * Game::save->GetDouble("Note Size"))) - receptors[0]->x) * (positionInSong / (songLength)), 24);
 	add(songPosBar);
@@ -474,7 +475,8 @@ void Gameplay::update(Events::updateEvent event)
 
 		if (cam->scale > 1.0)
 		{
-			drop -= Game::deltaTime * 0.6;
+			float var = Game::deltaTime;
+			drop -= var * 0.6;
 			cam->scale = lerp(1.0, 1.05, drop / (20000 / curSeg.bpm));
 		}
 	}
@@ -690,7 +692,8 @@ void Gameplay::update(Events::updateEvent event)
 					if (Game::save->GetBool("hitsounds") && !note->clapped)
 					{
 						note->clapped = true;
-						clap->play();
+						if (SoundManager::getChannelByName("clapFx") != NULL)
+							clap->play();
 					}
 					if (botplay && note->active)
 					{

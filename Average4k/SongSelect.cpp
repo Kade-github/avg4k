@@ -8,6 +8,7 @@ song* SongSelect::selectedSong = NULL;
 int SongSelect::lastChecked = 0;
 
 void SongSelect::updateList() {
+	MUTATE_START
 	listOfCharts.clear();
 	if (!MultiplayerLobby::inLobby)
 	{
@@ -170,10 +171,12 @@ void SongSelect::updateList() {
 		steam->setText(listOfCharts[selectedIndex].steam ? "Steam Workshop" : "Local Storage (Press shift to upload)");
 		steam->centerX();
 	}
+	MUTATE_END
 }
 
 void SongSelect::update(Events::updateEvent event)
 {
+	MUTATE_START
 	if (!currentChart)
 		return;
 	
@@ -193,6 +196,7 @@ void SongSelect::update(Events::updateEvent event)
 			steam->centerX();
 		}
 	}
+	MUTATE_END
 }
 
 void SongSelect::keyDown(SDL_KeyboardEvent event)

@@ -95,6 +95,7 @@ void Game::db_addLine(std::string s) {
 }
 
 void transCall() {
+	MUTATE_START
 	Game::currentMenu->removeAll();
 	Game::mainCamera->children.clear();
 	delete Game::currentMenu;
@@ -102,16 +103,19 @@ void transCall() {
 	Game::currentMenu->create();
 	__transRect->alpha = 0;
 	transCompleted = true;
+	MUTATE_END
 }
 
 void Game::transitionToMenu(Menu* m)
 {
+	MUTATE_START
 	transCompleted = false;
 	toGoTo = m;
 	Tweening::tweenCallback callback = (Tweening::tweenCallback)transCall;
 	transitioning = true;
 	Tweening::TweenManager::activeTweens.clear();
 	Tweening::TweenManager::createNewTween("_trans", __transRect, Tweening::tt_Alpha, 235, 0, 1, callback, Easing::EaseInSine);
+	MUTATE_END
 }
 
 void Game::switchMenu(Menu* m)

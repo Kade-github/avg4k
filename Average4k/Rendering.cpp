@@ -13,6 +13,7 @@ Texture* Rendering::white = NULL;
 
 
 void Rendering::Render_GLInit(Shader* shad) {
+	VM_START
 	shad->GL_Use();
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -31,10 +32,12 @@ void Rendering::Render_GLInit(Shader* shad) {
 
 
 	glGenBuffers(1, &batch_vbo);
+	VM_END
 }
 
 void Rendering::drawBatch()
 {
+	MUTATE_START
 	if (batch_buffer.size() != 0)
 	{
 		glBindVertexArray(batch_vao);
@@ -55,6 +58,7 @@ void Rendering::drawBatch()
 	}
 	batch_texture = NULL;
 	batch_shader = NULL;
+	MUTATE_END
 }
 void Rendering::SetClipRect(Rect* clipRect)
 {
@@ -72,6 +76,7 @@ void Rendering::SetClipRect(Rect* clipRect)
 // rotate the texture on 90 degree angles
 void Rendering::PushQuad(Rect* dstRect, Rect* srcRect, Texture* tex, Shader* shad, float deg)
 {
+	MUTATE_START
 	if (tex == nullptr)
 		tex = white;
 	if (shad == nullptr)
@@ -158,10 +163,12 @@ void Rendering::PushQuad(Rect* dstRect, Rect* srcRect, Texture* tex, Shader* sha
 	batch_buffer.push_back(tr);
 	batch_buffer.push_back(bl);
 	batch_buffer.push_back(br);
+	MUTATE_END
 }
 
 void Rendering::PushQuad(Rect* dstRect, Rect* srcRect, Texture* tex, Shader* shad) {
 
+	MUTATE_START
 	if (tex == nullptr)
 		tex = white;
 	if (shad == nullptr)
@@ -221,4 +228,5 @@ void Rendering::PushQuad(Rect* dstRect, Rect* srcRect, Texture* tex, Shader* sha
 	batch_buffer.push_back(tr);
 	batch_buffer.push_back(bl);
 	batch_buffer.push_back(br);
+	MUTATE_END
 }

@@ -848,12 +848,12 @@ void Gameplay::cleanUp()
 
 void Gameplay::keyDown(SDL_KeyboardEvent event)
 {
-	MUTATE_START
+	VM_START
 
 	switch (event.keysym.sym)
 	{
 		case SDLK_ESCAPE:
-			VM_START
+			
 			if (MultiplayerLobby::inLobby) {
 				CPacketHostEndChart end;
 				end.Order = 0;
@@ -865,7 +865,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			SongSelect::currentChart->destroy();
 			cleanUp();
 			Game::instance->transitionToMenu(new MainMenu());
-			VM_END
+		
 			return;
 		case SDLK_F1:
 			if (MultiplayerLobby::inLobby)
@@ -1022,7 +1022,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				}
 		}
 	}
-	MUTATE_END
+	VM_END
 }
 
 void Gameplay::keyUp(SDL_KeyboardEvent ev)

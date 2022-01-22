@@ -227,24 +227,30 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			while (SDL_PollEvent(&event) > 0)
 			{
 				switch (event.type) {
-				case SDL_QUIT:
+				case SDL_QUIT: {
 					run = false;
 					break;
-				case SDL_KEYDOWN:
+				}
+				case SDL_KEYDOWN: {
 					game->keyDown(event.key);
 					break;
-				case SDL_KEYUP:
+				}
+				case SDL_KEYUP: {
 					game->keyUp(event.key);
 					break;
-				case SDL_MOUSEBUTTONDOWN:
+				}
+				case SDL_MOUSEBUTTONDOWN: {
 					game->mouseButtonDown();
 					break;
-				case SDL_TEXTINPUT:
+				}
+				case SDL_TEXTINPUT: {
 					game->textInput(event.text);
 					break;
-				case SDL_MOUSEWHEEL:
+				}
+				case SDL_MOUSEWHEEL: {
 					wheel = event.wheel.y;
 					break;
+				}
 				}
 
 			}

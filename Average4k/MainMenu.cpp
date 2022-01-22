@@ -37,7 +37,7 @@ void changeMenu() {
 
 void callback()
 {
-	VM_START
+	//VM_START
 	MainMenu* instance = (MainMenu*)Game::currentMenu;
 	Texture* tex = Steam::getAvatar(Multiplayer::currentUserAvatar.c_str());
 	if (tex)
@@ -111,7 +111,7 @@ void callback()
 		Tweening::TweenManager::createNewTween("buttonY" + index, b, Tweening::tt_Y, 600, b->y + 100, b->y, NULL, Easing::EaseInSine);
 		index++;
 	}
-	VM_END
+	//VM_END
 }
 
 MainMenu::MainMenu()

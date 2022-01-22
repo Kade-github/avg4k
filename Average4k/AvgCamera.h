@@ -88,8 +88,11 @@ public:
 		Rect dstRect;
 		Rect srcRect;
 
-		dstRect.x = x;
-		dstRect.y = y;
+		float mpx = (w * (1 - scale)) / 2;
+		float mpy = (h * (1 - scale)) / 2;
+
+		dstRect.x = x + mpx;
+		dstRect.y = y + mpy;
 
 		dstRect.w = w * scale;
 		dstRect.h = h * scale;

@@ -239,6 +239,8 @@ void Gameplay::create() {
 
 	Judge::judgeNote(174);
 
+
+
 	std::string bg = SongSelect::currentChart->meta.folder + "/" + SongSelect::currentChart->meta.background;
 
 	background = new AvgSprite(0, 0, bg);
@@ -460,6 +462,23 @@ void Gameplay::update(Events::updateEvent event)
 		lastBPM = curSeg.bpm;
 	}
 
+
+	if (Game::save->GetBool("Annoying bopping"))
+	{
+		if ((int)beat % 4 == 0 && lastbeat != (int)beat)
+		{
+			lastbeat = (int)beat;
+			std::cout << "beat " << beat << std::endl;
+			drop = 20000 / curSeg.bpm;
+			cam->scale = 1.1;
+		}
+
+		if (cam->scale > 1.0)
+		{
+			drop -= Game::deltaTime * 0.6;
+			cam->scale = lerp(1.0, 1.1, drop / (20000 / curSeg.bpm));
+		}
+	}
 	songPosBar->w = ((receptors[3]->x + (64 * Game::save->GetDouble("Note Size"))) - receptors[0]->x) * (positionInSong / (songLength));
 
 	// underlay for accuracy

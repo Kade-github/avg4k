@@ -425,7 +425,9 @@ void Gameplay::update(Events::updateEvent event)
 
 	if (Judgement->scale > 1.0)
 	{
-		Judgement->scale = lerp(1.1, 1, SDL_GetTicks() / scaleTime);
+		Combo->scale = lerp(1.25, 1, scaleStart / scaleTime);
+		Judgement->scale = lerp(1.25, 1, scaleStart / scaleTime);
+		scaleStart += Game::deltaTime;
 	}
 
 	if (BASS_ErrorGetCode() != 0)
@@ -686,8 +688,10 @@ void Gameplay::update(Events::updateEvent event)
 
 						combo++;
 
-						Judgement->scale = 1.1;
-						scaleTime = SDL_GetTicks() + 450;
+						Judgement->scale = 1.15;
+						Combo->scale = 1.15;
+						scaleTime = 350;
+						scaleStart = 0;
 
 						Judgement->setX((Game::gameWidth / 2) - (Judgement->surfW / 2));
 						Judgement->setY((Game::gameHeight / 2));
@@ -970,8 +974,10 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 					}
 
 					combo++;
-					Judgement->scale = 1.1;
-					scaleTime = SDL_GetTicks() + 450;
+					Judgement->scale = 1.15;
+					Combo->scale = 1.15;
+					scaleTime = 350;
+					scaleStart = 0;
 					Judgement->setX((Game::gameWidth / 2) - (Judgement->surfW / 2));
 					Judgement->setY((Game::gameHeight / 2));
 

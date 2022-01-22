@@ -65,6 +65,8 @@ class Gameplay :
 
 		std::vector<float> clapped;
 
+		float scaleStart = 0;
+
 		bool keys[4];
 		bool holding[4];
 		float startTime = 0;

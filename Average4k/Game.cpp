@@ -40,6 +40,9 @@ bool debug_takingInput;
 
 std::string debug_string;
 
+AvgRect* consoleBG;
+AvgRect* consoleCMDBar;
+
 bool debugConsole;
 Text* debugText;
 Text* consoleLog;
@@ -81,9 +84,13 @@ void Game::GetMousePos(int* mx, int* my)
 	(*my) *= multipliery;
 }
 
+std::vector<Text*> lines;
+
 void Game::db_addLine(std::string s) {
-	consoleLog->setText(consoleLog->text + s + "\n");
-	consoleLog->setY(220 - consoleLog->surfH);
+	for (Text* t : lines)
+		t->y -= 16;
+	Text* newLine = new Text(0, 204, s, 16, "NotoSans-Regular");
+	lines.push_back(newLine);
 }
 
 void transCall() {
@@ -133,6 +140,12 @@ void Game::createGame()
 	// to start
 	currentMenu = new MainMenu();
 	currentMenu->create();
+
+	consoleBG = new AvgRect(0, 0, Game::gameWidth, 220);
+	consoleBG->alpha = 0.4;
+
+	consoleCMDBar = new AvgRect(0, 220, Game::gameWidth, 25);
+	consoleCMDBar->alpha = 0.4;
 
 	save = new SaveFile();
 
@@ -291,36 +304,24 @@ void Game::update(Events::updateEvent update)
 		else
 			cmdPrompt->setText(">");
 
-		SDL_FRect bg;
-		bg.x = 0;
-		bg.y = 0;
-		bg.w = Game::gameWidth;
-		bg.h = 220;
 
-		SDL_FRect bottomBar;
-		bottomBar.x = 0;
-		bottomBar.y = 220;
-		bottomBar.w = Game::gameWidth;
-		bottomBar.h = 25;
-		SDL_SetRenderDrawColor(renderer, 128, 128, 128, 64);
-		SDL_RenderFillRectF(renderer, &bg);
-		SDL_RenderFillRectF(renderer, &topBar);
-		SDL_SetRenderDrawColor(renderer, 128, 128, 128, 128);
-		SDL_RenderFillRectF(renderer, &bottomBar);
-		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-		SDL_Rect clip;
+		consoleBG->draw();
+		consoleCMDBar->draw();
+
+		Rect clip;
 
 		clip.x = 0;
 		clip.y = 25;
 		clip.w = Game::gameWidth;
 		clip.h = 220;
 
-		SDL_RenderSetClipRect(Game::renderer, &clip);
+		Rendering::SetClipRect(&clip);
 
-		consoleLog->draw();
+		for (Text* t : lines)
+			t->draw();
 
-		SDL_RenderSetClipRect(Game::renderer, NULL);
+		Rendering::SetClipRect(NULL);
 
 		debugText->draw();
 		cmdPrompt->draw();
@@ -362,7 +363,12 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 
 		if (debug_string == "help")
 		{
-			db_addLine("checkConnection - Check's your connection and shows some other details\ndumpVar - dumps a lot of variables\npackets - Prints incoming packets\ngameplayEvents - prints out gameplay events when they happen\nxg - hacks\nchangeName - change the lobby name");
+			db_addLine("checkConnection - Check's your connection and shows some other details");
+			db_addLine("dumpVar - dumps a lot of variables");
+			db_addLine("packets - Prints incoming packets");
+			db_addLine("gameplayEvents - prints out gameplay events when they happen");
+			db_addLine("xg - hacks");
+			db_addLine("changeName - change the lobby name (you must be the host, and also in a lobby lol)");
 		}
 		else if (debug_string == "checkConnection")
 		{
@@ -375,7 +381,9 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 		}
 		else if (debug_string == "dumpVar")
 		{
-			db_addLine("Menu Variables:\nTransitioning: " + std::to_string(transitioning) + "\nChildren: " + std::to_string(currentMenu->children.size()));
+			db_addLine("Menu Variables:");
+			db_addLine("Transitioning: " + std::to_string(transitioning));
+			db_addLine("Children: " + std::to_string(currentMenu->cam->children.size()));
 		}
 		else if (debug_string == "gameplayEvents")
 		{

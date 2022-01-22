@@ -20,18 +20,19 @@ void changeMenu() {
 		b->beforeDeath();
 		b->die();
 	}
-	switch (instance->selectedIndex && Multiplayer::loggedIn)
-	{
-	case 1:
-		Game::instance->transitionToMenu(new MultiplayerLobbies());
-		break;
-	case 0:
-		Game::instance->transitionToMenu(new SongSelect());
-		break;
-	case 2:
-		Game::instance->transitionToMenu(new SettingsMenu());
-		break;
-	}
+	if (Multiplayer::loggedIn)
+		switch (instance->selectedIndex)
+		{
+		case 1:
+			Game::instance->transitionToMenu(new MultiplayerLobbies());
+			break;
+		case 0:
+			Game::instance->transitionToMenu(new SongSelect());
+			break;
+		case 2:
+			Game::instance->transitionToMenu(new SettingsMenu());
+			break;
+		}
 }
 
 void callback()

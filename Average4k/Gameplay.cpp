@@ -465,7 +465,7 @@ void Gameplay::update(Events::updateEvent event)
 
 	if (Game::save->GetBool("Annoying bopping"))
 	{
-		if ((int)beat % 4 == 0 && lastbeat != (int)beat)
+		if ((int)beat % 2 == 0 && lastbeat != (int)beat && beat > 0)
 		{
 			lastbeat = (int)beat;
 			std::cout << "beat " << beat << std::endl;

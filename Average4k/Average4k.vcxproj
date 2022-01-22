@@ -246,6 +246,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Gameplay.h" />
     <ClInclude Include="GL.h" />
+    <ClInclude Include="Helpers.h" />
     <ClInclude Include="includes.h" />
     <ClInclude Include="Judge.h" />
     <ClInclude Include="Lobby.h" />

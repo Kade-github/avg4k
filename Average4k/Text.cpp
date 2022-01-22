@@ -35,10 +35,13 @@ void Text::draw()
 	srcRect.w = 1;
 	srcRect.h = 1;
 
+	float mpx = (w * (1 - scale)) / 2;
+	float mpy = (h * (1 - scale)) / 2;
+
 	if (border)
 	{
-		dstRect.x = x - 1;
-		dstRect.y = y;
+		dstRect.x = (x - 1) + mpx;
+		dstRect.y = y + mpy;
 
 		dstRect.w = w * scale;
 		dstRect.h = h * scale;
@@ -49,8 +52,8 @@ void Text::draw()
 		Rendering::PushQuad(&dstRect, &srcRect, message, GL::genShader);
 	}
 
-	dstRect.x = x;
-	dstRect.y = y;
+	dstRect.x = x + mpx;
+	dstRect.y = y + mpy;
 
 	dstRect.w = w * scale;
 	dstRect.h = h * scale;
@@ -81,8 +84,6 @@ void Text::die()
 	if (message)
 		if (message->width > 0 && message->height > 0)
 			delete message;
-	if (isCreated)
-		Game::removeGlobalObject(this);
 }
 
 void Text::centerX()

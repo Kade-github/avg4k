@@ -3,11 +3,15 @@
 
 #include "Game.h"
 
+float Object::currentId = 0;
+
 
 Object::Object(float x, float y)
 {
 	setX(x);
 	setY(y);
+	currentId++;
+	id = currentId;
 	isCreated = false;
 }
 

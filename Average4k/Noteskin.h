@@ -14,6 +14,8 @@ struct noteskin_asset {
 	Texture* holdend;
 	Texture* light;
 	bool rotate;
+	bool bounce;
+	bool shrink;
 };
 
 class Noteskin

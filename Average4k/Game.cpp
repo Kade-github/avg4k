@@ -8,6 +8,7 @@
 #include "AvgRect.h"
 #include "msgpack.hpp"
 #include "TweenManager.h"
+#include "Helpers.h"
 using namespace std;
 
 mutex pog;
@@ -39,6 +40,9 @@ std::string Game::version;
 bool debug_takingInput;
 
 std::string debug_string;
+
+AvgRect* consoleBG;
+AvgRect* consoleCMDBar;
 
 bool debugConsole;
 Text* debugText;
@@ -81,20 +85,18 @@ void Game::GetMousePos(int* mx, int* my)
 	(*my) *= multipliery;
 }
 
+std::vector<Text*> lines;
+
 void Game::db_addLine(std::string s) {
-	consoleLog->setText(consoleLog->text + s + "\n");
-	consoleLog->setY(220 - consoleLog->surfH);
+	for (Text* t : lines)
+		t->y -= 16;
+	Text* newLine = new Text(0, 204, s, 16, "NotoSans-Regular");
+	lines.push_back(newLine);
 }
 
 void transCall() {
-	for (Object* obj : Game::mainCamera->children)
-	{
-		if (obj != NULL)
-			if (obj->w >= 0 && obj->h >= 0)
-				delete obj;
-	}
-	Game::mainCamera->children.clear();
 	Game::currentMenu->removeAll();
+	Game::mainCamera->children.clear();
 	delete Game::currentMenu;
 	Game::currentMenu = Game::toGoTo;
 	Game::currentMenu->create();
@@ -140,6 +142,12 @@ void Game::createGame()
 	currentMenu = new MainMenu();
 	currentMenu->create();
 
+	consoleBG = new AvgRect(0, 0, Game::gameWidth, 220);
+	consoleBG->alpha = 0.4;
+
+	consoleCMDBar = new AvgRect(0, 220, Game::gameWidth, 25);
+	consoleCMDBar->alpha = 0.4;
+
 	save = new SaveFile();
 
 	fpsText = new Text(0, 0, "FPS: 0", 16, "NotoSans-Regular");
@@ -164,8 +172,8 @@ void Game::mouseButtonDown()
 void Game::update(Events::updateEvent update)
 {
 	MUTATE_START
-	if (Multiplayer::connectedToServer)
-		SteamAPI_RunCallbacks();
+		if (Multiplayer::connectedToServer)
+			SteamAPI_RunCallbacks();
 
 	if (!Multiplayer::connectedToServer && startConnect)
 	{
@@ -188,29 +196,29 @@ void Game::update(Events::updateEvent update)
 		Tweening::TweenManager::createNewTween("_trans", __transRect, Tweening::tt_Alpha, 235, 255, 0, []()->void {
 			Game::instance->transitioning = false;
 			std::cout << "no more" << std::endl;
-		}, Easing::EaseInSine);
+			}, Easing::EaseInSine);
 	}
 
 	mainCamera->update(update);
 
 	if (currentMenu->created)
-	currentMenu->update(update);
+		currentMenu->update(update);
 
 	if (!transitioning)
 		fpsText->setText("FPS: " + std::to_string(gameFPS) + " - Visuals are subject to change");
 
-		for (int i = 0; i < objects->size(); i++)
+	for (int i = 0; i < objects->size(); i++)
+	{
+		try
 		{
-			try
-			{
-				Object* bruh = (*objects)[i];
-				bruh->update(update);
-			}
-			catch (...)
-			{
-
-			}
+			Object* bruh = (*objects)[i];
+			bruh->update(update);
 		}
+		catch (...)
+		{
+
+		}
+	}
 
 
 
@@ -270,7 +278,7 @@ void Game::update(Events::updateEvent update)
 	}
 
 	if (currentMenu->created)
-	currentMenu->postUpdate(update);
+		currentMenu->postUpdate(update);
 
 	if (fpsText && !debugConsole)
 		fpsText->draw();
@@ -297,36 +305,24 @@ void Game::update(Events::updateEvent update)
 		else
 			cmdPrompt->setText(">");
 
-		SDL_FRect bg;
-		bg.x = 0;
-		bg.y = 0;
-		bg.w = Game::gameWidth;
-		bg.h = 220;
 
-		SDL_FRect bottomBar;
-		bottomBar.x = 0;
-		bottomBar.y = 220;
-		bottomBar.w = Game::gameWidth;
-		bottomBar.h = 25;
-		SDL_SetRenderDrawColor(renderer, 128, 128, 128, 64);
-		SDL_RenderFillRectF(renderer, &bg);
-		SDL_RenderFillRectF(renderer, &topBar);
-		SDL_SetRenderDrawColor(renderer, 128, 128, 128, 128);
-		SDL_RenderFillRectF(renderer, &bottomBar);
-		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-		SDL_Rect clip;
+		consoleBG->draw();
+		consoleCMDBar->draw();
+
+		Rect clip;
 
 		clip.x = 0;
 		clip.y = 25;
 		clip.w = Game::gameWidth;
 		clip.h = 220;
 
-		SDL_RenderSetClipRect(Game::renderer, &clip);
+		Rendering::SetClipRect(&clip);
 
-		consoleLog->draw();
+		for (Text* t : lines)
+			t->draw();
 
-		SDL_RenderSetClipRect(Game::renderer, NULL);
+		Rendering::SetClipRect(NULL);
 
 		debugText->draw();
 		cmdPrompt->draw();
@@ -341,12 +337,11 @@ void Game::update(Events::updateEvent update)
 
 	if (transitioning)
 		__transRect->draw();
-	
+
 
 	//SDL_RenderPresent(renderer);
 	MUTATE_END
 }
-
 
 void Game::keyDown(SDL_KeyboardEvent ev)
 {
@@ -363,14 +358,19 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 		debug_takingInput = false;
 		// cmds
 
-
+		std::transform(debug_string.begin(), debug_string.end(), debug_string.begin(), Helpers::asciitolower);
 		db_addLine(">" + debug_string);
 
 		if (debug_string == "help")
 		{
-			db_addLine("checkConnection - Check's your connection and shows some other details\ndumpVar - dumps a lot of variables\npackets - Prints incoming packets\ngameplayEvents - prints out gameplay events when they happen\nxg - hacks\nchangeName - change the lobby name");
+			db_addLine("checkConnection - Check's your connection and shows some other details");
+			db_addLine("dumpVar - dumps a lot of variables");
+			db_addLine("packets - Prints incoming packets");
+			db_addLine("gameplayEvents - prints out gameplay events when they happen");
+			db_addLine("xg - hacks");
+			db_addLine("changeName - change the lobby name (you must be the host, and also in a lobby lol)");
 		}
-		else if (debug_string == "checkConnection")
+		else if (debug_string == "checkconnection")
 		{
 			std::string res = (Multiplayer::loggedIn ? "fuck you" : "bitch ass (not logged in)");
 			db_addLine(res + " - also cock: " + std::to_string(Multiplayer::connectedToServer));
@@ -379,11 +379,13 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 		{
 			db_addLine("xg is a dumbass lol! (jkjkjkjk 187384089228214273)");
 		}
-		else if (debug_string == "dumpVar")
+		else if (debug_string == "dumpvar")
 		{
-			db_addLine("Menu Variables:\nTransitioning: " + std::to_string(transitioning) + "\nChildren: " + std::to_string(currentMenu->children.size()));
+			db_addLine("Menu Variables:");
+			db_addLine("Transitioning: " + std::to_string(transitioning));
+			db_addLine("Children: " + std::to_string(currentMenu->cam->children.size()));
 		}
-		else if (debug_string == "gameplayEvents")
+		else if (debug_string == "gameplayevents")
 		{
 			gameplayEvents_DB = !gameplayEvents_DB;
 			db_addLine("set to " + std::to_string(gameplayEvents_DB));
@@ -392,7 +394,7 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 		{
 			printPackets_DB = !printPackets_DB;
 		}
-		else if (debug_string.starts_with("changeName"))
+		else if (debug_string.starts_with("changename"))
 		{
 			if (!MultiplayerLobby::inLobby)
 			{
@@ -472,6 +474,7 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 			SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 			SDL_DisplayMode DM;
 			SDL_GetCurrentDisplayMode(0, &DM);
+		
 			w = DM.w;
 			h = DM.h;
 		}
@@ -484,17 +487,18 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 
 		std::cout << "bruh " << w << " " << h << std::endl;
 
-		multiplierx = (float)1280 / (float)w;
-		multipliery = (float)720 / (float)h;
+		multiplierx = 1280 / w;
+		multipliery = 720 / w;
+
+		GL::projection = glm::ortho(0.0f, (float)w, (float)h, 0.0f, -1.0f, 1.0f);
+		glUniformMatrix4fv(glGetUniformLocation(GL::genShader->program, "u_projection"), 1, GL_FALSE, &GL::projection[0][0]);
 
 		glViewport(0, 0, w, h);
+		
 
 		std::cout << "FULLSCREEN MULTIPLIERS: " << multiplierx << " " << multipliery << std::endl;
-
-		//__transRect->w = w;
-		//__transRect->h = h;
-		//mainCamera->w = w;
-		//mainCamera->h = h;
+		mainCamera->w = w;
+		mainCamera->h = h;
 	}
 
 	if (ev.keysym.sym == SDLK_F11)

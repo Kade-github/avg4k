@@ -34,6 +34,5 @@ class MultiplayerLobby :
         MultiplayerLobby(lobby l, bool hosted, bool backFromSelect);
         void keyDown(SDL_KeyboardEvent event) override;
         void update(Events::updateEvent event) override;
-        void postUpdate(Events::updateEvent event) override;
 };
 

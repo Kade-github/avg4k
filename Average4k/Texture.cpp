@@ -1,5 +1,5 @@
 #include "stbi.h"
-
+#include "Rendering.h"
 //Constructors and destructor
 		
 Texture* Texture::createWithImage(std::string filePath)
@@ -14,6 +14,11 @@ Texture* Texture::createWithImage(std::string filePath)
 }
 
 Texture* Texture::createFromSurface(SDL_Surface* surf, bool free) {
+	if (surf == NULL)
+	{
+		std::cout << "Texture*: NULL PTR FROM SURFACE. FUCKING APE" << std::endl;
+		return Rendering::white;
+	}
 	int w = surf->w;
 	int h = surf->h;
 	unsigned char* c = (unsigned char*)surf->pixels;

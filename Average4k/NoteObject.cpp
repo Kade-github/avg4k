@@ -46,7 +46,7 @@ void NoteObject::draw() {
 
     // get quant
 
-    float beatRow = beat * 48;
+    float beatRow = (beat - stopOffset) * 48;
 
     if (SongSelect::currentChart->meta.chartType == 1) // osu/quaver
     {

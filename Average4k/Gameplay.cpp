@@ -532,7 +532,7 @@ void Gameplay::update(Events::updateEvent event)
 		for (int noteId = 0; noteId < notesToPlay.size(); noteId++)
 		{
 			note& n = notesToPlay[noteId];
-			if (n.beat < beat + 16 && !n.played && (n.type != Note_Tail && n.type != Note_Mine)) // if its in 16 beats
+			if (n.beat < beat + 16 && !n.played && !n.killed && (n.type != Note_Tail && n.type != Note_Mine)) // if its in 16 beats
 			{
 				n.played = true;
 				n.killed = false;
@@ -547,9 +547,11 @@ void Gameplay::update(Events::updateEvent event)
 
 				float stopOffset = SongSelect::currentChart->getStopOffsetFromBeat(n.beat);
 
-				float stopBeatOffset = (stopOffset / 1000) * (preStopSeg.bpm / 60);
+				double stopBeatOffset = (stopOffset / 1000) * (preStopSeg.bpm / 60);
 
-				object->beat = n.beat + stopBeatOffset;
+				object->stopOffset = stopBeatOffset;
+
+				object->beat = (double) n.beat + stopBeatOffset;
 				object->lane = n.lane;
 				object->type = n.type;
 				object->endTime = -1;
@@ -580,11 +582,11 @@ void Gameplay::update(Events::updateEvent event)
 						note& nn = notesToPlay[i];
 						if (nn.type != Note_Tail)
 							continue;
-						if (nn.lane != object->lane)
+						if (nn.lane != object->lane && nn.killed)
 							continue;
+						nn.killed = true;
 						object->endBeat = nn.beat;
-						bpmSegment heldSeg = SongSelect::currentChart->getSegmentFromBeat(nn.beat);
-
+						
 						object->endTime = SongSelect::currentChart->getTimeFromBeatOffset(nn.beat, noteSeg);
 						tail = nn;
 						break;

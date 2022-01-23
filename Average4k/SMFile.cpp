@@ -88,7 +88,7 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
 
                     }
                 }
-                else
+                if (!readingBPMS && !readingSTOPS)
                 {
 
                     if (stuff.size() != 0)

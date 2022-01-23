@@ -30,6 +30,8 @@ class NoteObject : public Object
 		note* connected;
 		Text* debugText;
 
+		float stopOffset;
+
 		int holdHeight;
 
 		int holdsActive = 0;

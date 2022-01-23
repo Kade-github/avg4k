@@ -849,7 +849,7 @@ void Gameplay::cleanUp()
 
 void Gameplay::keyDown(SDL_KeyboardEvent event)
 {
-	VM_START
+	MUTATE_START
 
 	switch (event.keysym.sym)
 	{
@@ -1023,7 +1023,8 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				}
 		}
 	}
-	VM_END
+	
+	MUTATE_END
 }
 
 void Gameplay::keyUp(SDL_KeyboardEvent ev)

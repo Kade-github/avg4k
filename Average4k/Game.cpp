@@ -373,6 +373,7 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 			db_addLine("gameplayEvents - prints out gameplay events when they happen");
 			db_addLine("xg - hacks");
 			db_addLine("changeName - change the lobby name (you must be the host, and also in a lobby lol)");
+			db_addLine("debug - toggle a debug mode, allows you to control the flow of fucking time. (its a lil broken, space to pause, up and down to navigate time. +/- to rate change)");
 		}
 		else if (debug_string == "checkconnection")
 		{
@@ -434,6 +435,14 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 			change.Lobby = l;
 			Multiplayer::sendMessage<CPacketHostUpdateLobby>(change);
 
+		}
+		else if (debug_string == "debug")
+		{
+			flowtime = !flowtime;
+			if (flowtime)
+				db_addLine("FLOW TIME!!");
+			else
+				db_addLine("no more flow time >:((((");
 		}
 		else
 		{

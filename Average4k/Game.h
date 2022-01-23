@@ -17,6 +17,8 @@ public:
 	static float multiplierx;
 	static float multipliery;
 
+	bool flowtime = false;
+
 	Menu* menuToDelete;
 
 	bool transitioning;

@@ -78,7 +78,7 @@ void Gameplay::removeNote(NoteObject* object)
 			return nn->beat == object->beat && nn->lane == object->lane;
 			}),
 		spawnedNotes.end());
-
+	object->connected->killed = true;
 	colGroups[object->lane]->children.erase(colGroups[object->lane]->children.begin());
 
 }
@@ -405,8 +405,8 @@ void Gameplay::update(Events::updateEvent event)
 			play = true;
 			lastBPM = 0;
 		}
-
-		positionInSong = song->getPos();
+		if (playing)
+ 			positionInSong = song->getPos();
 	}
 	else
 		positionInSong += Game::deltaTime;
@@ -496,6 +496,21 @@ void Gameplay::update(Events::updateEvent event)
 	overlayForAccuracy.h = Accuracy->surfH;
 
 
+	// debug stuff
+
+	if (!MultiplayerLobby::inLobby && Game::instance->flowtime)
+	{
+		for (int noteId = 0; noteId < notesToPlay.size(); noteId++)
+		{
+			note& n = notesToPlay[noteId];
+			if (n.beat > beat && n.played && n.killed)
+			{
+				n.played = false;
+				n.killed = false;
+			}
+		}
+	}
+
 	//SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 128);
 	//SDL_RenderFillRectF(Game::renderer, &overlayForAccuracy);
 	//SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
@@ -514,126 +529,135 @@ void Gameplay::update(Events::updateEvent event)
 
 	if (notesToPlay.size() > 0)
 	{
-		note& n = notesToPlay[0];
-		if (n.type == Note_Tail || n.type == Note_Mine)
-			notesToPlay.erase(notesToPlay.begin());
-		else if (n.beat < beat + 16) // if its in 16 beats
+		for (int noteId = 0; noteId < notesToPlay.size(); noteId++)
 		{
-			NoteObject* object = new NoteObject();
-			SDL_FRect rect;
-			object->wasHit = false;
-			object->clapped = false;
-			object->active = true;
-			object->beat = n.beat;
-			object->lane = n.lane;
-			object->type = n.type;
-			object->endTime = -1;
-			object->endBeat = -1;
-
-			bpmSegment noteSeg = SongSelect::currentChart->getSegmentFromBeat(object->beat);
-
-			object->time = SongSelect::currentChart->getTimeFromBeatOffset(object->beat, noteSeg);
-			rect.y = Game::gameHeight + 400;
-			rect.x = 0;
-			rect.w = 64 * Game::save->GetDouble("Note Size");
-			rect.h = 64 * Game::save->GetDouble("Note Size");
-			object->rect = rect;
-
-			note tail;
-
-			bpmSegment bruh = SongSelect::currentChart->getSegmentFromBeat(object->beat);
-
-			float wh = SongSelect::currentChart->getTimeFromBeat(beat, bruh);
-
-			float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
-
-
-			if (object->type == Note_Head)
+			note& n = notesToPlay[noteId];
+			if (n.beat < beat + 16 && !n.played && (n.type != Note_Tail && n.type != Note_Mine)) // if its in 16 beats
 			{
-				for (int i = 0; i < notesToPlay.size(); i++)
+				n.played = true;
+				n.killed = false;
+				NoteObject* object = new NoteObject();
+				object->connected = &n;
+				SDL_FRect rect;
+				object->wasHit = false;
+				object->clapped = false;
+				object->active = true;
+
+				bpmSegment preStopSeg = SongSelect::currentChart->getSegmentFromBeat(n.beat);
+
+				float stopOffset = SongSelect::currentChart->getStopOffsetFromBeat(n.beat);
+
+				float stopBeatOffset = (stopOffset / 1000) * (preStopSeg.bpm / 60);
+
+				object->beat = n.beat + stopBeatOffset;
+				object->lane = n.lane;
+				object->type = n.type;
+				object->endTime = -1;
+				object->endBeat = -1;
+
+				bpmSegment noteSeg = SongSelect::currentChart->getSegmentFromBeat(object->beat);
+
+				object->time = SongSelect::currentChart->getTimeFromBeatOffset(object->beat, noteSeg);
+				rect.y = Game::gameHeight + 400;
+				rect.x = 0;
+				rect.w = 64 * Game::save->GetDouble("Note Size");
+				rect.h = 64 * Game::save->GetDouble("Note Size");
+				object->rect = rect;
+
+				note tail;
+
+				bpmSegment bruh = SongSelect::currentChart->getSegmentFromBeat(object->beat);
+
+				float wh = SongSelect::currentChart->getTimeFromBeat(beat, bruh);
+
+				float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
+
+
+				if (object->type == Note_Head)
 				{
-					note& nn = notesToPlay[i];
-					if (nn.type != Note_Tail)
-						continue;
-					if (nn.lane != object->lane)
-						continue;
-					object->endBeat = nn.beat;
-					bpmSegment heldSeg = SongSelect::currentChart->getSegmentFromBeat(nn.beat);
-
-					object->endTime = SongSelect::currentChart->getTimeFromBeatOffset(nn.beat, noteSeg);
-					tail = nn;
-					break;
-				}
-			}
-
-			notesToPlay.erase(notesToPlay.begin());
-
-			float time = SDL_GetTicks();
-
-			if (object->type == Note_Head)
-			{
-
-				for (int i = std::floorf(object->time); i < std::floorf(object->endTime); i++)
-				{
-					bpmSegment holdSeg = SongSelect::currentChart->getSegmentFromTime(i);
-
-					double beat = SongSelect::currentChart->getBeatFromTimeOffset(i, holdSeg);
-
-					float whHold = SongSelect::currentChart->getTimeFromBeatOffset(beat, holdSeg);
-
-					float diff = whHold - (object->time);
-
-					float noteOffset = (bps * (diff / 1000)) * (64 * Game::save->GetDouble("Note Size"));
-
-					float y = 0;
-					float yDiff = 0;
-					if (object->heldTilings.size() != 0)
+					for (int i = 0; i < notesToPlay.size(); i++)
 					{
-						if (downscroll)
-							y = object->rect.y - noteOffset;
-						else
-							y = object->rect.y + noteOffset;
-						yDiff = y - object->heldTilings.back().rect.y;
-					}
-					else
-					{
-						if (downscroll)
-							y = object->rect.y - noteOffset;
-						else
-							y = object->rect.y + noteOffset;
-						yDiff = y - object->rect.y;
-					}
+						note& nn = notesToPlay[i];
+						if (nn.type != Note_Tail)
+							continue;
+						if (nn.lane != object->lane)
+							continue;
+						object->endBeat = nn.beat;
+						bpmSegment heldSeg = SongSelect::currentChart->getSegmentFromBeat(nn.beat);
 
-					bool otherOne = false;
-
-					if (downscroll)
-						otherOne = yDiff <= -(64 * Game::save->GetDouble("Note Size"));
-					else
-						otherOne = yDiff >= 64 * Game::save->GetDouble("Note Size");
-
-					if (otherOne || object->heldTilings.size() == 0)
-					{
-						object->holdHeight += 64 * Game::save->GetDouble("Note Size");
-						holdTile tile;
-						SDL_FRect rect;
-						tile.active = true;
-						tile.fucked = false;
-						rect.y = y;
-						rect.x = 0;
-						rect.w = 64 * Game::save->GetDouble("Note Size");
-						rect.h = 68 * Game::save->GetDouble("Note Size");
-						tile.rect = rect;
-						tile.beat = beat;
-						tile.time = i;
-						object->heldTilings.push_back(tile);
+						object->endTime = SongSelect::currentChart->getTimeFromBeatOffset(nn.beat, noteSeg);
+						tail = nn;
+						break;
 					}
 				}
+
+				float time = SDL_GetTicks();
+
+				if (object->type == Note_Head)
+				{
+
+					for (int i = std::floorf(object->time); i < std::floorf(object->endTime); i++)
+					{
+						bpmSegment holdSeg = SongSelect::currentChart->getSegmentFromTime(i);
+
+						double beat = SongSelect::currentChart->getBeatFromTimeOffset(i, holdSeg);
+
+						float whHold = SongSelect::currentChart->getTimeFromBeatOffset(beat, holdSeg);
+
+						float diff = whHold - (object->time);
+
+						float noteOffset = (bps * (diff / 1000)) * (64 * Game::save->GetDouble("Note Size"));
+
+						float y = 0;
+						float yDiff = 0;
+						if (object->heldTilings.size() != 0)
+						{
+							if (downscroll)
+								y = object->rect.y - noteOffset;
+							else
+								y = object->rect.y + noteOffset;
+							yDiff = y - object->heldTilings.back().rect.y;
+						}
+						else
+						{
+							if (downscroll)
+								y = object->rect.y - noteOffset;
+							else
+								y = object->rect.y + noteOffset;
+							yDiff = y - object->rect.y;
+						}
+
+						bool otherOne = false;
+
+						if (downscroll)
+							otherOne = yDiff <= -(64 * Game::save->GetDouble("Note Size"));
+						else
+							otherOne = yDiff >= 64 * Game::save->GetDouble("Note Size");
+
+						if (otherOne || object->heldTilings.size() == 0)
+						{
+							object->holdHeight += 64 * Game::save->GetDouble("Note Size");
+							holdTile tile;
+							SDL_FRect rect;
+							tile.active = true;
+							tile.fucked = false;
+							rect.y = y;
+							rect.x = 0;
+							rect.w = 64 * Game::save->GetDouble("Note Size");
+							rect.h = 68 * Game::save->GetDouble("Note Size");
+							tile.rect = rect;
+							tile.beat = beat;
+							tile.time = i;
+							object->heldTilings.push_back(tile);
+						}
+					}
+				}
+				std::sort(object->heldTilings.begin(), object->heldTilings.end());
+
+				spawnedNotes.push_back(object);
+				object->create();
+				colGroups[object->lane]->add(object);
 			}
-			std::sort(object->heldTilings.begin(), object->heldTilings.end());
-			
-			spawnedNotes.push_back(object);
-			object->create();
-			colGroups[object->lane]->add(object);
 		}
 	}
 	else
@@ -790,7 +814,7 @@ void Gameplay::update(Events::updateEvent event)
 
 				}
 
-				if (wh - positionInSong <= -Judge::hitWindows[4] && note->active)
+				if (wh - positionInSong <= -Judge::hitWindows[4] && note->active && playing)
 				{
 					note->active = false;
 					miss(note);
@@ -799,9 +823,10 @@ void Gameplay::update(Events::updateEvent event)
 				bool condition = true;
 
 
-				if ((wh - positionInSong <= -200 && !note->active) && note->holdsActive == 0)
+				if ((wh - positionInSong <= -200 && !note->active) && note->holdsActive == 0 && playing)
 				{
 					removeNote(note);
+					std::cout << "remove note " << wh << " " << positionInSong << std::endl;
 				}
 
 				for (int i = 0; i < note->heldTilings.size(); i++)
@@ -811,7 +836,7 @@ void Gameplay::update(Events::updateEvent event)
 					float whHold = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat));
 					float diff = whHold - positionInSong;
 
-					if (diff < -Judge::hitWindows[2] && tile.active)
+					if (diff < -Judge::hitWindows[2] && tile.active && playing)
 					{
 						std::cout << note->lane << " fucked " << diff << " time: " << whHold << " song: " << positionInSong << std::endl;
 						miss(note);
@@ -882,6 +907,76 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			cleanUp();
 			Game::instance->transitionToMenu(new Gameplay());
 			return;
+		case SDLK_SPACE:
+			if (Game::instance->flowtime && !MultiplayerLobby::inLobby)
+			{
+				if (playing)
+				{
+					playing = false;
+					song->stop();
+				}
+				else
+				{ 
+					Game::instance->db_addLine("Set pos to " + std::to_string(positionInSong));
+					song->play();
+					song->setPos(positionInSong - 50);
+					playing = true;
+				}
+				
+			}
+			break;
+		case SDLK_UP:
+			if (Game::instance->flowtime && !MultiplayerLobby::inLobby)
+			{
+				if (!playing)
+					positionInSong -= 10;
+				else
+				{
+					playing = false;
+					song->stop();
+					positionInSong -= 10;
+				}
+			}
+			break;
+		case SDLK_DOWN:
+			if (Game::instance->flowtime && !MultiplayerLobby::inLobby)
+			{
+				if (!playing)
+					positionInSong += 10;
+				else
+				{
+					playing = false;
+					song->stop();
+					positionInSong += 10;
+				}
+			}
+			break;
+		case SDLK_EQUALS:
+			if (Game::instance->flowtime && !MultiplayerLobby::inLobby)
+			{
+				if (playing)
+				{
+					playing = false;
+					song->stop();
+				}
+				rate += 0.1;
+				song->rateChange(rate);
+				Game::instance->db_addLine("rate changed to " + std::to_string(rate));
+			}
+			break;
+		case SDLK_MINUS:
+			if (Game::instance->flowtime && !MultiplayerLobby::inLobby)
+			{
+				if (playing)
+				{
+					playing = false;
+					song->stop();
+				}
+				rate -= 0.1;
+				song->rateChange(rate);
+				Game::instance->db_addLine("rate changed to " + std::to_string(rate));
+			}
+			break;
 	}
 
 	// hit notes

@@ -15,6 +15,7 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
 
     bool readingNotes = false;
     bool readingBPMS = false;
+    bool readingSTOPS = false;
     int bpmIndex = 0;
 
     int diffIndex = 0;
@@ -71,6 +72,22 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                         bpmIndex++;
                     }
                 }
+                else if (readingSTOPS)
+                {
+                    if (iss.str() == ";" || iss.str()[0] == '#')
+                        readingSTOPS = false;
+                    else
+                    {
+                        stuff[0].erase(std::remove(stuff[0].begin(), stuff[0].end(), ','), stuff[0].end());
+                        std::vector < std::string > bpmSeg = Chart::split(stuff[0], '=');
+                        stopSegment seg;
+                        seg.beat = std::stod(bpmSeg[0]);
+                        seg.length = std::stof(bpmSeg[1]) * 1000;
+
+                        meta.stops.push_back(seg);
+
+                    }
+                }
                 else
                 {
 
@@ -79,28 +96,50 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                         if (stuff[0] == "#BPMS") {
                             // gather bpms
                             readingBPMS = true;
-                            std::vector < std::string > bpmSeg = Chart::split(stuff[1], ',');
-                            if (bpmSeg.size() != 0)
+                            if (stuff.size() != 1)
                             {
-                                for (int ii = 0; ii < bpmSeg.size(); ii += 2)
+                                std::vector < std::string > bpmSeg = Chart::split(stuff[1], ',');
+                                if (bpmSeg.size() != 0)
                                 {
-                                    bpmSegment seg;
-                                    seg.startBeat = std::stod(Chart::split(bpmSeg[ii],'=')[0]);
-                                    seg.endBeat = INT_MAX;
-                                    seg.length = INT_MAX;
-                                    seg.bpm = std::stof(Chart::split(bpmSeg[ii], '=')[1]);
-                                    seg.startTime = 0;
-
-                                    if (bpmIndex != 0) // previous lol
+                                    for (int ii = 0; ii < bpmSeg.size(); ii += 2)
                                     {
-                                        bpmSegment& prevSeg = meta.bpms[bpmIndex - 1];
-                                        prevSeg.endBeat = seg.startBeat;
-                                        prevSeg.length = ((prevSeg.endBeat - prevSeg.startBeat) / (prevSeg.bpm / 60)) * 1000;
-                                        seg.startTime = prevSeg.startTime + prevSeg.length;
-                                    }
+                                        bpmSegment seg;
+                                        seg.startBeat = std::stod(Chart::split(bpmSeg[ii], '=')[0]);
+                                        seg.endBeat = INT_MAX;
+                                        seg.length = INT_MAX;
+                                        seg.bpm = std::stof(Chart::split(bpmSeg[ii], '=')[1]);
+                                        seg.startTime = 0;
 
-                                    meta.bpms.push_back(seg);
-                                    bpmIndex++;
+                                        if (bpmIndex != 0) // previous lol
+                                        {
+                                            bpmSegment& prevSeg = meta.bpms[bpmIndex - 1];
+                                            prevSeg.endBeat = seg.startBeat;
+                                            prevSeg.length = ((prevSeg.endBeat - prevSeg.startBeat) / (prevSeg.bpm / 60)) * 1000;
+                                            seg.startTime = prevSeg.startTime + prevSeg.length;
+                                        }
+
+                                        meta.bpms.push_back(seg);
+                                        bpmIndex++;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (stuff[0] == "#STOPS") {
+                            readingSTOPS = true;
+                            if (stuff.size() != 1)
+                            {
+                                std::vector < std::string > bpmSeg = Chart::split(stuff[1], ',');
+                                if (bpmSeg.size() != 0)
+                                {
+                                    for (int ii = 0; ii < bpmSeg.size(); ii += 2)
+                                    {
+                                        stopSegment seg;
+                                        seg.beat = std::stod(Chart::split(bpmSeg[ii], '=')[0]);
+                                        seg.length = std::stof(Chart::split(bpmSeg[ii], '=')[1]) * 1000;
+
+                                        meta.stops.push_back(seg);
+                                    }
                                 }
                             }
                         }

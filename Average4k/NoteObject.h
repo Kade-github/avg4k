@@ -27,7 +27,7 @@ class NoteObject : public Object
 			h = 64;
 		};
 		~NoteObject() {};
-
+		note* connected;
 		Text* debugText;
 
 		int holdHeight;

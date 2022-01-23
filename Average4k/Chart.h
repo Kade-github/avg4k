@@ -8,8 +8,13 @@ struct bpmSegment {
 	float startBeat;
 	float startTime;
 	float endBeat;
-	float length; // in seconds
+	float length; // in ms
 	float bpm;
+};
+
+struct stopSegment {
+	float length;
+	float beat;
 };
 
 enum noteType {
@@ -23,6 +28,10 @@ struct note {
 	float beat;
 	noteType type;
 	int lane;
+
+	// gameplay var
+	bool played;
+	bool killed;
 };
 
 struct difficulty
@@ -39,6 +48,7 @@ class chartMeta {
 		std::string folder;
 		std::string background;
 		std::vector<bpmSegment> bpms;
+		std::vector<stopSegment> stops;
 		std::vector<difficulty> difficulties;
 		float chartOffset;
 		int chartType = 0;
@@ -61,6 +71,8 @@ class Chart
 		float getBeatFromTime(float timestamp, bpmSegment seg);
 		float getBeatFromTimeOffset(float timestamp, bpmSegment seg);
 		bpmSegment getSegmentFromTime(float timestamp);
+		float getStopOffsetFromTime(float timestamp);
+		float getStopOffsetFromBeat(float beat);
 		bpmSegment getSegmentFromBeat(float beat);
 
 		void destroy();

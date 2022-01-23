@@ -43,6 +43,8 @@ class Gameplay :
 
 		std::vector<leaderboardSpot> leaderboard;
 
+		bool playing = true;
+
 		AvgSprite* background;
 
 		static float rate;

@@ -645,7 +645,7 @@ void Gameplay::update(Events::updateEvent event)
 			{
 				SongSelect::currentChart->destroy();
 				cleanUp();
-				Game::currentMenu = new MainMenu();
+				Game::instance->transitionToMenu(new SongSelect());
 			}
 			else
 			{

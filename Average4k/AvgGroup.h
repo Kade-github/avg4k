@@ -11,6 +11,8 @@ public:
 
 	Rect clipRect;
 
+	bool center = true;
+
 	AvgGroup(int _x, int _y, int _w, int _h) : Object(x, y)
 	{
 		handleDraw = true;
@@ -26,12 +28,15 @@ public:
 
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+		else
+			std::cout << "created frame buffer " << fb << std::endl;
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
 	~AvgGroup()
 	{
-		delete ctb;
+		if (ctb)
+			delete ctb;
 	}
 
 	virtual void draw();

@@ -498,18 +498,6 @@ void Gameplay::update(Events::updateEvent event)
 
 	// debug stuff
 
-	if (!MultiplayerLobby::inLobby && Game::instance->flowtime)
-	{
-		for (int noteId = 0; noteId < notesToPlay.size(); noteId++)
-		{
-			note& n = notesToPlay[noteId];
-			if (n.beat > beat && n.played && n.killed)
-			{
-				n.played = false;
-				n.killed = false;
-			}
-		}
-	}
 
 	//SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 128);
 	//SDL_RenderFillRectF(Game::renderer, &overlayForAccuracy);
@@ -529,13 +517,10 @@ void Gameplay::update(Events::updateEvent event)
 
 	if (notesToPlay.size() > 0)
 	{
-		for (int noteId = 0; noteId < notesToPlay.size(); noteId++)
+		note& n = notesToPlay[0];
+		if (n.beat < beat + 16 && !n.played && (n.type != Note_Tail && n.type != Note_Mine)) // if its in 16 beats
 		{
-			note& n = notesToPlay[noteId];
-			if (n.beat < beat + 16 && !n.played && !n.killed && (n.type != Note_Tail && n.type != Note_Mine)) // if its in 16 beats
-			{
-				n.played = true;
-				n.killed = false;
+			n.played = true;
 				NoteObject* object = new NoteObject();
 				object->connected = &n;
 				SDL_FRect rect;
@@ -582,12 +567,18 @@ void Gameplay::update(Events::updateEvent event)
 						note& nn = notesToPlay[i];
 						if (nn.type != Note_Tail)
 							continue;
-						if (nn.lane != object->lane && nn.killed)
+						if (nn.lane != object->lane)
 							continue;
-						nn.killed = true;
-						object->endBeat = nn.beat;
+
+						bpmSegment npreStopSeg = SongSelect::currentChart->getSegmentFromBeat(nn.beat);
+
+						float nstopOffset = SongSelect::currentChart->getStopOffsetFromBeat(nn.beat);
+
+						double nstopBeatOffset = (nstopOffset / 1000) * (npreStopSeg.bpm / 60);
+
+						object->endBeat = nn.beat + nstopBeatOffset;
 						
-						object->endTime = SongSelect::currentChart->getTimeFromBeatOffset(nn.beat, noteSeg);
+						object->endTime = SongSelect::currentChart->getTimeFromBeatOffset(nn.beat + nstopBeatOffset, noteSeg);
 						tail = nn;
 						break;
 					}
@@ -655,12 +646,15 @@ void Gameplay::update(Events::updateEvent event)
 					}
 				}
 				std::sort(object->heldTilings.begin(), object->heldTilings.end());
-
 				spawnedNotes.push_back(object);
 				object->create();
+				notesToPlay.erase(notesToPlay.begin());
 				colGroups[object->lane]->add(object);
 			}
-		}
+			else if (n.type == Note_Tail || n.type == Note_Mine)
+			{
+				notesToPlay.erase(notesToPlay.begin());
+			}
 	}
 	else
 	{
@@ -909,50 +903,6 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			cleanUp();
 			Game::instance->transitionToMenu(new Gameplay());
 			return;
-		case SDLK_SPACE:
-			if (Game::instance->flowtime && !MultiplayerLobby::inLobby)
-			{
-				if (playing)
-				{
-					playing = false;
-					song->stop();
-				}
-				else
-				{ 
-					Game::instance->db_addLine("Set pos to " + std::to_string(positionInSong));
-					song->play();
-					song->setPos(positionInSong - 50);
-					playing = true;
-				}
-				
-			}
-			break;
-		case SDLK_UP:
-			if (Game::instance->flowtime && !MultiplayerLobby::inLobby)
-			{
-				if (!playing)
-					positionInSong -= 10;
-				else
-				{
-					playing = false;
-					song->stop();
-					positionInSong -= 10;
-				}
-			}
-			break;
-		case SDLK_DOWN:
-			if (Game::instance->flowtime && !MultiplayerLobby::inLobby)
-			{
-				if (!playing)
-					positionInSong += 10;
-				else
-				{
-					playing = false;
-					song->stop();
-					positionInSong += 10;
-				}
-			}
-			break;
 		case SDLK_EQUALS:
 			if (Game::instance->flowtime && !MultiplayerLobby::inLobby)
 			{

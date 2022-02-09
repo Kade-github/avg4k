@@ -13,7 +13,7 @@ Texture* Rendering::white = NULL;
 
 
 void Rendering::Render_GLInit(Shader* shad) {
-	MUTATE_START
+	
 	shad->GL_Use();
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -32,12 +32,12 @@ void Rendering::Render_GLInit(Shader* shad) {
 
 
 	glGenBuffers(1, &batch_vbo);
-	MUTATE_END
+	
 }
 
 void Rendering::drawBatch()
 {
-	MUTATE_START
+	
 	if (batch_buffer.size() != 0)
 	{
 		glBindVertexArray(batch_vao);
@@ -58,7 +58,7 @@ void Rendering::drawBatch()
 	}
 	batch_texture = NULL;
 	batch_shader = NULL;
-	MUTATE_END
+	
 }
 void Rendering::SetClipRect(Rect* clipRect)
 {
@@ -73,10 +73,28 @@ void Rendering::SetClipRect(Rect* clipRect)
 		glDisable(GL_SCISSOR_TEST);
 	}
 }
+
+void Rendering::setBlend() {
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+void Rendering::setPremBlend() {
+	glEnable(GL_BLEND);
+	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+void Rendering::setBlendSep() {
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+}
+
 // rotate the texture on 90 degree angles
 void Rendering::PushQuad(Rect* dstRect, Rect* srcRect, Texture* tex, Shader* shad, float deg)
 {
-	MUTATE_START
+
 	if (tex == nullptr)
 		tex = white;
 	if (shad == nullptr)
@@ -132,27 +150,22 @@ void Rendering::PushQuad(Rect* dstRect, Rect* srcRect, Texture* tex, Shader* sha
 
 	// rotate stuff
 
-	if (deg > 0)
+	if (deg != 0) // lil broken too
 	{
-		for (int i = 1; i < 5; i++)
+		float s = sin(deg * (3.14159265 / 180));
+		float c = cos(deg * (3.14159265 / 180));
+		float cx = dstRect->x + dstRect->w * 0.5f;
+		float cy = dstRect->y + dstRect->h * 0.5f;
+
+		GL_Vertex* verts[] = { &tl, &bl, &tr, &br };
+		for (GL_Vertex* vert : verts)
 		{
-			float simDeg = i * 90;
-			if (simDeg > deg)
-				break;
-
-			GL_Vertex ctr = tr;
-			GL_Vertex cbr = br;
-			GL_Vertex cbl = bl;
-			GL_Vertex ctl = tl;
-
-			tl.u = ctr.u;
-			tl.v = ctr.v;
-			tr.v = cbr.v;
-			tr.u = cbr.u;
-			br.u = cbl.u;
-			br.v = cbl.v;
-			bl.u = ctl.u;
-			bl.v = ctl.v;
+			float tx = vert->x - cx;
+			float ty = vert->y - cy;
+			float rx = tx * c - ty * s;
+			float ry = tx * s + ty * c;
+			vert->x = rx + cx;
+			vert->y = ry + cy;
 		}
 	}
 
@@ -163,12 +176,12 @@ void Rendering::PushQuad(Rect* dstRect, Rect* srcRect, Texture* tex, Shader* sha
 	batch_buffer.push_back(tr);
 	batch_buffer.push_back(bl);
 	batch_buffer.push_back(br);
-	MUTATE_END
+	
 }
 
 void Rendering::PushQuad(Rect* dstRect, Rect* srcRect, Texture* tex, Shader* shad) {
 
-	MUTATE_START
+	
 	if (tex == nullptr)
 		tex = white;
 	if (shad == nullptr)
@@ -228,5 +241,5 @@ void Rendering::PushQuad(Rect* dstRect, Rect* srcRect, Texture* tex, Shader* sha
 	batch_buffer.push_back(tr);
 	batch_buffer.push_back(bl);
 	batch_buffer.push_back(br);
-	MUTATE_END
+	
 }

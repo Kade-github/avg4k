@@ -69,6 +69,11 @@ public:
 		float mpy = (h * (1 - scale)) / 2;
 		dstRect.x = x + mpx;
 		dstRect.y = y + mpy;
+		if (!staticView)
+		{
+			dstRect.x -= Game::mainView.x;
+			dstRect.y -= Game::mainView.y;
+		}
 		dstRect.w = w * scale;
 		dstRect.h = h * scale;
 		dstRect.r = 255;

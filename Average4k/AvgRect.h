@@ -26,6 +26,11 @@ public:
 		Rect srcRect;
 		rect.x = x;
 		rect.y = y;
+		if (!staticView)
+		{
+			rect.x -= Game::mainView.x;
+			rect.y -= Game::mainView.y;
+		}
 		rect.w = w;
 		rect.h = h;
 		rect.r = c.r;

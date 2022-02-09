@@ -201,6 +201,9 @@
     <ClCompile Include="AvgGroup.cpp">
       <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
     </ClCompile>
+    <ClCompile Include="AvgCamera.cpp">
+      <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes.h">

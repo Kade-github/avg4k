@@ -43,9 +43,9 @@ void ReceptorObject::draw() {
 		{
 		case 0:
 			if (lightUpTimer <= 0)
-				Rendering::PushQuad(&dstRect, &srcRect, Gameplay::noteskin->receptor, GL::genShader, 270);
+				Rendering::PushQuad(&dstRect, &srcRect, Gameplay::noteskin->receptor, GL::genShader, 90);
 			else
-				Rendering::PushQuad(&dstRect, &srcRect, Gameplay::noteskin->light, GL::genShader, 270);
+				Rendering::PushQuad(&dstRect, &srcRect, Gameplay::noteskin->light, GL::genShader, 90);
 
 			break;
 		case 1:
@@ -64,9 +64,9 @@ void ReceptorObject::draw() {
 			break;
 		case 3:
 			if (lightUpTimer <= 0)
-				Rendering::PushQuad(&dstRect, &srcRect, Gameplay::noteskin->receptor, GL::genShader, 90);
+				Rendering::PushQuad(&dstRect, &srcRect, Gameplay::noteskin->receptor, GL::genShader, -90);
 			else
-				Rendering::PushQuad(&dstRect, &srcRect, Gameplay::noteskin->light, GL::genShader, 90);
+				Rendering::PushQuad(&dstRect, &srcRect, Gameplay::noteskin->light, GL::genShader, -90);
 			break;
 		}
 	}

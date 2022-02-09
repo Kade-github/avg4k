@@ -42,6 +42,11 @@ void Text::draw()
 	{
 		dstRect.x = (x - 1) + mpx;
 		dstRect.y = y + mpy;
+		if (!staticView)
+		{
+			dstRect.x -= Game::mainView.x;
+			dstRect.y -= Game::mainView.y;
+		}
 
 		dstRect.w = w * scale;
 		dstRect.h = h * scale;
@@ -54,6 +59,11 @@ void Text::draw()
 
 	dstRect.x = x + mpx;
 	dstRect.y = y + mpy;
+	if (!staticView)
+	{
+		dstRect.x -= Game::mainView.x;
+		dstRect.y -= Game::mainView.y;
+	}
 
 	dstRect.w = w * scale;
 	dstRect.h = h * scale;

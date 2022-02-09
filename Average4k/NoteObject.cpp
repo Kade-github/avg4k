@@ -169,7 +169,7 @@ void NoteObject::draw() {
         if (Gameplay::noteskin->rotate) {
             switch (lane) {
             case 0: // left
-                Rendering::PushQuad(&dstRect, &srcRect, texture, GL::genShader, 270);
+                Rendering::PushQuad(&dstRect, &srcRect, texture, GL::genShader, 90);
                 break;
             case 1: // down
                 Rendering::PushQuad(&dstRect, &srcRect, texture, GL::genShader);
@@ -180,7 +180,7 @@ void NoteObject::draw() {
                 srcRect.h = 1;
                 break;
             case 3: // right
-                Rendering::PushQuad(&dstRect, &srcRect, texture, GL::genShader, 90);
+                Rendering::PushQuad(&dstRect, &srcRect, texture, GL::genShader, -90);
                 break;
             }
         }

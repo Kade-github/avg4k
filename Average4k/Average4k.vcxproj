@@ -184,6 +184,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Average4k.cpp" />
+    <ClCompile Include="AvgCamera.cpp" />
     <ClCompile Include="AvgGroup.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Chart.cpp" />

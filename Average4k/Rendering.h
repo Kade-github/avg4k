@@ -34,6 +34,10 @@ public:
 
 	static void drawBatch();
 
+	static void setBlend();
+	static void setBlendSep();
+	static void setPremBlend();
+
 	static void SetClipRect(Rect* clipRect);
 
 	static void PushQuad(Rect* dstRect, Rect* srcRect, Texture* tex, Shader* shad, float deg);

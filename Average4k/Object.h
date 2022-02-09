@@ -42,6 +42,7 @@ public:
 	}
 
 	bool handleDraw = false;
+	bool staticView = false;
 
 	float alpha = 1;
 	float x = 0;

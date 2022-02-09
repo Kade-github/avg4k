@@ -160,6 +160,7 @@ void MainMenu::create() {
 	border->create();
 	add(border);
 	created = true;
+
 }
 
 void MainMenu::onSteam(std::string s)
@@ -176,6 +177,7 @@ void call() {
 void MainMenu::update(Events::updateEvent event)
 {
 	MUTATE_START
+
 	// I made this math myself
 	// it sucks
 	// parallax though

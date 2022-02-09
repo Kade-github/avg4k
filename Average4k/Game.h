@@ -9,6 +9,10 @@
 #include "Chart.h"
 #include "AvgCamera.h"
 
+struct Viewpoint {
+	float x, y;
+};
+
 class Game
 {
 public:
@@ -36,6 +40,7 @@ public:
 
 	void textInput(SDL_TextInputEvent event);
 	static AvgCamera* mainCamera;
+	static Viewpoint mainView;
 	static Menu* currentMenu;
 	static SaveFile* save;
 	static Steam* steam;

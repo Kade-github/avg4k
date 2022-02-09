@@ -240,6 +240,11 @@ namespace Tweening
 
 			rect.x = scaledX;
 			rect.y = scaledY;
+			if (!staticView)
+			{
+				rect.x -= Game::mainView.x;
+				rect.y -= Game::mainView.y;
+			}
 			rect.w = scaledWidth;
 			rect.h = scaledHeight;
 			rect.r = fillColor.r;

@@ -26,6 +26,7 @@ vector<Object*>* objects;
 std::vector<Events::packetEvent> packetsToBeHandeld;
 
 AvgCamera* Game::mainCamera = NULL;
+Viewpoint Game::mainView;
 Menu* Game::currentMenu = NULL;
 Menu* Game::toGoTo = NULL;
 SaveFile* Game::save = NULL;
@@ -145,6 +146,8 @@ void Game::createGame()
 	// to start
 	currentMenu = new MainMenu();
 	currentMenu->create();
+	mainView.x = 0;
+	mainView.y = 0;
 
 	consoleBG = new AvgRect(0, 0, Game::gameWidth, 220);
 	consoleBG->alpha = 0.4;

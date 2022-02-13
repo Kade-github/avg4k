@@ -75,20 +75,12 @@ ChatObject::ChatObject(float _x, float _y)
 
 ChatObject::~ChatObject()
 {
-	delete chatSend;
-	delete chatBody;
-	delete sendText;
-	delete rank;
 	for (message& msg : messages)
 	{
 		delete msg.tagT;
 		delete msg.text;
 	}
-	delete notifText;
-	delete notifRank;
-	delete chatNotif;
 	messages.clear();
-	delete texts;
 }
 
 void ChatObject::open()
@@ -238,7 +230,7 @@ void ChatObject::keyDown(SDL_KeyboardEvent ev)
 		}
 		break;
 	case SDLK_RETURN:
-		if (typing)
+		if (typing && fuckin.size() != 0)
 		{
 			typing = false;
 

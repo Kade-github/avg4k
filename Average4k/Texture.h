@@ -7,6 +7,8 @@ class Texture
 		//GL object
 		GLuint id;
 
+		SDL_Surface* surf;
+
 		//Constructors and destructor
 
 		static Texture* createFromSurface(SDL_Surface* surf, bool free);

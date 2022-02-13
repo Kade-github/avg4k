@@ -106,6 +106,8 @@ class Gameplay :
 		AvgRect* songPosOutline;
 		AvgRect* songPosBar;
 
+		AvgSprite* leaderboardCrown;
+
 		float heldEnd[4];
 
 		float positionInSong = 0;
@@ -123,6 +125,7 @@ class Gameplay :
 		Text* Accuracy;
 		int score;
 		Text* ScoreText;
+		Text* Placement;
 
 		Text* Mrv;
 		Text* Prf;

@@ -9,6 +9,7 @@ void Text::setText(std::string temp)
 
 	const char* c = text.c_str();
 	SDL_Surface* borderMe = nullptr;
+	
 	if (border)
 	{
 		TTF_SetFontOutline(Arial, borderSize);
@@ -41,6 +42,11 @@ void Text::setText(std::string temp)
 		surfW = message->width;
 		surfH = message->height;
 	}
+}
+void Text::setCharacterSpacing(float spacing)
+{
+	TTF_SetFontCharacterSpacing(Arial, spacing);
+	setText(text);
 }
 void Text::draw()
 {

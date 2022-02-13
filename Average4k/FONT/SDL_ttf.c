@@ -87,6 +87,9 @@ struct _TTF_Font {
     int kerning;
     int use_kerning;
 
+    /* Character spacing (space between kerning) */
+    float characterSpacing;
+
     /* Extra width in glyph bounds for text styles */
     int glyph_overhang;
 
@@ -1098,6 +1101,16 @@ void TTF_SetFontKerning(TTF_Font *font, int allowed)
     font->use_kerning = FT_HAS_KERNING(font->face) && font->kerning;
 }
 
+int TTF_GetFontCharacterSpacing(const TTF_Font* font)
+{
+    return font->characterSpacing;
+}
+
+void TTF_SetFontCharacterSpacing(TTF_Font* font, float spacing)
+{
+    font->characterSpacing = spacing;
+}
+
 long TTF_FontFaces(const TTF_Font *font)
 {
     return font->face->num_faces;
@@ -1211,10 +1224,10 @@ static int TTF_SizeUTF8_Internal(TTF_Font *font, const char *text, int *w, int *
         /* Allows to render a string with only one space " ". (bug 4344). */
         maxx = SDL_max(maxx, x + glyph->advance);
 
-        miny = SDL_min(miny, glyph->yoffset);
-        maxy = SDL_max(maxy, glyph->yoffset + glyph->maxy - glyph->miny);
+        miny = SDL_min(miny, glyph->yoffset + 4);
+        maxy = SDL_max(maxy, (glyph->yoffset + 4) + glyph->maxy - glyph->miny);
 
-        x += glyph->advance;
+        x += glyph->advance + font->characterSpacing;
         prev_index = glyph->index;
     }
 
@@ -1691,7 +1704,8 @@ SDL_Surface *TTF_RenderUTF8_Blended(TTF_Font *font,
             }
         }
 
-        xstart += glyph->advance;
+        xstart += glyph->advance + font->characterSpacing;
+       
         prev_index = glyph->index;
     }
 

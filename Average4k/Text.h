@@ -82,6 +82,8 @@ public:
 		die();
 	}
 
+	void setCharacterSpacing(float spacing);
+
 	int size;
 
 	void draw() override;

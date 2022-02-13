@@ -220,8 +220,6 @@ void ChatObject::keyDown(SDL_KeyboardEvent ev)
 	case SDLK_RETURN:
 		if (typing && fuckin.size() != 0)
 		{
-			typing = false;
-
 			CPacketSendMessage msg;
 			msg.message = fuckin;
 			msg.Order = 0;

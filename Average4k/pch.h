@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <glad/glad.h>
 #include <SDL.h>
-#include <SDL_ttf.h>
+#include "FONT/SDL_ttf.h"
 #include <vector>
 #include <string>
 #include <filesystem>

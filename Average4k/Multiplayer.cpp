@@ -255,6 +255,7 @@ DWORD WINAPI pleaseLogin(LPVOID agh)
 
 void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr msg) {
     VM_START
+    PacketType type;
     if (msg->get_opcode() != websocketpp::frame::opcode::BINARY)
         return;
     try {
@@ -318,7 +319,7 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
 
         std::string encoded = macaron::Base64::Encode(plaintex);
 
-        //std::cout << "Decrypted message: " << encoded << std::endl;
+        std::cout << "Decrypted message: " << encoded << std::endl;
 
 
         int32_t* ints = (int32_t*)plaintext;
@@ -326,14 +327,14 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
         int32_t packetType = ints[0];
         int32_t length = ints[1];
 
-        //std::cout << "Packet length: " << length << std::endl;
-       // std::cout << "packet type: " << packetType << std::endl;
+        std::cout << "Packet length: " << length << std::endl;
+        std::cout << "packet type: " << packetType << std::endl;
 
         size_t size = (size_t)length;
 
         char* data = (char*)((__int64)(plaintext)+8);
 
-        PacketType type = (PacketType)packetType;
+        type = (PacketType)packetType;
 
         SPacketStatus status;
         SPacketHello helloBack;
@@ -348,7 +349,6 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
         int cock = 46;
         int cockmonkey = 567;
         int monkeysexCock = 7372;
-        
         switch (type)
         {
         case eSPacketStatus:
@@ -429,15 +429,23 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
             Game::instance->weGotPacket(p);
             break;
         case eSPacketHello:
+            std::cout << "bruh moment -1" << std::endl;
             unpack(result, data, length);
+
+            std::cout << "bruh moment 0" << std::endl;
 
             obj = msgpack::object(result.get());
 
+            std::cout << "bruh moment 0.5" << std::endl;
+
             obj.convert(helloBack);
 
+            std::cout << "bruh moment 1" << std::endl;
 
             CreateThread(NULL, NULL, NewThread, NULL, NULL, NULL);
             Multiplayer::loggedIn = true;
+
+            std::cout << "bruh moment 2" << std::endl;
 
             if (reauth)
                 delete reauth;
@@ -464,7 +472,7 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
         }
     }
     catch (std::exception e) {
-        std::cout << "shit " << e.what() << std::endl;
+        std::cout << "shit " << e.what() << " - THINGY CASTING " << type << std::endl;
     }
     VM_END
 }

@@ -210,13 +210,6 @@ void ChatObject::keyDown(SDL_KeyboardEvent ev)
 		return;
 	switch (ev.keysym.sym)
 	{
-	case SDLK_LCTRL:
-		if (typing)
-			sendText->setText(Multiplayer::username + ": " + fuckin);
-		else
-			sendText->setText(Multiplayer::username + ": " + fuckin + "_");
-		typing = !typing;
-		break;
 	case SDLK_BACKSPACE:
 		if (fuckin.size() > 0 && typing)
 		{
@@ -227,8 +220,6 @@ void ChatObject::keyDown(SDL_KeyboardEvent ev)
 	case SDLK_RETURN:
 		if (typing && fuckin.size() != 0)
 		{
-			typing = false;
-
 			CPacketSendMessage msg;
 			msg.message = fuckin;
 			msg.Order = 0;
@@ -239,6 +230,9 @@ void ChatObject::keyDown(SDL_KeyboardEvent ev)
 
 			Multiplayer::sendMessage<CPacketSendMessage>(msg);
 		}
+		else
+			sendText->setText(Multiplayer::username + ": " + fuckin + "_");
+		typing = !typing;
 		break;
 	}
 

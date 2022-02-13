@@ -148,6 +148,10 @@ extern DECLSPEC int SDLCALL TTF_FontLineSkip(const TTF_Font *font);
 extern DECLSPEC int SDLCALL TTF_GetFontKerning(const TTF_Font *font);
 extern DECLSPEC void SDLCALL TTF_SetFontKerning(TTF_Font *font, int allowed);
 
+/* Get/Set whether or not kerning is allowed for this font */
+extern DECLSPEC int SDLCALL TTF_GetFontCharacterSpacing(const TTF_Font* font);
+extern DECLSPEC void SDLCALL TTF_SetFontCharacterSpacing(TTF_Font* font, float spacing);
+
 /* Get the number of faces of the font */
 extern DECLSPEC long SDLCALL TTF_FontFaces(const TTF_Font *font);
 

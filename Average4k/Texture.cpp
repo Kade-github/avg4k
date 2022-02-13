@@ -22,9 +22,9 @@ Texture* Texture::createFromSurface(SDL_Surface* surf, bool free) {
 	int w = surf->w;
 	int h = surf->h;
 	unsigned char* c = (unsigned char*)surf->pixels;
-	if (free)
-		SDL_FreeSurface(surf);
-	return new Texture(c, w, h);
+	Texture* t = new Texture(c, w, h);
+	t->surf = surf;
+	return t;
 }
 
 Texture::Texture(unsigned char* data, const unsigned int width, const unsigned int height)
@@ -41,6 +41,8 @@ Texture::~Texture()
 	glDeleteTextures(1, &id);
 	if (pixels != nullptr && fromSTBI && width > 0 && height > 0)
 		stbi_h::stbi_free(pixels);
+	if (surf)
+		SDL_FreeSurface(surf);
 }
 		
 //Set texture data function

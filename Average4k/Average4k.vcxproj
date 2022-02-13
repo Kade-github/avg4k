@@ -190,6 +190,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="Chart.cpp" />
     <ClCompile Include="ChatObject.cpp" />
     <ClCompile Include="Easing.cpp" />
+    <ClCompile Include="FONT\SDL_ttf.c" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Gameplay.cpp" />
     <ClCompile Include="GL.cpp" />
@@ -246,6 +247,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="CPacketWtfAmIn.h" />
     <ClInclude Include="Easing.h" />
     <ClInclude Include="Font.h" />
+    <ClInclude Include="FONT\SDL_ttf.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Gameplay.h" />

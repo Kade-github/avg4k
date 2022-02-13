@@ -55,13 +55,15 @@ void Gameplay::updateAccuracy(double hitWorth)
 		notesHit += hitWorth;
 		accuracy = ((notesHit / notesPlayed) * 100);
 	}
+	else
+		accuracy = 100;
 	if (accuracy < 0)
 		accuracy = 0;
 
 	std::string format = std::to_string((double)((int)(accuracy * 100)) / 100);
 	format.erase(format.find_last_not_of('0') + 1, std::string::npos);
 
-	if (floor(accuracy) == accuracy)
+	if (accuracy == (int)accuracy)
 		format.erase(format.find_last_not_of('.') + 1, std::string::npos);
 
 	ScoreText->setText(std::to_string(score));
@@ -143,6 +145,16 @@ void Gameplay::miss(NoteObject* object)
 	Combo->setY((Game::gameHeight / 2) + 40);	
 }
 
+const char* ordinal_suffix(int n)
+{
+	static const char suffixes[][3] = { "th", "st", "nd", "rd" };
+	auto ord = n % 100;
+	if (ord / 10 == 1) { ord = 0; }
+	ord = ord % 10;
+	if (ord > 3) { ord = 0; }
+	return suffixes[ord];
+}
+
 void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 {
 	MUTATE_START
@@ -176,6 +188,12 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 
 		for (PlayerScore score : pack.orderedScores)
 		{
+			if (score.SteamID64 == std::to_string(SteamUser()->GetSteamID().ConvertToUint64()))
+			{
+				int realRank = score.Ranking + 1;
+				Placement->setText(std::to_string(realRank) + std::string(ordinal_suffix(realRank)) + " Place");
+				Placement->x = (Game::gameWidth - Placement->surfW) - 24;
+			}
 			bool found = false;
 			for (leaderboardSpot& spot : leaderboard)
 			{
@@ -188,28 +206,83 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 						username = score.Username;				
 					spot.score = score; // copy it over
 					found = true;
-					spot.t->y = ((Game::gameHeight / 2) + (46 * ranking)) + 4;
-					spot.t->setText(username + ": " + std::to_string(spot.score.score));
-					spot.avgRect->w = 300;
-					spot.avgRect->y = ((Game::gameHeight / 2) + (46 * ranking));
+					spot.t->y = ((leaderboardText->y + leaderboardText->h) + 24) + ((64 * ranking) + 4);
+					if (spot.owner->text != "")
+						spot.owner->y = spot.t->y + spot.t->surfH;
+					spot.accuracy->y = spot.owner->y + spot.owner->surfH;
+					spot.scoreText->y = spot.accuracy->y + spot.accuracy->surfH;
+
+					std::string format = "0";
+					if (score.Accuracy != 0)
+					{
+						format = std::to_string((double)((int)(score.Accuracy * 10000)) / 100);
+						format.erase(format.find_last_not_of('0') + 1, std::string::npos);
+
+						if (score.Accuracy == (int)score.Accuracy)
+							format.erase(format.find_last_not_of('.') + 1, std::string::npos);
+					}
+
+					spot.accuracy->setText(format + "% accuracy");
+					spot.scoreText->setText(std::to_string(score.score));
+					spot.t->setText(username);
+
+					if (score.Ranking == 0)
+					{
+						leaderboardCrown->x = -23;
+						leaderboardCrown->y = (spot.t->y - spot.t->surfH) - 10;
+					}
 				}
 			}
 			if (!found)
 			{
 				int y = (Game::gameHeight / 2) + (46 * ranking);
-				cspot.avgRect = new AvgRect(0, y, 1, 46);
-				add(cspot.avgRect);
 				std::string username = "";
-				if (score.Username.size() > 6)
-					username = score.Username.substr(0, 6) + "...";
+				if (score.Username.size() > 16)
+					username = score.Username.substr(0, 16) + "...";
 				else
 					username = score.Username;
 				cspot.score = score;
-				cspot.avgRect->alpha = 0.3;
-				cspot.t = new Text(50, y + 4, username + ": " + std::to_string(cspot.score.score), 24, "NotoSans-Regular");
-				cspot.avgRect->w = 300;
+				float off = (avatars[cspot.score.SteamID64]->w + 4);
+				cspot.t = new Text(3 + off, y + 4, username, 16, "arial");
+				cspot.owner = new Text(3 + off, cspot.t->y + cspot.t->surfH, "", 16, "arialbd");
+				if (MultiplayerLobby::hostSteamId == score.SteamID64)
+					cspot.owner->setText("lobby owner");
+				else
+				{
+					cspot.owner->text = "";
+					cspot.owner->surfH = cspot.t->surfH;
+					cspot.owner->y = cspot.t->y;
+				}
+				std::string format = "0";
+				if (score.Accuracy != 0)
+				{
+					format = std::to_string((double)((int)(score.Accuracy * 10000)) / 100);
+					format.erase(format.find_last_not_of('0') + 1, std::string::npos);
+
+					if (score.Accuracy == (int)score.Accuracy)
+						format.erase(format.find_last_not_of('.') + 1, std::string::npos);
+				}
+
+				cspot.accuracy = new Text(3 + off,cspot.owner->y + cspot.owner->surfH, format + "% accuracy", 16, "ariali");
+
+
+				cspot.scoreText = new Text(3 + off, cspot.accuracy->y + cspot.accuracy->surfH, std::to_string(score.score), 16, "arialbd");
 				leaderboard.push_back(cspot);
+				add(cspot.accuracy);
+				add(cspot.scoreText);
+				add(cspot.owner);
 				add(cspot.t);
+
+				if (score.Ranking == 0)
+				{
+					leaderboardCrown->x = -23;
+					leaderboardCrown->y = (cspot.t->y - cspot.t->surfH) - 10;
+				}
+
+				cspot.accuracy->setCharacterSpacing(3);
+				cspot.scoreText->setCharacterSpacing(3);
+				cspot.owner->setCharacterSpacing(3);
+				cspot.t->setCharacterSpacing(3);
 			}
 			ranking++;
 		}
@@ -222,8 +295,8 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 
 		for (leaderboardSpot& spot : leaderboard)
 		{
-			avatars[spot.score.SteamID64]->y = spot.avgRect->y;
-			avatars[spot.score.SteamID64]->x = 0;
+			avatars[spot.score.SteamID64]->y = spot.t->y;
+			avatars[spot.score.SteamID64]->x = 3;
 			//add(avatars[spot.score.SteamID64]);
 		}
 		break;
@@ -269,7 +342,19 @@ void Gameplay::create() {
 
 	Judge::judgeNote(174);
 
-
+	if (!SongSelect::currentChart)
+	{
+		std::cout << "FUCKING WHAT??? chart is null!" << std::endl;
+		if (!MultiplayerLobby::inLobby)
+		{
+			Game::instance->transitionToMenu(new SongSelect());
+		}
+		else
+		{
+			Game::instance->transitionToMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost,false));
+		}
+		return;
+	}
 
 	std::string bg = SongSelect::currentChart->meta.folder + "/" + SongSelect::currentChart->meta.background;
 
@@ -302,18 +387,6 @@ void Gameplay::create() {
 	AvgRect* rOverlay = new AvgRect(0, 0, background->w, background->h);
 	rOverlay->alpha = 0.46;
 	add(rOverlay);
-
-	if (MultiplayerLobby::inLobby)
-		for (int i = 0; i < MultiplayerLobby::CurrentLobby.PlayerList.size(); i++)
-		{
-			player pp = MultiplayerLobby::CurrentLobby.PlayerList[i];
-			const char* pog = pp.AvatarURL.c_str();
-			Texture* s = Steam::getAvatar(pog);
-			avatars[pp.SteamID64] = new AvgSprite(0, 0, s);
-			avatars[pp.SteamID64]->w = 46;
-			avatars[pp.SteamID64]->h = 46;
-			add(avatars[pp.SteamID64]);
-		}
 
 
 	float bassRate = (rate * 100) - 100;
@@ -367,6 +440,7 @@ void Gameplay::create() {
 	lunderBorder->h = laneUnderway.h;
 
 	Judgement = new Text(Game::gameWidth / 2, Game::gameHeight / 2, " ", 23, "Futura Bold");
+	Judgement->setCharacterSpacing(4.25);
 	Judgement->create();
 
 	Judgement->borderColor = { 255,255,255 };
@@ -388,12 +462,77 @@ void Gameplay::create() {
 	rightGrad->colorB = darkestColor.b;
 	add(rightGrad);
 
-	ScoreText = new Text(Game::gameWidth - 200, 10, "", 52, "Futura Bold");
+	if (MultiplayerLobby::inLobby)
+	{
+		AvgSprite* leftGrad = new AvgSprite(0, 0, Noteskin::getGameplayElement(Game::noteskin, "leftGraid.png"));
+		leftGrad->colorR = darkestColor.r;
+		leftGrad->colorG = darkestColor.g;
+		leftGrad->colorB = darkestColor.b;
+		leftGrad->alpha = 0.8;
+		add(leftGrad);
+
+		AvgSprite* leftGradBorder = new AvgSprite(0, 0, Noteskin::getGameplayElement(Game::noteskin, "leftBorder.png"));
+		leftGradBorder->colorR = lightestAccent.r;
+		leftGradBorder->colorG = lightestAccent.g;
+		leftGradBorder->colorB = lightestAccent.b;
+		add(leftGradBorder);
+
+		for (int i = 0; i < MultiplayerLobby::CurrentLobby.PlayerList.size(); i++)
+		{
+			player pp = MultiplayerLobby::CurrentLobby.PlayerList[i];
+			const char* pog = pp.AvatarURL.c_str();
+			Texture* s = Steam::getAvatar(pog);
+			avatars[pp.SteamID64] = new AvgSprite(0, 0, s);
+			avatars[pp.SteamID64]->w = 52;
+			avatars[pp.SteamID64]->h = 52;
+			add(avatars[pp.SteamID64]);
+		}
+
+		if (avatars.size() == 0)
+		{
+			Game::instance->transitionToMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, false));
+			return;
+		}
+		else
+		{
+			for (int i = 0; i < MultiplayerLobby::CurrentLobby.PlayerList.size(); i++)
+			{
+				player pp = MultiplayerLobby::CurrentLobby.PlayerList[i];
+				if (avatars[pp.SteamID64] == nullptr)
+				{
+					Game::instance->transitionToMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, false));
+					return;
+				}
+			}
+		}
+
+		leaderboardText = new Text(15, 12, "Leaderboard", 18, "arialbd");
+		add(leaderboardText);
+		leaderboardText->setCharacterSpacing(3);
+
+		leaderboardCrown = new AvgSprite(100, 100, Noteskin::getGameplayElement(Game::noteskin, "crown.png"));
+		leaderboardCrown->scale = 0.3;
+		leaderboardCrown->colorR = 255;
+		leaderboardCrown->colorG = 209;
+		leaderboardCrown->colorB = 83;
+		add(leaderboardCrown);
+
+		Placement = new Text(Game::gameWidth - 200, 10, "", 36, "Futura Bold");
+		add(Placement);
+		Placement->setCharacterSpacing(6);
+		Placement->border = true;
+		Placement->borderAlpha = 0.5;
+		Placement->borderSize = 2;
+	}
+
+	ScoreText = new Text(Game::gameWidth - 200, 10, "", 36, "Futura Bold");
 	add(ScoreText);
+	ScoreText->setCharacterSpacing(6);
 
 
-	Accuracy = new Text(Game::gameWidth - 200, 60, "", 38, "Futura Bold");
+	Accuracy = new Text(Game::gameWidth - 200, 46, "", 36, "Futura Bold");
 	add(Accuracy);
+	Accuracy->setCharacterSpacing(6);
 
 	Accuracy->border = true;
 	Accuracy->borderAlpha = 0.5;
@@ -403,11 +542,19 @@ void Gameplay::create() {
 	ScoreText->borderAlpha = 0.5;
 	ScoreText->borderSize = 2;
 
-	ranking = new Text(0, 102, "", 32, "Futura Bold");
+	ranking = new Text(0, 82, "", 36, "Futura Bold");
 	ranking->border = true;
 	ranking->borderAlpha = 0.5;
 	ranking->borderSize = 2;
 	add(ranking);
+	ranking->setCharacterSpacing(6);
+
+	if (Placement)
+	{
+		Accuracy->y += 36;
+		ranking->y += 36;
+		ScoreText->y += 36;
+	}
 
 
 	for (int i = 0; i < 4; i++)
@@ -740,7 +887,7 @@ void Gameplay::update(Events::updateEvent event)
 	}
 	else
 	{
-		if (!ended && spawnedNotes.size() == 0 && positionInSong > (songLength) - 1000)
+		if (!ended && spawnedNotes.size() == 0 && notesToPlay.size() == 0)
 		{
 			ended = true;
 			if (!MultiplayerLobby::inLobby)
@@ -1072,7 +1219,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				closestObject->wasHit = true;
 
 				judgement judge = Judge::judgeNote(diff);
-				score += Judge::scoreNote(1);
+				score += Judge::scoreNote(diff);
 
 				std::string format = std::to_string(diff - fmod(diff, 0.01));
 				format.erase(format.find_last_not_of('0') + 1, std::string::npos);

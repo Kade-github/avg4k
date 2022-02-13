@@ -100,6 +100,9 @@
     <Filter Include="Source Files\OpenGL\Renderer">
       <UniqueIdentifier>{c74006df-4e09-47ce-9588-b10851a7111c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="FontStuff\lib">
+      <UniqueIdentifier>{8f707079-2bf9-4451-8c60-ea650b9c420e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Average4k.cpp">
@@ -206,6 +209,9 @@
     </ClCompile>
     <ClCompile Include="ChatObject.cpp">
       <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="FONT\SDL_ttf.c">
+      <Filter>FontStuff\lib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -439,6 +445,9 @@
     </ClInclude>
     <ClInclude Include="ChatObject.h">
       <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="FONT\SDL_ttf.h">
+      <Filter>FontStuff\lib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

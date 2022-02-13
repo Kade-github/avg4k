@@ -266,7 +266,7 @@ namespace Tweening
 					text->setText(text->text);
 				}
 				text->setX((scaledX + (scaledWidth / 2)) - (text->surfW / 2));
-				text->setY(scaledY + (text->surfH / 2));
+				text->setY((scaledY + (text->surfH / 2)) + 5);
 				if (alpha != text->alpha)
 					text->setAlpha(alpha);
 			}

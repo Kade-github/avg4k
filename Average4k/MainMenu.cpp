@@ -68,7 +68,7 @@ void callback()
 	font.g = 0;
 	font.b = 142;
 
-	Tweening::AvgButtonTweenable* but = new Tweening::AvgButtonTweenable(250, 500, 250, 45, "solo", 18, "arial", (clickCallback)changeMenu);
+	Tweening::AvgButtonTweenable* but = new Tweening::AvgButtonTweenable(250, 500, 250, 45, "solo", 15, "arialbd", (clickCallback)changeMenu);
 	but->create();
 	but->text->border = false;
 	but->fontColor = font;
@@ -76,9 +76,10 @@ void callback()
 	but->borderColor = c;
 	but->hoverColor = hovered;
 	but->fillColor = filC;
+	but->text->setCharacterSpacing(2.33);
 	instance->add(but);
 	instance->buttons.push_back(but);
-	Tweening::AvgButtonTweenable* but2 = new Tweening::AvgButtonTweenable(532, 500, 250, 45, "multiplayer", 18, "arial", (clickCallback)changeMenu);
+	Tweening::AvgButtonTweenable* but2 = new Tweening::AvgButtonTweenable(532, 500, 250, 45, "multiplayer", 15, "arialbd", (clickCallback)changeMenu);
 	but2->create();
 	but2->text->border = false;
 	but2->fontColor = font;
@@ -86,9 +87,10 @@ void callback()
 	but2->borderColor = c;
 	but2->hoverColor = hovered;
 	but2->fillColor = filC;
+	but2->text->setCharacterSpacing(2.33);
 	instance->add(but2);
 	instance->buttons.push_back(but2);
-	Tweening::AvgButtonTweenable* but3 = new Tweening::AvgButtonTweenable(832, 500, 250, 45, "settings", 18, "arial", (clickCallback)changeMenu);
+	Tweening::AvgButtonTweenable* but3 = new Tweening::AvgButtonTweenable(832, 500, 250, 45, "settings", 15, "arialbd", (clickCallback)changeMenu);
 	but3->create();
 	but3->text->border = false;
 	but3->fontColor = font;
@@ -96,6 +98,7 @@ void callback()
 	but3->hoverColor = hovered;
 	but3->borderColor = c;
 	but3->fillColor = filC;
+	but3->text->setCharacterSpacing(2.33);
 	instance->add(but3);
 	instance->buttons.push_back(but3);
 	instance->hello->setText("Hi " + std::string(SteamFriends()->GetPersonaName()));

@@ -19,6 +19,7 @@ class MultiplayerLobby :
 {
     public:
         static bool inLobby;
+        static std::string hostSteamId;
         bool waitingForStart;
         static lobby CurrentLobby;
         static bool isHost;

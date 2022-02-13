@@ -4,6 +4,7 @@
 bool MultiplayerLobby::inLobby = false;
 lobby MultiplayerLobby::CurrentLobby;
 bool MultiplayerLobby::isHost = false;
+std::string MultiplayerLobby::hostSteamId;
 
 
 void MultiplayerLobby::refreshLobby(lobby l)
@@ -24,6 +25,8 @@ void MultiplayerLobby::refreshLobby(lobby l)
 	for (int i = 0; i < l.PlayerList.size(); i++)
 	{
 		player& p = l.PlayerList[i];
+		if (i == 0)
+			hostSteamId = p.SteamID64;
 		person per;
 		per.display = new Text(82, 192 + (46 * i), p.Name, 24, "NotoSans-Regular");
 		per.display->create();

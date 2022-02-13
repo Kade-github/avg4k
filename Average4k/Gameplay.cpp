@@ -55,13 +55,15 @@ void Gameplay::updateAccuracy(double hitWorth)
 		notesHit += hitWorth;
 		accuracy = ((notesHit / notesPlayed) * 100);
 	}
+	else
+		accuracy = 100;
 	if (accuracy < 0)
 		accuracy = 0;
 
 	std::string format = std::to_string((double)((int)(accuracy * 100)) / 100);
 	format.erase(format.find_last_not_of('0') + 1, std::string::npos);
 
-	if (floor(accuracy) == accuracy)
+	if (accuracy == (int)accuracy)
 		format.erase(format.find_last_not_of('.') + 1, std::string::npos);
 
 	ScoreText->setText(std::to_string(score));
@@ -188,27 +190,65 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 						username = score.Username;				
 					spot.score = score; // copy it over
 					found = true;
-					spot.t->y = ((Game::gameHeight / 2) + (46 * ranking)) + 4;
-					spot.t->setText(username + ": " + std::to_string(spot.score.score));
-					spot.avgRect->w = 300;
-					spot.avgRect->y = ((Game::gameHeight / 2) + (46 * ranking));
+					spot.t->y = ((leaderboardText->y + leaderboardText->h) + 24) + ((64 * ranking) + 4);
+					if (spot.owner->text != "")
+						spot.owner->y = spot.t->y + spot.t->surfH;
+					spot.accuracy->y = spot.owner->y + spot.owner->surfH;
+					spot.scoreText->y = spot.accuracy->y + spot.accuracy->surfH;
+
+					std::string format = "0";
+					if (score.Accuracy != 0)
+					{
+						format = std::to_string((double)((int)(score.Accuracy * 10000)) / 100);
+						format.erase(format.find_last_not_of('0') + 1, std::string::npos);
+
+						if (score.Accuracy == (int)score.Accuracy)
+							format.erase(format.find_last_not_of('.') + 1, std::string::npos);
+					}
+
+					spot.accuracy->setText(format + "% accuracy");
+					spot.scoreText->setText(std::to_string(score.score));
+					spot.t->setText(username);
 				}
 			}
 			if (!found)
 			{
 				int y = (Game::gameHeight / 2) + (46 * ranking);
-				cspot.avgRect = new AvgRect(0, y, 1, 46);
-				add(cspot.avgRect);
 				std::string username = "";
-				if (score.Username.size() > 6)
-					username = score.Username.substr(0, 6) + "...";
+				if (score.Username.size() > 16)
+					username = score.Username.substr(0, 16) + "...";
 				else
 					username = score.Username;
 				cspot.score = score;
-				cspot.avgRect->alpha = 0.3;
-				cspot.t = new Text(50, y + 4, username + ": " + std::to_string(cspot.score.score), 24, "NotoSans-Regular");
-				cspot.avgRect->w = 300;
+				float off = (avatars[cspot.score.SteamID64]->w + 4);
+				cspot.t = new Text(15 + off, y + 4, username, 16, "arial");
+				cspot.owner = new Text(15 + off, cspot.t->y + cspot.t->surfH, "", 16, "arialbd");
+				if (MultiplayerLobby::hostSteamId == score.SteamID64)
+					cspot.owner->setText("lobby owner");
+				else
+				{
+					cspot.owner->text = "";
+					cspot.owner->surfH = cspot.t->surfH;
+					cspot.owner->y = cspot.t->y;
+				}
+				std::string format = "0";
+				if (score.Accuracy != 0)
+				{
+					format = std::to_string((double)((int)(score.Accuracy * 10000)) / 100);
+					format.erase(format.find_last_not_of('0') + 1, std::string::npos);
+
+					if (score.Accuracy == (int)score.Accuracy)
+						format.erase(format.find_last_not_of('.') + 1, std::string::npos);
+				}
+
+				cspot.accuracy = new Text(15 + off,cspot.owner->y + cspot.owner->surfH, format + "% accuracy", 16, "ariali");
+
+
+				cspot.scoreText = new Text(15 + off, cspot.accuracy->y + cspot.accuracy->surfH, std::to_string(score.score), 16, "arialbd");
 				leaderboard.push_back(cspot);
+				add(cspot.accuracy);
+				add(cspot.scoreText);
+				add(cspot.owner);
 				add(cspot.t);
 			}
 			ranking++;
@@ -222,8 +262,8 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 
 		for (leaderboardSpot& spot : leaderboard)
 		{
-			avatars[spot.score.SteamID64]->y = spot.avgRect->y;
-			avatars[spot.score.SteamID64]->x = 0;
+			avatars[spot.score.SteamID64]->y = spot.t->y;
+			avatars[spot.score.SteamID64]->x = 15;
 			//add(avatars[spot.score.SteamID64]);
 		}
 		break;
@@ -303,18 +343,6 @@ void Gameplay::create() {
 	rOverlay->alpha = 0.46;
 	add(rOverlay);
 
-	if (MultiplayerLobby::inLobby)
-		for (int i = 0; i < MultiplayerLobby::CurrentLobby.PlayerList.size(); i++)
-		{
-			player pp = MultiplayerLobby::CurrentLobby.PlayerList[i];
-			const char* pog = pp.AvatarURL.c_str();
-			Texture* s = Steam::getAvatar(pog);
-			avatars[pp.SteamID64] = new AvgSprite(0, 0, s);
-			avatars[pp.SteamID64]->w = 46;
-			avatars[pp.SteamID64]->h = 46;
-			add(avatars[pp.SteamID64]);
-		}
-
 
 	float bassRate = (rate * 100) - 100;
 
@@ -387,6 +415,36 @@ void Gameplay::create() {
 	rightGrad->colorG = darkestColor.g;
 	rightGrad->colorB = darkestColor.b;
 	add(rightGrad);
+
+	if (MultiplayerLobby::inLobby)
+	{
+		AvgSprite* leftGrad = new AvgSprite(0, 0, Noteskin::getGameplayElement(Game::noteskin, "leftGraid.png"));
+		leftGrad->colorR = darkestColor.r;
+		leftGrad->colorG = darkestColor.g;
+		leftGrad->colorB = darkestColor.b;
+		leftGrad->alpha = 0.8;
+		add(leftGrad);
+
+		AvgSprite* leftGradBorder = new AvgSprite(0, 0, Noteskin::getGameplayElement(Game::noteskin, "leftBorder.png"));
+		leftGradBorder->colorR = lightestAccent.r;
+		leftGradBorder->colorG = lightestAccent.g;
+		leftGradBorder->colorB = lightestAccent.b;
+		add(leftGradBorder);
+
+		for (int i = 0; i < MultiplayerLobby::CurrentLobby.PlayerList.size(); i++)
+		{
+			player pp = MultiplayerLobby::CurrentLobby.PlayerList[i];
+			const char* pog = pp.AvatarURL.c_str();
+			Texture* s = Steam::getAvatar(pog);
+			avatars[pp.SteamID64] = new AvgSprite(0, 0, s);
+			avatars[pp.SteamID64]->w = 52;
+			avatars[pp.SteamID64]->h = 52;
+			add(avatars[pp.SteamID64]);
+		}
+
+		leaderboardText = new Text(15, 12, "Leaderboard", 18, "arialbd");
+		add(leaderboardText);
+	}
 
 	ScoreText = new Text(Game::gameWidth - 200, 10, "", 52, "Futura Bold");
 	add(ScoreText);
@@ -1072,7 +1130,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				closestObject->wasHit = true;
 
 				judgement judge = Judge::judgeNote(diff);
-				score += Judge::scoreNote(1);
+				score += Judge::scoreNote(diff);
 
 				std::string format = std::to_string(diff - fmod(diff, 0.01));
 				format.erase(format.find_last_not_of('0') + 1, std::string::npos);

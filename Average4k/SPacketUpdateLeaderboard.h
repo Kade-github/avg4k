@@ -9,9 +9,9 @@ public:
 	std::string Username;
 	std::string SteamAvatar;
 	std::string SteamID64;
-	float accuracy;
+	float Accuracy;
 	unsigned short Ranking;
-	MSGPACK_DEFINE_MAP(score, meanTiming, Username, SteamAvatar, SteamID64, Ranking);
+	MSGPACK_DEFINE_MAP(score, meanTiming, Username, SteamAvatar, SteamID64, Ranking, Accuracy);
 };
 
 class SPacketUpdateLeaderboard : public Packet

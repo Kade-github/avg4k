@@ -21,9 +21,10 @@ struct gameplayControl {
 };
 
 struct leaderboardSpot {
-	SDL_FRect rect;
 	Text* t;
-	AvgRect* avgRect;
+	Text* owner;
+	Text* accuracy;
+	Text* scoreText;
 	PlayerScore score;
 
 	friend bool operator==(const leaderboardSpot& lhs, const leaderboardSpot& rhs)
@@ -108,6 +109,8 @@ class Gameplay :
 		float heldEnd[4];
 
 		float positionInSong = 0;
+
+		Text* leaderboardText;
 
 		Text* songLengthText;
 

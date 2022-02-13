@@ -8,13 +8,32 @@ void Text::setText(std::string temp)
 	text = temp;
 
 	const char* c = text.c_str();
+	SDL_Surface* borderMe = nullptr;
+	if (border)
+	{
+		TTF_SetFontOutline(Arial, borderSize);
 
+		borderMe =
+			TTF_RenderText_Blended(Arial, c, { 255, 255, 255 });
+	}
+	TTF_SetFontOutline(Arial, 0);
 	SDL_Surface* surfaceMessage =
-		TTF_RenderUTF8_Blended_Wrapped(Arial, c, { 255, 255,255 }, Game::gameWidth);
+		TTF_RenderText_Blended(Arial, c, { 255, 255,255 });
+	
 	if (surfaceMessage != nullptr)
 	{
 		if (message)
 			delete message;
+
+		if (outline)
+			delete outline;
+
+		if (borderMe)
+		{
+			outline = Texture::createFromSurface(borderMe, true);
+			borderW = outline->width;
+			borderH = outline->height;
+		}
 
 		message = Texture::createFromSurface(surfaceMessage, true);
 		w = message->width;
@@ -38,42 +57,36 @@ void Text::draw()
 	float mpx = (w * (1 - scale)) / 2;
 	float mpy = (h * (1 - scale)) / 2;
 
-	if (border)
-	{
-		dstRect.x = (x - 1) + mpx;
-		dstRect.y = y + mpy;
-		if (!staticView)
-		{
-			dstRect.x -= Game::mainView.x;
-			dstRect.y -= Game::mainView.y;
-		}
-
-		dstRect.w = w * scale;
-		dstRect.h = h * scale;
-		dstRect.r = 0;
-		dstRect.g = 0;
-		dstRect.b = 0;
-		dstRect.a = alpha;
-		Rendering::PushQuad(&dstRect, &srcRect, message, GL::genShader);
-	}
 
 	dstRect.x = x + mpx;
 	dstRect.y = y + mpy;
-	if (!staticView)
-	{
-		dstRect.x -= Game::mainView.x;
-		dstRect.y -= Game::mainView.y;
-	}
-
 	dstRect.w = w * scale;
 	dstRect.h = h * scale;
-	dstRect.r = color.r;
-	dstRect.g = color.g;
-	dstRect.b = color.b;
 	dstRect.a = alpha;
 
 
-	Rendering::PushQuad(&dstRect, &srcRect, message, GL::genShader);
+	if (border && outline)
+	{
+		dstRect.x -= borderSize;
+		dstRect.y -= borderSize;
+		dstRect.w = borderW * scale;
+		dstRect.h = borderH * scale;
+		dstRect.a = borderAlpha;
+		dstRect.r = borderColor.r;
+		dstRect.g = borderColor.g;
+		dstRect.b = borderColor.b;
+		Rendering::PushQuad(&dstRect, &srcRect, outline, GL::genShader, angle);
+		dstRect.x += borderSize;
+		dstRect.y += borderSize;
+		dstRect.w = w * scale;
+		dstRect.h = h * scale;
+		dstRect.a = alpha;
+	}
+	dstRect.r = color.r;
+	dstRect.g = color.g;
+	dstRect.b = color.b;
+
+	Rendering::PushQuad(&dstRect, &srcRect, message, GL::genShader, angle);
 }
 
 void Text::setFont(std::string name)

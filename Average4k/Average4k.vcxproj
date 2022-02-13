@@ -29,26 +29,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -188,6 +188,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="AvgGroup.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Chart.cpp" />
+    <ClCompile Include="ChatObject.cpp" />
     <ClCompile Include="Easing.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Gameplay.cpp" />
@@ -226,6 +227,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="AvgSprite.h" />
     <ClInclude Include="Base64.h" />
     <ClInclude Include="Chart.h" />
+    <ClInclude Include="ChatObject.h" />
     <ClInclude Include="CPacketChartAcquired.h" />
     <ClInclude Include="CPacketHello.h" />
     <ClInclude Include="CPacketHostChangeChart.h" />
@@ -237,6 +239,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="CPacketLeave.h" />
     <ClInclude Include="CPacketNoteHit.h" />
     <ClInclude Include="CPacketRequestAvatar.h" />
+    <ClInclude Include="CPacketSendMessage.h" />
     <ClInclude Include="CPacketServerList.h" />
     <ClInclude Include="CPacketSongFinished.h" />
     <ClInclude Include="CPacketStatus.h" />
@@ -280,6 +283,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="SPacketHostServerReply.h" />
     <ClInclude Include="SPacketInvalidPacket.h" />
     <ClInclude Include="SPacketJoinServerReply.h" />
+    <ClInclude Include="SPacketOnChat.h" />
     <ClInclude Include="SPacketPlayerSongFinished.h" />
     <ClInclude Include="SPacketServerListReply.h" />
     <ClInclude Include="SPacketStartLobbyGame.h" />

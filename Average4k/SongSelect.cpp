@@ -457,7 +457,7 @@ SongSelect::SongSelect()
 
 void SongSelect::create() {
 	addCamera(Game::mainCamera);
-	AvgSprite* sprite = new AvgSprite(0, 0, "assets/graphical/menu/mm/bg.png");
+	AvgSprite* sprite = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/bg.png"));
 	sprite->create();
 	add(sprite);
 

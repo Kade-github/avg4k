@@ -14,6 +14,7 @@
 #include "SoundManager.h"
 #include <SDL_image.h>
 #include "ReceptorObject.h"
+#include "stbi.h"
 struct gameplayControl {
 	int lane;
 	SDL_Keycode code;
@@ -63,6 +64,12 @@ class Gameplay :
 		double beat;
 		bool play = false;
 
+		Pixel lightestAccent;
+		Pixel lighterAccent;
+		Pixel darkestAccent;
+		Pixel lightestColor;
+		Pixel darkestColor;
+
 		std::vector<NoteObject*> spawnedNotes;
 
 		std::vector<float> clapped;
@@ -108,8 +115,11 @@ class Gameplay :
 
 		Text* Judgement;
 		Text* Combo;
+		Text* ranking;
 
 		Text* Accuracy;
+		int score;
+		Text* ScoreText;
 
 		Text* Mrv;
 		Text* Prf;
@@ -125,8 +135,6 @@ class Gameplay :
 		
 		Channel* song;
 		Channel* clap;
-
-		static noteskin_asset* noteskin;
 
 		Gameplay();
 

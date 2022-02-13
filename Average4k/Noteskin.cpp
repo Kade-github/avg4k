@@ -11,27 +11,17 @@ noteskin_asset* Noteskin::asset = NULL;
 Texture* getAsset(std::string path)
 {
 	// stbi cannot find these for some reason??
-	Texture* texture = Texture::createFromSurface(IMG_Load(path.c_str()), true);
+	Texture* texture = Texture::createWithImage(path);
 
 	return texture;
 }
 
 void Noteskin::resetNoteskin(noteskin_asset* as)
 {
-	if (as)
-	{
-		delete as->fourth;
-		delete as->eighth;
-		delete as->hold;
-		delete as->sixteenth;
-		delete as->twelfth;
-		delete as->holdend;
-		delete as->receptor;
-		delete as->none;
-		delete as->thirty2nd;
-		free(as);
-		as = NULL;
-	}
+	// TODO: FIGURE OUT HOW TO SAFLEY DELETE SKINS
+	// CALLING "delete as" OR "delete as->'any tex'" DOESN'T WORK
+	// IT JUST ACCESS VIOLATIONS SOMETIMES
+	// IDK WHY
 }
 
 
@@ -39,20 +29,21 @@ bool convertStringBool(std::string text) {
 	return text == "false" ? false : true;
 }
 
-noteskin_asset* loadSkin(noteskin_asset* as, std::string type) {
+noteskin_asset* loadSkin(noteskin_asset* as, std::string typ) {
 	as = new noteskin_asset();
-	as->fourth = getAsset("assets/noteskin/" + type + "/4th.png");
-	as->eighth = getAsset("assets/noteskin/" + type + "/8th.png");
-	as->twelfth = getAsset("assets/noteskin/" + type + "/12th.png");
-	as->sixteenth = getAsset("assets/noteskin/" + type + "/16th.png");
-	as->thirty2nd = getAsset("assets/noteskin/" + type + "/32nd.png");
-	as->hold = getAsset("assets/noteskin/" + type + "/hold.png");
-	as->none = getAsset("assets/noteskin/" + type + "/idfk.png");
-	as->receptor = getAsset("assets/noteskin/" + type + "/Receptor.png");
-	as->holdend = getAsset("assets/noteskin/" + type + "/holdend.png");
-	as->light = getAsset("assets/noteskin/" + type + "/lit.png");
+	Noteskin::type = typ;
+	as->fourth = getAsset("assets/noteskin/" + Noteskin::type + "/4th.png");
+	as->eighth = getAsset("assets/noteskin/" + Noteskin::type + "/8th.png");
+	as->twelfth = getAsset("assets/noteskin/" + Noteskin::type + "/12th.png");
+	as->sixteenth = getAsset("assets/noteskin/" + Noteskin::type + "/16th.png");
+	as->thirty2nd = getAsset("assets/noteskin/" + Noteskin::type + "/32nd.png");
+	as->none = getAsset("assets/noteskin/" + Noteskin::type + "/idfk.png");
+	as->receptor = getAsset("assets/noteskin/" + Noteskin::type + "/Receptor.png");
+	as->hold = getAsset("assets/noteskin/" + Noteskin::type + "/hold.png");
+	as->holdend = getAsset("assets/noteskin/" + Noteskin::type + "/holdend.png");
+	as->light = getAsset("assets/noteskin/" + Noteskin::type + "/lit.png");
 
-	std::ifstream config("assets/noteskin/" + type + "/config.skin");
+	std::ifstream config("assets/noteskin/" + Noteskin::type + "/config.skin");
 	std::string line;
 	if (config.is_open())
 	{
@@ -71,9 +62,12 @@ noteskin_asset* loadSkin(noteskin_asset* as, std::string type) {
 				as->bounce = convertStringBool(second);
 			if (first == "shrink")
 				as->shrink = convertStringBool(second);
+			if (first == "path")
+				as->skinpath = second;
 		}
 		config.close();
 	}
+	as->name = Noteskin::type;
 	return as;
 }
 

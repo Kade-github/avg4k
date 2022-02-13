@@ -1,6 +1,5 @@
 #pragma once
 #include "includes.h"
-
 class Object
 {
 public:
@@ -23,6 +22,7 @@ public:
 	virtual void update(Events::updateEvent ev) {};
 	virtual void draw() {};
 	virtual void mouseDown() {};
+	virtual void onPacket(PacketType pt, char* data, int32_t length) {};
 	virtual void keyDown(SDL_KeyboardEvent ev) {};
 	virtual void textInput(SDL_TextInputEvent ev) {};
 	virtual void beforeDeath() {};
@@ -42,9 +42,11 @@ public:
 	}
 
 	bool handleDraw = false;
+	bool drawGroups = false;
 	bool staticView = false;
 
 	float alpha = 1;
+	float angle = 0;
 	float x = 0;
 	float scale = 1.0;
 	int w = 0;
@@ -66,11 +68,8 @@ public:
 	virtual void die();
 
 
-	void drawChildren()
-	{
-		for (Object* obj : children)
-			obj->draw();
-	}
+	void drawChildren();
+
 
 	virtual void setAlpha(float _alpha)
 	{

@@ -26,6 +26,7 @@ class MainMenu :
 		Text* bottom;
 		SDL_Texture* avatar;
 		AvgSprite* border;
+
 		MainMenu();
 
 		

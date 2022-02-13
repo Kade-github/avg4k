@@ -56,17 +56,17 @@ void NoteObject::draw() {
         beatRow = std::roundf(48 * (pos / bps));
     }
     if (fmod(beatRow, (192 / 4)) == 0)
-        texture = Gameplay::noteskin->fourth;
+        texture = Game::noteskin->fourth;
     else if (fmod(beatRow, (192 / 8)) == 0)
-        texture = Gameplay::noteskin->eighth;
+        texture = Game::noteskin->eighth;
     else if (fmod(beatRow, (192 / 12)) == 0)
-        texture = Gameplay::noteskin->twelfth;
+        texture = Game::noteskin->twelfth;
     else if (fmod(beatRow, (192 / 16)) == 0)
-        texture = Gameplay::noteskin->sixteenth;
+        texture = Game::noteskin->sixteenth;
     else if (fmod(beatRow, (192 / 32)) == 0)
-        texture = Gameplay::noteskin->thirty2nd;
+        texture = Game::noteskin->thirty2nd;
     else
-        texture = Gameplay::noteskin->none;
+        texture = Game::noteskin->none;
 
     Rect clipThingy;
 
@@ -122,24 +122,24 @@ void NoteObject::draw() {
             if (!downscroll)
             {
                 srcRect.h = -1;
-                Rendering::PushQuad(&dstRect, &srcRect, Gameplay::noteskin->hold, GL::genShader);
+                Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->hold, GL::genShader);
                 srcRect.h = 1;
             }
             else
             {
-                Rendering::PushQuad(&dstRect, &srcRect, Gameplay::noteskin->hold, GL::genShader);
+                Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->hold, GL::genShader);
             }
         }
         else {
             if (!downscroll)
             {
                 srcRect.h = -1;
-                Rendering::PushQuad(&dstRect, &srcRect, Gameplay::noteskin->holdend, GL::genShader);
+                Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->holdend, GL::genShader);
                 srcRect.h = 1;
             }
             else
             {
-                Rendering::PushQuad(&dstRect, &srcRect, Gameplay::noteskin->holdend, GL::genShader);
+                Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->holdend, GL::genShader);
             }
         }
 
@@ -166,7 +166,7 @@ void NoteObject::draw() {
         holdsActive = activeH;
 
     if (active) {
-        if (Gameplay::noteskin->rotate) {
+        if (Game::noteskin->rotate) {
             switch (lane) {
             case 0: // left
                 Rendering::PushQuad(&dstRect, &srcRect, texture, GL::genShader, 90);

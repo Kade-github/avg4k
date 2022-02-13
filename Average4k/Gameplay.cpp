@@ -8,7 +8,6 @@
 
 std::mutex weirdPog;
 
-noteskin_asset* Gameplay::noteskin;
 
 std::map<std::string, AvgSprite*> avatars;
 
@@ -50,9 +49,12 @@ const float min(const float a, const float b)
 void Gameplay::updateAccuracy(double hitWorth)
 {
 	MUTATE_START
-	notesPlayed++;
-	notesHit += hitWorth;
-	accuracy = ((notesHit / notesPlayed) * 100);
+	if (hitWorth != 0)
+	{
+		notesPlayed++;
+		notesHit += hitWorth;
+		accuracy = ((notesHit / notesPlayed) * 100);
+	}
 	if (accuracy < 0)
 		accuracy = 0;
 
@@ -62,12 +64,37 @@ void Gameplay::updateAccuracy(double hitWorth)
 	if (floor(accuracy) == accuracy)
 		format.erase(format.find_last_not_of('.') + 1, std::string::npos);
 
-	Accuracy->setText("Accuracy: " + format + "%");
-	Mrv->setText("Marvelous: " + std::to_string(Marvelous));
-	Prf->setText("Perfect: " + std::to_string(Perfect));
-	God->setText("Great: " + std::to_string(Great));
-	Ehh->setText("Eh: " + std::to_string(Eh));
-	Yke->setText("Yikes: " + std::to_string(Yikes));
+	ScoreText->setText(std::to_string(score));
+	ScoreText->x = (Game::gameWidth - ScoreText->surfW) - 24;
+
+	Accuracy->setText(format + "%");
+	Accuracy->x = (Game::gameWidth - Accuracy->surfW) - 24;
+
+	// calculate rank here
+
+	std::string rank = "";
+
+	if (hitWorth != 0)
+	{
+		if (accuracy == 100)
+			rank = "S";
+		else if (accuracy >= 96)
+			rank = "A+";
+		else if (accuracy >= 93)
+			rank = "A";
+		else if (accuracy >= 80)
+			rank = "B";
+		else if (accuracy >= 70)
+			rank = "C";
+		else if (accuracy >= 60)
+			rank = "D";
+		else if (accuracy <= 59)
+			rank = "F";
+	}
+
+	ranking->setText(rank);
+	ranking->x = (Game::gameWidth - ranking->surfW) - 24;
+
 	MUTATE_END
 }
 
@@ -105,7 +132,7 @@ void Gameplay::miss(NoteObject* object)
 	Judgement->color.r = 255;
 	Judgement->color.g = 0;
 	Judgement->color.b = 0;
-	Judgement->setText("MISS");
+	Judgement->setText("miss");
 
 	Judgement->setX((Game::gameWidth / 2) - (Judgement->surfW / 2));
 	Judgement->setY((Game::gameHeight / 2));
@@ -251,6 +278,31 @@ void Gameplay::create() {
 	background->h = Game::gameHeight;
 	add(background);
 
+	if (background->tex->pixels)
+	{
+		lightestColor = stbi_h::getLightestPixel(background->tex->pixels, background->tex->width, background->tex->height);
+		darkestColor = stbi_h::getDarkestPixel(background->tex->pixels, background->tex->width, background->tex->height);
+
+		darkestColor.r *= 0.46;
+		darkestColor.g *= 0.46;
+		darkestColor.b *= 0.46;
+
+		darkestAccent = stbi_h::getAccentPixel(background->tex->pixels, background->tex->width, background->tex->height, lightestColor, darkestColor);
+		Pixel p;
+		p.r = darkestAccent.r += 20;
+		p.g = darkestAccent.g += 20;
+		p.b = darkestAccent.b += 20;
+		lighterAccent = stbi_h::getAccentPixel(background->tex->pixels, background->tex->width, background->tex->height, lightestColor, p);
+		p.r = lighterAccent.r += 40;
+		p.g = lighterAccent.g += 40;
+		p.b = lighterAccent.b += 40;
+		lightestAccent = stbi_h::getAccentPixel(background->tex->pixels, background->tex->width, background->tex->height, lightestColor, p);
+	}
+
+	AvgRect* rOverlay = new AvgRect(0, 0, background->w, background->h);
+	rOverlay->alpha = 0.46;
+	add(rOverlay);
+
 	if (MultiplayerLobby::inLobby)
 		for (int i = 0; i < MultiplayerLobby::CurrentLobby.PlayerList.size(); i++)
 		{
@@ -284,7 +336,6 @@ void Gameplay::create() {
 	add(positionAndBeats);
 
 
-	noteskin = Noteskin::getNoteskin();
 	notesToPlay = SongSelect::currentChart->meta.difficulties[diff].notes;
 
 	Rect laneUnderway;
@@ -294,45 +345,69 @@ void Gameplay::create() {
 	laneUnderway.w = (((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * 3) - laneUnderway.x) + (68 * Game::save->GetDouble("Note Size"));
 	laneUnderway.h = 1280;
 
-	AvgRect* lunder = new AvgRect(laneUnderway.x, laneUnderway.y, laneUnderway.w, laneUnderway.h);
+	AvgSprite* lunder = new AvgSprite(laneUnderway.x, laneUnderway.y, Noteskin::getGameplayElement(Game::noteskin, "underway.png"));
 	add(lunder);
-	lunder->alpha = 0.5;
+	lunder->alpha = 0.8;
 
+	lunder->colorR = darkestColor.r;
+	lunder->colorG = darkestColor.g;
+	lunder->colorB = darkestColor.b;
 
-	Judgement = new Text(Game::gameWidth / 2, Game::gameHeight / 2, " ", 24, "NotoSans-Regular");
+	AvgSprite* lunderBorder = new AvgSprite(laneUnderway.x, laneUnderway.y, Noteskin::getGameplayElement(Game::noteskin, "underwayBorder.png"));
+	add(lunderBorder);
+	lunderBorder->alpha = 1;
+
+	lunderBorder->colorR = lightestAccent.r;
+	lunderBorder->colorG = lightestAccent.g;
+	lunderBorder->colorB = lightestAccent.b;
+
+	lunder->w = laneUnderway.w;
+	lunder->h = laneUnderway.h;
+	lunderBorder->w = laneUnderway.w;
+	lunderBorder->h = laneUnderway.h;
+
+	Judgement = new Text(Game::gameWidth / 2, Game::gameHeight / 2, " ", 23, "Futura Bold");
 	Judgement->create();
 
-	Combo = new Text(Game::gameWidth / 2, Game::gameHeight / 2 + 40, " ", 24, "NotoSans-Regular");
+	Judgement->borderColor = { 255,255,255 };
+	Judgement->border = true;
+	Judgement->borderSize = 1;
+
+	Combo = new Text(Game::gameWidth / 2, Game::gameHeight / 2 + 40, " ", 24, "Futura Bold");
 	Combo->create();
 
-	AvgRect* lAcc = new AvgRect(171, (Game::gameHeight / 2) - 304, 250, 295);
-	lAcc->alpha = 0.5;
-	add(lAcc);
 
-	Accuracy = new Text(175, (Game::gameHeight / 2) - 300, "Accuracy: N/A", 24, "NotoSans-Regular");
-	Accuracy->create();
+	Combo->borderSize = 1;
+	Combo->border = true;
+
+	AvgSprite* rightGrad = new AvgSprite(0, 0, Noteskin::getGameplayElement(Game::noteskin, "rightGraid.png"));
+	rightGrad->x = Game::gameWidth - rightGrad->w;
+
+	rightGrad->colorR = darkestColor.r;
+	rightGrad->colorG = darkestColor.g;
+	rightGrad->colorB = darkestColor.b;
+	add(rightGrad);
+
+	ScoreText = new Text(Game::gameWidth - 200, 10, "", 52, "Futura Bold");
+	add(ScoreText);
+
+
+	Accuracy = new Text(Game::gameWidth - 200, 60, "", 38, "Futura Bold");
 	add(Accuracy);
 
-	Mrv = new Text(175, (Game::gameHeight / 2) - 250, "Marvelous: " + std::to_string(Marvelous), 24, "NotoSans-Regular");
-	Mrv->create();
-	add(Mrv);
+	Accuracy->border = true;
+	Accuracy->borderAlpha = 0.5;
+	Accuracy->borderSize = 2;
 
-	Prf = new Text(175, (Game::gameHeight / 2) - 200, "Perfect: " + std::to_string(Perfect), 24, "NotoSans-Regular");
-	Prf->create();
-	add(Prf);
+	ScoreText->border = true;
+	ScoreText->borderAlpha = 0.5;
+	ScoreText->borderSize = 2;
 
-	God = new Text(175, (Game::gameHeight / 2) - 150, "Great: " + std::to_string(Great), 24, "NotoSans-Regular");
-	God->create();
-	add(God);
-
-	Ehh = new Text(175, (Game::gameHeight / 2) - 100, "Eh: " + std::to_string(Eh), 24, "NotoSans-Regular");
-	Ehh->create();
-	add(Ehh);
-
-	Yke = new Text(175, (Game::gameHeight / 2) - 50, "Yikes: " + std::to_string(Yikes), 24, "NotoSans-Regular");
-	Yke->create();
-	add(Yke);
-
+	ranking = new Text(0, 102, "", 32, "Futura Bold");
+	ranking->border = true;
+	ranking->borderAlpha = 0.5;
+	ranking->borderSize = 2;
+	add(ranking);
 
 
 	for (int i = 0; i < 4; i++)
@@ -365,7 +440,7 @@ void Gameplay::create() {
 	add(Combo);
 
 	songPosBar = new AvgRect(receptors[0]->x, 24, ((receptors[3]->x + (64 * Game::save->GetDouble("Note Size"))) - receptors[0]->x) * (positionInSong / (songLength)), 24);
-	add(songPosBar);
+	//add(songPosBar);
 	songPosBar->c.r = 255;
 	songPosBar->c.g = 255;
 	songPosBar->c.b = 255;
@@ -382,6 +457,7 @@ void Gameplay::create() {
 	created = true;
 
 	positionInSong = -1500;
+	updateAccuracy(0);
 	MUTATE_END
 }
 
@@ -405,11 +481,17 @@ void Gameplay::update(Events::updateEvent event)
 			play = true;
 			lastBPM = 0;
 		}
-		if (playing)
- 			positionInSong = song->getPos();
 	}
-	else
-		positionInSong += Game::deltaTime;
+
+	positionInSong += Game::deltaTime;
+	if (play)
+	{
+		positionInSong -= Game::save->GetDouble("offset");
+		if (song->getPos() - Game::save->GetDouble("offset") > positionInSong + 20 || song->getPos() - Game::save->GetDouble("offset") < positionInSong - 20)
+		{
+			positionInSong = song->getPos() - Game::save->GetDouble("offset");
+		}
+	}
 
 	SDL_FRect bruh;
 	bruh.x = 0;
@@ -457,8 +539,8 @@ void Gameplay::update(Events::updateEvent event)
 	if (!SongSelect::currentChart)
 		return;
 
-	curSeg = SongSelect::currentChart->getSegmentFromTime(positionInSong - Game::save->GetDouble("offset"));
-	beat = SongSelect::currentChart->getBeatFromTimeOffset(positionInSong - Game::save->GetDouble("offset"), curSeg);
+	curSeg = SongSelect::currentChart->getSegmentFromTime(positionInSong);
+	beat = SongSelect::currentChart->getBeatFromTimeOffset(positionInSong, curSeg);
 	if (lastBPM != curSeg.bpm && Game::gameplayEvents_DB)
 	{
 		Game::instance->db_addLine("bpm change to " + std::to_string(curSeg.bpm));
@@ -687,12 +769,12 @@ void Gameplay::update(Events::updateEvent event)
 		if (keys[i] || holding[i])
 		{
 			receptors[i]->light();
-			if (noteskin->shrink)
+			if (Game::noteskin->shrink)
 				receptors[i]->scale = 0.85;
 		}
 		else
 		{
-			if (receptors[i]->scale < 1.0 && noteskin->shrink)
+			if (receptors[i]->scale < 1.0 && Game::noteskin->shrink)
 			{
 				receptors[i]->scale += Game::deltaTime * 0.04;
 				if (receptors[i]->scale > 1.0)
@@ -724,17 +806,18 @@ void Gameplay::update(Events::updateEvent event)
 
 						std::string format = std::to_string(diff - fmod(diff, 0.01));
 						format.erase(format.find_last_not_of('0') + 1, std::string::npos);
-
-						Judgement->setText("Botplay (" + format + "ms)");
+						receptors[note->lane]->lightUpTimer = 100;
+						Judgement->setText("botplay");
 						(*Judgement).color.r = 0;
 						(*Judgement).color.g = 255;
 						(*Judgement).color.b = 255;
 						Marvelous++;
+						score += Judge::scoreNote(diff);
 						updateAccuracy(1);
 						note->active = false;
 
 						combo++;
-						if (noteskin->bounce)
+						if (Game::noteskin->bounce)
 						{
 							Judgement->scale = 1.15;
 							Combo->scale = 1.15;
@@ -764,6 +847,10 @@ void Gameplay::update(Events::updateEvent event)
 							holdTile& tile = note->heldTilings[i];
 							float wh = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat));
 							float offset = wh;
+							if (botplay && offset - positionInSong > 0 && offset - positionInSong < (Judge::hitWindows[1] * 0.5))
+							{
+								receptors[note->lane]->lightUpTimer = 100;
+							}
 							if (offset - positionInSong <= Judge::hitWindows[3] && !tile.fucked)
 							{
 								tile.active = false;
@@ -985,6 +1072,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				closestObject->wasHit = true;
 
 				judgement judge = Judge::judgeNote(diff);
+				score += Judge::scoreNote(1);
 
 				std::string format = std::to_string(diff - fmod(diff, 0.01));
 				format.erase(format.find_last_not_of('0') + 1, std::string::npos);
@@ -1007,18 +1095,19 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				switch (judge)
 				{
 					case judgement::Judge_marvelous:
-						(*Judgement).color.r = 0;
-						(*Judgement).color.g = 255;
-						(*Judgement).color.b = 255;
-						Judgement->setText("Marvelous (" + format + "ms)");
+						(*Judgement).color.r = 100;
+						(*Judgement).color.g = 220;
+						(*Judgement).color.b = 225;
+						Judgement->setText("marvelous");
 						Marvelous++;
 						updateAccuracy(1);
+
 						break;
 					case judgement::Judge_perfect:
 						(*Judgement).color.r = 255;
 						(*Judgement).color.g = 255;
 						(*Judgement).color.b = 0;
-						Judgement->setText("Perfect (" + format + "ms)");
+						Judgement->setText("perfect");
 						Perfect++;
 						updateAccuracy(0.925);
 						break;
@@ -1026,7 +1115,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 						(*Judgement).color.r = 0;
 						(*Judgement).color.g = 255;
 						(*Judgement).color.b = 0;
-						Judgement->setText("Great (" + format + "ms)");
+						Judgement->setText("great");
 						Great++;
 						updateAccuracy(0.7);
 						break;
@@ -1034,7 +1123,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 						(*Judgement).color.r = 255;
 						(*Judgement).color.g = 0;
 						(*Judgement).color.b = 0;
-						Judgement->setText("Eh (" + format + "ms)");
+						Judgement->setText("eh");
 						Eh++;
 						updateAccuracy(0.35);
 						break;
@@ -1043,14 +1132,14 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 						(*Judgement).color.r = 128;
 						(*Judgement).color.g = 0;
 						(*Judgement).color.b = 0;
-						Judgement->setText("Yikes (" + format + "ms) ");
+						Judgement->setText("yikes");
 						Yikes++;
 						updateAccuracy(0.1);
 						break;
 					}
 
 					combo++;
-					if (noteskin->bounce)
+					if (Game::noteskin->bounce)
 					{
 						Judgement->scale = 1.15;
 						Combo->scale = 1.15;

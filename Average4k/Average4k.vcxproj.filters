@@ -204,6 +204,9 @@
     <ClCompile Include="AvgCamera.cpp">
       <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
     </ClCompile>
+    <ClCompile Include="ChatObject.cpp">
+      <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes.h">
@@ -427,6 +430,15 @@
     </ClInclude>
     <ClInclude Include="Helpers.h">
       <Filter>Source Files\Average4k\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketSendMessage.h">
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketOnChat.h">
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="ChatObject.h">
+      <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

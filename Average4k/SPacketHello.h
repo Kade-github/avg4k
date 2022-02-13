@@ -1,5 +1,6 @@
 #pragma once
 #include "Packet.h"
+#include "SPacketOnChat.h"
 class SPacketHello : public Packet
 {
 public:
@@ -12,5 +13,10 @@ public:
 	std::string reauth;
 	std::string avatarURL;
 
-	MSGPACK_DEFINE_MAP(Message, Error, ErrorCode, reauth, avatarURL);
+	std::string chatTag;
+
+	ccolor tagColor;
+	ccolor nameColor;
+
+	MSGPACK_DEFINE_MAP(Message, Error, ErrorCode, reauth, avatarURL, chatTag, tagColor, nameColor);
 };

@@ -13,6 +13,8 @@ public:
 	bool border = false;
 	bool round = false;
 
+	int colorR = 255, colorG = 255, colorB = 255;
+
 	Rect clipRect;
 
 	virtual void setAlpha(float _alpha)
@@ -76,9 +78,9 @@ public:
 		}
 		dstRect.w = w * scale;
 		dstRect.h = h * scale;
-		dstRect.r = 255;
-		dstRect.g = 255;
-		dstRect.b = 255;
+		dstRect.r = colorR;
+		dstRect.g = colorG;
+		dstRect.b = colorB;
 		dstRect.a = alpha;
 
 		srcRect.x = 0;

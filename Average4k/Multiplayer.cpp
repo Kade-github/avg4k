@@ -8,6 +8,11 @@ bool Multiplayer::connectedToServer = false;
 
 bool Multiplayer::loggedIn = false;
 
+std::string Multiplayer::tag = "";
+std::string Multiplayer::username = "";
+Color Multiplayer::tagColor;
+Color Multiplayer::nameColor;
+
 ConnectionData* connectionData;
 std::string Multiplayer::currentUserAvatar = "";
 
@@ -438,6 +443,12 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
                 delete reauth;
 
             reauth = new std::string(helloBack.reauth);
+
+            Multiplayer::username = SteamFriends()->GetPersonaName();
+
+            Multiplayer::tag = helloBack.chatTag;
+            Multiplayer::tagColor = { (int)(helloBack.tagColor.red * 255),(int)(helloBack.tagColor.green * 255),(int)(helloBack.tagColor.blue * 255) };
+            Multiplayer::nameColor = { (int)(helloBack.nameColor.red * 255),(int)(helloBack.nameColor.green * 255),(int)(helloBack.nameColor.blue * 255) };
 
             Multiplayer::currentUserAvatar = helloBack.avatarURL;
 

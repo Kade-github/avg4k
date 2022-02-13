@@ -119,7 +119,7 @@ SettingsMenu::SettingsMenu()
 
 void SettingsMenu::create() {
 	addCamera(Game::mainCamera);
-	AvgSprite* sprite = new AvgSprite(0, 0, "assets/graphical/menu/mm/bg.png");
+	AvgSprite* sprite = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/bg.png"));
 	add(sprite);
 	AvgRect* rect = new AvgRect(0, 0, 1280, 720);
 	rect->alpha = 0.3;
@@ -231,6 +231,9 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 
 			Game::save->SetString("Noteskin", noteskins[selectedNoteskinIndex]);
 			Game::save->Save();
+			Noteskin::resetNoteskin(Game::noteskin);
+			Noteskin::type = noteskins[selectedNoteskinIndex];
+			Noteskin::getNoteskin();
 			updateText(b);
 			return;
 		}
@@ -262,6 +265,9 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 
 			Game::save->SetString("Noteskin", noteskins[selectedNoteskinIndex]);
 			Game::save->Save();
+			Noteskin::resetNoteskin(Game::noteskin);
+			Noteskin::type = noteskins[selectedNoteskinIndex];
+			Noteskin::getNoteskin();
 			updateText(b);
 			return;
 		}

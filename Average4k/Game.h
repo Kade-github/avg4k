@@ -8,6 +8,7 @@
 #include "Multiplayer.h"
 #include "Chart.h"
 #include "AvgCamera.h"
+#include "Noteskin.h"
 
 struct Viewpoint {
 	float x, y;
@@ -41,6 +42,7 @@ public:
 	void textInput(SDL_TextInputEvent event);
 	static AvgCamera* mainCamera;
 	static Viewpoint mainView;
+	static noteskin_asset* noteskin;
 	static Menu* currentMenu;
 	static SaveFile* save;
 	static Steam* steam;

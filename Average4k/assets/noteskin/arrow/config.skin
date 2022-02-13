@@ -4,3 +4,8 @@ rotate: true
 shrink: true
 # Make the combo and judgement text bounce when a note is played
 bounce: true
+# You can make this any path thats inside the skin folder, just make a folder with the name you want;
+# Then copy whats inside of assets/skinDefaults
+# And change what ever you want, and then it'll be skin specific
+path: default
+# default = use assets/skinDefaults

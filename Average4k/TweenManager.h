@@ -178,8 +178,8 @@ namespace Tweening
 			text->create();
 			callback = _callback;
 			add(text);
-			button = Texture::createWithImage("assets/graphical/menu/mm/button.png");
-			select = Texture::createWithImage("assets/graphical/menu/mm/button_selected.png");
+			button = Noteskin::getMenuElement(Game::noteskin, "MainMenu/button.png");
+			select = Noteskin::getMenuElement(Game::noteskin, "MainMenu/button_selected.png");
 		};
 
 		virtual ~AvgButtonTweenable()

@@ -28,6 +28,7 @@ std::vector<Events::packetEvent> packetsToBeHandeld;
 AvgCamera* Game::mainCamera = NULL;
 Viewpoint Game::mainView;
 Menu* Game::currentMenu = NULL;
+noteskin_asset* Game::noteskin = NULL;
 Menu* Game::toGoTo = NULL;
 SaveFile* Game::save = NULL;
 Steam* Game::steam = NULL;
@@ -50,6 +51,7 @@ Text* debugText;
 Text* consoleLog;
 Text* cmdPrompt;
 Text* fpsText;
+Text* alphaWatermark;
 
 map<int, bool> Game::controls = {
 	{SDLK_d, false},
@@ -136,6 +138,11 @@ void Game::createGame()
 	objects = new std::vector<Object*>();
 	steam = new Steam();
 	steam->InitSteam();
+	
+
+	save = new SaveFile();
+
+	noteskin = Noteskin::getNoteskin();
 
 	__transRect = new AvgRect(0,0,Game::gameWidth, Game::gameHeight);
 	__transRect->create();
@@ -155,10 +162,19 @@ void Game::createGame()
 	consoleCMDBar = new AvgRect(0, 220, Game::gameWidth, 25);
 	consoleCMDBar->alpha = 0.4;
 
-	save = new SaveFile();
 
-	fpsText = new Text(0, 0, "FPS: 0", 16, "NotoSans-Regular");
-
+	fpsText = new Text(4, 4, "FPS: 0", 12, "Futura Bold");
+	alphaWatermark = new Text(0, 0, "- AVERAGE4K ALPHA " + Game::version + " - EVERYTHING IS SUBJECT TO CHANGE - ", 14, "Futura Bold");
+	alphaWatermark->border = true;
+	fpsText->borderSize = 2;
+	fpsText->border = true;
+	fpsText->borderColor = { 0,0,0 };
+	fpsText->borderAlpha = 0.4;
+	fpsText->alpha = 0.8;
+	alphaWatermark->borderSize = 2;
+	alphaWatermark->alpha = 0.6;
+	alphaWatermark->borderAlpha = 0.8;
+	alphaWatermark->borderColor = { 255,255,255 };
 	multi = new Multiplayer();
 	multiThreadHandle = CreateThread(NULL, NULL, Multiplayer::connect, NULL, NULL, NULL);
 }
@@ -212,7 +228,7 @@ void Game::update(Events::updateEvent update)
 		currentMenu->update(update);
 
 	if (!transitioning)
-		fpsText->setText("FPS: " + std::to_string(gameFPS) + " - Visuals are subject to change");
+		fpsText->setText("FPS: " + std::to_string((int)gameFPS));
 
 	for (int i = 0; i < objects->size(); i++)
 	{
@@ -256,6 +272,11 @@ void Game::update(Events::updateEvent update)
 			}
 			if (currentMenu != NULL)
 				currentMenu->onPacket(p.type, p.data, p.length);
+			for (int i = 0; i < objects->size(); i++)
+			{
+				Object* btuh = (*objects)[i];
+				btuh->onPacket(p.type, p.data, p.length);
+			}
 			free(p.ogPtr);
 		}
 	}
@@ -288,7 +309,16 @@ void Game::update(Events::updateEvent update)
 		currentMenu->postUpdate(update);
 
 	if (fpsText && !debugConsole)
+	{
+		if (alphaWatermark->x < Game::gameWidth + (alphaWatermark->surfW / 2))
+		{
+			alphaWatermark->x += 0.6;
+		}
+		else
+			alphaWatermark->x = -(alphaWatermark->surfW + 12);
+		alphaWatermark->draw();
 		fpsText->draw();
+	}
 
 
 	if (debugConsole)
@@ -545,7 +575,7 @@ void Game::keyUp(SDL_KeyboardEvent ev)
 	for (int i = 0; i < objects->size(); i++)
 	{
 		Object* bruh = (*objects)[i];
-		bruh->keyDown(ev);
+		//bruh->keyUp(ev);
 	}
 }
 //asd

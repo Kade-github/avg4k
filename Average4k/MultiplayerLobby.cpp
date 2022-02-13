@@ -233,7 +233,7 @@ MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted, bool backFromSelect = f
 void MultiplayerLobby::create() {
 	addCamera(Game::mainCamera);
 
-	AvgSprite* sprite = new AvgSprite(0, 0, "assets/graphical/menu/mm/bg.png");
+	AvgSprite* sprite = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/bg.png"));
 	add(sprite);
 	AvgRect* rect = new AvgRect(0, 0, 1280, 720);
 	rect->alpha = 0.3;
@@ -279,6 +279,10 @@ void MultiplayerLobby::create() {
 		Multiplayer::sendMessage<CPacketClientChartAcquired>(acquired);
 	}
 	created = true;
+
+	chat = new ChatObject(0, 0);
+	chat->create();
+	add(chat);
 }
 
 void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
@@ -288,6 +292,8 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 	switch (event.keysym.sym)
 	{
 		case SDLK_ESCAPE:
+			if (chat->typing)
+				return;
 			CPacketLeave leave;
 			leave.Order = 0;
 			leave.PacketType = eCPacketLeave;
@@ -299,7 +305,17 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 			people.clear();
 			inLobby = false;
 			break;
+		case SDLK_TAB:
+			if (chat->typing)
+				return;
+			if (!chat->opened)
+				chat->open();
+			else
+				chat->close();
+			break;
 		case SDLK_RETURN:
+			if (chat->typing)
+				return;
 			if (!isHost)
 				return;
 
@@ -320,6 +336,8 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 			}
 			break;
 		case SDLK_LSHIFT:
+			if (chat->typing)
+				return;
 			if (!isHost && !waitingForStart)
 				return;
 			Game::instance->transitionToMenu(new SongSelect());

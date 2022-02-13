@@ -111,6 +111,7 @@ void callback()
 		Tweening::TweenManager::createNewTween("buttonY" + index, b, Tweening::tt_Y, 600, b->y + 100, b->y, NULL, Easing::EaseInSine);
 		index++;
 	}
+
 	//VM_END
 }
 
@@ -122,17 +123,17 @@ MainMenu::MainMenu()
 void MainMenu::create() {
 	addCamera(Game::mainCamera);
 
-	bg = new AvgSprite(0, 0, "assets/graphical/menu/mm/bg.png");
+	bg = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/bg.png"));
 	bg->create();
 	bg->w = 1286;
 	bg->h = 726;
 	add(bg);
 
-	icon = new AvgSprite(32, 32, "assets/graphical/menu/genericAvatar.png");
+	icon = new AvgSprite(32, 32, Noteskin::getMenuElement(Game::noteskin, "genericAvatar.png"));
 	icon->create();
 	add(icon);
 
-	thing = new AvgSprite(Game::gameWidth / 2, Game::gameHeight / 2, "assets/graphical/menu/mm/avg4k.png");
+	thing = new AvgSprite(Game::gameWidth / 2, Game::gameHeight / 2, Noteskin::getMenuElement(Game::noteskin, "MainMenu/avg4k.png"));
 	thing->x -= thing->w / 2;
 	thing->y -= thing->h / 2;
 	thing->alpha = 0;
@@ -156,10 +157,11 @@ void MainMenu::create() {
 	bottom->create();
 	add(bottom);
 
-	border = new AvgSprite(32, 32, "assets/graphical/menu/border.png");
+	border = new AvgSprite(32, 32, Noteskin::getMenuElement(Game::noteskin,"border.png"));
 	border->create();
 	add(border);
 	created = true;
+
 
 }
 

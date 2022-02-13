@@ -6,11 +6,13 @@
 #include "MainMenu.h"
 #include "MultiplayerLobbies.h"
 #include "Gameplay.h"
+#include "ChatObject.h"
 
 struct person {
     Text* display;
     AvgSprite* avatar;
 };
+
 
 class MultiplayerLobby :
     public Menu
@@ -24,6 +26,8 @@ class MultiplayerLobby :
         bool downloading = true;
 
         int diff = 0;
+
+        ChatObject* chat;
 
         Text* helpDisplay;
 

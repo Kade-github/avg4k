@@ -4,10 +4,17 @@
 #include "Texture.h"
 #include "Shader.h"
 #include <glm/gtc/matrix_transform.hpp>
+struct Color {
+	int r;
+	int g;
+	int b;
+};
+
 using namespace glm;
 class GL
 {
 public:
 	static Shader* genShader;
 	static mat4 projection;
+
 };

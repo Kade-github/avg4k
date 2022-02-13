@@ -7,6 +7,7 @@
 #include "CPacketStatus.h"
 #include "Base64.h"
 #include <iostream>
+#include "GL.h"
 
 typedef websocketpp::client<websocketpp::config::asio_tls_client> client;
 typedef websocketpp::lib::shared_ptr<websocketpp::lib::asio::ssl::context> context_ptr;
@@ -29,6 +30,11 @@ public:
 	static DWORD WINAPI connect(LPVOID agh);
 
 	static std::string currentUserAvatar;
+
+	static std::string username;
+	static std::string tag;
+	static Color tagColor;
+	static Color nameColor;
 
 	static void InitCrypto();
 

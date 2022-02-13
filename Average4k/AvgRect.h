@@ -1,4 +1,5 @@
 #pragma once
+#include "Game.h"
 #include "Object.h"
 #include "GL.h"
 class AvgRect : public Object

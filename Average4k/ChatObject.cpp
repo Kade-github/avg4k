@@ -75,11 +75,6 @@ ChatObject::ChatObject(float _x, float _y)
 
 ChatObject::~ChatObject()
 {
-	for (message& msg : messages)
-	{
-		delete msg.tagT;
-		delete msg.text;
-	}
 	messages.clear();
 }
 

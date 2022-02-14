@@ -3,7 +3,7 @@
 #include "Game.h"
 
 
-
+std::map<std::string, Texture*> Steam::pixelsForAvatar;
 
 void Steam::InitSteam()
 {
@@ -50,6 +50,12 @@ extern "C"
 
 Texture* Steam::getAvatar(const char* url)
 {
+    if (pixelsForAvatar[std::string(url)] != nullptr)
+    {
+        Game::currentMenu->onSteam("profileDownloaded");
+        return pixelsForAvatar[std::string(url)];
+    }
+
 	CURL* curlCtx = curl_easy_init();
 
     struct MemoryStruct chunk;
@@ -78,11 +84,13 @@ Texture* Steam::getAvatar(const char* url)
     std::cout << "trying to texture bruh" << std::endl;
 
     Texture* tex = stbi_h::stbi_load_memory(chunk.memory, chunk.size);
-
     std::cout << "textured " << std::endl;
 
     if (!tex)
         return NULL;
+
+    pixelsForAvatar[std::string(url)] = tex;
+    tex->dontDelete = true;
 
     free(chunk.memory);
 

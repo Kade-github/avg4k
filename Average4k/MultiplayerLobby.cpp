@@ -17,6 +17,7 @@ void MultiplayerLobby::refreshLobby(lobby l)
 	{
 		removeObj(p.avatar);
 		removeObj(p.display);
+		delete p.display;
 		delete p.avatar;
 	}
 

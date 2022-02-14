@@ -254,8 +254,8 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 					username = score.Username;
 				cspot.score = score;
 				float off = (avatars[cspot.score.SteamID64]->w + 4);
-				cspot.t = new Text(3 + off, y + 4, username, 16, "arial");
-				cspot.owner = new Text(3 + off, cspot.t->y + cspot.t->surfH, "", 16, "arialbd");
+				cspot.t = new Text(7 + off, y + 4, username, 16, "arial");
+				cspot.owner = new Text(7 + off, cspot.t->y + cspot.t->surfH, "", 16, "arialbd");
 				if (MultiplayerLobby::hostSteamId == score.SteamID64)
 					cspot.owner->setText("lobby owner");
 				else
@@ -274,10 +274,10 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 						format.erase(format.find_last_not_of('.') + 1, std::string::npos);
 				}
 
-				cspot.accuracy = new Text(3 + off,cspot.owner->y + cspot.owner->surfH, format + "% accuracy", 16, "ariali");
+				cspot.accuracy = new Text(7 + off,cspot.owner->y + cspot.owner->surfH, format + "% accuracy", 16, "ariali");
 
 
-				cspot.scoreText = new Text(3 + off, cspot.accuracy->y + cspot.accuracy->surfH, std::to_string(score.score), 16, "arialbd");
+				cspot.scoreText = new Text(7 + off, cspot.accuracy->y + cspot.accuracy->surfH, std::to_string(score.score), 16, "arialbd");
 				leaderboard.push_back(cspot);
 				add(cspot.accuracy);
 				add(cspot.scoreText);
@@ -780,7 +780,7 @@ void Gameplay::update(Events::updateEvent event)
 				notesToPlay.erase(notesToPlay.begin() + index);
 				light.time = -1;
 				removeObj(light.rect);
-				delete light.rect;
+				//delete light.rect;
 			}
 			index++;
 		}

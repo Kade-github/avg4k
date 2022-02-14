@@ -317,9 +317,9 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
 
         std::string plaintex = std::string(plaintext, plaintext_len);
 
-        std::string encoded = macaron::Base64::Encode(plaintex);
+       // std::string encoded = macaron::Base64::Encode(plaintex);
 
-        std::cout << "Decrypted message: " << encoded << std::endl;
+        //std::cout << "Decrypted message: " << encoded << std::endl;
 
 
         int32_t* ints = (int32_t*)plaintext;
@@ -327,8 +327,8 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
         int32_t packetType = ints[0];
         int32_t length = ints[1];
 
-        std::cout << "Packet length: " << length << std::endl;
-        std::cout << "packet type: " << packetType << std::endl;
+        //std::cout << "Packet length: " << length << std::endl;
+        //std::cout << "packet type: " << packetType << std::endl;
 
         size_t size = (size_t)length;
 
@@ -429,23 +429,23 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
             Game::instance->weGotPacket(p);
             break;
         case eSPacketHello:
-            std::cout << "bruh moment -1" << std::endl;
+            //std::cout << "bruh moment -1" << std::endl;
             unpack(result, data, length);
 
-            std::cout << "bruh moment 0" << std::endl;
+            //std::cout << "bruh moment 0" << std::endl;
 
             obj = msgpack::object(result.get());
 
-            std::cout << "bruh moment 0.5" << std::endl;
+            //std::cout << "bruh moment 0.5" << std::endl;
 
             obj.convert(helloBack);
 
-            std::cout << "bruh moment 1" << std::endl;
+           // std::cout << "bruh moment 1" << std::endl;
 
             CreateThread(NULL, NULL, NewThread, NULL, NULL, NULL);
             Multiplayer::loggedIn = true;
 
-            std::cout << "bruh moment 2" << std::endl;
+            //std::cout << "bruh moment 2" << std::endl;
 
             if (reauth)
                 delete reauth;
@@ -660,7 +660,7 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
             std::string encryptedData = std::string((char*)out, outLen);
 
             std::string base64Encoded = macaron::Base64::Encode(encryptedData);
-            std::cout << "Base64: " << base64Encoded << std::endl;
+            //std::cout << "Base64: " << base64Encoded << std::endl;
             con->append_header("Key", base64Encoded);
 
             // Note that connect here only requests a connection. No network messages are

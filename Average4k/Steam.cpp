@@ -199,7 +199,7 @@ void Steam::uploadToItem(Chart* c, PublishedFileId_t id, std::string fileName)
 
     if (size == -1 || size > 1000000)
     {
-        SteamUGC()->SetItemPreview(handle, (std::filesystem::current_path().string() + std::string("/assets/graphical/menu/bg.png")).c_str());
+        SteamUGC()->SetItemPreview(handle, (std::filesystem::current_path().string() + std::string("/assets/skinDefaults/Menu/bg.png")).c_str());
         std::cout << "item preview (cuz the other one was too big " + std::to_string(size) + "): assets / graphical / menu / bg.png" << std::endl;
     }
 

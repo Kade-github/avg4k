@@ -781,7 +781,7 @@ void Gameplay::update(Events::updateEvent event)
 				light.rect->alpha = lerp(0.8, 0, light.time / 500);
 			if (light.time > 500)
 			{
-				notesToPlay.erase(notesToPlay.begin() + index);
+				highlights.erase(highlights.begin() + index);
 				light.time = -1;
 				removeObj(light.rect);
 				//delete light.rect;
@@ -941,7 +941,7 @@ void Gameplay::update(Events::updateEvent event)
 	}
 	else
 	{
-		if (!ended && spawnedNotes.size() == 0 && notesToPlay.size() == 0)
+		if (!ended && notesToPlay.size() == 0 && positionInSong >= song->length - Game::save->GetDouble("offset"))
 		{
 			ended = true;
 			if (!MultiplayerLobby::inLobby)

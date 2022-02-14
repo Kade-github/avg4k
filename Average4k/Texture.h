@@ -11,6 +11,8 @@ class Texture
 
 		//Constructors and destructor
 
+		bool dontDelete = false;
+
 		static Texture* createFromSurface(SDL_Surface* surf, bool free);
 
 		static Texture* createWithImage(std::string filePath);

@@ -218,17 +218,20 @@ void ChatObject::keyDown(SDL_KeyboardEvent ev)
 		}
 		break;
 	case SDLK_RETURN:
-		if (typing && fuckin.size() != 0)
+		if (typing)
 		{
-			CPacketSendMessage msg;
-			msg.message = fuckin;
-			msg.Order = 0;
-			msg.PacketType = eCPacketSendMessage;
+			if (fuckin.size() != 0)
+			{
+				CPacketSendMessage msg;
+				msg.message = fuckin;
+				msg.Order = 0;
+				msg.PacketType = eCPacketSendMessage;
 
-			fuckin = "";
+				fuckin = "";
+
+				Multiplayer::sendMessage<CPacketSendMessage>(msg);
+			}
 			sendText->setText(Multiplayer::username + ": " + fuckin);
-
-			Multiplayer::sendMessage<CPacketSendMessage>(msg);
 		}
 		else
 			sendText->setText(Multiplayer::username + ": " + fuckin + "_");

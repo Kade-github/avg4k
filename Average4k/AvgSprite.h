@@ -98,7 +98,8 @@ public:
 	}
 
 	virtual void beforeDeath() {
-		delete tex;
+		if (!tex->dontDelete)
+			delete tex;
 	}
 };
 

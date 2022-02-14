@@ -1052,21 +1052,12 @@ void Gameplay::update(Events::updateEvent event)
 							{
 								receptors[note->lane]->lightUpTimer = 100;
 							}
-							if (offset - positionInSong <= Judge::hitWindows[3] && !tile.fucked)
+							if (offset - positionInSong <= Judge::hitWindows[2] && !tile.fucked)
 							{
 								tile.active = false;
 							}
 						}
 					}
-				}
-
-				bool fuckOver = false;
-
-				for (int i = 0; i < note->heldTilings.size(); i++)
-				{
-					holdTile& tile = note->heldTilings[i];
-					if (fuckOver)
-						tile.fucked = true;
 				}
 
 				if (note->lane < 4 && note->lane >= 0)

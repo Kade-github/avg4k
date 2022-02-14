@@ -163,7 +163,7 @@ void Game::createGame()
 	consoleCMDBar->alpha = 0.4;
 
 
-	fpsText = new Text(4, 4, "FPS: 0", 12, "Futura Bold");
+	fpsText = new Text(4, 4, "FPS: 240", 12, "Futura Bold");
 	alphaWatermark = new Text(0, 0, "- AVERAGE4K ALPHA " + Game::version + " - EVERYTHING IS SUBJECT TO CHANGE - ", 14, "Futura Bold");
 	alphaWatermark->border = true;
 	fpsText->borderSize = 2;
@@ -228,7 +228,11 @@ void Game::update(Events::updateEvent update)
 		currentMenu->update(update);
 
 	if (!transitioning && SDL_GetTicks() % 250 == 0)
+	{
+		if (gameFPS > 240)
+			gameFPS = 240;
 		fpsText->setText("FPS: " + std::to_string((int)gameFPS));
+	}
 
 	for (int i = 0; i < objects->size(); i++)
 	{

@@ -641,15 +641,19 @@ void Gameplay::update(Events::updateEvent event)
 		}
 	}
 
-	positionInSong += Game::deltaTime;
+	
 	if (play)
 	{
 		positionInSong -= Game::save->GetDouble("offset");
-		if (song->getPos() - Game::save->GetDouble("offset") > positionInSong + 20 || song->getPos() - Game::save->GetDouble("offset") < positionInSong - 20)
-		{
-			positionInSong = song->getPos() - Game::save->GetDouble("offset");
-		}
+		float songPos = song->getPos() - Game::save->GetDouble("offset");
+		
+		if (std::abs((positionInSong - songPos) >= 0.05))
+			positionInSong = songPos;
+		else
+			positionInSong += Game::deltaTime;
 	}
+	else
+		positionInSong += Game::deltaTime;
 
 	SDL_FRect bruh;
 	bruh.x = 0;

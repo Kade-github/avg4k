@@ -195,10 +195,20 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 				Placement->x = (Game::gameWidth - Placement->surfW) - 24;
 			}
 			bool found = false;
+			int index = 0;
 			for (leaderboardSpot& spot : leaderboard)
 			{
 				if (spot.score.SteamID64 == score.SteamID64)
 				{
+					if (rankin >= 10)
+					{
+						removeObj(spot.accuracy);
+						removeObj(spot.scoreText);
+						removeObj(spot.owner);
+						removeObj(spot.t);
+						leaderboard.erase(leaderboard.begin() + index);
+						continue;
+					}
 					std::string username = "";
 					if (score.Username.size() > 14)
 						username = score.Username.substr(0, 14) + "...";
@@ -242,8 +252,9 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 					spot.scoreText->setText(std::to_string(score.score));
 					spot.t->setText(username);
 				}
+				index++;
 			}
-			if (!found)
+			if (!found && rankin < 10)
 			{
 				int y = ((leaderboardText->y + leaderboardText->h) + 24) + ((82 * rankin) + 4);
 				std::string username = "";

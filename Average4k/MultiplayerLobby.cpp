@@ -23,7 +23,7 @@ void MultiplayerLobby::refreshLobby(lobby l)
 
 	people.clear();
 
-	for (int i = 0; i < l.PlayerList.size(); i++)
+	for (int i = 0; i < (l.PlayerList.size() > 20 ? 20 : l.PlayerList.size()); i++)
 	{
 		player& p = l.PlayerList[i];
 		if (i == 0)

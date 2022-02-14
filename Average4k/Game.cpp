@@ -227,7 +227,7 @@ void Game::update(Events::updateEvent update)
 	if (currentMenu != nullptr && currentMenu->created)
 		currentMenu->update(update);
 
-	if (!transitioning)
+	if (!transitioning && SDL_GetTicks() % 250 == 0)
 		fpsText->setText("FPS: " + std::to_string((int)gameFPS));
 
 	for (int i = 0; i < objects->size(); i++)

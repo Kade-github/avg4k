@@ -215,7 +215,7 @@ DWORD WINAPI SendPacketT(LPVOID param) {
 }
 void Multiplayer::SendPacket(std::string data, PacketType packet) {
 
-     VM_START
+     MUTATE_START
     PacketData packetData = PacketData();
     packetData.data = data;
     packetData.packetType = packet;
@@ -223,7 +223,7 @@ void Multiplayer::SendPacket(std::string data, PacketType packet) {
     Multiplayer::sendQueueLock.lock();
     Multiplayer::sendQueue.push(packetData);
     Multiplayer::sendQueueLock.unlock();
-    VM_END
+    MUTATE_END
 }
 
 DWORD WINAPI NewThread(LPVOID param) {
@@ -254,7 +254,7 @@ DWORD WINAPI pleaseLogin(LPVOID agh)
 }
 
 void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr msg) {
-    VM_START
+    MUTATE_START
     PacketType type;
     if (msg->get_opcode() != websocketpp::frame::opcode::BINARY)
         return;
@@ -474,7 +474,7 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
     catch (std::exception e) {
         std::cout << "shit " << e.what() << " - THINGY CASTING " << type << std::endl;
     }
-    VM_END
+    MUTATE_END
 }
 
 

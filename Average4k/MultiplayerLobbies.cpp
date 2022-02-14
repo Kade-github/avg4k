@@ -92,7 +92,7 @@ void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
 
 void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 {
-	VM_START
+	MUTATE_START
 	SPacketServerListReply fuck;
 	SPacketStatus f;
 	msgpack::unpacked result;
@@ -163,7 +163,7 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 			break;
 		}
 	}
-	VM_END
+	MUTATE_END
 }
 
 void MultiplayerLobbies::update(Events::updateEvent event)

@@ -41,6 +41,48 @@ namespace Tweening
 
 		static std::vector<Tweening::Tween> tweenRemove;
 		static std::vector<Tween> activeTweens;
+		static void removeTween(std::string ident)
+		{
+			for (int i = 0; i < activeTweens.size(); i++)
+			{
+				Tween& t = activeTweens[i];
+				if (t.name == ident && !t.call)
+				{
+					switch (t.type)
+					{
+					case tt_Alpha:
+						t.obj->alpha = t.end;
+						break;
+					case tt_X:
+						t.obj->setX(t.end);
+						break;
+					case tt_Y:
+						t.obj->setY(t.end);
+						break;
+					case tt_scale:
+						t.obj->scale = t.end;
+						break;
+					case tt_butFill:
+						AvgButton* but = (AvgButton*)t.obj;
+						if (t.end == 1)
+						{
+							but->fillColor.r = but->defColor.r;
+							but->fillColor.g = but->defColor.g;
+							but->fillColor.b = but->defColor.b;
+						}
+						else
+						{
+							but->fillColor.r = but->hoverColor.r;
+							but->fillColor.g = but->hoverColor.g;
+							but->fillColor.b = but->hoverColor.b;
+						}
+						break;
+					}
+					t.call = true;
+					activeTweens.erase(std::remove(activeTweens.begin(), activeTweens.end(), t), activeTweens.end());
+				}
+			}
+		}
 		static Tween createNewTween(std::string identity, Object* toTween, TweenType type, double dur, double s, double e, tweenCallback callbackFunc, Easing::easing_functions easeType)
 		{
 			//std::cout << "creating " << identity << std::endl;

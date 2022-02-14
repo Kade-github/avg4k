@@ -50,8 +50,9 @@ void Text::setCharacterSpacing(float spacing)
 }
 void Text::draw()
 {
-	if (text.size() == 0 || text == " ")
+	if (text.size() == 0 || text == " " || !message)
 		return;
+
 	Rect dstRect;
 	Rect srcRect;
 

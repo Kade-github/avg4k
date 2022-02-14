@@ -24,6 +24,8 @@ Text* rank;
 Text* notifText;
 Text* notifRank;
 
+bool shouldNotif = false;
+
 std::string fuckin;
 
 ChatObject::ChatObject(float _x, float _y)
@@ -80,12 +82,14 @@ ChatObject::~ChatObject()
 
 void ChatObject::open()
 {
+	shouldNotif = false;
 	opened = !opened;
 	Tweening::TweenManager::createNewTween("chat_openBody", chatBody, Tweening::tt_Y, 500, Game::gameHeight + h, Game::gameHeight - h, NULL, Easing::EaseInSine);
 }
 
 void ChatObject::close()
 {
+	shouldNotif = false;
 	opened = !opened;
 	Tweening::TweenManager::createNewTween("chat_closeBody", chatBody, Tweening::tt_Y, 500, Game::gameHeight - h, Game::gameHeight + h, NULL, Easing::EaseInSine);
 }
@@ -130,18 +134,22 @@ void ChatObject::addMessage(SPacketOnChat packetChat)
 	
 	if (!opened)
 	{
-		chatNotif->alpha = 0.6;
+		chatNotif->alpha = 0.8;
 
-		Tweening::TweenManager::createNewTween("chat_notif", chatNotif, Tweening::tt_Alpha, 3500, 0.6, 0, NULL, Easing::EaseInSine);
+		notifRank->alpha = 1;
+		notifText->alpha = 1;
 
-		notifRank->alpha = 0.6;
-		notifText->alpha = 0.6;
+		shouldNotif = true;
 
 		notifRank->borderColor = { 255,255,255 };
 		notifText->borderColor = { 255,255,255 };
 
 		notifRank->color = { (int)(packetChat.tagColor.red * 255),(int)(packetChat.tagColor.green * 255),(int)(packetChat.tagColor.blue * 255) };
 		notifText->color = { (int)(packetChat.color.red * 255),(int)(packetChat.color.green * 255),(int)(packetChat.color.blue * 255) };
+		startTween = false;
+		wait = 0;
+		if (msg.tag == "NO_TAG")
+			notifRank->alpha = 0;
 		notifRank->setText(msg.tag);
 		notifText->setText(msg.name);
 	}
@@ -178,20 +186,43 @@ void ChatObject::draw()
 	if (rank->text != "NO_TAG")
 		sendText->x = rank->surfW + 8;
 	else
-		sendText->x = 8;
+		sendText->x = 0;
 
-	notifRank->y = chatNotif->y + (notifRank->surfH / 2);
-	notifText->y = notifRank->y;
+	if (shouldNotif)
+	{
 
-	if (notifRank->text != "NO_TAG")
-		notifText->x = notifRank->surfW + 8;
-	else
-		notifText->x = 8;
+		notifRank->y = chatNotif->y + (notifRank->surfH / 2);
+		notifText->y = notifRank->y;
 
-	notifRank->alpha = chatNotif->alpha;
-	notifText->alpha = chatNotif->alpha;
+		if (notifRank->text != "NO_TAG")
+			notifText->x = notifRank->surfW + 8;
+		else
+			notifText->x = 0;
 
-	texts->y = chatBody->y;
+		if (startTween)
+		{
+			if (notifRank->text != "NO_TAG")
+				notifRank->alpha = chatNotif->alpha;
+			notifText->alpha = chatNotif->alpha;
+		}
+
+		texts->y = chatBody->y;
+
+		if (!startTween && wait >= 1000)
+		{
+			startTween = true;
+			Tweening::TweenManager::createNewTween("chat_notif", chatNotif, Tweening::tt_Alpha, 3500, 1, 0, NULL, Easing::EaseInSine);
+		}
+		else if (wait < 1000)
+			wait += Game::deltaTime;
+
+		if (opened && startTween)
+		{
+			shouldNotif = false;
+			startTween = false;
+			Tweening::TweenManager::removeTween("chat_notif");
+		}
+	}
 
 	for (message& msg : messages)
 	{
@@ -200,7 +231,7 @@ void ChatObject::draw()
 		if (msg.tagT->text != "NO_TAG")
 			msg.text->x = msg.tagT->surfW + 8;
 		else
-			msg.text->x = 8;
+			msg.text->x = 0;
 	}
 }
 

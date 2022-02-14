@@ -782,7 +782,7 @@ void Gameplay::update(Events::updateEvent event)
 			avatars[spot.score.SteamID64]->y = spot.t->y;
 		}
 
-		int index = 0;
+
 		for (leaderboardhighlight& light : highlights)
 		{
 			if (light.time == -1)
@@ -791,11 +791,17 @@ void Gameplay::update(Events::updateEvent event)
 			if (light.rect)
 				light.rect->alpha = lerp(0.8, 0, light.time / 500);
 			if (light.time > 500)
-			{
-				highlights.erase(highlights.begin() + index);
 				light.time = -1;
-				removeObj(light.rect);
-				//delete light.rect;
+			
+		}
+		int index = 0;
+		for (leaderboardhighlight light : highlights)
+		{
+			if (light.time == -1)
+			{
+				removeObj(highlights[index].rect);
+				highlights.erase(highlights.begin() + index);
+				index--;
 			}
 			index++;
 		}

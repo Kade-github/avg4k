@@ -14,6 +14,9 @@ public:
 	int w;
 	int h;
 
+	int wait = 0;
+	bool startTween = false;
+
 	ChatObject(float _x, float _y);
 	~ChatObject();
 

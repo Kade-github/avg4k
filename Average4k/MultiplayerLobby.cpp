@@ -295,7 +295,7 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 	switch (event.keysym.sym)
 	{
 		case SDLK_ESCAPE:
-			if (chat->typing)
+			if (chat->typing || chat->opened)
 				return;
 			CPacketLeave leave;
 			leave.Order = 0;
@@ -317,7 +317,7 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 				chat->close();
 			break;
 		case SDLK_RETURN:
-			if (chat->typing)
+			if (chat->typing || chat->opened)
 				return;
 			if (!isHost)
 				return;
@@ -339,7 +339,7 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 			}
 			break;
 		case SDLK_LSHIFT:
-			if (chat->typing)
+			if (chat->typing || chat->opened)
 				return;
 			if (!isHost && !waitingForStart)
 				return;

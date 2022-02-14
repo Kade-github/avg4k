@@ -159,7 +159,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 {
 	MUTATE_START
 
-	if (!MultiplayerLobby::inLobby)
+	if (!MultiplayerLobby::inLobby || !created)
 		return;
 
 	SPacketUpdateLeaderboard pack;
@@ -175,7 +175,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 
 	std::vector<leaderboardSpot> copy = leaderboard;
 
-	int ranking = 0;
+	int rankin = 0;
 
 	switch (pt)
 	{
@@ -190,7 +190,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 		{
 			if (score.SteamID64 == std::to_string(SteamUser()->GetSteamID().ConvertToUint64()))
 			{
-				int realRank = score.Ranking + 1;
+				int realRank = rankin + 1;
 				Placement->setText(std::to_string(realRank) + std::string(ordinal_suffix(realRank)) + " Place");
 				Placement->x = (Game::gameWidth - Placement->surfW) - 24;
 			}
@@ -203,14 +203,30 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 					if (score.Username.size() > 6)
 						username = score.Username.substr(0, 6) + "...";
 					else
-						username = score.Username;				
+						username = score.Username;
 					spot.score = score; // copy it over
 					found = true;
-					spot.t->y = ((leaderboardText->y + leaderboardText->h) + 24) + ((64 * ranking) + 4);
-					if (spot.owner->text != "")
-						spot.owner->y = spot.t->y + spot.t->surfH;
-					spot.accuracy->y = spot.owner->y + spot.owner->surfH;
-					spot.scoreText->y = spot.accuracy->y + spot.accuracy->surfH;
+					int y = ((leaderboardText->y + leaderboardText->h) + 24) + ((82 * rankin) + 4);
+
+					if (spot.rankin > rankin)
+					{
+						// create little splash (TODO)
+						for (leaderboardhighlight& highlight : highlights)
+							if (highlight.spot == rankin)
+								highlight.time = 500; // make it done NOW
+						leaderboardhighlight high;
+						high.rect = new AvgRect(0, y, 227, 82);
+						high.time = 0;
+						high.spot = rankin;
+						high.rect->alpha = 0.8;
+						high.rect->c = { 255,255,255 };
+						add(high.rect);
+						highlights.push_back(high);
+					}
+
+					if (rankin != spot.rankin)
+						Tweening::TweenManager::createNewTween("scoreboard" + score.SteamID64, spot.t, Tweening::tt_Y, 750, spot.t->y,y,NULL, Easing::EaseInCubic);
+					spot.rankin = rankin;
 
 					std::string format = "0";
 					if (score.Accuracy != 0)
@@ -225,18 +241,13 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 					spot.accuracy->setText(format + "% accuracy");
 					spot.scoreText->setText(std::to_string(score.score));
 					spot.t->setText(username);
-
-					if (score.Ranking == 0)
-					{
-						leaderboardCrown->x = -23;
-						leaderboardCrown->y = (spot.t->y - spot.t->surfH) - 10;
-					}
 				}
 			}
 			if (!found)
 			{
-				int y = (Game::gameHeight / 2) + (46 * ranking);
+				int y = ((leaderboardText->y + leaderboardText->h) + 24) + ((82 * rankin) + 4);
 				std::string username = "";
+				cspot.rankin = rankin;
 				if (score.Username.size() > 16)
 					username = score.Username.substr(0, 16) + "...";
 				else
@@ -273,7 +284,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 				add(cspot.owner);
 				add(cspot.t);
 
-				if (score.Ranking == 0)
+				if (rankin == 0)
 				{
 					leaderboardCrown->x = -23;
 					leaderboardCrown->y = (cspot.t->y - cspot.t->surfH) - 10;
@@ -284,7 +295,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 				cspot.owner->setCharacterSpacing(3);
 				cspot.t->setCharacterSpacing(3);
 			}
-			ranking++;
+			rankin++;
 		}
 
 
@@ -735,6 +746,45 @@ void Gameplay::update(Events::updateEvent event)
 	// multiplayer shit
 
 	// leaderboard
+
+	if (MultiplayerLobby::inLobby)
+	{
+		for (leaderboardSpot& spot : leaderboard)
+		{
+			if (spot.owner->text != "")
+				spot.owner->y = spot.t->y + spot.t->surfH;
+			else
+				spot.owner->y = spot.t->y;
+			spot.accuracy->y = spot.owner->y + spot.owner->surfH;
+			spot.scoreText->y = spot.accuracy->y + spot.accuracy->surfH;
+
+			if (spot.rankin == 0)
+			{
+				leaderboardCrown->x = -23;
+				leaderboardCrown->y = (spot.t->y - spot.t->surfH) - 10;
+			}
+
+			avatars[spot.score.SteamID64]->y = spot.t->y;
+		}
+
+		int index = 0;
+		for (leaderboardhighlight& light : highlights)
+		{
+			if (light.time == -1)
+				continue;
+			light.time += Game::deltaTime * 0.6;
+			if (light.rect)
+				light.rect->alpha = lerp(0.8, 0, light.time / 500);
+			if (light.time > 500)
+			{
+				notesToPlay.erase(notesToPlay.begin() + index);
+				light.time = -1;
+				removeObj(light.rect);
+				delete light.rect;
+			}
+			index++;
+		}
+	}
 
 	//SDL_SetRenderDrawColor(Game::renderer, 255, 255, 255, 255);
 

@@ -26,11 +26,19 @@ struct leaderboardSpot {
 	Text* accuracy;
 	Text* scoreText;
 	PlayerScore score;
+	int rankin;
 
 	friend bool operator==(const leaderboardSpot& lhs, const leaderboardSpot& rhs)
 	{
 		return lhs.score.SteamID64 == rhs.score.SteamID64;
 	}
+};
+
+struct leaderboardhighlight
+{
+	AvgRect* rect;
+	float time;
+	int spot;
 };
 
 class Gameplay :
@@ -42,6 +50,8 @@ class Gameplay :
 		std::vector<ReceptorObject*> receptors;
 
 		std::vector<note> notesToPlay;
+
+		std::vector<leaderboardhighlight> highlights;
 
 		std::vector<leaderboardSpot> leaderboard;
 

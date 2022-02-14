@@ -82,6 +82,11 @@ ChatObject::~ChatObject()
 
 void ChatObject::open()
 {
+	Tweening::TweenManager::removeTween("chat_notif");
+	chatNotif->alpha = 0;
+
+	notifRank->alpha = 0;
+	notifText->alpha = 0;
 	shouldNotif = false;
 	opened = !opened;
 	Tweening::TweenManager::createNewTween("chat_openBody", chatBody, Tweening::tt_Y, 500, Game::gameHeight + h, Game::gameHeight - h, NULL, Easing::EaseInSine);
@@ -191,9 +196,6 @@ void ChatObject::draw()
 
 	texts->y = chatBody->y;
 
-	if (shouldNotif)
-	{
-
 		notifRank->y = chatNotif->y + (notifRank->surfH / 2);
 		notifText->y = notifRank->y;
 
@@ -209,21 +211,17 @@ void ChatObject::draw()
 			notifText->alpha = chatNotif->alpha;
 		}
 
-		if (!startTween && wait >= 1000)
+		if (wait >= 1000)
 		{
-			startTween = true;
-			Tweening::TweenManager::createNewTween("chat_notif", chatNotif, Tweening::tt_Alpha, 3500, 1, 0, NULL, Easing::EaseInSine);
+			if (!startTween && shouldNotif)
+			{
+				startTween = true;
+				Tweening::TweenManager::createNewTween("chat_notif", chatNotif, Tweening::tt_Alpha, 1000, 1, 0, NULL, Easing::EaseInSine);
+			}
 		}
 		else if (wait < 1000)
 			wait += Game::deltaTime;
 
-		if (opened && startTween)
-		{
-			shouldNotif = false;
-			startTween = false;
-			Tweening::TweenManager::removeTween("chat_notif");
-		}
-	}
 
 	for (message& msg : messages)
 	{

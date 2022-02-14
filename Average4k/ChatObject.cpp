@@ -87,6 +87,8 @@ void ChatObject::open()
 
 	notifRank->alpha = 0;
 	notifText->alpha = 0;
+	wait = 0;
+	startTween = false;
 	shouldNotif = false;
 	opened = !opened;
 	Tweening::TweenManager::createNewTween("chat_openBody", chatBody, Tweening::tt_Y, 500, Game::gameHeight + h, Game::gameHeight - h, NULL, Easing::EaseInSine);
@@ -219,7 +221,7 @@ void ChatObject::draw()
 				Tweening::TweenManager::createNewTween("chat_notif", chatNotif, Tweening::tt_Alpha, 1000, 1, 0, NULL, Easing::EaseInSine);
 			}
 		}
-		else if (wait < 1000)
+		else if (wait < 1000 && !startTween)
 			wait += Game::deltaTime;
 
 

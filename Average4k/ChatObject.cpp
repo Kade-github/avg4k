@@ -245,6 +245,8 @@ void ChatObject::textInput(SDL_TextInputEvent ev)
 {
 	if (typing)
 	{
+		if (fuckin.size() + 1 > 128)
+			return;
 		fuckin += ev.text;
 		sendText->setText(Multiplayer::username + ": " + fuckin + "_");
 	}

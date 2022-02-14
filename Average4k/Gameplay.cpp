@@ -200,8 +200,8 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 				if (spot.score.SteamID64 == score.SteamID64)
 				{
 					std::string username = "";
-					if (score.Username.size() > 6)
-						username = score.Username.substr(0, 6) + "...";
+					if (score.Username.size() > 14)
+						username = score.Username.substr(0, 14) + "...";
 					else
 						username = score.Username;
 					spot.score = score; // copy it over
@@ -248,8 +248,8 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 				int y = ((leaderboardText->y + leaderboardText->h) + 24) + ((82 * rankin) + 4);
 				std::string username = "";
 				cspot.rankin = rankin;
-				if (score.Username.size() > 16)
-					username = score.Username.substr(0, 16) + "...";
+				if (score.Username.size() > 14)
+					username = score.Username.substr(0, 14) + "...";
 				else
 					username = score.Username;
 				cspot.score = score;

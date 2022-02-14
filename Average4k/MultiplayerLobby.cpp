@@ -6,6 +6,8 @@ lobby MultiplayerLobby::CurrentLobby;
 bool MultiplayerLobby::isHost = false;
 std::string MultiplayerLobby::hostSteamId;
 
+AvgGroup* playerList;
+
 
 void MultiplayerLobby::refreshLobby(lobby l)
 {
@@ -15,10 +17,8 @@ void MultiplayerLobby::refreshLobby(lobby l)
 
 	for (person& p : people)
 	{
-		removeObj(p.avatar);
-		removeObj(p.display);
-		delete p.display;
-		delete p.avatar;
+		playerList->removeObj(p.avatar);
+		playerList->removeObj(p.display);
 	}
 
 	people.clear();
@@ -39,8 +39,8 @@ void MultiplayerLobby::refreshLobby(lobby l)
 			per.avatar = NULL;
 		spr->w = 46;
 		spr->h = 46;
-		add(per.display);
-		add(spr);
+		playerList->add(per.display);
+		playerList->add(spr);
 		people.push_back(per);
 	}
 
@@ -236,7 +236,7 @@ MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted, bool backFromSelect = f
 
 void MultiplayerLobby::create() {
 	addCamera(Game::mainCamera);
-
+	playerList = new AvgGroup(0, 0, 1280, 720);
 	AvgSprite* sprite = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/bg.png"));
 	add(sprite);
 	AvgRect* rect = new AvgRect(0, 0, 1280, 720);
@@ -263,6 +263,8 @@ void MultiplayerLobby::create() {
 	fuck.PacketType = eCPacketWtfAmIn;
 
 	Multiplayer::sendMessage<CPacketWtfAmIn>(fuck);
+
+	add(playerList);
 
 	refreshLobby(CurrentLobby);
 

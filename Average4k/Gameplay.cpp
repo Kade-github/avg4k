@@ -1010,7 +1010,10 @@ void Gameplay::update(Events::updateEvent event)
 					{
 						note->clapped = true;
 						if (SoundManager::getChannelByName("clapFx") != NULL)
+						{
+							clap->stop();
 							clap->play();
+						}
 					}
 					if (botplay && note->active)
 					{

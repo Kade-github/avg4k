@@ -188,6 +188,9 @@ void ChatObject::draw()
 	else
 		sendText->x = 0;
 
+
+	texts->y = chatBody->y;
+
 	if (shouldNotif)
 	{
 
@@ -205,8 +208,6 @@ void ChatObject::draw()
 				notifRank->alpha = chatNotif->alpha;
 			notifText->alpha = chatNotif->alpha;
 		}
-
-		texts->y = chatBody->y;
 
 		if (!startTween && wait >= 1000)
 		{

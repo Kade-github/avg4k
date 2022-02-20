@@ -2,7 +2,7 @@
 #include "Menu.h"
 #include "includes.h"
 #include "AvgSprite.h";
-
+#include "Chart.h"
 #include "imgui.h"
 typedef void(__cdecl* drawCall)();
 struct editorWindow {
@@ -23,6 +23,7 @@ public:
 	void imguiUpdate(float elapsed) override;
 	std::vector<AvgSprite*> fuck;
 	std::vector<editorWindow> windows;
+	
 
 	void keyDown(SDL_KeyboardEvent event) override;
 

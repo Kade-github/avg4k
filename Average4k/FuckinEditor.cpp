@@ -4,6 +4,10 @@
 
 // window draws
 
+Chart* selectedChart;
+float currentTime;
+float currentBeat;
+
 void changeTheme(int theme) {
 	Game::save->SetDouble("chartTheme", (double)theme);
 	Game::save->Save();
@@ -285,15 +289,52 @@ void changeTheme(int theme) {
 void window_chartProperties() {
 	if (ImGui::CollapsingHeader("Chart Metadata"))
 	{
-		char fuck[24] = "";
-		char artist[24] = "";
-		ImGui::InputText("Charter", fuck, sizeof(fuck));
-		ImGui::InputText("Artist", artist, sizeof(artist));
+		if (selectedChart)
+		{
+			ImGui::Text("Difficulties:");
+			for (difficulty& diff : selectedChart->meta.difficulties)
+			{
+				
+				if (ImGui::CollapsingHeader(diff.name.c_str(), ImGuiTreeNodeFlags_Bullet))
+				{
+					char buf[24];
+					strcpy_s(buf, diff.charter.c_str());
+					ImGui::InputText("Charter", buf, sizeof(buf));
+					ImGui::Text(("Notes: " + std::to_string(diff.notes.size())).c_str());
+					if (ImGui::Button("Delete Difficulty"))
+					{
+						// TODO: Delete diff
+					}
+				}
+			}
+			ImGui::Separator();
+			ImGui::Text("Global Metadata:");
+			char buf[32];
+			strcpy_s(buf, selectedChart->meta.background.c_str());
+			ImGui::InputText("Background", buf, sizeof(buf));
+			ImGui::Separator();
+			if (ImGui::Button("Create Difficulty"))
+			{
+				// TODO: Create diff
+			}
+		}
+		else
+		{
+			ImGui::Text("Please select a chart first");
+		}
 	}
 	if (ImGui::CollapsingHeader("Tempo"))
 	{
-		double bpm = 120;
-		ImGui::InputDouble("BPM", &bpm, 1, 10);
+		if (selectedChart)
+		{
+			bpmSegment seg = selectedChart->getSegmentFromTime(currentTime);
+			double bpm = seg.bpm;
+			ImGui::InputDouble("BPM", &bpm, 1, 10);
+		}
+		else
+		{
+			ImGui::Text("Please select a chart first");
+		}
 	}
 	if (ImGui::CollapsingHeader("Extras"))
 	{
@@ -386,7 +427,7 @@ void FuckinEditor::create()
 		fuck.push_back(r);
 	}
 
-	createWindow("Chart Properties", { 350,150 }, (drawCall)window_chartProperties, false);
+	createWindow("Chart Properties", { 400,400 }, (drawCall)window_chartProperties, false);
 	createWindow("Help", { 550,350 }, (drawCall)window_help, false);
 	findWindow("Help").xOff = 10;
 	created = true;
@@ -399,6 +440,12 @@ void FuckinEditor::update(Events::updateEvent event)
 
 bool openingFile = false;
 
+void openChart(std::string path, std::string folder) {
+	SMFile* file = new SMFile(path, folder, true);
+	selectedChart = new Chart(file->meta);
+	delete file;
+}
+
 void fileMenu() {
 	if (ImGui::MenuItem("New Chart") && !openingFile) {
 		// TODO create a chart
@@ -409,7 +456,20 @@ void fileMenu() {
 	}
 	if (ImGui::BeginMenu("Open Recent") && !openingFile)
 	{
-		// TODO show charts recently saved
+		int ind = 0;
+		std::vector<std::string> history = Chart::split(Game::save->GetString("nonChange_chartHistory"), ';');
+		if (history.size() == 0)
+			ImGui::Text("Open a chart for it to appear here!");
+		else
+		for (std::string file : history)
+		{
+			if (ind > 6)
+				break;
+			std::string name = file.substr(file.find_last_of("\\") + 1, file.size());
+			if (ImGui::MenuItem(name.c_str()))
+				openChart(file, file.substr(0, file.find_last_of("\\")));
+			ind++;
+		}
 		ImGui::EndMenu();
 	}
 }
@@ -443,12 +503,14 @@ void FuckinEditor::imguiUpdate(float elapsed)
 	{
 		if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey"))
 		{
-			// action if OK
 			if (ImGuiFileDialog::Instance()->IsOk())
 			{
 				std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
-				std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
-
+				std::string folder = filePathName.substr(0,filePathName.find_last_of("\\"));
+				if (selectedChart)
+					selectedChart->destroy();
+				openChart(filePathName, folder);
+				Game::save->SetString("nonChange_chartHistory", filePathName + ";" + Game::save->GetString("nonChange_chartHistory"));
 			}
 			openingFile = false;
 			ImGuiFileDialog::Instance()->Close();
@@ -483,5 +545,10 @@ void FuckinEditor::imguiUpdate(float elapsed)
 void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 {
 	if (event.keysym.sym == SDLK_ESCAPE)
+	{
+		if (selectedChart)
+			selectedChart->destroy();
 		Game::instance->transitionToMenu(new MainMenu());
+
+	}
 }

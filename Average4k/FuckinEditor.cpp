@@ -461,15 +461,15 @@ void fileMenu() {
 		if (history.size() == 0)
 			ImGui::Text("Open a chart for it to appear here!");
 		else
-		for (std::string file : history)
-		{
-			if (ind > 6)
-				break;
-			std::string name = file.substr(file.find_last_of("\\") + 1, file.size());
-			if (ImGui::MenuItem(name.c_str()))
-				openChart(file, file.substr(0, file.find_last_of("\\")));
-			ind++;
-		}
+			for (std::string file : history)
+			{
+				if (ind > 6)
+					break;
+				std::string name = file.substr(file.find_last_of("\\") + 1, file.size());
+				if (ImGui::MenuItem(name.c_str()))
+					openChart(file, file.substr(0, file.find_last_of("\\")));
+				ind++;
+			}
 		ImGui::EndMenu();
 	}
 }

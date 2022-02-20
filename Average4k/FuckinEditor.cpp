@@ -458,8 +458,10 @@ void fileMenu() {
 	{
 		int ind = 0;
 		std::vector<std::string> history = Chart::split(Game::save->GetString("nonChange_chartHistory"), ';');
+		ImGuiStyle* style = &ImGui::GetStyle();
+		ImVec4* colors = style->Colors;
 		if (history.size() == 0)
-			ImGui::Text("Open a chart for it to appear here!");
+			ImGui::TextColored(colors[ImGuiCol_TextDisabled], "Open a chart for it to appear here!");
 		else
 			for (std::string file : history)
 			{
@@ -506,11 +508,16 @@ void FuckinEditor::imguiUpdate(float elapsed)
 			if (ImGuiFileDialog::Instance()->IsOk())
 			{
 				std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
-				std::string folder = filePathName.substr(0,filePathName.find_last_of("\\"));
-				if (selectedChart)
-					selectedChart->destroy();
-				openChart(filePathName, folder);
-				Game::save->SetString("nonChange_chartHistory", filePathName + ";" + Game::save->GetString("nonChange_chartHistory"));
+				if (filePathName.find_first_of(".sm") != -1)
+				{
+					std::string copy = filePathName;
+					std::string folder = filePathName.substr(0, filePathName.find_last_of("\\"));
+					if (selectedChart)
+						selectedChart->destroy();
+					openChart(filePathName, folder);
+					Game::save->SetString("nonChange_chartHistory", copy + ";" + Game::save->GetString("nonChange_chartHistory"));
+					Game::save->Save();
+				}
 			}
 			openingFile = false;
 			ImGuiFileDialog::Instance()->Close();

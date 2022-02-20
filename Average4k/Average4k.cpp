@@ -270,6 +270,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 				}
 				case SDL_MOUSEWHEEL: {
 					wheel = event.wheel.y;
+					game->mouseWheel(wheel);
 					break;
 				}
 				}

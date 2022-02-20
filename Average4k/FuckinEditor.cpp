@@ -7,8 +7,18 @@
 Chart* selectedChart;
 float currentTime;
 float currentBeat;
+std::vector<NoteObject*> notes;
 
-Channel* song;
+int snapSelect = 0;
+float startBeats[4] = {};
+note saved[4] = {};
+note tails[4] = {};
+
+bool topLayer = false;
+int currentDiff = 0;
+int snap = 16;
+
+std::map<int, int> snapConvert;
 
 void changeTheme(int theme) {
 	Game::save->SetDouble("chartTheme", (double)theme);
@@ -288,6 +298,63 @@ void changeTheme(int theme) {
 	}
 }
 
+
+note findNote(int lane, float beat)
+{
+	note struc;
+	struc.beat = -1;
+	for (note& n : selectedChart->meta.difficulties[currentDiff].notes)
+		if (n.beat == beat && n.lane == lane)
+			return n;
+	return struc;
+}
+
+void createNote(int lane, float beat = currentBeat, noteType type = noteType::Note_Normal, float connectedBeat = -1, bool dontSave = false) {
+	note n;
+	n.beat = beat;
+	n.lane = lane;
+	n.type = type;
+	n.connectedBeat = connectedBeat;
+	selectedChart->meta.difficulties[currentDiff].notes.push_back(n);
+	FuckinEditor* editor = (FuckinEditor*)Game::instance->currentMenu;
+	editor->generateNoteObject(n, selectedChart->meta.difficulties[currentDiff], selectedChart, notes);
+	std::cout << "created |" << type << " beat: " << n.beat << std::endl;
+	if (!dontSave)
+	{
+		saved[n.lane] = findNote(lane, beat);
+		startBeats[n.lane] = beat;
+	}
+}
+
+
+void deleteVisualNote(float lane, float beat)
+{
+	FuckinEditor* editor = (FuckinEditor*)Game::instance->currentMenu;
+	int ind = 0;
+	for (NoteObject* obj : notes)
+	{
+		if (obj->lane == lane && obj->beat == beat)
+		{
+			std::cout << "deleted " << obj->beat << " " << obj->lane << std::endl;
+			editor->gameplay->removeObj(obj);
+			notes.erase(notes.begin() + ind);
+			break;
+		}
+		ind++;
+	}
+}
+
+void deleteNote(int lane, float beat)
+{
+	selectedChart->meta.difficulties[currentDiff].notes.erase(
+		std::remove_if(selectedChart->meta.difficulties[currentDiff].notes.begin(), selectedChart->meta.difficulties[currentDiff].notes.end(), [&](note n) {
+			return n.beat == beat && n.lane == lane;
+			}),
+		selectedChart->meta.difficulties[currentDiff].notes.end());
+	deleteVisualNote(lane, beat);
+}
+
+
 void window_chartProperties() {
 	if (ImGui::CollapsingHeader("Chart Metadata"))
 	{
@@ -318,6 +385,7 @@ void window_chartProperties() {
 					if (ImGui::Button("Load Difficulty"))
 					{
 						FuckinEditor* editor = (FuckinEditor*)Game::instance->currentMenu;
+						currentDiff = ind;
 						editor->loadNotes(diff);
 					}
 					if (ImGui::Button("Delete Difficulty"))
@@ -358,16 +426,16 @@ void window_chartProperties() {
 				ind++;
 				if (ImGui::CollapsingHeader(("BPM Segment #" + std::to_string(ind)).c_str(), ImGuiTreeNodeFlags_Bullet))
 				{
+					double beat = seg.startBeat;
+					ImGui::Text("Beat:");
+					ImGui::PushItemWidth(100);
+					ImGui::InputDouble(("##Beat" + std::to_string(ind)).c_str(), &beat, 1, 10);
 					double d = seg.bpm;
 					ImGui::Text("BPM:");
 					ImGui::PushItemWidth(100);
 					ImGui::InputDouble(("##BPM" + std::to_string(ind)).c_str(), &d, 1, 10);
 					if (d < 1)
 						d = 1;
-					double beat = seg.startBeat;
-					ImGui::Text("Beat:");
-					ImGui::PushItemWidth(100);
-					ImGui::InputDouble(("##Beat" + std::to_string(ind)).c_str(), &beat, 1, 10);
 					if (beat < 0)
 						beat = 0;
 					double endBeat = seg.endBeat;
@@ -389,6 +457,46 @@ void window_chartProperties() {
 				seg.endBeat = INT_MAX;
 				seg.startBeat = currentBeat;
 				selectedChart->meta.bpms.push_back(seg);
+			}
+		}
+		else
+		{
+			ImGui::Text("Please select a chart first");
+		}
+	}
+	if (ImGui::CollapsingHeader("Stops"))
+	{
+		if (selectedChart)
+		{
+			int ind = 0;
+			for (stopSegment& seg : selectedChart->meta.stops)
+			{
+				ind++;
+				if (ImGui::CollapsingHeader(("Stop Segment #" + std::to_string(ind)).c_str(), ImGuiTreeNodeFlags_Bullet))
+				{
+					double beat = seg.beat;
+					ImGui::Text("Beat:");
+					ImGui::PushItemWidth(100);
+					ImGui::InputDouble(("##SBeat" + std::to_string(ind)).c_str(), &beat, 1, 10);
+					double d = seg.length;
+					ImGui::Text("Stop Length (in ms):");
+					ImGui::PushItemWidth(100);
+					ImGui::InputDouble(("##SLength" + std::to_string(ind)).c_str(), &d, 1, 10);
+					if (d < 1)
+						d = 1;
+					if (beat < 0)
+						beat = 0;
+					seg.length = d;
+					seg.beat = beat;
+				}
+			}
+			ImGui::Separator();
+			if (ImGui::Button("Create Stop Segment"))
+			{
+				stopSegment seg;
+				seg.beat = currentBeat;
+				seg.length = 0;
+				selectedChart->meta.stops.push_back(seg);
 			}
 		}
 		else
@@ -439,6 +547,16 @@ void FuckinEditor::create()
 {
 	addCamera(Game::mainCamera);
 
+	for (int i = 0; i < 4; i++)
+	{
+		note n;
+		n.beat = -1;
+		saved[i] = n;
+		tails[i] = n;
+	}
+	snapSelect = 3;
+	snapConvert = { {4,1}, {8,2},{12,3},{16,4}, {24,6}, {32,8}, {64,16} };
+
 	Judge::initJudge();
 
 	changeTheme(Game::save->GetDouble("chartTheme"));
@@ -471,12 +589,16 @@ void FuckinEditor::create()
 	lunderBorder->w = laneUnderway.w;
 	lunderBorder->h = laneUnderway.h;
 
+	top = new AvgGroup(0, 0, 1280, 720);
+	gameplay = new AvgGroup(0, 0, 1280, 720);
+
 	for (int i = 0; i < 4; i++)
 	{
 		float x = (lunder->x + 12) + (((64 * Game::save->GetDouble("Note Size") + 12)) * i);
 
-		AvgSprite* r = new AvgSprite(x, 65, Game::noteskin->receptor);
-		add(r);
+		ReceptorObject* r = new ReceptorObject(x, 140, i);
+		r->defAlpha = 0.8;
+		top->add(r);
 		switch (i)
 		{
 		case 0:
@@ -494,6 +616,9 @@ void FuckinEditor::create()
 		fuck.push_back(r);
 	}
 
+	add(gameplay);
+	add(top);
+
 	createWindow("Chart Properties", { 400,400 }, (drawCall)window_chartProperties, false);
 	createWindow("Help", { 550,350 }, (drawCall)window_help, false);
 	findWindow("Help").xOff = 10;
@@ -502,12 +627,46 @@ void FuckinEditor::create()
 
 void FuckinEditor::update(Events::updateEvent event)
 {
+	if (!selectedChart)
+		return;
+
 	for (NoteObject* obj : notes)
 	{
 		obj->rTime = currentTime;
+		float wh = selectedChart->getTimeFromBeat(obj->beat, selectedChart->getSegmentFromBeat(obj->beat));
+		if (songPlaying)
+		{
+			bool removeLayer = false;
+			if (wh - currentTime < (Judge::hitWindows[1] * 0.5) && wh - currentTime > -(Judge::hitWindows[1] * 0.2))
+				fuck[obj->lane]->lightUpTimer = 195;
+
+			for (holdTile tile : obj->heldTilings)
+			{
+				wh = selectedChart->getTimeFromBeat(tile.beat, selectedChart->getSegmentFromBeat(tile.beat));
+				if (wh - currentTime < (Judge::hitWindows[1] * 0.5) && wh - currentTime > -(Judge::hitWindows[1] * 0.2))
+				{
+					fuck[obj->lane]->lightUpTimer = 195;
+				}
+			}
+		}
+
 	}
 
-	if (songPlaying && selectedChart)
+	for (line& l : beatLines)
+	{
+		float diff = l.time - currentTime;
+
+		float bps = (Game::save->GetDouble("scrollspeed") / 60);
+
+		float noteOffset = (bps * (diff / 1000)) * (64 * Game::save->GetDouble("Note Size"));
+		l.rect->y = fuck[0]->y + noteOffset;
+		l.text->y = l.rect->y - (l.text->surfH / 2);
+		l.text->x = l.rect->x - (l.text->surfW + 4);
+	}
+
+
+
+	if (songPlaying)
 	{
 		float songPos = song->getPos();
 
@@ -518,6 +677,71 @@ void FuckinEditor::update(Events::updateEvent event)
 
 		bpmSegment curSeg = selectedChart->getSegmentFromTime(currentTime);
 		currentBeat = selectedChart->getBeatFromTimeOffset(currentTime, curSeg);
+	}
+
+	for (note& n : saved)
+	{
+		if (n.beat == -1)
+			continue;
+
+		float beatDiff = currentBeat - n.beat;
+
+		if (beatDiff > 0 && tails[n.lane].beat != currentBeat)
+		{
+			// create a note if it doesn't exist
+			if (tails[n.lane].beat != -1)
+			{
+				deleteNote(n.lane, tails[n.lane].beat);
+			}
+			tails[n.lane].beat = currentBeat;
+			tails[n.lane].type = noteType::Note_Tail;
+			tails[n.lane].lane = n.lane;
+
+			note find = findNote(n.lane, currentBeat);
+			if (find.beat == -1)
+				createNote(n.lane, currentBeat, noteType::Note_Tail, n.beat, true);
+			else
+			{
+				deleteNote(n.lane, find.beat);
+				createNote(n.lane, currentBeat, noteType::Note_Tail, n.beat, true);
+			}
+
+			deleteNote(n.lane, n.beat);
+			createNote(n.lane, n.beat, noteType::Note_Head);
+
+			for (note nn : selectedChart->meta.difficulties[currentDiff].notes)
+			{
+				if (nn.beat > n.beat && nn.beat < tails[n.lane].beat && nn.lane == n.lane)
+					deleteNote(nn.lane, nn.beat);
+			}
+		}
+		else if (beatDiff < 0 && n.beat != currentBeat)
+		{
+			if (tails[n.lane].beat != -1)
+			{
+				deleteNote(n.lane, tails[n.lane].beat);
+			}
+			tails[n.lane].beat = startBeats[n.lane];
+			tails[n.lane].type = noteType::Note_Tail;
+			tails[n.lane].lane = n.lane;
+
+			note find = findNote(n.lane, startBeats[n.lane]);
+			if (find.beat == -1)
+				createNote(n.lane, startBeats[n.lane], noteType::Note_Tail, currentBeat, true);
+			else
+			{
+				deleteNote(n.lane, find.beat);
+				createNote(n.lane, startBeats[n.lane], noteType::Note_Tail, currentBeat, true);
+			}
+
+			std::cout << "reset head and created tail | " << currentBeat << " " << startBeats[n.lane] << std::endl;
+
+			deleteNote(n.lane, n.beat);
+			createNote(n.lane, currentBeat, noteType::Note_Head, -1, true);
+
+			n.beat = currentBeat;
+		}
+
 	}
 }
 
@@ -530,11 +754,12 @@ void openChart(std::string path, std::string folder) {
 	delete file;
 	std::string pathj = selectedChart->meta.folder + "/" + selectedChart->meta.audio;
 
-	song = SoundManager::createChannel(pathj.c_str(), "editorSong");
+	editor->song = SoundManager::createChannel(pathj.c_str(), "editorSong");
 
-	song->createFXStream();
+	editor->song->createFXStream();
 
 	editor->loadNotes(selectedChart->meta.difficulties[0]);
+	currentDiff = 0;
 }
 
 void fileMenu() {
@@ -640,9 +865,32 @@ void FuckinEditor::imguiUpdate(float elapsed)
 	ImGui::EndMainMenuBar();
 	ImGui::Begin("BottomInfo", NULL, (ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize));
 	ImGui::SetWindowPos({ 15,660 });
-	ImGui::SetWindowSize({ 265,50 });
-	ImGui::Text(("Time: " + std::to_string((double)(currentTime / 1000)) + "s | Beat: " + std::to_string(currentBeat)).c_str());
+	ImGui::SetWindowSize({ 350,50 });
+	ImGui::Text(("Time: " + std::to_string((double)(currentTime / 1000)) + "s | Beat: " + std::to_string(currentBeat) + " | Snap: " + std::to_string(snap)).c_str());
 	ImGui::End();
+}
+
+
+void FuckinEditor::keyUp(SDL_KeyboardEvent event)
+{
+	note n;
+	n.beat = -1;
+	if (selectedChart)
+		switch (event.keysym.sym)
+		{
+			case SDLK_1:
+				saved[0] = n;
+				break;
+			case SDLK_2:
+				saved[1] = n;
+				break;
+			case SDLK_3:
+				saved[2] = n;
+				break;
+			case SDLK_4:
+				saved[3] = n;
+				break;
+		}
 }
 
 void FuckinEditor::keyDown(SDL_KeyboardEvent event)
@@ -660,8 +908,8 @@ void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 			song->stop();
 		else
 		{
-			song->play();
 			song->setPos(currentTime);
+			song->play();
 		}
 		songPlaying = !songPlaying;
 	}
@@ -669,13 +917,102 @@ void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 	if (event.keysym.sym == SDLK_UP && selectedChart)
 	{
 		currentTime -= 100;
+		bpmSegment curSeg = selectedChart->getSegmentFromTime(currentTime);
+		currentBeat = selectedChart->getBeatFromTimeOffset(currentTime, curSeg);
 	}
 
 	if (event.keysym.sym == SDLK_DOWN && selectedChart)
 	{
 		currentTime += 100;
+		bpmSegment curSeg = selectedChart->getSegmentFromTime(currentTime);
+		currentBeat = selectedChart->getBeatFromTimeOffset(currentTime, curSeg);
+	}
+
+	if (event.keysym.sym == SDLK_LEFT)
+		snapSelect--;
+	if (event.keysym.sym == SDLK_RIGHT)
+		snapSelect++;
+
+	if (snapSelect < 0)
+		snapSelect = snapConvert.size() - 1;
+	if (snapSelect > snapConvert.size() - 1)
+		snapSelect = 0;
+
+	auto it = snapConvert.begin();
+	std::advance(it, snapSelect);
+	snap = it->first;
+
+	if (currentTime < 0)
+	{
+		currentTime = 0;
+		currentBeat = 0;
+	}
+
+	if (selectedChart)
+		switch (event.keysym.sym)
+		{
+		case SDLK_1:
+			if (saved[0].beat != -1)
+				return;
+			if (findNote(0, currentBeat).beat != -1)
+				deleteNote(0, currentBeat);
+			else
+				createNote(0);
+			break;
+		case SDLK_2:
+			if (saved[1].beat != -1)
+				return;
+			if (findNote(1, currentBeat).beat != -1)
+				deleteNote(1, currentBeat);
+			else
+				createNote(1);
+			break;
+		case SDLK_3:
+			if (saved[2].beat != -1)
+				return;
+			if (findNote(2, currentBeat).beat != -1)
+				deleteNote(2, currentBeat);
+			else
+				createNote(2);
+			break;
+		case SDLK_4:
+			if (saved[3].beat != -1)
+				return;
+			if (findNote(3, currentBeat).beat != -1)
+				deleteNote(3, currentBeat);
+			else
+				createNote(3);
+			break;
+		}
+}
+
+void FuckinEditor::mouseWheel(float wheel)
+{
+	if (!selectedChart)
+		return;
+	float amount = wheel;
+	float increase = 0;
+	float beats = 0;
+	if (amount < 0)
+	{
+		increase = (float)1 / (float)snapConvert[snap];
+		beats = (floor((currentBeat * (float)snapConvert[snap]) + 0.001) / (float)snapConvert[snap]) + increase;
+	}
+	else
+	{
+		increase = (float)-1 / (float)snapConvert[snap];
+		beats = ((ceil(currentBeat * (float)snapConvert[snap]) - 0.001) / (float)snapConvert[snap]) + increase;
+	}
+	if (beats < 0)
+		return;
+	currentBeat = beats;
+	currentTime = selectedChart->getTimeFromBeat(beats, selectedChart->getSegmentFromBeat(beats));
+	if (songPlaying)
+	{
+		song->setPos(currentTime);
 	}
 }
+
 
 void FuckinEditor::loadNotes(difficulty diff)
 {
@@ -693,138 +1030,9 @@ void FuckinEditor::loadNotes(difficulty diff)
 	}
 	notes.clear();
 	bool downscroll = false;
+	regenBeatLines(selectedChart);
 	for (note n : diff.notes)
 	{
-		NoteObject* object = new NoteObject();
-		object->fboMode = false;
-		object->currentChart = selectedChart;
-		object->connected = &n;
-		SDL_FRect rect;
-		object->wasHit = false;
-		object->clapped = false;
-		object->active = true;
-
-		bpmSegment preStopSeg = selectedChart->getSegmentFromBeat(n.beat);
-
-		float stopOffset = selectedChart->getStopOffsetFromBeat(n.beat);
-
-		double stopBeatOffset = (stopOffset / 1000) * (preStopSeg.bpm / 60);
-
-		object->stopOffset = stopBeatOffset;
-
-		object->beat = (double)n.beat + stopBeatOffset;
-		object->lane = n.lane;
-		object->connectedReceptor = fuck[n.lane];
-		object->type = n.type;
-		object->endTime = -1;
-		object->endBeat = -1;
-
-		bpmSegment noteSeg = selectedChart->getSegmentFromBeat(object->beat);
-
-		object->time = selectedChart->getTimeFromBeatOffset(object->beat, noteSeg);
-		rect.y = Game::gameHeight + 400;
-		rect.x = 0;
-		rect.w = 64 * Game::save->GetDouble("Note Size");
-		rect.h = 64 * Game::save->GetDouble("Note Size");
-		object->rect = rect;
-
-		note tail;
-
-		bpmSegment bruh = selectedChart->getSegmentFromBeat(object->beat);
-
-		float wh = selectedChart->getTimeFromBeat(n.beat, bruh);
-
-		float bps = (Game::save->GetDouble("scrollspeed") / 60);
-
-
-		if (object->type == Note_Head)
-		{
-			for (int i = 0; i < diff.notes.size(); i++)
-			{
-				note& nn = diff.notes[i];
-				if (nn.type != Note_Tail)
-					continue;
-				if (nn.lane != object->lane)
-					continue;
-
-				bpmSegment npreStopSeg = selectedChart->getSegmentFromBeat(nn.beat);
-
-				float nstopOffset = selectedChart->getStopOffsetFromBeat(nn.beat);
-
-				double nstopBeatOffset = (nstopOffset / 1000) * (npreStopSeg.bpm / 60);
-
-				object->endBeat = nn.beat + nstopBeatOffset;
-
-				object->endTime = selectedChart->getTimeFromBeatOffset(nn.beat + nstopBeatOffset, noteSeg);
-				tail = nn;
-				break;
-			}
-		}
-
-		float time = SDL_GetTicks();
-
-		if (object->type == Note_Head)
-		{
-
-			for (int i = std::floorf(object->time); i < std::floorf(object->endTime); i++)
-			{
-				bpmSegment holdSeg = selectedChart->getSegmentFromTime(i);
-
-				double beat = selectedChart->getBeatFromTimeOffset(i, holdSeg);
-
-				float whHold = selectedChart->getTimeFromBeatOffset(beat, holdSeg);
-
-				float diff = whHold - (object->time);
-
-				float noteOffset = (bps * (diff / 1000)) * (64 * Game::save->GetDouble("Note Size"));
-
-				float y = 0;
-				float yDiff = 0;
-				if (object->heldTilings.size() != 0)
-				{
-					if (downscroll)
-						y = object->rect.y - noteOffset;
-					else
-						y = object->rect.y + noteOffset;
-					yDiff = y - object->heldTilings.back().rect.y;
-				}
-				else
-				{
-					if (downscroll)
-						y = object->rect.y - noteOffset;
-					else
-						y = object->rect.y + noteOffset;
-					yDiff = y - object->rect.y;
-				}
-
-				bool otherOne = false;
-
-				if (downscroll)
-					otherOne = yDiff <= -(64 * Game::save->GetDouble("Note Size"));
-				else
-					otherOne = yDiff >= 64 * Game::save->GetDouble("Note Size");
-
-				if (otherOne || object->heldTilings.size() == 0)
-				{
-					object->holdHeight += 64 * Game::save->GetDouble("Note Size");
-					holdTile tile;
-					SDL_FRect rect;
-					tile.active = true;
-					tile.fucked = false;
-					rect.y = y;
-					rect.x = 0;
-					rect.w = 64 * Game::save->GetDouble("Note Size");
-					rect.h = 68 * Game::save->GetDouble("Note Size");
-					tile.rect = rect;
-					tile.beat = beat;
-					tile.time = i;
-					object->heldTilings.push_back(tile);
-				}
-			}
-		}
-		std::sort(object->heldTilings.begin(), object->heldTilings.end());
-		notes.push_back(object);
-		object->create();
-		add(object);
+		generateNoteObject(n, diff, selectedChart, notes);
 	}
 }

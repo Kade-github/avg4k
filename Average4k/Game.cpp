@@ -393,7 +393,9 @@ void Game::update(Events::updateEvent update)
 
 void Game::keyDown(SDL_KeyboardEvent ev)
 {
-	if (transitioning)
+	if (transitioning || !currentMenu)
+		return;
+	if (!currentMenu->created)
 		return;
 	MUTATE_START
 	if (ev.keysym.sym == SDLK_ESCAPE && debug_takingInput)
@@ -580,7 +582,9 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 
 void Game::keyUp(SDL_KeyboardEvent ev)
 {
-	if (transitioning)
+	if (transitioning || !currentMenu)
+		return;
+	if (!currentMenu->created)
 		return;
 	if (controls.count(ev.keysym.sym) == 1)
 		controls[ev.keysym.sym] = false;
@@ -592,6 +596,13 @@ void Game::keyUp(SDL_KeyboardEvent ev)
 		Object* bruh = (*objects)[i];
 		//bruh->keyUp(ev);
 	}
+}
+void Game::mouseWheel(float wheel)
+{
+	if (!currentMenu)
+		return;
+	if (currentMenu->created)
+		currentMenu->mouseWheel(wheel);
 }
 //asd
 void Game::weGotPacket(Events::packetEvent p)

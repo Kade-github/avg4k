@@ -29,6 +29,8 @@ struct note {
 	noteType type;
 	int lane;
 
+	float connectedBeat = -1;
+
 	// gameplay var
 	bool played;
 	bool killed;

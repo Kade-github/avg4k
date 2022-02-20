@@ -38,6 +38,7 @@ public:
 	void update(Events::updateEvent updateEvent);
 	void keyDown(SDL_KeyboardEvent event);
 	void keyUp(SDL_KeyboardEvent event);
+	void mouseWheel(float wheel);
 
 	void textInput(SDL_TextInputEvent event);
 	static AvgCamera* mainCamera;

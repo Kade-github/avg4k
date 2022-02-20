@@ -993,6 +993,8 @@ void Gameplay::update(Events::updateEvent event)
 		}
 		else
 		{
+			if (!botplay)
+				receptors[i]->lightUpTimer = 0;
 			if (receptors[i]->scale < 1.0 && Game::noteskin->shrink)
 			{
 				receptors[i]->scale += Game::deltaTime * 0.04;
@@ -1029,7 +1031,7 @@ void Gameplay::update(Events::updateEvent event)
 
 						std::string format = std::to_string(diff - fmod(diff, 0.01));
 						format.erase(format.find_last_not_of('0') + 1, std::string::npos);
-						receptors[note->lane]->lightUpTimer = 100;
+						receptors[note->lane]->lightUpTimer = 195;
 						Judgement->setText("botplay");
 						(*Judgement).color.r = 0;
 						(*Judgement).color.g = 255;
@@ -1072,7 +1074,7 @@ void Gameplay::update(Events::updateEvent event)
 							float offset = wh;
 							if (botplay && offset - positionInSong > 0 && offset - positionInSong < (Judge::hitWindows[1] * 0.5))
 							{
-								receptors[note->lane]->lightUpTimer = 100;
+								receptors[note->lane]->lightUpTimer = 195;
 							}
 							if (offset - positionInSong <= Judge::hitWindows[2] && !tile.fucked)
 							{

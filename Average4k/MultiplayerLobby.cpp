@@ -83,7 +83,7 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 {
 	if (!this)
 		return;
-	VM_START
+	MUTATE_START
 	//MUTATE_START
 	SPacketUpdateLobbyData update;
 	SPacketWtfAmInReply reply;
@@ -220,8 +220,8 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 
 		break;
 	}
-	VM_END
-	//MUTATE_END
+
+	MUTATE_END
 	
 }
 

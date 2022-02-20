@@ -795,7 +795,7 @@ void fileMenu() {
 
 void FuckinEditor::imguiUpdate(float elapsed)
 {
-
+	focused = false;
 	for (editorWindow& wind : windows)
 	{
 		if (!wind.shouldDraw)
@@ -813,6 +813,8 @@ void FuckinEditor::imguiUpdate(float elapsed)
 				ImGui::EndMenuBar();
 			}
 			wind.draw();
+			if (ImGui::IsWindowFocused())
+				focused = true;
 		}
 		ImGui::End();
 	}
@@ -873,6 +875,8 @@ void FuckinEditor::imguiUpdate(float elapsed)
 
 void FuckinEditor::keyUp(SDL_KeyboardEvent event)
 {
+	if (focused)
+		return;
 	note n;
 	n.beat = -1;
 	if (selectedChart)
@@ -895,6 +899,8 @@ void FuckinEditor::keyUp(SDL_KeyboardEvent event)
 
 void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 {
+	if (focused)
+		return;
 	if (event.keysym.sym == SDLK_ESCAPE)
 	{
 		if (selectedChart)
@@ -988,6 +994,8 @@ void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 
 void FuckinEditor::mouseWheel(float wheel)
 {
+	if (focused)
+		return;
 	if (!selectedChart)
 		return;
 	float amount = wheel;

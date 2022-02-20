@@ -42,6 +42,8 @@ public:
 	std::vector<ReceptorObject*> fuck;
 	std::vector<editorWindow> windows;
 
+	bool focused = false;
+
 	std::vector<line> beatLines;
 	std::vector<thingy> sideStuff;
 

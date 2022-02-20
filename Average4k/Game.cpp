@@ -7,7 +7,9 @@
 #include "MultiplayerLobby.h"
 #include "AvgRect.h"
 #include "msgpack.hpp"
+#include "FuckinEditor.h"
 #include "TweenManager.h"
+#include "imgui_impl_sdl.h"
 #include "Helpers.h"
 using namespace std;
 
@@ -140,6 +142,7 @@ void Game::createGame()
 	steam->InitSteam();
 	
 
+
 	save = new SaveFile();
 
 	noteskin = Noteskin::getNoteskin();
@@ -224,8 +227,12 @@ void Game::update(Events::updateEvent update)
 
 	mainCamera->update(update);
 
+
 	if (currentMenu != nullptr && currentMenu->created)
+	{
 		currentMenu->update(update);
+		currentMenu->imguiUpdate(Game::deltaTime);
+	}
 
 	if (!transitioning && SDL_GetTicks() % 250 == 0)
 	{
@@ -480,6 +487,10 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 				db_addLine("FLOW TIME!!");
 			else
 				db_addLine("no more flow time >:((((");
+		}
+		else if (debug_string == "editor")
+		{
+			transitionToMenu(new FuckinEditor());
 		}
 		else
 		{

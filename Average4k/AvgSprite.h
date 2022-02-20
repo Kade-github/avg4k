@@ -2,6 +2,7 @@
 #include "includes.h"
 #include "Object.h"
 #include "GL.h"
+#include "Game.h"
 
 class AvgSprite : public Object
 {
@@ -91,7 +92,7 @@ public:
 		if (clipRect.w > 0 || clipRect.h > 0)
 			Rendering::SetClipRect(&clipRect);
 
-		Rendering::PushQuad(&dstRect, &srcRect, tex, GL::genShader);
+		Rendering::PushQuad(&dstRect, &srcRect, tex, GL::genShader, angle);
 
 		if (clipRect.w > 0 || clipRect.h > 0)
 			Rendering::SetClipRect(NULL);

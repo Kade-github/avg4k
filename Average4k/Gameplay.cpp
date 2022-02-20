@@ -655,13 +655,12 @@ void Gameplay::update(Events::updateEvent event)
 	
 	if (play)
 	{
-		positionInSong -= Game::save->GetDouble("offset");
 		float songPos = song->getPos() - Game::save->GetDouble("offset");
 		
-		if (std::abs((positionInSong - songPos) >= 0.05))
+		if (std::abs(((positionInSong - Game::save->GetDouble("offset")) - songPos) >= 0.05))
 			positionInSong = songPos;
 		else
-			positionInSong += Game::deltaTime;
+			positionInSong += (Game::deltaTime - Game::save->GetDouble("offset"));
 	}
 	else
 		positionInSong += Game::deltaTime;

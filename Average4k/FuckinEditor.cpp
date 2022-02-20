@@ -1,12 +1,14 @@
 #include "FuckinEditor.h"
 #include "ImGuiFileDialog.h"
 #include "MainMenu.h"
-
+#include "Judge.h"
 // window draws
 
 Chart* selectedChart;
 float currentTime;
 float currentBeat;
+
+Channel* song;
 
 void changeTheme(int theme) {
 	Game::save->SetDouble("chartTheme", (double)theme);
@@ -292,30 +294,53 @@ void window_chartProperties() {
 		if (selectedChart)
 		{
 			ImGui::Text("Difficulties:");
+			int ind = 0;
 			for (difficulty& diff : selectedChart->meta.difficulties)
 			{
-				
+				char buff[24];
+				strcpy_s(buff, diff.name.c_str());
+				ImGui::Separator();
+				ImGui::PushItemWidth(165);
+				ImGui::Text("Name:");
+				ImGui::InputText(("##NAME" + std::to_string(ind)).c_str(), buff, sizeof(buff));
+				if (std::string(buff).size() != 0)
+					diff.name = std::string(buff);
+
+
 				if (ImGui::CollapsingHeader(diff.name.c_str(), ImGuiTreeNodeFlags_Bullet))
 				{
 					char buf[24];
 					strcpy_s(buf, diff.charter.c_str());
-					ImGui::InputText("Charter", buf, sizeof(buf));
+					ImGui::PushItemWidth(165);
+					ImGui::InputText(("##Charter" + std::to_string(ind)).c_str(), buf, sizeof(buf));
 					ImGui::Text(("Notes: " + std::to_string(diff.notes.size())).c_str());
+					diff.charter = std::string(buf);
+					if (ImGui::Button("Load Difficulty"))
+					{
+						FuckinEditor* editor = (FuckinEditor*)Game::instance->currentMenu;
+						editor->loadNotes(diff);
+					}
 					if (ImGui::Button("Delete Difficulty"))
 					{
 						// TODO: Delete diff
 					}
 				}
+				ind++;
 			}
 			ImGui::Separator();
 			ImGui::Text("Global Metadata:");
 			char buf[32];
 			strcpy_s(buf, selectedChart->meta.background.c_str());
+			ImGui::PushItemWidth(180);
 			ImGui::InputText("Background", buf, sizeof(buf));
+			selectedChart->meta.background = std::string(buf);
 			ImGui::Separator();
 			if (ImGui::Button("Create Difficulty"))
 			{
-				// TODO: Create diff
+				difficulty diff;
+				diff.name = "Untitled Diff";
+				diff.charter = "";
+				selectedChart->meta.difficulties.push_back(diff);
 			}
 		}
 		else
@@ -327,9 +352,44 @@ void window_chartProperties() {
 	{
 		if (selectedChart)
 		{
-			bpmSegment seg = selectedChart->getSegmentFromTime(currentTime);
-			double bpm = seg.bpm;
-			ImGui::InputDouble("BPM", &bpm, 1, 10);
+			int ind = 0;
+			for (bpmSegment& seg : selectedChart->meta.bpms)
+			{
+				ind++;
+				if (ImGui::CollapsingHeader(("BPM Segment #" + std::to_string(ind)).c_str(), ImGuiTreeNodeFlags_Bullet))
+				{
+					double d = seg.bpm;
+					ImGui::Text("BPM:");
+					ImGui::PushItemWidth(100);
+					ImGui::InputDouble(("##BPM" + std::to_string(ind)).c_str(), &d, 1, 10);
+					if (d < 1)
+						d = 1;
+					double beat = seg.startBeat;
+					ImGui::Text("Beat:");
+					ImGui::PushItemWidth(100);
+					ImGui::InputDouble(("##Beat" + std::to_string(ind)).c_str(), &beat, 1, 10);
+					if (beat < 0)
+						beat = 0;
+					double endBeat = seg.endBeat;
+					if (endBeat >= (INT_MAX - 10))
+						ImGui::Text("End Beat: INF");
+					else
+						ImGui::Text(("End Beat: " + std::to_string(endBeat)).c_str());
+					seg.bpm = d;
+					seg.startBeat = beat;
+					if (ind - 2 >= 0)
+						selectedChart->meta.bpms[ind - 2].endBeat = beat;
+				}
+			}
+			ImGui::Separator();
+			if (ImGui::Button("Create BPM Segment"))
+			{
+				bpmSegment seg;
+				seg.bpm = 120;
+				seg.endBeat = INT_MAX;
+				seg.startBeat = currentBeat;
+				selectedChart->meta.bpms.push_back(seg);
+			}
 		}
 		else
 		{
@@ -349,6 +409,11 @@ void window_chartProperties() {
 			changeTheme(2);
 		if (ImGui::Button("Red Theme"))
 			changeTheme(3);
+		if (ImGui::Button("Clear Recent Charts"))
+		{
+			Game::save->SetString("nonChange_chartHistory", "");
+			Game::save->Save();
+		}
 	}
 }
 
@@ -373,6 +438,8 @@ void window_help() {
 void FuckinEditor::create()
 {
 	addCamera(Game::mainCamera);
+
+	Judge::initJudge();
 
 	changeTheme(Game::save->GetDouble("chartTheme"));
 
@@ -435,15 +502,39 @@ void FuckinEditor::create()
 
 void FuckinEditor::update(Events::updateEvent event)
 {
-	
+	for (NoteObject* obj : notes)
+	{
+		obj->rTime = currentTime;
+	}
+
+	if (songPlaying && selectedChart)
+	{
+		float songPos = song->getPos();
+
+		if (std::abs(((currentTime) - songPos) >= 0.05))
+			currentTime = songPos;
+		else
+			currentTime += Game::deltaTime;
+
+		bpmSegment curSeg = selectedChart->getSegmentFromTime(currentTime);
+		currentBeat = selectedChart->getBeatFromTimeOffset(currentTime, curSeg);
+	}
 }
 
 bool openingFile = false;
 
 void openChart(std::string path, std::string folder) {
+	FuckinEditor* editor = (FuckinEditor*)Game::instance->currentMenu;
 	SMFile* file = new SMFile(path, folder, true);
 	selectedChart = new Chart(file->meta);
 	delete file;
+	std::string pathj = selectedChart->meta.folder + "/" + selectedChart->meta.audio;
+
+	song = SoundManager::createChannel(pathj.c_str(), "editorSong");
+
+	song->createFXStream();
+
+	editor->loadNotes(selectedChart->meta.difficulties[0]);
 }
 
 void fileMenu() {
@@ -457,7 +548,7 @@ void fileMenu() {
 	if (ImGui::BeginMenu("Open Recent") && !openingFile)
 	{
 		int ind = 0;
-		std::vector<std::string> history = Chart::split(Game::save->GetString("nonChange_chartHistory"), ';');
+		std::vector<std::string> history = Chart::split(Game::save->GetString("nonChange_chartHistory"), '$');
 		ImGuiStyle* style = &ImGui::GetStyle();
 		ImVec4* colors = style->Colors;
 		if (history.size() == 0)
@@ -465,7 +556,7 @@ void fileMenu() {
 		else
 			for (std::string file : history)
 			{
-				if (ind > 6)
+				if (ind > 10)
 					break;
 				std::string name = file.substr(file.find_last_of("\\") + 1, file.size());
 				if (ImGui::MenuItem(name.c_str()))
@@ -515,7 +606,7 @@ void FuckinEditor::imguiUpdate(float elapsed)
 					if (selectedChart)
 						selectedChart->destroy();
 					openChart(filePathName, folder);
-					Game::save->SetString("nonChange_chartHistory", copy + ";" + Game::save->GetString("nonChange_chartHistory"));
+					Game::save->SetString("nonChange_chartHistory", copy + "$" + Game::save->GetString("nonChange_chartHistory"));
 					Game::save->Save();
 				}
 			}
@@ -547,6 +638,11 @@ void FuckinEditor::imguiUpdate(float elapsed)
 		}
 	}
 	ImGui::EndMainMenuBar();
+	ImGui::Begin("BottomInfo", NULL, (ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize));
+	ImGui::SetWindowPos({ 15,660 });
+	ImGui::SetWindowSize({ 265,50 });
+	ImGui::Text(("Time: " + std::to_string((double)(currentTime / 1000)) + "s | Beat: " + std::to_string(currentBeat)).c_str());
+	ImGui::End();
 }
 
 void FuckinEditor::keyDown(SDL_KeyboardEvent event)
@@ -557,5 +653,178 @@ void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 			selectedChart->destroy();
 		Game::instance->transitionToMenu(new MainMenu());
 
+	}
+	if (event.keysym.sym == SDLK_SPACE && selectedChart)
+	{
+		if (songPlaying)
+			song->stop();
+		else
+		{
+			song->play();
+			song->setPos(currentTime);
+		}
+		songPlaying = !songPlaying;
+	}
+
+	if (event.keysym.sym == SDLK_UP && selectedChart)
+	{
+		currentTime -= 100;
+	}
+
+	if (event.keysym.sym == SDLK_DOWN && selectedChart)
+	{
+		currentTime += 100;
+	}
+}
+
+void FuckinEditor::loadNotes(difficulty diff)
+{
+	currentTime = 0;
+	currentBeat = 0;
+	if (songPlaying)
+	{
+		song->stop();
+		songPlaying = false;
+	}
+	for (NoteObject* obj : notes)
+	{
+		removeObj(obj);
+		delete obj;
+	}
+	notes.clear();
+	bool downscroll = false;
+	for (note n : diff.notes)
+	{
+		NoteObject* object = new NoteObject();
+		object->fboMode = false;
+		object->currentChart = selectedChart;
+		object->connected = &n;
+		SDL_FRect rect;
+		object->wasHit = false;
+		object->clapped = false;
+		object->active = true;
+
+		bpmSegment preStopSeg = selectedChart->getSegmentFromBeat(n.beat);
+
+		float stopOffset = selectedChart->getStopOffsetFromBeat(n.beat);
+
+		double stopBeatOffset = (stopOffset / 1000) * (preStopSeg.bpm / 60);
+
+		object->stopOffset = stopBeatOffset;
+
+		object->beat = (double)n.beat + stopBeatOffset;
+		object->lane = n.lane;
+		object->connectedReceptor = fuck[n.lane];
+		object->type = n.type;
+		object->endTime = -1;
+		object->endBeat = -1;
+
+		bpmSegment noteSeg = selectedChart->getSegmentFromBeat(object->beat);
+
+		object->time = selectedChart->getTimeFromBeatOffset(object->beat, noteSeg);
+		rect.y = Game::gameHeight + 400;
+		rect.x = 0;
+		rect.w = 64 * Game::save->GetDouble("Note Size");
+		rect.h = 64 * Game::save->GetDouble("Note Size");
+		object->rect = rect;
+
+		note tail;
+
+		bpmSegment bruh = selectedChart->getSegmentFromBeat(object->beat);
+
+		float wh = selectedChart->getTimeFromBeat(n.beat, bruh);
+
+		float bps = (Game::save->GetDouble("scrollspeed") / 60);
+
+
+		if (object->type == Note_Head)
+		{
+			for (int i = 0; i < diff.notes.size(); i++)
+			{
+				note& nn = diff.notes[i];
+				if (nn.type != Note_Tail)
+					continue;
+				if (nn.lane != object->lane)
+					continue;
+
+				bpmSegment npreStopSeg = selectedChart->getSegmentFromBeat(nn.beat);
+
+				float nstopOffset = selectedChart->getStopOffsetFromBeat(nn.beat);
+
+				double nstopBeatOffset = (nstopOffset / 1000) * (npreStopSeg.bpm / 60);
+
+				object->endBeat = nn.beat + nstopBeatOffset;
+
+				object->endTime = selectedChart->getTimeFromBeatOffset(nn.beat + nstopBeatOffset, noteSeg);
+				tail = nn;
+				break;
+			}
+		}
+
+		float time = SDL_GetTicks();
+
+		if (object->type == Note_Head)
+		{
+
+			for (int i = std::floorf(object->time); i < std::floorf(object->endTime); i++)
+			{
+				bpmSegment holdSeg = selectedChart->getSegmentFromTime(i);
+
+				double beat = selectedChart->getBeatFromTimeOffset(i, holdSeg);
+
+				float whHold = selectedChart->getTimeFromBeatOffset(beat, holdSeg);
+
+				float diff = whHold - (object->time);
+
+				float noteOffset = (bps * (diff / 1000)) * (64 * Game::save->GetDouble("Note Size"));
+
+				float y = 0;
+				float yDiff = 0;
+				if (object->heldTilings.size() != 0)
+				{
+					if (downscroll)
+						y = object->rect.y - noteOffset;
+					else
+						y = object->rect.y + noteOffset;
+					yDiff = y - object->heldTilings.back().rect.y;
+				}
+				else
+				{
+					if (downscroll)
+						y = object->rect.y - noteOffset;
+					else
+						y = object->rect.y + noteOffset;
+					yDiff = y - object->rect.y;
+				}
+
+				bool otherOne = false;
+
+				if (downscroll)
+					otherOne = yDiff <= -(64 * Game::save->GetDouble("Note Size"));
+				else
+					otherOne = yDiff >= 64 * Game::save->GetDouble("Note Size");
+
+				if (otherOne || object->heldTilings.size() == 0)
+				{
+					object->holdHeight += 64 * Game::save->GetDouble("Note Size");
+					holdTile tile;
+					SDL_FRect rect;
+					tile.active = true;
+					tile.fucked = false;
+					rect.y = y;
+					rect.x = 0;
+					rect.w = 64 * Game::save->GetDouble("Note Size");
+					rect.h = 68 * Game::save->GetDouble("Note Size");
+					tile.rect = rect;
+					tile.beat = beat;
+					tile.time = i;
+					object->heldTilings.push_back(tile);
+				}
+			}
+		}
+		std::sort(object->heldTilings.begin(), object->heldTilings.end());
+		notes.push_back(object);
+		object->create();
+		add(object);
 	}
 }

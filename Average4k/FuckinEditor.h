@@ -4,6 +4,7 @@
 #include "AvgSprite.h";
 #include "Chart.h"
 #include "imgui.h"
+#include "NoteObject.h"
 typedef void(__cdecl* drawCall)();
 struct editorWindow {
 	std::string title;
@@ -13,19 +14,22 @@ struct editorWindow {
 	float xOff = 0;
 };
 
-
 class FuckinEditor : public Menu
 {
 public:
 	void create() override;
 
+	bool songPlaying = false;
+
 	void update(Events::updateEvent event) override;
 	void imguiUpdate(float elapsed) override;
 	std::vector<AvgSprite*> fuck;
 	std::vector<editorWindow> windows;
-	
+	std::vector<NoteObject*> notes;
 
 	void keyDown(SDL_KeyboardEvent event) override;
+
+	void loadNotes(difficulty diff);
 
 	void createWindow(std::string title, ImVec2 size, drawCall draw, bool shouldDraw)
 	{

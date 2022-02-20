@@ -821,6 +821,7 @@ void Gameplay::update(Events::updateEvent event)
 		{
 			n.played = true;
 				NoteObject* object = new NoteObject();
+				object->currentChart = SongSelect::currentChart;
 				object->connected = &n;
 				SDL_FRect rect;
 				object->wasHit = false;
@@ -837,6 +838,7 @@ void Gameplay::update(Events::updateEvent event)
 
 				object->beat = (double) n.beat + stopBeatOffset;
 				object->lane = n.lane;
+				object->connectedReceptor = receptors[n.lane];
 				object->type = n.type;
 				object->endTime = -1;
 				object->endBeat = -1;
@@ -1004,6 +1006,7 @@ void Gameplay::update(Events::updateEvent event)
 		for (int i = 0; i < spawnedNotes.size(); i++)
 		{
 			NoteObject* note = spawnedNotes[i];
+			note->rTime = positionInSong;
 
 			if (!note->destroyed)
 			{

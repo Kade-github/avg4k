@@ -10,7 +10,7 @@ struct setting {
 	bool takesActive;
 	bool isKeybind;
 	double increm;
-	char stringValue[248];
+	char stringValue[4086];
 	MSGPACK_DEFINE(active, value, name, takesActive, lowestValue, highestValue, isKeybind, increm, stringValue);
 };
 

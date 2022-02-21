@@ -38,7 +38,8 @@ public:
 				return ob->id == obj->id;
 				}),
 			children.end());
-		delete obj;
+		if (obj->id >= 0)
+			delete obj;
 	}
 
 	bool handleDraw = false;

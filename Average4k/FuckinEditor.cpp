@@ -297,7 +297,20 @@ void changeTheme(int theme) {
 		break;
 	}
 }
+std::string notifTitle = "";
+std::string notifText = "";
 
+void triggerNotif(std::string title, std::string text)
+{
+	FuckinEditor* editor = (FuckinEditor*)Game::instance->currentMenu;
+
+	notifTitle = title;
+	notifText = text;
+
+
+
+	editor->findWindow("Notification").shouldDraw = true;
+}
 
 note findNote(int lane, float beat)
 {
@@ -543,6 +556,11 @@ void window_help() {
 	}
 }
 
+void window_notif() {
+	ImGui::Text(notifTitle.c_str());
+	ImGui::Text(notifText.c_str());
+}
+
 void FuckinEditor::create()
 {
 	addCamera(Game::mainCamera);
@@ -621,6 +639,8 @@ void FuckinEditor::create()
 
 	createWindow("Chart Properties", { 400,400 }, (drawCall)window_chartProperties, false);
 	createWindow("Help", { 550,350 }, (drawCall)window_help, false);
+	createWindow("Notification", { 500,100 }, (drawCall)window_notif, false);
+	findWindow("Notification").xOff = 12;
 	findWindow("Help").xOff = 10;
 	created = true;
 }
@@ -752,6 +772,20 @@ void openChart(std::string path, std::string folder) {
 	SMFile* file = new SMFile(path, folder, true);
 	selectedChart = new Chart(file->meta);
 	delete file;
+
+	if (!selectedChart)
+	{
+		triggerNotif("Failed to parse chart!", "Couldn't get the chart data, try again maybe?");
+		return;
+	}
+
+	if (selectedChart->meta.difficulties.size() == 0)
+	{
+		selectedChart = nullptr;
+		triggerNotif("Failed to parse chart!", "There weren't any difficulties, does the chart exist?");
+		return;
+	}
+
 	std::string pathj = selectedChart->meta.folder + "/" + selectedChart->meta.audio;
 
 	editor->song = SoundManager::createChannel(pathj.c_str(), "editorSong");
@@ -818,10 +852,12 @@ void FuckinEditor::imguiUpdate(float elapsed)
 		}
 		ImGui::End();
 	}
+	if (openingFile)
+		focused = true;
 
 	if (openingFile)
 	{
-		if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey"))
+		if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey", ImGuiWindowFlags_NoCollapse, { 640, 360 }, {800, 600}))
 		{
 			if (ImGuiFileDialog::Instance()->IsOk())
 			{
@@ -865,11 +901,18 @@ void FuckinEditor::imguiUpdate(float elapsed)
 		}
 	}
 	ImGui::EndMainMenuBar();
-	ImGui::Begin("BottomInfo", NULL, (ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize));
-	ImGui::SetWindowPos({ 15,660 });
-	ImGui::SetWindowSize({ 350,50 });
-	ImGui::Text(("Time: " + std::to_string((double)(currentTime / 1000)) + "s | Beat: " + std::to_string(currentBeat) + " | Snap: " + std::to_string(snap)).c_str());
-	ImGui::End();
+	if (selectedChart)
+	{
+		ImGui::Begin("BottomInfo", NULL, (ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize));
+		ImGui::SetWindowPos({ 15,660 });
+		ImGui::SetWindowSize({ 350,50 });
+
+		ImGui::Text("Time: %.2f", currentTime / 1000);
+		ImGui::SameLine();  ImGui::Text("Beat: %.2f", currentBeat);
+		ImGui::SameLine();  ImGui::Text("BPM: %.2f", selectedChart->getSegmentFromTime(currentTime).bpm);
+		ImGui::SameLine();  ImGui::Text("Snap: %i", snap);
+		ImGui::End();
+	}
 }
 
 
@@ -950,8 +993,9 @@ void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 
 	if (currentTime < 0)
 	{
-		currentTime = 0;
 		currentBeat = 0;
+		bpmSegment curSeg = selectedChart->getSegmentFromBeat(currentBeat);
+		currentTime = selectedChart->getTimeFromBeat(currentBeat, curSeg);
 	}
 
 	if (selectedChart)
@@ -1012,7 +1056,7 @@ void FuckinEditor::mouseWheel(float wheel)
 		beats = ((ceil(currentBeat * (float)snapConvert[snap]) - 0.001) / (float)snapConvert[snap]) + increase;
 	}
 	if (beats < 0)
-		return;
+		beats = 0;
 	currentBeat = beats;
 	currentTime = selectedChart->getTimeFromBeat(beats, selectedChart->getSegmentFromBeat(beats));
 	if (songPlaying)
@@ -1031,11 +1075,12 @@ void FuckinEditor::loadNotes(difficulty diff)
 		song->stop();
 		songPlaying = false;
 	}
-	for (NoteObject* obj : notes)
+	std::vector<Object*> objs = gameplay->children;
+	for (Object* obj : objs)
 	{
-		removeObj(obj);
-		delete obj;
+		gameplay->removeObj(obj);
 	}
+	beatLines.clear();
 	notes.clear();
 	bool downscroll = false;
 	regenBeatLines(selectedChart);

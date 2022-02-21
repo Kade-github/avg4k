@@ -395,13 +395,13 @@ void window_chartProperties() {
 					ImGui::InputText(("##Charter" + std::to_string(ind)).c_str(), buf, sizeof(buf));
 					ImGui::Text(("Notes: " + std::to_string(diff.notes.size())).c_str());
 					diff.charter = std::string(buf);
-					if (ImGui::Button("Load Difficulty"))
+					if (ImGui::Button(("Load Difficulty##DiffLoad" + std::to_string(ind)).c_str()))
 					{
 						FuckinEditor* editor = (FuckinEditor*)Game::instance->currentMenu;
 						currentDiff = ind;
 						editor->loadNotes(diff);
 					}
-					if (ImGui::Button("Delete Difficulty"))
+					if (ImGui::Button(("Delete Difficulty##DiffDelete" + std::to_string(ind)).c_str()))
 					{
 						// TODO: Delete diff
 					}
@@ -996,10 +996,9 @@ void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 	std::advance(it, snapSelect);
 	snap = it->first;
 
-	if (currentTime < selectedChart->meta.chartOffset)
-		currentTime = selectedChart->meta.chartOffset;
 
 	if (selectedChart)
+	{
 		switch (event.keysym.sym)
 		{
 		case SDLK_1:
@@ -1035,6 +1034,9 @@ void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 				createNote(3);
 			break;
 		}
+		if (currentTime < selectedChart->meta.chartOffset)
+			currentTime = selectedChart->meta.chartOffset;
+	}
 }
 
 void FuckinEditor::mouseWheel(float wheel)
@@ -1057,8 +1059,9 @@ void FuckinEditor::mouseWheel(float wheel)
 		beats = ((ceil(currentBeat * (float)snapConvert[snap]) - 0.001) / (float)snapConvert[snap]) + increase;
 	}
 	currentTime = selectedChart->getTimeFromBeat(beats, selectedChart->getSegmentFromBeat(beats));
+	currentTime += (selectedChart->getStopOffsetFromTime(currentTime) / 1000);
 	if (currentTime < selectedChart->meta.chartOffset)
-		currentTime = selectedChart->meta.chartOffset;
+		currentTime = selectedChart->meta.chartOffset + (selectedChart->getStopOffsetFromTime(currentTime) / 1000);
 	currentBeat = selectedChart->getBeatFromTime(currentTime, selectedChart->getSegmentFromTime(currentTime));
 	if (songPlaying)
 	{

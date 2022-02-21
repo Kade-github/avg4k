@@ -418,7 +418,7 @@ void window_chartProperties() {
 			ImGui::InputText("##Background", buf, sizeof(buf));
 			selectedChart->meta.background = std::string(buf);
 			ImGui::Text("Chart Offset:");
-			ImGui::InputFloat("##Offset", &offset, 1, 10, "%.4f");
+			ImGui::InputFloat("##Offset", &offset, .001, .01, "%.3f");
 			selectedChart->meta.chartOffset = offset;
 			ImGui::Separator();
 			if (ImGui::Button("Create Difficulty"))

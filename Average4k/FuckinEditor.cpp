@@ -409,12 +409,17 @@ void window_chartProperties() {
 				ind++;
 			}
 			ImGui::Separator();
-			ImGui::Text("Global Metadata:");
+			ImGui::Text("Global Metadata");
 			char buf[32];
 			strcpy_s(buf, selectedChart->meta.background.c_str());
+			float offset = selectedChart->meta.chartOffset;
 			ImGui::PushItemWidth(180);
-			ImGui::InputText("Background", buf, sizeof(buf));
+			ImGui::Text("Chart Background:");
+			ImGui::InputText("##Background", buf, sizeof(buf));
 			selectedChart->meta.background = std::string(buf);
+			ImGui::Text("Chart Offset:");
+			ImGui::InputFloat("##Offset", &offset, 1, 10, "%.4f");
+			selectedChart->meta.chartOffset = offset;
 			ImGui::Separator();
 			if (ImGui::Button("Create Difficulty"))
 			{
@@ -991,12 +996,8 @@ void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 	std::advance(it, snapSelect);
 	snap = it->first;
 
-	if (currentTime < 0)
-	{
-		currentBeat = 0;
-		bpmSegment curSeg = selectedChart->getSegmentFromBeat(currentBeat);
-		currentTime = selectedChart->getTimeFromBeat(currentBeat, curSeg);
-	}
+	if (currentTime < selectedChart->meta.chartOffset)
+		currentTime = selectedChart->meta.chartOffset;
 
 	if (selectedChart)
 		switch (event.keysym.sym)
@@ -1055,10 +1056,10 @@ void FuckinEditor::mouseWheel(float wheel)
 		increase = (float)-1 / (float)snapConvert[snap];
 		beats = ((ceil(currentBeat * (float)snapConvert[snap]) - 0.001) / (float)snapConvert[snap]) + increase;
 	}
-	if (beats < 0)
-		beats = 0;
-	currentBeat = beats;
 	currentTime = selectedChart->getTimeFromBeat(beats, selectedChart->getSegmentFromBeat(beats));
+	if (currentTime < selectedChart->meta.chartOffset)
+		currentTime = selectedChart->meta.chartOffset;
+	currentBeat = selectedChart->getBeatFromTime(currentTime, selectedChart->getSegmentFromTime(currentTime));
 	if (songPlaying)
 	{
 		song->setPos(currentTime);

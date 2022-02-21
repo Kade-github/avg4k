@@ -7,6 +7,7 @@
 #include "ReceptorObject.h"
 #include "NoteObject.h"
 #include "Text.h"
+
 typedef void(__cdecl* drawCall)();
 struct editorWindow {
 	std::string title;
@@ -19,6 +20,8 @@ struct editorWindow {
 struct thingy {
 	Text* text;
 	AvgRect* background;
+	float beat;
+	float time;
 };
 
 struct line {
@@ -82,6 +85,37 @@ public:
 				gameplay->add(l.text);
 				beatLines.push_back(l);
 			}
+		}
+	}
+
+	void regenThings(Chart* selectedChart)
+	{
+		for (bpmSegment seg : selectedChart->meta.bpms)
+		{
+			float beat = seg.startBeat;
+			float diff = selectedChart->getTimeFromBeat(beat, seg);
+
+			float bps = (Game::save->GetDouble("scrollspeed") / 60);
+
+			float noteOffset = (bps * (diff / 1000)) * (64 * Game::save->GetDouble("Note Size"));
+
+			AvgRect* rect = new AvgRect(((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) - 4, fuck[0]->y + noteOffset, 0, 25);
+			rect->c = { 50, 165, 50 };
+			rect->w = (((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * 3) - rect->x) + (68 * Game::save->GetDouble("Note Size") + 12);
+			rect->x += rect->w + 25;
+			rect->w = 95;
+
+			thingy t;
+			t.beat = beat;
+			t.time = diff;
+			t.background = rect;
+
+			t.text = new Text(rect->x + 4, rect->y + 2, "BPM " + std::format("%.2f",seg.bpm), 16, "Futura Bold");
+			t.background->w = t.text->surfW + 12;
+			t.background->h = t.text->surfH + 4;
+			gameplay->add(rect);
+			gameplay->add(t.text);
+			sideStuff.push_back(t);
 		}
 	}
 

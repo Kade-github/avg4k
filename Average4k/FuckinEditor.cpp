@@ -689,6 +689,18 @@ void FuckinEditor::update(Events::updateEvent event)
 		l.text->x = l.rect->x - (l.text->surfW + 4);
 	}
 
+	for (thingy& l : sideStuff)
+	{
+		float diff = l.time - currentTime;
+
+		float bps = (Game::save->GetDouble("scrollspeed") / 60);
+
+		float noteOffset = (bps * (diff / 1000)) * (64 * Game::save->GetDouble("Note Size"));
+		l.background->y = (fuck[0]->y + noteOffset) - 25;
+		l.text->y = l.background->y + 2;
+
+	}
+
 
 
 	if (songPlaying)
@@ -1086,8 +1098,10 @@ void FuckinEditor::loadNotes(difficulty diff)
 	}
 	beatLines.clear();
 	notes.clear();
+	sideStuff.clear();
 	bool downscroll = false;
 	regenBeatLines(selectedChart);
+	regenThings(selectedChart);
 	for (note n : diff.notes)
 	{
 		generateNoteObject(n, diff, selectedChart, notes);

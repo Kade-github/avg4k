@@ -227,7 +227,7 @@ void ChatObject::draw()
 
 	for (message& msg : messages)
 	{
-		msg.tagT->y = ((((texts->h + texts->y) - msg.text->surfH)) - (16 * msg.ind)) - (chatSend->h + 4);
+		msg.tagT->y = ((((texts->h + texts->y) - 16)) - (16 * msg.ind)) - (chatSend->h + 4);
 		msg.text->y = msg.tagT->y + 1;
 		if (msg.tagT->text != "NO_TAG")
 			msg.text->x = msg.tagT->surfW + 8;

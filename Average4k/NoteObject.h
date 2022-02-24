@@ -49,6 +49,8 @@ class NoteObject : public Object
 		bool wasHit;
 		bool clapped;
 
+		float tailBeat = 0;
+
 		bool debug = false;
 		double beat = 0;
 		float endTime = 0;

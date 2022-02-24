@@ -59,18 +59,28 @@ public:
 
 	void regenBeatLines(Chart* selectedChart)
 	{
+		for (line& thing : beatLines)
+		{
+			gameplay->removeObj(thing.rect);
+			gameplay->removeObj(thing.text);
+		}
+
+		beatLines.clear();
+
 		int lastBeat = -1;
-		for (int i = 0; i < song->length; i++)
+		for (int i = (int)(selectedChart->meta.chartOffset * 1000); i < song->length; i++)
 		{
 			bpmSegment seg = selectedChart->getSegmentFromTime(i);
 			float beat = selectedChart->getBeatFromTime(i, seg);
+			if (beat < 0)
+				continue;
 			float diff = i;
 
 			float bps = (Game::save->GetDouble("scrollspeed") / 60);
 
 			float noteOffset = (bps * (diff / 1000)) * (64 * Game::save->GetDouble("Note Size"));
 
-			if ((int)beat % 4 == 0 && lastBeat != (int)beat)
+			if (((int)beat % 4 == 0 || lastBeat == -1) && lastBeat != (int)beat)
 			{
 				lastBeat = (int)beat;
 				AvgRect* rect = new AvgRect(((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) - 4, fuck[0]->y + noteOffset, 0,2);
@@ -90,6 +100,14 @@ public:
 
 	void regenThings(Chart* selectedChart)
 	{
+		for (thingy& thing : sideStuff)
+		{
+			gameplay->removeObj(thing.background);
+			gameplay->removeObj(thing.text);
+		}
+
+		sideStuff.clear();
+
 		for (bpmSegment seg : selectedChart->meta.bpms)
 		{
 			float beat = seg.startBeat;
@@ -110,7 +128,43 @@ public:
 			t.time = diff;
 			t.background = rect;
 
-			t.text = new Text(rect->x + 4, rect->y + 2, "BPM " + std::format("%.2f",seg.bpm), 16, "Futura Bold");
+			char buffer[12];
+
+			sprintf_s(buffer, "%.2f", seg.bpm);
+
+			t.text = new Text(rect->x + 4, rect->y + 2, "BPM " + std::string(buffer), 16, "Futura Bold");
+			t.background->w = t.text->surfW + 12;
+			t.background->h = t.text->surfH + 4;
+			gameplay->add(rect);
+			gameplay->add(t.text);
+			sideStuff.push_back(t);
+		}
+
+		for (stopSegment seg : selectedChart->meta.stops)
+		{
+			float beat = seg.beat;
+			float diff = selectedChart->getTimeFromBeat(beat, selectedChart->getSegmentFromBeat(beat));
+
+			float bps = (Game::save->GetDouble("scrollspeed") / 60);
+
+			float noteOffset = (bps * (diff / 1000)) * (64 * Game::save->GetDouble("Note Size"));
+
+			AvgRect* rect = new AvgRect(((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) - 4, fuck[0]->y + noteOffset, 0, 25);
+			rect->c = { 138,43,226 };
+			rect->w = (((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * 3) - rect->x) + (68 * Game::save->GetDouble("Note Size") + 12);
+			rect->x += rect->w + 25;
+			rect->w = 95;
+
+			thingy t;
+			t.beat = beat;
+			t.time = diff;
+			t.background = rect;
+
+			char buffer[12];
+
+			sprintf_s(buffer, "%.2f", seg.length / 1000);
+
+			t.text = new Text(rect->x + 4, rect->y + 2, "Stop " + std::string(buffer) + "s", 16, "Futura Bold");
 			t.background->w = t.text->surfW + 12;
 			t.background->h = t.text->surfH + 4;
 			gameplay->add(rect);
@@ -119,7 +173,7 @@ public:
 		}
 	}
 
-	void generateNoteObject(note n, difficulty diff, Chart* selectedChart, std::vector<NoteObject*>& notes)
+	void generateNoteObject(note n, difficulty diff, Chart* selectedChart, std::vector<NoteObject*>& notes, bool findTail = true)
 	{
 		if (n.type == noteType::Note_Tail || n.type == noteType::Note_Mine)
 			return;
@@ -127,6 +181,7 @@ public:
 		NoteObject* object = new NoteObject();
 		object->fboMode = false;
 		object->currentChart = selectedChart;
+		object->connected = &n;
 		SDL_FRect rect;
 		object->wasHit = false;
 		object->clapped = false;
@@ -164,29 +219,43 @@ public:
 
 		float bps = (Game::save->GetDouble("scrollspeed") / 60);
 
-
-		if (object->type == Note_Head)
+		if (findTail)
 		{
-			for (int i = 0; i < diff.notes.size(); i++)
+			if (object->type == Note_Head)
 			{
-				note& nn = diff.notes[i];
-				if (nn.type != Note_Tail)
-					continue;
-				if (nn.lane != object->lane || nn.connectedBeat != n.beat)
-					continue;
+				for (int i = 0; i < diff.notes.size(); i++)
+				{
+					note& nn = diff.notes[i];
+					if (nn.type != Note_Tail)
+						continue;
+					if (nn.lane != object->lane || nn.connectedBeat != n.beat)
+						continue;
 
-				bpmSegment npreStopSeg = selectedChart->getSegmentFromBeat(nn.beat);
+					bpmSegment npreStopSeg = selectedChart->getSegmentFromBeat(nn.beat);
 
-				float nstopOffset = selectedChart->getStopOffsetFromBeat(nn.beat);
+					float nstopOffset = selectedChart->getStopOffsetFromBeat(nn.beat);
 
-				double nstopBeatOffset = (nstopOffset / 1000) * (npreStopSeg.bpm / 60);
+					double nstopBeatOffset = (nstopOffset / 1000) * (npreStopSeg.bpm / 60);
 
-				object->endBeat = nn.beat + nstopBeatOffset;
+					object->endBeat = nn.beat + nstopBeatOffset;
+					object->tailBeat = nn.beat;
 
-				object->endTime = selectedChart->getTimeFromBeatOffset(nn.beat + nstopBeatOffset, noteSeg);
-				tail = nn;
-				break;
+					object->endTime = selectedChart->getTimeFromBeatOffset(nn.beat + nstopBeatOffset, noteSeg);
+					tail = nn;
+					break;
+				}
 			}
+		}
+		else
+		{
+			note nn;
+			nn.beat = n.connectedBeat;
+			nn.connectedBeat = -1;
+			nn.type = noteType::Note_Tail;
+			nn.lane = n.lane;
+			object->tailBeat = nn.beat;
+			tail = nn;
+			object->endTime = selectedChart->getTimeFromBeatOffset(n.connectedBeat, noteSeg);
 		}
 
 		float time = SDL_GetTicks();

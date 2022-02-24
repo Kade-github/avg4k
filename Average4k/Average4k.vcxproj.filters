@@ -106,6 +106,9 @@
     <Filter Include="imgui">
       <UniqueIdentifier>{5cca7c23-cfd9-40c7-8409-494c9de8907c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MiniBPM">
+      <UniqueIdentifier>{b169299e-1ada-413a-a2dd-4c8058e38004}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Average4k.cpp">
@@ -242,6 +245,9 @@
     </ClCompile>
     <ClCompile Include="ImGuiFileDialog.cpp">
       <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniBpm.cpp">
+      <Filter>MiniBPM</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -511,6 +517,9 @@
     </ClInclude>
     <ClInclude Include="ImGuiFileDialog.h">
       <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="MiniBpm.h">
+      <Filter>MiniBPM</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

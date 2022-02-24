@@ -938,7 +938,7 @@ void Gameplay::update(Events::updateEvent event)
 							rect.y = y;
 							rect.x = 0;
 							rect.w = 64 * Game::save->GetDouble("Note Size");
-							rect.h = 68 * Game::save->GetDouble("Note Size");
+							rect.h = 64 * Game::save->GetDouble("Note Size");
 							tile.rect = rect;
 							tile.beat = beat;
 							tile.time = i;
@@ -1108,7 +1108,8 @@ void Gameplay::update(Events::updateEvent event)
 
 					if (keys[note->lane] || botplay)
 					{
-						colGroups[note->lane]->clipRect = l;
+						if (holding[note->lane])
+							colGroups[note->lane]->clipRect = l;
 					}
 
 				}

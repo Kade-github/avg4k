@@ -45,6 +45,8 @@ class NoteObject : public Object
 
 		int holdHeight;
 
+		float size;
+
 		int holdsActive = 0;
 		bool wasHit;
 		bool clapped;

@@ -32,7 +32,7 @@ void NoteObject::draw() {
 
     float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
 
-    float noteOffset = (bps * (diff / 1000)) * (64 * Game::save->GetDouble("Note Size"));
+    float noteOffset = (bps * (diff / 1000)) * (64 * size);
 
     bool downscroll = Game::save->GetBool("downscroll");
 
@@ -74,7 +74,7 @@ void NoteObject::draw() {
     else
         clipThingy.x = obj->x;
     clipThingy.y = rect.y + 32;
-    clipThingy.w = 64 * Game::save->GetDouble("Note Size");
+    clipThingy.w = 64 * size;
     clipThingy.h = holdHeight;
     if (downscroll) {
         clipThingy.y -= holdHeight;
@@ -107,12 +107,12 @@ void NoteObject::draw() {
 
         float diff2 = time - position;
 
-        float offsetFromY = (bps * (diff2 / 1000)) * (64 * Game::save->GetDouble("Note Size"));
+        float offsetFromY = (bps * (diff2 / 1000)) * (64 * size);
         tile.rect.y = receptor.y + offsetFromY;
         if (downscroll)
             tile.rect.y = receptor.y - offsetFromY;
 
-        dstRect.h = obj->h + 1;
+        dstRect.h = 65 * size;
 
         dstRect.y = tile.rect.y;
 

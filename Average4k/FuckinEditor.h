@@ -34,6 +34,9 @@ struct line {
 class FuckinEditor : public Menu
 {
 public:
+	float noteZoom = 1;
+	AvgSprite* lunder;
+	AvgSprite* lunderBorder;
 	void create() override;
 	Channel* song;
 	bool songPlaying = false;
@@ -78,14 +81,14 @@ public:
 
 			float bps = (Game::save->GetDouble("scrollspeed") / 60);
 
-			float noteOffset = (bps * (diff / 1000)) * (64 * Game::save->GetDouble("Note Size"));
+			float noteOffset = (bps * (diff / 1000)) * (64 * noteZoom);
 
 			if (((int)beat % 4 == 0 || lastBeat == -1) && lastBeat != (int)beat)
 			{
 				lastBeat = (int)beat;
-				AvgRect* rect = new AvgRect(((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) - 4, fuck[0]->y + noteOffset, 0,2);
+				AvgRect* rect = new AvgRect(((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) - 4, fuck[0]->y + noteOffset, 0,2);
 				rect->c = { 255,255,255 };
-				rect->w = (((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * 3) - rect->x) + (68 * Game::save->GetDouble("Note Size") + 12);
+				rect->w = (((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) + ((64 * noteZoom + 12) * 3) - rect->x) + (68 * noteZoom + 12);
 				line l;
 				l.rect = rect;
 				l.time = i;
@@ -115,11 +118,11 @@ public:
 
 			float bps = (Game::save->GetDouble("scrollspeed") / 60);
 
-			float noteOffset = (bps * (diff / 1000)) * (64 * Game::save->GetDouble("Note Size"));
+			float noteOffset = (bps * (diff / 1000)) * (64 * noteZoom);
 
-			AvgRect* rect = new AvgRect(((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) - 4, fuck[0]->y + noteOffset, 0, 25);
+			AvgRect* rect = new AvgRect(((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) - 4, fuck[0]->y + noteOffset, 0, 25);
 			rect->c = { 50, 165, 50 };
-			rect->w = (((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * 3) - rect->x) + (68 * Game::save->GetDouble("Note Size") + 12);
+			rect->w = (((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) + ((64 * noteZoom + 12) * 3) - rect->x) + (68 * noteZoom + 12);
 			rect->x += rect->w + 25;
 			rect->w = 95;
 
@@ -147,11 +150,11 @@ public:
 
 			float bps = (Game::save->GetDouble("scrollspeed") / 60);
 
-			float noteOffset = (bps * (diff / 1000)) * (64 * Game::save->GetDouble("Note Size"));
+			float noteOffset = (bps * (diff / 1000)) * (64 * noteZoom);
 
-			AvgRect* rect = new AvgRect(((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) - 4, fuck[0]->y + noteOffset, 0, 25);
+			AvgRect* rect = new AvgRect(((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) - 4, fuck[0]->y + noteOffset, 0, 25);
 			rect->c = { 138,43,226 };
-			rect->w = (((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * 3) - rect->x) + (68 * Game::save->GetDouble("Note Size") + 12);
+			rect->w = (((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) + ((64 * noteZoom + 12) * 3) - rect->x) + (68 * noteZoom + 12);
 			rect->x += rect->w + 25;
 			rect->w = 95;
 
@@ -180,6 +183,7 @@ public:
 		bool downscroll = false;
 		NoteObject* object = new NoteObject();
 		object->fboMode = false;
+		object->size = noteZoom;
 		object->currentChart = selectedChart;
 		object->connected = &n;
 		SDL_FRect rect;
@@ -207,8 +211,8 @@ public:
 		object->time = selectedChart->getTimeFromBeatOffset(object->beat, noteSeg);
 		rect.y = Game::gameHeight + 400;
 		rect.x = 0;
-		rect.w = 64 * Game::save->GetDouble("Note Size");
-		rect.h = 64 * Game::save->GetDouble("Note Size");
+		rect.w = 64 * noteZoom;
+		rect.h = 64 * noteZoom;
 		object->rect = rect;
 
 		note tail;
@@ -273,7 +277,7 @@ public:
 
 				float diff = whHold - (object->time);
 
-				float noteOffset = (bps * (diff / 1000)) * (64 * Game::save->GetDouble("Note Size"));
+				float noteOffset = (bps * (diff / 1000)) * (64 * noteZoom);
 
 				float y = 0;
 				float yDiff = 0;
@@ -297,21 +301,21 @@ public:
 				bool otherOne = false;
 
 				if (downscroll)
-					otherOne = yDiff <= -(64 * Game::save->GetDouble("Note Size"));
+					otherOne = yDiff <= -(64 * noteZoom);
 				else
-					otherOne = yDiff >= 64 * Game::save->GetDouble("Note Size");
+					otherOne = yDiff >= 64 * noteZoom;
 
 				if (otherOne || object->heldTilings.size() == 0)
 				{
-					object->holdHeight += 64 * Game::save->GetDouble("Note Size");
+					object->holdHeight += 64 * noteZoom;
 					holdTile tile;
 					SDL_FRect rect;
 					tile.active = true;
 					tile.fucked = false;
 					rect.y = y;
 					rect.x = 0;
-					rect.w = 64 * Game::save->GetDouble("Note Size");
-					rect.h = 68 * Game::save->GetDouble("Note Size");
+					rect.w = 64 * noteZoom;
+					rect.h = 68 * noteZoom;
 					tile.rect = rect;
 					tile.beat = beat;
 					tile.time = i;

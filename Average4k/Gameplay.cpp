@@ -657,14 +657,17 @@ void Gameplay::update(Events::updateEvent event)
 	{
 		float songPos = song->getPos() - Game::save->GetDouble("offset");
 		
-		if (std::abs(((positionInSong - Game::save->GetDouble("offset")) - songPos) >= 0.05))
+		float bruh = positionInSong - Game::save->GetDouble("offset");
+
+		if ((bruh - songPos) <= -0.05 
+			|| (bruh + songPos) >= 0.05)
 			positionInSong = songPos;
 		else
 			positionInSong += (Game::deltaTime - Game::save->GetDouble("offset"));
 	}
 	else
 		positionInSong += Game::deltaTime;
-
+	 
 	SDL_FRect bruh;
 	bruh.x = 0;
 	bruh.y = 0;
@@ -822,6 +825,7 @@ void Gameplay::update(Events::updateEvent event)
 			n.played = true;
 				NoteObject* object = new NoteObject();
 				object->currentChart = SongSelect::currentChart;
+				object->size = Game::save->GetDouble("Note Size");
 				object->connected = &n;
 				SDL_FRect rect;
 				object->wasHit = false;

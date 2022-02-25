@@ -730,6 +730,7 @@ void window_notif() {
 
 void FuckinEditor::create()
 {
+	noteZoom = 1;
 	addCamera(Game::mainCamera);
 
 	for (int i = 0; i < 4; i++)
@@ -748,12 +749,12 @@ void FuckinEditor::create()
 
 	Rect laneUnderway;
 
-	laneUnderway.x = ((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) - 4;
+	laneUnderway.x = ((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) - 4;
 	laneUnderway.y = -200;
-	laneUnderway.w = (((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * 3) - laneUnderway.x) + (68 * Game::save->GetDouble("Note Size") + 12);
+	laneUnderway.w = (((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) + ((64 * noteZoom + 12) * 3) - laneUnderway.x) + (68 * noteZoom + 12);
 	laneUnderway.h = 1280;
 
-	AvgSprite* lunder = new AvgSprite(laneUnderway.x, laneUnderway.y, Noteskin::getGameplayElement(Game::noteskin, "underway.png"));
+	lunder = new AvgSprite(laneUnderway.x, laneUnderway.y, Noteskin::getGameplayElement(Game::noteskin, "underway.png"));
 	add(lunder);
 	lunder->alpha = 0.8;
 
@@ -761,7 +762,7 @@ void FuckinEditor::create()
 	lunder->colorG = 35;
 	lunder->colorB = 35;
 
-	AvgSprite* lunderBorder = new AvgSprite(laneUnderway.x, laneUnderway.y, Noteskin::getGameplayElement(Game::noteskin, "underwayBorder.png"));
+	lunderBorder = new AvgSprite(laneUnderway.x, laneUnderway.y, Noteskin::getGameplayElement(Game::noteskin, "underwayBorder.png"));
 	add(lunderBorder);
 	lunderBorder->alpha = 1;
 
@@ -779,7 +780,7 @@ void FuckinEditor::create()
 
 	for (int i = 0; i < 4; i++)
 	{
-		float x = (lunder->x + 12) + (((64 * Game::save->GetDouble("Note Size") + 12)) * i);
+		float x = (lunder->x + 12) + (((64 * noteZoom + 12)) * i);
 
 		ReceptorObject* r = new ReceptorObject(x, 140, i);
 		r->defAlpha = 0.8;
@@ -796,8 +797,8 @@ void FuckinEditor::create()
 			r->angle = -90;
 			break;
 		}
-		r->w = (64 * Game::save->GetDouble("Note Size"));
-		r->h = (64 * Game::save->GetDouble("Note Size"));
+		r->w = (64 * noteZoom);
+		r->h = (64 * noteZoom);
 		fuck.push_back(r);
 	}
 
@@ -1095,6 +1096,7 @@ void FuckinEditor::imguiUpdate(float elapsed)
 	}
 }
 
+bool controlHeld = false;
 
 void FuckinEditor::keyUp(SDL_KeyboardEvent event)
 {
@@ -1116,6 +1118,9 @@ void FuckinEditor::keyUp(SDL_KeyboardEvent event)
 				break;
 			case SDLK_4:
 				saved[3] = n;
+				break;
+			case SDLK_LCTRL:
+				controlHeld = false;
 				break;
 		}
 }
@@ -1217,6 +1222,9 @@ void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 			else
 				createNote(3);
 			break;
+		case SDLK_LCTRL:
+			controlHeld = true;
+			break;
 		}
 		if (currentTime < selectedChart->meta.chartOffset)
 			currentTime = selectedChart->meta.chartOffset;
@@ -1231,6 +1239,56 @@ void FuckinEditor::mouseWheel(float wheel)
 	if (!selectedChart)
 		return;
 	float amount = wheel;
+	if (controlHeld)
+	{
+		if (amount < 0)
+			noteZoom -= 0.01;
+		else
+			noteZoom += 0.01;
+
+
+		Rect laneUnderway;
+
+		laneUnderway.x = ((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) - 4;
+		laneUnderway.y = -200;
+		laneUnderway.w = (((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) + ((64 * noteZoom + 12) * 3) - laneUnderway.x) + (68 * noteZoom + 12);
+		laneUnderway.h = 1280;
+
+		lunder->x = laneUnderway.x;
+		lunder->y = laneUnderway.y;
+		lunder->w = laneUnderway.w;
+		lunder->h = laneUnderway.h;
+
+		lunderBorder->x = laneUnderway.x;
+		lunderBorder->y = laneUnderway.y;
+		lunderBorder->w = laneUnderway.w;
+		lunderBorder->h = laneUnderway.h;
+
+		for (int i = 0; i < 4; i++)
+		{
+			ReceptorObject* obj = fuck[i];
+			float x = (laneUnderway.x + 12) + (((64 * noteZoom + 12)) * i);
+			obj->x = x;
+			obj->w = 64 * noteZoom;
+			obj->h = 64 * noteZoom;
+		}
+
+		for (NoteObject* obj : notes)
+		{
+			obj->size = noteZoom;
+			obj->w = 64 * noteZoom;
+			obj->h = 64 * noteZoom;
+			obj->rect.w = 64 * noteZoom;
+			obj->rect.h = 64 * noteZoom;
+			obj->connectedReceptor = fuck[obj->lane];
+		}
+
+		regenBeatLines(selectedChart);
+		regenThings(selectedChart);
+
+		return;
+	}
+
 	float increase = 0;
 	float beats = 0;
 	increase = 1.0f / static_cast<float>(snapConvert[snap]);

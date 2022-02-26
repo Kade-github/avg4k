@@ -72,10 +72,10 @@ void NoteObject::draw() {
     if (fboMode)
         clipThingy.x = 0;
     else
-        clipThingy.x = obj->x;
-    clipThingy.y = rect.y + 32;
+        clipThingy.x = fboX;
+    clipThingy.y = rect.y + (32 * size);
     clipThingy.w = 64 * size;
-    clipThingy.h = holdHeight;
+    clipThingy.h = holdHeight * size;
     if (downscroll) {
         clipThingy.y -= holdHeight;
     }
@@ -85,7 +85,7 @@ void NoteObject::draw() {
     if (fboMode)
         dstRect.x = 0;
     else
-        dstRect.x = obj->x;
+        dstRect.x = fboX;
     dstRect.y = rect.y;
     dstRect.w = rect.w;
     dstRect.h = rect.h;

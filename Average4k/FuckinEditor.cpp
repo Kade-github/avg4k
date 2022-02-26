@@ -780,7 +780,7 @@ void FuckinEditor::create()
 
 	for (int i = 0; i < 4; i++)
 	{
-		float x = (lunder->x + 12) + (((64 * noteZoom + 12)) * i);
+		float x = (lunder->x + 12) + ((((64 * noteZoom) + 12)) * i);
 
 		ReceptorObject* r = new ReceptorObject(x, 140, i);
 		r->defAlpha = 0.8;
@@ -847,8 +847,10 @@ void FuckinEditor::update(Events::updateEvent event)
 
 		float bps = (Game::save->GetDouble("scrollspeed") / 60);
 
-		float noteOffset = (bps * (diff / 1000)) * (64 * Game::save->GetDouble("Note Size"));
+		float noteOffset = (bps * (diff / 1000)) * (64 * noteZoom);
 		l.rect->y = fuck[0]->y + noteOffset;
+		l.rect->x = lunder->x;
+		l.rect->w = lunder->w;
 		l.text->y = l.rect->y - (l.text->surfH / 2);
 		l.text->x = l.rect->x - (l.text->surfW + 4);
 	}
@@ -859,7 +861,7 @@ void FuckinEditor::update(Events::updateEvent event)
 
 		float bps = (Game::save->GetDouble("scrollspeed") / 60);
 
-		float noteOffset = (bps * (diff / 1000)) * (64 * Game::save->GetDouble("Note Size"));
+		float noteOffset = (bps * (diff / 1000)) * (64 * noteZoom);
 		l.background->y = (fuck[0]->y + noteOffset) - 25;
 		l.text->y = l.background->y + 2;
 
@@ -1249,9 +1251,9 @@ void FuckinEditor::mouseWheel(float wheel)
 
 		Rect laneUnderway;
 
-		laneUnderway.x = ((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) - 4;
+		laneUnderway.x = ((Game::gameWidth / 2) - (((64 * noteZoom) + 12) * 2)) - 4;
 		laneUnderway.y = -200;
-		laneUnderway.w = (((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) + ((64 * noteZoom + 12) * 3) - laneUnderway.x) + (68 * noteZoom + 12);
+		laneUnderway.w = (((Game::gameWidth / 2) - (((64 * noteZoom) + 12) * 2)) + (((64 * noteZoom) + 12) * 3) - laneUnderway.x) + ((68 * noteZoom) + 12);
 		laneUnderway.h = 1280;
 
 		lunder->x = laneUnderway.x;
@@ -1267,7 +1269,7 @@ void FuckinEditor::mouseWheel(float wheel)
 		for (int i = 0; i < 4; i++)
 		{
 			ReceptorObject* obj = fuck[i];
-			float x = (laneUnderway.x + 12) + (((64 * noteZoom + 12)) * i);
+			float x = (laneUnderway.x + 12) + ((((64 * noteZoom) + 12)) * i);
 			obj->x = x;
 			obj->w = 64 * noteZoom;
 			obj->h = 64 * noteZoom;
@@ -1276,16 +1278,10 @@ void FuckinEditor::mouseWheel(float wheel)
 		for (NoteObject* obj : notes)
 		{
 			obj->size = noteZoom;
-			obj->w = 64 * noteZoom;
-			obj->h = 64 * noteZoom;
 			obj->rect.w = 64 * noteZoom;
 			obj->rect.h = 64 * noteZoom;
-			obj->connectedReceptor = fuck[obj->lane];
+			obj->fboX = fuck[obj->lane]->x;
 		}
-
-		regenBeatLines(selectedChart);
-		regenThings(selectedChart);
-
 		return;
 	}
 

@@ -184,6 +184,7 @@ public:
 		NoteObject* object = new NoteObject();
 		object->fboMode = false;
 		object->size = noteZoom;
+		object->fboX = fuck[n.lane]->x;
 		object->currentChart = selectedChart;
 		object->connected = &n;
 		SDL_FRect rect;

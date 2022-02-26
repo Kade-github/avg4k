@@ -56,6 +56,7 @@ class NoteObject : public Object
 		bool debug = false;
 		double beat = 0;
 		float endTime = 0;
+		float fboX = 0;
 		double endBeat = 0;
 		float rTime = 0;
 		bool active = true;

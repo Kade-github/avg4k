@@ -83,9 +83,9 @@ DWORD WINAPI SendPacketT(LPVOID param) {
     
         while (true) {
         VM_START
-            Sleep(1);
-
+          
         if (!connectionData) {
+            Sleep(1);
             continue;
         }
         
@@ -94,6 +94,7 @@ DWORD WINAPI SendPacketT(LPVOID param) {
 
             if (Multiplayer::sendQueue.empty()) {
                 Multiplayer::sendQueueLock.unlock();
+                Sleep(1);
                 continue;
             }
 
@@ -577,6 +578,7 @@ context_ptr on_tls_init(const char* hostname, websocketpp::connection_hdl) {
 
 bool firstConnection = false;
 
+
 DWORD WINAPI Multiplayer::connect(LPVOID agh)
 {
 
@@ -627,6 +629,8 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
 
             connectionData->c.set_tls_init_handler(bind(&on_tls_init, "titnoas.xyz", ::_1));
            
+
+            
 
             websocketpp::lib::error_code ec;
             client::connection_ptr con = connectionData->c.get_connection(url, ec);
@@ -679,6 +683,12 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
             std::cout << "done run" << std::endl;
             Multiplayer::loggedIn = false;
             connectedToServer = false;
+            
+            auto closeCode = con->get_remote_close_code();
+            std::string closeReason = con->get_remote_close_reason();
+            
+
+
             connectionData->c.reset();
         }
     }

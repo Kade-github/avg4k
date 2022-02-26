@@ -25,6 +25,8 @@ SaveFile::SaveFile()
     defaultSettings.push_back(CreateSetting(false, SDLK_k, "Right Key", true, 0, 1, true,0, ""));
     defaultSettings.push_back(CreateSetting(false, 0, "Noteskin", false, 0, 1, false, 0, "arrow"));
     defaultSettings.push_back(CreateSetting(false, 0, "Annoying bopping", true, 0, 1, false, 0, ""));
+    defaultSettings.push_back(CreateSetting(false, 0, "nonChange_chartTheme", false, 0, 3, false, 0, ""));
+    defaultSettings.push_back(CreateSetting(false, 0, "nonChange_chartHistory", false, 0, 3, false, 0, ""));
     std::ifstream ifs("settings.avg");
     if (!ifs.good())
     {

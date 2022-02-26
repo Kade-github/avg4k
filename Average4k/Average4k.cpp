@@ -4,6 +4,8 @@
 #include "Game.h"
 #include <DbgHelp.h>
 #include "AvgSprite.h"
+#include "imgui_impl_sdl.h"
+#include "imgui_impl_opengl3.h"
 using namespace std;
 
 #undef main
@@ -147,17 +149,19 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	fpsinit();
 
 	SDL_Window* window = SDL_CreateWindow("Average4k", SDL_WINDOWPOS_UNDEFINED,
-		SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
-
-	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
+		SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
+	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	// Create a OpenGL context on SDL2
 	SDL_GLContext gl_context = SDL_GL_CreateContext(window);
-
+	SDL_GL_MakeCurrent(window, gl_context);
 	// Load GL extensions using glad
 	if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
 		std::cerr << "Failed to initialize the OpenGL context." << std::endl;
@@ -166,6 +170,20 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	std::cout << "OpenGL version loaded: " << GLVersion.major << "."
 		<< GLVersion.minor << std::endl;
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.IniFilename = NULL;
+
+	io.DisplaySize.x = (float)200;
+	io.DisplaySize.y = (float)200;
+
+	ImGui_ImplSDL2_InitForOpenGL(Game::window, gl_context);
+	ImGui_ImplOpenGL3_Init("#version 150");
+
+
+	ImGui::StyleColorsDark();
+
 
 	GL::projection = glm::ortho(0.0f, (float)1280, (float)720, 0.0f, -1.0f, 1.0f);
 
@@ -191,6 +209,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	int lastTime = 0;
 
+	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
 	float timestamps[31], fps[31], deltaTimes[31];
 
 	for (int i = 0; i < 30; i++)
@@ -206,7 +226,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	Uint64 LAST = 0;
 
 	bool create = false;
-	//SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 	float time = 0;
 	float bruh = 0;
 	double next_tick = (double)SDL_GetTicks();
@@ -216,6 +236,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		double now_tick = (double)SDL_GetTicks();
 		if (now_tick >= next_tick)
 		{
+			glViewport(0, 0, 1280, 720);
 			bruh = time;
 			const Uint32 startTime = SDL_GetTicks();
 			LAST = NOW;
@@ -226,6 +247,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 			while (SDL_PollEvent(&event) > 0)
 			{
+				ImGui_ImplSDL2_ProcessEvent(&event);
 				switch (event.type) {
 				case SDL_QUIT: {
 					run = false;
@@ -249,13 +271,12 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 				}
 				case SDL_MOUSEWHEEL: {
 					wheel = event.wheel.y;
+					game->mouseWheel(wheel);
 					break;
 				}
 				}
 
 			}
-
-			glClear(GL_COLOR_BUFFER_BIT);
 
 			Events::updateEvent updateEvent;
 
@@ -269,11 +290,23 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 				create = true;
 			}
 
+			ImGui_ImplOpenGL3_NewFrame();
+			ImGui_ImplSDL2_NewFrame();
+			ImGui::NewFrame();
+
+			
+			glClear(GL_COLOR_BUFFER_BIT);
+
 
 			game->update(updateEvent);
 
 
+
 			Rendering::drawBatch();
+
+			ImGui::Render();
+			glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 			SDL_GL_SwapWindow(window);
 
@@ -301,6 +334,10 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	}
 
 	SDL_StopTextInput();
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
 
 	SDL_GL_DeleteContext(gl_context);
 	SDL_DestroyRenderer(renderer);

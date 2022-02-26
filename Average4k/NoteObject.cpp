@@ -12,28 +12,27 @@
 
 
 void NoteObject::draw() {
-    Gameplay* instance = (Gameplay*)Game::currentMenu;
 
-    float position = instance->positionInSong;
+    float position = rTime;
 
     Rect receptor;
 
-    ReceptorObject* obj = instance->receptors[lane];
+    Object* obj = connectedReceptor;
 
     receptor.x = obj->x;
     receptor.y = obj->y;
     receptor.w = obj->w;
     receptor.h = obj->h;
 
-    bpmSegment bruh = SongSelect::currentChart->getSegmentFromBeat(beat);
+    bpmSegment bruh = currentChart->getSegmentFromBeat(beat);
 
-    float wh = SongSelect::currentChart->getTimeFromBeat(beat, bruh);
+    float wh = currentChart->getTimeFromBeat(beat, bruh);
 
     float diff = (wh)-(position);
 
     float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
 
-    float noteOffset = (bps * (diff / 1000)) * (64 * Game::save->GetDouble("Note Size"));
+    float noteOffset = (bps * (diff / 1000)) * (64 * size);
 
     bool downscroll = Game::save->GetBool("downscroll");
 
@@ -48,7 +47,7 @@ void NoteObject::draw() {
 
     float beatRow = (beat - stopOffset) * 48;
 
-    if (SongSelect::currentChart->meta.chartType == 1) // osu/quaver
+    if (currentChart->meta.chartType == 1) // osu/quaver
     {
         float pos = (wh / 1000) - (bruh.startTime / 1000);
         float bps = 60 / bruh.bpm;
@@ -70,18 +69,23 @@ void NoteObject::draw() {
 
     Rect clipThingy;
 
-    clipThingy.x = 0;
-    clipThingy.y = rect.y + 32;
-    clipThingy.w = 64 * Game::save->GetDouble("Note Size");
-    clipThingy.h = holdHeight;
+    if (fboMode)
+        clipThingy.x = 0;
+    else
+        clipThingy.x = fboX;
+    clipThingy.y = rect.y + (32 * size);
+    clipThingy.w = 64 * size;
+    clipThingy.h = holdHeight * size;
     if (downscroll) {
         clipThingy.y -= holdHeight;
     }
 
     Rect dstRect;
     Rect srcRect;
-
-    dstRect.x = 0;
+    if (fboMode)
+        dstRect.x = 0;
+    else
+        dstRect.x = fboX;
     dstRect.y = rect.y;
     dstRect.w = rect.w;
     dstRect.h = rect.h;
@@ -99,24 +103,18 @@ void NoteObject::draw() {
 
     for (int i = 0; i < heldTilings.size(); i++) {
         holdTile& tile = heldTilings[i];
-        float time = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat));
+        float time = currentChart->getTimeFromBeat(tile.beat, currentChart->getSegmentFromBeat(tile.beat));
 
         float diff2 = time - position;
 
-        float offsetFromY = (bps * (diff2 / 1000)) * (64 * Game::save->GetDouble("Note Size"));
+        float offsetFromY = (bps * (diff2 / 1000)) * (64 * size);
         tile.rect.y = receptor.y + offsetFromY;
         if (downscroll)
             tile.rect.y = receptor.y - offsetFromY;
 
-        dstRect.h = tile.rect.h;
+        dstRect.h = 65 * size;
 
         dstRect.y = tile.rect.y;
-
-        if (tile.rect.y < receptor.y - 32 && !tile.active && !downscroll)
-            continue;
-
-        if (tile.rect.y > receptor.y + 48 && !tile.active && downscroll)
-            continue;
 
         if (i != heldTilings.size() - 1) {
             if (!downscroll)
@@ -154,7 +152,7 @@ void NoteObject::draw() {
 
     for (int i = 0; i < heldTilings.size(); i++) {
         holdTile& tile = heldTilings[i];
-        float time = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat));
+        float time = currentChart->getTimeFromBeat(tile.beat, currentChart->getSegmentFromBeat(tile.beat));
 
         float diff2 = time - position;
         bool condition = diff2 > -Judge::hitWindows[4];

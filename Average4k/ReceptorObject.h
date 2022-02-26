@@ -7,7 +7,7 @@ public:
 	int y;
 
 	int type;
-	
+	float defAlpha = 1;
 	float lightUpTimer;
 
 	ReceptorObject(int _x, int _y, int _type) {
@@ -24,7 +24,7 @@ public:
 
 	void light()
 	{
-		lightUpTimer = 1;
+		lightUpTimer = 195;
 	}
 
 	void draw() override;

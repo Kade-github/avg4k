@@ -158,6 +158,18 @@ namespace Tweening
 			double end = t.end;
 			double value = t.easeFunc(t.percnt);
 
+			if (!t.obj)
+			{
+				tweenRemove.push_back(t);
+				return;
+			}
+
+			if (t.obj->w < 0)
+			{
+				tweenRemove.push_back(t);
+				return;
+			}
+
 			switch (t.type)
 			{
 			case tt_Alpha:

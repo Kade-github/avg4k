@@ -27,6 +27,8 @@ void ReceptorObject::draw() {
 	dstRect.r = 255;
 	dstRect.g = 255;
 	dstRect.b = 255;
+	if (lightUpTimer > 0)
+		alpha = std::lerp(0, 1, lightUpTimer / 150);
 	dstRect.a = alpha;
 
 	srcRect.x = 0;
@@ -42,39 +44,45 @@ void ReceptorObject::draw() {
 		switch (type)
 		{
 		case 0:
-			if (lightUpTimer <= 0)
-				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, GL::genShader, 90);
-			else
+			dstRect.a = defAlpha;
+			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, GL::genShader, 90);
+			dstRect.a = alpha;
+			if (lightUpTimer > 0)
 				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, GL::genShader, 90);
+			
 
 			break;
 		case 1:
-			if (lightUpTimer <= 0)
-				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, GL::genShader);
-			else
+			dstRect.a = defAlpha;
+			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, GL::genShader);
+			dstRect.a = alpha;
+			if (lightUpTimer > 0)
 				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, GL::genShader);
 			break;
 		case 2:
 			srcRect.h = -1;
-			if (lightUpTimer <= 0)
-				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, GL::genShader);
-			else
+			dstRect.a = defAlpha;
+			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, GL::genShader);
+			dstRect.a = alpha;
+			if (lightUpTimer > 0)
 				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, GL::genShader);
 			srcRect.h = 1;
 			break;
 		case 3:
-			if (lightUpTimer <= 0)
-				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, GL::genShader, -90);
-			else
+			dstRect.a = defAlpha;
+			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, GL::genShader, -90);
+			dstRect.a = alpha;
+			if (lightUpTimer > 0)
 				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, GL::genShader, -90);
 			break;
 		}
 	}
 	else
 	{
-		if (lightUpTimer <= 0)
-			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, GL::genShader);
-		else
+		dstRect.a = defAlpha;
+		Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, GL::genShader);
+		dstRect.a = alpha;
+		if (lightUpTimer > 0)
 			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, GL::genShader);
 	}
 

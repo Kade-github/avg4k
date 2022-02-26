@@ -5,6 +5,7 @@
 #include "SPacketAvatarRequestResponse.h"
 #include "CPacketRequestAvatar.h"
 #include "AvgGroup.h"
+#include "FuckinEditor.h"
 
 bool MainMenu::tweened = false;
 
@@ -258,6 +259,16 @@ void MainMenu::keyDown(SDL_KeyboardEvent event)
 	{
 		changeMenu();
 	}
+	if (event.keysym.sym == SDLK_e)
+	{
+		for (Tweening::AvgButtonTweenable* b : buttons)
+		{
+			b->beforeDeath();
+			b->die();
+		}
+		Game::instance->transitionToMenu(new FuckinEditor());
+	}
+
 	if (event.keysym.sym == SDLK_LEFT)
 	{
 		buttons[selectedIndex]->selected = false;

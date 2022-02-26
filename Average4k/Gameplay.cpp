@@ -655,17 +655,19 @@ void Gameplay::update(Events::updateEvent event)
 	
 	if (play)
 	{
-		positionInSong -= Game::save->GetDouble("offset");
 		float songPos = song->getPos() - Game::save->GetDouble("offset");
 		
-		if (std::abs((positionInSong - songPos) >= 0.05))
+		float bruh = positionInSong - Game::save->GetDouble("offset");
+
+		if ((bruh - songPos) <= -0.05 
+			|| (bruh + songPos) >= 0.05)
 			positionInSong = songPos;
 		else
-			positionInSong += Game::deltaTime;
+			positionInSong += (Game::deltaTime - Game::save->GetDouble("offset"));
 	}
 	else
 		positionInSong += Game::deltaTime;
-
+	 
 	SDL_FRect bruh;
 	bruh.x = 0;
 	bruh.y = 0;
@@ -822,6 +824,8 @@ void Gameplay::update(Events::updateEvent event)
 		{
 			n.played = true;
 				NoteObject* object = new NoteObject();
+				object->currentChart = SongSelect::currentChart;
+				object->size = Game::save->GetDouble("Note Size");
 				object->connected = &n;
 				SDL_FRect rect;
 				object->wasHit = false;
@@ -838,6 +842,7 @@ void Gameplay::update(Events::updateEvent event)
 
 				object->beat = (double) n.beat + stopBeatOffset;
 				object->lane = n.lane;
+				object->connectedReceptor = receptors[n.lane];
 				object->type = n.type;
 				object->endTime = -1;
 				object->endBeat = -1;
@@ -937,7 +942,7 @@ void Gameplay::update(Events::updateEvent event)
 							rect.y = y;
 							rect.x = 0;
 							rect.w = 64 * Game::save->GetDouble("Note Size");
-							rect.h = 68 * Game::save->GetDouble("Note Size");
+							rect.h = 64 * Game::save->GetDouble("Note Size");
 							tile.rect = rect;
 							tile.beat = beat;
 							tile.time = i;
@@ -992,6 +997,8 @@ void Gameplay::update(Events::updateEvent event)
 		}
 		else
 		{
+			if (!botplay)
+				receptors[i]->lightUpTimer = 0;
 			if (receptors[i]->scale < 1.0 && Game::noteskin->shrink)
 			{
 				receptors[i]->scale += Game::deltaTime * 0.04;
@@ -1005,6 +1012,7 @@ void Gameplay::update(Events::updateEvent event)
 		for (int i = 0; i < spawnedNotes.size(); i++)
 		{
 			NoteObject* note = spawnedNotes[i];
+			note->rTime = positionInSong;
 
 			if (!note->destroyed)
 			{
@@ -1027,7 +1035,7 @@ void Gameplay::update(Events::updateEvent event)
 
 						std::string format = std::to_string(diff - fmod(diff, 0.01));
 						format.erase(format.find_last_not_of('0') + 1, std::string::npos);
-						receptors[note->lane]->lightUpTimer = 100;
+						receptors[note->lane]->lightUpTimer = 195;
 						Judgement->setText("botplay");
 						(*Judgement).color.r = 0;
 						(*Judgement).color.g = 255;
@@ -1070,7 +1078,7 @@ void Gameplay::update(Events::updateEvent event)
 							float offset = wh;
 							if (botplay && offset - positionInSong > 0 && offset - positionInSong < (Judge::hitWindows[1] * 0.5))
 							{
-								receptors[note->lane]->lightUpTimer = 100;
+								receptors[note->lane]->lightUpTimer = 195;
 							}
 							if (offset - positionInSong <= Judge::hitWindows[2] && !tile.fucked)
 							{
@@ -1104,7 +1112,8 @@ void Gameplay::update(Events::updateEvent event)
 
 					if (keys[note->lane] || botplay)
 					{
-						colGroups[note->lane]->clipRect = l;
+						if (holding[note->lane])
+							colGroups[note->lane]->clipRect = l;
 					}
 
 				}

@@ -124,8 +124,8 @@ void AvgCamera::draw()
 
 	Rendering::PushQuad(&dstRect, &srcRect, ctb, GL::genShader);
 
-	if (!glGetError())
-		std::cout << "error: " << glGetError() << std::endl;
+	//if (!glGetError())
+		//std::cout << "opgl error: " << glGetError() << std::endl;
 
 	if (tint.r != -1)
 	{

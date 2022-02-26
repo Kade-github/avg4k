@@ -20,6 +20,8 @@ void SettingsMenu::refreshList() {
 	for (int i = 0; i < Game::save->settings.size(); i++)
 	{
 		setting& set = Game::save->settings[i];
+		if (std::string(set.name).starts_with("nonChange_"))
+			continue;
 		std::string value = "";
 		if (set.takesActive)
 			value = ": " + std::string((set.active ? " true" : " false"));

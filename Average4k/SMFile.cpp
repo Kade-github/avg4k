@@ -22,6 +22,8 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
     float beat = 0;
     int measureIndex = 0;
 
+    note notes[4] = {};
+
     std::unique_ptr<std::vector < std::string >> measure = std::make_unique<std::vector<std::string>>();
 
     // I don't want to talk about this code >:(
@@ -216,12 +218,15 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                                         break;
                                     case '2':
                                         note.type = Note_Head;
+                                        notes[n] = note;
                                         break;
                                     case '3':
                                         note.type = Note_Tail;
+                                        note.connectedBeat = notes[n].beat;
                                         break;
                                     case '4':
                                         note.type = Note_Head;
+                                        notes[n] = note;
                                         break;
 
                                     }

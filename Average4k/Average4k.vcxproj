@@ -97,7 +97,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ForcedIncludeFiles>pch.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -132,7 +132,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>include</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <Optimization>MaxSpeed</Optimization>
@@ -193,13 +193,23 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="ChatObject.cpp" />
     <ClCompile Include="Easing.cpp" />
     <ClCompile Include="FONT\SDL_ttf.c" />
+    <ClCompile Include="FuckinEditor.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Gameplay.cpp" />
     <ClCompile Include="GL.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="imgui.cpp" />
+    <ClCompile Include="ImGuiFileDialog.cpp" />
+    <ClCompile Include="imgui_demo.cpp" />
+    <ClCompile Include="imgui_draw.cpp" />
+    <ClCompile Include="imgui_impl_opengl3.cpp" />
+    <ClCompile Include="imgui_impl_sdl.cpp" />
+    <ClCompile Include="imgui_tables.cpp" />
+    <ClCompile Include="imgui_widgets.cpp" />
     <ClCompile Include="Judge.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="MenuCreator.cpp" />
+    <ClCompile Include="MiniBpm.cpp" />
     <ClCompile Include="Multiplayer.cpp" />
     <ClCompile Include="MultiplayerLobbies.cpp" />
     <ClCompile Include="MultiplayerLobby.cpp" />
@@ -250,11 +260,22 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="Easing.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FONT\SDL_ttf.h" />
+    <ClInclude Include="FuckinEditor.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Gameplay.h" />
     <ClInclude Include="GL.h" />
     <ClInclude Include="Helpers.h" />
+    <ClInclude Include="imconfig.h" />
+    <ClInclude Include="imgui.h" />
+    <ClInclude Include="ImGuiFileDialog.h" />
+    <ClInclude Include="imgui_impl_opengl3.h" />
+    <ClInclude Include="imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="imgui_impl_sdl.h" />
+    <ClInclude Include="imgui_internal.h" />
+    <ClInclude Include="imstb_rectpack.h" />
+    <ClInclude Include="imstb_textedit.h" />
+    <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="includes.h" />
     <ClInclude Include="Judge.h" />
     <ClInclude Include="Lobby.h" />
@@ -263,6 +284,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MenuCreator.h" />
+    <ClInclude Include="MiniBpm.h" />
     <ClInclude Include="Multiplayer.h" />
     <ClInclude Include="MultiplayerLobbies.h" />
     <ClInclude Include="MultiplayerLobby.h" />

@@ -57,9 +57,10 @@ public:
 		std::cout << "removed all " << children.size() << std::endl;
 		cam->children.clear();
 	}
-
+	virtual void imguiUpdate(float elapsed) {};
 	virtual void update(Events::updateEvent ev) = 0;
 	virtual void postUpdate(Events::updateEvent ev) {};
 	virtual void keyDown(SDL_KeyboardEvent ev) {};
 	virtual void keyUp(SDL_KeyboardEvent ev) {};
+	virtual void mouseWheel(float wheel) {};
 };

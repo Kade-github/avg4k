@@ -13,6 +13,7 @@ std::vector<std::string> Chart::split(std::string str, char delimiter)
     return internal;
 }
 
+
 float Chart::getTimeFromBeat(float beat, bpmSegment seg) {
     float beatThing = (beat - seg.startBeat) / (seg.bpm / 60);
     return seg.startTime + (beatThing * 1000) - (meta.chartOffset * 1000);

@@ -2,12 +2,19 @@
 #include "includes.h"
 #include "bass_fx.h"
 #include "Chart.h"
+#include "MiniBpm.h"
+
 class Channel {
 public:
 	float bpm = 0; // this is used to set the bpm, when ever we want to.
+	std::vector<double> bpmCan;
 	unsigned long id = -1;
+	unsigned long bpmChanId = -1;
 	float rate = 1;
 	int length = 0;
+
+	float detectedBPMProg = 0;
+
 	std::string path;
 	Channel(unsigned long channelId)
 	{
@@ -27,6 +34,7 @@ public:
 	{
 		if (id == -1)
 			return;
+		BASS_ChannelFree(bpmChanId);
 		BASS_ChannelFree(id);
 	}
 
@@ -57,6 +65,36 @@ public:
 		if (id == -1)
 			return 0;
 		return BASS_ChannelBytes2Seconds(id, BASS_ChannelGetPosition(id, BASS_POS_BYTE)) * 1000;
+	}
+
+	float returnSampleRate()
+	{
+		float sample;
+		BASS_ChannelGetAttribute(id, BASS_ATTRIB_FREQ, &sample);
+		return sample;
+	}
+
+	void bpmDetect(float* samples, int length, bool freeSamples = false)
+	{
+
+		breakfastquay::MiniBPM finder = breakfastquay::MiniBPM(returnSampleRate());
+
+		finder.setBPMRange(55, 245);
+		float banger = (float)finder.estimateTempoOfSamples(samples, length);
+		bpmCan = finder.getTempoCandidates();
+		if (freeSamples)
+			std::free(samples);
+
+		bpm = banger;
+	}
+
+	float* returnSamples(float length)
+	{
+		// FREE THIS KADE :))))
+		float* samples = (float*)std::malloc(sizeof(float) * length);
+
+		BASS_ChannelGetData(id, samples, BASS_DATA_FFT_COMPLEX);
+		return samples;
 	}
 
 	void setPos(float ms)
@@ -105,6 +143,17 @@ public:
 	static Channel* getChannelByName(std::string name)
 	{
 		return channels[name];
+	}
+
+	static Channel* getChannelById(unsigned long id, bool testBPMChannel = false)
+	{
+		Channel* notFound = nullptr;
+		for (std::map<std::string, Channel*>::iterator iter = channels.begin(); iter != channels.end(); ++iter)
+		{
+			if (iter->second->id == id || (testBPMChannel && iter->second->bpmChanId == id))
+				return iter->second;
+		}
+		return notFound;
 	}
 
 	static void removeChannel(std::string name)

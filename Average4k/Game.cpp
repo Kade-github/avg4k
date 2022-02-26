@@ -7,7 +7,9 @@
 #include "MultiplayerLobby.h"
 #include "AvgRect.h"
 #include "msgpack.hpp"
+#include "FuckinEditor.h"
 #include "TweenManager.h"
+#include "imgui_impl_sdl.h"
 #include "Helpers.h"
 using namespace std;
 
@@ -140,6 +142,7 @@ void Game::createGame()
 	steam->InitSteam();
 	
 
+
 	save = new SaveFile();
 
 	noteskin = Noteskin::getNoteskin();
@@ -224,8 +227,12 @@ void Game::update(Events::updateEvent update)
 
 	mainCamera->update(update);
 
+
 	if (currentMenu != nullptr && currentMenu->created)
+	{
 		currentMenu->update(update);
+		currentMenu->imguiUpdate(Game::deltaTime);
+	}
 
 	if (!transitioning && SDL_GetTicks() % 250 == 0)
 	{
@@ -386,7 +393,9 @@ void Game::update(Events::updateEvent update)
 
 void Game::keyDown(SDL_KeyboardEvent ev)
 {
-	if (transitioning)
+	if (transitioning || !currentMenu)
+		return;
+	if (!currentMenu->created)
 		return;
 	MUTATE_START
 	if (ev.keysym.sym == SDLK_ESCAPE && debug_takingInput)
@@ -481,6 +490,10 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 			else
 				db_addLine("no more flow time >:((((");
 		}
+		else if (debug_string == "editor")
+		{
+			transitionToMenu(new FuckinEditor());
+		}
 		else
 		{
 			db_addLine("No command found");
@@ -569,7 +582,9 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 
 void Game::keyUp(SDL_KeyboardEvent ev)
 {
-	if (transitioning)
+	if (transitioning || !currentMenu)
+		return;
+	if (!currentMenu->created)
 		return;
 	if (controls.count(ev.keysym.sym) == 1)
 		controls[ev.keysym.sym] = false;
@@ -581,6 +596,13 @@ void Game::keyUp(SDL_KeyboardEvent ev)
 		Object* bruh = (*objects)[i];
 		//bruh->keyUp(ev);
 	}
+}
+void Game::mouseWheel(float wheel)
+{
+	if (!currentMenu)
+		return;
+	if (currentMenu->created)
+		currentMenu->mouseWheel(wheel);
 }
 //asd
 void Game::weGotPacket(Events::packetEvent p)

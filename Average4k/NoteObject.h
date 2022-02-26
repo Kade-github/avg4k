@@ -2,6 +2,7 @@
 #include "includes.h"
 #include "SMFile.h"
 #include "MainMenu.h"
+#include "Chart.h"
 
 struct holdTile {
 	float time;
@@ -20,29 +21,44 @@ struct holdTile {
 class NoteObject : public Object
 {
 	public:
-		NoteObject() {
+		NoteObject()  {
 			setX(0);
 			setY(0);
 			w = 64;
 			h = 64;
+			Object::currentId++;
+			id = Object::currentId;
 		};
 		~NoteObject() {};
 		note* connected;
 		Text* debugText;
 
+		bool fboMode = true;
+
+		Chart* currentChart;
+
+		float time;
+
+		Object* connectedReceptor;
+
 		float stopOffset;
 
 		int holdHeight;
+
+		float size;
 
 		int holdsActive = 0;
 		bool wasHit;
 		bool clapped;
 
+		float tailBeat = 0;
+
 		bool debug = false;
 		double beat = 0;
 		float endTime = 0;
+		float fboX = 0;
 		double endBeat = 0;
-		float time = 0;
+		float rTime = 0;
 		bool active = true;
 		bool destroyed = false;
 		int lane = 0;

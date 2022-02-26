@@ -103,6 +103,12 @@
     <Filter Include="FontStuff\lib">
       <UniqueIdentifier>{8f707079-2bf9-4451-8c60-ea650b9c420e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{5cca7c23-cfd9-40c7-8409-494c9de8907c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MiniBPM">
+      <UniqueIdentifier>{b169299e-1ada-413a-a2dd-4c8058e38004}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Average4k.cpp">
@@ -212,6 +218,36 @@
     </ClCompile>
     <ClCompile Include="FONT\SDL_ttf.c">
       <Filter>FontStuff\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="FuckinEditor.cpp">
+      <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_widgets.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_sdl.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_demo.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_tables.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_opengl3.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuiFileDialog.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniBpm.cpp">
+      <Filter>MiniBPM</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -448,6 +484,42 @@
     </ClInclude>
     <ClInclude Include="FONT\SDL_ttf.h">
       <Filter>FontStuff\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="FuckinEditor.h">
+      <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
+    </ClInclude>
+    <ClInclude Include="imconfig.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_internal.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_rectpack.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_textedit.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_truetype.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_sdl.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_opengl3.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_opengl3_loader.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiFileDialog.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="MiniBpm.h">
+      <Filter>MiniBPM</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -863,6 +863,8 @@ void FuckinEditor::update(Events::updateEvent event)
 
 		float noteOffset = (bps * (diff / 1000)) * (64 * noteZoom);
 		l.background->y = (fuck[0]->y + noteOffset) - 25;
+		l.background->x = (lunder->x + lunder->w) + 25;
+		l.text->x = l.background->x + 4;
 		l.text->y = l.background->y + 2;
 
 	}
@@ -1247,6 +1249,11 @@ void FuckinEditor::mouseWheel(float wheel)
 			noteZoom -= 0.01;
 		else
 			noteZoom += 0.01;
+
+		if (noteZoom < 0.2)
+			noteZoom = 0.2;
+		else if (noteZoom > 2)
+			noteZoom = 2;
 
 
 		Rect laneUnderway;

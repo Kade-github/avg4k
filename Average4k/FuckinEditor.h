@@ -17,6 +17,13 @@ struct editorWindow {
 	float xOff = 0;
 };
 
+struct waveformSeg {
+	AvgSprite* sprite;
+	float time;
+	float length;
+	int offset;
+};
+
 struct thingy {
 	Text* text;
 	AvgRect* background;
@@ -29,6 +36,7 @@ struct line {
 	float time;
 	AvgRect* rect;
 	Text* text;
+	float freqR;
 };
 
 class FuckinEditor : public Menu
@@ -39,9 +47,24 @@ public:
 	AvgSprite* lunderBorder;
 	void create() override;
 	Channel* song;
+	std::vector<Channel*> clapChannels;
+	std::vector<float> beatsClapped;
+	bool findClapped(float beat)
+	{
+		for (float f : beatsClapped)
+		{
+			if (f == beat)
+				return true;
+		}
+		return false;
+	}
 	bool songPlaying = false;
 	AvgGroup* gameplay;
+	AvgGroup* lines;
+	AvgGroup* wave;
 	AvgGroup* top;
+
+	std::vector<waveformSeg> waveform;
 
 	void update(Events::updateEvent event) override;
 	void imguiUpdate(float elapsed) override;
@@ -51,7 +74,10 @@ public:
 	bool focused = false;
 
 	std::vector<line> beatLines;
+	std::vector<line> snapBeat;
 	std::vector<thingy> sideStuff;
+
+	std::vector<line> waveFormStuff;
 
 	void keyDown(SDL_KeyboardEvent event) override;
 	void keyUp(SDL_KeyboardEvent event) override;
@@ -60,18 +86,69 @@ public:
 
 	void loadNotes(difficulty diff);
 
+	void generateWaveForm();
+
+	void generateSnapLines(Chart* selectedChart, float snapDiv)
+	{
+		for (line thing : snapBeat)
+		{
+			lines->removeObj(thing.rect);
+			//gameplay->removeObj(thing.text);
+		}
+		snapBeat.clear();
+		int lastBeat = -1;
+		for (int i = 0; i < song->length; i++)
+		{
+			bpmSegment seg = selectedChart->getSegmentFromTime(i);
+			float beat = selectedChart->getBeatFromTime(i, seg);
+			if (beat < 0)
+				continue;
+
+			float diff = i;
+
+			float bps = (Game::save->GetDouble("scrollspeed") / 60);
+
+			float noteOffset = (bps * (diff / 1000)) * (64 * noteZoom);
+
+			if (lastBeat != (int)beat)
+			{
+				lastBeat = (int)beat;
+				AvgRect* rect = new AvgRect(((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) - 4, fuck[0]->y + noteOffset + (32 * noteZoom), 0, 2);
+				rect->c = { 128,128,128 };
+				rect->w = (((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) + ((64 * noteZoom + 12) * 3) - rect->x) + (68 * noteZoom + 12);
+				line l;
+				l.rect = rect;
+				l.time = i;
+				l.beat = beat;
+				//l.text = new Text(rect->x - 10, rect->y, std::to_string((int)snappedBeat), 16, "Futura Bold");
+				lines->add(rect);
+				//gameplay->add(l.text);
+				snapBeat.push_back(l);
+			}
+		}
+	}
+
+	float getWaveLength(float second, Chart* selectedChart)
+	{
+		float time = second * 1000;
+
+		float bps = (Game::save->GetDouble("scrollspeed") / 60);
+
+		return (bps * (time / 1000)) * (64 * noteZoom);
+	}
+
 	void regenBeatLines(Chart* selectedChart)
 	{
-		for (line& thing : beatLines)
+		for (line thing : beatLines)
 		{
-			gameplay->removeObj(thing.rect);
-			gameplay->removeObj(thing.text);
+			lines->removeObj(thing.rect);
+			lines->removeObj(thing.text);
 		}
 
 		beatLines.clear();
 
 		int lastBeat = -1;
-		for (int i = (int)(selectedChart->meta.chartOffset * 1000); i < song->length; i++)
+		for (int i = 0; i < song->length; i++)
 		{
 			bpmSegment seg = selectedChart->getSegmentFromTime(i);
 			float beat = selectedChart->getBeatFromTime(i, seg);
@@ -86,7 +163,7 @@ public:
 			if (((int)beat % 4 == 0 || lastBeat == -1) && lastBeat != (int)beat)
 			{
 				lastBeat = (int)beat;
-				AvgRect* rect = new AvgRect(((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) - 4, fuck[0]->y + noteOffset, 0,2);
+				AvgRect* rect = new AvgRect(((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) - 4, fuck[0]->y + noteOffset + (32 * noteZoom), 0,2);
 				rect->c = { 255,255,255 };
 				rect->w = (((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) + ((64 * noteZoom + 12) * 3) - rect->x) + (68 * noteZoom + 12);
 				line l;
@@ -94,8 +171,8 @@ public:
 				l.time = i;
 				l.beat = beat;
 				l.text = new Text(rect->x - 10, rect->y, std::to_string((int)beat), 16, "Futura Bold");
-				gameplay->add(rect);
-				gameplay->add(l.text);
+				lines->add(rect);
+				lines->add(l.text);
 				beatLines.push_back(l);
 			}
 		}

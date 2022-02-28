@@ -38,7 +38,7 @@ public:
 				return ob->id == obj->id;
 				}),
 			children.end());
-		if (obj->id >= 0)
+		if (obj->id >= 0 && !obj->isDead)
 			delete obj;
 	}
 

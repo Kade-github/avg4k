@@ -418,7 +418,7 @@ void Gameplay::create() {
 	std::cout << "playing " << path << std::endl;
 
 	song = SoundManager::createChannel(path.c_str(), "gameplaySong");
-	clap = SoundManager::createChannel("assets/sounds/hitSound.mp3", "clapFx");
+	clap = SoundManager::createChannel("assets/sounds/hitSound.wav", "clapFx");
 
 	song->createFXStream();
 

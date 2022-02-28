@@ -16,7 +16,7 @@ void AvgCamera::draw()
 			continue;
 		if (obj->w < 0 || obj->h < 0)
 			continue;
-		if (obj->children.size() < 9000)
+		if (obj->children.size() < 900000)
 		{
 			//glBindFramebuffer(GL_FRAMEBUFFER, fb);
 

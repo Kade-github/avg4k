@@ -1,7 +1,39 @@
 #include "AvgGroup.h"
 
-void AvgGroup::draw() 
+
+
+
+void AvgGroup::forceDraw()
+{
+	Rendering::setBlend();
+	Rendering::drawBatch();
+	glBindFramebuffer(GL_FRAMEBUFFER, fb);
+	bind(ctb->width,ctb->height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glClearColor(0, 0, 0, 0);
+	Rendering::setBlendSep();
+
+	for (Object* obj : children)
 	{
+		if (obj == nullptr)
+			continue;
+		if (obj->children.size() < 900000)
+		{
+			//glBindFramebuffer(GL_FRAMEBUFFER, fb);
+			obj->draw();
+			Rendering::setBlend();
+		}
+	}
+	Rendering::setBlend();
+	Rendering::drawBatch();
+	bind(1280, 720);
+}
+
+void AvgGroup::draw()
+	{
+		if (renderOnce)
+			return;
+
 		Rendering::setBlend();
 		Rendering::drawBatch();
 		glBindFramebuffer(GL_FRAMEBUFFER, fb);
@@ -13,7 +45,7 @@ void AvgGroup::draw()
 		{
 			if (obj == nullptr)
 				continue;
-			if (obj->children.size() < 9000)
+			if (obj->children.size() < 900000)
 			{
 				//glBindFramebuffer(GL_FRAMEBUFFER, fb);
 				obj->draw();

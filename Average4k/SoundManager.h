@@ -9,7 +9,7 @@ public:
 	float bpm = 0; // this is used to set the bpm, when ever we want to.
 	std::vector<double> bpmCan;
 	unsigned long id = -1;
-	unsigned long bpmChanId = -1;
+	unsigned long decodeChan = -1;
 	float rate = 1;
 	int length = 0;
 
@@ -20,6 +20,7 @@ public:
 	{
 		id = channelId;
 		QWORD word = BASS_ChannelGetLength(id, BASS_POS_BYTE);
+
 
 		length = BASS_ChannelBytes2Seconds(id, word) * 1000;
 	}
@@ -34,7 +35,8 @@ public:
 	{
 		if (id == -1)
 			return;
-		BASS_ChannelFree(bpmChanId);
+		if (decodeChan != -1)
+			BASS_ChannelFree(decodeChan);
 		BASS_ChannelFree(id);
 	}
 
@@ -88,12 +90,38 @@ public:
 		bpm = banger;
 	}
 
-	float* returnSamples(float length)
+	float* returnSongSample(float* sampleLength)
+	{
+		if (decodeChan == -1)
+		{
+			decodeChan = BASS_StreamCreateFile(false, path.c_str(), 0, 0, BASS_SAMPLE_FLOAT | BASS_STREAM_DECODE);
+		}
+
+		float leng = BASS_ChannelGetLength(decodeChan, BASS_POS_BYTE);
+
+		float* samples = (float*)std::malloc(leng);
+
+		leng = BASS_ChannelGetData(decodeChan, samples, leng);
+		*sampleLength = leng;
+
+		return samples;
+	}
+
+	float* returnSamples(float length, float* nonFFTLength, bool FFT = true)
 	{
 		// FREE THIS KADE :))))
 		float* samples = (float*)std::malloc(sizeof(float) * length);
 
-		BASS_ChannelGetData(id, samples, BASS_DATA_FFT_COMPLEX);
+		if (decodeChan == -1)
+		{
+			decodeChan = BASS_StreamCreateFile(false, path.c_str(), 0, 0, BASS_SAMPLE_FLOAT | BASS_STREAM_DECODE);
+		}
+
+		if (FFT)
+			BASS_ChannelGetData(decodeChan, samples, BASS_DATA_FFT_COMPLEX);
+
+		std::cout << BASS_ErrorGetCode() << std::endl;
+
 		return samples;
 	}
 
@@ -150,7 +178,7 @@ public:
 		Channel* notFound = nullptr;
 		for (std::map<std::string, Channel*>::iterator iter = channels.begin(); iter != channels.end(); ++iter)
 		{
-			if (iter->second->id == id || (testBPMChannel && iter->second->bpmChanId == id))
+			if (iter->second->id == id)
 				return iter->second;
 		}
 		return notFound;

@@ -27,6 +27,10 @@ SaveFile::SaveFile()
     defaultSettings.push_back(CreateSetting(false, 0, "Annoying bopping", true, 0, 1, false, 0, ""));
     defaultSettings.push_back(CreateSetting(false, 0, "nonChange_chartTheme", false, 0, 3, false, 0, ""));
     defaultSettings.push_back(CreateSetting(false, 0, "nonChange_chartHistory", false, 0, 3, false, 0, ""));
+    defaultSettings.push_back(CreateSetting(false, 0, "nonChange_waveform", false, 0, 3, false, 0, ""));
+    defaultSettings.push_back(CreateSetting(true, 0, "nonChange_beatLines", false, 0, 3, false, 0, ""));
+    defaultSettings.push_back(CreateSetting(true, 0, "nonChange_infoPanel", false, 0, 3, false, 0, ""));
+    defaultSettings.push_back(CreateSetting(false, 0, "nonChange_noteTick", false, 0, 3, false, 0, ""));
     std::ifstream ifs("settings.avg");
     if (!ifs.good())
     {

@@ -11,7 +11,7 @@ struct setting {
 	bool isKeybind;
 	double increm;
 	// big enough to store history stuff LOL
-	char stringValue[10240];
+	char stringValue[80240];
 	MSGPACK_DEFINE(active, value, name, takesActive, lowestValue, highestValue, isKeybind, increm, stringValue);
 };
 

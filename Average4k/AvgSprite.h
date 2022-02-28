@@ -13,6 +13,7 @@ public:
 	//Color borderColor;
 	bool border = false;
 	bool round = false;
+	bool flip = false;
 
 	int colorR = 255, colorG = 255, colorB = 255;
 
@@ -87,7 +88,10 @@ public:
 		srcRect.x = 0;
 		srcRect.y = 0;
 		srcRect.w = 1;
-		srcRect.h = 1;
+		if (flip)
+			srcRect.h = -1;
+		else
+			srcRect.h = 1;
 
 		if (clipRect.w > 0 || clipRect.h > 0)
 			Rendering::SetClipRect(&clipRect);

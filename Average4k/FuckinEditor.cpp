@@ -333,7 +333,7 @@ void resortBPMS()
 
 void triggerNotif(std::string title, std::string text)
 {
-	FuckinEditor* editor = (FuckinEditor*)Game::instance->currentMenu;
+	FuckinEditor* editor = (FuckinEditor*)Game::currentMenu;
 
 	notifTitle = title;
 	notifText = text;
@@ -371,7 +371,7 @@ float beatMath(float amount, float increase, float startBeat)
 
 void deleteVisualNote(float lane, float beat)
 {
-	FuckinEditor* editor = (FuckinEditor*)Game::instance->currentMenu;
+	FuckinEditor* editor = (FuckinEditor*)Game::currentMenu;
 	int ind = 0;
 	for (NoteObject* obj : notes)
 	{
@@ -403,7 +403,7 @@ void createNote(int lane, float beat = currentBeat, noteType type = noteType::No
 	n.type = type;
 	n.connectedBeat = connectedBeat;
 	selectedChart->meta.difficulties[currentDiff].notes.push_back(n);
-	FuckinEditor* editor = (FuckinEditor*)Game::instance->currentMenu;
+	FuckinEditor* editor = (FuckinEditor*)Game::currentMenu;
 	editor->generateNoteObject(n, selectedChart->meta.difficulties[currentDiff], selectedChart, notes, findTail);
 
 	for (NoteObject* obj : notes)
@@ -435,6 +435,7 @@ void createNote(int lane, float beat = currentBeat, noteType type = noteType::No
 
 
 void window_chartProperties() {
+	FuckinEditor* editor = (FuckinEditor*)Game::currentMenu;
 	if (ImGui::CollapsingHeader("Chart Metadata"))
 	{
 		if (selectedChart)
@@ -463,7 +464,7 @@ void window_chartProperties() {
 					diff.charter = std::string(buf);
 					if (ImGui::Button(("Load Difficulty##DiffLoad" + std::to_string(ind)).c_str()))
 					{
-						FuckinEditor* editor = (FuckinEditor*)Game::instance->currentMenu;
+						FuckinEditor* editor = (FuckinEditor*)Game::currentMenu;
 						currentDiff = ind;
 						editor->loadNotes(diff);
 					}
@@ -485,7 +486,10 @@ void window_chartProperties() {
 			selectedChart->meta.background = std::string(buf);
 			ImGui::Text("Chart Offset:");
 			ImGui::InputFloat("##Offset", &offset, .001, .01, "%.3f");
-			selectedChart->meta.chartOffset = offset;
+			if (selectedChart->meta.chartOffset != offset)
+			{
+				selectedChart->meta.chartOffset = offset;
+			}
 			ImGui::Separator();
 			if (ImGui::Button("Create Difficulty"))
 			{
@@ -504,7 +508,6 @@ void window_chartProperties() {
 	{
 		if (selectedChart)
 		{
-			FuckinEditor* editor = (FuckinEditor*)Game::instance->currentMenu;
 
 			if (ImGui::CollapsingHeader("BPM Detection"))
 			{
@@ -522,7 +525,7 @@ void window_chartProperties() {
 				if (ImGui::Button("Detect BPM"))
 				{
 					float sampl = editor->song->returnSampleRate() * (editor->song->length / 1000);
-					float* samples = editor->song->returnSamples(sampl);
+					float* samples = editor->song->returnSamples(sampl, NULL);
 					editor->song->bpmDetect(samples, sampl, true);
 				}
 			}
@@ -560,6 +563,7 @@ void window_chartProperties() {
 							editor->gameplay->removeObj(t.text);
 						}
 						resortBPMS();
+						editor->generateSnapLines(selectedChart, snapConvert[snap]);
 						editor->regenBeatLines(selectedChart);
 						editor->regenThings(selectedChart);
 					}
@@ -572,6 +576,7 @@ void window_chartProperties() {
 							editor->gameplay->removeObj(t.text);
 						}
 						resortBPMS();
+						editor->generateSnapLines(selectedChart, snapConvert[snap]);
 						editor->regenBeatLines(selectedChart);
 						editor->regenThings(selectedChart);
 					}
@@ -590,6 +595,7 @@ void window_chartProperties() {
 				seg.length = INT_MAX;
 				selectedChart->meta.bpms.push_back(seg);
 				resortBPMS();
+				editor->generateSnapLines(selectedChart, snapConvert[snap]);
 				editor->regenBeatLines(selectedChart);
 				editor->regenThings(selectedChart);
 			}
@@ -603,7 +609,7 @@ void window_chartProperties() {
 	{
 		if (selectedChart)
 		{
-			FuckinEditor* editor = (FuckinEditor*)Game::instance->currentMenu;
+			FuckinEditor* editor = (FuckinEditor*)Game::currentMenu;
 			int ind = 0;
 			for (stopSegment& seg : selectedChart->meta.stops)
 			{
@@ -625,7 +631,7 @@ void window_chartProperties() {
 					if (seg.length / 1000 != d)
 					{
 						seg.length = d * 1000;
-						FuckinEditor* editor = (FuckinEditor*)Game::instance->currentMenu;
+						FuckinEditor* editor = (FuckinEditor*)Game::currentMenu;
 						for (thingy t : editor->sideStuff)
 						{
 							editor->gameplay->removeObj(t.background);
@@ -640,7 +646,7 @@ void window_chartProperties() {
 					if (seg.beat != beat)
 					{
 						seg.beat = beat;
-						FuckinEditor* editor = (FuckinEditor*)Game::instance->currentMenu;
+						FuckinEditor* editor = (FuckinEditor*)Game::currentMenu;
 						for (thingy t : editor->sideStuff)
 						{
 							editor->gameplay->removeObj(t.background);
@@ -774,9 +780,11 @@ void FuckinEditor::create()
 	lunder->h = laneUnderway.h;
 	lunderBorder->w = laneUnderway.w;
 	lunderBorder->h = laneUnderway.h;
-
+	lines = new AvgGroup(0, 0, 1280, 720);
+	wave = new AvgGroup(0, 0, 1280, 720);
 	top = new AvgGroup(0, 0, 1280, 720);
 	gameplay = new AvgGroup(0, 0, 1280, 720);
+
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -801,7 +809,8 @@ void FuckinEditor::create()
 		r->h = (64 * noteZoom);
 		fuck.push_back(r);
 	}
-
+	add(wave);
+	add(lines);
 	add(gameplay);
 	add(top);
 
@@ -827,7 +836,17 @@ void FuckinEditor::update(Events::updateEvent event)
 		{
 			bool removeLayer = false;
 			if (wh - currentTime < (Judge::hitWindows[1] * 0.5) && wh - currentTime > -(Judge::hitWindows[1] * 0.2))
+			{
 				fuck[obj->lane]->lightUpTimer = 195;
+				if (!findClapped(obj->beat) && Game::save->GetBool("nonChange_noteTick"))
+				{
+					beatsClapped.push_back(obj->beat);
+					Channel* c = SoundManager::createChannel("assets/sounds/hitSound.wav", "clap_" + std::to_string(obj->beat));
+ 					c->play();
+					c->setVolume(1);
+					clapChannels.push_back(c);
+				}
+			}
 
 			for (holdTile tile : obj->heldTilings)
 			{
@@ -841,14 +860,33 @@ void FuckinEditor::update(Events::updateEvent event)
 
 	}
 
-	for (line& l : beatLines)
+	for (line& l : snapBeat)
 	{
-		float diff = l.time - currentTime;
+		float diff = (selectedChart->getTimeFromBeat(l.beat, selectedChart->getSegmentFromBeat(l.beat)) + (selectedChart->getStopOffsetFromBeat(l.beat))) - currentTime;
 
 		float bps = (Game::save->GetDouble("scrollspeed") / 60);
 
+		l.rect->alpha = Game::save->GetBool("nonChange_beatLines") ? 1 : 0;
+
 		float noteOffset = (bps * (diff / 1000)) * (64 * noteZoom);
-		l.rect->y = fuck[0]->y + noteOffset;
+		l.rect->y = fuck[0]->y + noteOffset + (32 * noteZoom);
+		l.rect->x = lunder->x;
+		l.rect->w = lunder->w;
+	}
+
+	for (line& l : beatLines)
+	{
+		float diff = (selectedChart->getTimeFromBeat(l.beat, selectedChart->getSegmentFromBeat(l.beat)) + (selectedChart->getStopOffsetFromBeat(l.beat))) - currentTime;
+
+		float bps = (Game::save->GetDouble("scrollspeed") / 60);
+
+
+		l.rect->alpha = Game::save->GetBool("nonChange_beatLines") ? 1 : 0;
+
+		l.text->alpha = Game::save->GetBool("nonChange_beatLines") ? 1 : 0;
+
+		float noteOffset = (bps * (diff / 1000)) * (64 * noteZoom);
+		l.rect->y = fuck[0]->y + noteOffset + (32 * noteZoom);
 		l.rect->x = lunder->x;
 		l.rect->w = lunder->w;
 		l.text->y = l.rect->y - (l.text->surfH / 2);
@@ -857,18 +895,34 @@ void FuckinEditor::update(Events::updateEvent event)
 
 	for (thingy& l : sideStuff)
 	{
-		float diff = l.time - currentTime;
+		float diff = selectedChart->getTimeFromBeat(l.beat,selectedChart->getSegmentFromBeat(l.beat)) - currentTime;
 
 		float bps = (Game::save->GetDouble("scrollspeed") / 60);
 
 		float noteOffset = (bps * (diff / 1000)) * (64 * noteZoom);
-		l.background->y = (fuck[0]->y + noteOffset) - 25;
+		l.background->y = (fuck[0]->y + noteOffset + (32 * noteZoom)) - 25;
 		l.background->x = (lunder->x + lunder->w) + 25;
 		l.text->x = l.background->x + 4;
 		l.text->y = l.background->y + 2;
 
 	}
 
+	int waveInd = 0;
+	for (waveformSeg& seg : waveform)
+	{
+		float bps = (Game::save->GetDouble("scrollspeed") / 60);
+
+		float noteOffset = (bps * (-currentTime / 1000)) * (64 * noteZoom);
+
+		seg.sprite->alpha = Game::save->GetBool("nonChange_waveform") ? 1 : 0;
+
+		seg.sprite->y = (fuck[0]->y - fuck[0]->h) + noteOffset + ((seg.length * noteZoom) * waveInd) + ((seg.length / 2) * noteZoom);
+		seg.sprite->y -= seg.offset;
+		seg.sprite->x = lunder->x;
+		seg.sprite->w = lunder->w;
+		seg.sprite->h = seg.length * noteZoom;
+		waveInd++;
+	}
 
 
 	if (songPlaying)
@@ -951,7 +1005,7 @@ void FuckinEditor::update(Events::updateEvent event)
 bool openingFile = false;
 
 void openChart(std::string path, std::string folder) {
-	FuckinEditor* editor = (FuckinEditor*)Game::instance->currentMenu;
+	FuckinEditor* editor = (FuckinEditor*)Game::currentMenu;
 	SMFile* file = new SMFile(path, folder, true);
 	selectedChart = new Chart(file->meta);
 	delete file;
@@ -974,7 +1028,7 @@ void openChart(std::string path, std::string folder) {
 	editor->song = SoundManager::createChannel(pathj.c_str(), "editorSong");
 
 	editor->song->createFXStream();
-
+	editor->generateWaveForm();
 	editor->loadNotes(selectedChart->meta.difficulties[0]);
 	currentDiff = 0;
 }
@@ -1074,6 +1128,46 @@ void FuckinEditor::imguiUpdate(float elapsed)
 		{
 			ImGui::EndMenu();
 		}
+		if (ImGui::BeginMenu("View"))
+		{
+			bool shit = Game::save->GetBool("nonChange_waveform");
+			ImGui::Checkbox("Waveform (WIP)", &shit);
+			if (shit != Game::save->GetBool("nonChange_waveform"))
+			{
+				Game::save->SetBool("nonChange_waveform", shit);
+				Game::save->Save();
+			}
+
+			shit = Game::save->GetBool("nonChange_beatLines");
+			ImGui::Checkbox("Lines", &shit);
+			if (shit != Game::save->GetBool("nonChange_beatLines"))
+			{
+				Game::save->SetBool("nonChange_beatLines", shit);
+				Game::save->Save();
+			}
+
+			shit = Game::save->GetBool("nonChange_infoPanel");
+			ImGui::Checkbox("Info Panel", &shit);
+			if (shit != Game::save->GetBool("nonChange_infoPanel"))
+			{
+				Game::save->SetBool("nonChange_infoPanel", shit);
+				Game::save->Save();
+			}
+
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Ticks"))
+		{
+
+			bool shit = Game::save->GetBool("nonChange_noteTick");
+			ImGui::Checkbox("Note Tick", &shit);
+			if (shit != Game::save->GetBool("nonChange_noteTick"))
+			{
+				Game::save->SetBool("nonChange_noteTick", shit);
+				Game::save->Save();
+			}
+			ImGui::EndMenu();
+		}
 		if (ImGui::MenuItem("Chart Properties"))
 		{
 			editorWindow& wind = findWindow("Chart Properties");
@@ -1086,7 +1180,7 @@ void FuckinEditor::imguiUpdate(float elapsed)
 		}
 	}
 	ImGui::EndMainMenuBar();
-	if (selectedChart)
+	if (selectedChart && Game::save->GetBool("nonChange_infoPanel"))
 	{
 		ImGui::Begin("BottomInfo", NULL, (ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize));
 		ImGui::SetWindowPos({ 15,660 });
@@ -1150,7 +1244,36 @@ void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 	if (event.keysym.sym == SDLK_SPACE && selectedChart)
 	{
 		if (songPlaying)
+		{
+			float beats = 0;
+			float increase = 1.0f / static_cast<float>(snapConvert[snap]);
+
+			beats = beatMath(1, increase, currentBeat);
+
+			if (beats < 0.00)
+				beats = 0.00;
+
+			bpmSegment seg = selectedChart->getSegmentFromBeat(beats);
+
+			float stopOffset = (selectedChart->getStopOffsetFromBeat(beats) / 1000.0f) * (seg.bpm / 60.0f);
+
+			float offsetBeats = beatMath(1, stopOffset, beats);
+
+			if (stopOffset != 0)
+				beats = offsetBeats;
+
+			currentTime = selectedChart->getTimeFromBeat(beats, seg);
+			currentBeat = beats;
+			song->setPos(currentTime);
 			song->stop();
+
+			beatsClapped.clear();
+			for (Channel* c : clapChannels)
+			{
+				c->stop();
+				c->free();
+			}
+		}
 		else
 		{
 			if (currentTime < 0)
@@ -1176,14 +1299,18 @@ void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 	}
 
 	if (event.keysym.sym == SDLK_LEFT)
+	{
 		snapSelect--;
+		if (snapSelect < 0)
+			snapSelect = snapConvert.size() - 1;
+	}
 	if (event.keysym.sym == SDLK_RIGHT)
+	{
 		snapSelect++;
+		if (snapSelect > snapConvert.size() - 1)
+			snapSelect = 0;
+	}
 
-	if (snapSelect < 0)
-		snapSelect = snapConvert.size() - 1;
-	if (snapSelect > snapConvert.size() - 1)
-		snapSelect = 0;
 
 	auto it = snapConvert.begin();
 	std::advance(it, snapSelect);
@@ -1337,10 +1464,150 @@ void FuckinEditor::loadNotes(difficulty diff)
 	notes.clear();
 	sideStuff.clear();
 	bool downscroll = false;
+	generateSnapLines(selectedChart, snapConvert[snap]);
 	regenBeatLines(selectedChart);
 	regenThings(selectedChart);
 	for (note n : diff.notes)
 	{
 		generateNoteObject(n, diff, selectedChart, notes);
 	}
+}
+
+void FuckinEditor::generateWaveForm()
+{
+	for (Object* wavething : wave->children)
+	{
+		wave->removeObj(wavething);
+	}
+
+	waveform.clear();
+
+	float rate = song->returnSampleRate();
+	float leng = 0;
+	float* samples = song->returnSongSample(&leng);
+	int lastInterp = 0;
+	float lastFreqR = 0;
+	float savedInd = 0;
+	float nextFreq = 0;
+	float lastNext = 0;
+	int nextIndex = 0;
+
+	int plength = getWaveLength(1, selectedChart);
+	float pixels = 0;
+	float lastTime = 0;
+
+	AvgGroup* waveSeg = new AvgGroup(0, 0, lunder->w, plength);
+	waveSeg->renderOnce = true;
+	float currentSegTime = 0;
+	float offset = 0;
+
+	for (int i = 0; i < song->length; i++)
+	{
+		int index = BASS_ChannelSeconds2Bytes(song->id, std::max(0.0f,(float)i / 1000.0f)) / 2;
+
+		if (index > leng)
+			break;
+
+		float time = i - lastTime;
+
+		float rightFreq = samples[index + 1] * 128;
+		float leftFreq = samples[index] * 128;
+
+
+		if (rightFreq == 0 || leftFreq == 0)
+		{
+			offset++;
+			continue;
+		}
+
+		/*for (int ii = i; ii < song->length; ii++)
+		{
+			QWORD iindex = BASS_ChannelSeconds2Bytes(song->id, (float)ii / (float)1000) / 2;
+			if (iindex > leng)
+			{
+				lastNext = nextFreq;
+				nextFreq = 0;
+				nextIndex = iindex;
+				break;
+			}
+			if (samples[iindex + 1] * 100 != rightFreq)
+			{
+				nextIndex = iindex;
+				lastNext = nextFreq;
+ 				nextFreq = samples[iindex + 1] * 100;
+				break;
+			}
+		}*/
+
+		/*if (rightFreq == lastNext)
+		{
+			savedInd = index;
+			lastFreqR = rightFreq;
+			lastInterp = i;
+		}
+		else
+		{
+			if (i > lastInterp + 10)
+				lastInterp = i;
+			else
+				continue;
+
+			// interperlate to the next
+			if (nextIndex == 0)
+				nextIndex = song->length;
+
+			// normalize
+			float firstInd = i - savedInd;
+			float secondInd = nextIndex - savedInd;
+
+			float newFreq = std::lerp(lastFreqR, nextFreq, (float)index / (float)nextIndex);
+
+			std::cout << newFreq << " | " << (index / nextIndex) << " | " << index << " | " << nextIndex << std::endl;
+
+			lastFreqR = newFreq;
+			rightFreq = newFreq;
+		}*/
+
+
+		float x = (lunder->w / 2);
+
+		float w = (abs(rightFreq * 2));
+
+		if (w / 2 + (lunder->w / 2) > lunder->w)
+			w = (lunder->w - (lunder->w / 2)) * 2;
+
+		AvgRect* rect = new AvgRect(x - abs(rightFreq), pixels, w, 1);
+		rect->c = { 128,128,255 };
+		line l;
+		l.freqR = rightFreq;
+		l.rect = rect;
+		l.time = i;
+		pixels += 1;
+		//l.text = new Text(rect->x - 10, rect->y, std::to_string((int)snappedBeat), 16, "Futura Bold");
+		waveSeg->add(rect);
+		if (pixels + 1 > plength)
+		{
+			waveformSeg wSeg;
+			wSeg.time = currentSegTime;
+			Text* t = new Text(0, 0, "bruh",24,"Futura Bold");
+			waveSeg->add(t);
+			waveSeg->forceDraw();
+			wSeg.sprite = new AvgSprite(0, 0, waveSeg->ctb);
+			wSeg.sprite->flip = true;
+			wSeg.offset = offset;
+			wave->add(wSeg.sprite);
+			lastTime = i;
+			wSeg.length = plength;
+			waveform.push_back(wSeg);
+			delete waveSeg;
+			pixels = 0;
+			plength = getWaveLength(1, selectedChart);
+			waveSeg = new AvgGroup(0, 0, lunder->w, plength);
+			waveSeg->renderOnce = true;
+			currentSegTime = i;
+		}
+		//gameplay->add(l.text);
+	}
+	if (waveSeg)
+		delete waveSeg;
 }

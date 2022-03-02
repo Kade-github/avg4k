@@ -104,8 +104,7 @@ void SaveFile::SetString(std::string sett, std::string value)
     {
         if (set.name == sett)
         {
-            memset(set.stringValue, 0, 248);
-            memcpy_s(set.stringValue, size, value.c_str(), size);
+            set.stringValue = value;
         }
     }
 }
@@ -168,7 +167,6 @@ setting SaveFile::CreateSetting(bool defaultActive, double defaultValue, std::st
     set.lowestValue = lowest;
     set.isKeybind = isKeybind;
     set.increm = increm;
-    memcpy_s(set.stringValue, 248, defaultStringValue.c_str(), 248);
-    memcpy_s(set.name, 128, defaultName.c_str(), 128);
+    set.stringValue = defaultStringValue;
     return set;
 }

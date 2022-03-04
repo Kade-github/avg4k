@@ -1459,6 +1459,14 @@ void FuckinEditor::loadNotes(difficulty diff)
 	{
 		gameplay->removeObj(obj);
 	}
+	std::vector<Object*> objss = wave->children;
+	for (Object* seg : objss)
+	{
+		wave->removeObj(seg);
+	}
+
+	waveform.clear();
+
 	notes.clear();
 	sideStuff.clear();
 	bool downscroll = false;

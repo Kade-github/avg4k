@@ -869,7 +869,7 @@ void FuckinEditor::update(Events::updateEvent event)
 		l.rect->alpha = Game::save->GetBool("nonChange_beatLines") ? 1 : 0;
 
 		float noteOffset = (bps * (diff / 1000)) * (64 * noteZoom);
-		l.rect->y = fuck[0]->y + noteOffset + (32 * noteZoom);
+		l.rect->y = (fuck[0]->y) + noteOffset + (32 * noteZoom);
 		l.rect->x = lunder->x;
 		l.rect->w = lunder->w;
 	}
@@ -886,7 +886,7 @@ void FuckinEditor::update(Events::updateEvent event)
 		l.text->alpha = Game::save->GetBool("nonChange_beatLines") ? 1 : 0;
 
 		float noteOffset = (bps * (diff / 1000)) * (64 * noteZoom);
-		l.rect->y = fuck[0]->y + noteOffset + (32 * noteZoom);
+		l.rect->y = (fuck[0]->y) + noteOffset + (32 * noteZoom);
 		l.rect->x = lunder->x;
 		l.rect->w = lunder->w;
 		l.text->y = l.rect->y - (l.text->surfH / 2);
@@ -912,12 +912,11 @@ void FuckinEditor::update(Events::updateEvent event)
 	{
 		float bps = (Game::save->GetDouble("scrollspeed") / 60);
 
-		float noteOffset = (bps * (-currentTime / 1000)) * (64 * noteZoom);
+		float noteOffset = (bps * (-(currentTime - seg.offset) / 1000)) * (64 * noteZoom);
 
 		seg.sprite->alpha = Game::save->GetBool("nonChange_waveform") ? 1 : 0;
 
-		seg.sprite->y = (fuck[0]->y - fuck[0]->h) + noteOffset + ((seg.length * noteZoom) * waveInd) + ((seg.length / 2) * noteZoom);
-		seg.sprite->y -= seg.offset;
+		seg.sprite->y = (fuck[0]->y + ((64 * noteZoom))) - (32 * noteZoom) + noteOffset + ((seg.length * waveInd) * noteZoom);
 		seg.sprite->x = lunder->x;
 		seg.sprite->w = lunder->w;
 		seg.sprite->h = seg.length * noteZoom;
@@ -1460,7 +1459,6 @@ void FuckinEditor::loadNotes(difficulty diff)
 	{
 		gameplay->removeObj(obj);
 	}
-	beatLines.clear();
 	notes.clear();
 	sideStuff.clear();
 	bool downscroll = false;
@@ -1500,7 +1498,7 @@ void FuckinEditor::generateWaveForm()
 	waveSeg->renderOnce = true;
 	float currentSegTime = 0;
 	float offset = 0;
-
+	float lastY = 0;
 	for (int i = 0; i < song->length; i++)
 	{
 		int index = BASS_ChannelSeconds2Bytes(song->id, std::max(0.0f,(float)i / 1000.0f)) / 2;
@@ -1589,8 +1587,6 @@ void FuckinEditor::generateWaveForm()
 		{
 			waveformSeg wSeg;
 			wSeg.time = currentSegTime;
-			Text* t = new Text(0, 0, "bruh",24,"Futura Bold");
-			waveSeg->add(t);
 			waveSeg->forceDraw();
 			wSeg.sprite = new AvgSprite(0, 0, waveSeg->ctb);
 			wSeg.sprite->flip = true;

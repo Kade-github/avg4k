@@ -62,6 +62,8 @@ void NoteObject::draw() {
         texture = Game::noteskin->twelfth;
     else if (fmod(beatRow, (192 / 16)) == 0)
         texture = Game::noteskin->sixteenth;
+    else if (fmod(beatRow, (192 / 24)) == 0)
+        texture = Game::noteskin->twelfth;
     else if (fmod(beatRow, (192 / 32)) == 0)
         texture = Game::noteskin->thirty2nd;
     else

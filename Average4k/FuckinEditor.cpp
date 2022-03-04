@@ -355,16 +355,16 @@ note findNote(int lane, float beat)
 
 float beatMath(float amount, float increase, float startBeat)
 {
-	float beats = 0;
+	float beats = 0.0f;
 	if (amount < 0)
 	{
-		float flor = floor(startBeat * (float)snapConvert[snap]);
-		beats = (flor / (float)snapConvert[snap]) + increase;
+		float flor = roundf(startBeat * static_cast<float>(snapConvert[snap]));
+		beats = (flor / static_cast<float>(snapConvert[snap])) + increase;
 	}
 	else
 	{
-		float ceal = ceil(startBeat * (float)snapConvert[snap]);
-		beats = ((ceal) / (float)snapConvert[snap]) - increase;
+		float ceal = roundf(startBeat * static_cast<float>(snapConvert[snap]));
+		beats = (ceal / static_cast<float>(snapConvert[snap])) - increase;
 	}
 	return beats;
 }

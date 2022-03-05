@@ -7,6 +7,7 @@
 #include "ReceptorObject.h"
 #include "NoteObject.h"
 #include "Text.h"
+#include "Helpers.h"
 
 typedef void(__cdecl* drawCall)();
 struct editorWindow {
@@ -34,6 +35,7 @@ struct thingy {
 struct line {
 	float beat;
 	float time;
+	int lane;
 	AvgRect* rect;
 	Text* text;
 	float freqR;
@@ -45,7 +47,12 @@ public:
 	float noteZoom = 1;
 	AvgSprite* lunder;
 	AvgSprite* lunderBorder;
+	AvgRect* miniMapBorder;
+	AvgRect* miniMapCursor;
+	AvgRect* selectionRect;
 	void create() override;
+	void leftMouseDown() override;
+	void leftMouseUp() override;
 	Channel* song;
 	std::vector<Channel*> clapChannels;
 	std::vector<float> beatsClapped;
@@ -60,6 +67,7 @@ public:
 	}
 	bool songPlaying = false;
 	AvgGroup* gameplay;
+	AvgGroup* miniMap;
 	AvgGroup* lines;
 	AvgGroup* wave;
 	AvgGroup* top;
@@ -72,7 +80,7 @@ public:
 	std::vector<editorWindow> windows;
 
 	bool focused = false;
-
+	std::vector<line> miniMapLines;
 	std::vector<line> beatLines;
 	std::vector<line> snapBeat;
 	std::vector<thingy> sideStuff;
@@ -401,6 +409,35 @@ public:
 				}
 			}
 		}
+
+		// generate minimap line
+
+		/*line l;
+		l.beat = object->beat;
+		l.time = object->time;
+
+		l.rect = new AvgRect((10 * object->lane) + 4, (miniMapBorder->h * (object->time / static_cast<float>(song->length))), 4,2);
+		l.lane = object->lane;
+		float beatRow = (object->beat - stopBeatOffset) * 48;
+
+		if (fmod(beatRow, (192 / 4)) == 0)
+			l.rect->c = { 255,0,0 };
+		else if (fmod(beatRow, (192 / 8)) == 0)
+			l.rect->c = { 0,0,255 };
+		else if (fmod(beatRow, (192 / 12)) == 0)
+			l.rect->c = { 0,255,0 };
+		else if (fmod(beatRow, (192 / 16)) == 0)
+			l.rect->c = { 255,255,0 };
+		else if (fmod(beatRow, (192 / 24)) == 0)
+			l.rect->c = { 0,255,0 };
+		else if (fmod(beatRow, (192 / 32)) == 0)
+			l.rect->c = { 255,215,0 };
+		else
+			l.rect->c = { 105,105,105 };
+		miniMapLines.push_back(l);
+		miniMap->add(l.rect);*/
+
+
 		std::sort(object->heldTilings.begin(), object->heldTilings.end());
 		notes.push_back(object);
 		object->create();

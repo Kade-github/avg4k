@@ -6,14 +6,14 @@
 #ARTISTTRANSLIT:Hideki Naganuma;
 #GENRE:;
 #CREDIT:;
-#MUSIC:What U Need.mp3;
+#MUSIC:What U Need.ogg;
 #BANNER:whatuneed-bn.jpg;
 #BACKGROUND:whatuneed-bg.jpg;
 #CDTITLE:!cdtitle.png;
 #SAMPLESTART:35.018;
 #SAMPLELENGTH:12.500;
 #SELECTABLE:YES;
-#OFFSET:-0.262;
+#OFFSET:-0.007;
 #BPMS:0.000=138.000;
 #STOPS:;
 #BGCHANGES:;

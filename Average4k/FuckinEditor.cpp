@@ -2,7 +2,6 @@
 #include "ImGuiFileDialog.h"
 #include "MainMenu.h"
 #include "Judge.h"
-#include "Helpers.h"
 // window draws
 
 Chart* selectedChart;
@@ -376,6 +375,18 @@ void deleteVisualNote(float lane, float beat)
 {
 	FuckinEditor* editor = (FuckinEditor*)Game::currentMenu;
 	int ind = 0;
+	for (line l : editor->miniMapLines)
+	{
+		if (l.beat == beat && l.lane == lane)
+		{
+			editor->miniMap->removeObj(l.rect);
+		}
+	}
+	editor->miniMapLines.erase(
+		std::remove_if(editor->miniMapLines.begin(), editor->miniMapLines.end(), [&](line l) {
+			return l.beat == beat && l.lane == lane;
+			}),
+		editor->miniMapLines.end());
 	for (NoteObject* obj : notes)
 	{
 		if (obj->lane == lane && obj->beat == beat)
@@ -786,6 +797,21 @@ void FuckinEditor::create()
 	lunder->colorR = 35;
 	lunder->colorG = 35;
 	lunder->colorB = 35;
+	float w = 42;
+	float x = Game::gameWidth - (w + 6);
+	float y = 24;
+	float h = 690;
+
+	miniMapBorder = new AvgRect(x, y, w, h);
+	miniMapBorder->c = { 255,255,255 };
+	add(miniMapBorder);
+
+	AvgRect* rectShitBitch = new AvgRect(x + 2, y + 2, w - 4, h - 4);
+	add(rectShitBitch);
+
+
+	miniMapCursor = new AvgRect(x, y, 42, 4);
+	miniMapCursor->c = { 255,255,255 };;
 
 	lunderBorder = new AvgSprite(laneUnderway.x, laneUnderway.y, Noteskin::getGameplayElement(Game::noteskin, "underwayBorder.png"));
 	add(lunderBorder);
@@ -794,6 +820,7 @@ void FuckinEditor::create()
 	lunderBorder->colorR = 255;
 	lunderBorder->colorG = 255;
 	lunderBorder->colorB = 255;
+	selectionRect = new AvgRect(0, 0, 0, 0);
 
 	lunder->w = laneUnderway.w;
 	lunder->h = laneUnderway.h;
@@ -803,6 +830,7 @@ void FuckinEditor::create()
 	wave = new AvgGroup(0, 0, 1280, 720);
 	top = new AvgGroup(0, 0, 1280, 720);
 	gameplay = new AvgGroup(0, 0, 1280, 720);
+	miniMap = new AvgGroup(miniMapBorder->x, miniMapBorder->y, miniMapBorder->w, miniMapBorder->h);
 
 
 	for (int i = 0; i < 4; i++)
@@ -832,6 +860,11 @@ void FuckinEditor::create()
 	add(lines);
 	add(gameplay);
 	add(top);
+	add(miniMap);
+	add(miniMapCursor);
+	top->add(selectionRect);
+	selectionRect->alpha = 0.6;
+	selectionRect->c = { 255,255,255 };
 
 	createWindow("Chart Properties", { 400,400 }, (drawCall)window_chartProperties, false);
 	createWindow("Waveform Properties", { 400,400 }, (drawCall)window_waveProperties, false);
@@ -843,10 +876,69 @@ void FuckinEditor::create()
 	created = true;
 }
 
+bool mousePressed = false;
+
+int initalSelectionX, initalSelectionY;
+
+void FuckinEditor::leftMouseDown()
+{
+	int x, y;
+	Game::GetMousePos(&x, &y);
+
+	selectionRect->x = x;
+	selectionRect->y = y;
+
+	initalSelectionX = x;
+	initalSelectionY = y;
+
+	mousePressed = true;
+}
+
+void FuckinEditor::leftMouseUp()
+{
+	for (NoteObject* n : notes)
+	{
+		if ((n->y > selectionRect->y && n->y < selectionRect->y + selectionRect->h) &&
+			(n->x > selectionRect->x && n->x < selectionRect->x + selectionRect->w))
+			n->selected = true;
+		else
+			n->selected = false;
+	}
+
+	selectionRect->w = 0;
+	selectionRect->h = 0;
+	mousePressed = false;
+}
+
 void FuckinEditor::update(Events::updateEvent event)
 {
 	if (!selectedChart)
 		return;
+
+	miniMapCursor->y = miniMapBorder->y + (miniMapBorder->h * (currentTime / song->length));
+
+	int x, y;
+	Game::GetMousePos(&x, &y);
+
+	if (selectedChart && mousePressed)
+	{
+		if ((x > miniMapBorder->x && x < miniMapBorder->x + miniMapBorder->w) &&
+			(y > miniMapBorder->y && y < miniMapBorder->y + miniMapBorder->h))
+		{
+			float relativeY = y - miniMapBorder->y;
+			int time = song->length * (relativeY / miniMapBorder->h);
+			currentTime = time;
+			bpmSegment curSeg = selectedChart->getSegmentFromTime(currentTime);
+			currentBeat = selectedChart->getBeatFromTimeOffset(currentTime, curSeg);
+		}
+		else
+		{
+			selectionRect->y = min(y, static_cast<int>(initalSelectionY));
+			selectionRect->x = min(x, static_cast<int>(initalSelectionX));
+			selectionRect->w = abs(x - initalSelectionX);
+			selectionRect->h = abs(y - initalSelectionY);
+		}
+	}
 
 	for (NoteObject* obj : notes)
 	{
@@ -1503,6 +1595,11 @@ void FuckinEditor::loadNotes(difficulty diff)
 		song->stop();
 		songPlaying = false;
 	}
+	for (line l : miniMapLines)
+	{
+		miniMap->removeObj(l.rect);
+	}
+	miniMapLines.clear();
 	std::vector<Object*> objs = gameplay->children;
 	for (Object* obj : objs)
 	{

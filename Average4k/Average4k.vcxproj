@@ -257,6 +257,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="CPacketSongFinished.h" />
     <ClInclude Include="CPacketStatus.h" />
     <ClInclude Include="CPacketWtfAmIn.h" />
+    <ClInclude Include="dr_mp3.h" />
     <ClInclude Include="Easing.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FONT\SDL_ttf.h" />
@@ -302,6 +303,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SMFile.h" />
     <ClInclude Include="SongSelect.h" />
+    <ClInclude Include="SoundBackend.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="SPacketAvatarRequestResponse.h" />
     <ClInclude Include="SPacketFinalizeChart.h" />

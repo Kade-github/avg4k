@@ -63,4 +63,6 @@ public:
 	virtual void keyDown(SDL_KeyboardEvent ev) {};
 	virtual void keyUp(SDL_KeyboardEvent ev) {};
 	virtual void mouseWheel(float wheel) {};
+	virtual void leftMouseDown() {};
+	virtual void leftMouseUp() {};
 };

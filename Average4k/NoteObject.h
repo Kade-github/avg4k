@@ -40,6 +40,8 @@ class NoteObject : public Object
 
 		float time;
 
+		bool selected = false;
+
 		Object* connectedReceptor;
 
 		float stopOffset;

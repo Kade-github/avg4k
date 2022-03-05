@@ -109,6 +109,9 @@
     <Filter Include="MiniBPM">
       <UniqueIdentifier>{b169299e-1ada-413a-a2dd-4c8058e38004}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Audio">
+      <UniqueIdentifier>{48364d92-56cb-4d9a-948f-c8ee79d20b5a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Average4k.cpp">
@@ -520,6 +523,12 @@
     </ClInclude>
     <ClInclude Include="MiniBpm.h">
       <Filter>MiniBPM</Filter>
+    </ClInclude>
+    <ClInclude Include="dr_mp3.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundBackend.h">
+      <Filter>Source Files\Average4k\Sound</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

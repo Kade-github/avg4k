@@ -265,6 +265,10 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 					game->mouseButtonDown();
 					break;
 				}
+				case SDL_MOUSEBUTTONUP: {
+					game->mouseButtonUp();
+					break;
+				}
 				case SDL_TEXTINPUT: {
 					game->textInput(event.text);
 					break;

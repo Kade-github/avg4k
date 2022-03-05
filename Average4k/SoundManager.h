@@ -193,7 +193,7 @@ public:
 	{
 		if (channels[name] != NULL)
 			delete channels[name];
-		channels[name] = new Channel(BASS_StreamCreateFile(false, path.c_str(), 0, 0, BASS_STREAM_PRESCAN));
+		channels[name] = new Channel(BASS_StreamCreateFile(false, path.c_str(), 0, 0, BASS_STREAM_PRESCAN | BASS_SAMPLE_FLOAT));
 		channels[name]->path = path;
 		channels[name]->setVolume(0.2);
 		return channels[name];

@@ -193,6 +193,8 @@ void Game::mouseButtonDown()
 			bruh->mouseDown();
 		}
 	}
+	if (currentMenu)
+		currentMenu->leftMouseDown();
 }
 
 void Game::update(Events::updateEvent update)
@@ -604,6 +606,12 @@ void Game::mouseWheel(float wheel)
 	if (currentMenu->created)
 		currentMenu->mouseWheel(wheel);
 }
+void Game::mouseButtonUp()
+{
+	if (currentMenu)
+		currentMenu->leftMouseUp();
+}
+
 //asd
 void Game::weGotPacket(Events::packetEvent p)
 {

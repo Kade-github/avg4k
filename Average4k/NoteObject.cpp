@@ -40,7 +40,7 @@ void NoteObject::draw() {
         rect.y = (receptor.y - noteOffset);
     else
         rect.y = (receptor.y + noteOffset);
-
+    x = obj->x;
     y = rect.y;
 
     if (!drawCall)
@@ -170,6 +170,7 @@ void NoteObject::draw() {
     if (activeH != holdsActive)
         holdsActive = activeH;
 
+
     if (active) {
         if (Game::noteskin->rotate) {
             switch (lane) {
@@ -192,6 +193,15 @@ void NoteObject::draw() {
         else {
             Rendering::PushQuad(&dstRect, &srcRect, texture, GL::genShader);
         }
+
+        if (selected)
+        {
+            dstRect.a = 0.6;
+            Rendering::PushQuad(&dstRect, &srcRect, NULL, GL::genShader);
+            dstRect.a = alpha;
+        }
     }
+
+
 
 }

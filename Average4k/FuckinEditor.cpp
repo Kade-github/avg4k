@@ -830,7 +830,7 @@ void FuckinEditor::create()
 	wave = new AvgGroup(0, 0, 1280, 720);
 	top = new AvgGroup(0, 0, 1280, 720);
 	gameplay = new AvgGroup(0, 0, 1280, 720);
-	miniMap = new AvgGroup(miniMapBorder->x, miniMapBorder->y, miniMapBorder->w, miniMapBorder->h);
+	miniMap = new AvgGroup(rectShitBitch->x, rectShitBitch->y, rectShitBitch->w, rectShitBitch->h);
 
 
 	for (int i = 0; i < 4; i++)
@@ -975,6 +975,31 @@ void FuckinEditor::update(Events::updateEvent event)
 		}
 
 	}
+
+	if (Game::save->GetBool("nonChange_minimap"))
+	{
+		float maxY = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed"), song->length, 0, 2);
+
+		float bruh = 720 / maxY;
+
+		for (line& l : miniMapLines)
+		{
+			l.rect->alpha = 1;
+			l.rect->drawCall = true;
+			float cmod = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed"), selectedChart->getTimeFromBeatOffset(l.beat, selectedChart->getSegmentFromBeat(l.beat)), 0, 2);
+
+			l.rect->y = cmod * bruh;
+		}
+	}
+	else
+	{
+		for (line& l : miniMapLines)
+		{
+			l.rect->alpha = 0;
+			l.rect->drawCall = false;
+		}
+	}
+
 	int showBeatLines = Game::save->GetBool("nonChange_beatLines") ? 1 : 0;
 
 	for (line& l : snapBeat)
@@ -1295,6 +1320,15 @@ void FuckinEditor::imguiUpdate(float elapsed)
 				Game::save->SetBool("nonChange_infoPanel", shit);
 				Game::save->Save();
 			}
+
+			shit = Game::save->GetBool("nonChange_minimap");
+			ImGui::Checkbox("Mini Map", &shit);
+			if (shit != Game::save->GetBool("nonChange_minimap"))
+			{
+				Game::save->SetBool("nonChange_minimap", shit);
+				Game::save->Save();
+			}
+
 
 			ImGui::EndMenu();
 		}

@@ -412,11 +412,11 @@ public:
 
 		// generate minimap line
 
-		/*line l;
+		line l;
 		l.beat = object->beat;
 		l.time = object->time;
 
-		l.rect = new AvgRect((10 * object->lane) + 4, (miniMapBorder->h * (object->time / static_cast<float>(song->length))), 4,2);
+		l.rect = new AvgRect((6 * object->lane) + 9, 0, 2,2);
 		l.lane = object->lane;
 		float beatRow = (object->beat - stopBeatOffset) * 48;
 
@@ -435,7 +435,7 @@ public:
 		else
 			l.rect->c = { 105,105,105 };
 		miniMapLines.push_back(l);
-		miniMap->add(l.rect);*/
+		miniMap->add(l.rect);
 
 
 		std::sort(object->heldTilings.begin(), object->heldTilings.end());

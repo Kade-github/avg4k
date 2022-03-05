@@ -32,6 +32,7 @@ SaveFile::SaveFile()
     defaultSettings.push_back(CreateSetting(true, 0, "nonChange_infoPanel", false, 0, 3, false, 0, ""));
     defaultSettings.push_back(CreateSetting(false, 0, "nonChange_noteTick", false, 0, 3, false, 0, ""));
     defaultSettings.push_back(CreateSetting(false, 0, "nonChange_colorShit", false, 0, 3, false, 0, "128,128,255"));
+    defaultSettings.push_back(CreateSetting(true, 0, "nonChange_minimap", false, 0, 3, false, 0, ""));
     std::ifstream ifs("settings.avg");
     if (!ifs.good())
     {

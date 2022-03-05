@@ -312,6 +312,11 @@ bool compareByBeatStop(const stopSegment& a, const stopSegment& b)
 	return a.beat < b.beat;
 }
 
+bool compareNoteByBeat(const NoteObject* a, const NoteObject* b)
+{
+	return a->beat < b->beat;
+}
+
 
 void resortBPMS()
 {
@@ -419,7 +424,7 @@ void createNote(int lane, float beat = currentBeat, noteType type = noteType::No
 	selectedChart->meta.difficulties[currentDiff].notes.push_back(n);
 	FuckinEditor* editor = (FuckinEditor*)Game::currentMenu;
 	editor->generateNoteObject(n, selectedChart->meta.difficulties[currentDiff], selectedChart, notes, findTail);
-
+	std::sort(notes.begin(), notes.end(), compareNoteByBeat);
 	for (NoteObject* obj : notes)
 	{
 		if (obj->type == noteType::Note_Head)
@@ -915,7 +920,15 @@ void FuckinEditor::update(Events::updateEvent event)
 	if (!selectedChart)
 		return;
 
-	miniMapCursor->y = miniMapBorder->y + (miniMapBorder->h * (currentTime / song->length));
+	float lastBeat = notes[notes.size() - 1]->beat;
+
+	float lastTime = selectedChart->getTimeFromBeat(lastBeat, selectedChart->getSegmentFromBeat(lastBeat)) + (selectedChart->getStopOffsetFromBeat(lastBeat));
+
+	float perc = currentTime / lastTime;
+	if (perc > 1)
+		perc = 1;
+
+	miniMapCursor->y = miniMapBorder->y + (miniMapBorder->h * (perc));
 
 	int x, y;
 	Game::GetMousePos(&x, &y);
@@ -926,7 +939,7 @@ void FuckinEditor::update(Events::updateEvent event)
 			(y > miniMapBorder->y && y < miniMapBorder->y + miniMapBorder->h))
 		{
 			float relativeY = y - miniMapBorder->y;
-			int time = song->length * (relativeY / miniMapBorder->h);
+			int time = lastTime * (relativeY / miniMapBorder->h);
 			currentTime = time;
 			bpmSegment curSeg = selectedChart->getSegmentFromTime(currentTime);
 			currentBeat = selectedChart->getBeatFromTimeOffset(currentTime, curSeg);
@@ -978,7 +991,7 @@ void FuckinEditor::update(Events::updateEvent event)
 
 	if (Game::save->GetBool("nonChange_minimap"))
 	{
-		float maxY = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed"), song->length, 0, 2);
+		float maxY = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed"), lastTime, 0, 2);
 
 		float bruh = 720 / maxY;
 
@@ -1006,7 +1019,7 @@ void FuckinEditor::update(Events::updateEvent event)
 	{
 		l.rect->alpha = showBeatLines;
 
-		float noteOffset = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed") / 60, selectedChart->getTimeFromBeat(l.beat, selectedChart->getSegmentFromBeat(l.beat)) + (selectedChart->getStopOffsetFromBeat(l.beat)), currentTime, 64 * noteZoom);
+		float noteOffset = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed") / 60, selectedChart->getTimeFromBeatOffset(l.beat, selectedChart->getSegmentFromBeat(l.beat)), currentTime, 64 * noteZoom);
 		l.rect->y = (fuck[0]->y) + noteOffset + (32 * noteZoom);
 		l.rect->x = lunder->x;
 		l.rect->w = lunder->w;

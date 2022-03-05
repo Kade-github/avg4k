@@ -970,7 +970,7 @@ void FuckinEditor::update(Events::updateEvent event)
 				if (!findClapped(obj->beat) && Game::save->GetBool("nonChange_noteTick"))
 				{
 					beatsClapped.push_back(obj->beat);
-					Channel* c = SoundManager::createChannel("assets/sounds/hitSound.wav", "clap_" + std::to_string(obj->beat));
+					Channel* c = SoundManager::createChannel("assets/sounds/hitSound.wav", "clap_" + std::to_string(obj->beat), true);
 					c->play();
 					c->setVolume(1);
 					clapChannels.push_back(c);
@@ -1019,7 +1019,7 @@ void FuckinEditor::update(Events::updateEvent event)
 	{
 		l.rect->alpha = showBeatLines;
 
-		float noteOffset = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed") / 60, selectedChart->getTimeFromBeatOffset(l.beat, selectedChart->getSegmentFromBeat(l.beat)), currentTime, 64 * noteZoom);
+		float noteOffset = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed") / 60, selectedChart->getTimeFromBeat(l.beat, selectedChart->getSegmentFromBeat(l.beat)), currentTime, 64 * noteZoom);
 		l.rect->y = (fuck[0]->y) + noteOffset + (32 * noteZoom);
 		l.rect->x = lunder->x;
 		l.rect->w = lunder->w;
@@ -1442,6 +1442,7 @@ void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 				c->stop();
 				c->free();
 			}
+			clapChannels.clear();
 		}
 		else
 		{
@@ -1555,6 +1556,12 @@ void FuckinEditor::mouseWheel(float wheel)
 		return;
 
 	beatsClapped.clear();
+	for (Channel* c : clapChannels)
+	{
+		c->stop();
+		c->free();
+	}
+	clapChannels.clear();
 
 	float amount = wheel;
 	if (controlHeld)

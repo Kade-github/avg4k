@@ -189,11 +189,14 @@ public:
 		channels.erase(channels.find(name));
 	}
 
-	static Channel* createChannel(std::string path, std::string name)
+	static Channel* createChannel(std::string path, std::string name, bool autoFree = false)
 	{
 		if (channels[name] != NULL)
 			delete channels[name];
-		channels[name] = new Channel(BASS_StreamCreateFile(false, path.c_str(), 0, 0, BASS_STREAM_PRESCAN | BASS_SAMPLE_FLOAT));
+		if (autoFree)
+			channels[name] = new Channel(BASS_StreamCreateFile(false, path.c_str(), 0, 0, BASS_STREAM_PRESCAN | BASS_SAMPLE_FLOAT | BASS_STREAM_AUTOFREE));
+		else
+			channels[name] = new Channel(BASS_StreamCreateFile(false, path.c_str(), 0, 0, BASS_STREAM_PRESCAN | BASS_SAMPLE_FLOAT));
 		channels[name]->path = path;
 		channels[name]->setVolume(0.2);
 		return channels[name];

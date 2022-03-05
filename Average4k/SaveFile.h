@@ -10,7 +10,6 @@ struct setting {
 	bool takesActive;
 	bool isKeybind;
 	double increm;
-	// big enough to store history stuff LOL
 	std::string stringValue;
 	MSGPACK_DEFINE(active, value, name, takesActive, lowestValue, highestValue, isKeybind, increm, stringValue);
 };

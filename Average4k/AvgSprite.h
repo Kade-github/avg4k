@@ -15,6 +15,8 @@ public:
 	bool round = false;
 	bool flip = false;
 
+	bool drawCall = true;
+
 	int colorR = 255, colorG = 255, colorB = 255;
 
 	Rect clipRect;
@@ -65,6 +67,8 @@ public:
 	}
 
 	virtual void draw() {
+		if (!drawCall)
+			return;
 		Rect dstRect;
 		Rect srcRect;
 

@@ -8,7 +8,7 @@ public:
 	int w = 0;
 	int h = 0;
 	bool border = false;
-
+	bool drawCall = true;
 	int thickness = 4;
 
 	Color c;
@@ -22,6 +22,8 @@ public:
 	};
 
 	void draw() {
+		if (!drawCall)
+			return;
 
 		Rect rect;
 		Rect srcRect;

@@ -2,6 +2,7 @@
 #include "ImGuiFileDialog.h"
 #include "MainMenu.h"
 #include "Judge.h"
+#include "Helpers.h"
 // window draws
 
 Chart* selectedChart;
@@ -17,6 +18,8 @@ note tails[4] = {};
 bool topLayer = false;
 int currentDiff = 0;
 int snap = 16;
+
+float speed = 1;
 
 std::map<float, float> snapConvert;
 
@@ -432,7 +435,23 @@ void createNote(int lane, float beat = currentBeat, noteType type = noteType::No
 		startBeats[n.lane] = beat;
 	}
 }
+void window_waveProperties() {
+	bool shit = Game::save->GetBool("nonChange_waveform");
+	ImGui::Checkbox("Show Waveform", &shit);
+	Game::save->SetBool("nonChange_waveform", shit);
 
+	if (Game::save->GetString("nonChange_colorShit") == "")
+		Game::save->SetString("nonChange_colorShit", "128,128,255");
+
+	std::string bruh = Game::save->GetString("nonChange_colorShit");
+
+	std::vector<std::string> colorSaved = Chart::split(bruh, ',');
+
+	float c[3] = {std::stof(colorSaved[0]) / 255,std::stof(colorSaved[1]) / 255,std::stof(colorSaved[2]) / 255 };
+	ImGui::Text("Waveform Color:");
+	ImGui::ColorEdit3("##WaveformColor",(float*)&c);
+	Game::save->SetString("nonChange_colorShit", std::to_string(c[0] * 255) + "," + std::to_string(c[1] * 255) + "," + std::to_string(c[2] * 255));
+}
 
 void window_chartProperties() {
 	FuckinEditor* editor = (FuckinEditor*)Game::currentMenu;
@@ -815,6 +834,7 @@ void FuckinEditor::create()
 	add(top);
 
 	createWindow("Chart Properties", { 400,400 }, (drawCall)window_chartProperties, false);
+	createWindow("Waveform Properties", { 400,400 }, (drawCall)window_waveProperties, false);
 	createWindow("Help", { 550,350 }, (drawCall)window_help, false);
 	createWindow("Notification", { 500,100 }, (drawCall)window_notif, false);
 	findWindow("Notification").xOff = 12;
@@ -835,14 +855,14 @@ void FuckinEditor::update(Events::updateEvent event)
 		if (songPlaying)
 		{
 			bool removeLayer = false;
-			if (wh - currentTime < (Judge::hitWindows[1] * 0.5) && wh - currentTime > -(Judge::hitWindows[1] * 0.2))
+			if (wh - abs(currentTime) < (Judge::hitWindows[1] * 0.5) && wh - abs(currentTime) > -(Judge::hitWindows[1] * 0.2))
 			{
 				fuck[obj->lane]->lightUpTimer = 195;
 				if (!findClapped(obj->beat) && Game::save->GetBool("nonChange_noteTick"))
 				{
 					beatsClapped.push_back(obj->beat);
 					Channel* c = SoundManager::createChannel("assets/sounds/hitSound.wav", "clap_" + std::to_string(obj->beat));
- 					c->play();
+					c->play();
 					c->setVolume(1);
 					clapChannels.push_back(c);
 				}
@@ -851,7 +871,7 @@ void FuckinEditor::update(Events::updateEvent event)
 			for (holdTile tile : obj->heldTilings)
 			{
 				wh = selectedChart->getTimeFromBeat(tile.beat, selectedChart->getSegmentFromBeat(tile.beat));
-				if (wh - currentTime < (Judge::hitWindows[1] * 0.5) && wh - currentTime > -(Judge::hitWindows[1] * 0.2))
+				if (wh - abs(currentTime) < (Judge::hitWindows[1] * 0.5) && wh - abs(currentTime) > -(Judge::hitWindows[1] * 0.2))
 				{
 					fuck[obj->lane]->lightUpTimer = 195;
 				}
@@ -859,67 +879,98 @@ void FuckinEditor::update(Events::updateEvent event)
 		}
 
 	}
+	int showBeatLines = Game::save->GetBool("nonChange_beatLines") ? 1 : 0;
 
 	for (line& l : snapBeat)
 	{
-		float diff = (selectedChart->getTimeFromBeat(l.beat, selectedChart->getSegmentFromBeat(l.beat)) + (selectedChart->getStopOffsetFromBeat(l.beat))) - currentTime;
+		l.rect->alpha = showBeatLines;
 
-		float bps = (Game::save->GetDouble("scrollspeed") / 60);
-
-		l.rect->alpha = Game::save->GetBool("nonChange_beatLines") ? 1 : 0;
-
-		float noteOffset = (bps * (diff / 1000)) * (64 * noteZoom);
+		float noteOffset = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed") / 60, selectedChart->getTimeFromBeat(l.beat, selectedChart->getSegmentFromBeat(l.beat)) + (selectedChart->getStopOffsetFromBeat(l.beat)), currentTime, 64 * noteZoom);
 		l.rect->y = (fuck[0]->y) + noteOffset + (32 * noteZoom);
 		l.rect->x = lunder->x;
 		l.rect->w = lunder->w;
+		if (showBeatLines == 1)
+		{
+			if (l.rect->y >= 720)
+				l.rect->drawCall = false;
+			else
+				l.rect->drawCall = true;
+		}
+		else
+			l.rect->drawCall = false;
 	}
+
 
 	for (line& l : beatLines)
 	{
-		float diff = (selectedChart->getTimeFromBeat(l.beat, selectedChart->getSegmentFromBeat(l.beat)) + (selectedChart->getStopOffsetFromBeat(l.beat))) - currentTime;
+		l.rect->alpha = showBeatLines;
 
-		float bps = (Game::save->GetDouble("scrollspeed") / 60);
+		l.text->alpha = showBeatLines;
 
-
-		l.rect->alpha = Game::save->GetBool("nonChange_beatLines") ? 1 : 0;
-
-		l.text->alpha = Game::save->GetBool("nonChange_beatLines") ? 1 : 0;
-
-		float noteOffset = (bps * (diff / 1000)) * (64 * noteZoom);
+		float noteOffset = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed") / 60, selectedChart->getTimeFromBeat(l.beat, selectedChart->getSegmentFromBeat(l.beat)) + (selectedChart->getStopOffsetFromBeat(l.beat)), currentTime, 64 * noteZoom);
 		l.rect->y = (fuck[0]->y) + noteOffset + (32 * noteZoom);
 		l.rect->x = lunder->x;
 		l.rect->w = lunder->w;
 		l.text->y = l.rect->y - (l.text->surfH / 2);
 		l.text->x = l.rect->x - (l.text->surfW + 4);
+		if (showBeatLines == 1)
+		{
+			if (l.rect->y >= 720)
+				l.rect->drawCall = false;
+			else
+				l.rect->drawCall = true;
+		}
+		else
+			l.rect->drawCall = false;
 	}
 
 	for (thingy& l : sideStuff)
 	{
-		float diff = selectedChart->getTimeFromBeat(l.beat,selectedChart->getSegmentFromBeat(l.beat)) - currentTime;
-
-		float bps = (Game::save->GetDouble("scrollspeed") / 60);
-
-		float noteOffset = (bps * (diff / 1000)) * (64 * noteZoom);
+		float noteOffset = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed") / 60, selectedChart->getTimeFromBeat(l.beat, selectedChart->getSegmentFromBeat(l.beat)) + (selectedChart->getStopOffsetFromBeat(l.beat)), currentTime, 64 * noteZoom);
 		l.background->y = (fuck[0]->y + noteOffset + (32 * noteZoom)) - 25;
 		l.background->x = (lunder->x + lunder->w) + 25;
 		l.text->x = l.background->x + 4;
 		l.text->y = l.background->y + 2;
-
+		if (l.background->y >= 720)
+			l.background->drawCall = false;
+		else
+			l.background->drawCall = true;
 	}
+
+	std::vector<std::string> colorSaved = Chart::split(Game::save->GetString("nonChange_colorShit"), ',');
+
+	Color c = { std::stoi(colorSaved[0]),std::stoi(colorSaved[1]),std::stoi(colorSaved[2]) };
+
+	float waveformAlpha = Game::save->GetBool("nonChange_waveform") ? 1 : 0;
 
 	int waveInd = 0;
 	for (waveformSeg& seg : waveform)
 	{
 		float bps = (Game::save->GetDouble("scrollspeed") / 60);
 
-		float noteOffset = (bps * (-(currentTime - seg.offset) / 1000)) * (64 * noteZoom);
+		float noteOffset = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed") / 60, seg.time, currentTime, 64 * noteZoom);
 
-		seg.sprite->alpha = Game::save->GetBool("nonChange_waveform") ? 1 : 0;
+		seg.sprite->alpha = waveformAlpha;
 
-		seg.sprite->y = (fuck[0]->y + ((64 * noteZoom))) - (32 * noteZoom) + noteOffset + ((seg.length * waveInd) * noteZoom);
+		seg.sprite->colorR = c.r;
+		seg.sprite->colorG = c.g;
+		seg.sprite->colorB = c.b;
+
+		seg.sprite->y = (fuck[0]->y) + noteOffset;
 		seg.sprite->x = lunder->x;
 		seg.sprite->w = lunder->w;
 		seg.sprite->h = seg.length * noteZoom;
+
+		if (waveformAlpha != 0)
+		{
+			if (seg.sprite->y >= 720)
+				seg.sprite->drawCall = false;
+			else
+				seg.sprite->drawCall = true;
+		}
+		else
+			seg.sprite->drawCall = false;
+
 		waveInd++;
 	}
 
@@ -1129,15 +1180,11 @@ void FuckinEditor::imguiUpdate(float elapsed)
 		}
 		if (ImGui::BeginMenu("View"))
 		{
-			bool shit = Game::save->GetBool("nonChange_waveform");
-			ImGui::Checkbox("Waveform (WIP)", &shit);
-			if (shit != Game::save->GetBool("nonChange_waveform"))
-			{
-				Game::save->SetBool("nonChange_waveform", shit);
-				Game::save->Save();
+			if (ImGui::MenuItem("Waveform") && !openingFile) {
+				findWindow("Waveform Properties").shouldDraw = true;
 			}
 
-			shit = Game::save->GetBool("nonChange_beatLines");
+			bool shit = Game::save->GetBool("nonChange_beatLines");
 			ImGui::Checkbox("Lines", &shit);
 			if (shit != Game::save->GetBool("nonChange_beatLines"))
 			{
@@ -1310,6 +1357,21 @@ void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 			snapSelect = 0;
 	}
 
+	if (event.keysym.sym == SDLK_LEFT && (event.keysym.mod & KMOD_SHIFT))
+	{
+		speed -= 0.1;
+		if (speed < 0.1)
+			speed = 0.1;
+		song->rateChange(speed);
+	}
+
+	if (event.keysym.sym == SDLK_RIGHT && (event.keysym.mod & KMOD_SHIFT))
+	{
+		speed += 0.1;
+		if (speed > 3)
+			speed = 3;
+		song->rateChange(speed);
+	}
 
 	auto it = snapConvert.begin();
 	std::advance(it, snapSelect);
@@ -1494,113 +1556,83 @@ void FuckinEditor::generateWaveForm()
 
 	int plength = getWaveLength(1, selectedChart);
 	float pixels = 0;
-	float lastTime = 0;
 
-	AvgGroup* waveSeg = new AvgGroup(0, 0, lunder->w, plength);
+	AvgGroup* waveSeg = new AvgGroup(0, 0, lunder->w, 715);
 	waveSeg->renderOnce = true;
 	float currentSegTime = 0;
 	float offset = 0;
 	float lastY = 0;
+	double startTime = 0;
+	int indexx = 0;
+	bool startNext = false;
 	for (int i = 0; i < song->length; i++)
 	{
-		int index = BASS_ChannelSeconds2Bytes(song->id, std::max(0.0f,(float)i / 1000.0f)) / 2;
+		int index = BASS_ChannelSeconds2Bytes(song->id, std::max(0.0,(double)i / 1000.0)) / 2;
 
 		if (index > leng)
 			break;
 
-		float time = i - lastTime;
+		double time = (double)i / 1000.0;
 
 		float rightFreq = samples[index + 1] * 128;
+		rightFreq = abs(rightFreq);
+
 		float leftFreq = samples[index] * 128;
+		leftFreq = abs(leftFreq);
 
-
-		if (rightFreq == 0 || leftFreq == 0)
-		{
-			offset++;
-			continue;
-		}
-
-		/*for (int ii = i; ii < song->length; ii++)
-		{
-			QWORD iindex = BASS_ChannelSeconds2Bytes(song->id, (float)ii / (float)1000) / 2;
-			if (iindex > leng)
-			{
-				lastNext = nextFreq;
-				nextFreq = 0;
-				nextIndex = iindex;
-				break;
-			}
-			if (samples[iindex + 1] * 100 != rightFreq)
-			{
-				nextIndex = iindex;
-				lastNext = nextFreq;
- 				nextFreq = samples[iindex + 1] * 100;
-				break;
-			}
-		}*/
-
-		/*if (rightFreq == lastNext)
-		{
-			savedInd = index;
-			lastFreqR = rightFreq;
-			lastInterp = i;
-		}
-		else
-		{
-			if (i > lastInterp + 10)
-				lastInterp = i;
-			else
-				continue;
-
-			// interperlate to the next
-			if (nextIndex == 0)
-				nextIndex = song->length;
-
-			// normalize
-			float firstInd = i - savedInd;
-			float secondInd = nextIndex - savedInd;
-
-			float newFreq = std::lerp(lastFreqR, nextFreq, (float)index / (float)nextIndex);
-
-			std::cout << newFreq << " | " << (index / nextIndex) << " | " << index << " | " << nextIndex << std::endl;
-
-			lastFreqR = newFreq;
-			rightFreq = newFreq;
-		}*/
-
+		if (rightFreq != leftFreq)
+			rightFreq = leftFreq;
 
 		float x = (lunder->w / 2);
 
-		float w = (abs(rightFreq * 2));
+		float w = (rightFreq * 2);
+
+		if (rightFreq == 0)
+		{
+			startNext = true;
+
+			continue;
+		}
+		if (startNext)
+		{
+			pixels = 0;
+			startNext = false;
+		}
+
 
 		if (w / 2 + (lunder->w / 2) > lunder->w)
 			w = (lunder->w - (lunder->w / 2)) * 2;
 
-		AvgRect* rect = new AvgRect(x - abs(rightFreq), pixels, w, 1);
-		rect->c = { 128,128,255 };
+		float noteOffTime = i - (startTime * 1000);
+		float bps = (Game::save->GetDouble("scrollspeed") / 60);
+
+		float noteOffset = Helpers::calculateCMODY(bps, noteOffTime, 0, 64 * noteZoom);
+
+		AvgRect* rect = new AvgRect(x - rightFreq, noteOffset, w, 2);
+		rect->c = { 255,255,255 };
 		line l;
 		l.freqR = rightFreq;
 		l.rect = rect;
 		l.time = i;
-		pixels += 1;
+		pixels += 2;
 		//l.text = new Text(rect->x - 10, rect->y, std::to_string((int)snappedBeat), 16, "Futura Bold");
 		waveSeg->add(rect);
-		if (pixels + 1 > plength)
+		if (pixels >= 715)
 		{
+			indexx++;
 			waveformSeg wSeg;
-			wSeg.time = currentSegTime;
+			wSeg.time = startTime * 1000;
+			startTime = time;
 			waveSeg->forceDraw();
 			wSeg.sprite = new AvgSprite(0, 0, waveSeg->ctb);
 			wSeg.sprite->flip = true;
 			wSeg.offset = offset;
 			wave->add(wSeg.sprite);
-			lastTime = i;
-			wSeg.length = plength;
+			wSeg.length = 715;
 			waveform.push_back(wSeg);
 			delete waveSeg;
 			pixels = 0;
-			plength = getWaveLength(1, selectedChart);
-			waveSeg = new AvgGroup(0, 0, lunder->w, plength);
+			waveSeg = new AvgGroup(0, 0, lunder->w, 715);
 			waveSeg->renderOnce = true;
 			currentSegTime = i;
 		}

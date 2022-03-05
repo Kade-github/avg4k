@@ -8,7 +8,6 @@ void AvgGroup::forceDraw()
 	Rendering::setBlend();
 	Rendering::drawBatch();
 	glBindFramebuffer(GL_FRAMEBUFFER, fb);
-	bind(ctb->width,ctb->height);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glClearColor(0, 0, 0, 0);
 	Rendering::setBlendSep();
@@ -26,7 +25,6 @@ void AvgGroup::forceDraw()
 	}
 	Rendering::setBlend();
 	Rendering::drawBatch();
-	bind(1280, 720);
 }
 
 void AvgGroup::draw()

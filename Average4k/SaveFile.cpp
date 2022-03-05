@@ -31,6 +31,7 @@ SaveFile::SaveFile()
     defaultSettings.push_back(CreateSetting(true, 0, "nonChange_beatLines", false, 0, 3, false, 0, ""));
     defaultSettings.push_back(CreateSetting(true, 0, "nonChange_infoPanel", false, 0, 3, false, 0, ""));
     defaultSettings.push_back(CreateSetting(false, 0, "nonChange_noteTick", false, 0, 3, false, 0, ""));
+    defaultSettings.push_back(CreateSetting(false, 0, "nonChange_colorShit", false, 0, 3, false, 0, "128,128,255"));
     std::ifstream ifs("settings.avg");
     if (!ifs.good())
     {
@@ -102,7 +103,7 @@ void SaveFile::SetString(std::string sett, std::string value)
         size = 248;
     for (setting& set : settings)
     {
-        if (set.name == sett)
+        if (std::string(set.name) == sett)
         {
             set.stringValue = value;
         }
@@ -113,7 +114,7 @@ void SaveFile::SetDouble(std::string sett, double value)
 {
     for (setting& set : settings)
     {
-        if (set.name == sett)
+        if (std::string(set.name) == sett)
             set.value = value;
     }
 }
@@ -122,7 +123,7 @@ void SaveFile::SetBool(std::string sett, bool value)
 {
     for (setting& set : settings)
     {
-        if (set.name == sett)
+        if (std::string(set.name) == sett)
             set.active = value;
     }
 }
@@ -131,7 +132,7 @@ std::string SaveFile::GetString(std::string sett)
 {
     for (setting& set : settings)
     {
-        if (set.name == sett)
+        if (std::string(set.name) == sett)
             return set.stringValue;
     }
     return "";
@@ -141,7 +142,7 @@ double SaveFile::GetDouble(std::string sett)
 {
     for (setting& set : settings)
     {
-        if (set.name == sett)
+        if (std::string(set.name) == sett)
             return set.value;
     }
     return 0;
@@ -151,7 +152,7 @@ bool SaveFile::GetBool(std::string sett)
 {
     for (setting& set : settings)
     {
-        if (set.name == sett)
+        if (std::string(set.name) == sett)
             return set.active;
     }
     return false;
@@ -160,6 +161,9 @@ bool SaveFile::GetBool(std::string sett)
 setting SaveFile::CreateSetting(bool defaultActive, double defaultValue, std::string defaultName, bool tA, double lowest, double highest, bool isKeybind, double increm, std::string defaultStringValue)
 {
     setting set;
+
+    strcpy_s(set.name, defaultName.c_str());
+
     set.active = defaultActive;
     set.takesActive = tA;
     set.value = defaultValue;

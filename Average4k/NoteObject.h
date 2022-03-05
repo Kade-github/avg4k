@@ -34,6 +34,7 @@ class NoteObject : public Object
 		Text* debugText;
 
 		bool fboMode = true;
+		bool drawCall = true;
 
 		Chart* currentChart;
 

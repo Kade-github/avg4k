@@ -41,6 +41,11 @@ void NoteObject::draw() {
     else
         rect.y = (receptor.y + noteOffset);
 
+    y = rect.y;
+
+    if (!drawCall)
+        return;
+
     Texture* texture;
 
     // get quant

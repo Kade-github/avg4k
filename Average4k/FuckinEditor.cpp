@@ -850,6 +850,10 @@ void FuckinEditor::update(Events::updateEvent event)
 
 	for (NoteObject* obj : notes)
 	{
+		if (obj->y > 720 && obj->y + 64 < 0)
+			obj->drawCall = false;
+		else
+			obj->drawCall = true;
 		obj->rTime = currentTime;
 		float wh = selectedChart->getTimeFromBeat(obj->beat, selectedChart->getSegmentFromBeat(obj->beat));
 		if (songPlaying)
@@ -891,7 +895,7 @@ void FuckinEditor::update(Events::updateEvent event)
 		l.rect->w = lunder->w;
 		if (showBeatLines == 1)
 		{
-			if (l.rect->y >= 720)
+			if (l.rect->y > 720 || l.rect->y + l.rect->h < 0)
 				l.rect->drawCall = false;
 			else
 				l.rect->drawCall = true;
@@ -915,7 +919,7 @@ void FuckinEditor::update(Events::updateEvent event)
 		l.text->x = l.rect->x - (l.text->surfW + 4);
 		if (showBeatLines == 1)
 		{
-			if (l.rect->y >= 720)
+			if (l.rect->y > 720 || l.rect->y + l.rect->h < 0)
 				l.rect->drawCall = false;
 			else
 				l.rect->drawCall = true;
@@ -931,7 +935,7 @@ void FuckinEditor::update(Events::updateEvent event)
 		l.background->x = (lunder->x + lunder->w) + 25;
 		l.text->x = l.background->x + 4;
 		l.text->y = l.background->y + 2;
-		if (l.background->y >= 720)
+		if (l.background->y > 720 || l.background->y + l.background->h < 0)
 			l.background->drawCall = false;
 		else
 			l.background->drawCall = true;
@@ -963,7 +967,7 @@ void FuckinEditor::update(Events::updateEvent event)
 
 		if (waveformAlpha != 0)
 		{
-			if (seg.sprite->y >= 720)
+			if (seg.sprite->y > 720 || seg.sprite->y + seg.sprite->h < 0)
 				seg.sprite->drawCall = false;
 			else
 				seg.sprite->drawCall = true;
@@ -1291,26 +1295,6 @@ void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 	{
 		if (songPlaying)
 		{
-			float beats = 0;
-			float increase = 1.0f / static_cast<float>(snapConvert[snap]);
-
-			beats = beatMath(1, increase, currentBeat);
-
-			if (beats < 0.00)
-				beats = 0.00;
-
-			bpmSegment seg = selectedChart->getSegmentFromBeat(beats);
-
-			float stopOffset = (selectedChart->getStopOffsetFromBeat(beats) / 1000.0f) * (seg.bpm / 60.0f);
-
-			float offsetBeats = beatMath(1, stopOffset, beats);
-
-			if (stopOffset != 0)
-				beats = offsetBeats;
-
-			currentTime = selectedChart->getTimeFromBeat(beats, seg);
-			currentBeat = beats;
-			song->setPos(currentTime);
 			song->stop();
 
 			beatsClapped.clear();
@@ -1430,6 +1414,9 @@ void FuckinEditor::mouseWheel(float wheel)
 		return;
 	if (!selectedChart)
 		return;
+
+	beatsClapped.clear();
+
 	float amount = wheel;
 	if (controlHeld)
 	{

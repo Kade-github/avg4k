@@ -13,6 +13,7 @@ public:
 
 	bool center = true;
 	bool renderOnce = false;
+	bool flip = false;
 
 	float newW, newH;
 

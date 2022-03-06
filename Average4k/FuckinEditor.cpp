@@ -14,6 +14,8 @@ float startBeats[4] = {};
 note saved[4] = {};
 note tails[4] = {};
 
+bool downscroll = false;
+
 bool topLayer = false;
 int currentDiff = 0;
 int snap = 16;
@@ -773,6 +775,7 @@ void FuckinEditor::create()
 {
 	noteZoom = 1;
 	addCamera(Game::mainCamera);
+	downscroll = Game::save->GetBool("downscroll");
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -842,7 +845,11 @@ void FuckinEditor::create()
 	{
 		float x = (lunder->x + 12) + ((((64 * noteZoom) + 12)) * i);
 
-		ReceptorObject* r = new ReceptorObject(x, 140, i);
+		float y = 140;
+		if (downscroll)
+			y = 580;
+
+		ReceptorObject* r = new ReceptorObject(x, y, i);
 		r->defAlpha = 0.8;
 		top->add(r);
 		switch (i)
@@ -927,19 +934,18 @@ void FuckinEditor::update(Events::updateEvent event)
 	float perc = currentTime / lastTime;
 	if (perc > 1)
 		perc = 1;
-
-	miniMapCursor->y = miniMapBorder->y + (miniMapBorder->h * (perc));
+	miniMapCursor->y = miniMap->y + (miniMap->h * (perc));
 
 	int x, y;
 	Game::GetMousePos(&x, &y);
 
 	if (selectedChart && mousePressed)
 	{
-		if ((x > miniMapBorder->x && x < miniMapBorder->x + miniMapBorder->w) &&
-			(y > miniMapBorder->y && y < miniMapBorder->y + miniMapBorder->h))
+		if ((x > miniMap->x && x < miniMap->x + miniMap->w) &&
+			(y > miniMap->y && y < miniMap->y + miniMap->h))
 		{
-			float relativeY = y - miniMapBorder->y;
-			int time = lastTime * (relativeY / miniMapBorder->h);
+			float relativeY = y - miniMap->y;
+			int time = lastTime * (relativeY / miniMap->h);
 			currentTime = time;
 			bpmSegment curSeg = selectedChart->getSegmentFromTime(currentTime);
 			currentBeat = selectedChart->getBeatFromTimeOffset(currentTime, curSeg);
@@ -993,13 +999,13 @@ void FuckinEditor::update(Events::updateEvent event)
 	{
 		float maxY = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed"), lastTime, 0, 2);
 
-		float bruh = 720 / maxY;
+		float bruh = miniMap->h / maxY;
 
 		for (line& l : miniMapLines)
 		{
 			l.rect->alpha = 1;
 			l.rect->drawCall = true;
-			float cmod = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed"), selectedChart->getTimeFromBeatOffset(l.beat, selectedChart->getSegmentFromBeat(l.beat)), 0, 2);
+			float cmod = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed"), selectedChart->getTimeFromBeat(l.beat, selectedChart->getSegmentFromBeat(l.beat)), 0, 2);
 
 			l.rect->y = cmod * bruh;
 		}
@@ -1020,7 +1026,11 @@ void FuckinEditor::update(Events::updateEvent event)
 		l.rect->alpha = showBeatLines;
 
 		float noteOffset = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed") / 60, selectedChart->getTimeFromBeat(l.beat, selectedChart->getSegmentFromBeat(l.beat)), currentTime, 64 * noteZoom);
-		l.rect->y = (fuck[0]->y) + noteOffset + (32 * noteZoom);
+		if (downscroll)
+			l.rect->y = (fuck[0]->y) - noteOffset + (32 * noteZoom);
+		else
+			l.rect->y = (fuck[0]->y) + noteOffset + (32 * noteZoom);
+
 		l.rect->x = lunder->x;
 		l.rect->w = lunder->w;
 		if (showBeatLines == 1)
@@ -1042,7 +1052,10 @@ void FuckinEditor::update(Events::updateEvent event)
 		l.text->alpha = showBeatLines;
 
 		float noteOffset = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed") / 60, selectedChart->getTimeFromBeat(l.beat, selectedChart->getSegmentFromBeat(l.beat)) + (selectedChart->getStopOffsetFromBeat(l.beat)), currentTime, 64 * noteZoom);
-		l.rect->y = (fuck[0]->y) + noteOffset + (32 * noteZoom);
+		if (downscroll)
+			l.rect->y = (fuck[0]->y) - noteOffset + (32 * noteZoom);
+		else
+			l.rect->y = (fuck[0]->y) + noteOffset + (32 * noteZoom);
 		l.rect->x = lunder->x;
 		l.rect->w = lunder->w;
 		l.text->y = l.rect->y - (l.text->surfH / 2);
@@ -1061,7 +1074,10 @@ void FuckinEditor::update(Events::updateEvent event)
 	for (thingy& l : sideStuff)
 	{
 		float noteOffset = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed") / 60, selectedChart->getTimeFromBeat(l.beat, selectedChart->getSegmentFromBeat(l.beat)) + (selectedChart->getStopOffsetFromBeat(l.beat)), currentTime, 64 * noteZoom);
-		l.background->y = (fuck[0]->y + noteOffset + (32 * noteZoom)) - 25;
+		if (downscroll)
+			l.background->y = (fuck[0]->y - noteOffset + (32 * noteZoom)) - 25;
+		else
+			l.background->y = (fuck[0]->y + noteOffset + (32 * noteZoom)) - 25;
 		l.background->x = (lunder->x + lunder->w) + 25;
 		l.text->x = l.background->x + 4;
 		l.text->y = l.background->y + 2;
@@ -1090,7 +1106,10 @@ void FuckinEditor::update(Events::updateEvent event)
 		seg.sprite->colorG = c.g;
 		seg.sprite->colorB = c.b;
 
-		seg.sprite->y = (fuck[0]->y) + noteOffset;
+		if (downscroll)
+			seg.sprite->y = ((fuck[0]->y + (64 * noteZoom)) - 715) - (noteOffset);
+		else
+			seg.sprite->y = (fuck[0]->y) + noteOffset;
 		seg.sprite->x = lunder->x;
 		seg.sprite->w = lunder->w;
 		seg.sprite->h = seg.length * noteZoom;
@@ -1726,16 +1745,7 @@ void FuckinEditor::generateWaveForm()
 		float w = (rightFreq * 2);
 
 		if (rightFreq == 0)
-		{
-			startNext = true;
-
 			continue;
-		}
-		if (startNext)
-		{
-			pixels = 0;
-			startNext = false;
-		}
 
 
 		if (w / 2 + (lunder->w / 2) > lunder->w)
@@ -1746,7 +1756,11 @@ void FuckinEditor::generateWaveForm()
 
 		float noteOffset = Helpers::calculateCMODY(bps, noteOffTime, 0, 64 * noteZoom);
 
-		AvgRect* rect = new AvgRect(x - rightFreq, noteOffset, w, 2);
+		float yy = noteOffset;
+		if (downscroll)
+			yy = 715 - noteOffset;
+
+		AvgRect* rect = new AvgRect(x - rightFreq, yy, w, 2);
 		rect->c = { 255,255,255 };
 		line l;
 		l.freqR = rightFreq;

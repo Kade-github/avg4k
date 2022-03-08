@@ -655,9 +655,9 @@ void Gameplay::update(Events::updateEvent event)
 	
 	if (play)
 	{
-		float songPos = song->getPos() - Game::save->GetDouble("offset");
+		float songPos = song->getPos();
 		
-		float bruh = positionInSong - Game::save->GetDouble("offset");
+		float bruh = positionInSong;
 
 		if ((bruh - songPos) <= -0.05 
 			|| (bruh + songPos) >= 0.05)

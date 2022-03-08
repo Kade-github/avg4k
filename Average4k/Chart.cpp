@@ -1,5 +1,7 @@
 #include "Chart.h"
 
+
+
 std::vector<std::string> Chart::split(std::string str, char delimiter)
 {
     std::vector < std::string > internal;
@@ -16,12 +18,12 @@ std::vector<std::string> Chart::split(std::string str, char delimiter)
 
 float Chart::getTimeFromBeat(float beat, bpmSegment seg) {
     float beatThing = (beat - seg.startBeat) / (seg.bpm / 60);
-    return seg.startTime + (beatThing * 1000) - (meta.chartOffset * 1000);
+    return (seg.startTime + (beatThing * 1000) - (meta.chartOffset * 1000)) - (0.033 * 1000);
 }
 
 float Chart::getTimeFromBeatOffset(float beat, bpmSegment seg) {
     float beatThing = (beat - seg.startBeat) / (seg.bpm / 60);
-    return seg.startTime + (beatThing * 1000);
+    return (seg.startTime + (beatThing * 1000)) - (0.033 * 1000);
 }
 
 float Chart::getBeatFromTime(float timestamp, bpmSegment seg) {

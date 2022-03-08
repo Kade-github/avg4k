@@ -1,8 +1,8 @@
 #pragma once
 #include "includes.h"
 #include "bass_fx.h"
-#include "Chart.h"
 #include "MiniBpm.h"
+
 
 class Channel {
 public:
@@ -66,7 +66,7 @@ public:
 	{
 		if (id == -1)
 			return 0;
-		return BASS_ChannelBytes2Seconds(id, BASS_ChannelGetPosition(id, BASS_POS_BYTE)) * 1000;
+		return (BASS_ChannelBytes2Seconds(id, BASS_ChannelGetPosition(id, BASS_POS_BYTE))) * 1000;
 	}
 
 	float returnSampleRate()
@@ -81,7 +81,7 @@ public:
 
 		breakfastquay::MiniBPM finder = breakfastquay::MiniBPM(returnSampleRate());
 
-		finder.setBPMRange(55, 245);
+		finder.setBPMRange(55, 190);
 		float banger = (float)finder.estimateTempoOfSamples(samples, length);
 		bpmCan = finder.getTempoCandidates();
 		if (freeSamples)
@@ -148,18 +148,6 @@ public:
 			return;
 		BASS_ChannelFree(id);
 		id = BASS_FX_TempoCreate(BASS_StreamCreateFile(false, path.c_str(), 0, 0, BASS_STREAM_DECODE), BASS_FX_FREESOURCE);
-	}
-	// little helper for this shit
-	bpmSegment getBPMSegmentFromChart(Chart* chart)
-	{
-		if (id == -1)
-		{
-			bpmSegment seg = bpmSegment();
-			return seg;
-		}
-		float pos = getPos();
-		bpmSegment seg = chart->getSegmentFromTime(pos);
-		return seg;
 	}
 };
 

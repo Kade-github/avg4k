@@ -179,6 +179,19 @@ void call() {
 	Tweening::TweenManager::createNewTween("thingBeat",instance->thing, Tweening::tt_scale, 19750 / ch->bpm, 1.1, 1, NULL, Easing::EaseInSine);
 }
 
+// little helper for this shit
+bpmSegment getBPMSegmentFromChart(Chart* chart)
+{
+	Channel* ch = SoundManager::getChannelByName("prevSong");
+	if (ch->id == -1)
+	{
+		bpmSegment seg = bpmSegment();
+		return seg;
+	}
+	float pos = ch->getPos();
+	bpmSegment seg = chart->getSegmentFromTime(pos);
+	return seg;
+}
 
 void MainMenu::update(Events::updateEvent event)
 {
@@ -199,7 +212,7 @@ void MainMenu::update(Events::updateEvent event)
 		if (tweenDone)
 		{
 			Channel* ch = SoundManager::getChannelByName("prevSong");
-			bpmSegment seg = ch->getBPMSegmentFromChart(SongSelect::currentChart);
+			bpmSegment seg = getBPMSegmentFromChart(SongSelect::currentChart);
 			ch->bpm = seg.bpm;
 			float beat = SongSelect::currentChart->getBeatFromTime(ch->getPos(), seg);
 			if (beat >= lastBeat + 1)

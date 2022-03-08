@@ -715,6 +715,10 @@ void window_chartProperties() {
 	{
 		ImGui::Text("Tempo Detection Results:");
 		int ind = 0;
+		if (editor->song->bpmCan.size() == 0 && editor->triedBPM)
+		{
+			ImGui::Text("Seems like I failed to detect the bpm, uh. woops, idfk.");
+		}
 		for (double d : editor->song->bpmCan)
 		{
 			ImGui::PushItemWidth(100);
@@ -726,7 +730,8 @@ void window_chartProperties() {
 		}
 		if (ImGui::Button("Detect Tempo"))
 		{
-			float sampl = editor->song->returnSampleRate() * (editor->song->length / 1000);
+			editor->triedBPM = true;
+			float sampl = (editor->song->returnSampleRate() * (editor->song->length / 1000)) / 2;
 			float* samples = editor->song->returnSamples(sampl, NULL);
 			editor->song->bpmDetect(samples, sampl, true);
 		}
@@ -1231,6 +1236,7 @@ void openChart(std::string path, std::string folder) {
 	SMFile* file = new SMFile(path, folder, true);
 	selectedChart = new Chart(file->meta);
 	delete file;
+	editor->triedBPM = false;
 
 	if (!selectedChart)
 	{

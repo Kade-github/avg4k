@@ -44,6 +44,7 @@ struct line {
 class FuckinEditor : public Menu
 {
 public:
+	bool triedBPM = false;
 	float noteZoom = 1;
 	AvgSprite* lunder;
 	AvgSprite* lunderBorder;

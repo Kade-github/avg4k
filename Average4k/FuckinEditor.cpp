@@ -730,6 +730,7 @@ void window_chartProperties() {
 			float* samples = editor->song->returnSamples(sampl, NULL);
 			editor->song->bpmDetect(samples, sampl, true);
 		}
+		ImGui::EndTabItem();
 	}
 	if (ImGui::BeginTabItem("Extras"))
 	{

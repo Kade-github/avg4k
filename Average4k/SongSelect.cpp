@@ -214,7 +214,9 @@ void SongSelect::keyDown(SDL_KeyboardEvent event)
 		Color c;
 		song selectedChart = listOfCharts[selectedIndex];
 		std::string name = currentChart->meta.songName;
-		std::string diff = currentChart->meta.difficulties[selectedDiffIndex].name;
+		std::string diff = "";
+		if (currentChart->meta.difficulties.size() != 0)
+			diff = currentChart->meta.difficulties[selectedDiffIndex].name;
 		switch (event.keysym.sym)
 		{
 		case SDLK_LSHIFT:
@@ -249,10 +251,19 @@ void SongSelect::keyDown(SDL_KeyboardEvent event)
 
 			switchChart(selectedChart);
 
-			diff = currentChart->meta.difficulties[selectedDiffIndex].name;
+			if (currentChart->meta.difficulties.size() == 0)
+			{
+				songName->setText("> " + currentChart->meta.songName + " (No diffs) ");
+				songName->centerX();
+			}
+			else
+			{
 
-			songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
-			songName->centerX();
+				diff = currentChart->meta.difficulties[selectedDiffIndex].name;
+
+				songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
+				songName->centerX();
+			}
 
 			if (listOfCharts[selectedIndex].steam)
 			{
@@ -290,10 +301,19 @@ void SongSelect::keyDown(SDL_KeyboardEvent event)
 
 			switchChart(selectedChart);
 
-			diff = currentChart->meta.difficulties[selectedDiffIndex].name;
+			if (currentChart->meta.difficulties.size() == 0)
+			{
+				songName->setText("> " + currentChart->meta.songName + " (No diffs) ");
+				songName->centerX();
+			}
+			else
+			{
 
-			songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
-			songName->centerX();
+				diff = currentChart->meta.difficulties[selectedDiffIndex].name;
+
+				songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
+				songName->centerX();
+			}
 
 			if (listOfCharts[selectedIndex].steam)
 			{
@@ -356,12 +376,16 @@ void SongSelect::keyDown(SDL_KeyboardEvent event)
 				return;
 			if (MultiplayerLobby::inLobby && currentChart)
 			{
-				Game::instance->transitionToMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, true));
+				if (currentChart->meta.difficulties.size() != 0)
+					Game::instance->transitionToMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, true));
 			}
 			else if (currentChart)
 			{
-				Game::instance->transitionToMenu(new Gameplay());
-				free(selectedSong);
+				if (currentChart->meta.difficulties.size() != 0)
+				{
+					Game::instance->transitionToMenu(new Gameplay());
+					free(selectedSong);
+				}
 			}
 			break;
 		case SDLK_ESCAPE:

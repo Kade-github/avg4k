@@ -44,6 +44,9 @@ struct line {
 class FuckinEditor : public Menu
 {
 public:
+	std::vector<note> copiedNotes;
+	std::vector<note> pastedNotes;
+	std::vector<note> deletedNotes;
 	bool triedBPM = false;
 	float noteZoom = 1;
 	AvgSprite* lunder;

@@ -123,6 +123,16 @@ void NoteObject::draw() {
 
         dstRect.y = tile.rect.y;
 
+        if (downscroll)
+        {
+            if (obj->y + obj->h < tile.rect.y && !tile.active)
+                continue;
+        }
+        else
+            if (obj->y > tile.rect.y && !tile.active)
+                continue;
+
+
         if (i != heldTilings.size() - 1) {
             if (!downscroll)
             {

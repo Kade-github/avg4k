@@ -473,11 +473,41 @@ void window_waveProperties() {
 
 void window_chartProperties() {
 	FuckinEditor* editor = (FuckinEditor*)Game::currentMenu;
-	if (ImGui::CollapsingHeader("Chart Metadata"))
+	ImGui::BeginTabBar("##Chart Metadata");
+	if (ImGui::BeginTabItem("Metadata"))
 	{
 		if (selectedChart)
 		{
-			ImGui::Text("Difficulties:");
+			float offset = selectedChart->meta.chartOffset;
+			ImGui::Text("Chart Offset:");
+			ImGui::InputFloat("##Offset", &offset, .001, .01, "%.3f");
+			if (selectedChart->meta.chartOffset != offset)
+				selectedChart->meta.chartOffset = offset;
+
+			char buf[32];
+			strcpy_s(buf, selectedChart->meta.background.c_str());
+			ImGui::PushItemWidth(180);
+			ImGui::Text("Chart Background:");
+			ImGui::InputText("##Background", buf, sizeof(buf));
+			selectedChart->meta.background = std::string(buf);
+
+			char buff[32];
+			strcpy_s(buff, selectedChart->meta.songName.c_str());
+			ImGui::PushItemWidth(180);
+			ImGui::Text("Song Title:");
+			ImGui::InputText("##Title", buff, sizeof(buff));
+			selectedChart->meta.songName = std::string(buff);
+		}
+		else
+		{
+			ImGui::Text("Please select a chart first");
+		}
+		ImGui::EndTabItem();
+	}
+	if (ImGui::BeginTabItem("Diffs"))
+	{
+		if (selectedChart)
+		{
 			int ind = 0;
 			for (difficulty& diff : selectedChart->meta.difficulties)
 			{
@@ -485,7 +515,6 @@ void window_chartProperties() {
 				strcpy_s(buff, diff.name.c_str());
 				ImGui::Separator();
 				ImGui::PushItemWidth(165);
-				ImGui::Text("Name:");
 				ImGui::InputText(("##NAME" + std::to_string(ind)).c_str(), buff, sizeof(buff));
 				if (std::string(buff).size() != 0)
 					diff.name = std::string(buff);
@@ -513,21 +542,6 @@ void window_chartProperties() {
 				ind++;
 			}
 			ImGui::Separator();
-			ImGui::Text("Global Metadata");
-			char buf[32];
-			strcpy_s(buf, selectedChart->meta.background.c_str());
-			float offset = selectedChart->meta.chartOffset;
-			ImGui::PushItemWidth(180);
-			ImGui::Text("Chart Background:");
-			ImGui::InputText("##Background", buf, sizeof(buf));
-			selectedChart->meta.background = std::string(buf);
-			ImGui::Text("Chart Offset:");
-			ImGui::InputFloat("##Offset", &offset, .001, .01, "%.3f");
-			if (selectedChart->meta.chartOffset != offset)
-			{
-				selectedChart->meta.chartOffset = offset;
-			}
-			ImGui::Separator();
 			if (ImGui::Button("Create Difficulty"))
 			{
 				difficulty diff;
@@ -540,32 +554,12 @@ void window_chartProperties() {
 		{
 			ImGui::Text("Please select a chart first");
 		}
+		ImGui::EndTabItem();
 	}
-	if (ImGui::CollapsingHeader("Tempo"))
+	if (ImGui::BeginTabItem("Tempo"))
 	{
 		if (selectedChart)
 		{
-
-			if (ImGui::CollapsingHeader("BPM Detection"))
-			{
-				ImGui::Text("BPM Detection Results:");
-				int ind = 0;
-				for (double d : editor->song->bpmCan)
-				{
-					ImGui::PushItemWidth(100);
-					double dd = d;
-					ImGui::InputDouble(("##Beat" + std::to_string(d)).c_str(), &dd, 0, 0, "%.2f");
-					ind++;
-					if (ind > 4)
-						break;
-				}
-				if (ImGui::Button("Detect BPM"))
-				{
-					float sampl = editor->song->returnSampleRate() * (editor->song->length / 1000);
-					float* samples = editor->song->returnSamples(sampl, NULL);
-					editor->song->bpmDetect(samples, sampl, true);
-				}
-			}
 
 			int ind = 0;
 			for (bpmSegment& seg : selectedChart->meta.bpms)
@@ -576,11 +570,11 @@ void window_chartProperties() {
 					double beat = seg.startBeat;
 					ImGui::Text("Beat:");
 					ImGui::PushItemWidth(100);
-					ImGui::InputDouble(("##Beat" + std::to_string(ind)).c_str(), &beat, 0.01, 0.1);
+					ImGui::InputDouble(("##Beat" + std::to_string(ind)).c_str(), &beat, 0.01, 0.1, "%.2f");
 					double d = seg.bpm;
 					ImGui::Text("BPM:");
 					ImGui::PushItemWidth(100);
-					ImGui::InputDouble(("##BPM" + std::to_string(ind)).c_str(), &d, 0.01, 0.1);
+					ImGui::InputDouble(("##BPM" + std::to_string(ind)).c_str(), &d, 0.01, 0.1, "%.2f");
 					if (d < 1)
 						d = 1;
 					if (beat < 0)
@@ -641,8 +635,9 @@ void window_chartProperties() {
 		{
 			ImGui::Text("Please select a chart first");
 		}
+		ImGui::EndTabItem();
 	}
-	if (ImGui::CollapsingHeader("Stops"))
+	if (ImGui::BeginTabItem("Stops"))
 	{
 		if (selectedChart)
 		{
@@ -656,11 +651,11 @@ void window_chartProperties() {
 					double beat = seg.beat;
 					ImGui::Text("Beat:");
 					ImGui::PushItemWidth(100);
-					ImGui::InputDouble(("##SBeat" + std::to_string(ind)).c_str(), &beat, 0.01, 0.1);
+					ImGui::InputDouble(("##SBeat" + std::to_string(ind)).c_str(), &beat, 0.01, 0.1, "%.2f");
 					double d = seg.length / 1000;
 					ImGui::Text("Stop Length (in seconds):");
 					ImGui::PushItemWidth(100);
-					ImGui::InputDouble(("##SLength" + std::to_string(ind)).c_str(), &d, 0.01, 0.1);
+					ImGui::InputDouble(("##SLength" + std::to_string(ind)).c_str(), &d, 0.01, 0.1, "%.2f");
 					if (d < 1)
 						d = 1;
 					if (beat < 0)
@@ -714,8 +709,29 @@ void window_chartProperties() {
 		{
 			ImGui::Text("Please select a chart first");
 		}
+		ImGui::EndTabItem();
 	}
-	if (ImGui::CollapsingHeader("Extras"))
+	if (ImGui::BeginTabItem("BPM Detect"))
+	{
+		ImGui::Text("Tempo Detection Results:");
+		int ind = 0;
+		for (double d : editor->song->bpmCan)
+		{
+			ImGui::PushItemWidth(100);
+			double dd = d;
+			ImGui::InputDouble(("##Beat" + std::to_string(d)).c_str(), &dd, 0, 0, "%.2f");
+			ind++;
+			if (ind > 8)
+				break;
+		}
+		if (ImGui::Button("Detect Tempo"))
+		{
+			float sampl = editor->song->returnSampleRate() * (editor->song->length / 1000);
+			float* samples = editor->song->returnSamples(sampl, NULL);
+			editor->song->bpmDetect(samples, sampl, true);
+		}
+	}
+	if (ImGui::BeginTabItem("Extras"))
 	{
 		ImGui::Text("Themes:");
 		if (ImGui::Button("Dark Theme"))
@@ -733,7 +749,9 @@ void window_chartProperties() {
 			Game::save->SetString("nonChange_chartHistory", "");
 			Game::save->Save();
 		}
+		ImGui::EndTabItem();
 	}
+	ImGui::EndTabBar();
 }
 
 void window_help() {

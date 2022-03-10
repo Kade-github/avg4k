@@ -920,16 +920,18 @@ bool mousePressed = false;
 
 int initalSelectionX, initalSelectionY;
 
+
 void FuckinEditor::leftMouseDown()
 {
 	int x, y;
 	Game::GetMousePos(&x, &y);
 
+	initalSelectionX = x;
+	initalSelectionY = y;
+
 	selectionRect->x = x;
 	selectionRect->y = y;
 
-	initalSelectionX = x;
-	initalSelectionY = y;
 
 	mousePressed = true;
 }

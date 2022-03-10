@@ -419,6 +419,7 @@ public:
 
 		l.rect = new AvgRect((6 * object->lane) + 9, 0, 2,2);
 		l.lane = object->lane;
+
 		float beatRow = (object->beat - stopBeatOffset) * 48;
 
 		if (fmod(beatRow, (192 / 4)) == 0)

@@ -144,12 +144,40 @@ void MainMenu::create() {
 	thing->create();
 	add(thing);
 
-	SDL_Rect clip;
+	const char* frag = R"(
+		#version 150 core
+		const float tau = radians(360.);
+		uniform sampler2D u_texture;
+		in vec2 f_uv;
+		in vec4 f_colour;
+
+		vec3 linearToSRGB(vec3 linear){
+			return mix(
+				linear * 12.92,
+				pow(linear, vec3(1./2.4) ) * 1.055 - .055,
+				step( .0031308, linear )
+			);
+		}
+
+		out vec4 o_colour;
+		void main()
+		{
+			vec3 rainbow = linearToSRGB(
+				sin( (f_uv.x+vec3(0,2,1)/3.)*tau ) * .5 + .5
+			);
+
+			o_colour = vec4(rainbow,1.0);
+			if (o_colour.a == 0.0)
+				discard;
+		})";
+
+	
+	Rect clip;
 	clip.x = 34;
 	clip.y = 34;
 	clip.w = 43;
 	clip.h = 43;
-	//icon->clipRect = clip;
+	icon->clipRect = clip;
 
 	hello = new Text(32 + ((icon->w / 2) * 2.6), 36, "Refreshing avatar data...", 16, "arialbd");
 	hello->border = false;

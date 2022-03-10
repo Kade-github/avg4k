@@ -15,6 +15,8 @@ public:
 	bool round = false;
 	bool flip = false;
 
+	Shader* customShader;
+
 	bool drawCall = true;
 
 	int colorR = 255, colorG = 255, colorB = 255;
@@ -54,6 +56,8 @@ public:
 		{
 			delete obj;
 		}
+		if (customShader)
+			delete customShader;
 		beforeDeath();
 		die();
 	}
@@ -100,10 +104,16 @@ public:
 		if (clipRect.w > 0 || clipRect.h > 0)
 			Rendering::SetClipRect(&clipRect);
 
-		Rendering::PushQuad(&dstRect, &srcRect, tex, GL::genShader, angle);
+		if (!customShader)
+			Rendering::PushQuad(&dstRect, &srcRect, tex, GL::genShader, angle);
+		else
+			Rendering::PushQuad(&dstRect, &srcRect, tex, customShader, angle);
 
 		if (clipRect.w > 0 || clipRect.h > 0)
 			Rendering::SetClipRect(NULL);
+
+		if (customShader)
+			Rendering::drawBatch();
 	}
 
 	virtual void beforeDeath() {

@@ -9,6 +9,10 @@ float currentTime;
 float currentBeat;
 std::vector<NoteObject*> notes;
 
+std::vector<note> copiedNotes;
+std::vector<note> pastedNotes;
+std::vector<note> deletedNotes;
+
 int snapSelect = 0;
 float startBeats[4] = {};
 note saved[4] = {};
@@ -1293,6 +1297,89 @@ void fileMenu() {
 	}
 }
 
+void copy()
+{
+	copiedNotes.clear();
+	float firstBeat = -1;
+	for (NoteObject* ne : notes)
+	{
+		if (!ne->selected)
+			continue;
+		note n;
+		if (firstBeat == -1)
+			firstBeat = ne->beat;
+		n.beat = ne->beat - firstBeat;
+		n.lane = ne->lane;
+		n.type = ne->type;
+
+		copiedNotes.push_back(n);
+	}
+	std::cout << "copied " << copiedNotes.size() << std::endl;
+}
+
+void paste()
+{
+	FuckinEditor* editor = (FuckinEditor*)Game::currentMenu;
+	if (copiedNotes.size() == 0)
+		return;
+	for (NoteObject* ne : notes)
+	{
+		ne->selected = false;
+	}
+	pastedNotes.clear();
+	deletedNotes.clear();
+	float startBeat = copiedNotes[0].beat + currentBeat;
+	float endBeat = copiedNotes[copiedNotes.size() - 1].beat + currentBeat;
+	for (NoteObject* n : notes)
+	{
+		if (n->beat >= startBeat && n->beat <= endBeat)
+		{
+			note nn;
+			nn.beat = n->beat;
+			nn.lane = n->lane;
+			nn.type = n->type;
+			deletedNotes.push_back(nn);
+			deleteNote(n->lane, n->beat);
+		}
+	}
+	for (note n : copiedNotes)
+	{
+		note copiedN = n;
+		copiedN.beat = currentBeat + copiedN.beat;
+		selectedChart->meta.difficulties[currentDiff].notes.push_back(copiedN);
+		pastedNotes.push_back(copiedN);
+		editor->generateNoteObject(copiedN, selectedChart->meta.difficulties[currentDiff], selectedChart, notes);
+	}
+	std::sort(notes.begin(), notes.end(), compareNoteByBeat);
+	std::cout << "pasted " << pastedNotes.size() << " deleted " << deletedNotes.size() << std::endl;
+}
+
+void undo()
+{
+	FuckinEditor* editor = (FuckinEditor*)Game::currentMenu;
+	if (pastedNotes.size() == 0 && deletedNotes.size() == 0)
+		return;
+	for (NoteObject* ne : notes)
+	{
+		ne->selected = false;
+	}
+	for (note n : pastedNotes)
+	{
+		deleteNote(n.lane, n.beat);
+	}
+	for (note n : deletedNotes)
+	{
+		note copiedN = n;
+		copiedN.beat = copiedN.beat;
+		selectedChart->meta.difficulties[currentDiff].notes.push_back(copiedN);
+		editor->generateNoteObject(copiedN, selectedChart->meta.difficulties[currentDiff], selectedChart, notes);
+	}
+	std::sort(notes.begin(), notes.end(), compareNoteByBeat);
+	std::cout << "deleted " << pastedNotes.size() << " pasted " << deletedNotes.size() << std::endl;
+
+	pastedNotes.clear();
+	deletedNotes.clear();
+}
 
 void FuckinEditor::imguiUpdate(float elapsed)
 {
@@ -1354,6 +1441,24 @@ void FuckinEditor::imguiUpdate(float elapsed)
 		}
 		if (ImGui::BeginMenu("Edit"))
 		{
+			if (ImGui::MenuItem("Undo") && !openingFile) {
+				undo();
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Copy") && !openingFile) {
+				copy();
+			}
+			if (ImGui::MenuItem("Paste") && !openingFile) {
+				paste();
+			}
+			if (ImGui::MenuItem("Delete") && !openingFile) {
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Select All") && !openingFile) {
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Mirror") && !openingFile) {
+			}
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("View"))
@@ -1397,6 +1502,14 @@ void FuckinEditor::imguiUpdate(float elapsed)
 			if (shit != Game::save->GetBool("nonChange_noteTick"))
 			{
 				Game::save->SetBool("nonChange_noteTick", shit);
+				Game::save->Save();
+			}
+
+			shit = Game::save->GetBool("nonChange_beatTick");
+			ImGui::Checkbox("Beat Tick", &shit);
+			if (shit != Game::save->GetBool("nonChange_beatTick"))
+			{
+				Game::save->SetBool("nonChange_beatTick", shit);
 				Game::save->Save();
 			}
 			ImGui::EndMenu();
@@ -1544,76 +1657,17 @@ void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 
 	if (event.keysym.sym == SDLK_c && (event.keysym.mod & KMOD_CTRL))
 	{
-		copiedNotes.clear();
-		float firstBeat = -1;
-		for (NoteObject* ne : notes)
-		{
-			if (!ne->selected)
-				continue;
-			note n;
-			if (firstBeat == -1)
-				firstBeat = ne->beat;
-			n.beat = ne->beat - firstBeat;
-			n.lane = ne->lane;
-			n.type = ne->type;
-
-			copiedNotes.push_back(n);
-		}
-		std::cout << "copied " << copiedNotes.size() << std::endl;
+		copy();
 	}
 
 	if (event.keysym.sym == SDLK_z && (event.keysym.mod & KMOD_CTRL))
 	{
-		if (pastedNotes.size() == 0 && deletedNotes.size() == 0)
-			return;
-		for (note n : pastedNotes)
-		{
-			deleteNote(n.lane, n.beat);
-		}
-		for (note n : deletedNotes)
-		{
-			note copiedN = n;
-			copiedN.beat = currentBeat + copiedN.beat;
-			selectedChart->meta.difficulties[currentDiff].notes.push_back(copiedN);
-			generateNoteObject(copiedN, selectedChart->meta.difficulties[currentDiff], selectedChart, notes);
-		}
-
-		std::cout << "deleted " << pastedNotes.size() << " pasted " << deletedNotes.size() << std::endl;
-
-		pastedNotes.clear();
-		deletedNotes.clear();
+		undo();
 	}
 
 	if (event.keysym.sym == SDLK_v && (event.keysym.mod & KMOD_CTRL))
 	{
-		if (copiedNotes.size() == 0)
-			return;
-		pastedNotes.clear();
-		deletedNotes.clear();
-		float startBeat = copiedNotes[0].beat + currentBeat;
-		float endBeat = copiedNotes[copiedNotes.size() - 1].beat + currentBeat;
-		for (NoteObject* n : notes)
-		{
-			if (n->beat >= startBeat && n->beat <= endBeat)
-			{
-				note nn;
-				nn.beat = n->beat;
-				nn.lane = n->lane;
-				nn.type = n->type;
-				deletedNotes.push_back(nn);
-				deleteNote(n->lane, n->beat);
-			}
-		}
-		for (note n : copiedNotes)
-		{
-			note copiedN = n;
-			copiedN.beat = currentBeat + copiedN.beat;
-			selectedChart->meta.difficulties[currentDiff].notes.push_back(copiedN);
-			pastedNotes.push_back(copiedN);
-			generateNoteObject(copiedN, selectedChart->meta.difficulties[currentDiff], selectedChart, notes);
-		}
-
-		std::cout << "pasted " << pastedNotes.size() << " deleted " << deletedNotes.size() << std::endl;
+		paste();
 	}
 
 	auto it = snapConvert.begin();

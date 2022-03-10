@@ -91,7 +91,6 @@ void Rendering::setBlendSep() {
 	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-// rotate the texture on 90 degree angles
 void Rendering::PushQuad(Rect* dstRect, Rect* srcRect, Texture* tex, Shader* shad, float deg)
 {
 

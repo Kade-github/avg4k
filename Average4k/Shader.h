@@ -200,4 +200,9 @@ public:
 
 		std::cout << "Created shader " << program << std::endl;
 	}
+
+	void setProject(glm::mat4 proj)
+	{
+		glUniformMatrix4fv(glGetUniformLocation(this->program, "u_projection"), 1, GL_FALSE, &proj[0][0]);
+	}
 };

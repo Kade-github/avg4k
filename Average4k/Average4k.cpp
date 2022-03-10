@@ -190,7 +190,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	GL::genShader = new Shader();
 	GL::genShader->GL_CompileShader(NULL, NULL);
 	GL::genShader->GL_Use();
-	glUniformMatrix4fv(glGetUniformLocation(GL::genShader->program, "u_projection"), 1, GL_FALSE, &GL::projection[0][0]);
+	GL::genShader->setProject(GL::projection);
 
 	Rendering::Render_GLInit(GL::genShader);
 

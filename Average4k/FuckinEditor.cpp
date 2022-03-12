@@ -1266,9 +1266,15 @@ bool openingFile = false;
 void openChart(std::string path, std::string folder) {
 	FuckinEditor* editor = (FuckinEditor*)Game::currentMenu;
 	SMFile* file = new SMFile(path, folder, true);
+	if (selectedChart)
+	{
+		delete selectedChart;
+	}
 	selectedChart = new Chart(file->meta);
 	delete file;
 	editor->triedBPM = false;
+
+	
 
 	if (!selectedChart)
 	{
@@ -1284,6 +1290,9 @@ void openChart(std::string path, std::string folder) {
 	}
 
 	std::string pathj = selectedChart->meta.folder + "/" + selectedChart->meta.audio;
+
+	if (editor->song)
+		editor->song->free();
 
 	editor->song = SoundManager::createChannel(pathj.c_str(), "editorSong");
 
@@ -1855,10 +1864,26 @@ void FuckinEditor::loadNotes(difficulty diff)
 		miniMap->removeObj(l.rect);
 	}
 	miniMapLines.clear();
-	std::vector<Object*> objs = gameplay->children;
-	for (Object* obj : objs)
+	for (NoteObject* obj : notes)
 	{
 		gameplay->removeObj(obj);
+	}
+
+	for (line obj : snapBeat)
+	{
+		gameplay->removeObj(obj.rect);
+	}
+
+	for (line obj : beatLines)
+	{
+		gameplay->removeObj(obj.rect);
+		gameplay->removeObj(obj.text);
+	}
+
+	for (thingy obj : sideStuff)
+	{
+		gameplay->removeObj(obj.background);
+		gameplay->removeObj(obj.text);
 	}
 
 	notes.clear();
@@ -1875,10 +1900,9 @@ void FuckinEditor::loadNotes(difficulty diff)
 
 void FuckinEditor::generateWaveForm(int start, int end)
 {
-	std::vector<Object*> objss = wave->children;
-	for (Object* seg : objss)
+	for (waveformSeg seg : waveform)
 	{
-		wave->removeObj(seg);
+		wave->removeObj(seg.sprite);
 	}
 
 	waveform.clear();
@@ -1974,4 +1998,5 @@ void FuckinEditor::generateWaveForm(int start, int end)
 	}
 	if (waveSeg)
 		delete waveSeg;
+	delete samples;
 }

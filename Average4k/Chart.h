@@ -43,8 +43,7 @@ struct difficulty
 	std::vector<note> notes;
 };
 
-class chartMeta {
-	public:
+struct chartMeta {
 		std::string songName;
 		std::string audio;
 		std::string folder;

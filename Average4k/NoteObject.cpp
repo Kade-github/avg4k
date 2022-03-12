@@ -124,11 +124,11 @@ void NoteObject::draw() {
 
         if (downscroll)
         {
-            if (obj->y + obj->h < tile.rect.y && !tile.active)
+            if ((obj->y + obj->h + (32 * size)) < tile.rect.y && !tile.active)
                 continue;
         }
         else
-            if (obj->y > tile.rect.y && !tile.active)
+            if (obj->y > tile.rect.y + (32 * size) && !tile.active)
                 continue;
 
 

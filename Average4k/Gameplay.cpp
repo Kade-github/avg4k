@@ -1112,7 +1112,7 @@ void Gameplay::update(Events::updateEvent event)
 
 					if (keys[note->lane] || botplay)
 					{
-						if (holding[note->lane])
+						if (holding[note->lane] || botplay)
 							colGroups[note->lane]->clipRect = l;
 					}
 

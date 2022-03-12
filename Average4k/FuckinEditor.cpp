@@ -1188,10 +1188,7 @@ void FuckinEditor::update(Events::updateEvent event)
 	{
 		float songPos = song->getPos();
 
-		if (std::abs(((currentTime) - songPos) >= 0.05))
-			currentTime = songPos;
-		else
-			currentTime += Game::deltaTime;
+		currentTime = songPos;
 		bpmSegment curSeg = selectedChart->getSegmentFromTime(currentTime);
 
 		currentBeat = selectedChart->getBeatFromTimeOffset(currentTime, curSeg);

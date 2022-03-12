@@ -9,6 +9,9 @@ float currentTime;
 float currentBeat;
 std::vector<NoteObject*> notes;
 
+Color wavec = { 255,255,255 };
+float waveformAlpha = 1;
+
 std::vector<note> copiedNotes;
 std::vector<note> pastedNotes;
 std::vector<note> deletedNotes;
@@ -410,6 +413,27 @@ void deleteVisualNote(float lane, float beat)
 	}
 }
 
+void getShitBetween()
+{
+	FuckinEditor* editor = (FuckinEditor*)Game::currentMenu;
+	float minBeat = currentBeat - 4;
+	if (minBeat < 0)
+		minBeat = 0;
+	editor->lastBeatMin = minBeat;
+	float maxBeat = currentBeat + 4;
+	editor->lastBeatMax = maxBeat;
+
+
+	bpmSegment minSeg = selectedChart->getSegmentFromBeat(minBeat);
+	bpmSegment maxSeg = selectedChart->getSegmentFromBeat(maxBeat);
+
+	float minTime = selectedChart->getTimeFromBeatOffset(minBeat, minSeg);
+	float maxTime = selectedChart->getTimeFromBeatOffset(maxBeat, maxSeg);
+
+
+	editor->generateWaveForm(minTime, maxTime);
+}
+
 void deleteNote(int lane, float beat)
 {
 	selectedChart->meta.difficulties[currentDiff].notes.erase(
@@ -470,6 +494,8 @@ void window_waveProperties() {
 	std::vector<std::string> colorSaved = Chart::split(bruh, ',');
 
 	float c[3] = {std::stof(colorSaved[0]) / 255,std::stof(colorSaved[1]) / 255,std::stof(colorSaved[2]) / 255 };
+
+	wavec = { static_cast<int>(c[0]),static_cast<int>(c[1]),static_cast<int>(c[2])};
 	ImGui::Text("Waveform Color:");
 	ImGui::ColorEdit3("##WaveformColor",(float*)&c);
 	Game::save->SetString("nonChange_colorShit", std::to_string(c[0] * 255) + "," + std::to_string(c[1] * 255) + "," + std::to_string(c[2] * 255));
@@ -906,6 +932,9 @@ void FuckinEditor::create()
 	selectionRect->alpha = 0.6;
 	selectionRect->c = { 255,255,255 };
 
+	std::vector<std::string> colorSaved = Chart::split(Game::save->GetString("nonChange_colorShit"), ',');
+	wavec = { std::atoi(colorSaved[0].c_str()),std::atoi(colorSaved[1].c_str()),std::atoi(colorSaved[2].c_str()) };
+
 	createWindow("Chart Properties", { 400,400 }, (drawCall)window_chartProperties, false);
 	createWindow("Waveform Properties", { 400,400 }, (drawCall)window_waveProperties, false);
 	createWindow("Help", { 550,350 }, (drawCall)window_help, false);
@@ -992,7 +1021,10 @@ void FuckinEditor::update(Events::updateEvent event)
 	for (NoteObject* obj : notes)
 	{
 		if (obj->y > 720 && obj->y + 64 < 0)
+		{
 			obj->drawCall = false;
+			continue;
+		}
 		else
 			obj->drawCall = true;
 		obj->rTime = currentTime;
@@ -1117,12 +1149,6 @@ void FuckinEditor::update(Events::updateEvent event)
 			l.background->drawCall = true;
 	}
 
-	std::vector<std::string> colorSaved = Chart::split(Game::save->GetString("nonChange_colorShit"), ',');
-
-	Color c = { std::stoi(colorSaved[0]),std::stoi(colorSaved[1]),std::stoi(colorSaved[2]) };
-
-	float waveformAlpha = Game::save->GetBool("nonChange_waveform") ? 1 : 0;
-
 	int waveInd = 0;
 	for (waveformSeg& seg : waveform)
 	{
@@ -1132,9 +1158,9 @@ void FuckinEditor::update(Events::updateEvent event)
 
 		seg.sprite->alpha = waveformAlpha;
 
-		seg.sprite->colorR = c.r;
-		seg.sprite->colorG = c.g;
-		seg.sprite->colorB = c.b;
+		seg.sprite->colorR = wavec.r;
+		seg.sprite->colorG = wavec.g;
+		seg.sprite->colorB = wavec.b;
 
 		if (downscroll)
 			seg.sprite->y = ((fuck[0]->y + (64 * noteZoom)) - 715) - (noteOffset);
@@ -1262,7 +1288,7 @@ void openChart(std::string path, std::string folder) {
 	editor->song = SoundManager::createChannel(pathj.c_str(), "editorSong");
 
 	editor->song->createFXStream();
-	editor->generateWaveForm();
+	editor->generateWaveForm(0, editor->song->length);
 	editor->loadNotes(selectedChart->meta.difficulties[0]);
 	currentDiff = 0;
 }
@@ -1847,7 +1873,7 @@ void FuckinEditor::loadNotes(difficulty diff)
 	}
 }
 
-void FuckinEditor::generateWaveForm()
+void FuckinEditor::generateWaveForm(int start, int end)
 {
 	std::vector<Object*> objss = wave->children;
 	for (Object* seg : objss)
@@ -1872,13 +1898,13 @@ void FuckinEditor::generateWaveForm()
 
 	AvgGroup* waveSeg = new AvgGroup(0, 0, lunder->w, 715);
 	waveSeg->renderOnce = true;
-	float currentSegTime = 0;
+	float currentSegTime = start;
 	float offset = 0;
 	float lastY = 0;
-	double startTime = 0;
+	double startTime = start / 1000;
 	int indexx = 0;
 	bool startNext = false;
-	for (int i = 0; i < song->length; i++)
+	for (int i = start; i < end; i++)
 	{
 		int index = BASS_ChannelSeconds2Bytes(song->id, std::max(0.0,(double)i / 1000.0)) / 2;
 

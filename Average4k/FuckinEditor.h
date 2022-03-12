@@ -44,6 +44,8 @@ struct line {
 class FuckinEditor : public Menu
 {
 public:
+	float lastBeatMin = -1;
+	float lastBeatMax = -1;
 	bool triedBPM = false;
 	float noteZoom = 1;
 	AvgSprite* lunder;
@@ -95,7 +97,7 @@ public:
 
 	void loadNotes(difficulty diff);
 
-	void generateWaveForm();
+	void generateWaveForm(int start, int end);
 
 	void generateSnapLines(Chart* selectedChart, float snapDiv)
 	{

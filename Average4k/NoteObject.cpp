@@ -12,7 +12,8 @@
 
 
 void NoteObject::draw() {
-
+    if (!drawCall)
+        return;
     float position = rTime;
 
     Rect receptor;
@@ -43,8 +44,6 @@ void NoteObject::draw() {
     x = obj->x;
     y = rect.y;
 
-    if (!drawCall)
-        return;
 
     Texture* texture;
 

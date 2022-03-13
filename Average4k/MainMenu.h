@@ -13,7 +13,6 @@ class MainMenu :
     public Menu
 {
 	public:
-		static bool tweened;
 		float lastBop = 0;
 		bool tweenDone = false;
 		bool started = false;

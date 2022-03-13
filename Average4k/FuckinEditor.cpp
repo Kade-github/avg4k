@@ -354,8 +354,6 @@ void triggerNotif(std::string title, std::string text)
 	notifTitle = title;
 	notifText = text;
 
-
-
 	editor->findWindow("Notification").shouldDraw = true;
 }
 

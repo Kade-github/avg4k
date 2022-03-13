@@ -235,7 +235,7 @@ MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted, bool backFromSelect = f
 }
 
 void MultiplayerLobby::create() {
-	addCamera(Game::mainCamera);
+	
 	playerList = new AvgGroup(0, 0, 1280, 720);
 	AvgSprite* sprite = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/bg.png"));
 	add(sprite);

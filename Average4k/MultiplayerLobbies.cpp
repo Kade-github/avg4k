@@ -27,7 +27,7 @@ MultiplayerLobbies::MultiplayerLobbies()
 void MultiplayerLobbies::create()
 {
 	MUTATE_START;
-	addCamera(Game::mainCamera);
+	
 
 
 	refreshTimer = 3000;

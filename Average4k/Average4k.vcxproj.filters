@@ -252,6 +252,9 @@
     <ClCompile Include="MiniBpm.cpp">
       <Filter>MiniBPM</Filter>
     </ClCompile>
+    <ClCompile Include="StartMenu.cpp">
+      <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes.h">
@@ -529,6 +532,9 @@
     </ClInclude>
     <ClInclude Include="SoundBackend.h">
       <Filter>Source Files\Average4k\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="StartMenu.h">
+      <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

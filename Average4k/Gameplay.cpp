@@ -345,7 +345,7 @@ Gameplay::Gameplay()
 void Gameplay::create() {
 
 	MUTATE_START
-	addCamera(Game::mainCamera);
+	
 	initControls();
 
 	avatars.clear();

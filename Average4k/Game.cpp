@@ -1,7 +1,7 @@
 #include "includes.h"
 #include <algorithm>
 #include "Game.h"
-#include "MainMenu.h"
+#include "StartMenu.h"
 #include "Text.h"
 #include "CPacketHostUpdateLobby.h"
 #include "MultiplayerLobby.h"
@@ -105,7 +105,9 @@ void transCall() {
 	Game::mainCamera->children.clear();
 	delete Game::currentMenu;
 	Game::currentMenu = Game::toGoTo;
+	Game::currentMenu->addCamera(Game::mainCamera);
 	Game::currentMenu->create();
+	Game::currentMenu->created = true;
 	__transRect->alpha = 0;
 	transCompleted = true;
 	MUTATE_END
@@ -154,8 +156,10 @@ void Game::createGame()
 	mainCamera = new AvgCamera(0, 0, 1280, 720);
 
 	// to start
-	currentMenu = new MainMenu();
+	currentMenu = new StartMenu();
+	currentMenu->addCamera(mainCamera);
 	currentMenu->create();
+	currentMenu->created = true;
 	mainView.x = 0;
 	mainView.y = 0;
 

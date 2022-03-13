@@ -826,7 +826,7 @@ void window_notif() {
 void FuckinEditor::create()
 {
 	noteZoom = 1;
-	addCamera(Game::mainCamera);
+	
 	downscroll = Game::save->GetBool("downscroll");
 
 	for (int i = 0; i < 4; i++)

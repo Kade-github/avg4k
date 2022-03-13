@@ -42,5 +42,19 @@ class Noteskin
 				return Texture::createWithImage("assets/skinDefaults/Menu/" + element);
 			return Texture::createWithImage("assets/noteskin/" + as->name + "/" + as->skinpath + "/Menu/" + element);
 		}
+
+		static Texture* getStartElement(noteskin_asset* as, std::string element)
+		{
+			if (as->skinpath == "default")
+				return Texture::createWithImage("assets/skinDefaults/Start/" + element);
+			return Texture::createWithImage("assets/noteskin/" + as->name + "/" + as->skinpath + "/Start/" + element);
+		}
+
+		static std::string getMusicElement(noteskin_asset* as, std::string element)
+		{
+			if (as->skinpath == "default")
+				return "assets/skinDefaults/Music/" + element;
+			return "assets/noteskin/" + as->name + "/" + as->skinpath + "/Music/" + element;
+		}
 };
 

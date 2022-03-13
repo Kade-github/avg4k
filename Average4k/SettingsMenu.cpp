@@ -120,7 +120,7 @@ SettingsMenu::SettingsMenu()
 }
 
 void SettingsMenu::create() {
-	addCamera(Game::mainCamera);
+	
 	AvgSprite* sprite = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/bg.png"));
 	add(sprite);
 	AvgRect* rect = new AvgRect(0, 0, 1280, 720);

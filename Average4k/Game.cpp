@@ -135,6 +135,9 @@ void Game::switchMenu(Menu* m)
 	currentMenu->removeAll();
 	delete currentMenu;
 	currentMenu = m;
+	currentMenu->addCamera(mainCamera);
+	currentMenu->create();
+	currentMenu->created = true;
 }
 
 void Game::createGame()
@@ -608,7 +611,11 @@ void Game::mouseWheel(float wheel)
 	if (!currentMenu)
 		return;
 	if (currentMenu->created)
+	{
 		currentMenu->mouseWheel(wheel);
+		for (Object* obj : mainCamera->children)
+			obj->mouseWheel(wheel);
+	}
 }
 void Game::mouseButtonUp()
 {

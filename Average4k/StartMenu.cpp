@@ -9,8 +9,8 @@ float dddtime = 0;
 
 void StartMenu::create()
 {
-	// create opgl and kadedev logos
-	opgl = new AvgSprite(Game::gameWidth / 2, Game::gameHeight / 2, Noteskin::getStartElement(Game::noteskin, "OpenGL.png"));
+	// create misc and kadedev logos
+	opgl = new AvgSprite(Game::gameWidth / 2, Game::gameHeight / 2, Noteskin::getStartElement(Game::noteskin, "MiscLogo.png"));
 	kadedev = new AvgSprite(Game::gameWidth / 2, Game::gameHeight / 2, Noteskin::getStartElement(Game::noteskin, "KadeDevTeam.png"));
 
 	opgl->x = (Game::gameWidth / 2) - (opgl->w / 2);
@@ -56,7 +56,7 @@ void StartMenu::update(Events::updateEvent ev)
 		if (steps == 1)
 		{
 			steps++;
-
+			ch->setPos(12038);
 			Game::instance->transitionToMenu(new MainMenu());
 		}
 	}

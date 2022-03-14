@@ -207,6 +207,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="imgui_tables.cpp" />
     <ClCompile Include="imgui_widgets.cpp" />
     <ClCompile Include="Judge.cpp" />
+    <ClCompile Include="MainerMenu.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="MenuCreator.cpp" />
     <ClCompile Include="MiniBpm.cpp" />
@@ -236,6 +237,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
   <ItemGroup>
     <ClInclude Include="AvgButton.h" />
     <ClInclude Include="AvgCamera.h" />
+    <ClInclude Include="AvgContainer.h" />
     <ClInclude Include="AvgGroup.h" />
     <ClInclude Include="AvgRect.h" />
     <ClInclude Include="AvgSprite.h" />
@@ -283,6 +285,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="Lobby.h" />
     <ClInclude Include="luaaa.h" />
     <ClInclude Include="AvgLua.h" />
+    <ClInclude Include="MainerMenu.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MenuCreator.h" />

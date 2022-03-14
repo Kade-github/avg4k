@@ -255,6 +255,9 @@
     <ClCompile Include="StartMenu.cpp">
       <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
     </ClCompile>
+    <ClCompile Include="MainerMenu.cpp">
+      <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes.h">
@@ -535,6 +538,12 @@
     </ClInclude>
     <ClInclude Include="StartMenu.h">
       <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
+    </ClInclude>
+    <ClInclude Include="MainerMenu.h">
+      <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
+    </ClInclude>
+    <ClInclude Include="AvgContainer.h">
+      <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -45,6 +45,7 @@ public:
 	bool handleDraw = false;
 	bool drawGroups = false;
 	bool staticView = false;
+	bool customDraw = false;
 
 	float alpha = 1;
 	float angle = 0;
@@ -77,6 +78,7 @@ public:
 		alpha = _alpha;
 	}
 
+	virtual void mouseWheel(float amount) {};
 
 	virtual void setX(float x);
 	virtual void setY(float y);

@@ -93,8 +93,6 @@ public:
 	Color color;
 
 	std::string text;
-	int w;
-	int h;
 
 	int addW;
 	int addH;

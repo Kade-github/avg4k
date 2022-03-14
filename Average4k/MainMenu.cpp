@@ -6,12 +6,18 @@
 #include "CPacketRequestAvatar.h"
 #include "AvgGroup.h"
 #include "FuckinEditor.h"
+#include "MainerMenu.h"
 
 float ddddtime = 0;
 
 MainMenu::MainMenu()
 {
 
+}
+
+void callback()
+{
+	Game::instance->switchMenu(new MainerMenu());
 }
 
 float mainmenubpm = 155;
@@ -147,5 +153,14 @@ void MainMenu::keyDown(SDL_KeyboardEvent event)
 {
 	if (!Multiplayer::loggedIn)
 		return;
-
+	if (event.keysym.sym == SDLK_RETURN && !tweenDone)
+	{
+		tweenDone = true;
+		Tweening::TweenManager::createNewTween("hello", hello, Tweening::tt_Alpha, 600, 1, 0, NULL, Easing::EaseInSine);
+		Tweening::TweenManager::createNewTween("bottom", bottom, Tweening::tt_Alpha, 600, 1, 0, NULL, Easing::EaseInSine);
+		Tweening::TweenManager::createNewTween("border", border, Tweening::tt_Alpha, 600, 1, 0, NULL, Easing::EaseInSine);
+		Tweening::TweenManager::createNewTween("icon", icon, Tweening::tt_Alpha, 600, 1, 0, NULL, Easing::EaseInSine);
+		Tweening::TweenManager::createNewTween("movingLogo", thing, Tweening::tt_Y, 700, (Game::gameHeight / 2) - (thing->h / 2), -(Game::gameHeight / 2) - (thing->h / 2), (Tweening::tweenCallback)callback, Easing::EaseOutCubic);
+		Tweening::TweenManager::createNewTween("alphaLogo", thing, Tweening::tt_Alpha, 600, 1, 0, NULL, Easing::EaseInSine);
+	}
 }

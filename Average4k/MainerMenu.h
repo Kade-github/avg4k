@@ -45,12 +45,12 @@ public:
 
 		dstRect.x = x;
 		if (y == 0)
-			dstRect.y = 2;
+			dstRect.y = 4;
 		else
 			dstRect.y = y;
 		dstRect.w = w;
 		if (y == 0)
-			dstRect.h = h - 2;
+			dstRect.h = h - 4;
 		else
 			dstRect.h = h;
 

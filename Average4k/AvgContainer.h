@@ -192,9 +192,11 @@ public:
 		for (Object* a : above)
 		{
 			a->x += x + scrollBar.w;
+			a->w -= scrollBar.w;
 			a->y += y - scrollAddition;
 			a->draw();
 			a->x -= x + scrollBar.w;
+			a->w += scrollBar.w;
 			a->y -= y - scrollAddition;
 		}
 
@@ -204,11 +206,27 @@ public:
 
 	void mouseWheel(float amount)
 	{
-		float max = (h - 15) - scrollAddition;
-		scrollAddition += -(amount * 9);
-		if (scrollAddition > maxScroll)
-			scrollAddition = maxScroll;
-		if (scrollAddition < 0)
-			scrollAddition = 0;
+		int mx, my;
+		Game::GetMousePos(&mx, &my);
+
+		bool one = (mx > x && mx < x + w);
+		bool two = (my > y && my < y + h);
+		if (one && two && maxScroll > 0)
+		{
+			float max = (h - 15) - scrollAddition;
+			scrollAddition += -(amount * 20);
+			if (scrollAddition > maxScroll)
+				scrollAddition = maxScroll;
+			if (scrollAddition < 0)
+				scrollAddition = 0;
+		}
+
+		for (Object* obj : above)
+		{
+			AvgContainer* objb = dynamic_cast<AvgContainer*>(obj);
+			if (objb == NULL)
+				continue;
+			objb->mouseWheel(amount);
+		}
 	}
 };

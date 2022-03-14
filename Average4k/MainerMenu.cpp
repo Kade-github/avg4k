@@ -7,6 +7,7 @@ AvgContainer* soloContainer;
 AvgContainer* multiContainer;
 AvgContainer* settingsContainer;
 
+
 void MainerMenu::create()
 {
 	bg = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "darkmodebg.png"));
@@ -53,6 +54,18 @@ void MainerMenu::create()
 	
 	soloContainer->addObject(new Text(22, 36, "scroll down to see more", 16, "ariali"), "packsBottom");
 
+	AvgContainer* packContainer = new AvgContainer(0, 112, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/leftcontainer.png"));
+	packContainer->w *= .93;
+	packContainer->h *= .9;
+	packContainer->h += 16;
+
+	soloContainer->addObject(packContainer, "packContainer");
+
+	for (int i = 0; i < 20; i++)
+	{
+		addPack("testPack" + std::to_string(i));
+	}
+
 	Tweening::TweenManager::createNewTween("movingContainer", soloContainer, Tweening::tt_Y, 1000, Game::gameHeight, 120, NULL, Easing::EaseOutCubic);
 }
 
@@ -78,4 +91,28 @@ void MainerMenu::update(Events::updateEvent ev)
 
 void MainerMenu::keyDown(SDL_KeyboardEvent event)
 {
+}
+
+int packIndex = 0;
+
+
+void MainerMenu::addPack(std::string name)
+{
+	AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");
+	PackObject* obj = new PackObject(0, packIndex * 90, name, NULL);
+	obj->w = packContainer->w;
+	obj->h = 75;
+	packContainer->addObject(obj, "packInd" + packIndex);
+	packIndex++;
+}
+
+void MainerMenu::clearPacks()
+{
+	packIndex = 0;
+	AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");
+	for (Object* obj : packContainer->above)
+	{
+		packContainer->removeObject(obj);
+		delete obj;
+	}
 }

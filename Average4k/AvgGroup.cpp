@@ -15,7 +15,7 @@ void AvgGroup::forceDraw()
 	for (Object* obj : children)
 	{
 		if (obj == nullptr)
-			continue;
+			continue;  
 		if (obj->children.size() < 900000)
 		{
 			//glBindFramebuffer(GL_FRAMEBUFFER, fb);

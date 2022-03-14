@@ -99,7 +99,7 @@ int packIndex = 0;
 void MainerMenu::addPack(std::string name)
 {
 	AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");
-	PackObject* obj = new PackObject(0, packIndex * 90, name, NULL);
+	PackObject* obj = new PackObject(0, packIndex * 75, name, NULL);
 	obj->w = packContainer->w;
 	obj->h = 75;
 	packContainer->addObject(obj, "packInd" + packIndex);

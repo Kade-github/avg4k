@@ -74,6 +74,35 @@ void Rendering::SetClipRect(Rect* clipRect)
 	}
 }
 
+void Rendering::PushRectangle(Rect* rect, int stroke)
+{
+	Rect r1, r2, r3, r4;
+	r1 = r2 = r3 = r4 = *rect;
+	r1.w = stroke;
+	r1.h = stroke;
+	r2.y += rect->h;
+	r2.w = stroke;
+	r2.h = stroke;
+	r3.y += rect->h;
+	r3.x += rect->w;
+	r3.w = stroke;
+	r3.h = stroke;
+	r4.x += rect->w;
+	r4.w = stroke;
+	r4.h = stroke;
+
+	Rect srcRect;
+	srcRect.x = 0;
+	srcRect.y = 0;
+	srcRect.w = 1;
+	srcRect.h = 1;
+
+	PushQuad(&r1, &srcRect, white, GL::genShader);
+	PushQuad(&r2, &srcRect, white, GL::genShader);
+	PushQuad(&r3, &srcRect, white, GL::genShader);
+	PushQuad(&r4, &srcRect, white, GL::genShader);
+}
+
 void Rendering::setBlend() {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);

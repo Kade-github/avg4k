@@ -44,15 +44,9 @@ public:
 		dstRect.a = 1;
 
 		dstRect.x = x;
-		if (y == 0)
-			dstRect.y = 4;
-		else
-			dstRect.y = y;
+		dstRect.y = y;
 		dstRect.w = w;
-		if (y == 0)
-			dstRect.h = h - 4;
-		else
-			dstRect.h = h;
+		dstRect.h = h;
 
 		srcRect.x = 0;
 		srcRect.y = 0;

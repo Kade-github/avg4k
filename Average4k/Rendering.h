@@ -40,6 +40,8 @@ public:
 
 	static void SetClipRect(Rect* clipRect);
 
+	static void PushRectangle(Rect* rect, int stroke);
+
 	static void PushQuad(Rect* dstRect, Rect* srcRect, Texture* tex, Shader* shad, float deg);
 	static void PushQuad(Rect* dstRect, Rect* srcRect, Texture* tex, Shader* shad);
 };

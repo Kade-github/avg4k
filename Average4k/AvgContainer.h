@@ -78,10 +78,10 @@ public:
 
 	void draw() {
 
-		clipRect.x = x;
-		clipRect.y = y;
-		clipRect.w = w;
-		clipRect.h = h;
+		clipRect.x = x + 2;
+		clipRect.y = y + 2;
+		clipRect.w = w - 4;
+		clipRect.h = h - 4;
 
 
 
@@ -144,12 +144,16 @@ public:
 			b->y -= y;
 		}
 
+		if (clipRect.w > 0 || clipRect.h > 0)
+			Rendering::SetClipRect(NULL);
+
 		Rendering::PushQuad(&dstRect, &srcRect, tex, GL::genShader, angle);
+
 
 		if (scroll)
 		{
 			Rect topArrow;
-			topArrow.x = x + 3;
+			topArrow.x = x + 5;
 			topArrow.y = y + 9;
 			topArrow.w = 14;
 			topArrow.r = 255;
@@ -157,6 +161,12 @@ public:
 			topArrow.b = 255;
 			topArrow.a = 1;
 			topArrow.h = 6;
+
+			Rect border;
+			border.x = x;
+			border.y = y;
+			border.w = 14;
+			border.h = h;
 
 			scrollProg = (h - (12 + topArrow.h)) / ((lastItem.obj->y - scrollAddition) + lastItem.obj->h);
 
@@ -172,7 +182,7 @@ public:
 
 			float max = (h - (topArrow.h + 12));
 
-			scrollBar.y = (topArrow.y + ((12) + scrollProg * (max - (12)))) - (scrollBar.h - (topArrow.h + 3));
+			scrollBar.y = (topArrow.y + ((12) + scrollProg * (max - (12)))) - (scrollBar.h - (topArrow.h));
 			scrollBar.w = 22;
 
 			Rendering::PushQuad(&topArrow, &srcRect, scrollAr, GL::genShader, angle);
@@ -186,8 +196,10 @@ public:
 			srcRect.h = 1;
 
 			Rendering::PushQuad(&scrollBar, &srcRect, NULL, GL::genShader, angle);
-
 		}
+
+		if (clipRect.w > 0 || clipRect.h > 0)
+			Rendering::SetClipRect(&clipRect);
 
 		for (Object* a : above)
 		{
@@ -202,6 +214,7 @@ public:
 
 		if (clipRect.w > 0 || clipRect.h > 0)
 			Rendering::SetClipRect(NULL);
+
 	}
 
 	void mouseWheel(float amount)
@@ -214,7 +227,7 @@ public:
 		if (one && two && maxScroll > 0)
 		{
 			float max = (h - 15) - scrollAddition;
-			scrollAddition += -(amount * 20);
+			scrollAddition += -(amount * 40);
 			if (scrollAddition > maxScroll)
 				scrollAddition = maxScroll;
 			if (scrollAddition < 0)

@@ -112,6 +112,9 @@
     <Filter Include="Audio">
       <UniqueIdentifier>{48364d92-56cb-4d9a-948f-c8ee79d20b5a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Average4k\Structs\Chart\Pack">
+      <UniqueIdentifier>{f6150430-8318-434a-b7e7-daf0a3b0686f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Average4k.cpp">
@@ -544,6 +547,9 @@
     </ClInclude>
     <ClInclude Include="AvgContainer.h">
       <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Pack.h">
+      <Filter>Source Files\Average4k\Structs\Chart\Pack</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

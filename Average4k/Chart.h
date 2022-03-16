@@ -59,6 +59,7 @@ public:
 class Chart
 {
 	public:
+		Chart() {};
 		Chart(chartMeta m) { meta = m; };
 		chartMeta meta;
 

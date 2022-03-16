@@ -2,11 +2,14 @@
 #include "SoundManager.h"
 
 #include "AvgContainer.h"
+#include "Pack.h"
 
 AvgContainer* soloContainer;
 AvgContainer* multiContainer;
 AvgContainer* settingsContainer;
 
+Pack selected;
+std::vector<Pack> packs;
 
 void MainerMenu::create()
 {
@@ -41,10 +44,9 @@ void MainerMenu::create()
 	border->create();
 	add(border);
 
-	soloContainer = new AvgContainer(42, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/maincontainer.png"));
+	soloContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/maincontainer.png"));
 	soloContainer->alpha = 1;
-	soloContainer->w = 1194;
-	soloContainer->h = 584;
+	soloContainer->x = (Game::gameWidth / 2) - (soloContainer->w / 2);
 	add(soloContainer);
 
 	// solo creation
@@ -54,16 +56,17 @@ void MainerMenu::create()
 	
 	soloContainer->addObject(new Text(22, 36, "scroll down to see more", 16, "ariali"), "packsBottom");
 
-	AvgContainer* packContainer = new AvgContainer(0, 112, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/leftcontainer.png"));
-	packContainer->w *= .93;
-	packContainer->h *= .9;
-	packContainer->h += 16;
+	AvgContainer* packContainer = new AvgContainer(0, 88, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/leftcontainer.png"));
 
 	soloContainer->addObject(packContainer, "packContainer");
 
-	for (int i = 0; i < 20; i++)
+	// create packs
+
+	packs = SongGather::gatherPacks();
+
+	for (Pack p : packs)
 	{
-		addPack("testPack" + std::to_string(i));
+		addPack(p.packName, p.background, p.showName);
 	}
 
 	Tweening::TweenManager::createNewTween("movingContainer", soloContainer, Tweening::tt_Y, 1000, Game::gameHeight, 120, NULL, Easing::EaseOutCubic);
@@ -76,7 +79,7 @@ void MainerMenu::update(Events::updateEvent ev)
 		started = true;
 		hello->setText("Hi " + std::string(SteamFriends()->GetPersonaName()));
 		bottom->setText("Avg4k indev-" + Game::version);
-		Tweening::TweenManager::createNewTween("bottom", bottom, Tweening::tt_Alpha, 600, 0, 1, NULL, Easing::EaseInSine);
+		Tweening::TweenManager::createNewTween("bottoms", bottom, Tweening::tt_Alpha, 600, 0, 1, NULL, Easing::EaseInSine);
 		Texture* tex = Steam::getAvatar(Multiplayer::currentUserAvatar.c_str());
 		if (tex)
 		{
@@ -85,7 +88,7 @@ void MainerMenu::update(Events::updateEvent ev)
 			icon->h = 47;
 			icon->w = 47;
 		}
-		Tweening::TweenManager::createNewTween("icon", icon, Tweening::tt_Alpha, 600, 0, 1, NULL, Easing::EaseInSine);
+		Tweening::TweenManager::createNewTween("icons", icon, Tweening::tt_Alpha, 600, 0, 1, NULL, Easing::EaseInSine);
 	}
 }
 
@@ -96,10 +99,10 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 int packIndex = 0;
 
 
-void MainerMenu::addPack(std::string name)
+void MainerMenu::addPack(std::string name, Texture* background, bool showText)
 {
 	AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");
-	PackObject* obj = new PackObject(0, packIndex * 75, name, NULL);
+	PackObject* obj = new PackObject(0, packIndex * 75, name, background, showText);
 	obj->w = packContainer->w;
 	obj->h = 75;
 	packContainer->addObject(obj, "packInd" + packIndex);
@@ -115,4 +118,30 @@ void MainerMenu::clearPacks()
 		packContainer->removeObject(obj);
 		delete obj;
 	}
+}
+
+void MainerMenu::selectPack(int index)
+{
+	AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");
+	int ind = 0;
+
+	selected = packs[index];
+
+	for (Object* obj : packContainer->above)
+	{
+		PackObject* p = (PackObject*)obj;
+		if (ind == index)
+			p->selected = true;
+		else
+			p->selected = false;
+
+		ind++;
+	}
+
+	// show songs
+}
+
+void MainerMenu::leftMouseDown()
+{
+
 }

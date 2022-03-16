@@ -296,6 +296,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="NoteObject.h" />
     <ClInclude Include="Noteskin.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="Pack.h" />
     <ClInclude Include="Packet.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="QuaverFile.h" />

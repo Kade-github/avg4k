@@ -169,6 +169,18 @@ namespace Tweening
 				tweenRemove.push_back(t);
 				return;
 			}
+			
+			if (t.percnt >= 1.0)
+			{
+				// finished
+				tweenRemove.push_back(t);
+				if (t.callback != nullptr && !t.call)
+				{
+					t.call = true;
+					t.callback();
+				}
+
+			}
 
 			switch (t.type)
 			{
@@ -183,35 +195,7 @@ namespace Tweening
 				break;
 			case tt_scale:
 				t.obj->scale = start + ((end - start) * value);
-				std::cout << t.obj->scale << std::endl;
 				break;
-			case tt_butFill:
-				AvgButton* but = (AvgButton*)t.obj;
-				if (end == 1)
-				{
-					but->fillColor.r = but->hoverColor.r + ((but->defColor.r - but->hoverColor.r) * value);
-					but->fillColor.g = but->hoverColor.g + ((but->defColor.g - but->hoverColor.g) * value);
-					but->fillColor.b = but->hoverColor.b + ((but->defColor.b - but->hoverColor.b) * value);
-				}
-				else
-				{
-					but->fillColor.r = but->defColor.r + ((but->hoverColor.r - but->defColor.r) * value);
-					but->fillColor.g = but->defColor.g + ((but->hoverColor.g - but->defColor.g) * value);
-					but->fillColor.b = but->defColor.b + ((but->hoverColor.b - but->defColor.b) * value);
-				}
-				break;
-			}
-			
-			if (t.percnt >= 1.0)
-			{
-				// finished
-				tweenRemove.push_back(t);
-				//std::cout << "finished tween!" << std::endl;
-				if (t.callback != nullptr && !t.call)
-				{
-					t.call = true;
-					t.callback();
-				}
 			}
 		}
 	};

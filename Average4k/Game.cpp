@@ -101,6 +101,7 @@ void Game::db_addLine(std::string s) {
 
 void transCall() {
 	MUTATE_START
+	Tweening::TweenManager::activeTweens.clear();
 	Game::currentMenu->removeAll();
 	Game::mainCamera->children.clear();
 	delete Game::currentMenu;
@@ -131,7 +132,7 @@ void Game::switchMenu(Menu* m)
 	{
 		delete obj;
 	}
-	Game::mainCamera->children.clear();
+	Tweening::TweenManager::activeTweens.clear();
 	currentMenu->removeAll();
 	delete currentMenu;
 	currentMenu = m;
@@ -308,7 +309,7 @@ void Game::update(Events::updateEvent update)
 			Tweening::TweenManager::updateTween(tw, Game::deltaTime);
 		}
 
-		for (Tweening::Tween& tw : Tweening::TweenManager::tweenRemove)
+		for (Tweening::Tween tw : Tweening::TweenManager::tweenRemove)
 		{
 			Tweening::TweenManager::activeTweens.erase(std::remove(Tweening::TweenManager::activeTweens.begin(), Tweening::TweenManager::activeTweens.end(), tw), Tweening::TweenManager::activeTweens.end());
 		}

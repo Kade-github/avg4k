@@ -37,29 +37,24 @@ void StartMenu::create()
 
 void StartMenu::update(Events::updateEvent ev)
 {
-	dddtime += Game::deltaTime;
-	float beat = ((dddtime) / 1000) * (ch->bpm / 60);
+	float beat = ((ch->getPos()) / 1000) * (ch->bpm / 60);
 
 	// events
 
-	switch ((int)beat)
-	{
-	case 16:
+	if ((int)beat >= 16)
 		if (steps == 0)
 		{
 			steps++;
 			Tweening::TweenManager::createNewTween("opglLogo", opgl, Tweening::tt_Alpha, 750, 1, 0, NULL, Easing::EaseInSine);
 			Tweening::TweenManager::createNewTween("kadeLogo", kadedev, Tweening::tt_Alpha, 6000, 0, 1, NULL, Easing::EaseInSine);
 		}
-		break;
-	case 32:
+	if ((int)beat >= 32)
 		if (steps == 1)
 		{
 			steps++;
 			ch->setPos(12038);
 			Game::instance->transitionToMenu(new MainMenu());
 		}
-	}
 
 }
 

@@ -79,7 +79,7 @@ public:
 	void draw() {
 
 		clipRect.x = x + 2;
-		clipRect.y = y + 2;
+		clipRect.y = y + 1;
 		clipRect.w = w - 4;
 		clipRect.h = h - 4;
 

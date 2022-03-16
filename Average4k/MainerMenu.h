@@ -15,8 +15,21 @@ public:
 
 	Texture* bg;
 
-	PackObject(int _x, int _y, std::string packName, Texture* background)
+	bool selected = false;
+
+	bool showText;
+
+	PackObject(int _x, int _y, std::string packName, Texture* background, bool _showText)
 	{
+		pack = new Text(0, 0, packName, 18, "ANDALEMO");
+		pack->color = { 0,0,0 };
+		if (background)
+		{
+			pack->color = { 255,255,255 };
+			pack->border = 1;
+		}
+		pack->setCharacterSpacing(3);
+
 		if (background == NULL)
 			bg = Rendering::white;
 		else
@@ -25,9 +38,7 @@ public:
 		x = _x;
 		y = _y;
 
-		pack = new Text(0, 0, packName, 18, "ANDALEMO");
-		pack->color = { 0,0,0 };
-		pack->setCharacterSpacing(3);
+		showText = _showText;
 
 	}
 
@@ -40,6 +51,7 @@ public:
 		dstRect.r = 0;
 		dstRect.g = 0;
 		dstRect.b = 0;
+		
 
 		dstRect.a = 1;
 
@@ -65,11 +77,33 @@ public:
 		dstRect.h -= 2;
 
 		Rendering::PushQuad(&dstRect, &srcRect, bg, GL::genShader);
+		if (selected)
+		{
+			dstRect.a = 0.1;
 
-		pack->x = x + ((w / 2) - (pack->surfW / 2));
-		pack->y = y + ((h / 2) - (pack->surfH / 2));
+			Rendering::PushQuad(&dstRect, &srcRect, NULL, GL::genShader);
+		}
 
-		pack->draw();
+		if (showText)
+		{
+			if (pack->surfW > w)
+			{
+				float factor = static_cast<float>(w) / static_cast<float>(pack->surfW);
+
+				pack->surfW = pack->surfW * factor;
+				pack->surfH = pack->surfH * factor;
+				pack->borderW = pack->borderW * factor;
+				pack->borderH = pack->borderH * factor;
+				pack->w = pack->surfW;
+				pack->h = pack->surfH;
+			}
+
+			pack->x = x + ((w / 2) - (pack->w / 2));
+			pack->y = y + ((h / 2) - (pack->h / 2));
+
+
+			pack->draw();
+		}
 	}
 };
 
@@ -85,8 +119,8 @@ public:
 	Text* hello;
 	Text* bottom;
 	AvgSprite* border;
-
-	void addPack(std::string name);
+	void selectPack(int index);
+	void addPack(std::string name, Texture* background, bool showText);
 	void clearPacks();
 
 	void create() override;
@@ -94,5 +128,7 @@ public:
 	void update(Events::updateEvent ev) override;
 
 	void keyDown(SDL_KeyboardEvent event) override;
+
+	void leftMouseDown() override;
 };
 

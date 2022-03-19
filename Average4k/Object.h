@@ -17,6 +17,8 @@ public:
 
 	std::vector<Object*> children;
 
+	Object* parent;
+
 	bool isCreated;
 	void create();
 	virtual void update(Events::updateEvent ev) {};

@@ -4,6 +4,8 @@
 #include "AvgSprite.h"
 #include "Text.h"
 #include "TweenManager.h"
+#include "AvgRect.h"
+#include "SaveFile.h"
 
 // Objects
 
@@ -53,7 +55,7 @@ public:
 		dstRect.b = 0;
 		
 
-		dstRect.a = 1;
+		dstRect.a = alpha;
 
 		dstRect.x = x;
 		dstRect.y = y;
@@ -119,9 +121,21 @@ public:
 	Text* hello;
 	Text* bottom;
 	AvgSprite* border;
+
+	Text* soloText;
+	AvgRect* selectSolo;
+	Text* multiText;
+	AvgRect* selectMulti;
+	Text* settingsText;
+	AvgRect* selectSettings;
+
+	void selectContainer(int container);
+
 	void selectPack(int index);
 	void addPack(std::string name, Texture* background, bool showText);
 	void clearPacks();
+
+	void addSettings(std::string catNam, std::vector<setting> settings);
 
 	void create() override;
 

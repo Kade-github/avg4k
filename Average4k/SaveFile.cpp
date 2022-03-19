@@ -1,5 +1,5 @@
 #include "SaveFile.h"
-
+#include "Helpers.h"
 template <typename T>
 bool contains(std::vector<T> vec, const T& elem)
 {
@@ -11,32 +11,37 @@ bool contains(std::vector<T> vec, const T& elem)
     return result;
 }
 
+
 SaveFile::SaveFile()
 {
     // default settings
-    defaultSettings.push_back(CreateSetting(false, 0, "downscroll", true, 0,1, false, 0, ""));
-    defaultSettings.push_back(CreateSetting(true, 1100, "scrollspeed", false, 1,5000, false, 1, ""));
-    defaultSettings.push_back(CreateSetting(true, 0, "offset", false,-1000,1000,false, 1, ""));
-    defaultSettings.push_back(CreateSetting(false, 0, "hitsounds", true,0,1,false, 0, ""));
-    defaultSettings.push_back(CreateSetting(true, 1, "Note Size", false, 0.9, 1.5, false, 0.01, ""));
-    defaultSettings.push_back(CreateSetting(false, SDLK_d, "Left Key", true, 0, 1, true, 0, ""));
-    defaultSettings.push_back(CreateSetting(false, SDLK_f, "Down Key", true, 0, 1, true,0, ""));
-    defaultSettings.push_back(CreateSetting(false, SDLK_j, "Up Key", true, 0, 1, true,0, ""));
-    defaultSettings.push_back(CreateSetting(false, SDLK_k, "Right Key", true, 0, 1, true,0, ""));
-    defaultSettings.push_back(CreateSetting(false, 0, "Noteskin", false, 0, 1, false, 0, "arrow"));
-    defaultSettings.push_back(CreateSetting(false, 0, "Annoying bopping", true, 0, 1, false, 0, ""));
-    defaultSettings.push_back(CreateSetting(false, 0, "nonChange_chartTheme", false, 0, 3, false, 0, ""));
-    defaultSettings.push_back(CreateSetting(false, 0, "nonChange_chartHistory", false, 0, 3, false, 0, ""));
-    defaultSettings.push_back(CreateSetting(false, 0, "nonChange_waveform", false, 0, 3, false, 0, ""));
-    defaultSettings.push_back(CreateSetting(true, 0, "nonChange_beatLines", false, 0, 3, false, 0, ""));
-    defaultSettings.push_back(CreateSetting(true, 0, "nonChange_infoPanel", false, 0, 3, false, 0, ""));
-    defaultSettings.push_back(CreateSetting(false, 0, "nonChange_noteTick", false, 0, 3, false, 0, ""));
-    defaultSettings.push_back(CreateSetting(false, 0, "nonChange_colorShit", false, 0, 3, false, 0, "128,128,255"));
-    defaultSettings.push_back(CreateSetting(true, 0, "nonChange_minimap", false, 0, 3, false, 0, ""));
-    std::ifstream ifs("settings.avg");
+
+    // {takesActive, takesString, takesDouble, defaultActive, defaultString, defaultDouble, defaultMin, defaultMax}
+
+    settingHeader defaultHeader;
+    defaultHeader.settingsVersion = "v2";
+
+    defaultSettings.push_back(CreateSetting("Downscroll",{true}));
+    defaultSettings.push_back(CreateSetting("Scrollspeed",{false,false,true,false,"",800,200,1900}));
+    defaultSettings.push_back(CreateSetting("Offset",{false,false,true,false,"",0,-15,15}));
+    defaultSettings.push_back(CreateSetting("Hitsounds", {true}));
+    defaultSettings.push_back(CreateSetting("Note Size",{false,false,true,false,"",1,0.8,1.8,0.1}));
+    defaultSettings.push_back(CreateSetting("Keybinds", {false,true,false,false,"DFJK", 0, 0, 4}));
+    defaultSettings.push_back(CreateSetting("Noteskin", {false,true,false,false, "arrow"}));
+    defaultSettings.push_back(CreateSetting("nonChange_chartTheme", {}));
+    defaultSettings.push_back(CreateSetting("nonChange_chartHistory",{}));
+    defaultSettings.push_back(CreateSetting("nonChange_chartWaveform", {true}));
+    defaultSettings.push_back(CreateSetting("nonChange_beatLines", { true }));
+    defaultSettings.push_back(CreateSetting("nonChange_infoPanel", { true }));
+    defaultSettings.push_back(CreateSetting("nonChange_noteTick", { false }));
+    defaultSettings.push_back(CreateSetting("nonChange_colorShit", { false,true,false,false,"128,128,255"}));
+    defaultSettings.push_back(CreateSetting("nonChange_minimap", { false }));
+    defaultHeader.settings = defaultSettings;
+    std::ifstream ifs("settings.avg2");
     if (!ifs.good())
     {
-        CreateNewFile();
+        currentHeader = defaultHeader;
+        Save();
         return;
     }
    
@@ -44,53 +49,31 @@ SaveFile::SaveFile()
     buffer << ifs.rdbuf();
 
     msgpack::unpacked upd = msgpack::unpack(buffer.str().data(), buffer.str().size());
-    upd.get().convert(settings);
+    upd.get().convert(currentHeader);
 
     // check for new settings
-    if (settings.size() != defaultSettings.size())
+    if (currentHeader.settings.size() != defaultHeader.settings.size())
     {
         for (int i = 0; i < defaultSettings.size(); i++)
         {
-            if (i > settings.size() - 1)
+            if (i > currentHeader.settings.size() - 1)
             {
-                settings.push_back(defaultSettings[i]);
+                currentHeader.settings.push_back(defaultSettings[i]);
                 std::cout << "user didn't have " << defaultSettings[i].name << std::endl;
             }
         }
         Save();
     }
 
-    // check for defaults/max/min's
-    for (int i = 0; i < settings.size(); i++)
-    {
-        setting& set = settings[i];
-        setting& dSet = defaultSettings[i];
-        if (set.highestValue != dSet.highestValue)
-            set.highestValue = dSet.highestValue;
-        if (set.lowestValue != dSet.lowestValue)
-            set.lowestValue = dSet.lowestValue;
-        if (set.takesActive != dSet.takesActive)
-            set.takesActive == dSet.takesActive;
-        if (set.isKeybind != dSet.isKeybind)
-            set.isKeybind == dSet.isKeybind;
-    }
-
-}
-
-void SaveFile::CreateNewFile()
-{
-    for (setting& set : defaultSettings)
-        settings.push_back(set);
-    Save();
 }
 
 void SaveFile::Save()
 {
-    std::ofstream of("settings.avg");
+    std::ofstream of("settings.avg2");
 
     std::stringstream bitch;
 
-    msgpack::pack(bitch, settings);
+    msgpack::pack(bitch, currentHeader);
 
     of << bitch.str();
 
@@ -102,76 +85,107 @@ void SaveFile::SetString(std::string sett, std::string value)
     int size = value.size();
     if (size > 248)
         size = 248;
-    for (setting& set : settings)
+    for (setting& set : currentHeader.settings)
     {
-        if (std::string(set.name) == sett)
+        std::string s = set.name;
+        std::transform(s.begin(), s.end(), s.begin(), Helpers::asciitolower);
+        std::transform(sett.begin(), sett.end(), sett.begin(), Helpers::asciitolower);
+        if (s == sett)
         {
-            set.stringValue = value;
+            set.defaultString = value;
         }
     }
 }
 
 void SaveFile::SetDouble(std::string sett, double value)
 {
-    for (setting& set : settings)
+    for (setting& set : currentHeader.settings)
     {
-        if (std::string(set.name) == sett)
-            set.value = value;
+        std::string s = set.name;
+        std::transform(s.begin(), s.end(), s.begin(), Helpers::asciitolower);
+        std::transform(sett.begin(), sett.end(), sett.begin(), Helpers::asciitolower);
+        if (s == sett)
+            set.defaultDouble = value;
     }
 }
 
 void SaveFile::SetBool(std::string sett, bool value)
 {
-    for (setting& set : settings)
+    for (setting& set : currentHeader.settings)
     {
-        if (std::string(set.name) == sett)
-            set.active = value;
+        std::string s = set.name;
+        std::transform(s.begin(), s.end(), s.begin(), Helpers::asciitolower);
+        std::transform(sett.begin(), sett.end(), sett.begin(), Helpers::asciitolower);
+        if (s == sett)
+            set.defaultActive = value;
+    }
+}
+
+setting& SaveFile::getSetting(std::string sett)
+{
+    for (setting& set : currentHeader.settings)
+    {
+        std::string s = set.name;
+        std::transform(s.begin(), s.end(), s.begin(), Helpers::asciitolower);
+        std::transform(sett.begin(), sett.end(), sett.begin(), Helpers::asciitolower);
+        if (s == sett)
+            return set;
     }
 }
 
 std::string SaveFile::GetString(std::string sett)
 {
-    for (setting& set : settings)
+    for (setting& set : currentHeader.settings)
     {
-        if (std::string(set.name) == sett)
-            return set.stringValue;
+        std::string s = set.name;
+        std::transform(s.begin(), s.end(), s.begin(), Helpers::asciitolower);
+        std::transform(sett.begin(), sett.end(), sett.begin(), Helpers::asciitolower);
+        if (s == sett)
+            return set.defaultString;
     }
     return "";
 }
 
 double SaveFile::GetDouble(std::string sett)
 {
-    for (setting& set : settings)
+    for (setting& set : currentHeader.settings)
     {
-        if (std::string(set.name) == sett)
-            return set.value;
+        std::string s = set.name;
+        std::transform(s.begin(), s.end(), s.begin(), Helpers::asciitolower);
+        std::transform(sett.begin(), sett.end(), sett.begin(), Helpers::asciitolower);
+        if (s == sett)
+            return set.defaultDouble;
     }
     return 0;
 }
 
 bool SaveFile::GetBool(std::string sett)
 {
-    for (setting& set : settings)
+    for (setting& set : currentHeader.settings)
     {
-        if (std::string(set.name) == sett)
-            return set.active;
+        std::string s = set.name;
+        std::transform(s.begin(), s.end(), s.begin(), Helpers::asciitolower);
+        std::transform(sett.begin(), sett.end(), sett.begin(), Helpers::asciitolower);
+        if (s == sett)
+            return set.defaultActive;
     }
     return false;
 }
 
-setting SaveFile::CreateSetting(bool defaultActive, double defaultValue, std::string defaultName, bool tA, double lowest, double highest, bool isKeybind, double increm, std::string defaultStringValue)
+setting SaveFile::CreateSetting(std::string defaultName, settingConstruct cons)
 {
     setting set;
 
-    strcpy_s(set.name, defaultName.c_str());
+    set.name = defaultName;
 
-    set.active = defaultActive;
-    set.takesActive = tA;
-    set.value = defaultValue;
-    set.highestValue = highest;
-    set.lowestValue = lowest;
-    set.isKeybind = isKeybind;
-    set.increm = increm;
-    set.stringValue = defaultStringValue;
+    set.defaultActive = cons.defaultActive;
+    set.defaultDouble = cons.defaultDouble;
+    set.defaultMax = cons.defaultMax;
+    set.defaultMin = cons.defaultMin;
+    set.takesActive = cons.takesActive;
+    set.takesDouble = cons.takesDouble;
+    set.takesString = cons.takesString;
+    set.defaultString = cons.defaultString;
+    set.defaultIncrm = cons.defaultIncrm;
     return set;
 }

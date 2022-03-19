@@ -174,9 +174,6 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SettingsMenu.cpp">
-      <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
-    </ClCompile>
     <ClCompile Include="SongSelect.cpp">
       <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
     </ClCompile>
@@ -404,9 +401,6 @@
     <ClInclude Include="CPacketLeave.h">
       <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
     </ClInclude>
-    <ClInclude Include="SettingsMenu.h">
-      <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
-    </ClInclude>
     <ClInclude Include="SPacketPlayerSongFinished.h">
       <Filter>Source Files\Average4k\Multiplayer\Packets\Server</Filter>
     </ClInclude>
@@ -550,6 +544,9 @@
     </ClInclude>
     <ClInclude Include="Pack.h">
       <Filter>Source Files\Average4k\Structs\Chart\Pack</Filter>
+    </ClInclude>
+    <ClInclude Include="AvgTextBox.h">
+      <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -202,7 +202,11 @@ void Game::mouseButtonDown()
 		}
 	}
 	if (currentMenu)
+	{
 		currentMenu->leftMouseDown();
+		for (Object* obj : mainCamera->children)
+			obj->mouseDown();
+	}
 }
 
 void Game::update(Events::updateEvent update)
@@ -587,6 +591,10 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 			bruh->keyDown(ev);
 		}
 	}
+	if (currentMenu)
+		for (Object* obj : mainCamera->children)
+			obj->keyDown(ev);
+
 	MUTATE_END
 }
 
@@ -666,5 +674,11 @@ void Game::textInput(SDL_TextInputEvent event)
 	{
 		Object* btuh = (*objects)[i];
 		btuh->textInput(event);
+	}
+
+	if (currentMenu)
+	{
+		for (Object* obj : mainCamera->children)
+			obj->textInput(event);
 	}
 }

@@ -121,6 +121,8 @@ public:
 		lastItem.name = "NOOOOOO";
 		for (itemId i : items)
 		{
+			i.obj->alpha = alpha;
+			i.obj->parent = this;
 			if (i.obj->y > h || i.obj->y < 0) // yes!
 			{
 				scroll = true;
@@ -159,7 +161,7 @@ public:
 			topArrow.r = 255;
 			topArrow.g = 255;
 			topArrow.b = 255;
-			topArrow.a = 1;
+			topArrow.a = alpha;
 			topArrow.h = 6;
 
 			Rect border;
@@ -178,7 +180,7 @@ public:
 			scrollBar.r = 255;
 			scrollBar.g = 255;
 			scrollBar.b = 255;
-			scrollBar.a = 1;
+			scrollBar.a = alpha;
 
 			float max = (h - (topArrow.h + 12));
 
@@ -204,17 +206,39 @@ public:
 		for (Object* a : above)
 		{
 			a->x += x + scrollBar.w;
-			a->w -= scrollBar.w;
 			a->y += y - scrollAddition;
 			a->draw();
 			a->x -= x + scrollBar.w;
-			a->w += scrollBar.w;
 			a->y -= y - scrollAddition;
 		}
 
 		if (clipRect.w > 0 || clipRect.h > 0)
 			Rendering::SetClipRect(NULL);
 
+	}
+
+	void textInput(SDL_TextInputEvent event)
+	{
+		for (Object* obj : above)
+		{
+			obj->textInput(event);
+		}
+	}
+
+	void mouseDown()
+	{
+		for (Object* obj : above)
+		{
+			obj->mouseDown();
+		}
+	}
+
+	void keyDown(SDL_KeyboardEvent ev)
+	{
+		for (Object* obj : above)
+		{
+			obj->keyDown(ev);
+		}
 	}
 
 	void mouseWheel(float amount)

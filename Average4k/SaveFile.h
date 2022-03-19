@@ -1,25 +1,50 @@
 #pragma once
 #include "includes.h"
 
+struct settingConstruct {
+	bool takesActive = false;
+	bool takesString = false;
+	bool takesDouble = false;
+
+	bool defaultActive = false;
+	std::string defaultString = "";
+	double defaultDouble = 0;
+	double defaultMin = 0;
+	double defaultMax = 0;
+	double defaultIncrm = 1;
+};
+
 struct setting {
-	bool active;
-	double value;
-	double lowestValue;
-	double highestValue;
-	char name[128];
 	bool takesActive;
-	bool isKeybind;
-	double increm;
-	std::string stringValue;
-	MSGPACK_DEFINE(active, value, name, takesActive, lowestValue, highestValue, isKeybind, increm, stringValue);
+	bool takesString;
+	bool takesDouble;
+
+	bool defaultActive;
+	std::string defaultString;
+	double defaultDouble;
+	double defaultMin;
+	double defaultMax;
+	double defaultIncrm;
+
+	std::string name;
+
+	MSGPACK_DEFINE(takesActive, takesString, takesDouble, defaultActive, defaultString, defaultDouble, defaultMin, defaultMax, defaultIncrm, name);
+};
+
+struct settingHeader {
+	std::string settingsVersion;
+
+	std::vector<setting> settings;
+
+	MSGPACK_DEFINE(settingsVersion, settings);
 };
 
 class SaveFile
 {
 	public:
-		SaveFile();
+		settingHeader currentHeader;
 
-		void CreateNewFile();
+		SaveFile();
 
 		void Save();
 
@@ -28,13 +53,14 @@ class SaveFile
 		void SetDouble(std::string setting, double value);
 		void SetBool(std::string setting, bool value);
 
+		setting& getSetting(std::string setting);
+
 		std::string GetString(std::string setting);
 		double GetDouble(std::string setting);
 		bool GetBool(std::string setting);
 
-		setting CreateSetting(bool defaultActive, double defaultValue, std::string defaultName, bool tA, double lowest, double highest, bool isKeybind, double increm, std::string defaultStringValue);
+		setting CreateSetting(std::string defaultName, settingConstruct cons);
 
-		std::vector<setting> settings;
 		std::vector<setting> defaultSettings;
 };
 

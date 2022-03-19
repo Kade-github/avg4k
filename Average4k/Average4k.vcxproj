@@ -223,7 +223,6 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="Rendering.cpp" />
     <ClCompile Include="SaveFile.cpp" />
     <ClCompile Include="SDL2_gfxPrimitives.c" />
-    <ClCompile Include="SettingsMenu.cpp" />
     <ClCompile Include="SMFile.cpp" />
     <ClCompile Include="SongSelect.cpp" />
     <ClCompile Include="SoundManager.cpp" />
@@ -240,6 +239,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="AvgContainer.h" />
     <ClInclude Include="AvgGroup.h" />
     <ClInclude Include="AvgRect.h" />
+    <ClInclude Include="AvgTextBox.h" />
     <ClInclude Include="AvgSprite.h" />
     <ClInclude Include="Base64.h" />
     <ClInclude Include="Chart.h" />
@@ -304,7 +304,6 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="Rendering.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SaveFile.h" />
-    <ClInclude Include="SettingsMenu.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SMFile.h" />
     <ClInclude Include="SongSelect.h" />

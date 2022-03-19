@@ -32,9 +32,6 @@ void MainMenu::create() {
 	bg->h = 726;
 	add(bg);
 
-	icon = new AvgSprite(32, 32, Noteskin::getMenuElement(Game::noteskin, "genericAvatar.png"));
-	icon->create();
-	add(icon);
 
 	thing = new AvgSprite(Game::gameWidth / 2, Game::gameHeight / 2, Noteskin::getMenuElement(Game::noteskin, "avg4k.png"));
 	thing->x -= thing->w / 2;
@@ -44,26 +41,31 @@ void MainMenu::create() {
 	add(thing);
 
 	
+	icon = new AvgSprite(16, 12, Noteskin::getMenuElement(Game::noteskin, "genericAvatar.png"));
+	icon->create();
+	add(icon);
+
 	Rect clip;
-	clip.x = 34;
-	clip.y = 34;
+	clip.x = 18;
+	clip.y = 14;
 	clip.w = 43;
 	clip.h = 43;
 	icon->clipRect = clip;
 
-	hello = new Text(32 + ((icon->w / 2) * 2.6), 36, "Refreshing avatar data...", 16, "arialbd");
+	hello = new Text(16 + ((icon->w / 2) * 2.6), 16, "Refreshing avatar data...", 16, "arialbd");
 	hello->border = false;
 	hello->create();
 	add(hello);
 
-	bottom = new Text(32 + ((icon->w / 2) * 2.6), 54, "", 16, "arialbd");
+	bottom = new Text(16 + ((icon->w / 2) * 2.6), 30, "", 16, "arialbd");
 	bottom->border = false;
 	bottom->create();
 	add(bottom);
 
-	border = new AvgSprite(32, 32, Noteskin::getMenuElement(Game::noteskin,"border.png"));
+	border = new AvgSprite(16, 12, Noteskin::getMenuElement(Game::noteskin, "border.png"));
 	border->create();
 	add(border);
+
 	created = true;
 
 	Tweening::TweenManager::createNewTween("movingBG", bg, Tweening::tt_Y, 1000, Game::gameHeight, 0, NULL, Easing::EaseOutCubic);

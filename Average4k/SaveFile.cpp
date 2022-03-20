@@ -188,5 +188,6 @@ setting SaveFile::CreateSetting(std::string defaultName, settingConstruct cons)
     set.defaultString = cons.defaultString;
     set.defaultIncrm = cons.defaultIncrm;
     set.unique = cons.unique;
+    set.settingSuffix = cons.settingSuffix;
     return set;
 }

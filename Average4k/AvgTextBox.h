@@ -100,12 +100,12 @@ public:
 			type += event.text;
 			if (toModify.name != "none")
 			{
-				if (type.size() > toModify.defaultMax && toModify.defaultMax != 0)
-				{
-					type.pop_back();
-					return;
-				}
-
+				if (toModify.takesString)
+					if (type.size() > toModify.defaultMax && toModify.defaultMax != 0)
+					{
+						type.pop_back();
+						return;
+					}
 
 				if (!Helpers::is_number(event.text) && toModify.takesDouble)
 				{
@@ -126,7 +126,7 @@ public:
 				}
 
 				def = type;
-				if (toModify.takesDouble)
+				if (toModify.takesDouble && type[type.size() - 1] != '.')
 					Game::save->SetDouble(toModify.name, std::stod(std::string(type)));
 				else
 					Game::save->SetString(toModify.name, type);
@@ -144,8 +144,10 @@ public:
 		if (parent == NULL)
 			return;
 
+		float scrll = ((AvgContainer*)parent)->scrollAddition;
+
 		int relX = _x - parent->x;
-		int relY = _y - parent->y;
+		int relY = _y - parent->y + scrll;
 
 		if ((relX > x && relY > y) && (relX < x + w && relY < y + h))
 		{

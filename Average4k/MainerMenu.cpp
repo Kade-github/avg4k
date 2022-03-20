@@ -105,11 +105,25 @@ void MainerMenu::create()
 
 	std::vector<setting> gameplaySettings;
 	gameplaySettings.push_back(Game::save->getSetting("scrollspeed"));
-	gameplaySettings.push_back(Game::save->getSetting("noteskin"));
 	gameplaySettings.push_back(Game::save->getSetting("downscroll"));
+	gameplaySettings.push_back(Game::save->getSetting("offset"));
 	gameplaySettings.push_back(Game::save->getSetting("keybinds"));
 
 	addSettings("Gameplay", gameplaySettings);
+
+
+	std::vector<setting> appearnSettings;
+	appearnSettings.push_back(Game::save->getSetting("Note Size"));
+	appearnSettings.push_back(Game::save->getSetting("Noteskin"));
+
+	addSettings("Apperance", appearnSettings);
+
+
+	std::vector<setting> audioSettings;
+	audioSettings.push_back(Game::save->getSetting("Hitsounds"));
+
+	addSettings("Audio", audioSettings);
+
 
 	// create text stuff
 

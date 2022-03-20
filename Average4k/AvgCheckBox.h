@@ -52,6 +52,11 @@ public:
 				textPart->setText("on");
 			else
 				textPart->setText("off");
+			if (toModify.name != "none")
+			{
+				Game::save->SetBool(toModify.name, def);
+				Game::save->Save();
+			}
 		}
 	}
 

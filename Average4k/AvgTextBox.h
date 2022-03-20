@@ -45,7 +45,7 @@ public:
 
 	void resyncText()
 	{
-		setText(true);
+		setText(true, false, true);
 	}
 
 	void setText(bool de = false, bool include_ = true, bool checkForLong = false)

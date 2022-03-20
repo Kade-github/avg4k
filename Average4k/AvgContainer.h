@@ -135,7 +135,7 @@ public:
 					lastItem = i;
 					float first = ((i.obj->y + i.obj->h));
 					float second = h;
-					maxScroll = first - second;
+					maxScroll = (first - second) + 42;
 				}
 			}
 		}
@@ -168,19 +168,20 @@ public:
 			topArrow.a = alpha;
 			topArrow.h = 6;
 
+
 			Rect border;
 			border.x = x;
 			border.y = y;
 			border.w = 14;
 			border.h = h;
 
-			scrollProg = (h - (12 + topArrow.h)) / ((lastItem.obj->y - scrollAddition) + lastItem.obj->h);
+			scrollProg = (h - (12 + topArrow.h)) / (((lastItem.obj->y + 42) - scrollAddition) + lastItem.obj->h);
 
 			if (scrollProg >= 1)
 				scrollProg = 1;
 
 			scrollBar.x = topArrow.x - 5;
-			scrollBar.h = (h - (12 + topArrow.h)) * ((h - (12 + topArrow.h)) / (lastItem.obj->y + lastItem.obj->h));
+			scrollBar.h = (h - (12 + topArrow.h)) * ((h - (12 + topArrow.h)) / ((lastItem.obj->y + 42) + lastItem.obj->h));
 			scrollBar.r = 255;
 			scrollBar.g = 255;
 			scrollBar.b = 255;
@@ -188,7 +189,7 @@ public:
 
 			float max = (h - (topArrow.h + 12));
 
-			scrollBar.y = (topArrow.y + ((12) + scrollProg * (max - (12)))) - (scrollBar.h - (topArrow.h));
+			scrollBar.y = (topArrow.y + ((14) + scrollProg * (max - (12)))) - (scrollBar.h - (topArrow.h));
 			scrollBar.w = 22;
 
 			Rendering::PushQuad(&topArrow, &srcRect, scrollAr, GL::genShader, angle);

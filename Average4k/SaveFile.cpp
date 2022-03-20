@@ -23,7 +23,7 @@ SaveFile::SaveFile()
 
     defaultSettings.push_back(CreateSetting("Downscroll",{true}));
     defaultSettings.push_back(CreateSetting("Scrollspeed",{false,false,true,false,"",800,200,1900}));
-    defaultSettings.push_back(CreateSetting("Offset",{false,false,true,false,"",0,-15,15}));
+    defaultSettings.push_back(CreateSetting("Offset",{false,false,true,false,"",0,-1000,1000}));
     defaultSettings.push_back(CreateSetting("Hitsounds", {true}));
     defaultSettings.push_back(CreateSetting("Note Size",{false,false,true,false,"",1,0.8,1.8,0.1,false,"x"}));
     defaultSettings.push_back(CreateSetting("Keybinds", {false,true,false,false,"DFJK", 0, 0, 4, 0, true}));

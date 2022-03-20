@@ -39,8 +39,8 @@ public:
 
 		textPart = new Text(_x + 24, _y + searchBar->height / 2, def, 14, "arial");
 		setText(true, false, true);
-		textPart->setCharacterSpacing(3);
-		textPart->color = { 64,64,64 };
+		textPart->setCharacterSpacing(2.33);
+		textPart->color = { 13, 28, 64 };
 	}
 
 	void resyncText()
@@ -51,7 +51,7 @@ public:
 	void setText(bool de = false, bool include_ = true, bool checkForLong = false)
 	{
 		std::string todo = de ? def : type;
-		if (todo.size() == 0)
+		if (todo.size() == 0 && !include_)
 			return;
 
 		if (Helpers::is_number(todo.c_str()) && checkForLong)
@@ -68,7 +68,7 @@ public:
 					def = todo;
 			}
 		}
-		textPart->setText(todo + suffix + (include_ ? "_" : ""));
+		textPart->setText(todo + (include_ ? "_" : "") + suffix);
 	}
 
 	void keyDown(SDL_KeyboardEvent ev)
@@ -83,6 +83,15 @@ public:
 				Game::save->Save();
 			}
 			setText();
+		}
+		if (typing && ev.keysym.sym == SDLK_MINUS)
+		{
+			if (toModify.name != "none" && toModify.takesDouble)
+			{
+				type = std::to_string(-std::stod(type));
+				def = type;
+			}
+			setText(false,true,true);
 		}
 	}
 

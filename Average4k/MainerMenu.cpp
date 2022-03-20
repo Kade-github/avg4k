@@ -381,14 +381,14 @@ void MainerMenu::addSettings(std::string catNam, std::vector<setting> settings)
 		hh = settingsContainer->findItemByName(itemName)->h;
 
 		settingsContainer->findItemByName(itemName)->y -= (hh / 2) - 2;
-
+		((Text*)settingsContainer->findItemByName(itemName))->setCharacterSpacing(2.33);
 		if (set.takesString)
 		{
 			int hey = startY + lastHeight + 52 + (52 * setInd);
 
 			std::string boxName = "_cat_" + catNam + "_item_" + set.name + "_textBox";
 
-			settingsContainer->addObject(new AvgTextBar(startX + ww + 24, hey, set.defaultString, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Settings/typeinputcontainer.png")), boxName);
+			settingsContainer->addObject(new AvgTextBar(startX + ww + 26, hey, set.defaultString, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Settings/typeinputcontainer.png")), boxName);
 			settingsContainer->findItemByName(boxName)->y -= settingsContainer->findItemByName(itemName)->h / 2;
 			((AvgTextBar*)settingsContainer->findItemByName(boxName))->toModify = set;
 			((AvgTextBar*)settingsContainer->findItemByName(boxName))->spacedOut = 4;
@@ -401,7 +401,7 @@ void MainerMenu::addSettings(std::string catNam, std::vector<setting> settings)
 
 			std::string boxName = "_cat_" + catNam + "_item_" + set.name + "_checkBox";
 
-			settingsContainer->addObject(new AvgCheckBox(startX + ww + 24, hey, set.defaultActive), boxName);
+			settingsContainer->addObject(new AvgCheckBox(startX + ww + 26, hey, set.defaultActive), boxName);
 			settingsContainer->findItemByName(boxName)->y -= settingsContainer->findItemByName(itemName)->h / 2;
 			((AvgCheckBox*)settingsContainer->findItemByName(boxName))->toModify = set;
 		}
@@ -412,7 +412,7 @@ void MainerMenu::addSettings(std::string catNam, std::vector<setting> settings)
 
 			std::string boxName = "_cat_" + catNam + "_item_" + set.name + "_textBox";
 
-			settingsContainer->addObject(new AvgTextBar(startX + ww + 24, hey, std::to_string(set.defaultDouble), Noteskin::getMenuElement(Game::noteskin, "MainMenu/Settings/typeinputcontainer.png")), boxName);
+			settingsContainer->addObject(new AvgTextBar(startX + ww + 26, hey, std::to_string(set.defaultDouble), Noteskin::getMenuElement(Game::noteskin, "MainMenu/Settings/typeinputcontainer.png")), boxName);
 			settingsContainer->findItemByName(boxName)->y -= settingsContainer->findItemByName(itemName)->h / 2;
 			((AvgTextBar*)settingsContainer->findItemByName(boxName))->toModify = set;
 			((AvgTextBar*)settingsContainer->findItemByName(boxName))->spacedOut = 4;

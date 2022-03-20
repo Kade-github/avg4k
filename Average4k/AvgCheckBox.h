@@ -1,0 +1,102 @@
+#pragma once
+#include "includes.h"
+#include "Object.h"
+#include "Texture.h"
+#include "SaveFile.h"
+#include "Text.h"
+
+class AvgCheckBox : public Object {
+public:
+	bool def;
+
+	Text* textPart;
+
+	setting toModify;
+
+	Texture* box;
+	Texture* toggle;
+
+	AvgCheckBox(int _x, int _y, bool _def)
+	{
+		x = _x;
+		y = _y;
+		def = _def;
+
+		toModify.name = "none";
+
+		box = Noteskin::getMenuElement(Game::noteskin, "MainMenu/Settings/toggle_bg.png");
+		toggle = Noteskin::getMenuElement(Game::noteskin, "MainMenu/Settings/toggle.png");
+		w = box->width;
+		h = box->height;
+		textPart = new Text(x, y, def ? "on" : "off", 10, "arialbd");
+		textPart->setCharacterSpacing(1.67);
+		textPart->color = { 13, 28, 64 };
+	}
+
+
+	void mouseDown()
+	{
+		int _x, _y;
+		Game::GetMousePos(&_x, &_y);
+
+		if (parent == NULL)
+			return;
+
+		int relX = _x - parent->x;
+		int relY = _y - parent->y;
+
+		if ((relX > x && relY > y) && (relX < x + w && relY < y + h))
+		{
+			def = !def;
+			if (def)
+				textPart->setText("on");
+			else
+				textPart->setText("off");
+		}
+	}
+
+	void draw()
+	{
+		Rect dstRect;
+		Rect toggleRect;
+		Rect srcRect;
+
+
+		dstRect.r = 255;
+		dstRect.g = 255;
+		dstRect.b = 255;
+
+		dstRect.a = alpha;
+
+		dstRect.x = x;
+		dstRect.y = y;
+		dstRect.w = w;
+		dstRect.h = h;
+
+		toggleRect.x = x + 2;
+		toggleRect.a = alpha;
+		toggleRect.y = y + 2;
+		toggleRect.w = toggle->width;
+		toggleRect.h = toggle->height;
+
+		textPart->y = (toggleRect.y + (textPart->h / 2)) - 2;
+		textPart->x = (x + (textPart->w / 2)) + (w / 2);
+
+		if (def)
+		{
+			toggleRect.x = (x + (w / 2)) - 2;
+			textPart->x = (x + (textPart->w / 2));
+		}
+
+		srcRect.x = 0;
+		srcRect.y = 0;
+		srcRect.w = 1;
+		srcRect.h = 1;
+
+		Rendering::PushQuad(&dstRect, &srcRect, box, GL::genShader);
+		Rendering::PushQuad(&toggleRect, &srcRect, toggle, GL::genShader);
+
+		textPart->alpha = alpha;
+		textPart->draw();
+	}
+};

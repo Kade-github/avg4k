@@ -6,6 +6,7 @@
 #include "TweenManager.h"
 #include "AvgRect.h"
 #include "SaveFile.h"
+#include "AvgContainer.h"
 
 // Objects
 
@@ -14,6 +15,7 @@ class PackObject : public Object
 public:
 
 	Text* pack;
+
 
 	Texture* bg;
 
@@ -128,6 +130,8 @@ public:
 	AvgRect* selectMulti;
 	Text* settingsText;
 	AvgRect* selectSettings;
+
+	AvgContainer* currentContainer;
 
 	void selectContainer(int container);
 

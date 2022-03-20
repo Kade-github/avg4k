@@ -1,8 +1,8 @@
 #include "MainerMenu.h"
 #include "SoundManager.h"
 #include "AvgTextBox.h"
-#include "AvgContainer.h"
 #include "Pack.h"
+#include "AvgCheckBox.h"
 
 AvgContainer* soloContainer;
 AvgContainer* multiContainer;
@@ -85,16 +85,16 @@ void MainerMenu::create()
 	}
 
 	multiContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Multi/maincontainer.png"));
-	multiContainer->alpha = 0;
 	multiContainer->x = (Game::gameWidth / 2) - (multiContainer->w / 2);
+	multiContainer->active = false;
 	add(multiContainer);
 
 	// multi creation
 
 
 	settingsContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Settings/maincontainer.png"));
-	settingsContainer->alpha = 0;
 	settingsContainer->x = (Game::gameWidth / 2) - (settingsContainer->w / 2);
+	settingsContainer->active = false;
 	add(settingsContainer);
 
 	// settings creation
@@ -151,6 +151,8 @@ void MainerMenu::create()
 
 	add(selectSettings);
 	add(settingsText);
+
+	currentContainer = soloContainer;
 
 	Tweening::TweenManager::createNewTween("movingContainer2", settingsContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("movingContainer1", multiContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
@@ -269,35 +271,63 @@ void MainerMenu::selectPack(int index)
 	// show songs
 }
 
+int lastTrans = 0;
+int transToContainer = 0;
+int despawn = 0;
+void transContainerThing()
+{
+	MainerMenu* instance = (MainerMenu*)Game::currentMenu;
+	switch (despawn)
+	{
+	case 0:
+		soloContainer->active = false;
+		break;
+	case 1:
+		multiContainer->active = false;
+		break;
+	case 2:
+		settingsContainer->active = false;
+		break;
+	}
+}
+
 void MainerMenu::selectContainer(int container)
 {
+	transToContainer = container;
+	despawn = lastTrans;
+	if (transToContainer <= lastTrans)
+		Tweening::TweenManager::createNewTween("movingContainer", currentContainer, Tweening::tt_X, 750, currentContainer->x, Game::gameWidth, (Tweening::tweenCallback)transContainerThing, Easing::EaseOutCubic);
+	else
+		Tweening::TweenManager::createNewTween("movingContainer", currentContainer, Tweening::tt_X, 750, currentContainer->x, -(currentContainer->w + 100), (Tweening::tweenCallback)transContainerThing, Easing::EaseOutCubic);
 	switch (container)
 	{
 	case 0:
-		soloContainer->alpha = 1;
-		multiContainer->alpha = 0;
-		settingsContainer->alpha = 0;
+		currentContainer = soloContainer;
+		soloContainer->active = true;
 		selectSolo->alpha = 1;
 		selectMulti->alpha = 0;
 		selectSettings->alpha = 0;
 		break;
 	case 1:
-		soloContainer->alpha = 0;
-		multiContainer->alpha = 1;
-		settingsContainer->alpha = 0;
+		currentContainer = multiContainer;
+		multiContainer->active = true;
 		selectSolo->alpha = 0;
 		selectMulti->alpha = 1;
 		selectSettings->alpha = 0;
 		break;
 	case 2:
-		soloContainer->alpha = 0;
-		multiContainer->alpha = 0;
-		settingsContainer->alpha = 1;
+		currentContainer = settingsContainer;
+		settingsContainer->active = true;
 		selectSolo->alpha = 0;
 		selectMulti->alpha = 0;
 		selectSettings->alpha = 1;
 		break;
 	}
+	if (transToContainer <= lastTrans)
+		Tweening::TweenManager::createNewTween("movingContainer2", currentContainer, Tweening::tt_X, 750, -(currentContainer->w + 100), (Game::gameWidth / 2) - (currentContainer->w / 2), NULL, Easing::EaseOutCubic);
+	else
+		Tweening::TweenManager::createNewTween("movingContainer2", currentContainer, Tweening::tt_X, 750, Game::gameWidth, (Game::gameWidth / 2) - (currentContainer->w / 2), NULL, Easing::EaseOutCubic);
+	lastTrans = container;
 }
 
 void MainerMenu::leftMouseDown()
@@ -330,9 +360,53 @@ void MainerMenu::addSettings(std::string catNam, std::vector<setting> settings)
 	int setInd = 0;
 	for (setting& set : settings)
 	{
-		settingsContainer->addObject(new Text(startX,startY + lastHeight + 42 + (42 * setInd), set.name, 16, "arialbd"), "_cat_" + catNam + "_item_" + set.name);
+		settingsContainer->addObject(new Text(startX,startY + lastHeight + 52 + (52 * setInd), set.name, 16, "arial"), "_cat_" + catNam + "_item_" + set.name);
+		int ww, hh;
+		std::string itemName = "_cat_" + catNam + "_item_" + set.name;
+		ww = settingsContainer->findItemByName(itemName)->w;
+		hh = settingsContainer->findItemByName(itemName)->h;
+
+		settingsContainer->findItemByName(itemName)->y -= (hh / 2) - 2;
+
+		if (set.takesString)
+		{
+			int hey = startY + lastHeight + 52 + (52 * setInd);
+
+			std::string boxName = "_cat_" + catNam + "_item_" + set.name + "_textBox";
+
+			settingsContainer->addObject(new AvgTextBar(startX + ww + 24, hey, set.defaultString, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Settings/typeinputcontainer.png")), boxName);
+			settingsContainer->findItemByName(boxName)->y -= settingsContainer->findItemByName(itemName)->h / 2;
+			((AvgTextBar*)settingsContainer->findItemByName(boxName))->toModify = set;
+			((AvgTextBar*)settingsContainer->findItemByName(boxName))->spacedOut = 4;
+			((AvgTextBar*)settingsContainer->findItemByName(boxName))->unique = set.unique;
+		}
+
+		if (set.takesActive)
+		{
+			int hey = startY + lastHeight + 52 + (52 * setInd);
+
+			std::string boxName = "_cat_" + catNam + "_item_" + set.name + "_checkBox";
+
+			settingsContainer->addObject(new AvgCheckBox(startX + ww + 24, hey, set.defaultActive), boxName);
+			settingsContainer->findItemByName(boxName)->y -= settingsContainer->findItemByName(itemName)->h / 2;
+			((AvgCheckBox*)settingsContainer->findItemByName(boxName))->toModify = set;
+		}
+
+		if (set.takesDouble)
+		{
+			int hey = startY + lastHeight + 52 + (52 * setInd);
+
+			std::string boxName = "_cat_" + catNam + "_item_" + set.name + "_textBox";
+
+			settingsContainer->addObject(new AvgTextBar(startX + ww + 24, hey, std::to_string(set.defaultDouble), Noteskin::getMenuElement(Game::noteskin, "MainMenu/Settings/typeinputcontainer.png")), boxName);
+			settingsContainer->findItemByName(boxName)->y -= settingsContainer->findItemByName(itemName)->h / 2;
+			((AvgTextBar*)settingsContainer->findItemByName(boxName))->toModify = set;
+			((AvgTextBar*)settingsContainer->findItemByName(boxName))->spacedOut = 4;
+			((AvgTextBar*)settingsContainer->findItemByName(boxName))->suffix = set.settingSuffix;
+			((AvgTextBar*)settingsContainer->findItemByName(boxName))->resyncText();
+		}
 		setInd++;
 	}
 
-	lastHeight += (42 * settings.size()) + 42;
+	lastHeight += (52 * settings.size()) + 52;
 }

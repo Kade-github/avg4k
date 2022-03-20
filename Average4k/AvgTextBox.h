@@ -4,16 +4,20 @@
 #include "Texture.h"
 #include "SaveFile.h"
 #include "Text.h"
+#include "Helpers.h"
 
 class AvgTextBar : public Object {
 public:
 	std::string def;
 
 	std::string type;
+	std::string suffix = "";
 
 	Text* textPart;
 
 	setting toModify;
+
+	bool unique;
 
 	int spacedOut = 32;
 
@@ -34,10 +38,38 @@ public:
 		h = searchBar->height;
 
 		textPart = new Text(_x + 24, _y + searchBar->height / 2, def, 14, "arial");
+		setText(true, false, true);
 		textPart->setCharacterSpacing(3);
 		textPart->color = { 64,64,64 };
 	}
 
+	void resyncText()
+	{
+		setText(true);
+	}
+
+	void setText(bool de = false, bool include_ = true, bool checkForLong = false)
+	{
+		std::string todo = de ? def : type;
+		if (todo.size() == 0)
+			return;
+
+		if (Helpers::is_number(todo.c_str()) && checkForLong)
+		{
+			size_t n = std::count(todo.begin(), todo.end(), '.');
+			if (n == 1)
+			{
+				Helpers::removeTrailingCharacters(todo, '0');
+				if (todo[todo.size() - 1] == '.')
+					todo = todo.substr(0, todo.size() - 1);
+
+				type = todo;
+				if (toModify.name != "none")
+					def = todo;
+			}
+		}
+		textPart->setText(todo + suffix + (include_ ? "_" : ""));
+	}
 
 	void keyDown(SDL_KeyboardEvent ev)
 	{
@@ -46,10 +78,11 @@ public:
 			type.pop_back();
 			if (toModify.name != "none")
 			{
+				def = type;
 				Game::save->SetString(toModify.name, type);
 				Game::save->Save();
 			}
-			textPart->setText(type + "_");
+			setText();
 		}
 	}
 
@@ -57,13 +90,49 @@ public:
 	{
 		if (typing)
 		{
+			if (unique)
+			{
+				if (type.contains(event.text))
+					return;
+			}
+
+
 			type += event.text;
 			if (toModify.name != "none")
 			{
-				Game::save->SetString(toModify.name, type);
+				if (type.size() > toModify.defaultMax && toModify.defaultMax != 0)
+				{
+					type.pop_back();
+					return;
+				}
+
+
+				if (!Helpers::is_number(event.text) && toModify.takesDouble)
+				{
+					if (type[type.size() - 1] == '.')
+					{
+						size_t n = std::count(type.begin(), type.end(), '.');
+						if (n > 1)
+						{
+							type.pop_back();
+							return;
+						}
+					}
+					else
+					{
+						type.pop_back();
+						return;
+					}
+				}
+
+				def = type;
+				if (toModify.takesDouble)
+					Game::save->SetDouble(toModify.name, std::stod(std::string(type)));
+				else
+					Game::save->SetString(toModify.name, type);
 				Game::save->Save();
 			}
-			textPart->setText(type + "_");
+			setText();
 		}
 	}
 
@@ -72,22 +141,41 @@ public:
 		int _x, _y;
 		Game::GetMousePos(&_x, &_y);
 
+		if (parent == NULL)
+			return;
+
 		int relX = _x - parent->x;
 		int relY = _y - parent->y;
 
-		if ((relX > x && relY > y) && (relY < x + w && relY < y + h))
+		if ((relX > x && relY > y) && (relX < x + w && relY < y + h))
 		{
+			if (toModify.name != "none")
+				type = def;
 			typing = true;
-			if (type.size() == 0)
-				textPart->setText("_");
+			setText();
 		}
 		else
 		{
 			typing = false;
+
+			if (Helpers::is_number(type.c_str()) && toModify.takesDouble)
+			{
+				double d = std::stod(std::string(type));
+				if (d < toModify.defaultMin)
+					type = std::to_string(toModify.defaultMin);
+				if (d > toModify.defaultMax)
+					type = std::to_string(toModify.defaultMax);
+
+				def = type;
+
+				Game::save->SetDouble(toModify.name, std::stod(std::string(type)));
+				Game::save->Save();
+			}
+
 			if (type.size() == 0)
-				textPart->setText(def);
+				setText(true,false,true);
 			else
-				textPart->setText(type);
+				setText(false,false,true);
 		}
 	}
 

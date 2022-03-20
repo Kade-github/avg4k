@@ -16,7 +16,7 @@ SaveFile::SaveFile()
 {
     // default settings
 
-    // {takesActive, takesString, takesDouble, defaultActive, defaultString, defaultDouble, defaultMin, defaultMax}
+    // {takesActive, takesString, takesDouble, defaultActive, defaultString, defaultDouble, defaultMin, defaultMax, defaultIncrm, unique, suffix}
 
     settingHeader defaultHeader;
     defaultHeader.settingsVersion = "v2";
@@ -25,8 +25,8 @@ SaveFile::SaveFile()
     defaultSettings.push_back(CreateSetting("Scrollspeed",{false,false,true,false,"",800,200,1900}));
     defaultSettings.push_back(CreateSetting("Offset",{false,false,true,false,"",0,-15,15}));
     defaultSettings.push_back(CreateSetting("Hitsounds", {true}));
-    defaultSettings.push_back(CreateSetting("Note Size",{false,false,true,false,"",1,0.8,1.8,0.1}));
-    defaultSettings.push_back(CreateSetting("Keybinds", {false,true,false,false,"DFJK", 0, 0, 4}));
+    defaultSettings.push_back(CreateSetting("Note Size",{false,false,true,false,"",1,0.8,1.8,0.1,false,"x"}));
+    defaultSettings.push_back(CreateSetting("Keybinds", {false,true,false,false,"DFJK", 0, 0, 4, 0, true}));
     defaultSettings.push_back(CreateSetting("Noteskin", {false,true,false,false, "arrow"}));
     defaultSettings.push_back(CreateSetting("nonChange_chartTheme", {}));
     defaultSettings.push_back(CreateSetting("nonChange_chartHistory",{}));
@@ -187,5 +187,6 @@ setting SaveFile::CreateSetting(std::string defaultName, settingConstruct cons)
     set.takesString = cons.takesString;
     set.defaultString = cons.defaultString;
     set.defaultIncrm = cons.defaultIncrm;
+    set.unique = cons.unique;
     return set;
 }

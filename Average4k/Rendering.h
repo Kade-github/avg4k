@@ -14,8 +14,8 @@ struct Rect
 {
 	float x, y;
 	float w, h;
-	float r, g, b;
-	float a;
+	float r = 255, g = 255, b = 255;
+	float a = 1;
 };
 
 class Rendering

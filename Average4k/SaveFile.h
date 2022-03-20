@@ -12,6 +12,10 @@ struct settingConstruct {
 	double defaultMin = 0;
 	double defaultMax = 0;
 	double defaultIncrm = 1;
+
+	// other special stuff
+	bool unique = false;
+	std::string settingSuffix = "";
 };
 
 struct setting {
@@ -28,7 +32,11 @@ struct setting {
 
 	std::string name;
 
-	MSGPACK_DEFINE(takesActive, takesString, takesDouble, defaultActive, defaultString, defaultDouble, defaultMin, defaultMax, defaultIncrm, name);
+	// other special stuff
+	bool unique;
+	std::string settingSuffix;
+
+	MSGPACK_DEFINE(takesActive, takesString, takesDouble, defaultActive, defaultString, defaultDouble, defaultMin, defaultMax, defaultIncrm, name, unique, settingSuffix);
 };
 
 struct settingHeader {

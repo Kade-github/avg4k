@@ -17,6 +17,9 @@ public:
 	float scrollProg = 0;
 	float scrollAddition = 0;
 	float maxScroll = 0;
+
+	bool active = true;
+
 	std::vector<itemId> items;
 
 	std::vector<Object*> above;
@@ -77,7 +80,8 @@ public:
 	}
 
 	void draw() {
-
+		if (!active)
+			return;
 		clipRect.x = x + 2;
 		clipRect.y = y + 1;
 		clipRect.w = w - 4;
@@ -219,6 +223,8 @@ public:
 
 	void textInput(SDL_TextInputEvent event)
 	{
+		if (!active)
+			return;
 		for (Object* obj : above)
 		{
 			obj->textInput(event);
@@ -227,6 +233,8 @@ public:
 
 	void mouseDown()
 	{
+		if (!active)
+			return;
 		for (Object* obj : above)
 		{
 			obj->mouseDown();
@@ -235,6 +243,8 @@ public:
 
 	void keyDown(SDL_KeyboardEvent ev)
 	{
+		if (!active)
+			return;
 		for (Object* obj : above)
 		{
 			obj->keyDown(ev);
@@ -243,6 +253,8 @@ public:
 
 	void mouseWheel(float amount)
 	{
+		if (!active)
+			return;
 		int mx, my;
 		Game::GetMousePos(&mx, &my);
 

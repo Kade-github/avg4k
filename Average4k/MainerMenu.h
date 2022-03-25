@@ -47,6 +47,12 @@ public:
 	}
 
 
+	~PackObject()
+	{
+		delete bg;
+		delete pack;
+	}
+
 	void draw()
 	{
 		Rect dstRect;
@@ -116,6 +122,7 @@ public:
 class MainerMenu : public Menu
 {
 public:
+	static Chart currentSelectedSong;
 	float lastBeat = 0;
 	bool started;
 	AvgSprite* icon;

@@ -4,17 +4,22 @@
 #include "Pack.h"
 #include "AvgCheckBox.h"
 #include "AvgWheel.h"
+#include "MainMenu.h"
 
 AvgContainer* soloContainer;
 AvgContainer* multiContainer;
 AvgContainer* settingsContainer;
 
 std::mutex packMutex;
+int packIndex = 0;
 
 Pack selected;
 std::vector<Pack> packs;
 
 std::vector<Pack>* asyncPacks;
+
+Chart MainerMenu::currentSelectedSong;
+
 
 int selectedContainerIndex = 0;
 
@@ -25,6 +30,8 @@ void selectedSongCallback(Song s)
 	AvgContainer* cont = (AvgContainer*)soloContainer->findItemByName("songContainer");
 	if (!cont) // lol
 		return;
+
+	MainerMenu::currentSelectedSong = s.c;
 
 	Tweening::TweenManager::removeTween("fuckyoutween");
 
@@ -47,6 +54,19 @@ void selectedSongCallback(Song s)
 
 	cont->addObject(background, "background", true);
 
+	// play song
+
+	Channel* ch = SoundManager::getChannelByName("prevSong");
+
+	if (ch != NULL)
+	{
+		ch->stop();
+		ch->free();
+		SoundManager::removeChannel("prevSong");
+	}
+
+	Channel* real = SoundManager::createChannel(s.c.meta.folder + "/" + s.c.meta.audio, "prevSong");
+	real->play();
 	// text stuff
 
 
@@ -303,6 +323,15 @@ void MainerMenu::update(Events::updateEvent ev)
 	}
 }
 
+void endTrans()
+{
+	packIndex = 0;
+	packs.clear();
+	asyncPacks->clear();
+	Tweening::TweenManager::activeTweens.clear();
+	Game::instance->switchMenu(new MainMenu());
+}
+
 void MainerMenu::keyDown(SDL_KeyboardEvent event)
 {
 	if (selectedContainerIndex == 0)
@@ -319,9 +348,15 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 			break;
 		}
 	}
+	switch (event.keysym.sym)
+	{
+	case SDLK_ESCAPE:
+		Tweening::TweenManager::createNewTween("movingContainer2", settingsContainer, Tweening::tt_Y, 1000, 160, Game::gameHeight + 200, (Tweening::tweenCallback)endTrans, Easing::EaseOutCubic);
+		Tweening::TweenManager::createNewTween("movingContainer1", multiContainer, Tweening::tt_Y, 900, 160, Game::gameHeight + 200, NULL, Easing::EaseOutCubic);
+		Tweening::TweenManager::createNewTween("movingContainer", soloContainer, Tweening::tt_Y, 900, 160, Game::gameHeight + 200, NULL, Easing::EaseOutCubic);
+		break;
+	}
 }
-
-int packIndex = 0;
 
 
 void MainerMenu::addPack(std::string name, std::string bg, bool showText)

@@ -158,7 +158,7 @@ public:
 
 		if (select != actualValue)
 		{
-			select = std::lerp(select, actualValue, 0.08f);
+			select = std::lerp(select, actualValue, 0.1f);
 			//std::cout << select << " " << actualValue << std::endl;
 		}
 
@@ -175,7 +175,9 @@ public:
 			if (yy + backgroundImage->height < y || yy > y + h)
 				continue;
 
-			int xx = x - (backgroundImage->width / 2) + (std::lerp(backgroundImage->width / 2, 0.0f, std::abs(rank)));
+			float lerp = std::lerp(backgroundImage->width / 2, 0.0f, std::abs(rank));
+
+			int xx = x - (backgroundImage->width / 2) + (lerp);
 			std::string name = songs[i].c.meta.songName + songs[i].c.meta.folder;
 
 			Rect boxRect;

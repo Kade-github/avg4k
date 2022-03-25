@@ -10,6 +10,8 @@
 
 float ddddtime = 0;
 
+bool MainMenu::first = false;
+
 MainMenu::MainMenu()
 {
 
@@ -67,8 +69,15 @@ void MainMenu::create() {
 	add(border);
 
 	created = true;
-
-	Tweening::TweenManager::createNewTween("movingBG", bg, Tweening::tt_Y, 1000, Game::gameHeight, 0, NULL, Easing::EaseOutCubic);
+	if (!first)
+	{
+		first = true;
+		Tweening::TweenManager::createNewTween("movingBG", bg, Tweening::tt_Y, 1000, Game::gameHeight, 0, NULL, Easing::EaseOutCubic);
+	}
+	else
+	{
+		bg->y = 0;
+	}
 	Tweening::TweenManager::createNewTween("movingLogo", thing, Tweening::tt_Y, 1100, Game::gameHeight, (Game::gameHeight / 2) - (thing->h / 2), NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("alphaLogo", thing, Tweening::tt_Alpha, 1000, 0, 1, NULL, Easing::EaseInSine);
 }
@@ -78,7 +87,7 @@ void MainMenu::onSteam(std::string s)
 }
 
 // little helper for this shit
-bpmSegment getBPMSegmentFromChart(Chart* chart)
+bpmSegment getBPMSegmentFromChart(Chart chart)
 {
 	Channel* ch = SoundManager::getChannelByName("prevSong");
 	if (ch->id == -1)
@@ -87,7 +96,7 @@ bpmSegment getBPMSegmentFromChart(Chart* chart)
 		return seg;
 	}
 	float pos = ch->getPos();
-	bpmSegment seg = chart->getSegmentFromTime(pos);
+	bpmSegment seg = chart.getSegmentFromTime(pos);
 	return seg;
 }
 
@@ -106,11 +115,11 @@ void MainMenu::update(Events::updateEvent event)
 	{
 			Channel* ch = SoundManager::getChannelByName("prevSong");
 			float beat = 0;
-			if (SongSelect::currentChart)
+			if (MainerMenu::currentSelectedSong.meta.songName.size() != 0)
 			{
-				bpmSegment seg = getBPMSegmentFromChart(SongSelect::currentChart);
+				bpmSegment seg = getBPMSegmentFromChart(MainerMenu::currentSelectedSong);
 				ch->bpm = seg.bpm;
-				beat = SongSelect::currentChart->getBeatFromTime(ch->getPos() , seg);
+				beat = MainerMenu::currentSelectedSong.getBeatFromTime(ch->getPos() , seg);
 			}
 			else
 			{

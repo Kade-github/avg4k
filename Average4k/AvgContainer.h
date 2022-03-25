@@ -7,6 +7,7 @@
 struct itemId {
 	std::string name;
 	Object* obj;
+	bool below;
 };
 
 class AvgContainer : public Object
@@ -54,6 +55,7 @@ public:
 
 		itemId id;
 		id.name = name;
+		id.below = beloww;
 		id.obj = obj;
 		items.push_back(id);
 	}
@@ -125,6 +127,10 @@ public:
 		lastItem.name = "NOOOOOO";
 		for (itemId i : items)
 		{
+			if (i.below)
+			{
+				continue;
+			}
 			i.obj->alpha = alpha;
 			i.obj->parent = this;
 			if (i.obj->y > h || i.obj->y < 0) // yes!

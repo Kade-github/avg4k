@@ -13,7 +13,7 @@ struct Song {
 struct Pack {
 	std::vector<Song> songs;
 	std::string metaPath;
-	Texture* background;
+	std::string background;
 	std::string packName;
 	bool showName;
 };
@@ -51,6 +51,56 @@ public:
 
 class SongGather {
 public:
+	static void gatherPacksAsync(std::vector<Pack>* packs)
+	{
+		std::thread t([packs]() {
+			for (const auto& entry : std::filesystem::directory_iterator("assets/charts/"))
+			{
+				if (SongUtils::IsDirectory(entry.path()))
+				{
+					Pack p;
+
+					std::ifstream fs;
+					// meta
+					fs.open(entry.path().string() + "/pack.meta");
+
+					if (!fs.good())
+						continue;
+
+					p.metaPath = entry.path().string() + "/pack.meta";
+
+					std::string str;
+
+					while (std::getline(fs, str))
+					{
+						if (str.starts_with("#"))
+							continue;
+						std::vector<std::string> split = Chart::split(str, ':');
+						std::string end = split[1].erase(0, 1);
+						if (split[0] == "banner")
+							p.background = entry.path().string() + "/" + end;
+						if (split[0] == "packName")
+							p.packName = end;
+						if (split[0] == "showName")
+							p.showName = (end == "false" ? false : true);
+					}
+
+
+					std::vector<Song> songs = gatherSongsInFolder(entry.path().string() + "/");
+
+					if (songs.size() == 0)
+						continue;
+
+					for (Song s : songs)
+						p.songs.push_back(s);
+
+					packs->push_back(p);
+				}
+			}
+		});
+		t.detach();
+	}
+
 	static std::vector<Pack> gatherPacks()
 	{
 		std::vector<Pack> packs;
@@ -78,7 +128,7 @@ public:
 					std::vector<std::string> split = Chart::split(str, ':');
 					std::string end = split[1].erase(0, 1);
 					if (split[0] == "banner")
-						p.background = Texture::createWithImage(entry.path().string() + "/" + end);
+						p.background = entry.path().string() + "/" + end;
 					if (split[0] == "packName")
 						p.packName = end;
 					if (split[0] == "showName")

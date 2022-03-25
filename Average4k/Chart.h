@@ -49,6 +49,8 @@ public:
 		std::string audio;
 		std::string folder;
 		std::string background;
+		std::string banner;
+		std::string artist;
 		std::vector<bpmSegment> bpms;
 		std::vector<stopSegment> stops;
 		std::vector<difficulty> difficulties;

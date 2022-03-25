@@ -554,6 +554,9 @@
     <ClInclude Include="AvgDropDown.h">
       <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
     </ClInclude>
+    <ClInclude Include="AvgWheel.h">
+      <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Average4k.rc">

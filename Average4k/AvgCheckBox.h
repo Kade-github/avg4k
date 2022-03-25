@@ -13,6 +13,8 @@ public:
 
 	setting toModify;
 
+	float time = 0;
+
 	Texture* box;
 	Texture* toggle;
 
@@ -31,6 +33,7 @@ public:
 		textPart = new Text(x, y, def ? "on" : "off", 10, "arialbd");
 		textPart->setCharacterSpacing(1.67);
 		textPart->color = { 13, 28, 64 };
+		time = 500;
 	}
 
 
@@ -59,6 +62,8 @@ public:
 				Game::save->SetBool(toModify.name, def);
 				Game::save->Save();
 			}
+
+			time = 0;
 		}
 	}
 
@@ -75,12 +80,15 @@ public:
 
 		dstRect.a = alpha;
 
+		if (time < 500)
+			time += Game::deltaTime * 8;
+
 		dstRect.x = x;
 		dstRect.y = y;
 		dstRect.w = w;
 		dstRect.h = h;
 
-		toggleRect.x = x + 2;
+		toggleRect.x = std::lerp((x + (w / 2)) - 4, x + 2, time / 500);
 		toggleRect.a = alpha;
 		toggleRect.y = y + 2;
 		toggleRect.w = toggle->width;
@@ -91,7 +99,7 @@ public:
 
 		if (def)
 		{
-			toggleRect.x = (x + (w / 2)) - 2;
+			toggleRect.x = std::lerp(x + 2, (x + (w / 2)) - 4, time / 500);
 			textPart->x = (x + (textPart->w / 2));
 		}
 

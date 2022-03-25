@@ -1,0 +1,34 @@
+#TITLE:Summer Vacation (edo castle crashers mix);
+#SUBTITLE:squarewave surfers ~memory of 8bit;
+#ARTIST:Chibi-Tech;
+#TITLETRANSLIT:;
+#SUBTITLETRANSLIT:;
+#ARTISTTRANSLIT:;
+#GENRE:;
+#CREDIT:Kommisar;
+#BANNER:sv-bn.png;
+#BACKGROUND:sv-bg.png;
+#LYRICSPATH:;
+#CDTITLE:!cdtitle.png;
+#MUSIC:yup.mp3;
+#OFFSET:-0.454235;
+#SAMPLESTART:79.010002;
+#SAMPLELENGTH:12.000000;
+#SELECTABLE:YES;
+#BPMS:0.000000=180.259995
+,75.500000=182.639999
+,76.000000=180.259995
+;
+#STOPS:
+;
+#BGCHANGES:;
+#KEYSOUNDS:;
+
+//---------------dance-single - Kommisar----------------
+#NOTES:
+     dance-single:
+     Kommisar:
+     Hard:
+     9:
+     1343,933,327,164,103,84,0,0,0,-3898879,1835888459:
+;

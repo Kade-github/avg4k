@@ -7,8 +7,6 @@ Texture* stbi_h::stbi_load_file(std::string filePath)
 	int w;
 	int h;
 	unsigned char* c = stbi_load(filePath.c_str(), &w, &h, nullptr, 4);
-	if (stbi_failure_reason())
-		std::cout << "STBI: FAILURE " << stbi_failure_reason() << " ON " << filePath << std::endl;
 	return new Texture(c, w, h);
 }
 

@@ -3,13 +3,54 @@
 #include "AvgTextBox.h"
 #include "Pack.h"
 #include "AvgCheckBox.h"
+#include "AvgWheel.h"
 
 AvgContainer* soloContainer;
 AvgContainer* multiContainer;
 AvgContainer* settingsContainer;
 
+std::mutex packMutex;
+
 Pack selected;
 std::vector<Pack> packs;
+
+std::vector<Pack>* asyncPacks;
+
+int selectedContainerIndex = 0;
+
+void selectedSongCallback(Song s)
+{
+	std::cout << "selected " << s.c.meta.songName << std::endl;
+
+	AvgContainer* cont = (AvgContainer*)soloContainer->findItemByName("songContainer");
+	if (!cont) // lol
+		return;
+
+	Tweening::TweenManager::removeTween("fuckyoutween");
+
+	for (Object* obj : cont->above)
+		cont->removeObject(obj);
+	for (Object* obj : cont->below)
+		cont->removeObject(obj, true);
+	
+	// bg
+	AvgSprite* background = new AvgSprite(0, 0, Texture::createWithImage(s.c.meta.folder + "/" + s.c.meta.background));
+	if (background->w < cont->w)
+		background->w = cont->w;
+	if (background->h < cont->h)
+		background->h = cont->h;
+	background->x = (cont->w / 2) - background->w / 2;
+	background->y = (cont->h / 2) - background->h / 2;
+	background->alpha = 0;
+
+	Tweening::TweenManager::createNewTween("fuckyoutween", background, Tweening::tt_Alpha, 500, 0, 1, NULL, Easing::EaseInSine);
+
+	cont->addObject(background, "background", true);
+
+	// text stuff
+
+
+}
 
 void MainerMenu::create()
 {
@@ -54,35 +95,39 @@ void MainerMenu::create()
 	soloContainer->addObject(new Text(22, 18, "Packs", 18, "arialbd"), "packsText");
 	((Text*)soloContainer->findItemByName("packsText"))->setCharacterSpacing(3);
 
-	soloContainer->addObject(new Text(22, 36, "scroll down to see more", 16, "ariali"), "packsBottom");
+	soloContainer->addObject(new Text(22, 36, "** Loading packs, please be patient!", 16, "ariali"), "packsBottom");
 
 	AvgContainer* packContainer = new AvgContainer(0, 88, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/packscontainer.png"));
 
 	soloContainer->addObject(packContainer, "packContainer");
 
 
+
 	// create packs
-
-	packs = SongGather::gatherPacks();
-
-	for (Pack p : packs)
-	{
-		addPack(p.packName, p.background, p.showName);
-	}
+	asyncPacks = new std::vector<Pack>();
+	SongGather::gatherPacksAsync(asyncPacks);
 
 	std::vector<Song> songs = SongGather::gatherNoPackSongs();
 
 	if (songs.size() > 0)
 	{
 		Pack p;
-		p.background = NULL;
+		p.background = "";
 		p.metaPath = "unfl";
 		p.packName = "Unfiltered Songs";
 		p.showName = true;
 		p.songs = songs;
 
+		packs.push_back(p);
+
 		addPack(p.packName, p.background, p.showName);
 	}
+
+	soloContainer->addObject(new AvgContainer((soloContainer->x + soloContainer->w), 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/songcontainer.png")), "songContainer");
+	soloContainer->findItemByName("songContainer")->x -= soloContainer->findItemByName("songContainer")->w + 40;
+
+
+	soloContainer->addObject(new AvgWheel(packContainer->w, packContainer->y, 600, packContainer->h, NULL, (songSelectCallback)selectedSongCallback), "wheelObject");
 
 	multiContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Multi/maincontainer.png"));
 	multiContainer->x = (Game::gameWidth / 2) - (multiContainer->w / 2);
@@ -175,6 +220,28 @@ void MainerMenu::create()
 
 void MainerMenu::update(Events::updateEvent ev)
 {
+	if (asyncPacks->size() != 0)
+	{
+		std::vector<Pack> gatheredPacks;
+		{
+			std::lock_guard cock(packMutex);
+			for (Pack p : (*asyncPacks))
+			{
+				gatheredPacks.push_back(p);
+			}
+			asyncPacks->clear();
+		}
+
+		for (Pack p : gatheredPacks)
+		{
+			addPack(p.packName, p.background, p.showName);
+			packs.push_back(p);
+		}
+
+		Text* t = (Text*)soloContainer->findItemByName("packsBottom");
+		t->setText(std::to_string(packs.size()) + " loaded");
+	}
+
 	selectSolo->y = soloContainer->y - 26;
 	soloText->y = selectSolo->y - 28;
 
@@ -238,13 +305,28 @@ void MainerMenu::update(Events::updateEvent ev)
 
 void MainerMenu::keyDown(SDL_KeyboardEvent event)
 {
+	if (selectedContainerIndex == 0)
+	{
+		AvgWheel* wheel = (AvgWheel*)soloContainer->findItemByName("wheelObject");
+		switch (event.keysym.sym)
+		{
+		case SDLK_DOWN:
+			wheel->selectThis(wheel->actualValue + 1);
+			break;
+		case SDLK_UP:
+			wheel->selectThis(wheel->actualValue - 1);
+			if (wheel->actualValue < 0)
+			break;
+		}
+	}
 }
 
 int packIndex = 0;
 
 
-void MainerMenu::addPack(std::string name, Texture* background, bool showText)
+void MainerMenu::addPack(std::string name, std::string bg, bool showText)
 {
+	Texture* background = Texture::createWithImage(bg);
 	AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");
 	PackObject* obj = new PackObject(0, packIndex * 75, name, background, showText);
 	obj->w = packContainer->w;
@@ -307,6 +389,7 @@ void transContainerThing()
 
 void MainerMenu::selectContainer(int container)
 {
+	selectedContainerIndex = container;
 	transToContainer = container;
 	despawn = lastTrans;
 	if (transToContainer <= lastTrans)
@@ -355,6 +438,24 @@ void MainerMenu::leftMouseDown()
 		selectContainer(1);
 	if ((x > selectSettings->x && y > settingsText->y) && (x < selectSettings->x + selectSettings->w && y < selectSettings->y))
 		selectContainer(2);
+
+	if (selectedContainerIndex == 0)
+	{
+		AvgWheel* wheel = (AvgWheel*)soloContainer->findItemByName("wheelObject");
+		AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");
+		int relX = (x - soloContainer->x) - packContainer->x;
+		int relY = (y - soloContainer->y) - packContainer->y;
+		for (int i = 0; i < packContainer->above.size(); i++)
+		{
+			Object* obj = packContainer->above[i];
+			if ((relX > obj->x && relY > obj->y) && (relX < obj->x + obj->w && relY < obj->y + obj->h))
+			{
+				wheel->setSongs(&packs[i].songs);
+				selectPack(i);
+				return;
+			}
+		}
+	}
 }
 
 int catIndex = 0;

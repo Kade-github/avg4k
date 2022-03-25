@@ -154,6 +154,8 @@ namespace Tweening
 		{
 			t.time += elapsed;
 			t.percnt = t.time / t.duration;
+			if (t.percnt > 1)
+				t.percnt = 1;
 			double start = t.start;
 			double end = t.end;
 			double value = t.easeFunc(t.percnt);

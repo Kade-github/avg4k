@@ -136,7 +136,7 @@ public:
 	void selectContainer(int container);
 
 	void selectPack(int index);
-	void addPack(std::string name, Texture* background, bool showText);
+	void addPack(std::string name, std::string bg, bool showText);
 	void clearPacks();
 
 	void addSettings(std::string catNam, std::vector<setting> settings);

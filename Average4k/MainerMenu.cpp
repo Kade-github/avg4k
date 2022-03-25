@@ -5,6 +5,7 @@
 #include "AvgCheckBox.h"
 #include "AvgWheel.h"
 #include "MainMenu.h"
+#include "Gameplay.h"
 
 AvgContainer* soloContainer;
 AvgContainer* multiContainer;
@@ -19,6 +20,7 @@ std::vector<Pack> packs;
 std::vector<Pack>* asyncPacks;
 
 Chart MainerMenu::currentSelectedSong;
+int MainerMenu::selectedDiffIndex = 0;
 
 
 int selectedContainerIndex = 0;
@@ -344,7 +346,15 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 			break;
 		case SDLK_UP:
 			wheel->selectThis(wheel->actualValue - 1);
-			if (wheel->actualValue < 0)
+			break;
+		case SDLK_RETURN:
+			if (currentSelectedSong.meta.difficulties.size() != 0)
+			{
+				packIndex = 0;
+				packs.clear();
+				asyncPacks->clear();
+				Game::instance->transitionToMenu(new Gameplay());
+			}
 			break;
 		}
 	}

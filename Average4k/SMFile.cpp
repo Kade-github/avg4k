@@ -164,17 +164,12 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                             }
 
                             if (stuff[0] == "#NOTES") {
-                                if (isSingled)
-                                {
-                                    readingNotes = true;
-                                    skippingDiff = false;
-                                    difficulty diff;
-                                    diff.charter = "n/a";
-                                    diff.name = "n/a";
-                                    meta.difficulties.push_back(diff);
-                                }
-                                else
-                                    skippingDiff = true;
+                                readingNotes = true;
+                                skippingDiff = false;
+                                difficulty diff;
+                                diff.charter = "n/a";
+                                diff.name = "n/a";
+                                meta.difficulties.push_back(diff);
                                 isSingled = false;
                             }
                             if (stuff.size() != 1)

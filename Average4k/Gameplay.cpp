@@ -4,6 +4,7 @@
 #include "CPacketHostEndChart.h"
 #include <chrono>
 #include "TweenManager.h"
+#include "MainerMenu.h"
 
 
 std::mutex weirdPog;
@@ -22,23 +23,15 @@ void Gameplay::initControls()
 {
 	controls.clear();
 
-	gameplayControl left;
-	left.code = Game::save->GetDouble("Left Key");
-	left.lane = 0;
-	gameplayControl down;
-	down.code = Game::save->GetDouble("Down Key");
-	down.lane = 1;
-	gameplayControl up;
-	up.code = Game::save->GetDouble("Up Key");
-	up.lane = 2;
-	gameplayControl right;
-	right.code = Game::save->GetDouble("Right Key");
-	right.lane = 3;
+	std::string keybinds = Game::save->GetString("Keybinds");
 
-	controls.push_back(left);
-	controls.push_back(down);
-	controls.push_back(up);
-	controls.push_back(right);
+	for (int i = 0; i < keybinds.size(); i++)
+	{
+		gameplayControl ctrl;
+		ctrl.code = std::tolower(keybinds[i]);
+		ctrl.lane = i;
+		controls.push_back(ctrl);
+	}
 }
 
 const float min(const float a, const float b)
@@ -326,7 +319,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 
 		leaderboard.clear();
 
-		SongSelect::currentChart->destroy();
+		MainerMenu::currentSelectedSong.destroy();
 		cleanUp();
 		std::cout << "go back" << std::endl;
 
@@ -364,12 +357,11 @@ void Gameplay::create() {
 
 	Judge::judgeNote(174);
 
-	if (!SongSelect::currentChart)
+	if (MainerMenu::currentSelectedSong.meta.difficulties.size() == 0)
 	{
-		std::cout << "FUCKING WHAT??? chart is null!" << std::endl;
 		if (!MultiplayerLobby::inLobby)
 		{
-			Game::instance->transitionToMenu(new SongSelect());
+			Game::instance->transitionToMenu(new MainerMenu());
 		}
 		else
 		{
@@ -378,7 +370,7 @@ void Gameplay::create() {
 		return;
 	}
 
-	std::string bg = SongSelect::currentChart->meta.folder + "/" + SongSelect::currentChart->meta.background;
+	std::string bg = MainerMenu::currentSelectedSong.meta.folder + "/" + MainerMenu::currentSelectedSong.meta.background;
 
 	background = new AvgSprite(0, 0, bg);
 	background->w = Game::gameWidth;
@@ -413,7 +405,7 @@ void Gameplay::create() {
 
 	float bassRate = (rate * 100) - 100;
 
-	std::string path = SongSelect::currentChart->meta.folder + "/" + SongSelect::currentChart->meta.audio;
+	std::string path = MainerMenu::currentSelectedSong.meta.folder + "/" + MainerMenu::currentSelectedSong.meta.audio;
 
 	std::cout << "playing " << path << std::endl;
 
@@ -424,14 +416,14 @@ void Gameplay::create() {
 
 	songLength = song->length;
 
-	int diff = SongSelect::selectedDiffIndex;
+	int diff = MainerMenu::selectedDiffIndex;
 
 	positionAndBeats = new Text(0, 40, "", 16, "NotoSans-Regular");
 	positionAndBeats->create();
 	add(positionAndBeats);
 
 
-	notesToPlay = SongSelect::currentChart->meta.difficulties[diff].notes;
+	notesToPlay = MainerMenu::currentSelectedSong.meta.difficulties[diff].notes;
 
 	Rect laneUnderway;
 
@@ -640,6 +632,10 @@ float lastBPM = 0;
 void Gameplay::update(Events::updateEvent event)
 {
 	MUTATE_START
+
+	if (!song)
+		return;
+
 	if (positionInSong >= startTime)
 	{
 		if (!play)
@@ -715,11 +711,11 @@ void Gameplay::update(Events::updateEvent event)
 	//SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
 
 
-	if (!SongSelect::currentChart)
+	if (MainerMenu::currentSelectedSong.meta.songName.size() == 0)
 		return;
 
-	curSeg = SongSelect::currentChart->getSegmentFromTime(positionInSong);
-	beat = SongSelect::currentChart->getBeatFromTimeOffset(positionInSong, curSeg);
+	curSeg = MainerMenu::currentSelectedSong.getSegmentFromTime(positionInSong);
+	beat = MainerMenu::currentSelectedSong.getBeatFromTimeOffset(positionInSong, curSeg);
 	if (lastBPM != curSeg.bpm && Game::gameplayEvents_DB)
 	{
 		Game::instance->db_addLine("bpm change to " + std::to_string(curSeg.bpm));
@@ -827,7 +823,7 @@ void Gameplay::update(Events::updateEvent event)
 		if (n.beat < beat + 16 && (n.type != Note_Tail && n.type != Note_Mine)) // if its in 16 beats
 		{
 				NoteObject* object = new NoteObject();
-				object->currentChart = SongSelect::currentChart;
+				object->currentChart = &MainerMenu::currentSelectedSong;
 				object->size = Game::save->GetDouble("Note Size");
 				object->connected = &n;
 				SDL_FRect rect;
@@ -835,9 +831,9 @@ void Gameplay::update(Events::updateEvent event)
 				object->clapped = false;
 				object->active = true;
 
-				bpmSegment preStopSeg = SongSelect::currentChart->getSegmentFromBeat(n.beat);
+				bpmSegment preStopSeg = MainerMenu::currentSelectedSong.getSegmentFromBeat(n.beat);
 
-				float stopOffset = SongSelect::currentChart->getStopOffsetFromBeat(n.beat);
+				float stopOffset = MainerMenu::currentSelectedSong.getStopOffsetFromBeat(n.beat);
 
 				double stopBeatOffset = (stopOffset / 1000) * (preStopSeg.bpm / 60);
 
@@ -850,9 +846,9 @@ void Gameplay::update(Events::updateEvent event)
 				object->endTime = -1;
 				object->endBeat = -1;
 
-				bpmSegment noteSeg = SongSelect::currentChart->getSegmentFromBeat(object->beat);
+				bpmSegment noteSeg = MainerMenu::currentSelectedSong.getSegmentFromBeat(object->beat);
 
-				object->time = SongSelect::currentChart->getTimeFromBeatOffset(object->beat, noteSeg);
+				object->time = MainerMenu::currentSelectedSong.getTimeFromBeatOffset(object->beat, noteSeg);
 				rect.y = Game::gameHeight + 400;
 				rect.x = 0;
 				rect.w = 64 * Game::save->GetDouble("Note Size");
@@ -861,9 +857,9 @@ void Gameplay::update(Events::updateEvent event)
 
 				note tail;
 
-				bpmSegment bruh = SongSelect::currentChart->getSegmentFromBeat(object->beat);
+				bpmSegment bruh = MainerMenu::currentSelectedSong.getSegmentFromBeat(object->beat);
 
-				float wh = SongSelect::currentChart->getTimeFromBeat(beat, bruh);
+				float wh = MainerMenu::currentSelectedSong.getTimeFromBeat(beat, bruh);
 
 				float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
 
@@ -878,15 +874,15 @@ void Gameplay::update(Events::updateEvent event)
 						if (nn.lane != object->lane)
 							continue;
 
-						bpmSegment npreStopSeg = SongSelect::currentChart->getSegmentFromBeat(nn.beat);
+						bpmSegment npreStopSeg = MainerMenu::currentSelectedSong.getSegmentFromBeat(nn.beat);
 
-						float nstopOffset = SongSelect::currentChart->getStopOffsetFromBeat(nn.beat);
+						float nstopOffset = MainerMenu::currentSelectedSong.getStopOffsetFromBeat(nn.beat);
 
 						double nstopBeatOffset = (nstopOffset / 1000) * (npreStopSeg.bpm / 60);
 
 						object->endBeat = nn.beat + nstopBeatOffset;
 						
-						object->endTime = SongSelect::currentChart->getTimeFromBeatOffset(nn.beat + nstopBeatOffset, noteSeg);
+						object->endTime = MainerMenu::currentSelectedSong.getTimeFromBeatOffset(nn.beat + nstopBeatOffset, noteSeg);
 						tail = nn;
 						break;
 					}
@@ -899,11 +895,11 @@ void Gameplay::update(Events::updateEvent event)
 
 					for (int i = std::floorf(object->time); i < std::floorf(object->endTime); i++)
 					{
-						bpmSegment holdSeg = SongSelect::currentChart->getSegmentFromTime(i);
+						bpmSegment holdSeg = MainerMenu::currentSelectedSong.getSegmentFromTime(i);
 
-						double beat = SongSelect::currentChart->getBeatFromTimeOffset(i, holdSeg);
+						double beat = MainerMenu::currentSelectedSong.getBeatFromTimeOffset(i, holdSeg);
 
-						float whHold = SongSelect::currentChart->getTimeFromBeatOffset(beat, holdSeg);
+						float whHold = MainerMenu::currentSelectedSong.getTimeFromBeatOffset(beat, holdSeg);
 
 						float diff = whHold - (object->time);
 
@@ -971,9 +967,9 @@ void Gameplay::update(Events::updateEvent event)
 			ended = true;
 			if (!MultiplayerLobby::inLobby)
 			{
-				SongSelect::currentChart->destroy();
+				MainerMenu::currentSelectedSong.destroy();
 				cleanUp();
-				Game::instance->transitionToMenu(new SongSelect());
+				Game::instance->transitionToMenu(new MainerMenu());
 			}
 			else
 			{
@@ -1019,7 +1015,7 @@ void Gameplay::update(Events::updateEvent event)
 
 			if (!note->destroyed)
 			{
-				float wh = SongSelect::currentChart->getTimeFromBeat(note->beat, SongSelect::currentChart->getSegmentFromBeat(note->beat));
+				float wh = MainerMenu::currentSelectedSong.getTimeFromBeat(note->beat, MainerMenu::currentSelectedSong.getSegmentFromBeat(note->beat));
 
 				if (wh - positionInSong < 2)
 				{
@@ -1077,7 +1073,7 @@ void Gameplay::update(Events::updateEvent event)
 						for (int i = 0; i < note->heldTilings.size(); i++)
 						{
 							holdTile& tile = note->heldTilings[i];
-							float wh = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat));
+							float wh = MainerMenu::currentSelectedSong.getTimeFromBeat(tile.beat, MainerMenu::currentSelectedSong.getSegmentFromBeat(tile.beat));
 							float offset = wh;
 							if (botplay && offset - positionInSong > 0 && offset - positionInSong < (Judge::hitWindows[1] * 0.5))
 							{
@@ -1140,7 +1136,7 @@ void Gameplay::update(Events::updateEvent event)
 				{
 					holdTile& tile = note->heldTilings[i];
 
-					float whHold = SongSelect::currentChart->getTimeFromBeat(tile.beat, SongSelect::currentChart->getSegmentFromBeat(tile.beat));
+					float whHold = MainerMenu::currentSelectedSong.getTimeFromBeat(tile.beat, MainerMenu::currentSelectedSong.getSegmentFromBeat(tile.beat));
 					float diff = whHold - positionInSong;
 
 					if (diff < -Judge::hitWindows[2] && tile.active && playing)
@@ -1195,7 +1191,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				Multiplayer::sendMessage<CPacketHostEndChart>(end);
 				return;
 			}
-			SongSelect::currentChart->destroy();
+			MainerMenu::currentSelectedSong.destroy();
 			cleanUp();
 			Game::instance->transitionToMenu(new MainMenu());
 		
@@ -1260,7 +1256,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			{
 				NoteObject* object = spawnedNotes[n];
 
-				const auto wh = SongSelect::currentChart->getTimeFromBeat(object->beat, SongSelect::currentChart->getSegmentFromBeat(object->beat));
+				const auto wh = MainerMenu::currentSelectedSong.getTimeFromBeat(object->beat, MainerMenu::currentSelectedSong.getSegmentFromBeat(object->beat));
 
 				float diff = std::abs(wh - positionInSong);
 
@@ -1286,7 +1282,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			if (!closestObject)
 				continue;
 
-			float wh = SongSelect::currentChart->getTimeFromBeat(closestObject->beat, SongSelect::currentChart->getSegmentFromBeat(closestObject->beat));
+			float wh = MainerMenu::currentSelectedSong.getTimeFromBeat(closestObject->beat, MainerMenu::currentSelectedSong.getSegmentFromBeat(closestObject->beat));
 
 			float diff = (wh - positionInSong);
 

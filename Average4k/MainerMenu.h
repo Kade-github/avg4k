@@ -123,6 +123,7 @@ class MainerMenu : public Menu
 {
 public:
 	static Chart currentSelectedSong;
+	static int selectedDiffIndex;
 	float lastBeat = 0;
 	bool started;
 	AvgSprite* icon;

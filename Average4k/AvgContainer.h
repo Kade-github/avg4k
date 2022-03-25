@@ -39,6 +39,17 @@ public:
 		scrollAr = Noteskin::getMenuElement(Game::noteskin, "Container/scroll_arrow.png");
 	}
 
+	~AvgContainer()
+	{
+		for (Object* obj : below)
+			delete obj;
+		for (Object* obj : above)
+			delete obj;
+		items.clear();
+		below.clear();
+		above.clear();
+	}
+	
 	Object* findItemByName(std::string name)
 	{
 		for (itemId i : items)

@@ -104,6 +104,7 @@ public:
 		if (songs.size() != 0)
 			call(songs[0]);
 	}
+
 	AvgWheel(int _x, int _y, int _w, int _h, std::vector<Song>* _songs, songSelectCallback callback)
 	{
 		call = callback;
@@ -116,6 +117,18 @@ public:
 		h = _h;
 
 		setSongs(_songs);
+	}
+
+	~AvgWheel()
+	{
+		for (std::map<std::string, shit>::iterator iter = wheels.begin(); iter != wheels.end(); ++iter)
+		{
+			delete iter->second.spr;
+			delete iter->second.topText;
+			delete iter->second.bottomText;
+		}
+		wheels.clear();
+		songs.clear();
 	}
 
 	void selectThis(int toSelect)

@@ -35,6 +35,12 @@ public:
 		textPart->color = { 13, 28, 64 };
 		time = 500;
 	}
+	~AvgCheckBox()
+	{
+		delete textPart;
+		delete box;
+		delete toggle;
+	}
 
 
 	void mouseDown()

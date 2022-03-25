@@ -42,6 +42,11 @@ public:
 		textPart->setCharacterSpacing(2.33);
 		textPart->color = { 13, 28, 64 };
 	}
+	~AvgTextBar()
+	{
+		delete textPart;
+		delete searchBar;
+	}
 
 	void resyncText()
 	{

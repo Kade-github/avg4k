@@ -1193,7 +1193,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			}
 			MainerMenu::currentSelectedSong.destroy();
 			cleanUp();
-			Game::instance->transitionToMenu(new MainMenu());
+			Game::instance->transitionToMenu(new MainerMenu());
 		
 			return;
 		case SDLK_F1:

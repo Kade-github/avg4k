@@ -55,6 +55,7 @@ public:
 		std::vector<stopSegment> stops;
 		std::vector<difficulty> difficulties;
 		float chartOffset;
+		float start = 0;
 		int chartType = 0;
 };
 

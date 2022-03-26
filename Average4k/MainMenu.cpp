@@ -141,6 +141,7 @@ void MainMenu::update(Events::updateEvent event)
 
 	if (Multiplayer::loggedIn && !started)
 	{
+		Game::steam->populateSubscribedItems();
 		started = true;
 		hello->setText("Hi " + std::string(SteamFriends()->GetPersonaName()));
 		bottom->setText("Avg4k indev-" + Game::version);

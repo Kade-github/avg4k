@@ -14,7 +14,7 @@ public:
 	bool border = false;
 	bool round = false;
 	bool flip = false;
-
+	bool flipX = false;
 	Shader* customShader;
 
 	bool drawCall = true;
@@ -95,7 +95,10 @@ public:
 
 		srcRect.x = 0;
 		srcRect.y = 0;
-		srcRect.w = 1;
+		if (flipX)
+			srcRect.w = -1;
+		else
+			srcRect.w = 1;
 		if (flip)
 			srcRect.h = -1;
 		else

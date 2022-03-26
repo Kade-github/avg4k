@@ -160,9 +160,43 @@ public:
 
 	}
 	
-	static std::vector<Song> gatherNoPackSteamSongs()
+	static void gatherNoPackSteamSongsAsync(std::vector<Song>* songs)
 	{
+		std::thread t([songs]() {
+			for (int i = 0; i < Game::steam->subscribedList.size(); i++)
+			{
+				steamItem st = Game::steam->subscribedList[i];
 
+				Song s;
+
+
+				std::string path(st.folder);
+
+				if (path == "")
+					continue;
+				std::string fullPath = path + "\\" + st.chartFile;
+
+				std::string replaced = Steam::ReplaceString(fullPath, "\\", "/");
+				std::string replaced2 = Steam::ReplaceString(path, "\\", "/");
+				s.path = replaced;
+				Chart c;
+				if (st.chartType == "qv" || st.chartType == "qp")
+				{
+					QuaverFile f = QuaverFile();
+					c = f.returnChart(replaced2);
+				}
+				if (st.chartType == "sm")
+				{
+					SMFile f = SMFile(s.path, replaced2, false);
+					c = Chart();
+					c.meta = f.meta;
+				}
+
+				s.c = c;
+				songs->push_back(s);
+			}
+		});
+		t.detach();
 	}
 
 	static std::vector<Song> gatherSongsInFolder(std::string folder = "")

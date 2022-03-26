@@ -186,7 +186,16 @@ chartMeta QuaverFile::returnChart(std::string path)
                     }
                 }
                 if (split[0] == "BackgroundFile")
+                {
                     meta.background = split[1];
+                    meta.banner = split[1];
+                }
+                if (split[0] == "SongPreviewTime")
+                {
+                    meta.start = std::stof(split[1]);
+                }
+                if (split[0] == "Artist")
+                    meta.artist = split[1];
                 if (split[0] == "Creator")
                     meta.difficulties.back().charter = split[1];
                 if (split[0] == "DifficultyName")

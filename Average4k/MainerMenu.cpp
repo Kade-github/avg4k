@@ -10,20 +10,37 @@
 AvgContainer* soloContainer;
 AvgContainer* multiContainer;
 AvgContainer* settingsContainer;
+AvgContainer* testWorkshop;
 
 std::mutex packMutex;
+
+Pack steamWorkshop;
+
 int packIndex = 0;
+int catIndex = 0;
+
+int lastHeight = 0;
 
 Pack selected;
 std::vector<Pack> packs;
 
 std::vector<Pack>* asyncPacks;
+std::vector<Song>* asyncSongs;
 
 Chart MainerMenu::currentSelectedSong;
 int MainerMenu::selectedDiffIndex = 0;
 
+std::vector<steamItem> item;
 
 int selectedContainerIndex = 0;
+
+void resetStuff()
+{
+	packIndex = 0;
+	asyncPacks->clear();
+	lastHeight = 0;
+	catIndex = 0;
+}
 
 void selectedSongCallback(Song s)
 {
@@ -33,14 +50,24 @@ void selectedSongCallback(Song s)
 	if (!cont) // lol
 		return;
 
+	MainerMenu::selectedDiffIndex = 0;
+
 	MainerMenu::currentSelectedSong = s.c;
 
 	Tweening::TweenManager::removeTween("fuckyoutween");
 
+
 	for (Object* obj : cont->above)
+	{
 		cont->removeObject(obj);
+	}
 	for (Object* obj : cont->below)
-		cont->removeObject(obj, true);
+	{
+		cont->removeObject(obj, true);;
+	}
+	cont->items.clear();
+	cont->above.clear();
+	cont->below.clear();
 	
 	// bg
 	AvgSprite* background = new AvgSprite(0, 0, Texture::createWithImage(s.c.meta.folder + "/" + s.c.meta.background));
@@ -69,9 +96,77 @@ void selectedSongCallback(Song s)
 
 	Channel* real = SoundManager::createChannel(s.c.meta.folder + "/" + s.c.meta.audio, "prevSong");
 	real->play();
+	real->setPos(s.c.meta.start);
 	// text stuff
 
+	std::string display = s.c.meta.songName;
+	std::string secondLine = "";
 
+	if (display.size() > 25)
+	{
+		secondLine = display.substr(25, display.size());
+		display = display.substr(0, 25);
+		if (secondLine.size() > 22)
+			secondLine = secondLine.substr(0, 22) + "...";
+	}
+	Text* title = new Text(12, 24, display, 18, "arialbd");
+	title->setCharacterSpacing(3);
+	Text* artist = new Text(12, 44, s.c.meta.artist, 14, "arial");
+	artist->setCharacterSpacing(2.33);
+
+	cont->addObject(title, "title");
+	if (secondLine.size() != 0)
+	{
+		Text* title2 = new Text(12, 42, secondLine, 18, "arialbd");
+		title2->setCharacterSpacing(3);
+		cont->addObject(title2, "title2");
+		artist->y += 20;
+	}
+	cont->addObject(artist, "artist");
+
+	if (s.c.meta.difficulties.size() == 0)
+	{
+		std::string diffDisplay = "No Diffs :(";
+
+		Text* diff = new Text(0, 0, diffDisplay, 20, "arialblk");
+		diff->setCharacterSpacing(4.17);
+
+		diff->x = (cont->w / 2) - (diff->w / 2);
+		diff->y = 145;
+		cont->addObject(diff, "diff");
+	}
+	else
+	{
+
+		std::string diffDisplay = s.c.meta.difficulties[0].name;
+		if (diffDisplay.size() > 14)
+			diffDisplay = diffDisplay.substr(0, 14) + "...";
+
+		Text* diff = new Text(0, 0, diffDisplay, 20, "arialblk");
+		diff->setCharacterSpacing(4.17);
+
+		diff->x = (cont->w / 2) - (diff->w / 2);
+		diff->y = 145;
+
+		cont->addObject(diff, "diff");
+
+		if (s.c.meta.difficulties.size() >= 2)
+		{
+
+			AvgSprite* diffSelectLeft = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/diffSelectArrow.png"));
+			diffSelectLeft->y = 145 + ((diff->h / 2) - (diffSelectLeft->h / 2));
+			diffSelectLeft->x = diff->x - 24;
+
+			AvgSprite* diffSelectRight = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/diffSelectArrow.png"));
+			diffSelectRight->y = 145 + ((diff->h / 2) - (diffSelectRight->h / 2));
+			diffSelectRight->x = (diff->x + diff->w) + 24;
+			diffSelectRight->flipX = true;
+
+
+			cont->addObject(diffSelectLeft, "leftSelect");
+			cont->addObject(diffSelectRight, "rightSelect");
+		}
+	}
 }
 
 void MainerMenu::create()
@@ -107,6 +202,15 @@ void MainerMenu::create()
 	border->create();
 	add(border);
 
+	testWorkshop = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/maincontainer_solo.png"));
+	testWorkshop->active = false;
+	testWorkshop->x = (Game::gameWidth / 2) - (testWorkshop->w / 2);
+	add(testWorkshop);
+
+	testWorkshop->addObject(new Text(12, 12, "Average4K Workshop", 34, "arialbd"), "title");
+
+	// output the first page of stuff
+
 	soloContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/maincontainer_solo.png"));
 	soloContainer->alpha = 1;
 	soloContainer->x = (Game::gameWidth / 2) - (soloContainer->w / 2);
@@ -127,22 +231,28 @@ void MainerMenu::create()
 
 	// create packs
 	asyncPacks = new std::vector<Pack>();
+	asyncSongs = new std::vector<Song>();
+
 	SongGather::gatherPacksAsync(asyncPacks);
 
-	std::vector<Song> songs = SongGather::gatherNoPackSongs();
-
-	if (songs.size() > 0)
-	{
-		Pack p;
-		p.background = "";
-		p.metaPath = "unfl";
-		p.packName = "Unfiltered Songs";
-		p.showName = true;
-		p.songs = songs;
-
-		packs.push_back(p);
-
+	for (Pack p : packs)
 		addPack(p.packName, p.background, p.showName);
+
+	SongGather::gatherNoPackSongs();
+
+	SongGather::gatherNoPackSteamSongsAsync(asyncSongs);
+
+	if (Game::steam->subscribedList.size() > 0 && steamWorkshop.songs.size() == 0)
+	{
+		steamWorkshop.background = "";
+		steamWorkshop.metaPath = "unfl";
+		steamWorkshop.packName = "Steam Workshop";
+		steamWorkshop.showName = true;
+		steamWorkshop.songs = {};
+
+		packs.push_back(steamWorkshop);
+
+		addPack(steamWorkshop.packName, steamWorkshop.background, steamWorkshop.showName);
 	}
 
 	soloContainer->addObject(new AvgContainer((soloContainer->x + soloContainer->w), 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/songcontainer.png")), "songContainer");
@@ -235,6 +345,7 @@ void MainerMenu::create()
 
 	currentContainer = soloContainer;
 
+	Tweening::TweenManager::createNewTween("movingContainer3", testWorkshop, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("movingContainer2", settingsContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("movingContainer1", multiContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("movingContainer", soloContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
@@ -242,7 +353,7 @@ void MainerMenu::create()
 
 void MainerMenu::update(Events::updateEvent ev)
 {
-	if (asyncPacks->size() != 0)
+	if (asyncPacks->size() != 0 || asyncSongs->size() != 0)
 	{
 		std::vector<Pack> gatheredPacks;
 		{
@@ -254,14 +365,58 @@ void MainerMenu::update(Events::updateEvent ev)
 			asyncPacks->clear();
 		}
 
+		std::vector<Song> gatheredSongs;
+		{
+			std::lock_guard cock(packMutex);
+			for (Song s : (*asyncSongs))
+			{
+				gatheredSongs.push_back(s);
+			}
+			asyncSongs->clear();
+		}
+
 		for (Pack p : gatheredPacks)
 		{
+			bool d = false;
+			for (Pack pp : packs)
+				if (pp.packName == p.packName)
+					d = true;
+			if (d)
+				continue;
 			addPack(p.packName, p.background, p.showName);
 			packs.push_back(p);
 		}
+		for (Song s : gatheredSongs)
+		{
+			bool d = false;
+			for (Song pp : steamWorkshop.songs)
+				if (pp.c.meta.folder == s.c.meta.folder)
+					d = true;
+			if (d)
+				continue;
+			steamWorkshop.songs.push_back(s);
+			for (Pack& p : packs)
+				if (p.packName == "Steam Workshop")
+					p.songs = steamWorkshop.songs;
+		}
+
 
 		Text* t = (Text*)soloContainer->findItemByName("packsBottom");
 		t->setText(std::to_string(packs.size()) + " loaded");
+	}
+
+	for (steamItem it : Game::steam->downloadedList)
+	{
+		bool dont = false;
+		for (steamItem i : item)
+			if (i.details.m_nPublishedFileId == it.details.m_nPublishedFileId)
+				dont = true;
+		if (dont)
+			continue;
+		item.push_back(it);
+		std::string display = std::string(it.details.m_rgchTitle) + " - " + std::to_string(it.details.m_ulSteamIDOwner);
+
+		testWorkshop->addObject(new Text(12, 42 + (20 * item.size()), display, 18, "arial"), "item_" + std::string(it.details.m_rgchTitle));
 	}
 
 	selectSolo->y = soloContainer->y - 26;
@@ -327,11 +482,33 @@ void MainerMenu::update(Events::updateEvent ev)
 
 void endTrans()
 {
-	packIndex = 0;
-	packs.clear();
-	asyncPacks->clear();
+	resetStuff();
 	Tweening::TweenManager::activeTweens.clear();
 	Game::instance->switchMenu(new MainMenu());
+}
+
+void updateDiff()
+{
+	AvgContainer* cont = (AvgContainer*)soloContainer->findItemByName("songContainer");
+	if (!cont) // lol
+		return;
+
+	Text* diff = (Text*)cont->findItemByName("diff");
+
+	std::string diffDisplay = MainerMenu::currentSelectedSong.meta.difficulties[MainerMenu::selectedDiffIndex].name;
+	if (diffDisplay.size() > 14)
+		diffDisplay = diffDisplay.substr(0, 14) + "...";
+
+	diff->setText(diffDisplay);
+
+	diff->x = (cont->w / 2) - (diff->w / 2);
+	diff->y = 145;
+
+	AvgSprite* left = (AvgSprite*)cont->findItemByName("leftSelect");
+	AvgSprite* right = (AvgSprite*)cont->findItemByName("rightSelect");
+
+	left->x = diff->x - 24;
+	right->x = (diff->x + diff->w) + 24;
 }
 
 void MainerMenu::keyDown(SDL_KeyboardEvent event)
@@ -347,12 +524,32 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 		case SDLK_UP:
 			wheel->selectThis(wheel->actualValue - 1);
 			break;
+		case SDLK_3:
+			Game::instance->steam->populateWorkshopItems(1);
+			selectContainer(3);
+			break;
+		case SDLK_LEFT:
+			if (currentSelectedSong.meta.difficulties.size() > 1)
+			{
+				MainerMenu::selectedDiffIndex--;
+				if (MainerMenu::selectedDiffIndex < 0)
+					MainerMenu::selectedDiffIndex = currentSelectedSong.meta.difficulties.size() - 1;
+				updateDiff();
+			}
+			break;
+		case SDLK_RIGHT:
+			if (currentSelectedSong.meta.difficulties.size() > 1)
+			{
+				MainerMenu::selectedDiffIndex++;
+				if (MainerMenu::selectedDiffIndex > currentSelectedSong.meta.difficulties.size() - 1)
+					MainerMenu::selectedDiffIndex = 0;
+				updateDiff();
+			}
+			break;
 		case SDLK_RETURN:
 			if (currentSelectedSong.meta.difficulties.size() != 0)
 			{
-				packIndex = 0;
-				packs.clear();
-				asyncPacks->clear();
+				resetStuff();
 				Game::instance->transitionToMenu(new Gameplay());
 			}
 			break;
@@ -429,6 +626,9 @@ void transContainerThing()
 	case 2:
 		settingsContainer->active = false;
 		break;
+	case 3:
+		testWorkshop->active = false;
+		break;
 	}
 }
 
@@ -463,6 +663,13 @@ void MainerMenu::selectContainer(int container)
 		selectSolo->alpha = 0;
 		selectMulti->alpha = 0;
 		selectSettings->alpha = 1;
+		break;
+	case 3:
+		currentContainer = testWorkshop;
+		testWorkshop->active = true;
+		selectSolo->alpha = 0;
+		selectMulti->alpha = 0;
+		selectSettings->alpha = 0;
 		break;
 	}
 	if (transToContainer <= lastTrans)
@@ -503,9 +710,6 @@ void MainerMenu::leftMouseDown()
 	}
 }
 
-int catIndex = 0;
-
-int lastHeight = 0;
 
 void MainerMenu::addSettings(std::string catNam, std::vector<setting> settings)
 {

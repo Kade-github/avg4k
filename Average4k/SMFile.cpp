@@ -184,6 +184,8 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                                     meta.songName = stuff[1];
                                 if (stuff[0] == "#MUSIC")
                                     meta.audio = stuff[1];
+                                if (stuff[0] == "#SAMPLESTART")
+                                    meta.start = std::stof(stuff[1]) *1000;
                                 if (stuff[0] == "#OFFSET")
                                     meta.chartOffset = std::stof(stuff[1]);
                             }

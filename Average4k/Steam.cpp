@@ -281,7 +281,7 @@ void Steam::OnUGCAllQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFail
             uint32 timestamp;
             SteamUGC()->GetItemInstallInfo(id.m_nPublishedFileId, &sizeOnDisk, i.folder, sizeof(i.folder), &timestamp);
 
-            subscribedList.push_back(i);
+            downloadedList.push_back(i);
         }
     }
 }

@@ -175,7 +175,11 @@ public:
 			if (yy + backgroundImage->height < y || yy > y + h)
 				continue;
 
+
 			float lerp = std::lerp(backgroundImage->width / 2, 0.0f, std::abs(rank));
+
+			if (rank < 0.98)
+				lerp *= 0.6;
 
 			int xx = x - (backgroundImage->width / 2) + (lerp);
 			std::string name = songs[i].c.meta.songName + songs[i].c.meta.folder;

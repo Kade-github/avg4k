@@ -12,6 +12,7 @@ struct steamItem {
 	SteamUGCDetails_t details;
 	std::string chartType;
 	std::string chartFile;
+	bool isPackFolder;
 	char folder[512];
 };
 

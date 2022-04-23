@@ -44,7 +44,6 @@ void NoteObject::draw() {
     x = obj->x;
     y = rect.y;
 
-
     Texture* texture;
 
     // get quant
@@ -79,9 +78,11 @@ void NoteObject::draw() {
         clipThingy.x = 0;
     else
         clipThingy.x = fboX;
+
     clipThingy.y = rect.y + (32 * size);
     clipThingy.w = 64 * size;
     clipThingy.h = holdHeight * size;
+
     if (downscroll) {
         clipThingy.y -= holdHeight;
     }

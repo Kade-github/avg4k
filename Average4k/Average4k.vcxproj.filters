@@ -258,6 +258,9 @@
     <ClCompile Include="MainerMenu.cpp">
       <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
     </ClCompile>
+    <ClCompile Include="Pack.cpp">
+      <Filter>Source Files\Average4k\Structs\Chart\Pack</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes.h">

@@ -1,7 +1,7 @@
 #include "Steam.h"
 
 #include "Game.h"
-
+#include "Pack.h"
 
 std::map<std::string, Texture*> Steam::pixelsForAvatar;
 
@@ -162,11 +162,14 @@ void Steam::uploadToItem(Chart* c, PublishedFileId_t id, std::string fileName)
 
     auto handle = SteamUGC()->StartItemUpdate(1828580, id);
     updatehandle = handle;
-    SteamUGC()->SetItemTitle(handle, c->meta.songName.c_str());
+    SteamUGC()->SetItemTitle(handle, ("[CHART] " + c->meta.songName).c_str());
     std::string desc = "Uploaded from in game.\nDiffs:\n";
     for (difficulty& diff : c->meta.difficulties)
     {
-        desc += diff.name + " - Charted by " + diff.charter + "\n";
+        if (diff.charter.size() != 0)
+            desc += diff.name + " - Charted by " + diff.charter + "\n";
+        else
+            desc += diff.name + " - Charted by a unknown charter\n";
     }
     SteamUGC()->SetItemDescription(handle, desc.c_str());
     SteamUGC()->SetItemUpdateLanguage(handle, "english");
@@ -176,9 +179,9 @@ void Steam::uploadToItem(Chart* c, PublishedFileId_t id, std::string fileName)
     p->m_nNumStrings = 1;
     p->m_ppStrings = const_cast<const char**>((char**)malloc(sizeof(char*)));
     
-    char* bruh = (char*)malloc(6 * sizeof(char*));
+    char* bruh = (char*)malloc(7 * sizeof(char*));
 
-    strcpy_s(bruh, 6, "chart");
+    strcpy_s(bruh, 7, "Charts");
 
     p->m_ppStrings[0] = bruh;
 
@@ -213,10 +216,74 @@ void Steam::uploadToItem(Chart* c, PublishedFileId_t id, std::string fileName)
     MUTATE_END
 }
 
+void Steam::uploadPack(Pack* pac, PublishedFileId_t id)
+{
+    MUTATE_START
+        std::cout << "wassup homie " << id << std::endl;
+    std::vector<std::string> b = Chart::split(pac->metaPath, '/');
+
+    auto handle = SteamUGC()->StartItemUpdate(1828580, id);
+    updatehandle = handle;
+    SteamUGC()->SetItemTitle(handle, ("[PACK] " + pac->packName).c_str());
+    std::string desc = "Uploaded from in game.\nPack Contains:\n";
+    for (Song& s : pac->songs)
+    {
+        if (s.c.meta.artist.size() != 0)
+            desc += s.c.meta.songName + " by " + s.c.meta.artist + "\n";
+        else
+            desc += s.c.meta.songName + " by a unknown artist\n";
+    }
+    desc += "\nThis is a pack sumbission; This contains multiple songs and could be very large.";
+
+    SteamUGC()->SetItemDescription(handle, desc.c_str());
+    SteamUGC()->SetItemUpdateLanguage(handle, "english");
+    SteamUGC()->SetItemMetadata(handle, b[b.size() - 2].c_str());
+    SteamUGC()->SetItemVisibility(handle, k_ERemoteStoragePublishedFileVisibilityPublic);
+    SteamParamStringArray_t* p = (SteamParamStringArray_t*)malloc(sizeof(SteamParamStringArray_t));
+    p->m_nNumStrings = 1;
+    p->m_ppStrings = const_cast<const char**>((char**)malloc(sizeof(char*)));
+
+    char* bruh = (char*)malloc(6 * sizeof(char*));
+
+    strcpy_s(bruh, 6, "Packs");
+
+    p->m_ppStrings[0] = bruh;
+
+    SteamUGC()->SetItemTags(handle, p);
+    SteamUGC()->AddItemKeyValueTag(handle, "chartType", "pack");
+    SteamUGC()->AddItemKeyValueTag(handle, "chartFile", "this is a pack");
+
+    SteamUGC()->SetItemContent(handle, (std::filesystem::current_path().string() + "/" + pac->folder).c_str());
+    SteamUGC()->SetItemPreview(handle, (std::filesystem::current_path().string() + "/" + pac->background).c_str());
+
+    std::cout << "item metadata: " << b[b.size() - 2].c_str() << std::endl;
+
+    std::cout << "folder to upload: " << std::filesystem::current_path().string() + "/" + pac->folder << std::endl;
+
+    std::cout << "item preview: " << std::filesystem::current_path().string() + "/" + pac->background << std::endl;
+
+    long size = GetFileSize(std::filesystem::current_path().string() + "/" + pac->background);
+
+    if (size == -1 || size > 1000000)
+    {
+        SteamUGC()->SetItemPreview(handle, (std::filesystem::current_path().string() + std::string("/assets/skinDefaults/Menu/bg.png")).c_str());
+        std::cout << "item preview (cuz the other one was too big " + std::to_string(size) + "): assets / graphical / menu / bg.png" << std::endl;
+    }
+
+    std::cout << "first tag: " << p->m_ppStrings[0] << std::endl;
+
+    SteamAPICall_t call = SteamUGC()->SubmitItemUpdate(handle, "Upload");
+
+    UploadedItemCallback.Set(call, this, &Steam::OnUploadedItemCallback);
+
+    free(p);
+    MUTATE_END
+}
+
+
 void Steam::OnCreateItemCallback(CreateItemResult_t* result, bool bIOFailure)
 {
     createdId = result->m_nPublishedFileId;
-    SteamUGC()->SubscribeItem(createdId);
 
     std::cout << "created item " << createdId << std::endl;
 
@@ -237,7 +304,10 @@ void Steam::OnUploadedItemCallback(SubmitItemUpdateResult_t* result, bool bIOFai
             SteamUGC()->DeleteItem(createdId);
         }
         else
+        {
+            SteamUGC()->SubscribeItem(createdId);
             Game::currentMenu->onSteam("uploadItem");
+        }
     }
 }
 
@@ -345,14 +415,17 @@ void Steam::OnUGCSubscribedQueryCallback(SteamUGCQueryCompleted_t* result, bool 
         {
             char* chartType = (char*)malloc(512);
             char* chartFile = (char*)malloc(512);
+            char* tag = (char*)malloc(512);
             SteamUGC()->GetQueryUGCKeyValueTag(result->m_handle, i, "chartType", chartType, 512);
             SteamUGC()->GetQueryUGCKeyValueTag(result->m_handle, i, "chartFile", chartFile, 512);
-
+            SteamUGC()->GetQueryUGCTagDisplayName(result->m_handle, i, 0, tag, 512);
 
             steamItem i;
             i.details = id;
             i.chartType = std::string(chartType);
             i.chartFile = std::string(chartFile);
+            i.isPackFolder = tag == "Packs" ? true : false;
+
             uint64 sizeOnDisk;
             uint32 timestamp;
             SteamUGC()->GetItemInstallInfo(id.m_nPublishedFileId, &sizeOnDisk, i.folder, sizeof(i.folder), &timestamp);

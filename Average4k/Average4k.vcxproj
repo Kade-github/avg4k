@@ -217,6 +217,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="NoteObject.cpp" />
     <ClCompile Include="Noteskin.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Pack.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="QuaverFile.cpp" />
     <ClCompile Include="ReceptorObject.cpp" />

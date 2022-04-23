@@ -11,6 +11,7 @@ struct shit {
 	AvgSprite* spr;
 	Text* topText;
 	Text* bottomText;
+	int songIndex;
 };
 
 typedef void(__cdecl* songSelectCallback)(Song s);
@@ -26,6 +27,87 @@ public:
 
 	float actualValue = 0;
 	float select = 0;
+
+	void returnMinMax(int* min, int* max)
+	{
+		*min = actualValue - 3;
+		*max = actualValue + 3;
+
+		if (*min < 0)
+			*min = 0;
+
+		if (*max > songs.size() - 1)
+			*max = songs.size() - 1;
+	}
+
+	void addWheelAssets(int _songIndex)
+	{
+		if (songs.size() == 0)
+			return;
+		Song s = songs[_songIndex];
+
+		std::string path = s.c.meta.folder + "/" + s.c.meta.banner;
+
+		if (s.c.meta.banner.size() == 0)
+			path = s.c.meta.folder + "/" + "bn.png"; // common banner name
+
+		Texture* bg = Texture::createWithImage(path);
+
+		if (bg->width == 0 || bg->height == 0 || bg->width < 0 || bg->height < 0)
+		{
+			bg = Rendering::white;
+		}
+
+		AvgSprite* spr = new AvgSprite(0, 0, bg);
+
+
+		shit ss;
+		ss.spr = spr;
+		ss.topText = new Text(0, 0, s.c.meta.songName, 15, "arialbd");
+		ss.topText->setCharacterSpacing(2);
+		ss.bottomText = new Text(0, 0, s.c.meta.artist, 13, "arialbd");
+		ss.bottomText->setCharacterSpacing(2);
+		ss.songIndex = _songIndex;
+		wheels[s.c.meta.folder] = ss;
+	}
+
+	void addWheelAssetsForVisible()
+	{
+		int min, max;
+
+		returnMinMax(&min, &max);
+
+		std::map<std::string, shit>::iterator itr;
+
+		std::vector<int> toSkip = {};
+
+		std::vector<std::string> toDelete;
+
+		for (itr = wheels.begin(); itr != wheels.end(); ++itr) {
+			if (itr->second.songIndex < min || itr->second.songIndex > max)
+			{
+				delete itr->second.spr;
+				delete itr->second.topText;
+				delete itr->second.bottomText;
+				toDelete.push_back(itr->first);
+			}
+			else
+				toSkip.push_back(itr->second.songIndex);
+		}
+
+
+		for (std::string s : toDelete)
+			wheels.erase(s);
+		toDelete.clear();
+
+		for (int i = min; i < max; i++)
+		{
+			if (std::find(toSkip.begin(), toSkip.end(), i) != toSkip.end())
+				continue;
+			addWheelAssets(i);
+		}
+	}
+
 
 	songSelectCallback call;
 
@@ -51,55 +133,7 @@ public:
 		AvgGroup* grap = new AvgGroup(0, 0, 1280, 720);
 		grap->renderOnce = true;
 
-		// clip all backgrounds through some fb stuff
-
-
-		for (Song s : songs)
-		{
-			Texture* bg = Texture::createWithImage(s.c.meta.folder + "/" + s.c.meta.banner);
-
-			if (bg->width < backgroundImage->width)
-				bg->width = backgroundImage->width;
-			if (bg->height < backgroundImage->height)
-				bg->height = backgroundImage->height;
-
-			AvgSprite* spr = new AvgSprite(0, 0, bg);
-
-			spr->x = (backgroundImage->width / 2) - ((bg->width) / 2);
-			spr->y = (backgroundImage->height / 2) - ((bg->height) / 2);
-
-
-			Rect bgClip;
-			bgClip.w = backgroundImage->width;
-			bgClip.h = backgroundImage->height;
-			AvgRect* gray = new AvgRect(0, 0, 0, 0);
-			gray->w = bg->width;
-			gray->h = bg->height;
-			gray->x = spr->x;
-			gray->y = spr->y;
-			gray->alpha = 0.5;
-			grap->add(spr);
-			grap->add(gray);
-			Rendering::SetClipRect(&bgClip);
-			grap->forceDraw();
-			Rendering::SetClipRect(NULL);
-
-			shit ss;
-			ss.spr = new AvgSprite(0, 0, grap->ctb);
-			ss.topText = new Text(0, 0, s.c.meta.songName, 15, "arialbd");
-			ss.topText->setCharacterSpacing(2);
-			ss.bottomText = new Text(0, 0, s.c.meta.artist, 13, "arialbd");
-			ss.bottomText->setCharacterSpacing(2);
-			wheels[s.c.meta.songName + s.c.meta.folder] = ss;
-			wheels[s.c.meta.songName + s.c.meta.folder].spr->flip = true;
-			grap->removeObj(spr);
-			grap->removeObj(gray);
-			delete grap;
-			grap = new AvgGroup(0, 0, 1280, 720);
-			grap->renderOnce = true;
-		}
-		if (grap)
-			delete grap;
+		addWheelAssetsForVisible();
 
 		if (songs.size() != 0)
 			call(songs[0]);
@@ -145,16 +179,15 @@ public:
 
 	void draw()
 	{
+		if (songs.size() == 0)
+			return;
 		Rect srcRect;
 		srcRect.w = 1;
 		srcRect.h = 1;
 
 
 		Rect clip;
-		clip.x = x;
-		clip.y = y;
-		clip.w = w;
-		clip.h = h;
+
 
 		if (select != actualValue)
 		{
@@ -164,6 +197,15 @@ public:
 
 		//Rendering::PushQuad(&clip, &srcRect, Rendering::white, GL::genShader);
 
+		addWheelAssetsForVisible();
+
+		int min, max;
+
+		returnMinMax(&min, &max);
+
+
+		std::cout << min << " " << max << " \n";
+
 		for (int i = 0; i < songs.size(); i++)
 		{
 			float away = (i + 1) - (select + 1);
@@ -172,7 +214,9 @@ public:
 
 			int yy = (y + h / 2) + 12 + ((backgroundImage->height + 12) * away);
 
-			if (yy + backgroundImage->height < y || yy > y + h)
+			int songId = i;
+
+			if (yy + backgroundImage->height < y || yy > y + h || (i < min || i > max))
 				continue;
 
 
@@ -182,35 +226,82 @@ public:
 				lerp *= 0.6;
 
 			int xx = x - (backgroundImage->width / 2) + (lerp);
-			std::string name = songs[i].c.meta.songName + songs[i].c.meta.folder;
+			std::string name = songs[songId].c.meta.folder;
+
+			if (!wheels[name].spr || !wheels[name].topText || !wheels[name].bottomText)
+				continue;
 
 			Rect boxRect;
+
+			if (xx + 8 < x)
+				clip.x = x;
+			else
+				clip.x = xx + 8;
+			if (yy < y)
+				clip.y = y;
+			else
+				clip.y = yy;
+
+			if (backgroundImage->height > h)
+				clip.h = h;
+			else
+				clip.h = backgroundImage->height;
+
+			if (clip.y + clip.h > y + h)
+				clip.h -= (clip.y + clip.h) - (y + h);
+
 			boxRect.x = xx + 8;
 			boxRect.y = yy + 8;
 			boxRect.w = backgroundImage->width - 8;
-			boxRect.h = backgroundImage->height - 8;
+			boxRect.h = backgroundImage->width - 8;
 
-			Rendering::SetClipRect(&clip);
 
-			wheels[name].spr->x = xx;
-			wheels[name].spr->y = yy;
+			wheels[name].spr->x = (xx - (wheels[name].spr->w / 2)) - (backgroundImage->width / 2);
+			wheels[name].spr->y = (yy - (wheels[name].spr->h / 2)) - (backgroundImage->height / 2);
 
 			wheels[name].topText->x = xx + (backgroundImage->width - 15) - wheels[name].topText->w;
 			wheels[name].topText->y = yy + 4;
 			wheels[name].bottomText->x = xx + (backgroundImage->width - 15) - wheels[name].bottomText->w;
 			wheels[name].bottomText->y = yy + 4 + wheels[name].topText->h;
 
+			clip.w = backgroundImage->width - (x - xx);
+
+			Rendering::SetClipRect(&clip);
 
 			wheels[name].spr->draw();
 			wheels[name].topText->draw();
 			wheels[name].bottomText->draw();
+
 			boxRect.x = xx;
 			boxRect.y = yy;
 			boxRect.w = backgroundImage->width;
 			boxRect.h = backgroundImage->height;
 
-			Rendering::PushQuad(&boxRect, &srcRect, backgroundImage, GL::genShader);
+			Rendering::SetClipRect(NULL);
 
+			if (xx < x)
+				clip.x = x;
+			else
+				clip.x = xx;
+			if (yy < y)
+				clip.y = y;
+			else
+				clip.y = yy;
+
+			if (backgroundImage->width > w)
+				clip.w = w;
+			else
+				clip.w = backgroundImage->width;
+			if (backgroundImage->height > h)
+				clip.h = h;
+			else
+				clip.h = backgroundImage->height;
+
+			if (clip.y + clip.h > y + h)
+				clip.h -= (clip.y + clip.h) - (y + h);
+
+			Rendering::SetClipRect(&clip);
+			Rendering::PushQuad(&boxRect, &srcRect, backgroundImage, GL::genShader);
 			Rendering::SetClipRect(NULL);
 		}
 	}

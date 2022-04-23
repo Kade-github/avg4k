@@ -152,6 +152,7 @@ public:
 	void create() override;
 
 	void update(Events::updateEvent ev) override;
+	void onSteam(std::string s) override;
 
 	void keyDown(SDL_KeyboardEvent event) override;
 

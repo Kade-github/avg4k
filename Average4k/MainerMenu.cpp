@@ -14,12 +14,16 @@ AvgContainer* testWorkshop;
 
 std::mutex packMutex;
 
+bool uploading = false;
+
 Pack steamWorkshop;
 
 int packIndex = 0;
 int catIndex = 0;
 
 int lastHeight = 0;
+
+Song selectedSong;
 
 Pack selected;
 std::vector<Pack> packs;
@@ -33,6 +37,8 @@ int MainerMenu::selectedDiffIndex = 0;
 std::vector<steamItem> item;
 
 int selectedContainerIndex = 0;
+
+bool chartUploading = false;
 
 void resetStuff()
 {
@@ -52,7 +58,10 @@ void selectedSongCallback(Song s)
 
 	MainerMenu::selectedDiffIndex = 0;
 
+	MainerMenu::currentSelectedSong.destroy();
+
 	MainerMenu::currentSelectedSong = s.c;
+	selectedSong = s;
 
 	Tweening::TweenManager::removeTween("fuckyoutween");
 
@@ -222,6 +231,8 @@ void MainerMenu::create()
 	((Text*)soloContainer->findItemByName("packsText"))->setCharacterSpacing(3);
 
 	soloContainer->addObject(new Text(22, 36, "** Loading packs, please be patient!", 16, "ariali"), "packsBottom");
+	soloContainer->addObject(new Text(22, 54, "", 16, "ariali"), "uploadingProgress");
+	((Text*)soloContainer->findItemByName("uploadingProgress"))->color = { 128,128,255 };
 
 	AvgContainer* packContainer = new AvgContainer(0, 88, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/packscontainer.png"));
 
@@ -405,6 +416,27 @@ void MainerMenu::update(Events::updateEvent ev)
 		t->setText(std::to_string(packs.size()) + " loaded");
 	}
 
+	if (uploading)
+	{
+		Text* t = ((Text*)soloContainer->findItemByName("uploadingProgress"));
+		t->alpha = 1;
+		float prog = Game::steam->CheckWorkshopProgress();
+		std::string newTe = "Uploading " + selected.packName + " " + std::to_string(prog * 100).substr(0, 3) + "%";
+		if (chartUploading) {
+			newTe = "Uploading " + selectedSong.c.meta.songName + " " + std::to_string(prog * 100).substr(0, 3) + " % ";
+		}
+		if (prog != 0 && t->text != newTe)
+		{
+			t->setText(newTe);
+		}
+	}
+	else
+	{
+		Text* t = ((Text*)soloContainer->findItemByName("uploadingProgress"));
+		if (t->text != "Nothing being uploaded :)")
+			t->setText("Nothing being uploaded :)");
+	}
+
 	for (steamItem it : Game::steam->downloadedList)
 	{
 		bool dont = false;
@@ -519,14 +551,25 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 		switch (event.keysym.sym)
 		{
 		case SDLK_DOWN:
-			wheel->selectThis(wheel->actualValue + 1);
+			if (!chartUploading)
+				wheel->selectThis(wheel->actualValue + 1);
 			break;
 		case SDLK_UP:
-			wheel->selectThis(wheel->actualValue - 1);
+			if (!chartUploading)
+				wheel->selectThis(wheel->actualValue - 1);
 			break;
 		case SDLK_3:
 			Game::instance->steam->populateWorkshopItems(1);
 			selectContainer(3);
+			break;
+		case SDLK_LSHIFT:
+			if (selected.metaPath.size() != 0 && selected.metaPath != "unfl")
+			{
+				uploading = true;
+				if (event.keysym.mod & KMOD_CTRL)
+					chartUploading = true;
+				Game::steam->createWorkshopItem();
+			}
 			break;
 		case SDLK_LEFT:
 			if (currentSelectedSong.meta.difficulties.size() > 1)
@@ -547,11 +590,12 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 			}
 			break;
 		case SDLK_RETURN:
-			if (currentSelectedSong.meta.difficulties.size() != 0)
-			{
-				resetStuff();
-				Game::instance->transitionToMenu(new Gameplay());
-			}
+			if (!uploading)
+				if (currentSelectedSong.meta.difficulties.size() != 0)
+				{
+					resetStuff();
+					Game::instance->transitionToMenu(new Gameplay());
+				}
 			break;
 		}
 	}
@@ -575,6 +619,39 @@ void MainerMenu::addPack(std::string name, std::string bg, bool showText)
 	obj->h = 75;
 	packContainer->addObject(obj, "packInd" + packIndex);
 	packIndex++;
+}
+
+void MainerMenu::onSteam(std::string s)
+{
+	if (s == "createdItem")
+	{
+		// ok then lets fuckin do it lol!
+
+		if (!chartUploading)
+			Game::steam->uploadPack(&selected, Game::steam->createdId);
+		else
+		{
+			std::string replaced2 = Steam::ReplaceString(selectedSong.path, "\\", "/");
+
+			std::vector<std::string> split = Chart::split(replaced2, '/');
+
+			Game::steam->uploadToItem(&currentSelectedSong, Game::steam->createdId, split[split.size() - 1]);
+		}
+	}
+
+	if (s == "failedItem")
+	{
+		uploading = false;
+		chartUploading = false;
+		((Text*)soloContainer->findItemByName("uploadingProgress"))->text = "Failed to upload!";
+	}
+
+	if (s == "uploadItem")
+	{
+		uploading = false;
+		chartUploading = false;
+		((Text*)soloContainer->findItemByName("uploadingProgress"))->text = "Uploaded!";
+	}
 }
 
 void MainerMenu::clearPacks()
@@ -606,7 +683,7 @@ void MainerMenu::selectPack(int index)
 		ind++;
 	}
 
-	// show songs
+	
 }
 
 int lastTrans = 0;
@@ -691,7 +768,7 @@ void MainerMenu::leftMouseDown()
 	if ((x > selectSettings->x && y > settingsText->y) && (x < selectSettings->x + selectSettings->w && y < selectSettings->y))
 		selectContainer(2);
 
-	if (selectedContainerIndex == 0)
+	if (selectedContainerIndex == 0 && !uploading)
 	{
 		AvgWheel* wheel = (AvgWheel*)soloContainer->findItemByName("wheelObject");
 		AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");

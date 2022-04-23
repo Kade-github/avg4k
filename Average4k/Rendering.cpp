@@ -178,7 +178,7 @@ void Rendering::PushQuad(Rect* dstRect, Rect* srcRect, Texture* tex, Shader* sha
 
 	// rotate stuff
 
-	if (deg != 0) // lil broken too
+	if (deg != 0)
 	{
 		float s = sin(deg * (3.14159265 / 180));
 		float c = cos(deg * (3.14159265 / 180));

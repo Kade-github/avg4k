@@ -1,11 +1,10 @@
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS
-#include "includes.h"
-#include "Chart.h"
 #include "QuaverFile.h"
 #include "SMFile.h"
 #include "stbi.h"
 #include <map>
+#include "Pack.h"
 
 
 struct steamItem {
@@ -46,7 +45,7 @@ public:
 
 	void createWorkshopItem();
 	void uploadToItem(Chart* c, PublishedFileId_t id, std::string fileName);
-
+	void uploadPack(Pack* p, PublishedFileId_t id);
 	void populateWorkshopItems(int page);
 	void populateSubscribedItems();
 	float CheckWorkshopProgress();

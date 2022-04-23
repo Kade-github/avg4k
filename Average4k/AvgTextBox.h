@@ -106,7 +106,7 @@ public:
 		{
 			if (unique)
 			{
-				if (type.contains(event.text))
+				if (type.find(event.text) != std::string::npos)
 					return;
 			}
 

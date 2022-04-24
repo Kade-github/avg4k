@@ -185,8 +185,10 @@ public:
 
 		setSongs(_songs);
 
-		SDL_Thread* thread = SDL_CreateThread(&AvgWheel::loop, "Wheelshit", this);
-		SDL_DetachThread(thread);
+		std::thread t([&]() {
+			loop(this);
+		});
+		t.detach();
 	}
 
 	~AvgWheel()

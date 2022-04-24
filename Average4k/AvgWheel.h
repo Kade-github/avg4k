@@ -79,7 +79,7 @@ public:
 		ss.bottomText->setCharacterSpacing(2);
 		ss.songIndex = _songIndex;
 
-		std::cout << "created " << s.c.meta.songName << " " << bg->width << "-" << bg->height << std::endl;
+		std::cout << "created " << s.c.meta.songName << " " << bg->width << "-" << bg->height << " " << path << std::endl;
 
 		wheels[s.c.meta.folder] = ss;
 	}
@@ -294,8 +294,8 @@ public:
 			boxRect.h = backgroundImage->width - 8;
 
 
-			wheels[name].spr->x = (xx - (wheels[name].spr->w / 2)) - (backgroundImage->width / 2);
-			wheels[name].spr->y = (yy - (wheels[name].spr->h / 2)) - (backgroundImage->height / 2);
+			wheels[name].spr->x = xx;
+			wheels[name].spr->y = yy;
 
 			wheels[name].topText->x = xx + (backgroundImage->width - 15) - wheels[name].topText->w;
 			wheels[name].topText->y = yy + 4;

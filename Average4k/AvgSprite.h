@@ -43,7 +43,7 @@ public:
 		x = _x;
 		y = _y;
 		tex = data;
-		if (!tex)
+		if (!tex) 
 			std::cout << "failed to get texture!" << std::endl;
 		w = tex->width;
 		h = tex->height;

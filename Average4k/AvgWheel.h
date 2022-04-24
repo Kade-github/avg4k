@@ -14,7 +14,10 @@ struct shit {
 	int songIndex;
 };
 
+
 typedef void(__cdecl* songSelectCallback)(Song s);
+
+bool istotalydeadashell = false;
 
 class AvgWheel : public Object
 {
@@ -23,12 +26,12 @@ public:
 
 	std::map<std::string, shit> wheels;
 
+	std::mutex lock;
+
 	Texture* backgroundImage;
 
 	float actualValue = 0;
 	float select = 0;
-
-	std::mutex lock;
 
 	void returnMinMax(int* min, int* max)
 	{
@@ -44,17 +47,14 @@ public:
 
 	void addWheelAssets(int _songIndex)
 	{
-		lock.lock();
 		if (songs.size() == 0) {
-			lock.unlock();
 			return;
 		}
-		std::cout << "COCK MONKEY " << _songIndex << " EXTRA MONKEY: " << songs.size() << std::endl;
 
-		if (songs.size() > _songIndex) {
-			lock.unlock();
+		if (_songIndex >= songs.size()) {
 			return;
 		}
+
 		Song s = songs[_songIndex];
 
 		std::string path = s.c.meta.folder + "/" + s.c.meta.banner;
@@ -71,7 +71,6 @@ public:
 
 		AvgSprite* spr = new AvgSprite(0, 0, bg);
 
-
 		shit ss;
 		ss.spr = spr;
 		ss.topText = new Text(0, 0, s.c.meta.songName, 15, "arialbd");
@@ -79,8 +78,10 @@ public:
 		ss.bottomText = new Text(0, 0, s.c.meta.artist, 13, "arialbd");
 		ss.bottomText->setCharacterSpacing(2);
 		ss.songIndex = _songIndex;
+
+		std::cout << "created " << s.c.meta.songName << " " << bg->width << "-" << bg->height << std::endl;
+
 		wheels[s.c.meta.folder] = ss;
-		lock.unlock();
 	}
 
 	void addWheelAssetsForVisible()
@@ -103,6 +104,7 @@ public:
 				delete itr->second.spr;
 				delete itr->second.topText;
 				delete itr->second.bottomText;
+				std::cout << "deleted " << itr->second.songIndex << std::endl;
 				toDelete.push_back(itr->first);
 			}
 			else
@@ -115,28 +117,25 @@ public:
 			wheels.erase(s);
 		toDelete.clear();
 
-		lock.unlock();
-
 		for (int i = min; i < max; i++)
 		{
-			lock.lock();
 			if (std::find(toSkip.begin(), toSkip.end(), i) != toSkip.end()) {
-				lock.unlock();
 				continue;
 			}
-			lock.unlock();
 			addWheelAssets(i);
 		}
+		lock.unlock();
 	}
 
 	static int loop(void* ptr) {
 
 		AvgWheel* fuckshit = reinterpret_cast<AvgWheel*>(ptr);
 
-		while (true) {
+		while (!istotalydeadashell) {
 			fuckshit->addWheelAssetsForVisible();
 			std::this_thread::sleep_for(std::chrono::milliseconds(15));
 		}
+		return 0;
 	}
 
 
@@ -162,15 +161,15 @@ public:
 		else
 			songs = *_songs;
 
-		lock.unlock();
-
 		AvgGroup* grap = new AvgGroup(0, 0, 1280, 720);
 		grap->renderOnce = true;
+		lock.unlock();
 
 		addWheelAssetsForVisible();
 
 		if (songs.size() != 0)
 			call(songs[0]);
+
 	}
 
 	AvgWheel(int _x, int _y, int _w, int _h, std::vector<Song>* _songs, songSelectCallback callback)
@@ -186,11 +185,13 @@ public:
 
 		setSongs(_songs);
 
-		SDL_CreateThread(&AvgWheel::loop, "Wheelshit", this);
+		SDL_Thread* thread = SDL_CreateThread(&AvgWheel::loop, "Wheelshit", this);
+		SDL_DetachThread(thread);
 	}
 
 	~AvgWheel()
 	{
+		istotalydeadashell = true;
 		for (std::map<std::string, shit>::iterator iter = wheels.begin(); iter != wheels.end(); ++iter)
 		{
 			delete iter->second.spr;
@@ -240,7 +241,6 @@ public:
 		returnMinMax(&min, &max);
 
 
-		std::cout << min << " " << max << " \n";
 		if (!lock.try_lock())
 			return;
 		//lock.lock();

@@ -28,6 +28,8 @@ public:
 	float actualValue = 0;
 	float select = 0;
 
+	std::mutex lock;
+
 	void returnMinMax(int* min, int* max)
 	{
 		*min = actualValue - 3;
@@ -42,8 +44,17 @@ public:
 
 	void addWheelAssets(int _songIndex)
 	{
-		if (songs.size() == 0)
+		lock.lock();
+		if (songs.size() == 0) {
+			lock.unlock();
 			return;
+		}
+		std::cout << "COCK MONKEY " << _songIndex << " EXTRA MONKEY: " << songs.size() << std::endl;
+
+		if (songs.size() > _songIndex) {
+			lock.unlock();
+			return;
+		}
 		Song s = songs[_songIndex];
 
 		std::string path = s.c.meta.folder + "/" + s.c.meta.banner;
@@ -69,11 +80,14 @@ public:
 		ss.bottomText->setCharacterSpacing(2);
 		ss.songIndex = _songIndex;
 		wheels[s.c.meta.folder] = ss;
+		lock.unlock();
 	}
 
 	void addWheelAssetsForVisible()
 	{
 		int min, max;
+
+		lock.lock();
 
 		returnMinMax(&min, &max);
 
@@ -82,7 +96,7 @@ public:
 		std::vector<int> toSkip = {};
 
 		std::vector<std::string> toDelete;
-
+		
 		for (itr = wheels.begin(); itr != wheels.end(); ++itr) {
 			if (itr->second.songIndex < min || itr->second.songIndex > max)
 			{
@@ -94,17 +108,34 @@ public:
 			else
 				toSkip.push_back(itr->second.songIndex);
 		}
+		
 
 
 		for (std::string s : toDelete)
 			wheels.erase(s);
 		toDelete.clear();
 
+		lock.unlock();
+
 		for (int i = min; i < max; i++)
 		{
-			if (std::find(toSkip.begin(), toSkip.end(), i) != toSkip.end())
+			lock.lock();
+			if (std::find(toSkip.begin(), toSkip.end(), i) != toSkip.end()) {
+				lock.unlock();
 				continue;
+			}
+			lock.unlock();
 			addWheelAssets(i);
+		}
+	}
+
+	static int loop(void* ptr) {
+
+		AvgWheel* fuckshit = reinterpret_cast<AvgWheel*>(ptr);
+
+		while (true) {
+			fuckshit->addWheelAssetsForVisible();
+			std::this_thread::sleep_for(std::chrono::milliseconds(15));
 		}
 	}
 
@@ -113,6 +144,7 @@ public:
 
 	void setSongs(std::vector<Song>* _songs)
 	{
+		lock.lock();
 		for (std::map<std::string, shit>::iterator iter = wheels.begin(); iter != wheels.end(); ++iter)
 		{
 			delete iter->second.spr;
@@ -129,6 +161,8 @@ public:
 			songs = {};
 		else
 			songs = *_songs;
+
+		lock.unlock();
 
 		AvgGroup* grap = new AvgGroup(0, 0, 1280, 720);
 		grap->renderOnce = true;
@@ -151,6 +185,8 @@ public:
 		h = _h;
 
 		setSongs(_songs);
+
+		SDL_CreateThread(&AvgWheel::loop, "Wheelshit", this);
 	}
 
 	~AvgWheel()
@@ -197,7 +233,7 @@ public:
 
 		//Rendering::PushQuad(&clip, &srcRect, Rendering::white, GL::genShader);
 
-		addWheelAssetsForVisible();
+		//addWheelAssetsForVisible();
 
 		int min, max;
 
@@ -205,7 +241,9 @@ public:
 
 
 		std::cout << min << " " << max << " \n";
-
+		if (!lock.try_lock())
+			return;
+		//lock.lock();
 		for (int i = 0; i < songs.size(); i++)
 		{
 			float away = (i + 1) - (select + 1);
@@ -304,5 +342,6 @@ public:
 			Rendering::PushQuad(&boxRect, &srcRect, backgroundImage, GL::genShader);
 			Rendering::SetClipRect(NULL);
 		}
+		lock.unlock();
 	}
 };

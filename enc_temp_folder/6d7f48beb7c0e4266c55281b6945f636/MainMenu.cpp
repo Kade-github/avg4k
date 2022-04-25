@@ -140,10 +140,7 @@ void MainMenu::update(Events::updateEvent event)
 	}
 
 	if (hello->text != "Steam not running" && !Game::instance->isSteam)
-	{
 		hello->setText("Steam not running");
-		bottom->setText("So like, we cant authenticate you lol");
-	}
 
 	if (Multiplayer::loggedIn && !started)
 	{

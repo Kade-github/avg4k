@@ -213,6 +213,7 @@ public:
 		}
 		wheels.clear();
 		songs.clear();
+		delete backgroundImage;
 	}
 
 	void selectThis(int toSelect)
@@ -253,9 +254,13 @@ public:
 
 		returnMinMax(&min, &max);
 
+		bool isLocked = false;
 
 		if (!lock.try_lock())
+		{
+			// TODO: uhh make this cache stuff eventually to stop the flickering
 			return;
+		}
 		//lock.lock();
 		for (int i = 0; i < songs.size(); i++)
 		{
@@ -307,10 +312,12 @@ public:
 			boxRect.y = yy + 8;
 			boxRect.w = backgroundImage->width - 8;
 			boxRect.h = backgroundImage->width - 8;
+			AvgSprite* spr = wheels[name].spr;
 
-
-			wheels[name].spr->x = xx;
-			wheels[name].spr->y = yy;
+			spr->x = xx + (backgroundImage->width / 2);
+			spr->y = yy + (backgroundImage->height / 2);
+			spr->x -= spr->w / 2;
+			spr->y -= spr->h / 2;
 
 			wheels[name].topText->x = xx + (backgroundImage->width - 15) - wheels[name].topText->w;
 			wheels[name].topText->y = yy + 4;

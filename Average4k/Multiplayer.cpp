@@ -712,6 +712,12 @@ void Multiplayer::login()
 
     char c[5] = "dang";
 
+
+    if (SteamUser() == nullptr) {
+        std::cout << "User not logged into steam" << std::endl;
+        return;
+    }
+
     SteamAPICall_t call = SteamUser()->RequestEncryptedAppTicket(&c, 5);
     steamEncryptedAppTicketCall.Set(call, this, &Multiplayer::OnSteamAuthTicket);
     std::cout << "awaiting auth ticket from steam" << std::endl;

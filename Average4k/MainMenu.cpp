@@ -139,6 +139,9 @@ void MainMenu::update(Events::updateEvent event)
 			Game::mainCamera->scale = 1.004 + ((beat - lastBeat) / 1) * (1 - 1.004);
 	}
 
+	if (hello->text != "Steam not running" && !Game::instance->isSteam)
+		hello->setText("Steam not running");
+
 	if (Multiplayer::loggedIn && !started)
 	{
 		Game::steam->populateSubscribedItems();

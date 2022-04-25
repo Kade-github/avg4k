@@ -27,6 +27,8 @@ public:
 	static float multiplierx;
 	static float multipliery;
 
+
+	bool isSteam = true;
 	bool flowtime = false;
 
 	Menu* menuToDelete;

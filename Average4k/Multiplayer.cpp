@@ -715,6 +715,7 @@ void Multiplayer::login()
 
     if (SteamUser() == nullptr) {
         std::cout << "User not logged into steam" << std::endl;
+        Game::instance->isSteam = false;
         return;
     }
 

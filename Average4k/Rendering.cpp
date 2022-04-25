@@ -54,6 +54,7 @@ void Rendering::drawBatch()
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GL_Vertex) * batch_buffer.size(), batch_buffer.data(), GL_STATIC_DRAW);
 
 		glDrawArrays(GL_TRIANGLES, 0, batch_buffer.size());
+
 		batch_buffer.clear(); // clear it out
 	}
 	batch_texture = NULL;

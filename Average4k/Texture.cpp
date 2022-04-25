@@ -1,5 +1,6 @@
 #include "stbi.h"
 #include "Rendering.h"
+#include "Game.h"
 //Constructors and destructor
 		
 Texture* Texture::createWithImage(std::string filePath)
@@ -30,11 +31,11 @@ Texture* Texture::createFromSurface(SDL_Surface* surf, bool free) {
 Texture::Texture(unsigned char* data, const unsigned int width, const unsigned int height)
 {
 	//Create texture object and use given data
-
 	glGenTextures(1, &id);
 	SetData(data, width, height);
 }
-		
+
+
 Texture::~Texture()
 {
 	//Delete texture object
@@ -49,12 +50,12 @@ Texture::~Texture()
 bool Texture::SetData(unsigned char* data, const unsigned int _width, const unsigned int _height)
 {
 	pixels = data;
-	//Bind texture object
 	width = _width;
 	height = _height;
+
 	glBindTexture(GL_TEXTURE_2D, id);
 	glEnable(GL_TEXTURE_2D);
-			
+
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
 	//Set texture parameters
@@ -62,6 +63,9 @@ bool Texture::SetData(unsigned char* data, const unsigned int _width, const unsi
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+
+	//Game::instance->createTexture(this);
 			
 	return false;
 }

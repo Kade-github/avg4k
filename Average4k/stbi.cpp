@@ -10,6 +10,12 @@ Texture* stbi_h::stbi_load_file(std::string filePath)
 	return new Texture(c, w, h);
 }
 
+unsigned char* stbi_h::stbi_load_file_data(std::string filePath, int* w, int* h)
+{
+	unsigned char* c = stbi_load(filePath.c_str(), w, h, nullptr, 4);
+	return c;
+}
+
 Texture* stbi_h::stbi_load_memory(char* memory, int size)
 {
     int w = 0;

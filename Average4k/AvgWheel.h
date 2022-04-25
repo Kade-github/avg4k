@@ -8,10 +8,14 @@
 #include "AvgGroup.h"
 
 struct shit {
+	unsigned char* backgroundData;
+	int w, h;
 	AvgSprite* spr;
+	Song meta;
 	Text* topText;
 	Text* bottomText;
 	int songIndex;
+	bool created = false;
 };
 
 
@@ -45,6 +49,18 @@ public:
 			*max = songs.size() - 1;
 	}
 
+	void createStuff(shit* ss)
+	{
+		AvgSprite* spr = new AvgSprite(0, 0, new Texture(ss->backgroundData, ss->w, ss->h));
+
+		ss->spr = spr;
+		ss->topText = new Text(0, 0, ss->meta.c.meta.songName, 15, "arialbd");
+		ss->topText->setCharacterSpacing(2);
+		ss->bottomText = new Text(0, 0, ss->meta.c.meta.artist, 13, "arialbd");
+		ss->bottomText->setCharacterSpacing(2);
+		ss->created = true;
+	}
+
 	void addWheelAssets(int _songIndex)
 	{
 		if (songs.size() == 0) {
@@ -62,24 +78,20 @@ public:
 		if (s.c.meta.banner.size() == 0)
 			path = s.c.meta.folder + "/" + "bn.png"; // common banner name
 
-		Texture* bg = Texture::createWithImage(path);
-
-		if (bg->width == 0 || bg->height == 0 || bg->width < 0 || bg->height < 0)
-		{
-			bg = Rendering::white;
-		}
-
-		AvgSprite* spr = new AvgSprite(0, 0, bg);
 
 		shit ss;
-		ss.spr = spr;
+
+		unsigned char* bg = stbi_h::stbi_load_file_data(path, &ss.w, &ss.h);
+
+		ss.backgroundData = bg;
+		ss.songIndex = _songIndex;
+		ss.meta = s;
+		/*ss.spr = spr;
 		ss.topText = new Text(0, 0, s.c.meta.songName, 15, "arialbd");
 		ss.topText->setCharacterSpacing(2);
 		ss.bottomText = new Text(0, 0, s.c.meta.artist, 13, "arialbd");
 		ss.bottomText->setCharacterSpacing(2);
-		ss.songIndex = _songIndex;
-
-		std::cout << "created " << s.c.meta.songName << " " << bg->width << "-" << bg->height << " " << path << std::endl;
+		ss.songIndex = _songIndex;*/
 
 		wheels[s.c.meta.folder] = ss;
 	}
@@ -104,7 +116,6 @@ public:
 				delete itr->second.spr;
 				delete itr->second.topText;
 				delete itr->second.bottomText;
-				std::cout << "deleted " << itr->second.songIndex << std::endl;
 				toDelete.push_back(itr->first);
 			}
 			else
@@ -268,8 +279,10 @@ public:
 			int xx = x - (backgroundImage->width / 2) + (lerp);
 			std::string name = songs[songId].c.meta.folder;
 
-			if (!wheels[name].spr || !wheels[name].topText || !wheels[name].bottomText)
-				continue;
+			if (!wheels[name].created)
+			{
+				createStuff(&wheels[name]);
+			}
 
 			Rect boxRect;
 

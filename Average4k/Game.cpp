@@ -26,6 +26,7 @@ AvgRect* __transRect;
 vector<Object*>* objects;
 
 std::vector<Events::packetEvent> packetsToBeHandeld;
+std::map<std::string,Texture*> texturesToCreate;
 
 AvgCamera* Game::mainCamera = NULL;
 Viewpoint Game::mainView;
@@ -222,6 +223,7 @@ void Game::update(Events::updateEvent update)
 		multiThreadHandle = CreateThread(NULL, NULL, Multiplayer::connect, NULL, NULL, NULL);
 	}
 
+
 	//SDL_SetRenderTarget(renderer, NULL);
 
 	//SDL_RenderClear(update.renderer);
@@ -279,6 +281,7 @@ void Game::update(Events::updateEvent update)
 	if (!transitioning)
 	{
 		std::vector<Events::packetEvent> bruh;
+		std::vector<Texture*> bruhTex;
 		{
 			std::lock_guard cock(pog);
 			// copy shit
@@ -639,6 +642,20 @@ void Game::weGotPacket(Events::packetEvent p)
 	std::lock_guard<std::mutex> s(pog);
 	packetsToBeHandeld.push_back(p);
 	MUTATE_END
+}
+
+void Game::createTexture(std::string filename, Texture* tex)
+{
+	std::lock_guard<std::mutex> cockion(pog);
+	texturesToCreate.insert(std::make_pair(filename, tex));
+}
+
+Texture* Game::obtainTextureByFileName(std::string file)
+{
+	std::lock_guard<std::mutex> cockion(pog);
+	Texture* t = texturesToCreate[file];
+	texturesToCreate.erase(file);
+	return t;
 }
 
 std::vector<Object*>* Game::getGlobalObjects()

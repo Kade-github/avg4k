@@ -16,6 +16,7 @@ public:
 	bool flip = false;
 	bool flipX = false;
 	Shader* customShader;
+	std::string filePath;
 
 	bool drawCall = true;
 
@@ -32,6 +33,7 @@ public:
 		x = _x;
 		y = _y;
 		tex = Texture::createWithImage(path);
+		path = filePath;
 		if (!tex)
 			std::cout << "failed to get texture!" << std::endl;
 		w = tex->width;
@@ -73,6 +75,7 @@ public:
 	virtual void draw() {
 		if (!drawCall)
 			return;
+
 		Rect dstRect;
 		Rect srcRect;
 

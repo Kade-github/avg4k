@@ -14,6 +14,11 @@ struct Viewpoint {
 	float x, y;
 };
 
+struct createtexStruct {
+	Texture* texPtr;
+	std::string filename;
+};
+
 class Game
 {
 public:
@@ -56,6 +61,7 @@ public:
 	static bool patched;
 
 
+
 	bool fullscreen = false;
 
 	static int gameWidth;
@@ -64,6 +70,9 @@ public:
 	static std::map<int, bool> controls;
 	void db_addLine(std::string s);
 	void weGotPacket(Events::packetEvent p);
+
+	void createTexture(std::string filename, Texture* tex);
+	Texture* obtainTextureByFileName(std::string file);
 
 	void transitionToMenu(Menu* m);
 	void switchMenu(Menu* m);

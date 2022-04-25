@@ -11,6 +11,7 @@ class stbi_h
 {
 public:
 	static Texture* stbi_load_file(std::string filePath);
+	static unsigned char* stbi_load_file_data(std::string filePath, int* w, int* h);
 	static Texture* stbi_load_memory(char* memory, int size);
 	static void stbi_free(unsigned char* data);
 	static Pixel getPixelFromImage(unsigned char* data, int width, int x, int y)

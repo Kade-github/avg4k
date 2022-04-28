@@ -10,6 +10,44 @@ using namespace std;
 
 #undef main
 
+#ifdef STATIC_LINK
+#pragma comment(lib,"x64_static\\SDL2.lib")
+#pragma comment(lib,"x64\\bass.lib")
+#pragma comment(lib,"x64\\msgpackc.lib")
+#pragma comment(lib,"x64\\bass_fx.lib")
+#pragma comment(lib,"x64_static\\SDL2_mixer.lib")
+#pragma comment(lib,"x64_static\\SDL2_image.lib")
+#pragma comment(lib,"x64_static\\freetype.lib")
+#pragma comment(lib,"x64\\steam_api64.lib")
+#pragma comment(lib,"x64_static\\libcrypto.lib")
+#pragma comment(lib,"x64_static\\libssl.lib")
+#pragma comment(lib,"x64_static\\zip.lib")
+#pragma comment(lib,"x64_static\\libcurl.lib")
+#pragma comment(lib,"x64_static\\boost_regex-vc140-mt.lib")
+#pragma comment(lib,"x64_static\\boost_system-vc140-mt.lib")
+#pragma comment(lib,"x64_static\\boost_exception-vc140-mt.lib")
+#pragma comment(lib,"x64_static\\boost_chrono-vc140-mt.lib")
+#pragma comment(lib,"x64_static\\boost_container-vc140-mt.lib")
+#pragma comment(lib,"x64_static\\boost_context-vc140-mt.lib")
+#pragma comment(lib,"x64_static\\boost_coroutine-vc140-mt.lib")
+#pragma comment(lib,"x64_static\\boost_date_time-vc140-mt.lib")
+#pragma comment(lib,"x64_static\\boost_random-vc140-mt.lib")
+#pragma comment(lib,"x64_static\\brotlicommon-static.lib")
+#pragma comment(lib,"x64_static\\bz2.lib")
+#pragma comment(lib,"x64_static\\zlib.lib")
+//brotlidec-static.lib
+#pragma comment(lib,"x64_static\\brotlidec-static.lib")
+#pragma comment(lib,"x64_static\\brotlienc-static.lib")
+#pragma comment(lib,"x64_static\\lua.lib")
+#pragma comment(lib,"x64_static\\libpng16.lib")
+#pragma comment(lib, "dbghelp.lib")
+#pragma comment(lib, "kernel32.lib")
+#pragma comment(lib, "winmm.lib")
+#pragma comment(lib, "setupapi.lib")
+#pragma comment(lib, "crypt32.lib")
+#pragma comment(lib, "version.lib")
+
+#else
 #pragma comment(lib,"x64\\SDL2.lib")
 #pragma comment(lib,"x64\\bass.lib")
 #pragma comment(lib,"x64\\msgpackc.lib")
@@ -25,7 +63,10 @@ using namespace std;
 #pragma comment(lib,"x64\\boost_random-vc140-mt.lib")
 #pragma comment(lib,"x64\\lua54.lib")
 #pragma comment(lib, "dbghelp.lib")
+#endif
+
 #define FRAME_VALUES 60
+
 
 Uint32 frametimes[FRAME_VALUES];
 

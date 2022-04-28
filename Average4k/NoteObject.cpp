@@ -3,9 +3,6 @@
 #include "Gameplay.h"
 
 #include <mutex>
-
-#include <boost/algorithm/clamp.hpp>
-
 #include "Judge.h"
 
 #include "SongSelect.h"

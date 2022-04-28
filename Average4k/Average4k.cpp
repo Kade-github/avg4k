@@ -13,7 +13,7 @@ using namespace std;
 #ifdef STATIC_LINK
 #pragma comment(lib,"x64_static\\SDL2.lib")
 #pragma comment(lib,"x64\\bass.lib")
-#pragma comment(lib,"x64\\msgpackc.lib")
+#pragma comment(lib,"x64_static\\msgpackc.lib")
 #pragma comment(lib,"x64\\bass_fx.lib")
 #pragma comment(lib,"x64_static\\SDL2_mixer.lib")
 #pragma comment(lib,"x64_static\\SDL2_image.lib")

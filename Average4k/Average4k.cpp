@@ -153,6 +153,14 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	SetUnhandledExceptionFilter(UnhandledExceptionFilterHandler);
 	//AddVectoredExceptionHandler(1, &PvectoredExceptionHandler);
+	
+#ifdef  _DEBUG
+	AllocConsole();
+	freopen("conout$", "w", stdout);
+#else
+	freopen("log.txt", "w", stdout);
+#endif
+	
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		std::cerr << "SDL2 video subsystem couldn't be initialized. Error: "
 			<< SDL_GetError()
@@ -164,12 +172,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	curl_global_init(CURL_GLOBAL_ALL);
 	Multiplayer::InitCrypto();
 
-	#ifdef  _DEBUG
-	AllocConsole();
-	freopen("conout$", "w", stdout);
-	#else
-	freopen("log.txt", "w", stdout);
-	#endif
+	
 
 	BASS_Init(-1,44100,0,NULL,NULL);
 

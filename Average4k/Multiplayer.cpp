@@ -27,6 +27,7 @@ ENGINE* engine;
 EVP_CIPHER_CTX* aesCtx;
 
 unsigned char* key;
+unsigned char* keykey;
 
 unsigned char iv[] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 
@@ -72,6 +73,14 @@ void Multiplayer::InitCrypto() {
     key = (unsigned char*)malloc(32);
 
     RAND_bytes(key, 32);
+
+    keykey = (unsigned char*)malloc(32);
+
+    RAND_bytes(keykey, 32);
+
+    for (int i = 0; i < 32; i++) {
+        key[i] = key[i] ^ keykey[i];
+    }
         VM_END
     //STR_ENCRYPT_END
     
@@ -165,7 +174,13 @@ DWORD WINAPI SendPacketT(LPVOID param) {
                 return 0;
             }
 
-            if (EVP_EncryptInit_ex(aesCtx, NULL, NULL, key, cipherplusIV) != 1) {
+            unsigned char buf[32];
+
+            for (int i = 0; i < 32; i++) {
+                buf[i] = key[i] ^ keykey[i];
+            }
+
+            if (EVP_EncryptInit_ex(aesCtx, NULL, NULL, buf, cipherplusIV) != 1) {
                 std::cout << "Crypto error 6 (Packet Dropped)" << std::endl;
                 unfuckPlease.unlock();
                 return 0;
@@ -184,6 +199,8 @@ DWORD WINAPI SendPacketT(LPVOID param) {
                 unfuckPlease.unlock();
                 return 0;
             }
+
+            memset(buf, 0, 32);
 
             ciphertext_len += len;
 
@@ -266,15 +283,15 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
 
         if (strData.length() <= 16)
             return;
+        size_t payloadLength = strData.length();
 
-
-        char* ciphertext = (char*)malloc(strData.length());
+        char* ciphertext = (char*)malloc(payloadLength);
         char iv[16];
 
 
-        char* plaintext = (char*)malloc(strData.length() + 256);
+        char* plaintext = (char*)malloc(payloadLength + 256);
 
-        memcpy(ciphertext, strData.c_str() + 16, strData.length() - 16);
+        memcpy(ciphertext, strData.c_str() + 16, payloadLength - 16);
 
         memcpy(iv, strData.c_str(), 16);
 
@@ -298,11 +315,19 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
 
        // std::cout << "padding shit set" << std::endl;
 
-        EVP_DecryptInit_ex(ctx, NULL, NULL, key, (unsigned char*)iv);
+        unsigned char keyDec[32];
 
+        for (int i = 0; i < 32; i++) {
+            keyDec[i] = key[i] ^ keykey[i];
+        }
+
+
+        EVP_DecryptInit_ex(ctx, NULL, NULL, keyDec, (unsigned char*)iv);
+
+        memset(keyDec, 0, 32);
        // std::cout << "decrypt inited" << std::endl;
 
-        EVP_DecryptUpdate(ctx, (unsigned char*)plaintext, &len, (unsigned char*)ciphertext, strData.length());
+        EVP_DecryptUpdate(ctx, (unsigned char*)plaintext, &len, (unsigned char*)ciphertext, payloadLength);
        // std::cout << "first update done" << std::endl;
 
         plaintext_len = len;
@@ -312,7 +337,10 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
         plaintext_len += len;
 
         EVP_CIPHER_CTX_free(ctx);
+
+
        // std::cout << "freed cxt" << std::endl;
+        memset(ciphertext, 0, payloadLength);
         free(ciphertext);
         //std::cout << "freed ciphertext" << std::endl;
 
@@ -654,12 +682,20 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
 
             size_t outLen;
 
-            EVP_PKEY_encrypt(cryptoCtx, NULL, &outLen, key, 32);
+            unsigned char buf[32];
+
+            for (int i = 0; i < 32; i++) {
+                buf[i] = key[i] ^ keykey[i];
+            }
+
+            EVP_PKEY_encrypt(cryptoCtx, NULL, &outLen, buf, 32);
 
 
             unsigned char* out = (unsigned char*)OPENSSL_malloc(outLen);
 
-            EVP_PKEY_encrypt(cryptoCtx, out, &outLen, key, 32);
+            EVP_PKEY_encrypt(cryptoCtx, out, &outLen, buf, 32);
+
+            memset(buf, 0, 32);
 
             std::string encryptedData = std::string((char*)out, outLen);
 
@@ -667,6 +703,7 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
             //std::cout << "Base64: " << base64Encoded << std::endl;
             con->append_header("Key", base64Encoded);
 
+            OPENSSL_free(out);
             // Note that connect here only requests a connection. No network messages are
             // exchanged until the event loop starts running in the next line.
             connectionData->connectionHdl = connectionData->c.connect(con);

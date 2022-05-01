@@ -185,6 +185,7 @@ public:
 
 	AvgWheel(int _x, int _y, int _w, int _h, std::vector<Song>* _songs, songSelectCallback callback)
 	{
+		istotalydeadashell = false;
 		call = callback;
 		x = _x;
 		y = _y;

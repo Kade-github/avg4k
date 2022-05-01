@@ -27,8 +27,9 @@ class AvgWheel : public Object
 {
 public:
 	std::vector<Song> songs;
-
+	std::vector<Song> bangerSongs;
 	std::map<std::string, shit> wheels;
+	std::map<std::string, shit> bangerWheels;
 
 	std::mutex lock;
 
@@ -255,116 +256,117 @@ public:
 
 		returnMinMax(&min, &max);
 
-		bool isLocked = false;
-
-		if (!lock.try_lock())
+		if (lock.try_lock())
 		{
-			// TODO: uhh make this cache stuff eventually to stop the flickering
-			return;
+			//wheels = bangerWheels;
+			bangerSongs = songs;
+			lock.unlock();
 		}
 		//lock.lock();
-		for (int i = 0; i < songs.size(); i++)
-		{
-			float away = (i + 1) - (select + 1);
-
-			float rank = away / (select + 1);
-
-			int yy = (y + h / 2) + 12 + ((backgroundImage->height + 12) * away);
-
-			int songId = i;
-
-			if (yy + backgroundImage->height < y || yy > y + h || (i < min || i > max))
-				continue;
-
-
-			float lerp = std::lerp(backgroundImage->width / 2, 0.0f, std::abs(rank));
-
-			if (rank < 0.98)
-				lerp *= 0.6;
-
-			int xx = x - (backgroundImage->width / 2) + (lerp);
-			std::string name = songs[songId].c.meta.folder;
-
-			if (!wheels[name].created)
+		if (wheels.size() > 0)
+			for (int i = 0; i < bangerSongs.size(); i++)
 			{
-				createStuff(&wheels[name]);
-			}
+				float away = (i + 1) - (select + 1);
 
-			Rect boxRect;
+				float rank = away / (select + 1);
 
-			if (xx + 8 < x)
-				clip.x = x;
-			else
-				clip.x = xx + 8;
-			if (yy < y)
-				clip.y = y;
-			else
-				clip.y = yy;
+				int yy = (y + h / 2) + 12 + ((backgroundImage->height + 12) * away);
 
-			if (backgroundImage->height > h)
-				clip.h = h;
-			else
-				clip.h = backgroundImage->height;
+				int songId = i;
 
-			if (clip.y + clip.h > y + h)
-				clip.h -= (clip.y + clip.h) - (y + h);
+				if (yy + backgroundImage->height < y || yy > y + h || (i < min || i > max))
+					continue;
 
-			boxRect.x = xx + 8;
-			boxRect.y = yy + 8;
-			boxRect.w = backgroundImage->width - 8;
-			boxRect.h = backgroundImage->width - 8;
-			AvgSprite* spr = wheels[name].spr;
 
-			spr->x = xx + (backgroundImage->width / 2);
-			spr->y = yy + (backgroundImage->height / 2);
-			spr->x -= spr->w / 2;
-			spr->y -= spr->h / 2;
+				float lerp = std::lerp(backgroundImage->width / 2, 0.0f, std::abs(rank));
 
-			wheels[name].topText->x = xx + (backgroundImage->width - 15) - wheels[name].topText->w;
-			wheels[name].topText->y = yy + 4;
-			wheels[name].bottomText->x = xx + (backgroundImage->width - 15) - wheels[name].bottomText->w;
-			wheels[name].bottomText->y = yy + 4 + wheels[name].topText->h;
+				if (rank < 0.98)
+					lerp *= 0.6;
 
-			clip.w = backgroundImage->width - (x - xx);
+				int xx = x - (backgroundImage->width / 2) + (lerp);
+				std::string name = bangerSongs[songId].c.meta.folder;
 
-			Rendering::SetClipRect(&clip);
+				if (!wheels[name].created)
+				{
+					createStuff(&wheels[name]);
+				}
 
-			wheels[name].spr->draw();
-			wheels[name].topText->draw();
-			wheels[name].bottomText->draw();
+				Rect boxRect;
 
-			boxRect.x = xx;
-			boxRect.y = yy;
-			boxRect.w = backgroundImage->width;
-			boxRect.h = backgroundImage->height;
+				if (xx + 8 < x)
+					clip.x = x;
+				else
+					clip.x = xx + 8;
+				if (yy < y)
+					clip.y = y;
+				else
+					clip.y = yy;
 
-			Rendering::SetClipRect(NULL);
+				if (backgroundImage->height > h)
+					clip.h = h;
+				else
+					clip.h = backgroundImage->height;
 
-			if (xx < x)
-				clip.x = x;
-			else
-				clip.x = xx;
-			if (yy < y)
-				clip.y = y;
-			else
-				clip.y = yy;
+				if (clip.y + clip.h > y + h)
+					clip.h -= (clip.y + clip.h) - (y + h);
 
-			if (backgroundImage->width > w)
-				clip.w = w;
-			else
+				boxRect.x = xx + 8;
+				boxRect.y = yy + 8;
+				boxRect.w = backgroundImage->width - 8;
+				boxRect.h = backgroundImage->width - 8;
+				AvgSprite* spr = wheels[name].spr;
+
+				spr->x = xx + (backgroundImage->width / 2);
+				spr->y = yy + (backgroundImage->height / 2);
+				spr->x -= spr->w / 2;
+				spr->y -= spr->h / 2;
+
+				wheels[name].topText->x = xx + (backgroundImage->width - 15) - wheels[name].topText->w;
+				wheels[name].topText->y = yy + 4;
+				wheels[name].bottomText->x = xx + (backgroundImage->width - 15) - wheels[name].bottomText->w;
+				wheels[name].bottomText->y = yy + 4 + wheels[name].topText->h;
+
+				clip.w = backgroundImage->width - (x - xx);
+
+				Rendering::SetClipRect(&clip);
+
+				if (spr->w < backgroundImage->width)
+					spr->w = backgroundImage->width;
+
+				if (spr->h < backgroundImage->height)
+					spr->h = backgroundImage->height;
+
+				wheels[name].spr->draw();
+				wheels[name].topText->draw();
+				wheels[name].bottomText->draw();
+
+				boxRect.x = xx;
+				boxRect.y = yy;
+				boxRect.w = backgroundImage->width;
+				boxRect.h = backgroundImage->height;
+
+				Rendering::SetClipRect(NULL);
+
+
+				if (xx < x)
+					clip.x = x;
+				else
+					clip.x = xx;
+				if (yy < y)
+					clip.y = y;
+				else
+					clip.y = yy;
+
 				clip.w = backgroundImage->width;
-			if (backgroundImage->height > h)
-				clip.h = h;
-			else
+
 				clip.h = backgroundImage->height;
 
-			if (clip.y + clip.h > y + h)
-				clip.h -= (clip.y + clip.h) - (y + h);
+				if (clip.y + clip.h > y + h)
+					clip.h -= (clip.y + clip.h) - (y + h);
 
-			Rendering::SetClipRect(&clip);
-			Rendering::PushQuad(&boxRect, &srcRect, backgroundImage, GL::genShader);
-			Rendering::SetClipRect(NULL);
-		}
-		lock.unlock();
+				Rendering::SetClipRect(&clip);
+				Rendering::PushQuad(&boxRect, &srcRect, backgroundImage, GL::genShader);
+				Rendering::SetClipRect(NULL);
+			}
 	}
 };

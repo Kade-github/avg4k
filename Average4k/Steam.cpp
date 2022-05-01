@@ -388,7 +388,7 @@ float Steam::CheckWorkshopProgress()
     if (bytes == 0 || totalBytes == 0) // dont divide by 0 lol
         return 0;
 
-    return bytes / totalBytes;
+    return (float)bytes / (float)totalBytes;
 }
 
 float Steam::CheckWorkshopDownload()
@@ -401,7 +401,7 @@ float Steam::CheckWorkshopDownload()
     if (bytes == 0 || totalBytes == 0) // dont divide by 0 lol
         return 0;
 
-    return bytes / totalBytes;
+    return (float)bytes / (float)totalBytes;
 }
 
 void Steam::OnUGCSubscribedQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFailure)

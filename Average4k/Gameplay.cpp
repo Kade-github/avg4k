@@ -1079,7 +1079,7 @@ void Gameplay::update(Events::updateEvent event)
 							{
 								receptors[note->lane]->lightUpTimer = 195;
 							}
-							if (offset - positionInSong <= Judge::hitWindows[2] && !tile.fucked)
+							if (offset - positionInSong <= Judge::hitWindows[3] && !tile.fucked)
 							{
 								tile.active = false;
 							}
@@ -1139,7 +1139,7 @@ void Gameplay::update(Events::updateEvent event)
 					float whHold = MainerMenu::currentSelectedSong.getTimeFromBeat(tile.beat, MainerMenu::currentSelectedSong.getSegmentFromBeat(tile.beat));
 					float diff = whHold - positionInSong;
 
-					if (diff < -Judge::hitWindows[2] && tile.active && playing)
+					if (diff < -Judge::hitWindows[4] && tile.active && playing)
 					{
 						std::cout << note->lane << " fucked " << diff << " time: " << whHold << " song: " << positionInSong << std::endl;
 						miss(note);

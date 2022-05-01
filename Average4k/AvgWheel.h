@@ -45,8 +45,8 @@ public:
 		if (*min < 0)
 			*min = 0;
 
-		if (*max > songs.size() - 1)
-			*max = songs.size() - 1;
+		if (*max > songs.size())
+			*max = songs.size();
 	}
 
 	void createStuff(shit* ss)

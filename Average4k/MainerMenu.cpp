@@ -245,6 +245,7 @@ void MainerMenu::create()
 	asyncSongs = new std::vector<Song>();
 
 	SongGather::gatherPacksAsync(asyncPacks);
+	SongGather::gatherSteamPacksAsync(asyncPacks);
 
 	for (Pack p : packs)
 		addPack(p.packName, p.background, p.showName);

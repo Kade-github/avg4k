@@ -54,7 +54,7 @@ public:
 
 	static std::vector<Song> gatherNoPackSongs();
 
-	static std::vector<Pack> gatherSteamPacks();
+	static void gatherSteamPacksAsync(std::vector<Pack>* packs);
 	
 	static void gatherNoPackSteamSongsAsync(std::vector<Song>* songs);
 

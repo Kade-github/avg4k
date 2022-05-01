@@ -111,9 +111,58 @@ std::vector<Song> SongGather::gatherNoPackSongs()
 	return gatherSongsInFolder();
 }
 
-std::vector<Pack> SongGather::gatherSteamPacks()
+void SongGather::gatherSteamPacksAsync(std::vector<Pack>* packs)
 {
-	return {};
+	std::thread t([packs]() {
+		for (int i = 0; i < Game::steam->subscribedList.size(); i++)
+		{
+			steamItem st = Game::steam->subscribedList[i];
+
+			if (!st.isPackFolder)
+				continue;
+
+			Pack p;
+
+			std::string folder = std::string(st.folder);
+
+			std::ifstream fs;
+			// meta
+			fs.open(folder + "/pack.meta");
+
+			if (!fs.good())
+				continue;
+
+			p.metaPath = folder + "/pack.meta";
+
+			std::string str;
+
+			while (std::getline(fs, str))
+			{
+				if (str.starts_with("#"))
+					continue;
+				std::vector<std::string> split = Chart::split(str, ':');
+				std::string end = split[1].erase(0, 1);
+				if (split[0] == "banner")
+					p.background = folder + "/" + end;
+				if (split[0] == "packName")
+					p.packName = end;
+				if (split[0] == "showName")
+					p.showName = (end == "false" ? false : true);
+			}
+
+
+			std::vector<Song> songs = gatherSongsInFolder(folder + "/");
+
+			if (songs.size() == 0)
+				continue;
+
+			for (Song s : songs)
+				p.songs.push_back(s);
+
+			packs->push_back(p);
+		}
+		});
+	t.detach();
 }
 
 void SongGather::gatherNoPackSteamSongsAsync(std::vector<Song>* songs)

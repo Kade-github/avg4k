@@ -321,6 +321,9 @@ public:
 				spr->x -= spr->w / 2;
 				spr->y -= spr->h / 2;
 
+				if (!wheels.count(name))
+					continue;
+
 				wheels[name].topText->x = xx + (backgroundImage->width - 15) - wheels[name].topText->w;
 				wheels[name].topText->y = yy + 4;
 				wheels[name].bottomText->x = xx + (backgroundImage->width - 15) - wheels[name].bottomText->w;
@@ -335,6 +338,8 @@ public:
 
 				if (spr->h < backgroundImage->height)
 					spr->h = backgroundImage->height;
+				if (!wheels.count(name))
+					continue;
 
 				wheels[name].spr->draw();
 				wheels[name].topText->draw();

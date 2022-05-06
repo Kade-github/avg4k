@@ -114,9 +114,17 @@ public:
 		for (itr = wheels.begin(); itr != wheels.end(); ++itr) {
 			if (itr->second.songIndex < min || itr->second.songIndex > max)
 			{
-				delete itr->second.spr;
-				delete itr->second.topText;
-				delete itr->second.bottomText;
+				try {
+					if (itr->second.spr)
+						delete itr->second.spr;
+					if (itr->second.topText)
+						delete itr->second.topText;
+					if (itr->second.bottomText)
+						delete itr->second.bottomText;
+				}
+				catch(...) {
+					std::cout << "bruh moment" << std::endl;
+				}
 				toDelete.push_back(itr->first);
 			}
 			else
@@ -158,9 +166,12 @@ public:
 		lock.lock();
 		for (std::map<std::string, shit>::iterator iter = wheels.begin(); iter != wheels.end(); ++iter)
 		{
-			delete iter->second.spr;
-			delete iter->second.topText;
-			delete iter->second.bottomText;
+				if (iter->second.spr)
+					delete iter->second.spr;
+				if (iter->second.topText)
+					delete iter->second.topText;
+				if (iter->second.bottomText)
+					delete iter->second.bottomText;
 		}
 		wheels.clear();
 		songs.clear();
@@ -314,7 +325,13 @@ public:
 				boxRect.y = yy + 8;
 				boxRect.w = backgroundImage->width - 8;
 				boxRect.h = backgroundImage->width - 8;
-				AvgSprite* spr = wheels[name].spr;
+
+				shit shit = wheels[name];
+
+				if (!shit.spr || !shit.topText || !shit.bottomText)
+					continue;
+
+				AvgSprite* spr = shit.spr;
 
 				spr->x = xx + (backgroundImage->width / 2);
 				spr->y = yy + (backgroundImage->height / 2);

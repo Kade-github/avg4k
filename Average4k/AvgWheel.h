@@ -155,9 +155,12 @@ public:
 		while (!lock.try_lock()) {}
 		for (std::map<std::string, shit>::iterator iter = wheels.begin(); iter != wheels.end(); ++iter)
 		{
-			delete iter->second.spr;
-			delete iter->second.topText;
-			delete iter->second.bottomText;
+			if (iter->second.created)
+			{
+				delete iter->second.spr;
+				delete iter->second.topText;
+				delete iter->second.bottomText;
+			}
 		}
 		wheels.clear();
 		songs.clear();
@@ -354,7 +357,6 @@ public:
 				boxRect.y = yy - 8;
 				boxRect.w = backgroundImage->width - 8;
 				boxRect.h = backgroundImage->width - 8;
-				AvgSprite* spr = wheels[name].spr;
 
 				spr->x = xx + (backgroundImage->width / 2);
 

@@ -84,12 +84,20 @@ public:
 		if (s.c.meta.banner.size() == 0)
 			path = s.c.meta.folder + "/" + s.c.meta.background;
 
+		struct stat info;
 
 		shit ss;
 
-		unsigned char* bg = stbi_h::stbi_load_file_data(path, &ss.w, &ss.h);
+		if (std::filesystem::exists(path.c_str()))
+		{
+			unsigned char* bg = stbi_h::stbi_load_file_data(path, &ss.w, &ss.h);
 
-		ss.backgroundData = bg;
+			ss.backgroundData = bg;
+		}
+		else
+		{
+			ss.backgroundData = Rendering::white->pixels;
+		}
 		ss.songIndex = _songIndex;
 		ss.meta = s;
 		/*ss.spr = spr;

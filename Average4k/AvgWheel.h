@@ -268,159 +268,168 @@ public:
 		returnMinMax(&min, &max);
 
 		
-
-		if (lock.try_lock())
-		{
-			//wheels = bangerWheels;
-			bangerSongs = songs;
-
-			for (std::string s : pleaseDelete)
+		try {
+			if (lock.try_lock())
 			{
-				if (wheels[s].created)
+				//wheels = bangerWheels;
+				bangerSongs = songs;
+
+				for (std::string s : pleaseDelete)
 				{
-					delete wheels[s].spr;
-					delete wheels[s].topText;
-					delete wheels[s].bottomText;
+					if (wheels[s].created)
+					{
+						if (wheels[s].spr)
+							delete wheels[s].spr;
+						if (wheels[s].topText)
+							delete wheels[s].topText;
+						if (wheels[s].bottomText)
+							delete wheels[s].bottomText;
+					}
+					wheels.erase(s);
 				}
-				wheels.erase(s);
+
+				pleaseDelete.clear();
+
+				lock.unlock();
 			}
-
-			pleaseDelete.clear();
-
-			lock.unlock();
-		}
-		//lock.lock();
-		if (wheels.size() > 0)
-			for (int i = 0; i < bangerSongs.size(); i++)
-			{
-				float away = (i + 1) - (select + 1);
-
-				float rank = away / (select + 1);
-
-				int yy = (y + h / 2) + 12 + ((backgroundImage->height + 12) * away);
-
-				int songId = i;
-
-				if (yy + backgroundImage->height < y || yy > y + h || (i < min || i > max))
-					continue;
-
-
-				float lerp = std::lerp(backgroundImage->width / 2, 0.0f, std::abs(rank));
-
-				if (actualValue != i)
-					lerp *= 0.6;
-
-				int xx = x - (backgroundImage->width / 2) + (lerp);
-				std::string name = bangerSongs[songId].c.meta.folder;
-
-				if (!wheels.count(name))
+			//lock.lock();
+			if (wheels.size() > 0)
+				for (int i = 0; i < bangerSongs.size(); i++)
 				{
-					continue;
-				}
+					float away = (i + 1) - (select + 1);
+
+					float rank = away / (select + 1);
+
+					int yy = (y + h / 2) + 12 + ((backgroundImage->height + 12) * away);
+
+					int songId = i;
+
+					if (yy + backgroundImage->height < y || yy > y + h || (i < min || i > max))
+						continue;
 
 
-				if (!wheels[name].created)
-				{
-					createStuff(&wheels[name]);
-				}
-					
+					float lerp = std::lerp(backgroundImage->width / 2, 0.0f, std::abs(rank));
+
+					if (actualValue != i)
+						lerp *= 0.6;
+
+					int xx = x - (backgroundImage->width / 2) + (lerp);
+					std::string name = bangerSongs[songId].c.meta.folder;
+
+					if (!wheels.count(name))
+					{
+						continue;
+					}
 
 
-				Rect boxRect;
-
-				if (xx < x)
-					clip.x = x;
-				else
-					clip.x = xx;
-				if (yy < y)
-					clip.y = y;
-				else
-					clip.y = yy;
+					if (!wheels[name].created)
+					{
+						createStuff(&wheels[name]);
+					}
 
 
 
-				AvgSprite* spr = wheels[name].spr;
+					Rect boxRect;
 
-				if (!spr || !wheels[name].topText || !wheels[name].bottomText)
-					continue;
+					if (xx < x)
+						clip.x = x;
+					else
+						clip.x = xx;
+					if (yy < y)
+						clip.y = y;
+					else
+						clip.y = yy;
 
 
-				if (spr->h > backgroundImage->height)
+
+					AvgSprite* spr = wheels[name].spr;
+
+					if (!spr || !wheels[name].topText || !wheels[name].bottomText)
+						continue;
+
+
+					if (spr->h > backgroundImage->height)
+						clip.h = backgroundImage->height;
+					else
+						clip.h = spr->h;
+
+					if (clip.y + clip.h > y + h)
+						clip.h -= (clip.y + clip.h) - (y + h);
+
+					boxRect.x = xx - 8;
+					boxRect.y = yy - 8;
+					boxRect.w = backgroundImage->width - 8;
+					boxRect.h = backgroundImage->width - 8;
+
+					spr->x = xx + (backgroundImage->width / 2);
+
+					if (spr->x - spr->w > xx)
+						spr->x = xx;
+
+					spr->y = yy + (backgroundImage->height / 2);
+					spr->x -= spr->w / 2;
+					spr->y -= spr->h / 2;
+
+
+					wheels[name].topText->x = xx + (backgroundImage->width - 15) - wheels[name].topText->w;
+					wheels[name].topText->y = yy + 4;
+					wheels[name].bottomText->x = xx + (backgroundImage->width - 15) - wheels[name].bottomText->w;
+					wheels[name].bottomText->y = yy + 4 + wheels[name].topText->h;
+
+					clip.w = backgroundImage->width - (x - xx);
+
+					Rendering::SetClipRect(&clip);
+
+					if (spr->w < backgroundImage->width)
+						spr->w = backgroundImage->width;
+
+					if (spr->h < backgroundImage->height)
+						spr->h = backgroundImage->height;
+					if (!wheels.count(name))
+					{
+						continue;
+					}
+
+					if (!wheels[name].created)
+						continue;
+					if (!spr || !wheels[name].topText || !wheels[name].bottomText)
+						continue;
+					spr->draw();
+					wheels[name].topText->draw();
+					wheels[name].bottomText->draw();
+
+					boxRect.x = xx;
+					boxRect.y = yy;
+					boxRect.w = backgroundImage->width;
+					boxRect.h = backgroundImage->height;
+
+					Rendering::SetClipRect(NULL);
+
+
+					if (xx < x)
+						clip.x = x;
+					else
+						clip.x = xx;
+					if (yy < y)
+						clip.y = y;
+					else
+						clip.y = yy;
+
+					clip.w = backgroundImage->width;
+
 					clip.h = backgroundImage->height;
-				else
-					clip.h = spr->h;
 
-				if (clip.y + clip.h > y + h)
-					clip.h -= (clip.y + clip.h) - (y + h);
+					if (clip.y + clip.h > y + h)
+						clip.h -= (clip.y + clip.h) - (y + h);
 
-				boxRect.x = xx - 8;
-				boxRect.y = yy - 8;
-				boxRect.w = backgroundImage->width - 8;
-				boxRect.h = backgroundImage->width - 8;
-
-				spr->x = xx + (backgroundImage->width / 2);
-
-				if (spr->x - spr->w > xx)
-					spr->x = xx;
-
-				spr->y = yy + (backgroundImage->height / 2);
-				spr->x -= spr->w / 2;
-				spr->y -= spr->h / 2;
-
-
-				wheels[name].topText->x = xx + (backgroundImage->width - 15) - wheels[name].topText->w;
-				wheels[name].topText->y = yy + 4;
-				wheels[name].bottomText->x = xx + (backgroundImage->width - 15) - wheels[name].bottomText->w;
-				wheels[name].bottomText->y = yy + 4 + wheels[name].topText->h;
-
-				clip.w = backgroundImage->width - (x - xx);
-
-				Rendering::SetClipRect(&clip);
-
-				if (spr->w < backgroundImage->width)
-					spr->w = backgroundImage->width;
-
-				if (spr->h < backgroundImage->height)
-					spr->h = backgroundImage->height;
-				if (!wheels.count(name))
-				{
-					continue;
+					Rendering::SetClipRect(&clip);
+					Rendering::PushQuad(&boxRect, &srcRect, backgroundImage, GL::genShader);
+					Rendering::SetClipRect(NULL);
 				}
-
-				if (!wheels[name].created)
-					continue;
-
-				spr->draw();
-				wheels[name].topText->draw();
-				wheels[name].bottomText->draw();
-
-				boxRect.x = xx;
-				boxRect.y = yy;
-				boxRect.w = backgroundImage->width;
-				boxRect.h = backgroundImage->height;
-
-				Rendering::SetClipRect(NULL);
-
-
-				if (xx < x)
-					clip.x = x;
-				else
-					clip.x = xx;
-				if (yy < y)
-					clip.y = y;
-				else
-					clip.y = yy;
-
-				clip.w = backgroundImage->width;
-
-				clip.h = backgroundImage->height;
-
-				if (clip.y + clip.h > y + h)
-					clip.h -= (clip.y + clip.h) - (y + h);
-
-				Rendering::SetClipRect(&clip);
-				Rendering::PushQuad(&boxRect, &srcRect, backgroundImage, GL::genShader);
-				Rendering::SetClipRect(NULL);
-			}
+		}
+		catch (char* e)
+		{
+			std::cout << "[pls dont crashinator] EXCEPTION UH OH!!!! " << e << std::endl;
+		}
 	}
 };

@@ -305,7 +305,7 @@ void MainerMenu::create()
 	appearnSettings.push_back(Game::save->getSetting("Note Size"));
 	appearnSettings.push_back(Game::save->getSetting("Noteskin"));
 
-	addSettings("Apperance", appearnSettings);
+	addSettings("Appearance", appearnSettings);
 
 
 	std::vector<setting> audioSettings;

@@ -136,6 +136,7 @@ public:
 		bool scroll = false;
 		itemId lastItem;
 		lastItem.name = "NOOOOOO";
+		bool fail = true;
 		for (itemId i : items)
 		{
 			if (i.below)
@@ -153,6 +154,7 @@ public:
 					float first = ((i.obj->y + i.obj->h));
 					float second = h;
 					maxScroll = (first - second) + 42;
+					fail = false;
 				}
 			}
 		}
@@ -173,7 +175,7 @@ public:
 		Rendering::PushQuad(&dstRect, &srcRect, tex, GL::genShader, angle);
 
 
-		if (scroll)
+		if (scroll && !fail)
 		{
 			Rect topArrow;
 			topArrow.x = x + 5;

@@ -25,6 +25,8 @@ bool istotalydeadashell = false;
 bool pleaseSTOP = false;
 bool requireUpdate = false;
 
+std::mutex bigCock;
+
 class AvgWheel : public Object
 {
 public:
@@ -103,7 +105,7 @@ public:
 	void addWheelAssetsForVisible()
 	{
 		int min, max;
-
+		std::lock_guard hugeCock(bigCock);
 		lock.lock();
 
 		returnMinMax(&min, &max);
@@ -269,6 +271,7 @@ public:
 
 		
 		try {
+			std::lock_guard cock(bigCock);
 			if (lock.try_lock())
 			{
 				//wheels = bangerWheels;

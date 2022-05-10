@@ -387,6 +387,8 @@ public:
 					continue;
 				}
 
+				if (!wheels[name].created)
+					continue;
 
 				spr->draw();
 				wheels[name].topText->draw();

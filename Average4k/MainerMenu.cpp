@@ -782,7 +782,8 @@ void MainerMenu::leftMouseDown()
 		for (int i = 0; i < packContainer->above.size(); i++)
 		{
 			Object* obj = packContainer->above[i];
-			if ((relX > obj->x && relY > obj->y) && (relX < obj->x + obj->w && relY < obj->y + obj->h))
+			int yy = obj->y - packContainer->scrollAddition;
+			if ((relX > obj->x && relY > yy) && (relX < obj->x + obj->w && relY < yy + obj->h))
 			{
 				wheel->setSongs(&packs[i].songs);
 				selectPack(i);

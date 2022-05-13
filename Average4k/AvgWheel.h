@@ -45,8 +45,8 @@ public:
 
 	void returnMinMax(int* min, int* max)
 	{
-		*min = actualValue - 12;
-		*max = actualValue + 12;
+		*min = actualValue - 6;
+		*max = actualValue + 6;
 
 		if (*min < 0)
 			*min = 0;

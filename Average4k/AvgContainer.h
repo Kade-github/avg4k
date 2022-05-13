@@ -68,6 +68,7 @@ public:
 		id.name = name;
 		id.below = beloww;
 		id.obj = obj;
+		obj->parent = this;
 		items.push_back(id);
 	}
 

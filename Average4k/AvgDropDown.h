@@ -17,7 +17,6 @@ public:
 	setting toModify;
 
 	Texture* box;
-	Texture* arrow;
 
 	AvgDropDown(int _x, int _y, std::vector<std::string> _def)
 	{
@@ -27,8 +26,7 @@ public:
 
 		toModify.name = "none";
 
-		arrow = Noteskin::getMenuElement(Game::noteskin, "MainMenu/Settings/typinputcontainer.png");
-		arrow = Noteskin::getMenuElement(Game::noteskin, "Container/dropdownarrow.png");
+		box = Noteskin::getMenuElement(Game::noteskin, "MainMenu/Settings/dropdown.png");
 		w = box->width;
 		h = box->height;
 	}

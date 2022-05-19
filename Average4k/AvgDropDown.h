@@ -75,9 +75,6 @@ public:
 		srcRect.h = 1;
 
 		Rendering::PushQuad(&dstRect, &srcRect, box, GL::genShader);
-		Rendering::PushQuad(&arrowRect, &srcRect, arrow, GL::genShader);
 
-		textPart->alpha = alpha;
-		textPart->draw();
 	}
 };

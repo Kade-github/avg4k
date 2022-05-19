@@ -16,6 +16,7 @@ struct settingConstruct {
 	// other special stuff
 	bool unique = false;
 	std::string settingSuffix = "";
+	bool isDropdown = false;
 };
 
 struct setting {
@@ -35,8 +36,9 @@ struct setting {
 	// other special stuff
 	bool unique;
 	std::string settingSuffix;
+	bool isDropdown;
 
-	MSGPACK_DEFINE(takesActive, takesString, takesDouble, defaultActive, defaultString, defaultDouble, defaultMin, defaultMax, defaultIncrm, name, unique, settingSuffix);
+	MSGPACK_DEFINE(takesActive, takesString, takesDouble, defaultActive, defaultString, defaultDouble, defaultMin, defaultMax, defaultIncrm, name, unique, settingSuffix, isDropdown);
 };
 
 struct settingHeader {
@@ -62,6 +64,8 @@ class SaveFile
 		void SetBool(std::string setting, bool value);
 
 		setting& getSetting(std::string setting);
+
+		static std::vector<std::string> ObtainDropDownSettingList(std::string settting);
 
 		std::string GetString(std::string setting);
 		double GetDouble(std::string setting);

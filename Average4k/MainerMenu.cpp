@@ -6,6 +6,7 @@
 #include "AvgWheel.h"
 #include "MainMenu.h"
 #include "Gameplay.h"
+#include "AvgDropDown.h"
 
 AvgContainer* soloContainer;
 AvgContainer* multiContainer;
@@ -304,6 +305,8 @@ void MainerMenu::create()
 	std::vector<setting> appearnSettings;
 	appearnSettings.push_back(Game::save->getSetting("Note Size"));
 	appearnSettings.push_back(Game::save->getSetting("Noteskin"));
+	appearnSettings.push_back(Game::save->getSetting("Resolution"));
+	appearnSettings.push_back(Game::save->getSetting("Fullscreen"));
 
 	addSettings("Appearance", appearnSettings);
 
@@ -815,7 +818,18 @@ void MainerMenu::addSettings(std::string catNam, std::vector<setting> settings)
 
 		settingsContainer->findItemByName(itemName)->y -= (hh / 2) - 2;
 		((Text*)settingsContainer->findItemByName(itemName))->setCharacterSpacing(2.33);
-		if (set.takesString)
+
+		if (set.isDropdown)
+		{
+			int hey = startY + lastHeight + 52 + (52 * setInd);
+
+			std::string boxName = "_cat_" + catNam + "_item_" + set.name + "_dropDown";
+
+			settingsContainer->addObject(new AvgDropDown(startX + ww + 26, hey, SaveFile::ObtainDropDownSettingList(set.name)), boxName);
+			settingsContainer->findItemByName(boxName)->y -= settingsContainer->findItemByName(itemName)->h / 2;
+			((AvgDropDown*)settingsContainer->findItemByName(boxName))->toModify = set;
+		}
+		else if (set.takesString)
 		{
 			int hey = startY + lastHeight + 52 + (52 * setInd);
 
@@ -852,6 +866,7 @@ void MainerMenu::addSettings(std::string catNam, std::vector<setting> settings)
 			((AvgTextBar*)settingsContainer->findItemByName(boxName))->suffix = set.settingSuffix;
 			((AvgTextBar*)settingsContainer->findItemByName(boxName))->resyncText();
 		}
+
 		setInd++;
 	}
 

@@ -16,10 +16,10 @@ SaveFile::SaveFile()
 {
     // default settings
 
-    // {takesActive, takesString, takesDouble, defaultActive, defaultString, defaultDouble, defaultMin, defaultMax, defaultIncrm, unique, suffix}
+    // {takesActive, takesString, takesDouble, defaultActive, defaultString, defaultDouble, defaultMin, defaultMax, defaultIncrm, unique, suffix, isDropdown}
 
     settingHeader defaultHeader;
-    defaultHeader.settingsVersion = "v2";
+    defaultHeader.settingsVersion = "v2.1";
 
     defaultSettings.push_back(CreateSetting("Downscroll",{true}));
     defaultSettings.push_back(CreateSetting("Scrollspeed",{false,false,true,false,"",800,200,1900}));
@@ -27,7 +27,9 @@ SaveFile::SaveFile()
     defaultSettings.push_back(CreateSetting("Hitsounds", {true}));
     defaultSettings.push_back(CreateSetting("Note Size",{false,false,true,false,"",1,0.8,1.8,0.1,false,"x"}));
     defaultSettings.push_back(CreateSetting("Keybinds", {false,true,false,false,"DFJK", 0, 0, 4, 0, true}));
-    defaultSettings.push_back(CreateSetting("Noteskin", {false,true,false,false, "arrow"}));
+    defaultSettings.push_back(CreateSetting("Noteskin", {false,true,false,false, "arrow",0,0,0,0,false,"",true}));
+    defaultSettings.push_back(CreateSetting("Resolution", { false,true,false,false, "1280x720",0,0,0,0,false,"",true }));
+    defaultSettings.push_back(CreateSetting("Fullscreen", { false,true,false,false, "Windowed",0,0,0,0,false,"",true }));
     defaultSettings.push_back(CreateSetting("nonChange_chartTheme", {}));
     defaultSettings.push_back(CreateSetting("nonChange_chartHistory",{}));
     defaultSettings.push_back(CreateSetting("nonChange_chartWaveform", {true}));
@@ -133,6 +135,11 @@ setting& SaveFile::getSetting(std::string sett)
     }
 }
 
+std::vector<std::string> SaveFile::ObtainDropDownSettingList(std::string settting)
+{
+    return std::vector<std::string>();
+}
+
 std::string SaveFile::GetString(std::string sett)
 {
     for (setting& set : currentHeader.settings)
@@ -189,5 +196,6 @@ setting SaveFile::CreateSetting(std::string defaultName, settingConstruct cons)
     set.defaultIncrm = cons.defaultIncrm;
     set.unique = cons.unique;
     set.settingSuffix = cons.settingSuffix;
+    set.isDropdown = cons.isDropdown;
     return set;
 }

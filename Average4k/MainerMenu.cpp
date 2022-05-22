@@ -104,9 +104,6 @@ void selectedSongCallback(Song s)
 		SoundManager::removeChannel("prevSong");
 	}
 
-	Channel* real = SoundManager::createChannel(s.c.meta.folder + "/" + s.c.meta.audio, "prevSong");
-	real->play();
-	real->setPos(s.c.meta.start);
 	// text stuff
 
 	std::string display = s.c.meta.songName;
@@ -513,6 +510,20 @@ void MainerMenu::update(Events::updateEvent ev)
 	{
 		if (selectSettings->alpha != 1)
 			selectSettings->alpha = 0;
+	}
+
+
+	if (SDL_GetTicks() % 3000)
+	{
+		if (selectedSong.path.size() != 0)
+		{
+			if (SoundManager::getChannelByName("prevSong") == NULL)
+			{
+				Channel* real = SoundManager::createChannel(selectedSong.c.meta.folder + "/" + selectedSong.c.meta.audio, "prevSong");
+				real->play();
+				real->setPos(selectedSong.c.meta.start);
+			}
+		}
 	}
 }
 

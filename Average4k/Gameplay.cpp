@@ -1079,7 +1079,7 @@ void Gameplay::update(Events::updateEvent event)
 							{
 								receptors[note->lane]->lightUpTimer = 195;
 							}
-							if (offset - positionInSong <= Judge::hitWindows[3] && !tile.fucked)
+							if (offset - positionInSong <= Judge::hitWindows[2] && !tile.fucked)
 							{
 								tile.active = false;
 							}
@@ -1126,7 +1126,7 @@ void Gameplay::update(Events::updateEvent event)
 				bool condition = true;
 
 
-				if ((wh - positionInSong <= -200 && !note->active) && note->holdsActive == 0 && playing)
+				if ((wh - positionInSong <= -400 && !note->active) && note->holdsActive == 0 && playing)
 				{
 					removeNote(note);
 					std::cout << "remove note " << wh << " " << positionInSong << std::endl;
@@ -1139,7 +1139,7 @@ void Gameplay::update(Events::updateEvent event)
 					float whHold = MainerMenu::currentSelectedSong.getTimeFromBeat(tile.beat, MainerMenu::currentSelectedSong.getSegmentFromBeat(tile.beat));
 					float diff = whHold - positionInSong;
 
-					if (diff < -Judge::hitWindows[4] && tile.active && playing)
+					if (diff < -Judge::hitWindows[3] && tile.active && playing)
 					{
 						std::cout << note->lane << " fucked " << diff << " time: " << whHold << " song: " << positionInSong << std::endl;
 						miss(note);
@@ -1286,7 +1286,12 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 			float diff = (wh - positionInSong);
 
-			if (closestObject->active && diff <= Judge::hitWindows[4] && diff > -Judge::hitWindows[4])
+			float hw = Judge::hitWindows[4];
+
+			if (closestObject->holdsActive > 0)
+				hw = Judge::hitWindows[2];
+
+			if (closestObject->active && diff <= hw && diff > -hw)
 			{
 				closestObject->active = false;
 				closestObject->wasHit = true;

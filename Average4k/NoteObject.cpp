@@ -103,7 +103,7 @@ void NoteObject::draw() {
     srcRect.w = 1;
     srcRect.h = 1;
 
-    Rendering::SetClipRect(&clipThingy);
+    //Rendering::SetClipRect(&clipThingy);
 
     for (int i = 0; i < heldTilings.size(); i++) {
         holdTile& tile = heldTilings[i];
@@ -160,7 +160,7 @@ void NoteObject::draw() {
 
     dstRect.y = rect.y;
 
-    Rendering::SetClipRect(NULL);
+    //Rendering::SetClipRect(NULL);
 
     int activeH = 0;
 

@@ -112,7 +112,7 @@ void NoteObject::draw() {
         float diff2 = time - position;
 
         float offsetFromY = (bps * (diff2 / 1000)) * (64 * size);
-        tile.rect.y = receptor.y + offsetFromY;
+        tile.rect.y = (receptor.y + (64 * size)) + offsetFromY;
         if (downscroll)
             tile.rect.y = (receptor.y - (64 * size))  - offsetFromY;
 

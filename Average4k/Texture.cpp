@@ -11,6 +11,14 @@ Texture* Texture::createWithImage(std::string filePath)
 		std::cout << "pixels are fucking null? WTF STBI " << filePath << std::endl;
 	}
 	t->fromSTBI = true;
+
+	if (stbi_h::get_error())
+	{
+		unsigned char c[] = { 255, 255, 255, 255 };
+		delete t;
+		return new Texture(c, 1, 1);
+	}
+
 	return t;
 }
 
@@ -66,5 +74,5 @@ bool Texture::SetData(unsigned char* data, const unsigned int _width, const unsi
 
 	//Game::instance->createTexture(this);
 			
-	return false;
+	return true;
 }

@@ -269,7 +269,6 @@ void MainerMenu::create()
 	soloContainer->findItemByName("songContainer")->x -= soloContainer->findItemByName("songContainer")->w + 40;
 
 
-	soloContainer->addObject(new AvgWheel(packContainer->w, packContainer->y, 600, packContainer->h, NULL, (songSelectCallback)selectedSongCallback), "wheelObject");
 
 	multiContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Multi/maincontainer.png"));
 	multiContainer->x = (Game::gameWidth / 2) - (multiContainer->w / 2);
@@ -566,12 +565,10 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 		switch (event.keysym.sym)
 		{
 		case SDLK_DOWN:
-			if (!chartUploading)
-				wheel->selectThis(wheel->actualValue + 1);
+
 			break;
 		case SDLK_UP:
-			if (!chartUploading)
-				wheel->selectThis(wheel->actualValue - 1);
+
 			break;
 		case SDLK_3:
 			Game::instance->steam->populateWorkshopItems(1);
@@ -799,7 +796,7 @@ void MainerMenu::leftMouseDown()
 			int yy = obj->y - packContainer->scrollAddition;
 			if ((relX > obj->x && relY > yy) && (relX < obj->x + obj->w && relY < yy + obj->h))
 			{
-				wheel->setSongs(&packs[i].songs);
+				
 				selectPack(i);
 				return;
 			}

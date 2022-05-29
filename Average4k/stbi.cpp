@@ -30,3 +30,17 @@ void stbi_h::stbi_free(unsigned char* data)
 {
 	stbi_image_free(data);
 }
+
+bool stbi_h::get_error()
+{
+	if (stbi_failure_reason())
+	{
+		std::string reason = std::string(stbi_failure_reason());
+		if (reason != "can't fopen" && reason != "bad png sig")
+		{
+			std::cout << "STBI ERROR: " << stbi_failure_reason() << std::endl;
+			return true;
+		}
+	}
+	return false;
+}

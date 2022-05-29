@@ -175,9 +175,16 @@ std::vector<std::string> SaveFile::ObtainDropDownSettingList(std::string set)
     }
     if (set == "Fullscreen")
     {
-        return {"Fullscreen", "Windowed", "Borderless"};
+        return {"Fullscreen", "Windowed"};
     }
     return std::vector<std::string>();
+}
+
+std::vector<int> SaveFile::ObtainResolution()
+{
+    std::string resText = GetString("Resolution");
+
+    return { std::stoi(resText.substr(0,resText.find("x"))), std::stoi(resText.substr(resText.find("x") + 1,resText.length()))};
 }
 
 std::string SaveFile::GetString(std::string sett)

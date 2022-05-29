@@ -48,6 +48,8 @@ public:
 	void mouseWheel(float wheel);
 	void mouseButtonUp();
 
+	void resizeGame(int w, int h, int fullscreen);
+
 	void textInput(SDL_TextInputEvent event);
 	static AvgCamera* mainCamera;
 	static Viewpoint mainView;
@@ -61,10 +63,6 @@ public:
 
 	static Game* instance;
 	static bool patched;
-
-
-
-	bool fullscreen = false;
 
 	static int gameWidth;
 	static int gameHeight;

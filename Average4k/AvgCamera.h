@@ -16,6 +16,8 @@ public:
 
 	Rect clipRect;
 
+	float initalW, initalH;
+
 	AvgCamera(int _x, int _y, int _w, int _h)
 	{
 		handleDraw = true;
@@ -26,6 +28,9 @@ public:
 		x = _x;
 		y = _y;
 		tint.r = -1;
+
+		initalW = _w;
+		initalH = _h;
 
 		ctb = new Texture(NULL, _w, _h);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ctb->id, 0);
@@ -43,21 +48,13 @@ public:
 		shakeInten = inten;
 	}
 
-	void resChange(int w, int h)
+	void resize(float _w, float _h)
 	{
-		glDeleteTextures(1, &ctb->id);
-		glDeleteFramebuffers(1, &fb);
+		w = _w;
+		h = _h;
 
-		glGenFramebuffers(1, &fb);
-		glBindFramebuffer(GL_FRAMEBUFFER, fb);
-		w = w;
-		h = h;
-		ctb = new Texture(NULL, w, h);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ctb->id, 0);
-
-		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		GL::projection = glm::ortho(0.0f, (float)w, (float)h, 0.0f, -1.0f, 1.0f);
+		glUniformMatrix4fv(glGetUniformLocation(GL::genShader->program, "u_projection"), 1, GL_FALSE, &GL::projection[0][0]);
 	}
 
 	virtual void draw();

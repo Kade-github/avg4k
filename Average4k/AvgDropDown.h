@@ -6,8 +6,12 @@
 #include "Text.h"
 #include "AvgContainer.h"
 
+
+typedef void(__cdecl* dropDownCallback)(std::string, std::string);
+
 class AvgDropDown : public Object {
 public:
+
 	std::vector<std::string> def;
 
 	std::vector<Text*> textObjects;
@@ -27,6 +31,8 @@ public:
 	Texture* dropEnd;
 
 	Text* selectedText;
+
+	dropDownCallback call;
 
 	AvgDropDown(int _x, int _y, std::vector<std::string> _def)
 	{
@@ -77,6 +83,8 @@ public:
 		{
 			isActive = false;
 			Game::save->SetString(toModify.name, selectedText->text);
+			call(toModify.name, selectedText->text);
+			selectedText = nullptr;
 		}
 
 		if ((relX > x && relY > y) && (relX < x + (w * 1.4) && relY < y + ((h + addHeight) * 1.4)))

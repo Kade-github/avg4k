@@ -563,6 +563,9 @@
     <ClInclude Include="AvgWheel.h">
       <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
     </ClInclude>
+    <ClInclude Include="log_stream.h">
+      <Filter>Source Files\Average4k\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Average4k.rc">

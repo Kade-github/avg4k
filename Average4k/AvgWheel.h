@@ -161,8 +161,7 @@ public:
 	void setSongs(std::vector<Song>* _songs)
 	{
 		pleaseSTOP = true;
-		// yes freeze I know
-		while (!lock.try_lock()) {}
+		lock.lock();
 		for (std::map<std::string, shit>::iterator iter = wheels.begin(); iter != wheels.end(); ++iter)
 		{
 			if (iter->second.created)

@@ -6,6 +6,7 @@
 #include "AvgSprite.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
+#include "log_stream.h"
 using namespace std;
 
 #undef main
@@ -74,6 +75,8 @@ Uint32 frametimelast;
 
 Uint32 framecount;
 
+log_stream* outstream;
+
 
 
 void fpsinit() {
@@ -127,6 +130,10 @@ void CrashDmp(_EXCEPTION_POINTERS* ExceptionInfo) {
 
 	MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), file, MiniDumpWithFullMemory, &info, NULL, NULL);
 	CloseHandle(file);
+
+
+	if (outstream)
+		outstream->dump();
 }
 
 LONG PvectoredExceptionHandler(
@@ -143,6 +150,11 @@ long WINAPI UnhandledExceptionFilterHandler(LPEXCEPTION_POINTERS ex) {
 	return 0;
 }
 
+void atexit_handler()
+{
+	if (outstream)
+		outstream->dump();
+}
 
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
@@ -153,12 +165,22 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	SetUnhandledExceptionFilter(UnhandledExceptionFilterHandler);
 	//AddVectoredExceptionHandler(1, &PvectoredExceptionHandler);
+
+	std::atexit(&atexit_handler);
+	std::at_quick_exit(atexit_handler);
 	
 #ifdef  _DEBUG
 	AllocConsole();
 	freopen("conout$", "w", stdout);
 #else
 	freopen("log.txt", "w", stdout);
+	std::cout << "log init" << std::endl;
+
+	std::streambuf* origBuf = std::cout.rdbuf();
+	log_stream* logstream = new log_stream(origBuf);
+	std::cout.set_rdbuf(logstream);
+	outstream = logstream;
+	
 #endif
 	
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {

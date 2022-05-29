@@ -75,6 +75,7 @@ public:
 
 		if (selectedText != NULL && isActive)
 		{
+			isActive = false;
 			Game::save->SetString(toModify.name, selectedText->text);
 		}
 

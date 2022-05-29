@@ -135,8 +135,48 @@ setting& SaveFile::getSetting(std::string sett)
     }
 }
 
-std::vector<std::string> SaveFile::ObtainDropDownSettingList(std::string settting)
+std::vector<std::string> SaveFile::ObtainDropDownSettingList(std::string set)
 {
+    if (set == "Noteskin")
+        return {"arrow"}; // TODO: collect noteskins
+    if (set == "Resolution")
+    {
+        // current monitor resolution
+
+        int mw, mh;
+
+        std::vector<std::string> resStrings;
+
+        Helpers::GetDesktopResolution(mw, mh);
+
+        // lowest to highest
+        std::vector<std::vector<int>> resolutions;
+        resolutions.push_back({ 640,480 });
+        resolutions.push_back({ 1280,720 });
+        resolutions.push_back({ 1920,1080 });
+        resolutions.push_back({ 2048,1080 });
+        resolutions.push_back({ 2560,1440 });
+        resolutions.push_back({ 3840,2160 });
+        resolutions.push_back({ 7680,4320 });
+
+        for (int i = 0; i < resolutions.size(); i++)
+        {
+            int w, h;
+            w = resolutions[i][0];
+            h = resolutions[i][1];
+            if (w < mw && h < mh)
+            {
+                resStrings.push_back(std::to_string(w) + "x" + std::to_string(h));
+            }
+        }
+        resStrings.push_back(std::to_string(mw) + "x" + std::to_string(mh));
+
+        return resStrings;
+    }
+    if (set == "Fullscreen")
+    {
+        return {"Fullscreen", "Windowed", "Borderless"};
+    }
     return std::vector<std::string>();
 }
 

@@ -56,7 +56,7 @@ public:
 		int relX = _x - parent->x;
 		int relY = _y - parent->y + scrll;
 
-		if ((relX > x && relY > y) && (relX < x + w && relY < y + h))
+		if ((relX > x && relY > y) && (relX < x + (w * 1.42) && relY < y + (h * 1.1)))
 		{
 			def = !def;
 			if (def)

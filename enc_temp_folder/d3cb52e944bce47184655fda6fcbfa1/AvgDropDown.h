@@ -155,7 +155,6 @@ public:
 				g.h = dropTexture->height;
 				Rendering::PushQuad(&g, &srcRect, dropEnd, GL::genShader);
 			}
-			bool selected = false;
 			for (int i = 1; i < textObjects.size(); i++)
 			{
 				Rect g;
@@ -187,14 +186,11 @@ public:
 				if ((_x > g.x && _y > g.y) && (_x < g.x + (g.w) && _y < (g.y) + (g.h)))
 				{
 					selectedText = t;
-					selected = true;
 					t->alpha = 0.5;
 				}
 				else
 					t->alpha = 1;
 			}
-			if (!selected)
-				selectedText = NULL;
 		}
 	}
 };

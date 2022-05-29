@@ -43,11 +43,13 @@ void Text::setText(std::string temp)
 		surfH = message->height;
 	}
 }
+
 void Text::setCharacterSpacing(float spacing)
 {
 	TTF_SetFontCharacterSpacing(Arial, spacing);
 	setText(text);
 }
+
 void Text::draw()
 {
 	if (text.size() == 0 || text == " " || !message)

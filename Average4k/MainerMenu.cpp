@@ -807,6 +807,24 @@ void MainerMenu::leftMouseDown()
 	}
 }
 
+void dropdown_callback(std::string set, std::string value)
+{
+	if (set == "Fullscreen" || set == "Resolution")
+	{
+		std::vector<int> res = Game::save->ObtainResolution();
+
+		int fs = 0;
+
+		std::string fsType = Game::save->GetString("Fullscreen");
+		if (fsType == "Borderless")
+			fs = 2;
+		else if (fsType == "Fullscreen")
+			fs = 1;
+
+		Game::instance->resizeGame(res[0], res[1], fs);
+	}
+}
+
 
 void MainerMenu::addSettings(std::string catNam, std::vector<setting> settings)
 {
@@ -839,6 +857,7 @@ void MainerMenu::addSettings(std::string catNam, std::vector<setting> settings)
 			settingsContainer->addObject(new AvgDropDown(startX + ww + 26, hey, SaveFile::ObtainDropDownSettingList(set.name)), boxName);
 			settingsContainer->findItemByName(boxName)->y -= settingsContainer->findItemByName(itemName)->h / 2;
 			((AvgDropDown*)settingsContainer->findItemByName(boxName))->toModify = set;
+			((AvgDropDown*)settingsContainer->findItemByName(boxName))->call = (dropDownCallback)dropdown_callback;
 		}
 		else if (set.takesString)
 		{

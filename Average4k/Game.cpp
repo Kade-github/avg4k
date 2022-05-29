@@ -87,8 +87,6 @@ HANDLE multiThreadHandle;
 void Game::GetMousePos(int* mx, int* my)
 {
 	SDL_GetMouseState(mx, my);
-	(*mx) *= multiplierx;
-	(*my) *= multipliery;
 }
 
 std::vector<Text*> lines;
@@ -152,6 +150,17 @@ void Game::createGame()
 
 	save = new SaveFile();
 
+	std::vector<int> res = save->ObtainResolution();
+
+	int fs = 0;
+
+	std::string fsType = save->GetString("Fullscreen");
+	if (fsType == "Borderless")
+		fs = 2;
+	else if (fsType == "Fullscreen")
+		fs = 1;
+
+
 	noteskin = Noteskin::getNoteskin();
 
 	__transRect = new AvgRect(0,0,Game::gameWidth, Game::gameHeight);
@@ -164,6 +173,9 @@ void Game::createGame()
 	currentMenu = new StartMenu();
 	currentMenu->addCamera(mainCamera);
 	currentMenu->create();
+
+	resizeGame(res[0], res[1], fs);
+
 	currentMenu->created = true;
 	mainView.x = 0;
 	mainView.y = 0;
@@ -542,45 +554,6 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 	if (currentMenu != NULL)
 		currentMenu->keyDown(ev);
 
-	if (ev.keysym.sym == SDLK_F4)
-	{
-		fullscreen = !fullscreen;
-
-		auto w = 0;
-		auto h = 0;
-
-		if (fullscreen)
-		{
-			SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-			SDL_DisplayMode DM;
-			SDL_GetCurrentDisplayMode(0, &DM);
-		
-			w = DM.w;
-			h = DM.h;
-		}
-		else
-		{
-			SDL_SetWindowFullscreen(Game::window, 0);
-			w = 1280;
-			h = 720;
-		}
-
-		std::cout << "bruh " << w << " " << h << std::endl;
-
-		multiplierx = 1280 / w;
-		multipliery = 720 / w;
-
-		GL::projection = glm::ortho(0.0f, (float)w, (float)h, 0.0f, -1.0f, 1.0f);
-		glUniformMatrix4fv(glGetUniformLocation(GL::genShader->program, "u_projection"), 1, GL_FALSE, &GL::projection[0][0]);
-
-		glViewport(0, 0, w, h);
-		
-
-		std::cout << "FULLSCREEN MULTIPLIERS: " << multiplierx << " " << multipliery << std::endl;
-		mainCamera->w = w;
-		mainCamera->h = h;
-	}
-
 	if (ev.keysym.sym == SDLK_F11)
 	{
 		debugConsole = !debugConsole;
@@ -633,6 +606,36 @@ void Game::mouseButtonUp()
 {
 	if (currentMenu)
 		currentMenu->leftMouseUp();
+}
+
+void Game::resizeGame(int w, int h, int fullscreen)
+{
+
+
+	glViewport(0, 0, w, h);
+
+	switch (fullscreen)
+	{
+	case 0:
+		SDL_SetWindowFullscreen(Game::window, 0);
+		//SDL_SetWindowSize(window, w, h);
+		multiplierx = (float)1280 / (float)w;
+		multipliery = (float)720 / (float)h;
+		//mainCamera->resize(w, h);
+		break;
+	case 1:
+		SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_FULLSCREEN);
+		multiplierx = 1;
+		multipliery = 1;
+		mainCamera->resize(mainCamera->initalW, mainCamera->initalH);
+		break;
+	case 2:
+		SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		multiplierx = (float)1280 / (float)w;
+		multipliery = (float)720 / (float)h;
+		mainCamera->resize(w, h);
+		break;
+	}
 }
 
 //asd

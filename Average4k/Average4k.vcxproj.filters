@@ -261,6 +261,9 @@
     <ClCompile Include="Pack.cpp">
       <Filter>Source Files\Average4k\Structs\Chart\Pack</Filter>
     </ClCompile>
+    <ClCompile Include="AvgContainer.cpp">
+      <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes.h">

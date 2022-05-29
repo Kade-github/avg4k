@@ -66,7 +66,7 @@ class SaveFile
 		setting& getSetting(std::string setting);
 
 		static std::vector<std::string> ObtainDropDownSettingList(std::string settting);
-
+		std::vector<int> ObtainResolution();
 		std::string GetString(std::string setting);
 		double GetDouble(std::string setting);
 		bool GetBool(std::string setting);

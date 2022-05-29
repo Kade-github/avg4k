@@ -14,6 +14,7 @@ public:
 	static unsigned char* stbi_load_file_data(std::string filePath, int* w, int* h);
 	static Texture* stbi_load_memory(char* memory, int size);
 	static void stbi_free(unsigned char* data);
+	static bool get_error();
 	static Pixel getPixelFromImage(unsigned char* data, int width, int x, int y)
 	{
 		unsigned char* pp = data + (4 * (y * width + x));

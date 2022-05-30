@@ -69,27 +69,9 @@ void NoteObject::draw() {
     else
         texture = Game::noteskin->none;
 
-    Rect clipThingy;
-
-    if (fboMode)
-        clipThingy.x = 0;
-    else
-        clipThingy.x = fboX;
-
-    clipThingy.y = rect.y + (32 * size);
-    clipThingy.w = 64 * size;
-    clipThingy.h = holdHeight * size;
-
-    if (downscroll) {
-        clipThingy.y -= holdHeight;
-    }
-
     Rect dstRect;
     Rect srcRect;
-    if (fboMode)
-        dstRect.x = 0;
-    else
-        dstRect.x = fboX;
+    dstRect.x = obj->x;
     dstRect.y = rect.y;
     dstRect.w = rect.w;
     dstRect.h = rect.h;
@@ -125,9 +107,31 @@ void NoteObject::draw() {
             float diff2 = time - position;
 
             float offsetFromY = (bps * (diff2 / 1000)) * (64 * size);
+            Rect r;
+            r.x = obj->x;
+            r.y = obj->y + (obj->h / 2);
+            r.w = 64 * size;
+            r.h = Game::gameHeight;
+
             tile.rect.y = (receptor.y + (64 * size)) + offsetFromY;
             if (downscroll)
+            {
                 tile.rect.y = (receptor.y - (64 * size)) - offsetFromY;
+                if (!tile.active)
+                {
+                    r.y = 0;
+                    r.h = obj->y;
+                    Rendering::SetClipRect(&r);
+                }
+            }
+            else
+            {
+                if (!tile.active)
+                {
+                    Rendering::SetClipRect(&r);
+                }
+            }
+            
 
             dstRect.h = 65 * size;
 
@@ -157,7 +161,7 @@ void NoteObject::draw() {
                     Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->holdend, GL::genShader);
                 }
             }
-
+            Rendering::SetClipRect(NULL);
         }
     dstRect.h = rect.h;
 

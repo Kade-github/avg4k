@@ -101,7 +101,7 @@ void Gameplay::removeNote(NoteObject* object)
 			}),
 		spawnedNotes.end());
 	object->connected->killed = true;
-	colGroups[object->lane]->children.erase(colGroups[object->lane]->children.begin());
+	removeObj(object);
 
 }
 
@@ -588,15 +588,6 @@ void Gameplay::create() {
 		add(r);
 	}
 
-	for (int i = 0; i < receptors.size(); i++)
-	{
-		// create a group
-		ReceptorObject* r = receptors[i];
-		AvgGroup* group = new AvgGroup(r->x, 0, r->w, Game::gameHeight);
-		colGroups.push_back(group);
-		add(group);
-	}
-
 	add(Judgement);
 	add(Combo);
 
@@ -673,27 +664,6 @@ void Gameplay::update(Events::updateEvent event)
 	bruh.y = 0;
 	bruh.h = 720;
 	bruh.w = 1280;
-
-	Rect ll;
-	ll.y = 0;
-	ll.w = 64 * Game::save->GetDouble("Note Size");
-	ll.h = Game::gameHeight;
-
-	int indexG = 0;
-	for (AvgGroup* group : colGroups) // reset clips
-	{
-		ll.x = receptors[indexG]->x;
-		bool removeThingy = true;
-		for (int i = 0; i < spawnedNotes.size(); i++)
-		{
-			NoteObject* n = spawnedNotes[i];
-			if (n->lane == indexG && n->holdsActive != 0 && n->heldTilings.size() > 3)
-				removeThingy = false;
-		}
-		if (removeThingy)
-			group->clipRect = ll;
-		indexG++;
-	}
 
 	if (Judgement->scale > 1.0)
 	{
@@ -960,7 +930,7 @@ void Gameplay::update(Events::updateEvent event)
 				spawnedNotes.push_back(object);
 				object->create();
 				notesToPlay.erase(notesToPlay.begin());
-				colGroups[object->lane]->add(object);
+				add(object);
 			}
 			else if (n.type == Note_Tail || n.type == Note_Mine)
 			{
@@ -1086,7 +1056,7 @@ void Gameplay::update(Events::updateEvent event)
 							{
 								receptors[note->lane]->lightUpTimer = 195;
 							}
-							if (offset - positionInSong <= Judge::hitWindows[1] * 0.2 && !tile.fucked)
+							if (offset - positionInSong <= Judge::hitWindows[1] * 0.1 && !tile.fucked)
 							{
 								tile.active = false;
 							}
@@ -1102,25 +1072,7 @@ void Gameplay::update(Events::updateEvent event)
 					receptorRect.x = receptors[note->lane]->x;
 					receptorRect.y = receptors[note->lane]->y;
 					note->debug = debug;
-
-					Rect l;
-					l.x = receptorRect.x;
-					l.y = (receptorRect.y + 40);
-					l.w = Game::gameWidth;
-					l.h = Game::gameHeight - (receptorRect.y + 32);
-					if (downscroll)
-					{
-						l.y = 0;
-						l.h = receptorRect.y + 48;
-					}
-
 					//SDL_SetRenderTarget(Game::renderer, Game::mainCamera->cameraTexture);
-
-					if (keys[note->lane] || botplay)
-					{
-						if (holding[note->lane] || botplay)
-							colGroups[note->lane]->clipRect = l;
-					}
 
 				}
 
@@ -1146,7 +1098,7 @@ void Gameplay::update(Events::updateEvent event)
 					float whHold = MainerMenu::currentSelectedSong.getTimeFromBeat(tile.beat, MainerMenu::currentSelectedSong.getSegmentFromBeat(tile.beat));
 					float diff = whHold - positionInSong;
 
-					if (diff < -Judge::hitWindows[3] && tile.active && playing)
+					if (diff < -Judge::hitWindows[4] && tile.active && playing)
 					{
 						//std::cout << note->lane << " fucked " << diff << " time: " << whHold << " song: " << positionInSong << std::endl;
 						miss(note);
@@ -1161,7 +1113,6 @@ void Gameplay::update(Events::updateEvent event)
 }
 void Gameplay::cleanUp()
 {
-	colGroups.clear();
 	spawnedNotes.clear();
 	notesToPlay.clear();
 

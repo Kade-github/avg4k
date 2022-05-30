@@ -1086,7 +1086,7 @@ void Gameplay::update(Events::updateEvent event)
 							{
 								receptors[note->lane]->lightUpTimer = 195;
 							}
-							if (offset - positionInSong <= Judge::hitWindows[2] && !tile.fucked)
+							if (offset - positionInSong <= Judge::hitWindows[1] * 0.2 && !tile.fucked)
 							{
 								tile.active = false;
 							}

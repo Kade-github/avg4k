@@ -105,8 +105,18 @@ void NoteObject::draw() {
 
     //Rendering::SetClipRect(&clipThingy);
 
-    if (holdsActive > 1)
-    {
+
+    int activeH = 0;
+
+    for (int i = 0; i < heldTilings.size(); i++) {
+        holdTile& tile = heldTilings[i];
+
+        if (heldTilings[i].active)
+            activeH++;
+    }
+    if (activeH != holdsActive)
+        holdsActive = activeH;
+
 
         for (int i = 0; i < heldTilings.size(); i++) {
             holdTile& tile = heldTilings[i];
@@ -149,27 +159,11 @@ void NoteObject::draw() {
             }
 
         }
-    }
     dstRect.h = rect.h;
 
     dstRect.y = rect.y;
 
     //Rendering::SetClipRect(NULL);
-
-    int activeH = 0;
-
-    for (int i = 0; i < heldTilings.size(); i++) {
-        holdTile& tile = heldTilings[i];
-        float time = currentChart->getTimeFromBeat(tile.beat, currentChart->getSegmentFromBeat(tile.beat));
-
-        float diff2 = time - position;
-        bool condition = diff2 > -Judge::hitWindows[4];
-
-        if (heldTilings[i].active || condition)
-            activeH++;
-    }
-    if (activeH != holdsActive)
-        holdsActive = activeH;
 
 
     if (active) {

@@ -279,6 +279,8 @@ void MainerMenu::create()
 
 		SongGather::gatherNoPackSteamSongsAsync(asyncSongs);
 	}
+	else
+		((Text*)soloContainer->findItemByName("packsBottom"))->text = packs.size() + " loaded";
 
 	for (Pack p : packs)
 	{

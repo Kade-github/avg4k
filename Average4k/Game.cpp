@@ -558,15 +558,9 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 	{
 		debugConsole = !debugConsole;
 	}
-
-	if (objects != nullptr)
-	{
-		for (int i = 0; i < objects->size(); i++)
-		{
-			Object* bruh = (*objects)[i];
-			bruh->keyDown(ev);
-		}
-	}
+	if (currentMenu)
+		for (Object* obj : mainCamera->children)
+			obj->keyDown(ev);
 
 	MUTATE_END
 }

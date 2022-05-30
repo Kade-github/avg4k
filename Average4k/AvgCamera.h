@@ -20,6 +20,7 @@ public:
 
 	AvgCamera(int _x, int _y, int _w, int _h)
 	{
+		id = 690690690;
 		handleDraw = true;
 		glGenFramebuffers(1, &fb);
 		glBindFramebuffer(GL_FRAMEBUFFER, fb);

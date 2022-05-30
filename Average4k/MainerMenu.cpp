@@ -197,6 +197,7 @@ void selectedSongCallback(int sId)
 
 void MainerMenu::create()
 {
+	resetStuff();
 	bg = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "darkmodebg.png"));
 	bg->create();
 	bg->w = 1286;

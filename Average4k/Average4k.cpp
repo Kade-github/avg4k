@@ -9,6 +9,8 @@
 #include "log_stream.h"
 using namespace std;
 
+#define NOBUF
+
 #undef main
 
 #ifdef STATIC_LINK
@@ -160,7 +162,7 @@ void atexit_handler()
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	PSTR lpCmdLine, INT nCmdShow)
 {
-	VM_START
+	
 		
 
 	SetUnhandledExceptionFilter(UnhandledExceptionFilterHandler);
@@ -175,16 +177,18 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #else
 	freopen("log.txt", "w", stdout);
 	std::cout << "log init" << std::endl;
-
+#ifndef NOBUF
 	std::streambuf* origBuf = std::cout.rdbuf();
 	log_stream* logstream = new log_stream(origBuf);
 	std::cout.set_rdbuf(logstream);
 	outstream = logstream;
-	
+#endif
 #endif
 	
+	VM_START
+
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-		std::cerr << "SDL2 video subsystem couldn't be initialized. Error: "
+		std::cout << "SDL2 video subsystem couldn't be initialized. Error: "
 			<< SDL_GetError()
 			<< std::endl;
 		exit(1);

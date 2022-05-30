@@ -374,6 +374,7 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 				return;
 			if (!isHost && !waitingForStart)
 				return;
+			MainerMenu::isInLobby = true;
 			Game::instance->transitionToMenu(new MainerMenu());
 
 

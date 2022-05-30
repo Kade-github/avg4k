@@ -9,7 +9,7 @@
 #include "log_stream.h"
 using namespace std;
 
-#define NOBUF
+//#define NOBUF
 
 #undef main
 

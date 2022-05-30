@@ -175,7 +175,7 @@ std::vector<std::string> SaveFile::ObtainDropDownSettingList(std::string set)
     }
     if (set == "Fullscreen")
     {
-        return {"Fullscreen", "Windowed"};
+        return {"Fullscreen", "Windowed", "Borderless"};
     }
     return std::vector<std::string>();
 }

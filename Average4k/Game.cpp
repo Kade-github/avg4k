@@ -44,6 +44,9 @@ std::string Game::version;
 
 bool debug_takingInput;
 
+float Game::wW = 1280;
+float Game::wH = 720;
+
 std::string debug_string;
 
 AvgRect* consoleBG;
@@ -87,6 +90,8 @@ HANDLE multiThreadHandle;
 void Game::GetMousePos(int* mx, int* my)
 {
 	SDL_GetMouseState(mx, my);
+	*mx *= multiplierx;
+	*my *= multipliery;
 }
 
 std::vector<Text*> lines;
@@ -602,29 +607,21 @@ void Game::mouseButtonUp()
 void Game::resizeGame(int w, int h, int fullscreen)
 {
 
-
-	glViewport(0, 0, w, h);
-
+	wW = w;
+	wH = h;
+	SDL_SetWindowSize(window, w, h);
+	multiplierx = (float)1280 / (float)w;
+	multipliery = (float)720 / (float)h;
 	switch (fullscreen)
 	{
 	case 0:
 		SDL_SetWindowFullscreen(Game::window, 0);
-		//SDL_SetWindowSize(window, w, h);
-		multiplierx = (float)1280 / (float)w;
-		multipliery = (float)720 / (float)h;
-		//mainCamera->resize(w, h);
 		break;
 	case 1:
 		SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_FULLSCREEN);
-		multiplierx = 1;
-		multipliery = 1;
-		mainCamera->resize(mainCamera->initalW, mainCamera->initalH);
 		break;
 	case 2:
 		SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-		multiplierx = (float)1280 / (float)w;
-		multipliery = (float)720 / (float)h;
-		mainCamera->resize(w, h);
 		break;
 	}
 }

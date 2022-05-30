@@ -253,7 +253,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	ImGui::StyleColorsDark();
 
 
-	GL::projection = glm::ortho(0.0f, (float)1280, (float)720, 0.0f, -1.0f, 1.0f);
+	GL::projection = glm::ortho(0.0f, 1280.0f, 720.0f, 0.0f, -1.0f, 1.0f);
 
 	GL::genShader = new Shader();
 	GL::genShader->GL_CompileShader(NULL, NULL);
@@ -307,7 +307,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		double now_tick = (double)SDL_GetTicks();
 		if (now_tick >= next_tick)
 		{
-			glViewport(0, 0, 1280, 720);
+			glViewport(0, 0, game->wW, game->wH);
 			bruh = time;
 			const Uint32 startTime = SDL_GetTicks();
 			LAST = NOW;

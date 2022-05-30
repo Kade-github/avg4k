@@ -27,6 +27,8 @@ public:
 	static float multiplierx;
 	static float multipliery;
 
+	static float wW, wH;
+
 
 	bool isSteam = true;
 	bool flowtime = false;

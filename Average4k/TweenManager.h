@@ -184,6 +184,12 @@ namespace Tweening
 
 			}
 
+			if (!t.obj)
+			{
+				tweenRemove.push_back(t);
+				return;
+			}
+
 			switch (t.type)
 			{
 			case tt_Alpha:

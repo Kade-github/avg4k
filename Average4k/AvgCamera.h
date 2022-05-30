@@ -54,8 +54,8 @@ public:
 		w = _w;
 		h = _h;
 
-		GL::projection = glm::ortho(0.0f, (float)w, (float)h, 0.0f, -1.0f, 1.0f);
-		glUniformMatrix4fv(glGetUniformLocation(GL::genShader->program, "u_projection"), 1, GL_FALSE, &GL::projection[0][0]);
+		float aspect = w / h;
+
 	}
 
 	virtual void draw();

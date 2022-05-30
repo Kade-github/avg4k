@@ -558,6 +558,8 @@ void Game::update(Events::updateEvent update)
 		{
 			icon.w = error_major->width;
 			icon.h = error_major->height;
+			errorTitleText->x = (icon.x + icon.w) + 6;
+			errorTitleText->y = icon.y + 2;
 		}
 		else
 		{
@@ -565,10 +567,9 @@ void Game::update(Events::updateEvent update)
 			icon.y = startingY + 2;
 			icon.w = error_minor->width;
 			icon.h = error_minor->height;
+			errorTitleText->x = (icon.x + icon.w) + 6;
+			errorTitleText->y = icon.y + 4;
 		}
-
-		errorTitleText->x = (icon.x + icon.w) + 6;
-		errorTitleText->y = icon.y + 4;
 
 		if (errorType)
 			Rendering::PushQuad(&icon, &srcRect, error_major, GL::genShader);

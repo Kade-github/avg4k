@@ -745,6 +745,8 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
             auto closeCode = con->get_remote_close_code();
             std::string closeReason = con->get_remote_close_reason();
             
+            if (closeReason.size() != 0)
+                Game::asyncShowErrorWindow("Disconnected",closeReason,true);
 
 
             connectionData->c.reset();

@@ -4,6 +4,7 @@
 #include "CPacketJoinServer.h"
 #include "MultiplayerLobby.h"
 #include "CPacketHostServer.h"
+#include "MainerMenu.h"
 
 void MultiplayerLobbies::refreshLobbies() {
 	VM_START
@@ -194,7 +195,7 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 		switch (event.keysym.sym)
 		{
 		case SDLK_ESCAPE:
-			Game::instance->transitionToMenu(new MainMenu());
+			Game::instance->transitionToMenu(new MainerMenu());
 
 			for (bruh t : avatars)
 				delete t.avatar;
@@ -215,7 +216,7 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 		switch (event.keysym.sym)
 		{
 		case SDLK_ESCAPE:
-			Game::instance->transitionToMenu(new MainMenu());
+			Game::instance->transitionToMenu(new MainerMenu());
 
 			for (bruh t : avatars)
 			{

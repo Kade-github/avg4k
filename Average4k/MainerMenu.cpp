@@ -49,8 +49,17 @@ int selectedContainerIndex = 0;
 
 bool chartUploading = false;
 
+
+int lastTrans = 0;
+int transToContainer = 0;
+int despawn = 0;
+
 void resetStuff()
 {
+	transToContainer = 0;
+	despawn = 0;
+	lastTrans = 0;
+	selectedContainerIndex = 0;
 	packIndex = 0;
 	lastHeight = 0;
 	catIndex = 0;
@@ -281,7 +290,7 @@ void MainerMenu::create()
 	{
 		steamWorkshop.background = "";
 		steamWorkshop.metaPath = "unfl";
-		steamWorkshop.packName = "Steam Workshop";
+		steamWorkshop.packName = "Workshop/Local";
 		steamWorkshop.showName = true;
 		steamWorkshop.isSteam = true;
 		steamWorkshop.songs = {};
@@ -441,7 +450,7 @@ void MainerMenu::update(Events::updateEvent ev)
 				continue;
 			steamWorkshop.songs.push_back(s);
 			for (Pack& p : packs)
-				if (p.packName == "Steam Workshop")
+				if (p.packName == "Workshop/Local")
 					p.songs = steamWorkshop.songs;
 		}
 
@@ -645,7 +654,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 					resetStuff();
 					if (!isInLobby)
 						Game::instance->transitionToMenu(new Gameplay());
-					else
+					else if (isInLobby && selectedSong.isSteam)
 						Game::instance->transitionToMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, true));
 				}
 			break;
@@ -756,9 +765,6 @@ void MainerMenu::selectPack(int index)
 	
 }
 
-int lastTrans = 0;
-int transToContainer = 0;
-int despawn = 0;
 void transContainerThing()
 {
 	MainerMenu* instance = (MainerMenu*)Game::currentMenu;
@@ -832,15 +838,18 @@ void MainerMenu::leftMouseDown()
 	int x, y;
 	Game::GetMousePos(&x, &y);
 
-	if ((x > selectSolo->x && y > soloText->y) && (x < selectSolo->x + selectSolo->w && y < selectSolo->y))
-		selectContainer(0);
-	if ((x > selectMulti->x && y > multiText->y) && (x < selectMulti->x + selectMulti->w && y < selectMulti->y))
-	{
-		selectContainer(1);
-		return;
-	}
-	if ((x > selectSettings->x && y > settingsText->y) && (x < selectSettings->x + selectSettings->w && y < selectSettings->y))
-		selectContainer(2);
+	if (selectedContainerIndex != 0)
+		if ((x > selectSolo->x && y > soloText->y) && (x < selectSolo->x + selectSolo->w && y < selectSolo->y))
+			selectContainer(0);
+	if (selectedContainerIndex != 1)
+		if ((x > selectMulti->x && y > multiText->y) && (x < selectMulti->x + selectMulti->w && y < selectMulti->y))
+		{
+			selectContainer(1);
+			return;
+		}
+	if (selectedContainerIndex != 2)
+		if ((x > selectSettings->x && y > settingsText->y) && (x < selectSettings->x + selectSettings->w && y < selectSettings->y))
+			selectContainer(2);
 
 	if (selectedContainerIndex == 0 && !uploading)
 	{

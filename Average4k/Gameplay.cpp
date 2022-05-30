@@ -716,9 +716,8 @@ void Gameplay::update(Events::updateEvent event)
 
 	curSeg = MainerMenu::currentSelectedSong.getSegmentFromTime(positionInSong);
 	beat = MainerMenu::currentSelectedSong.getBeatFromTimeOffset(positionInSong, curSeg);
-	if (lastBPM != curSeg.bpm && Game::gameplayEvents_DB)
+	if (lastBPM != curSeg.bpm)
 	{
-		Game::instance->db_addLine("bpm change to " + std::to_string(curSeg.bpm));
 		song->bpm = curSeg.bpm;
 		lastBPM = curSeg.bpm;
 	}

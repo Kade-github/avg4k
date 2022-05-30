@@ -120,7 +120,7 @@ void NoteObject::draw() {
                 if (!tile.active)
                 {
                     r.y = 0;
-                    r.h = obj->y;
+                    r.h = obj->y + (obj->h / 2);
                     Rendering::SetClipRect(&r);
                 }
             }

@@ -244,9 +244,14 @@ void Multiplayer::SendPacket(std::string data, PacketType packet) {
     MUTATE_END
 }
 
+bool integ = false;
+bool prot = false;
+bool debugger = false;
+bool vm = false;
+
 DWORD WINAPI NewThread(LPVOID param) {
     for (;;) {
-        VM_START
+        VM_LION_BLACK_START
         Sleep(1000);
 
         CPacketStatus heartbeat;
@@ -260,7 +265,65 @@ DWORD WINAPI NewThread(LPVOID param) {
         heartbeat.Status = "hello";
 
         Multiplayer::sendMessage<CPacketStatus>(heartbeat);
-        VM_END
+
+        CPacketStatus send;
+        int monkey = 32;
+        int cock = 46;
+        int cockmonkey = 567;
+        int monkeysexCock = 7372;
+
+        if (integ) {
+            CHECK_CODE_INTEGRITY(monkey, 64);
+
+            if (monkey != 64) {
+
+                send.code = 6743;
+                send.Order = 0;
+                send.PacketType = eCPacketStatus;
+                send.Status = "ok";
+                Multiplayer::sendMessage<CPacketStatus>(send);
+            }
+            integ = false;
+        }
+        if (prot) {
+            CHECK_PROTECTION(cock, 76);
+
+            if (cock != 76) {
+                send.code = 6744;
+                send.Order = 0;
+                send.PacketType = eCPacketStatus;
+                send.Status = "ok";
+                Multiplayer::sendMessage<CPacketStatus>(send);
+            }
+            prot = false;
+        }
+
+        if (debugger) {
+            CHECK_DEBUGGER(cockmonkey, 878);
+
+            if (cockmonkey != 878) {
+                send.code = 6745;
+                send.Order = 0;
+                send.PacketType = eCPacketStatus;
+                send.Status = "ok";
+                Multiplayer::sendMessage<CPacketStatus>(send);
+            }
+            debugger = false;
+        }
+
+        if (vm) {
+            CHECK_VIRTUAL_PC(monkeysexCock, 4234);
+            if (cockmonkey != 4234) {
+                send.code = 6746;
+                send.Order = 0;
+                send.PacketType = eCPacketStatus;
+                send.Status = "ok";
+                Multiplayer::sendMessage<CPacketStatus>(send);
+            }
+            vm = false;
+        }
+
+        VM_LION_BLACK_END
     }
 }
 
@@ -272,7 +335,7 @@ DWORD WINAPI pleaseLogin(LPVOID agh)
 }
 
 void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr msg) {
-    MUTATE_START
+    VM_TIGER_WHITE_START
     PacketType type;
     if (msg->get_opcode() != websocketpp::frame::opcode::BINARY)
         return;
@@ -372,12 +435,6 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
         msgpack::unpacked result;
 
         msgpack::object obj;
-
-        CPacketStatus send;
-        int monkey = 32;
-        int cock = 46;
-        int cockmonkey = 567;
-        int monkeysexCock = 7372;
         switch (type)
         {
         case eSPacketStatus:
@@ -402,53 +459,16 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
                 std::cout << "not found" << std::endl;
                 break;
             case 3301:             
-                CHECK_CODE_INTEGRITY(monkey, 64);
-                
-                if (monkey != 64) {
-
-                    send.code = 6743;
-                    send.Order = 0;
-                    send.PacketType = eCPacketStatus;
-                    send.Status = "ok";
-                    Multiplayer::sendMessage<CPacketStatus>(send);
-                }
+                integ = true;
                 break;
             case 3302:
-                   
-                CHECK_PROTECTION(cock, 76);
-
-                if (cock != 76) {
-                    send.code = 6744;
-                    send.Order = 0;
-                    send.PacketType = eCPacketStatus;
-                    send.Status = "ok";
-                    Multiplayer::sendMessage<CPacketStatus>(send);
-                }
+                prot = true;
                 break;
-
             case 3303:
-
-                CHECK_DEBUGGER(cockmonkey, 878);
-
-                if (cockmonkey != 878) {
-                    send.code = 6745;
-                    send.Order = 0;
-                    send.PacketType = eCPacketStatus;
-                    send.Status = "ok";
-                    Multiplayer::sendMessage<CPacketStatus>(send);
-                }
+                debugger = true;
                 break;
-
             case 3304:
-
-                CHECK_VIRTUAL_PC(monkeysexCock, 4234);
-                if (cockmonkey != 4234) {
-                    send.code = 6746;
-                    send.Order = 0;
-                    send.PacketType = eCPacketStatus;
-                    send.Status = "ok";
-                    Multiplayer::sendMessage<CPacketStatus>(send);
-                }
+                vm = true;
                 break;
             }
             p.data = data;
@@ -503,7 +523,7 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
     catch (std::exception e) {
         std::cout << "shit " << e.what() << " - THINGY CASTING " << type << std::endl;
     }
-    MUTATE_END
+    VM_TIGER_WHITE_END
 }
 
 

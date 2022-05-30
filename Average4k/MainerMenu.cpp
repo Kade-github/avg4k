@@ -890,6 +890,13 @@ void dropdown_callback(std::string set, std::string value)
 
 		Game::instance->resizeGame(res[0], res[1], fs);
 	}
+
+	if (set == "Noteskin")
+	{
+		Game::noteskin = Noteskin::getNoteskin();
+		resetStuff();
+		Game::instance->transitionToMenu(new MainMenu());
+	}
 }
 
 

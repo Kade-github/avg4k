@@ -683,6 +683,7 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
             websocketpp::lib::error_code ec;
             client::connection_ptr con = connectionData->c.get_connection(url, ec);
             if (ec) {
+                Game::asyncShowErrorWindow("Connection failure!", "Couldn't connect to Average4K Servers.", true);
                 std::cout << "could not create connection because: " << ec.message() << std::endl;
                 return 0;
             }
@@ -771,6 +772,7 @@ void Multiplayer::login()
 
 
     if (SteamUser() == nullptr) {
+        Game::asyncShowErrorWindow("Steam not open!", "Steam is required to run this build.", true);
         std::cout << "User not logged into steam" << std::endl;
         Game::instance->isSteam = false;
         return;
@@ -799,6 +801,7 @@ void Multiplayer::OnSteamAuthTicket(EncryptedAppTicketResponse_t* pEncryptedAppT
 
     if (!result)
     {
+        Game::asyncShowErrorWindow("Authorization Failure!", "Failed to authorize your reuqest.", true);
         std::cout << "bruh bruh" << std::endl;
         return;
     }

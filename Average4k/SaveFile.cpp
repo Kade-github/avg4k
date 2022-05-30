@@ -1,5 +1,6 @@
 #include "SaveFile.h"
 #include "Helpers.h"
+#include "Chart.h"
 template <typename T>
 bool contains(std::vector<T> vec, const T& elem)
 {
@@ -138,7 +139,19 @@ setting& SaveFile::getSetting(std::string sett)
 std::vector<std::string> SaveFile::ObtainDropDownSettingList(std::string set)
 {
     if (set == "Noteskin")
-        return {"arrow"}; // TODO: collect noteskins
+    {
+        std::vector<std::string> noteskins;
+        for (const auto& entry : std::filesystem::directory_iterator("assets/noteskin/"))
+        {
+            if (entry.is_directory())
+            {
+                std::vector<std::string> spl = Chart::split(entry.path().string(), '/');
+                noteskins.push_back(spl[spl.size() - 1]);
+            }
+        }
+
+        return noteskins;
+    }
     if (set == "Resolution")
     {
         // current monitor resolution

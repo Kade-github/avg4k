@@ -25,6 +25,8 @@ AvgRect* __transRect;
 
 vector<Object*>* objects;
 
+bool Game::errorWindowOpen = false;
+
 std::vector<Events::packetEvent> packetsToBeHandeld;
 std::map<std::string,Texture*> texturesToCreate;
 
@@ -40,6 +42,17 @@ Game* Game::instance = NULL;
 chartMeta Game::loadedChart;
 bool Game::patched = false;
 
+Texture* error_button;
+Texture* error_major;
+Texture* error_minor;
+
+Rect errorButtonRect;
+bool errorType;
+
+Text* errorTitleText;
+Text* errorDescriptionText;
+Text* errorButtonText;
+
 std::string Game::version;
 
 bool debug_takingInput;
@@ -51,6 +64,12 @@ std::string debug_string;
 
 AvgRect* consoleBG;
 AvgRect* consoleCMDBar;
+
+struct needWindowPop {
+	std::string title;
+	std::string desc;
+	bool minor;
+};
 
 bool debugConsole;
 Text* debugText;
@@ -86,6 +105,55 @@ bool Game::startConnect = false;
 bool transCompleted = false;
 
 HANDLE multiThreadHandle;
+
+needWindowPop asyncPop;
+
+void Game::asyncShowErrorWindow(std::string title, std::string description, bool major)
+{
+	std::lock_guard cock(pog);
+	asyncPop.title = title;
+	asyncPop.desc = description;
+	asyncPop.minor = major;
+}
+
+void Game::showErrorWindow(std::string title, std::string description, bool major)
+{
+	if (!errorTitleText)
+		errorTitleText = new Text(0, 0, title, 18, "arial");
+	else
+		errorTitleText->setText(title);
+	errorTitleText->setCharacterSpacing(3);
+
+	errorType = major;
+
+	if (!errorDescriptionText)
+		errorDescriptionText = new Text(0, 0, description, 14, "arial");
+	else
+		errorDescriptionText->setText(description);
+	errorDescriptionText->setCharacterSpacing(2.33);
+	errorDescriptionText->color = { 0,0,0 };
+
+	if (!errorButtonText)
+		errorButtonText = new Text(0, 0, "ok", 14, "arialbd");
+	errorButtonText->setCharacterSpacing(2.33);
+	errorButtonText->color = { 0,0,0 };
+
+	if (!error_button)
+	{
+		error_button = Noteskin::getMenuElement(noteskin, "roundedbutton_ok.png");
+		error_major = Noteskin::getMenuElement(noteskin, "majorerroricon.png");
+		error_minor = Noteskin::getMenuElement(noteskin, "minorerroricon.png");
+	}
+
+	int startingX = (1280 / 2) - (433 / 2);
+	int startingY = (720 / 2) - (185 / 2);
+
+	errorButtonRect.x = startingX + (433 - 92);
+	errorButtonRect.y = startingY + (185 - 46);
+	errorButtonRect.w = 80;
+	errorButtonRect.h = 39;
+	errorWindowOpen = true;
+}
 
 void Game::GetMousePos(int* mx, int* my)
 {
@@ -211,6 +279,17 @@ void Game::createGame()
 
 void Game::mouseButtonDown()
 {
+	if (errorWindowOpen)
+	{
+		int mx, my;
+		GetMousePos(&mx, &my);
+		if (mx >= errorButtonRect.x && my >= errorButtonRect.y && mx < errorButtonRect.x + errorButtonRect.w && my < errorButtonRect.y + errorButtonRect.h)
+		{
+			errorWindowOpen = false;
+		}
+		return;
+	}
+	 
 	if (objects != nullptr)
 	{
 		for (int i = 0; i < objects->size(); i++)
@@ -304,6 +383,11 @@ void Game::update(Events::updateEvent update)
 			// copy shit
 			bruh = packetsToBeHandeld;
 			packetsToBeHandeld.clear();
+			if (asyncPop.title.size() != 0)
+			{
+				showErrorWindow(asyncPop.title, asyncPop.desc, asyncPop.minor);
+				asyncPop.title = "";
+			}
 		}
 
 		for (int i = 0; i < bruh.size(); i++)
@@ -420,6 +504,89 @@ void Game::update(Events::updateEvent update)
 	if (transitioning)
 		__transRect->draw();
 
+	
+
+	if (errorWindowOpen)
+	{
+		Rect srcRect;
+		srcRect.x = 0;
+		srcRect.y = 0;
+		srcRect.w = 1;
+		srcRect.h = 1;
+
+		int startingX = (1280 / 2) - (433 / 2);
+		int startingY = (720 / 2) - (185 / 2);
+
+		Rect mainBackground;
+		mainBackground.x = startingX;
+		mainBackground.y = startingY;
+		mainBackground.w = 433;
+		mainBackground.h = 185;
+
+		Rect overlay;
+		overlay.x = 0;
+		overlay.y = 0;
+		overlay.w = 1280;
+		overlay.h = 1280;
+
+		overlay.r = 0;
+		overlay.g = 0;
+		overlay.b = 0;
+		overlay.a = 0.5;
+
+		Rect topHeader;
+		topHeader.x = startingX;
+		topHeader.y = startingY;
+		topHeader.w = 433;
+		topHeader.h = 33;
+
+		topHeader.r = 255;
+		topHeader.g = 55;
+		topHeader.b = 79;
+
+		Rendering::PushQuad(&overlay, &srcRect, NULL, GL::genShader);
+		Rendering::PushQuad(&mainBackground, &srcRect, NULL, GL::genShader);
+		Rendering::PushQuad(&topHeader, &srcRect, NULL, GL::genShader);
+
+		int iconW = error_major->width;
+
+
+		Rect icon;
+		icon.x = startingX + 6;
+		icon.y = startingY + 6;
+		if (errorType)
+		{
+			icon.w = error_major->width;
+			icon.h = error_major->height;
+		}
+		else
+		{
+			icon.x = startingX + 2;
+			icon.y = startingY + 2;
+			icon.w = error_minor->width;
+			icon.h = error_minor->height;
+		}
+
+		errorTitleText->x = (icon.x + icon.w) + 6;
+		errorTitleText->y = icon.y + 4;
+
+		if (errorType)
+			Rendering::PushQuad(&icon, &srcRect, error_major, GL::genShader);
+		else
+			Rendering::PushQuad(&icon, &srcRect, error_minor, GL::genShader);
+
+		errorTitleText->draw();
+
+		errorDescriptionText->x = (startingX + (433 / 2)) - (errorDescriptionText->w / 2);
+		errorDescriptionText->y = (startingY + (185 / 2)) - (errorDescriptionText->h / 2);
+
+		errorDescriptionText->draw();
+
+		Rendering::PushQuad(&errorButtonRect, &srcRect, error_button, GL::genShader);
+		errorButtonText->x = (errorButtonRect.x + errorButtonRect.w / 2) - (errorButtonText->w / 2);
+		errorButtonText->y = (errorButtonRect.y + errorButtonRect.h / 2) - (errorButtonText->h / 2);
+		errorButtonText->draw();
+	}
 
 	//SDL_RenderPresent(renderer);
 	MUTATE_END
@@ -427,7 +594,7 @@ void Game::update(Events::updateEvent update)
 
 void Game::keyDown(SDL_KeyboardEvent ev)
 {
-	if (transitioning || !currentMenu)
+	if (transitioning || !currentMenu || errorWindowOpen)
 		return;
 	if (!currentMenu->created)
 		return;
@@ -572,7 +739,7 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 
 void Game::keyUp(SDL_KeyboardEvent ev)
 {
-	if (transitioning || !currentMenu)
+	if (transitioning || !currentMenu || errorWindowOpen)
 		return;
 	if (!currentMenu->created)
 		return;
@@ -589,7 +756,7 @@ void Game::keyUp(SDL_KeyboardEvent ev)
 }
 void Game::mouseWheel(float wheel)
 {
-	if (!currentMenu)
+	if (!currentMenu || errorWindowOpen)
 		return;
 	if (currentMenu->created)
 	{
@@ -600,7 +767,7 @@ void Game::mouseWheel(float wheel)
 }
 void Game::mouseButtonUp()
 {
-	if (currentMenu)
+	if (currentMenu || errorWindowOpen)
 		currentMenu->leftMouseUp();
 }
 
@@ -687,7 +854,7 @@ void Game::textInput(SDL_TextInputEvent event)
 		return;
 	}
 
-	if (currentMenu)
+	if (currentMenu && !errorWindowOpen)
 	{
 		for (Object* obj : mainCamera->children)
 			obj->textInput(event);

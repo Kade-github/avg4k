@@ -28,7 +28,7 @@ public:
 	static float multipliery;
 
 	static float wW, wH;
-
+	static bool errorWindowOpen;
 
 	bool isSteam = true;
 	bool flowtime = false;
@@ -40,6 +40,8 @@ public:
 	static bool startConnect;
 	static Menu* toGoTo;
 
+	static void asyncShowErrorWindow(std::string title, std::string description, bool minor);
+	static void showErrorWindow(std::string title, std::string description, bool minor);
 
 	static void GetMousePos(int* mx, int* my);
 

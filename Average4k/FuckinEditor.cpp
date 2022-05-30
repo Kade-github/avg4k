@@ -825,6 +825,7 @@ void window_notif() {
 
 void FuckinEditor::create()
 {
+	Game::showErrorWindow("Warning", "editor is super wip, your game is fucked.", false);
 	noteZoom = 1;
 	
 	downscroll = Game::save->GetBool("downscroll");

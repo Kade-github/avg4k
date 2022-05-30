@@ -105,56 +105,50 @@ void NoteObject::draw() {
 
     //Rendering::SetClipRect(&clipThingy);
 
-    for (int i = 0; i < heldTilings.size(); i++) {
-        holdTile& tile = heldTilings[i];
-        float time = currentChart->getTimeFromBeat(tile.beat, currentChart->getSegmentFromBeat(tile.beat));
+    if (holdsActive > 1)
+    {
 
-        float diff2 = time - position;
+        for (int i = 0; i < heldTilings.size(); i++) {
+            holdTile& tile = heldTilings[i];
+            float time = currentChart->getTimeFromBeat(tile.beat, currentChart->getSegmentFromBeat(tile.beat));
 
-        float offsetFromY = (bps * (diff2 / 1000)) * (64 * size);
-        tile.rect.y = (receptor.y + (64 * size)) + offsetFromY;
-        if (downscroll)
-            tile.rect.y = (receptor.y - (64 * size))  - offsetFromY;
+            float diff2 = time - position;
 
-        dstRect.h = 65 * size;
+            float offsetFromY = (bps * (diff2 / 1000)) * (64 * size);
+            tile.rect.y = (receptor.y + (64 * size)) + offsetFromY;
+            if (downscroll)
+                tile.rect.y = (receptor.y - (64 * size)) - offsetFromY;
 
-        dstRect.y = tile.rect.y;
+            dstRect.h = 65 * size;
 
-        if (downscroll)
-        {
-            if (obj->y + obj->h < tile.rect.y && !tile.active)
-                continue;
+            dstRect.y = tile.rect.y;
+
+            if (i != heldTilings.size() - 1) {
+                if (!downscroll)
+                {
+                    srcRect.h = -1;
+                    Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->hold, GL::genShader);
+                    srcRect.h = 1;
+                }
+                else
+                {
+                    Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->hold, GL::genShader);
+                }
+            }
+            else {
+                if (!downscroll)
+                {
+                    srcRect.h = -1;
+                    Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->holdend, GL::genShader);
+                    srcRect.h = 1;
+                }
+                else
+                {
+                    Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->holdend, GL::genShader);
+                }
+            }
+
         }
-        else
-            if (obj->y > tile.rect.y && !tile.active)
-                continue;
-
-
-        if (i != heldTilings.size() - 1) {
-            if (!downscroll)
-            {
-                srcRect.h = -1;
-                Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->hold, GL::genShader);
-                srcRect.h = 1;
-            }
-            else
-            {
-                Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->hold, GL::genShader);
-            }
-        }
-        else {
-            if (!downscroll)
-            {
-                srcRect.h = -1;
-                Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->holdend, GL::genShader);
-                srcRect.h = 1;
-            }
-            else
-            {
-                Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->holdend, GL::genShader);
-            }
-        }
-
     }
     dstRect.h = rect.h;
 

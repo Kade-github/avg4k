@@ -93,8 +93,11 @@ public:
 		{
 			if (toModify.name != "none" && toModify.takesDouble)
 			{
-				type = std::to_string(-std::stod(type));
-				def = type;
+				if (type.length() != 0)
+				{
+					type = std::to_string(-std::stod(type));
+					def = type;
+				}
 			}
 			setText(false,true,true);
 		}

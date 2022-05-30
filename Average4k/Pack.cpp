@@ -173,7 +173,7 @@ void SongGather::gatherSteamPacksAsync(std::vector<Pack>* packs)
 					continue;
 
 				Pack p;
-				p.steamId = st.details.m_nPublishedFileId;
+				p.steamId = (uint64_t) st.details.m_nPublishedFileId;
 				p.isSteam = true;
 
 				std::string folder = std::string(st.folder);

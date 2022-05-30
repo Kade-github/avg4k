@@ -295,7 +295,7 @@ void MultiplayerLobby::create() {
 	{
 		CPacketHostChangeChart chart;
 		chart.chartID = MainerMenu::selectedSong.steamId;
-		chart.packID = MainerMenu::selected.isSteam;
+		chart.packID = MainerMenu::selected.steamId;
 		chart.isPack = chart.packID != 0;
 		chart.chartIndex = MainerMenu::packSongIndex;
 		std::cout << "telling the server to start " << MainerMenu::selectedSong.steamId << std::endl;

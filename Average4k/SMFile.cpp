@@ -70,25 +70,30 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                             readingBPMS = false;
                         else
                         {
-                            stuff[0].erase(std::remove(stuff[0].begin(), stuff[0].end(), ','), stuff[0].end());
-                            std::vector < std::string > bpmSeg = Chart::split(stuff[0], '=');
-                            bpmSegment seg;
-                            seg.startBeat = std::stod(bpmSeg[0]);
-                            seg.endBeat = INT_MAX;
-                            seg.length = INT_MAX;
-                            seg.bpm = std::stof(bpmSeg[1]);
-                            seg.startTime = -(meta.chartOffset) * 1000;
-
-                            if (bpmIndex != 0) // previous lol
+                            std::vector <std::string> uhuh = Chart::split(stuff[0], ',');
+                            for (std::string s : uhuh)
                             {
-                                bpmSegment& prevSeg = meta.bpms[bpmIndex - 1];
-                                prevSeg.endBeat = seg.startBeat;
-                                prevSeg.length = ((prevSeg.endBeat - prevSeg.startBeat) / (prevSeg.bpm / 60)) * 1000;
-                                seg.startTime = prevSeg.startTime + prevSeg.length;
-                            }
+                                if (s.size() == 0)
+                                    continue;
+                                std::vector < std::string > bpmSeg = Chart::split(s, '=');
+                                bpmSegment seg;
+                                seg.startBeat = std::stod(bpmSeg[0]);
+                                seg.endBeat = INT_MAX;
+                                seg.length = INT_MAX;
+                                seg.bpm = std::stof(bpmSeg[1]);
+                                seg.startTime = -(meta.chartOffset) * 1000;
 
-                            meta.bpms.push_back(seg);
-                            bpmIndex++;
+                                if (bpmIndex != 0) // previous lol
+                                {
+                                    bpmSegment& prevSeg = meta.bpms[bpmIndex - 1];
+                                    prevSeg.endBeat = seg.startBeat;
+                                    prevSeg.length = ((prevSeg.endBeat - prevSeg.startBeat) / (prevSeg.bpm / 60)) * 1000;
+                                    seg.startTime = prevSeg.startTime + prevSeg.length;
+                                }
+
+                                meta.bpms.push_back(seg);
+                                bpmIndex++;
+                            }
                         }
                     }
                     else if (readingSTOPS)
@@ -120,7 +125,7 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                                     std::vector < std::string > bpmSeg = Chart::split(stuff[1], ',');
                                     if (bpmSeg.size() != 0)
                                     {
-                                        for (int ii = 0; ii < bpmSeg.size(); ii += 2)
+                                        for (int ii = 0; ii < bpmSeg.size(); ii += 1)
                                         {
                                             bpmSegment seg;
                                             seg.startBeat = std::stod(Chart::split(bpmSeg[ii], '=')[0]);

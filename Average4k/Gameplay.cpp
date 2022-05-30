@@ -683,7 +683,15 @@ void Gameplay::update(Events::updateEvent event)
 	for (AvgGroup* group : colGroups) // reset clips
 	{
 		ll.x = receptors[indexG]->x;
-		group->clipRect = ll;
+		bool removeThingy = true;
+		for (int i = 0; i < spawnedNotes.size(); i++)
+		{
+			NoteObject* n = spawnedNotes[i];
+			if (n->lane == indexG && n->holdsActive != 0 && n->heldTilings.size() > 3)
+				removeThingy = false;
+		}
+		if (removeThingy)
+			group->clipRect = ll;
 		indexG++;
 	}
 
@@ -716,9 +724,8 @@ void Gameplay::update(Events::updateEvent event)
 
 	curSeg = MainerMenu::currentSelectedSong.getSegmentFromTime(positionInSong);
 	beat = MainerMenu::currentSelectedSong.getBeatFromTimeOffset(positionInSong, curSeg);
-	if (lastBPM != curSeg.bpm && Game::gameplayEvents_DB)
+	if (lastBPM != curSeg.bpm)
 	{
-		Game::instance->db_addLine("bpm change to " + std::to_string(curSeg.bpm));
 		song->bpm = curSeg.bpm;
 		lastBPM = curSeg.bpm;
 	}
@@ -1129,7 +1136,7 @@ void Gameplay::update(Events::updateEvent event)
 				if ((wh - positionInSong <= -400 && !note->active) && note->holdsActive == 0 && playing)
 				{
 					removeNote(note);
-					std::cout << "remove note " << wh << " " << positionInSong << std::endl;
+					//std::cout << "remove note " << wh << " " << positionInSong << std::endl;
 				}
 
 				for (int i = 0; i < note->heldTilings.size(); i++)
@@ -1141,7 +1148,7 @@ void Gameplay::update(Events::updateEvent event)
 
 					if (diff < -Judge::hitWindows[3] && tile.active && playing)
 					{
-						std::cout << note->lane << " fucked " << diff << " time: " << whHold << " song: " << positionInSong << std::endl;
+						//std::cout << note->lane << " fucked " << diff << " time: " << whHold << " song: " << positionInSong << std::endl;
 						miss(note);
 						removeNote(note);
 						break;

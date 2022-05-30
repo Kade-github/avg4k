@@ -1085,7 +1085,7 @@ void Gameplay::update(Events::updateEvent event)
 				bool condition = true;
 
 
-				if ((wh - positionInSong <= -400 && !note->active) && note->holdsActive == 0 && playing)
+				if ((wh - positionInSong <= -1000 && !note->active) && note->holdsActive == 0 && playing)
 				{
 					removeNote(note);
 					//std::cout << "remove note " << wh << " " << positionInSong << std::endl;
@@ -1098,7 +1098,7 @@ void Gameplay::update(Events::updateEvent event)
 					float whHold = MainerMenu::currentSelectedSong.getTimeFromBeat(tile.beat, MainerMenu::currentSelectedSong.getSegmentFromBeat(tile.beat));
 					float diff = whHold - positionInSong;
 
-					if (diff < -Judge::hitWindows[4] && tile.active && playing)
+					if (diff < -Judge::hitWindows[4] * 1.5 && tile.active && playing)
 					{
 						//std::cout << note->lane << " fucked " << diff << " time: " << whHold << " song: " << positionInSong << std::endl;
 						miss(note);

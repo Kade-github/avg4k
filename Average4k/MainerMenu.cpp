@@ -282,12 +282,6 @@ void MainerMenu::create()
 	else
 		((Text*)soloContainer->findItemByName("packsBottom"))->text = packs.size() + " loaded";
 
-	for (Pack p : packs)
-	{
-		addPack(p.packName, p.background, p.showName, p.isSteam);
-	}
-
-
 	if (Game::steam->subscribedList.size() > 0 && steamWorkshop.songs.size() == 0)
 	{
 		steamWorkshop.background = "";
@@ -300,6 +294,14 @@ void MainerMenu::create()
 		packs.push_back(steamWorkshop);
 
 		addPack(steamWorkshop.packName, steamWorkshop.background, steamWorkshop.showName, true);
+	}
+
+
+
+	for (Pack p : packs)
+	{
+		if (p.packName != "Workshop/Local")
+			addPack(p.packName, p.background, p.showName, p.isSteam);
 	}
 
 

@@ -145,7 +145,7 @@ public:
 
 			Rect boxRect;
 			boxRect.x = x - (box->width / 2) + xBasedOnRank;
-			boxRect.y = (y + h / 2) + ((box->height + 8) * away);
+			boxRect.y = (y + ((h / 2) - 80)) + ((box->height + 8) * away);
 
 			boxRect.w = box->width;
 			boxRect.h = box->height;

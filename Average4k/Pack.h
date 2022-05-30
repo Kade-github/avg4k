@@ -3,6 +3,10 @@
 #include "Chart.h"
 struct Song {
 	std::string path;
+	bool isSteam = false;
+	uint64_t steamId;
+	uint64_t steamIdPack;
+	std::string folder;
 	Chart c;
 };
 
@@ -12,6 +16,8 @@ struct Pack {
 	std::string folder;
 	std::string background;
 	std::string packName;
+	uint64_t steamId;
+	bool isSteam = false;
 	bool showName;
 };
 
@@ -49,6 +55,7 @@ public:
 class SongGather {
 public:
 	static void gatherPacksAsync(std::vector<Pack>* packs);
+	static Pack gatherPack(std::string filePath);
 
 	static std::vector<Pack> gatherPacks();
 

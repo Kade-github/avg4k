@@ -6,55 +6,103 @@
 #include "Steam.h"
 #include "Game.h"
 
+bool packAsyncAlready;
+bool steamRegAsyncAlready;
+
 void SongGather::gatherPacksAsync(std::vector<Pack>* packs)
 {
-	std::thread t([packs]() {
-		for (const auto& entry : std::filesystem::directory_iterator("assets/charts/"))
-		{
-			if (SongUtils::IsDirectory(entry.path()))
+	if (!steamRegAsyncAlready)
+	{
+		steamRegAsyncAlready = true;
+		std::thread t([packs]() {
+			for (const auto& entry : std::filesystem::directory_iterator("assets/charts/"))
 			{
-				Pack p;
-
-				std::ifstream fs;
-				// meta
-				fs.open(entry.path().string() + "/pack.meta");
-
-				if (!fs.good())
-					continue;
-
-				p.folder = entry.path().string();
-				p.metaPath = entry.path().string() + "/pack.meta";
-
-				std::string str;
-
-				while (std::getline(fs, str))
+				if (SongUtils::IsDirectory(entry.path()))
 				{
-					if (str.starts_with("#"))
+					Pack p;
+
+					std::ifstream fs;
+					// meta
+					fs.open(entry.path().string() + "/pack.meta");
+
+					if (!fs.good())
 						continue;
-					std::vector<std::string> split = Chart::split(str, ':');
-					std::string end = split[1].erase(0, 1);
-					if (split[0] == "banner")
-						p.background = entry.path().string() + "/" + end;
-					if (split[0] == "packName")
-						p.packName = end;
-					if (split[0] == "showName")
-						p.showName = (end == "false" ? false : true);
+
+					p.folder = entry.path().string();
+					p.metaPath = entry.path().string() + "/pack.meta";
+
+					std::string str;
+
+					while (std::getline(fs, str))
+					{
+						if (str.starts_with("#"))
+							continue;
+						std::vector<std::string> split = Chart::split(str, ':');
+						std::string end = split[1].erase(0, 1);
+						if (split[0] == "banner")
+							p.background = entry.path().string() + "/" + end;
+						if (split[0] == "packName")
+							p.packName = end;
+						if (split[0] == "showName")
+							p.showName = (end == "false" ? false : true);
+					}
+
+
+					std::vector<Song> songs = gatherSongsInFolder(entry.path().string() + "/");
+
+					if (songs.size() == 0)
+						continue;
+
+					for (Song s : songs)
+						p.songs.push_back(s);
+
+					packs->push_back(p);
 				}
-
-
-				std::vector<Song> songs = gatherSongsInFolder(entry.path().string() + "/");
-
-				if (songs.size() == 0)
-					continue;
-
-				for (Song s : songs)
-					p.songs.push_back(s);
-
-				packs->push_back(p);
+				steamRegAsyncAlready = false;
 			}
-		}
-		});
-	t.detach();
+			});
+		t.detach();
+	}
+}
+
+Pack SongGather::gatherPack(std::string filePath)
+{
+	Pack p;
+
+	std::ifstream fs;
+	fs.open(filePath + "/pack.meta");
+
+	if (!fs.good())
+		return Pack();
+
+	p.metaPath = filePath + "/pack.meta";
+
+	std::string str;
+
+	while (std::getline(fs, str))
+	{
+		if (str.starts_with("#"))
+			continue;
+		std::vector<std::string> split = Chart::split(str, ':');
+		std::string end = split[1].erase(0, 1);
+		if (split[0] == "banner")
+			p.background = filePath + "/" + end;
+		if (split[0] == "packName")
+			p.packName = end;
+		if (split[0] == "showName")
+			p.showName = (end == "false" ? false : true);
+	}
+
+
+	std::vector<Song> songs = gatherSongsInFolder(filePath + "/");
+
+	if (songs.size() == 0)
+		return p;
+
+	for (Song s : songs)
+		p.songs.push_back(s);
+
+	return p;
 }
 
 std::vector<Pack> SongGather::gatherPacks()
@@ -113,56 +161,66 @@ std::vector<Song> SongGather::gatherNoPackSongs()
 
 void SongGather::gatherSteamPacksAsync(std::vector<Pack>* packs)
 {
-	std::thread t([packs]() {
-		for (int i = 0; i < Game::steam->subscribedList.size(); i++)
-		{
-			steamItem st = Game::steam->subscribedList[i];
-
-			if (!st.isPackFolder)
-				continue;
-
-			Pack p;
-
-			std::string folder = std::string(st.folder);
-
-			std::ifstream fs;
-			// meta
-			fs.open(folder + "/pack.meta");
-
-			if (!fs.good())
-				continue;
-
-			p.metaPath = folder + "/pack.meta";
-
-			std::string str;
-
-			while (std::getline(fs, str))
+	if (!packAsyncAlready)
+	{
+		packAsyncAlready = true;
+		std::thread t([packs]() {
+			for (int i = 0; i < Game::steam->subscribedList.size(); i++)
 			{
-				if (str.starts_with("#"))
+				steamItem st = Game::steam->subscribedList[i];
+
+				if (!st.isPackFolder)
 					continue;
-				std::vector<std::string> split = Chart::split(str, ':');
-				std::string end = split[1].erase(0, 1);
-				if (split[0] == "banner")
-					p.background = folder + "/" + end;
-				if (split[0] == "packName")
-					p.packName = end;
-				if (split[0] == "showName")
-					p.showName = (end == "false" ? false : true);
+
+				Pack p;
+				p.steamId = st.details.m_nPublishedFileId;
+				p.isSteam = true;
+
+				std::string folder = std::string(st.folder);
+
+				std::ifstream fs;
+				// meta
+				fs.open(folder + "/pack.meta");
+
+				if (!fs.good())
+					continue;
+
+				p.metaPath = folder + "/pack.meta";
+
+				std::string str;
+
+				while (std::getline(fs, str))
+				{
+					if (str.starts_with("#"))
+						continue;
+					std::vector<std::string> split = Chart::split(str, ':');
+					std::string end = split[1].erase(0, 1);
+					if (split[0] == "banner")
+						p.background = folder + "/" + end;
+					if (split[0] == "packName")
+						p.packName = end;
+					if (split[0] == "showName")
+						p.showName = (end == "false" ? false : true);
+				}
+
+
+				std::vector<Song> songs = gatherSongsInFolder(folder + "/");
+
+				if (songs.size() == 0)
+					continue;
+
+				for (Song s : songs)
+				{
+					s.steamIdPack = p.steamId;
+					p.songs.push_back(s);
+				}
+
+				packs->push_back(p);
 			}
-
-
-			std::vector<Song> songs = gatherSongsInFolder(folder + "/");
-
-			if (songs.size() == 0)
-				continue;
-
-			for (Song s : songs)
-				p.songs.push_back(s);
-
-			packs->push_back(p);
-		}
+			packAsyncAlready = false;
 		});
-	t.detach();
+		t.detach();
+	}
 }
 
 void SongGather::gatherNoPackSteamSongsAsync(std::vector<Song>* songs)
@@ -177,6 +235,9 @@ void SongGather::gatherNoPackSteamSongsAsync(std::vector<Song>* songs)
 
 			Song s;
 
+			s.isSteam = true;
+
+			s.steamId = st.details.m_nPublishedFileId;
 
 			std::string path(st.folder);
 

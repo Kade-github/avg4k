@@ -29,7 +29,8 @@ public:
 
 	std::string searchName;
 
-	Chart* downloadedChart;
+	Chart downloadedChart;
+	Pack downloadedPack;
 
 	PublishedFileId_t createdId;
 

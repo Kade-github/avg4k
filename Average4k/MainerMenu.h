@@ -35,7 +35,10 @@ public:
 		pack->setCharacterSpacing(3);
 
 		if (background == NULL)
-			bg = Rendering::white;
+		{
+			unsigned char c[] = { 0,0,0,255 };
+			bg = new Texture(c, 1,1);
+		}
 		else
 			bg = background;
 
@@ -123,7 +126,11 @@ class MainerMenu : public Menu
 {
 public:
 	static Chart currentSelectedSong;
+	static Song selectedSong;
+	static Pack selected;
+	static int packSongIndex;
 	static int selectedDiffIndex;
+	static bool isInLobby;
 	float lastBeat = 0;
 	bool started;
 	AvgSprite* icon;
@@ -144,7 +151,7 @@ public:
 	void selectContainer(int container);
 
 	void selectPack(int index);
-	void addPack(std::string name, std::string bg, bool showText);
+	void addPack(std::string name, std::string bg, bool showText, bool isSteam);
 	void clearPacks();
 
 	void addSettings(std::string catNam, std::vector<setting> settings);

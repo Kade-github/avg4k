@@ -126,7 +126,7 @@ void NoteObject::draw() {
                 continue;
         }
         else
-            if (obj->y + obj->h > tile.rect.y && !tile.active)
+            if (obj->y > tile.rect.y && !tile.active)
                 continue;
 
 

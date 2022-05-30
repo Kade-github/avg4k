@@ -3,6 +3,7 @@
 #include "AvgTextBox.h"
 #include "Pack.h"
 #include "AvgCheckBox.h"
+#include "MultiplayerLobby.h"
 #include "AvgWheel.h"
 #include "MainMenu.h"
 #include "Gameplay.h"
@@ -24,9 +25,14 @@ int catIndex = 0;
 
 int lastHeight = 0;
 
-Song selectedSong;
+Song MainerMenu::selectedSong;
 
-Pack selected;
+Pack MainerMenu::selected;
+
+bool MainerMenu::isInLobby = false;
+
+int MainerMenu::packSongIndex = 0;
+
 std::vector<Pack> packs;
 
 std::vector<Pack>* asyncPacks;
@@ -46,14 +52,14 @@ bool chartUploading = false;
 void resetStuff()
 {
 	packIndex = 0;
-	asyncPacks->clear();
 	lastHeight = 0;
 	catIndex = 0;
 }
 
 void selectedSongCallback(int sId)
 {
-	Song s = selected.songs[sId];
+	MainerMenu::packSongIndex = sId;
+	Song s = MainerMenu::selected.songs[sId];
 
 	std::cout << "selected " << s.c.meta.songName << std::endl;
 
@@ -66,7 +72,7 @@ void selectedSongCallback(int sId)
 	MainerMenu::currentSelectedSong.destroy();
 
 	MainerMenu::currentSelectedSong = s.c;
-	selectedSong = s;
+	MainerMenu::selectedSong = s;
 
 	Tweening::TweenManager::removeTween("fuckyoutween");
 
@@ -222,12 +228,15 @@ void MainerMenu::create()
 
 	// output the first page of stuff
 
+
 	soloContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/maincontainer_solo.png"));
 	soloContainer->alpha = 1;
 	soloContainer->x = (Game::gameWidth / 2) - (soloContainer->w / 2);
 	add(soloContainer);
 
 	// solo creation
+
+	soloContainer->active = true;
 
 	Texture* packSprite = Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/packscontainer.png");
 
@@ -249,18 +258,24 @@ void MainerMenu::create()
 
 
 	// create packs
-	asyncPacks = new std::vector<Pack>();
-	asyncSongs = new std::vector<Song>();
+	if (!asyncPacks)
+	{
+		asyncPacks = new std::vector<Pack>();
+		asyncSongs = new std::vector<Song>();
 
-	SongGather::gatherPacksAsync(asyncPacks);
-	SongGather::gatherSteamPacksAsync(asyncPacks);
+		SongGather::gatherPacksAsync(asyncPacks);
+		SongGather::gatherSteamPacksAsync(asyncPacks);
+
+		SongGather::gatherNoPackSongs();
+
+		SongGather::gatherNoPackSteamSongsAsync(asyncSongs);
+	}
 
 	for (Pack p : packs)
-		addPack(p.packName, p.background, p.showName);
+	{
+		addPack(p.packName, p.background, p.showName, p.isSteam);
+	}
 
-	SongGather::gatherNoPackSongs();
-
-	SongGather::gatherNoPackSteamSongsAsync(asyncSongs);
 
 	if (Game::steam->subscribedList.size() > 0 && steamWorkshop.songs.size() == 0)
 	{
@@ -268,11 +283,12 @@ void MainerMenu::create()
 		steamWorkshop.metaPath = "unfl";
 		steamWorkshop.packName = "Steam Workshop";
 		steamWorkshop.showName = true;
+		steamWorkshop.isSteam = true;
 		steamWorkshop.songs = {};
 
 		packs.push_back(steamWorkshop);
 
-		addPack(steamWorkshop.packName, steamWorkshop.background, steamWorkshop.showName);
+		addPack(steamWorkshop.packName, steamWorkshop.background, steamWorkshop.showName, true);
 	}
 
 
@@ -391,7 +407,15 @@ void MainerMenu::update(Events::updateEvent ev)
 			std::lock_guard cock(packMutex);
 			for (Song s : (*asyncSongs))
 			{
-				gatheredSongs.push_back(s);
+				if (isInLobby)
+				{
+					if (s.isSteam)
+					{
+						gatheredSongs.push_back(s);
+					}
+				}
+				else
+					gatheredSongs.push_back(s);
 			}
 			asyncSongs->clear();
 		}
@@ -404,7 +428,7 @@ void MainerMenu::update(Events::updateEvent ev)
 					d = true;
 			if (d)
 				continue;
-			addPack(p.packName, p.background, p.showName);
+			addPack(p.packName, p.background, p.showName, p.isSteam);
 			packs.push_back(p);
 		}
 		for (Song s : gatheredSongs)
@@ -619,7 +643,10 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 				if (currentSelectedSong.meta.difficulties.size() != 0)
 				{
 					resetStuff();
-					Game::instance->transitionToMenu(new Gameplay());
+					if (!isInLobby)
+						Game::instance->transitionToMenu(new Gameplay());
+					else
+						Game::instance->transitionToMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, true));
 				}
 			break;
 		}
@@ -635,11 +662,21 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 }
 
 
-void MainerMenu::addPack(std::string name, std::string bg, bool showText)
+void MainerMenu::addPack(std::string name, std::string bg, bool showText, bool isSteam)
 {
 	Texture* background = Texture::createWithImage(bg);
 	AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");
-	PackObject* obj = new PackObject(0, packIndex * 75, name, background, showText);
+	PackObject* obj = NULL;
+	if (isInLobby)
+		if (!isSteam)
+		{
+			background = Texture::createWithImage("");
+			obj = new PackObject(0, packIndex * 75, "Pack not available", background, true);
+		}
+		else
+			obj = new PackObject(0, packIndex * 75, name, background, showText);
+	else
+		obj = new PackObject(0, packIndex * 75, name, background, showText);
 	obj->w = packContainer->w;
 	obj->h = 75;
 	packContainer->addObject(obj, "packInd" + packIndex);
@@ -694,6 +731,9 @@ void MainerMenu::selectPack(int index)
 {
 	AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");
 	int ind = 0;
+
+	if (isInLobby && !packs[index].isSteam)
+		return;
 
 	selected = packs[index];
 
@@ -753,12 +793,12 @@ void MainerMenu::selectContainer(int container)
 		selectSettings->alpha = 0;
 		break;
 	case 1:
-		currentContainer = multiContainer;
-		multiContainer->active = true;
-		selectSolo->alpha = 0;
-		selectMulti->alpha = 1;
-		selectSettings->alpha = 0;
-		break;
+		resetStuff();
+		if (!isInLobby)
+			Game::instance->transitionToMenu(new MultiplayerLobbies());
+		else
+			Game::instance->transitionToMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, true));
+		return;
 	case 2:
 		currentContainer = settingsContainer;
 		settingsContainer->active = true;
@@ -789,7 +829,10 @@ void MainerMenu::leftMouseDown()
 	if ((x > selectSolo->x && y > soloText->y) && (x < selectSolo->x + selectSolo->w && y < selectSolo->y))
 		selectContainer(0);
 	if ((x > selectMulti->x && y > multiText->y) && (x < selectMulti->x + selectMulti->w && y < selectMulti->y))
+	{
 		selectContainer(1);
+		return;
+	}
 	if ((x > selectSettings->x && y > settingsText->y) && (x < selectSettings->x + selectSettings->w && y < selectSettings->y))
 		selectContainer(2);
 
@@ -804,6 +847,8 @@ void MainerMenu::leftMouseDown()
 			int yy = obj->y - packContainer->scrollAddition;
 			if ((relX > obj->x && relY > yy) && (relX < obj->x + obj->w && relY < yy + obj->h))
 			{
+				if (isInLobby && !packs[i].isSteam)
+					return;
 				wheel->setSongs(packs[i].songs);
 				selectPack(i);
 				return;

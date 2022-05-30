@@ -34,7 +34,7 @@ void MultiplayerLobbies::create()
 	if (Multiplayer::loggedIn)
 		Game::steam->populateSubscribedItems();
 
-	AvgSprite* sprite = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/bg.png"));
+	AvgSprite* sprite = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "darkmodebg.png"));
 	add(sprite);
 	AvgRect* rect = new AvgRect(0, 0, 1280, 720);
 	rect->alpha = 0.3;

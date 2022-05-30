@@ -1,5 +1,6 @@
 #include "MultiplayerLobby.h"
 #include "AvgSprite.h"
+#include "MainerMenu.h"
 
 bool MultiplayerLobby::inLobby = false;
 lobby MultiplayerLobby::CurrentLobby;
@@ -8,6 +9,7 @@ std::string MultiplayerLobby::hostSteamId;
 
 AvgGroup* playerList;
 
+bool isAwaitingPack = false;
 
 void MultiplayerLobby::refreshLobby(lobby l)
 {
@@ -63,16 +65,28 @@ void MultiplayerLobby::onSteam(std::string s) {
 	VM_START
 	if (s == "chartAquired")
 	{
-		SongSelect::currentChart = Game::steam->downloadedChart;
+		if (isAwaitingPack)
+		{
+			MainerMenu::selected = Game::steam->downloadedPack;
+			MainerMenu::currentSelectedSong = MainerMenu::selected.songs[MainerMenu::packSongIndex].c.meta;
+		}
+		else
+		{
+			MainerMenu::currentSelectedSong = Game::steam->downloadedChart;
+		}
 		CPacketClientChartAcquired acquired;
 		acquired.PacketType = eCPacketClientChartAcquired;
 		acquired.Order = 0;
 		downloading = false;
-		warningDisplay->setText("Chart downloaded! Current chart: " + SongSelect::currentChart->meta.songName + " (" + SongSelect::currentChart->meta.difficulties[diff].name + ")");
+		if (isAwaitingPack)
+			warningDisplay->setText("Pack downloaded! Current chart: " + MainerMenu::currentSelectedSong.meta.songName + " (" + MainerMenu::currentSelectedSong.meta.difficulties[diff].name + ")");
+		else
+			warningDisplay->setText("Chart downloaded! Current chart: " + MainerMenu::currentSelectedSong.meta.songName + " (" + MainerMenu::currentSelectedSong.meta.difficulties[diff].name + ")");
 		Color c;
 		c.r = 128;
 		c.g = 128;
 		c.b = 255;
+		isAwaitingPack = false;
 		warningDisplay->color = c;
 		Multiplayer::sendMessage<CPacketClientChartAcquired>(acquired);
 	}
@@ -129,7 +143,7 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 			warningDisplay->color = cc;
 
 			if (!isHost)
-				warningDisplay->setText("Unable to start, some players do not have the chart! " + std::string((SongSelect::currentChart != NULL ? "You have it!" : "You do not have it!")));
+				warningDisplay->setText("Unable to start, some players do not have the chart! " + std::string((MainerMenu::currentSelectedSong.meta.difficulties.size() != 0 ? "You have it!" : "You do not have it!")));
 			else
 				warningDisplay->setText("Unable to start, some players do not have the chart! press enter to start when they do, press shift to reselect.");
 			break;
@@ -186,8 +200,8 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		obj = msgpack::object(result.get());
 
 		obj.convert(cc);
-
-		SongSelect::selectedDiffIndex = cc.diff;
+		MainerMenu::packSongIndex = cc.chartIndex;
+		MainerMenu::selectedDiffIndex = cc.diff;
 		diff = cc.diff;
 		warningDisplay->setText("Obtaining chart...");
 		Color c;
@@ -196,8 +210,13 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		c.b = 255;
 		warningDisplay->color = c;
 		downloading = true;
-
-		Game::steam->LoadWorkshopChart((uint64_t)cc.chartID);
+		if (cc.isPack)
+		{
+			Game::steam->LoadWorkshopChart((uint64_t)cc.packID);
+			isAwaitingPack = true;
+		}
+		else
+			Game::steam->LoadWorkshopChart((uint64_t)cc.chartID);
 
 		for (person& p : people)
 		{
@@ -213,8 +232,6 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		break;
 	case eSPacketStartLobbyGame:
 		std::cout << "start!" << std::endl;
-
-		SongSelect::currentChart = Game::steam->downloadedChart;
 		Game::instance->transitionToMenu(new Gameplay());
 
 
@@ -236,8 +253,10 @@ MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted, bool backFromSelect = f
 
 void MultiplayerLobby::create() {
 	
+	if (!waitingForStart)
+		MainerMenu::currentSelectedSong = Chart();
 	playerList = new AvgGroup(0, 0, 1280, 720);
-	AvgSprite* sprite = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/bg.png"));
+	AvgSprite* sprite = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "darkmodebg.png"));
 	add(sprite);
 	AvgRect* rect = new AvgRect(0, 0, 1280, 720);
 	rect->alpha = 0.3;
@@ -271,9 +290,12 @@ void MultiplayerLobby::create() {
 	if (waitingForStart)
 	{
 		CPacketHostChangeChart chart;
-		chart.chartID = (uint64_t)SongSelect::selectedSong->steamHandle;
-		std::cout << "telling the server to start " << SongSelect::selectedSong->steamHandle << std::endl;
-		chart.diff = SongSelect::selectedDiffIndex;
+		chart.chartID = MainerMenu::selectedSong.steamId;
+		chart.packID = MainerMenu::selected.isSteam;
+		chart.isPack = chart.packID != 0;
+		chart.chartIndex = MainerMenu::packSongIndex;
+		std::cout << "telling the server to start " << MainerMenu::selectedSong.steamId << std::endl;
+		chart.diff = MainerMenu::selectedDiffIndex;
 		chart.Order = 0;
 		chart.PacketType = eCPacketHostChangeChart;
 		Multiplayer::sendMessage<CPacketHostChangeChart>(chart);
@@ -306,6 +328,8 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 
 			Multiplayer::sendMessage<CPacketLeave>(leave);
 
+			MainerMenu::isInLobby = false;
+
 			Game::instance->transitionToMenu(new MultiplayerLobbies());
 
 			people.clear();
@@ -325,7 +349,7 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 			if (!isHost)
 				return;
 
-			if (waitingForStart && SongSelect::currentChart != nullptr)
+			if (waitingForStart && MainerMenu::currentSelectedSong.meta.difficulties.size() != 0)
 			{
 				start.Order = 0;
 				start.PacketType = eCPacketHostStartGame;
@@ -334,8 +358,8 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 			}
 			else
 			{
-
-				Game::instance->transitionToMenu(new SongSelect());
+				MainerMenu::isInLobby = true;
+				Game::instance->transitionToMenu(new MainerMenu());
 
 				people.clear();
 
@@ -346,7 +370,7 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 				return;
 			if (!isHost && !waitingForStart)
 				return;
-			Game::instance->transitionToMenu(new SongSelect());
+			Game::instance->transitionToMenu(new MainerMenu());
 
 
 			people.clear();
@@ -372,7 +396,10 @@ void MultiplayerLobby::update(Events::updateEvent event)
 		float prog = Steam::CheckWorkshopDownload();
 		if (prog != 0)
 		{
-			warningDisplay->setText("Obtaining chart... (" + std::to_string(prog * 100).substr(0, 3) + ")");
+			if (isAwaitingPack)
+				warningDisplay->setText("Obtaining Pack... (" + std::to_string(prog * 100).substr(0, 3) + ")");
+			else
+				warningDisplay->setText("Obtaining chart... (" + std::to_string(prog * 100).substr(0, 3) + ")");
 			Color c;
 			c.r = 128;
 			c.g = 128;

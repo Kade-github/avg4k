@@ -567,9 +567,6 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 			bruh->keyDown(ev);
 		}
 	}
-	if (currentMenu)
-		for (Object* obj : mainCamera->children)
-			obj->keyDown(ev);
 
 	MUTATE_END
 }
@@ -689,11 +686,6 @@ void Game::textInput(SDL_TextInputEvent event)
 	{
 		debug_string += event.text;
 		return;
-	}
-	for (int i = 0; i < objects->size(); i++)
-	{
-		Object* btuh = (*objects)[i];
-		btuh->textInput(event);
 	}
 
 	if (currentMenu)

@@ -32,6 +32,8 @@ std::vector<Pack> packs;
 std::vector<Pack>* asyncPacks;
 std::vector<Song>* asyncSongs;
 
+AvgWheel* wheel;
+
 Chart MainerMenu::currentSelectedSong;
 int MainerMenu::selectedDiffIndex = 0;
 
@@ -49,8 +51,10 @@ void resetStuff()
 	catIndex = 0;
 }
 
-void selectedSongCallback(Song s)
+void selectedSongCallback(int sId)
 {
+	Song s = selected.songs[sId];
+
 	std::cout << "selected " << s.c.meta.songName << std::endl;
 
 	AvgContainer* cont = (AvgContainer*)soloContainer->findItemByName("songContainer");
@@ -225,6 +229,12 @@ void MainerMenu::create()
 
 	// solo creation
 
+	Texture* packSprite = Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/packscontainer.png");
+
+	wheel = (AvgWheel*)soloContainer->addObject(new AvgWheel(packSprite->width, 88, 600, packSprite->height), "wheelObject");
+
+	wheel->callSelect = selectedSongCallback;
+
 	soloContainer->addObject(new Text(22, 18, "Packs", 18, "arialbd"), "packsText");
 	((Text*)soloContainer->findItemByName("packsText"))->setCharacterSpacing(3);
 
@@ -232,7 +242,7 @@ void MainerMenu::create()
 	soloContainer->addObject(new Text(22, 54, "", 16, "ariali"), "uploadingProgress");
 	((Text*)soloContainer->findItemByName("uploadingProgress"))->color = { 128,128,255 };
 
-	AvgContainer* packContainer = new AvgContainer(0, 88, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/packscontainer.png"));
+	AvgContainer* packContainer = new AvgContainer(0, 88, packSprite);
 
 	soloContainer->addObject(packContainer, "packContainer");
 
@@ -265,10 +275,10 @@ void MainerMenu::create()
 		addPack(steamWorkshop.packName, steamWorkshop.background, steamWorkshop.showName);
 	}
 
+
+
 	soloContainer->addObject(new AvgContainer((soloContainer->x + soloContainer->w), 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/songcontainer.png")), "songContainer");
 	soloContainer->findItemByName("songContainer")->x -= soloContainer->findItemByName("songContainer")->w + 40;
-
-
 
 	multiContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Multi/maincontainer.png"));
 	multiContainer->x = (Game::gameWidth / 2) - (multiContainer->w / 2);
@@ -561,7 +571,6 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 {
 	if (selectedContainerIndex == 0)
 	{
-		AvgWheel* wheel = (AvgWheel*)soloContainer->findItemByName("wheelObject");
 		switch (event.keysym.sym)
 		{
 		case SDLK_DOWN:
@@ -786,7 +795,6 @@ void MainerMenu::leftMouseDown()
 
 	if (selectedContainerIndex == 0 && !uploading)
 	{
-		AvgWheel* wheel = (AvgWheel*)soloContainer->findItemByName("wheelObject");
 		AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");
 		int relX = (x - soloContainer->x) - packContainer->x;
 		int relY = (y - soloContainer->y) - packContainer->y;
@@ -796,7 +804,7 @@ void MainerMenu::leftMouseDown()
 			int yy = obj->y - packContainer->scrollAddition;
 			if ((relX > obj->x && relY > yy) && (relX < obj->x + obj->w && relY < yy + obj->h))
 			{
-				
+				wheel->setSongs(packs[i].songs);
 				selectPack(i);
 				return;
 			}

@@ -58,7 +58,7 @@ public:
 				return i.obj;
 	}
 
-	void addObject(Object* obj, std::string name, bool beloww = false)
+	Object* addObject(Object* obj, std::string name, bool beloww = false)
 	{
 		if (!beloww)
 			above.push_back(obj);
@@ -71,6 +71,7 @@ public:
 		id.obj = obj;
 		obj->parent = this;
 		items.push_back(id);
+		return obj;
 	}
 
 	void removeObject(Object* obj, bool beloww = false)

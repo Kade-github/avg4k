@@ -1700,6 +1700,8 @@ SDL_Surface *TTF_RenderUTF8_Blended(TTF_Font *font,
             src = (Uint8*)current->buffer + row * current->pitch;
             for (col = current->width; col > 0; --col) {
                 alpha = *src++;
+                if (dst == NULL)
+                    continue;
                 *dst++ |= pixel | ((Uint32)alpha_table[alpha] << 24);
             }
         }

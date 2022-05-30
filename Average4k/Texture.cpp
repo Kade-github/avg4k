@@ -50,8 +50,10 @@ Texture::~Texture()
 	glDeleteTextures(1, &id);
 	if (pixels != nullptr && fromSTBI && width > 0 && height > 0)
 		stbi_h::stbi_free(pixels);
-	if (surf)
+	if (surf && !fromSTBI)
+	{
 		SDL_FreeSurface(surf);
+	}
 }
 		
 //Set texture data function

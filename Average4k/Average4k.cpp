@@ -6,7 +6,7 @@
 #include "AvgSprite.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
-#include "log_stream.h"
+//#include "log_stream.h"
 using namespace std;
 
 #undef main
@@ -75,7 +75,7 @@ Uint32 frametimelast;
 
 Uint32 framecount;
 
-log_stream* outstream;
+//log_stream* outstream;
 
 
 
@@ -132,8 +132,8 @@ void CrashDmp(_EXCEPTION_POINTERS* ExceptionInfo) {
 	CloseHandle(file);
 
 
-	if (outstream)
-		outstream->dump();
+	//if (outstream)
+	//	outstream->dump();
 }
 
 LONG PvectoredExceptionHandler(
@@ -152,8 +152,8 @@ long WINAPI UnhandledExceptionFilterHandler(LPEXCEPTION_POINTERS ex) {
 
 void atexit_handler()
 {
-	if (outstream)
-		outstream->dump();
+	//if (outstream)
+	//	outstream->dump();
 }
 
 
@@ -298,7 +298,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	float time = 0;
 	float bruh = 0;
 	double next_tick = (double)SDL_GetTicks();
-	SDL_GL_SetSwapInterval(0);
+	//SDL_GL_SetSwapInterval(0);
 	while (run)
 	{
 		double now_tick = (double)SDL_GetTicks();

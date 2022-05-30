@@ -76,11 +76,12 @@ noteskin_asset* Noteskin::getNoteskin()
 	if (type != Game::save->GetString("Noteskin"))
 	{
 		type = Game::save->GetString("Noteskin");
-		if (!std::filesystem::exists("assets/noteskin/" + type))
+		std::string path = std::filesystem::current_path().string() + "/assets/noteskin/" + type;
+		if (!std::filesystem::exists(path))
 		{
 			Game::save->SetString("Noteskin", "arrow");
+			Game::save->Save();
 			type = "arrow";
-			Game::showErrorWindow("Noteskin error!", "Falling back to 'arrow'", false);
 		}
 
 		std::cout << "creating noteskin " << "assets/noteskin/" + type << std::endl;

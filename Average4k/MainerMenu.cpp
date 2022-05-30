@@ -291,8 +291,6 @@ void MainerMenu::create()
 		steamWorkshop.isSteam = true;
 		steamWorkshop.songs = {};
 
-		packs.push_back(steamWorkshop);
-
 		addPack(steamWorkshop.packName, steamWorkshop.background, steamWorkshop.showName, true);
 	}
 

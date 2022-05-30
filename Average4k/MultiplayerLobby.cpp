@@ -203,7 +203,6 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		MainerMenu::packSongIndex = cc.chartIndex;
 		MainerMenu::selectedDiffIndex = cc.diff;
 		diff = cc.diff;
-		warningDisplay->setText("Obtaining chart...");
 		Color c;
 		c.r = 128;
 		c.g = 128;
@@ -217,6 +216,11 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		}
 		else
 			Game::steam->LoadWorkshopChart((uint64_t)cc.chartID);
+
+		if (isAwaitingPack)
+			warningDisplay->setText("Obtaining pack...");
+		else
+			warningDisplay->setText("Obtaining chart...");
 
 		for (person& p : people)
 		{

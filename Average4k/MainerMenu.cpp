@@ -283,8 +283,14 @@ void MainerMenu::create()
 
 
 	std::vector<Song> stuff = SongGather::gatherNoPackSongs();
+	{
+		std::lock_guard cock(packMutex);
+		if (stuff.size() > 0)
+			for (Song s : stuff)
+				asyncSongs->push_back(s);
+	}
 
-	if (Game::steam->subscribedList.size() > 0 && steamWorkshop.songs.size() == 0 || stuff.size() > 0)
+	if (Game::steam->subscribedList.size() > 0 && steamWorkshop.songs.size() == 0)
 	{
 		steamWorkshop.background = "";
 		steamWorkshop.metaPath = "unfl";
@@ -293,9 +299,6 @@ void MainerMenu::create()
 		steamWorkshop.isSteam = true;
 		steamWorkshop.songs = {};
 
-		if (stuff.size() > 0)
-			for (Song s : stuff)
-				steamWorkshop.songs.push_back(s);
 
 		packs.push_back(steamWorkshop);
 
@@ -460,6 +463,9 @@ void MainerMenu::update(Events::updateEvent ev)
 			if (d)
 				continue;
 			steamWorkshop.songs.push_back(s);
+			for (Pack& p : packs)
+				if (p.packName == "Workshop/Local")
+					p.songs = steamWorkshop.songs;
 		}
 
 

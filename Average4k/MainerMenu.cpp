@@ -608,7 +608,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 			selectContainer(3);
 			break;
 		case SDLK_LSHIFT:
-			if (selected.metaPath.size() != 0 && selected.metaPath != "unfl")
+			if (selected.metaPath.size() != 0 && selected.metaPath != "unfl" && !isInLobby)
 			{
 				if (event.keysym.mod & KMOD_CTRL)
 					chartUploading = true;
@@ -654,9 +654,14 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 	switch (event.keysym.sym)
 	{
 	case SDLK_ESCAPE:
-		Tweening::TweenManager::createNewTween("movingContainer2", settingsContainer, Tweening::tt_Y, 1000, 160, Game::gameHeight + 200, (Tweening::tweenCallback)endTrans, Easing::EaseOutCubic);
-		Tweening::TweenManager::createNewTween("movingContainer1", multiContainer, Tweening::tt_Y, 900, 160, Game::gameHeight + 200, NULL, Easing::EaseOutCubic);
-		Tweening::TweenManager::createNewTween("movingContainer", soloContainer, Tweening::tt_Y, 900, 160, Game::gameHeight + 200, NULL, Easing::EaseOutCubic);
+		if (!isInLobby)
+		{
+			Tweening::TweenManager::createNewTween("movingContainer2", settingsContainer, Tweening::tt_Y, 1000, 160, Game::gameHeight + 200, (Tweening::tweenCallback)endTrans, Easing::EaseOutCubic);
+			Tweening::TweenManager::createNewTween("movingContainer1", multiContainer, Tweening::tt_Y, 900, 160, Game::gameHeight + 200, NULL, Easing::EaseOutCubic);
+			Tweening::TweenManager::createNewTween("movingContainer", soloContainer, Tweening::tt_Y, 900, 160, Game::gameHeight + 200, NULL, Easing::EaseOutCubic);
+		}
+		else
+			Game::instance->transitionToMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, true));
 		break;
 	}
 }
@@ -794,6 +799,7 @@ void MainerMenu::selectContainer(int container)
 		break;
 	case 1:
 		resetStuff();
+		selectedContainerIndex = 0;
 		if (!isInLobby)
 			Game::instance->transitionToMenu(new MultiplayerLobbies());
 		else

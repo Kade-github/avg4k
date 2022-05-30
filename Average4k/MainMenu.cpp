@@ -171,7 +171,7 @@ void MainMenu::keyDown(SDL_KeyboardEvent event)
 {
 	if (!Multiplayer::loggedIn)
 		return;
-	if (event.keysym.sym == SDLK_RETURN && !tweenDone)
+	if (event.keysym.sym == SDLK_RETURN && !tweenDone && Multiplayer::loggedIn)
 	{
 		tweenDone = true;
 		Tweening::TweenManager::createNewTween("hello", hello, Tweening::tt_Alpha, 600, 1, 0, NULL, Easing::EaseInSine);

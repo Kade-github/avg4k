@@ -291,6 +291,8 @@ void MainerMenu::create()
 		steamWorkshop.isSteam = true;
 		steamWorkshop.songs = {};
 
+		packs.push_back(steamWorkshop);
+
 		addPack(steamWorkshop.packName, steamWorkshop.background, steamWorkshop.showName, true);
 	}
 
@@ -298,7 +300,8 @@ void MainerMenu::create()
 
 	for (Pack p : packs)
 	{
-		addPack(p.packName, p.background, p.showName, p.isSteam);
+		if (p.packName != "Workshop/Local")
+			addPack(p.packName, p.background, p.showName, p.isSteam);
 	}
 
 

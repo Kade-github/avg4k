@@ -231,7 +231,7 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 			refreshLobbies();
 			break;
 		case SDLK_F1:
-			host.LobbyName = "bruh moment";
+			host.LobbyName = Multiplayer::username + "'s Lobby";
 			host.Order = 0;
 			host.PacketType = eCPacketHostServer;
 

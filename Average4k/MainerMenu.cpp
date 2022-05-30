@@ -256,7 +256,7 @@ void MainerMenu::create()
 	soloContainer->addObject(new Text(22, 18, "Packs", 18, "arialbd"), "packsText");
 	((Text*)soloContainer->findItemByName("packsText"))->setCharacterSpacing(3);
 
-	soloContainer->addObject(new Text(22, 36, "** Loading packs, please be patient!", 16, "ariali"), "packsBottom");
+	soloContainer->addObject(new Text(22, 36, std::to_string(packs.size()) + " loaded", 16, "ariali"), "packsBottom");
 	soloContainer->addObject(new Text(22, 54, "", 16, "ariali"), "uploadingProgress");
 	((Text*)soloContainer->findItemByName("uploadingProgress"))->color = { 128,128,255 };
 
@@ -279,8 +279,7 @@ void MainerMenu::create()
 
 		SongGather::gatherNoPackSteamSongsAsync(asyncSongs);
 	}
-	else
-		((Text*)soloContainer->findItemByName("packsBottom"))->text = packs.size() + " loaded";
+
 
 	if (Game::steam->subscribedList.size() > 0 && steamWorkshop.songs.size() == 0)
 	{
@@ -294,6 +293,15 @@ void MainerMenu::create()
 		packs.push_back(steamWorkshop);
 
 		addPack(steamWorkshop.packName, steamWorkshop.background, steamWorkshop.showName, true);
+	}
+	else
+	{
+		if (steamWorkshop.songs.size() > 0)
+		{
+			packs.push_back(steamWorkshop);
+
+			addPack(steamWorkshop.packName, steamWorkshop.background, steamWorkshop.showName, true);
+		}
 	}
 
 

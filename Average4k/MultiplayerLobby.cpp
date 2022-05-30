@@ -248,11 +248,9 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 
 MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted, bool backFromSelect = false)
 {
-	VM_START
 	waitingForStart = backFromSelect && hosted;
 	isHost = hosted;
 	CurrentLobby = l;
-	VM_END
 }
 
 void MultiplayerLobby::create() {

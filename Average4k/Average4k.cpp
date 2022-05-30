@@ -299,6 +299,9 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	float bruh = 0;
 	double next_tick = (double)SDL_GetTicks();
 	SDL_GL_SetSwapInterval(0);
+
+	VM_END
+	MUTATE_START
 	while (run)
 	{
 		double now_tick = (double)SDL_GetTicks();
@@ -404,6 +407,9 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 
 	}
+	MUTATE_END
+
+	VM_START
 
 	SDL_StopTextInput();
 
@@ -420,8 +426,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	if (Game::steam != nullptr)
 		Game::steam->ShutdownSteam();
 
-	
-	VM_END
+	VM_END	
+
 		
 	return 0;
 }

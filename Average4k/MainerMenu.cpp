@@ -32,6 +32,7 @@ Pack MainerMenu::selected;
 bool MainerMenu::isInLobby = false;
 
 int MainerMenu::packSongIndex = 0;
+bool lobbyUp = false;
 
 std::vector<Pack> packs;
 
@@ -58,6 +59,7 @@ void resetStuff()
 {
 	transToContainer = 0;
 	despawn = 0;
+	lobbyUp = false;
 	lastTrans = 0;
 	selectedContainerIndex = 0;
 	packIndex = 0;
@@ -613,6 +615,7 @@ void updateDiff()
 	right->x = (diff->x + diff->w) + 24;
 }
 
+
 void MainerMenu::keyDown(SDL_KeyboardEvent event)
 {
 	if (selectedContainerIndex == 0)
@@ -676,8 +679,9 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 	switch (event.keysym.sym)
 	{
 	case SDLK_ESCAPE:
-		if (!isInLobby)
+		if (!isInLobby && !lobbyUp)
 		{
+			lobbyUp = true;
 			Tweening::TweenManager::createNewTween("movingContainer2", settingsContainer, Tweening::tt_Y, 1000, 160, Game::gameHeight + 200, (Tweening::tweenCallback)endTrans, Easing::EaseOutCubic);
 			Tweening::TweenManager::createNewTween("movingContainer1", multiContainer, Tweening::tt_Y, 900, 160, Game::gameHeight + 200, NULL, Easing::EaseOutCubic);
 			Tweening::TweenManager::createNewTween("movingContainer", soloContainer, Tweening::tt_Y, 900, 160, Game::gameHeight + 200, NULL, Easing::EaseOutCubic);

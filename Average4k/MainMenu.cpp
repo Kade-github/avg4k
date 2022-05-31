@@ -26,6 +26,7 @@ float mainmenubpm = 155;
 
 void MainMenu::create() {
 	
+	MUTATE_START
 
 	bg = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "darkmodebg.png"));
 	bg->create();
@@ -80,6 +81,7 @@ void MainMenu::create() {
 	}
 	Tweening::TweenManager::createNewTween("movingLogo", thing, Tweening::tt_Y, 1100, Game::gameHeight, (Game::gameHeight / 2) - (thing->h / 2), NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("alphaLogo", thing, Tweening::tt_Alpha, 1000, 0, 1, NULL, Easing::EaseInSine);
+	MUTATE_END
 }
 
 void MainMenu::onSteam(std::string s)
@@ -89,6 +91,7 @@ void MainMenu::onSteam(std::string s)
 // little helper for this shit
 bpmSegment getBPMSegmentFromChart(Chart chart)
 {
+	VM_START
 	Channel* ch = SoundManager::getChannelByName("prevSong");
 	if (ch->id == -1)
 	{
@@ -98,6 +101,7 @@ bpmSegment getBPMSegmentFromChart(Chart chart)
 	float pos = ch->getPos();
 	bpmSegment seg = chart.getSegmentFromTime(pos);
 	return seg;
+	VM_END
 }
 
 void MainMenu::update(Events::updateEvent event)
@@ -169,6 +173,7 @@ void MainMenu::update(Events::updateEvent event)
 
 void MainMenu::keyDown(SDL_KeyboardEvent event)
 {
+	MUTATE_START
 	if (!Multiplayer::loggedIn)
 		return;
 	if (event.keysym.sym == SDLK_RETURN && !tweenDone && Multiplayer::loggedIn)
@@ -181,4 +186,5 @@ void MainMenu::keyDown(SDL_KeyboardEvent event)
 		Tweening::TweenManager::createNewTween("movingLogo", thing, Tweening::tt_Y, 700, (Game::gameHeight / 2) - (thing->h / 2), -(Game::gameHeight / 2) - (thing->h / 2), (Tweening::tweenCallback)callback, Easing::EaseOutCubic);
 		Tweening::TweenManager::createNewTween("alphaLogo", thing, Tweening::tt_Alpha, 600, 1, 0, NULL, Easing::EaseInSine);
 	}
+	MUTATE_END
 }

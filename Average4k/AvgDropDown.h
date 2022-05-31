@@ -36,6 +36,7 @@ public:
 
 	AvgDropDown(int _x, int _y, std::vector<std::string> _def)
 	{
+		VM_START
 		x = _x;
 		y = _y;
 		def = _def;
@@ -61,11 +62,13 @@ public:
 			t->setCharacterSpacing(2.33);
 			textObjects.push_back(t);
 		}
+		VM_END
 	}
 
 
 	void mouseDown()
 	{
+		VM_START
 		if (((AvgContainer*)parent)->dropDownActive && !isActive)
 			return;
 		int _x, _y;
@@ -96,7 +99,7 @@ public:
 			isActive = false;
 			selectedText = nullptr;
 		}
-
+		VM_END
 	}
 
 	void draw()

@@ -30,6 +30,7 @@ public:
 	}
 
 	AvgSprite(int _x, int _y, std::string path) : Object(x, y) {
+		MUTATE_START
 		x = _x;
 		y = _y;
 		tex = Texture::createWithImage(path);
@@ -39,9 +40,11 @@ public:
 		w = tex->width;
 		h = tex->height;
 		alpha = 1;
+		MUTATE_END
 	};
 
 	AvgSprite(int _x, int _y, Texture* data) : Object(x, y) {
+		MUTATE_START
 		x = _x;
 		y = _y;
 		tex = data;
@@ -50,6 +53,7 @@ public:
 		w = tex->width;
 		h = tex->height;
 		alpha = 1;
+		MUTATE_END
 	};
 
 	virtual ~AvgSprite()

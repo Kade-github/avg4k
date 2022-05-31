@@ -1106,6 +1106,8 @@ void Gameplay::update(Events::updateEvent event)
 }
 void Gameplay::cleanUp()
 {
+
+	MUTATE_START
 	spawnedNotes.clear();
 	notesToPlay.clear();
 
@@ -1124,6 +1126,8 @@ void Gameplay::cleanUp()
 	
 	//if (background)
 	//	SDL_DestroyTexture(background);
+
+	MUTATE_END
 }
 
 void Gameplay::keyDown(SDL_KeyboardEvent event)

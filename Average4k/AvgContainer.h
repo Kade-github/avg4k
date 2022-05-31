@@ -31,6 +31,7 @@ public:
 
 	AvgContainer(int _x, int _y, Texture* background)
 	{
+		MUTATE_START
 		x = _x;
 		y = _y;
 		tex = background;
@@ -38,6 +39,7 @@ public:
 		h = tex->height;
 		customDraw = true;
 		scrollAr = Noteskin::getMenuElement(Game::noteskin, "Container/scroll_arrow.png");
+		MUTATE_END
 	}
 
 	~AvgContainer()

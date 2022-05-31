@@ -11,6 +11,8 @@
 void NoteObject::draw() {
     if (!drawCall)
         return;
+
+    MUTATE_START
     float position = rTime;
 
     Rect receptor;
@@ -201,6 +203,5 @@ void NoteObject::draw() {
         }
     }
 
-
-
+    MUTATE_END
 }

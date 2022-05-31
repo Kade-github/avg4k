@@ -13,6 +13,7 @@ bool note_sort(note const& lhs, note const& rhs) {
 
 chartMeta QuaverFile::returnChart(std::string path)
 {
+    VM_START
     meta.folder = path;
     meta.chartType = 1;
 
@@ -217,4 +218,6 @@ chartMeta QuaverFile::returnChart(std::string path)
     }
     
     return meta;
+
+    VM_END
 }

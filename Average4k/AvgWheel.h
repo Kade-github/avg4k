@@ -31,6 +31,7 @@ public:
 
 	AvgWheel(int _x, int _y, int _w, int _h)
 	{
+		MUTATE_START
 		x = _x;
 		y = _y;
 		w = _w;
@@ -38,7 +39,7 @@ public:
 
 		box = Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/wheelContainer.png");
 		topBox = Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/wheelTop.png");
-
+		MUTATE_END
 	}
 
 	~AvgWheel()
@@ -83,6 +84,7 @@ public:
 
 	void setSongs(std::vector<Song> songs)
 	{
+		MUTATE_START
 		for (wheelObject& obj : wheelObjects)
 		{
 			if (obj.drawBanner)
@@ -112,6 +114,7 @@ public:
 
 			wheelObjects.push_back(obj);
 		}
+		MUTATE_END
 	}
 
 	void draw()

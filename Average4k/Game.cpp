@@ -215,6 +215,7 @@ void Game::switchMenu(Menu* m)
 
 void Game::createGame()
 {
+	VM_START
 	objects = new std::vector<Object*>();
 	steam = new Steam();
 	steam->InitSteam();
@@ -274,6 +275,7 @@ void Game::createGame()
 	alphaWatermark->borderColor = { 255,255,255 };
 	multi = new Multiplayer();
 	multiThreadHandle = CreateThread(NULL, NULL, Multiplayer::connect, NULL, NULL, NULL);
+	VM_END
 }
 
 

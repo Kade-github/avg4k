@@ -636,6 +636,13 @@ bool firstConnection = false;
 DWORD WINAPI Multiplayer::connect(LPVOID agh)
 {
 
+    std::string build = Game::version;
+    bool debug = false;
+    UNPROTECTED_START
+    build = "(DEBUG) " + build;
+    debug = true;
+    UNPROTECTED_END
+
     VM_START
     connectedToServer = false;
 
@@ -701,7 +708,9 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
             }
             con->append_header("Encrypted", "1");
             con->append_header("IV", "dynamic");
-            con->append_header("Version", Game::version);
+            con->append_header("Version", build);
+            if (debug)
+                con->append_header("Debug", "");
 
            // UNPROTECTED_START
            //     con->append_header("DebugBuild", "1");
@@ -729,6 +738,7 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
             std::string base64Encoded = macaron::Base64::Encode(encryptedData);
             //std::cout << "Base64: " << base64Encoded << std::endl;
             con->append_header("Key", base64Encoded);
+           
 
             OPENSSL_free(out);
             // Note that connect here only requests a connection. No network messages are

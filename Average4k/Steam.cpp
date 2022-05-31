@@ -7,10 +7,12 @@ std::map<std::string, Texture*> Steam::pixelsForAvatar;
 
 void Steam::InitSteam()
 {
+    MUTATE_START
 	if (!SteamAPI_Init())
 	{
 		std::cout << "uh oh, you aren't on steam (or you don't own the game)" << std::endl;
 	}
+    MUTATE_END
 }
 
 void Steam::ShutdownSteam()
@@ -28,6 +30,7 @@ extern "C"
     static size_t
         WriteMemoryCallback(void* contents, size_t size, size_t nmemb, void* userp)
     {
+        MUTATE_START
         size_t realsize = size * nmemb;
         struct MemoryStruct* mem = (struct MemoryStruct*)userp;
 
@@ -44,12 +47,14 @@ extern "C"
         mem->memory[mem->size] = 0;
 
         return realsize;
+        MUTATE_END
     }
 }
 
 
 Texture* Steam::getAvatar(const char* url)
 {
+    MUTATE_START
     if (pixelsForAvatar[std::string(url)] != nullptr)
     {
         Game::currentMenu->onSteam("profileDownloaded");
@@ -96,9 +101,9 @@ Texture* Steam::getAvatar(const char* url)
 
     Game::currentMenu->onSteam("profileDownloaded");
 
-
-
     return tex;
+
+    MUTATE_END
 }
 
 void Steam::doesWorkshopItemExist(std::string name)
@@ -118,6 +123,7 @@ void Steam::doesWorkshopItemExist(std::string name)
 
 void Steam::OnName(SteamUGCQueryCompleted_t* result, bool bIOFailure)
 {
+    MUTATE_START
     for (int i = 0; i < result->m_unNumResultsReturned; i++)
     {
         SteamUGCDetails_t id;
@@ -133,6 +139,7 @@ void Steam::OnName(SteamUGCQueryCompleted_t* result, bool bIOFailure)
         }
     }
     Game::currentMenu->onSteam("resultDoesntExist");
+    MUTATE_END
 }
 
 
@@ -283,16 +290,19 @@ void Steam::uploadPack(Pack* pac, PublishedFileId_t id)
 
 void Steam::OnCreateItemCallback(CreateItemResult_t* result, bool bIOFailure)
 {
+    MUTATE_START
     createdId = result->m_nPublishedFileId;
 
     std::cout << "created item " << createdId << std::endl;
 
     if (Game::currentMenu != nullptr)
         Game::currentMenu->onSteam("createdItem");
+    MUTATE_END
 }
 
 void Steam::OnUploadedItemCallback(SubmitItemUpdateResult_t* result, bool bIOFailure)
 {
+    MUTATE_START
     std::cout << "Result: " << result->m_eResult << " on " << result->m_nPublishedFileId << std::endl;
 
     if (Game::currentMenu != nullptr)
@@ -309,6 +319,7 @@ void Steam::OnUploadedItemCallback(SubmitItemUpdateResult_t* result, bool bIOFai
             Game::currentMenu->onSteam("uploadItem");
         }
     }
+    MUTATE_END
 }
 
 // show me the money
@@ -327,6 +338,7 @@ void Steam::populateWorkshopItems(int page) {
 
 void Steam::OnUGCAllQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFailure)
 {
+    MUTATE_START
     downloadedList.clear();
     for (int i = 0; i < result->m_unNumResultsReturned; i++)
     {
@@ -354,6 +366,7 @@ void Steam::OnUGCAllQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFail
             downloadedList.push_back(i);
         }
     }
+    MUTATE_END
 }
 
 // get subscribe
@@ -406,6 +419,7 @@ float Steam::CheckWorkshopDownload()
 
 void Steam::OnUGCSubscribedQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFailure)
 {
+    MUTATE_START
     subscribedList.clear();
     for (int i = 0; i < result->m_unNumResultsReturned; i++)
     {
@@ -436,6 +450,7 @@ void Steam::OnUGCSubscribedQueryCallback(SteamUGCQueryCompleted_t* result, bool 
             std::cout << "failed to fuck wit item #" << i << std::endl;
         }
     }
+    MUTATE_END
 }
 
 uint64_t Steam::downloadId = 0;
@@ -444,6 +459,7 @@ uint64_t Steam::downloadId = 0;
 
 void Steam::LoadWorkshopChart(uint64_t publishedFileID) {
 
+    STR_ENCRYPT_START
     downloadId = publishedFileID;
     PublishedFileId_t file = publishedFileID;
 
@@ -452,11 +468,12 @@ void Steam::LoadWorkshopChart(uint64_t publishedFileID) {
     bool success = SteamUGC()->DownloadItem(file, true);
 
     std::cout << "Started steam download: " << success << std::endl;
-    
+    STR_ENCRYPT_END
 }
 
 void Steam::CallbackDownload(DownloadItemResult_t* res) {
 
+    VM_START
     if (res->m_unAppID != 1828580)
         return;
 
@@ -487,6 +504,7 @@ void Steam::CallbackDownload(DownloadItemResult_t* res) {
     UGCQueryCallback.Set(handle, this, &Steam::OnUGCQueryCallback);
 
     SteamUGC()->ReleaseQueryUGCRequest(req);
+    VM_END
 }
 //haha stackoverflow go brrr (shut the fuck up i can hear you laughing)
 // dw I do it too :)

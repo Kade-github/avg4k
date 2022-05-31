@@ -255,6 +255,8 @@ MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted, bool backFromSelect = f
 
 void MultiplayerLobby::create() {
 	
+	VM_START
+
 	if (!waitingForStart)
 		MainerMenu::currentSelectedSong = Chart();
 	playerList = new AvgGroup(0, 0, 1280, 720);
@@ -313,6 +315,8 @@ void MultiplayerLobby::create() {
 	chat = new ChatObject(0, 0);
 	chat->create();
 	add(chat);
+
+	VM_END
 }
 
 void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
@@ -385,6 +389,7 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 
 void MultiplayerLobby::update(Events::updateEvent event)
 {
+	MUTATE_START
 	for (person& p : people)
 	{
 		AvgSprite* spr = p.avatar;
@@ -410,4 +415,5 @@ void MultiplayerLobby::update(Events::updateEvent event)
 			warningDisplay->color = c;
 		}
 	}
+	MUTATE_END
 }

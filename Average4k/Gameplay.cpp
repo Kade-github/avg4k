@@ -412,6 +412,7 @@ void Gameplay::create() {
 	song = SoundManager::createChannel(path.c_str(), "gameplaySong");
 	clap = SoundManager::createChannel("assets/sounds/hitSound.wav", "clapFx");
 
+
 	song->createFXStream();
 
 	songLength = song->length;
@@ -632,7 +633,8 @@ void Gameplay::update(Events::updateEvent event)
 		if (!play)
 		{
 			song->setPos(0);
-			song->setVolume(0.6);
+			song->setVolume(Game::save->GetDouble("Music Volume"));
+			clap->setVolume(Game::save->GetDouble("Hitsounds Volume"));
 			song->play();
 			play = true;
 			lastBPM = 0;
@@ -996,15 +998,6 @@ void Gameplay::update(Events::updateEvent event)
 
 				if (wh - positionInSong < 2)
 				{
-					if (Game::save->GetBool("hitsounds") && !note->clapped)
-					{
-						note->clapped = true;
-						if (SoundManager::getChannelByName("clapFx") != NULL)
-						{
-							clap->stop();
-							clap->play();
-						}
-					}
 					if (botplay && note->active)
 					{
 						float diff = (wh - positionInSong);
@@ -1259,6 +1252,16 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 				std::string format = std::to_string(diff - fmod(diff, 0.01));
 				format.erase(format.find_last_not_of('0') + 1, std::string::npos);
+
+				if (Game::save->GetBool("hitsounds") && !closestObject->clapped)
+				{
+					closestObject->clapped = true;
+					if (SoundManager::getChannelByName("clapFx") != NULL)
+					{
+						clap->stop();
+						clap->play();
+					}
+				}
 
 				if (MultiplayerLobby::inLobby)
 				{

@@ -366,6 +366,8 @@ void MainerMenu::create()
 
 	std::vector<setting> audioSettings;
 	audioSettings.push_back(Game::save->getSetting("Hitsounds"));
+	audioSettings.push_back(Game::save->getSetting("Music Volume"));
+	audioSettings.push_back(Game::save->getSetting("Hitsounds Volume"));
 
 	addSettings("Audio", audioSettings);
 
@@ -421,6 +423,16 @@ void MainerMenu::create()
 
 void MainerMenu::update(Events::updateEvent ev)
 {
+	Channel* ch = SoundManager::getChannelByName("prevSong");
+
+	if (ch != NULL)
+	{
+		if (ch->volume != Game::save->GetDouble("Music Volume"))
+		{
+			ch->setVolume(Game::save->GetDouble("Music Volume"));
+		}
+	}
+
 	if (asyncPacks->size() != 0 || asyncSongs->size() != 0)
 	{
 		std::vector<Pack> gatheredPacks;

@@ -10,6 +10,7 @@ public:
 	std::vector<double> bpmCan;
 	unsigned long id = -1;
 	unsigned long decodeChan = -1;
+	double volume;
 	float rate = 1;
 	int length = 0;
 
@@ -55,10 +56,11 @@ public:
 		BASS_ChannelStop(id);
 	}
 
-	void setVolume(float vol)
+	void setVolume(double vol)
 	{
 		if (id == -1)
 			return;
+		volume = vol;
 		BASS_ChannelSetAttribute(id, BASS_ATTRIB_VOL, vol);
 	}
 

@@ -490,8 +490,8 @@ void MainerMenu::update(Events::updateEvent ev)
 	else
 	{
 		Text* t = ((Text*)soloContainer->findItemByName("uploadingProgress"));
-		if (t->text != "Nothing being uploaded :) (ALT + LSHIFT to upload, CTRL + LSHIFT to upload chart (not pack))")
-			t->setText("Nothing being uploaded :) (ALT + LSHIFT to upload, CTRL + LSHIFT to upload chart (not pack))");
+		if (t->text != "Nothing being uploaded :) (ALT + LSHIFT to upload (only packs rn))")
+			t->setText("Nothing being uploaded :) (ALT + LSHIFT to upload (only packs rn))");
 	}
 
 	for (steamItem it : Game::steam->downloadedList)
@@ -634,8 +634,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 		case SDLK_LSHIFT:
 			if (selected.metaPath.size() != 0 && selected.metaPath != "unfl" && !isInLobby)
 			{
-				if (event.keysym.mod & KMOD_CTRL)
-					chartUploading = true;
+
 
 				if ((!chartUploading && (event.keysym.mod & KMOD_ALT)) || chartUploading)
 				{

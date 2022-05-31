@@ -473,6 +473,9 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
             case 3305:
                 Game::asyncShowErrorWindow("Message", status.Status, true);
                 break;
+            case 3306:
+                Game::asyncShowErrorWindow("Message", status.Status, false);
+                break;
             }
             p.data = data;
             p.length = length;

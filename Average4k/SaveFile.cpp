@@ -20,7 +20,7 @@ SaveFile::SaveFile()
     // {takesActive, takesString, takesDouble, defaultActive, defaultString, defaultDouble, defaultMin, defaultMax, defaultIncrm, unique, suffix, isDropdown}
 
     settingHeader defaultHeader;
-    defaultHeader.settingsVersion = "v2.1";
+    defaultHeader.settingsVersion = "v2.2";
 
     defaultSettings.push_back(CreateSetting("Downscroll",{true}));
     defaultSettings.push_back(CreateSetting("Scrollspeed",{false,false,true,false,"",800,200,1900}));
@@ -57,13 +57,21 @@ SaveFile::SaveFile()
     upd.get().convert(currentHeader);
 
     // check for new settings
-    if (currentHeader.settings.size() != defaultHeader.settings.size())
+    if (currentHeader.settingsVersion != defaultHeader.settingsVersion)
     {
         for (int i = 0; i < defaultSettings.size(); i++)
         {
-            if (i > currentHeader.settings.size() - 1)
+            if (i < currentHeader.settings.size())
             {
-                currentHeader.settings.push_back(defaultSettings[i]);
+                if (defaultHeader.settings[i].name != currentHeader.settings[i].name)
+                {
+                    currentHeader.settings[i] = defaultHeader.settings[i];
+                    std::cout << "user didn't have " << defaultSettings[i].name << std::endl;
+                }
+            }
+            else
+            {
+                currentHeader.settings.push_back(defaultHeader.settings[i]);
                 std::cout << "user didn't have " << defaultSettings[i].name << std::endl;
             }
         }

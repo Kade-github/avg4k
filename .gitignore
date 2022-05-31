@@ -10,3 +10,5 @@ Average4k/settings.avg2
 enc_temp_folder/6d7f48beb7c0e4266c55281b6945f636/MainMenu.cpp
 *.avg2
 *.avg2
+*.vcxproj
+Average4k/Average4k.vcxproj

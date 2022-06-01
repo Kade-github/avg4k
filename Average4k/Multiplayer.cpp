@@ -91,7 +91,7 @@ DWORD WINAPI SendPacketT(LPVOID param) {
 
     
         while (true) {
-        VM_START
+        
           
         if (!connectionData) {
             Sleep(1);
@@ -103,13 +103,15 @@ DWORD WINAPI SendPacketT(LPVOID param) {
 
             if (Multiplayer::sendQueue.empty()) {
                 Multiplayer::sendQueueLock.unlock();
-                Sleep(1);
+                Sleep(50);
                 continue;
             }
-
+           
             PacketData packetData = Multiplayer::sendQueue.front();
 
             Multiplayer::sendQueueLock.unlock();
+
+            VM_START
 
             websocketpp::lib::error_code ec;
 

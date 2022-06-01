@@ -163,13 +163,16 @@ void atexit_handler()
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	PSTR lpCmdLine, INT nCmdShow)
 {
-	
+
 
 	std::string cmdLine(lpCmdLine);
-	
-	SetUnhandledExceptionFilter(UnhandledExceptionFilterHandler);
-	//AddVectoredExceptionHandler(1, &PvectoredExceptionHandler);
 
+	SetUnhandledExceptionFilter(UnhandledExceptionFilterHandler);
+
+	if (cmdLine.find("-vechandler") != std::string::npos)
+	{
+		AddVectoredExceptionHandler(1, &PvectoredExceptionHandler);
+	}
 	std::atexit(&atexit_handler);
 	std::at_quick_exit(atexit_handler);
 	

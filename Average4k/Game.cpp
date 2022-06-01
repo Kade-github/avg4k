@@ -337,6 +337,7 @@ void Game::update(Events::updateEvent update)
 
 	if (transitioning && transCompleted)
 	{
+		transitioning = false;
 		transCompleted = false;
 		Tweening::TweenManager::createNewTween("_trans", __transRect, Tweening::tt_Alpha, 235, 255, 0, []()->void {
 			Game::instance->transitioning = false;

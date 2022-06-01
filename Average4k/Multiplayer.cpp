@@ -1,7 +1,6 @@
 #include "Multiplayer.h"
 #include "Game.h"
 #include "Gameplay.h"
-#include <boost_static/lockfree/queue.hpp>
 
 
 bool Multiplayer::connectedToServer = false;
@@ -31,11 +30,9 @@ unsigned char* keykey;
 
 unsigned char iv[] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 
-std::queue<PacketData> Multiplayer::sendQueue;
-std::mutex Multiplayer::sendQueueLock;
+boost::lockfree::queue<PacketData> Multiplayer::sendQueue;
 
 std::mutex ConnectionLock;
-
 std::mutex unfuckPlease;
 
 void Multiplayer::InitCrypto() {
@@ -100,17 +97,15 @@ DWORD WINAPI SendPacketT(LPVOID param) {
         
         
 
-        Multiplayer::sendQueueLock.lock();
-
-            if (Multiplayer::sendQueue.empty()) {
-                Multiplayer::sendQueueLock.unlock();
-                Sleep(50);
-                continue;
-            }
+         
            
-            PacketData packetData = Multiplayer::sendQueue.front();
+        PacketData packetData;
 
-            Multiplayer::sendQueueLock.unlock();
+        if (!Multiplayer::sendQueue.pop(packetData)) {
+            Sleep(1);
+            continue;
+           }
+
 
             VM_START
 
@@ -220,10 +215,10 @@ DWORD WINAPI SendPacketT(LPVOID param) {
             catch (std::exception ex) {
                 std::cout << "something something problem send: " << ex.what() << std::endl;
             }
-            if (success) {
-                Multiplayer::sendQueueLock.lock();
-                Multiplayer::sendQueue.pop();
-                Multiplayer::sendQueueLock.unlock();
+
+            if (!success && packetData.attempts < 5) {
+                packetData.attempts++;
+                Multiplayer::sendQueue.push(packetData);
             }
             unfuckPlease.unlock();
             free(cipherplusIV);
@@ -241,9 +236,7 @@ void Multiplayer::SendPacket(std::string data, PacketType packet) {
     packetData.data = data;
     packetData.packetType = packet;
 
-    Multiplayer::sendQueueLock.lock();
     Multiplayer::sendQueue.push(packetData);
-    Multiplayer::sendQueueLock.unlock();
     MUTATE_END
 }
 

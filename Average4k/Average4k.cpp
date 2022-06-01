@@ -163,8 +163,9 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	PSTR lpCmdLine, INT nCmdShow)
 {
 	
-		
 
+	std::string cmdLine(lpCmdLine);
+	
 	SetUnhandledExceptionFilter(UnhandledExceptionFilterHandler);
 	//AddVectoredExceptionHandler(1, &PvectoredExceptionHandler);
 
@@ -178,10 +179,16 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	freopen("log.txt", "w", stdout);
 	std::cout << "log init" << std::endl;
 #ifndef NOBUF
-	std::streambuf* origBuf = std::cout.rdbuf();
-	log_stream* logstream = new log_stream(origBuf);
-	std::cout.set_rdbuf(logstream);
-	outstream = logstream;
+
+	if (cmdLine.find("-nologbuf") != std::string::npos) {
+		std::cout << "Not using log buffers - could introduce stuttering." << std::endl;
+	}
+	else {
+		std::streambuf* origBuf = std::cout.rdbuf();
+		log_stream* logstream = new log_stream(origBuf);
+		std::cout.set_rdbuf(logstream);
+		outstream = logstream;
+	}
 #endif
 #endif
 	

@@ -69,6 +69,7 @@ void resetStuff()
 
 void selectedSongCallback(int sId)
 {
+	MUTATE_START
 	MainerMenu::packSongIndex = sId;
 	Song s = MainerMenu::selected.songs[sId];
 
@@ -195,10 +196,12 @@ void selectedSongCallback(int sId)
 			cont->addObject(diffSelectRight, "rightSelect");
 		}
 	}
+	MUTATE_END
 }
 
 void MainerMenu::create()
 {
+	VM_START
 	resetStuff();
 	bg = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "darkmodebg.png"));
 	bg->create();
@@ -424,10 +427,14 @@ void MainerMenu::create()
 	Tweening::TweenManager::createNewTween("movingContainer2", settingsContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("movingContainer1", multiContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("movingContainer", soloContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
+
+	VM_END
 }
 
 void MainerMenu::update(Events::updateEvent ev)
 {
+
+	MUTATE_START
 	Channel* ch = SoundManager::getChannelByName("prevSong");
 
 	if (ch != NULL)
@@ -598,6 +605,8 @@ void MainerMenu::update(Events::updateEvent ev)
 			}
 		}
 	}
+
+	MUTATE_END
 }
 
 void endTrans()
@@ -609,6 +618,7 @@ void endTrans()
 
 void updateDiff()
 {
+	MUTATE_START
 	AvgContainer* cont = (AvgContainer*)soloContainer->findItemByName("songContainer");
 	if (!cont) // lol
 		return;
@@ -629,11 +639,14 @@ void updateDiff()
 
 	left->x = diff->x - 24;
 	right->x = (diff->x + diff->w) + 24;
+
+	MUTATE_END
 }
 
 
 void MainerMenu::keyDown(SDL_KeyboardEvent event)
 {
+	MUTATE_START
 	if (selectedContainerIndex == 0)
 	{
 		switch (event.keysym.sym)
@@ -705,11 +718,14 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 			Game::instance->transitionToMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, true));
 		break;
 	}
+
+	MUTATE_END
 }
 
 
 void MainerMenu::addPack(std::string name, std::string bg, bool showText, bool isSteam)
 {
+	VM_START
 	Texture* background = Texture::createWithImage(bg);
 	AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");
 	PackObject* obj = NULL;
@@ -727,10 +743,12 @@ void MainerMenu::addPack(std::string name, std::string bg, bool showText, bool i
 	obj->h = 75;
 	packContainer->addObject(obj, "packInd" + packIndex);
 	packIndex++;
+	VM_END
 }
 
 void MainerMenu::onSteam(std::string s)
 {
+	VM_START
 	if (s == "createdItem")
 	{
 		// ok then lets fuckin do it lol!
@@ -760,10 +778,12 @@ void MainerMenu::onSteam(std::string s)
 		chartUploading = false;
 		((Text*)soloContainer->findItemByName("uploadingProgress"))->text = "Uploaded!";
 	}
+	VM_END
 }
 
 void MainerMenu::clearPacks()
 {
+	MUTATE_START
 	packIndex = 0;
 	AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");
 	for (Object* obj : packContainer->above)
@@ -771,10 +791,12 @@ void MainerMenu::clearPacks()
 		packContainer->removeObject(obj);
 		delete obj;
 	}
+	MUTATE_END
 }
 
 void MainerMenu::selectPack(int index)
 {
+	MUTATE_START
 	AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");
 	int ind = 0;
 
@@ -793,8 +815,7 @@ void MainerMenu::selectPack(int index)
 
 		ind++;
 	}
-
-	
+	MUTATE_END	
 }
 
 void transContainerThing()
@@ -819,6 +840,7 @@ void transContainerThing()
 
 void MainerMenu::selectContainer(int container)
 {
+	MUTATE_START
 	selectedContainerIndex = container;
 	transToContainer = container;
 	despawn = lastTrans;
@@ -863,10 +885,12 @@ void MainerMenu::selectContainer(int container)
 	else
 		Tweening::TweenManager::createNewTween("movingContainer2", currentContainer, Tweening::tt_X, 750, Game::gameWidth, (Game::gameWidth / 2) - (currentContainer->w / 2), NULL, Easing::EaseOutCubic);
 	lastTrans = container;
+	MUTATE_END
 }
 
 void MainerMenu::leftMouseDown()
 {
+	MUTATE_START
 	int x, y;
 	Game::GetMousePos(&x, &y);
 
@@ -902,10 +926,12 @@ void MainerMenu::leftMouseDown()
 			}
 		}
 	}
+	MUTATE_END
 }
 
 void dropdown_callback(std::string set, std::string value)
 {
+	MUTATE_START
 	if (set == "Fullscreen" || set == "Resolution")
 	{
 		std::vector<int> res = Game::save->ObtainResolution();
@@ -929,11 +955,13 @@ void dropdown_callback(std::string set, std::string value)
 	}
 
 	Game::save->Save();
+	MUTATE_END
 }
 
 
 void MainerMenu::addSettings(std::string catNam, std::vector<setting> settings)
 {
+	VM_START
 	int startY = settingsContainer->findItemByName("searchBox")->y + 42 + (52 * catIndex);
 	int startX = settingsContainer->findItemByName("searchBox")->x;
 
@@ -1007,4 +1035,5 @@ void MainerMenu::addSettings(std::string catNam, std::vector<setting> settings)
 	}
 
 	lastHeight += (52 * settings.size()) + 52;
+	VM_END
 }

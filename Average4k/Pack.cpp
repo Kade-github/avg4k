@@ -352,7 +352,7 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 					{
 						Song s;
 						QuaverFile file = QuaverFile();
-						chartMeta m = file.returnChart(bruh);
+						chartMeta m = file.returnChart(entry.path().string());
 						s.c = Chart(m);
 						s.path = bruh;
 						songs.push_back(s);

@@ -106,9 +106,11 @@ public:
 		leng = BASS_ChannelGetData(decodeChan, samples, leng);
 		*sampleLength = leng;
 
-		if (BASS_ErrorGetCode() != 0)
+		if (BASS_ErrorGetCode() != 0) {
+			STR_ENCRYPT_START
 			std::cout << "bass error " << BASS_ErrorGetCode() << std::endl;
-
+			STR_ENCRYPT_END
+		}
 		BASS_ChannelSetPosition(decodeChan, BASS_ChannelSeconds2Bytes(decodeChan, 0), NULL);
 
 		return samples;

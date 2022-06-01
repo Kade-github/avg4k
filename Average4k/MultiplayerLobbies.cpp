@@ -50,6 +50,8 @@ void MultiplayerLobbies::create()
 
 void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
 {
+	MUTATE_START
+
 	Lobbies.clear();
 	Lobbies = lobs;
 
@@ -88,6 +90,7 @@ void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
 		lobbyTexts.push_back(t);
 		add(t);
 	}
+	MUTATE_END
 }
 
 

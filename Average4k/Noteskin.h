@@ -32,33 +32,37 @@ class Noteskin
 
 		static Texture* getGameplayElement(noteskin_asset* as, std::string element)
 		{
+			VM_START
 			if (as->skinpath == "default")
-				return Texture::createWithImage(std::filesystem::current_path().string() + "\\assets/skinDefaults/Gameplay/" + element);
-			return Texture::createWithImage(std::filesystem::current_path().string() + "\\assets/noteskin/" + as->name + "/" + as->skinpath + "/Gameplay/" + element);
+				return Texture::createWithImage("assets/skinDefaults/Gameplay/" + element);
+			return Texture::createWithImage("assets/noteskin/" + as->name + "/" + as->skinpath + "/Gameplay/" + element);
+			VM_END
 		}
 		static Texture* getMenuElement(noteskin_asset* as, std::string element)
 		{
+			VM_START
 			if (as->skinpath == "default")
-			{
-				Texture* t = Texture::createWithImage(std::filesystem::current_path().string() + "\\assets/skinDefaults/Menu/" + element);
-
-				return t;
-			}
-			return Texture::createWithImage(std::filesystem::current_path().string() + "\\assets/noteskin/" + as->name + "/" + as->skinpath + "/Menu/" + element);
+				return Texture::createWithImage("assets/skinDefaults/Menu/" + element);
+			return Texture::createWithImage("assets/noteskin/" + as->name + "/" + as->skinpath + "/Menu/" + element);
+			VM_END
 		}
 
 		static Texture* getStartElement(noteskin_asset* as, std::string element)
 		{
+			VM_START
 			if (as->skinpath == "default")
-				return Texture::createWithImage(std::filesystem::current_path().string() + "\\assets/skinDefaults/Start/" + element);
-			return Texture::createWithImage(std::filesystem::current_path().string() + "\\assets/noteskin/" + as->name + "/" + as->skinpath + "/Start/" + element);
+				return Texture::createWithImage("assets/skinDefaults/Start/" + element);
+			return Texture::createWithImage("assets/noteskin/" + as->name + "/" + as->skinpath + "/Start/" + element);
+			VM_END
 		}
 
 		static std::string getMusicElement(noteskin_asset* as, std::string element)
 		{
+			VM_START
 			if (as->skinpath == "default")
-				return std::filesystem::current_path().string() + "\\assets/skinDefaults/Music/" + element;
-			return std::filesystem::current_path().string() + "\\assets/noteskin/" + as->name + "/" + as->skinpath + "/Music/" + element;
+				return "assets/skinDefaults/Music/" + element;
+			return "assets/noteskin/" + as->name + "/" + as->skinpath + "/Music/" + element;
+			VM_END
 		}
 };
 

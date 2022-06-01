@@ -480,7 +480,7 @@ SongSelect::SongSelect()
 }
 
 void SongSelect::create() {
-	
+	VM_START
 	AvgSprite* sprite = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/bg.png"));
 	sprite->create();
 	add(sprite);
@@ -516,12 +516,13 @@ void SongSelect::create() {
 	created = true;
 
 	updateList();
+	VM_END
 }
 
 void SongSelect::switchChart(song s)
 {
 	// cannot do switch due to "YOU CANNOT DEFINE VARIABLES IN SWITCHES OR SOMETHING"
-
+	VM_START
 	int time = SDL_GetTicks();
 
 	if (s.type == StepMania)
@@ -566,5 +567,5 @@ void SongSelect::switchChart(song s)
 	else
 		songPrev = SoundManager::getChannelByName("prevSong");
 	songPrev->play();
-
+	VM_END
 }

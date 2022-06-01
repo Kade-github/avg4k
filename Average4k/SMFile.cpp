@@ -4,6 +4,8 @@
 
 SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
 
+    MUTATE_START
+
     if(path.find("\\") != std::string::npos)
         path.replace(path.find("\\"), sizeof("\\") - 1, "/");
 
@@ -295,4 +297,6 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
         }
     }
     infile.close();
+
+    MUTATE_END
 }

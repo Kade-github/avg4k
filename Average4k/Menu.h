@@ -47,6 +47,7 @@ public:
 
 	void removeAll()
 	{
+		MUTATE_START
 		for(int i = 0; i < cam->children.size(); i++)
 		{
 			Object* obj = cam->children[i];
@@ -56,6 +57,7 @@ public:
 		}
 		std::cout << "removed all " << children.size() << std::endl;
 		cam->children.clear();
+		MUTATE_END
 	}
 	virtual void imguiUpdate(float elapsed) {};
 	virtual void update(Events::updateEvent ev) = 0;

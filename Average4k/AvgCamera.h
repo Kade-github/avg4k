@@ -20,6 +20,7 @@ public:
 
 	AvgCamera(int _x, int _y, int _w, int _h)
 	{
+		MUTATE_START
 		id = 690690690;
 		handleDraw = true;
 		glGenFramebuffers(1, &fb);
@@ -39,6 +40,7 @@ public:
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		MUTATE_END
 	}
 
 	float shakeTime = 0;

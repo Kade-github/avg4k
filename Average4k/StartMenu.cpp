@@ -9,6 +9,7 @@ float dddtime = 0;
 
 void StartMenu::create()
 {
+	MUTATE_START
 	// create misc and kadedev logos
 	opgl = new AvgSprite(Game::gameWidth / 2, Game::gameHeight / 2, Noteskin::getStartElement(Game::noteskin, "MiscLogo.png"));
 	kadedev = new AvgSprite(Game::gameWidth / 2, Game::gameHeight / 2, Noteskin::getStartElement(Game::noteskin, "KadeDevTeam.png"));
@@ -33,10 +34,12 @@ void StartMenu::create()
 	ch->bpm = 155;
 
 	Tweening::TweenManager::createNewTween("opglLogo", opgl, Tweening::tt_Alpha, 6000, 0, 1, NULL, Easing::EaseInSine);
+	MUTATE_END
 }
 
 void StartMenu::update(Events::updateEvent ev)
 {
+	MUTATE_START
 	float beat = ((ch->getPos()) / 1000) * (ch->bpm / 60);
 
 	// events
@@ -56,6 +59,7 @@ void StartMenu::update(Events::updateEvent ev)
 			Game::instance->transitionToMenu(new MainMenu());
 		}
 
+	MUTATE_END
 }
 
 void StartMenu::keyDown(SDL_KeyboardEvent event)

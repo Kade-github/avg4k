@@ -37,6 +37,8 @@ public:
 
 	bool transitioning;
 
+	static std::vector<Object*>* objects;
+
 	static bool startConnect;
 	static Menu* toGoTo;
 
@@ -92,5 +94,16 @@ public:
 	static float startTick;
 	static double gameFPS;
 	static float deltaTime;
+
+	static bool doesObjectExist(int id)
+	{
+		for (Object* obj : mainCamera->children)
+		{
+			if (obj->id == id)
+				return true;
+		}
+		return false;
+	}
+
 };
 

@@ -23,7 +23,7 @@ bool Game::gameplayEvents_DB = false;
 
 AvgRect* __transRect;
 
-vector<Object*>* objects;
+vector<Object*>* Game::objects;
 
 bool Game::errorWindowOpen = false;
 

@@ -26,6 +26,7 @@ namespace Tweening
 		Object* obj;
 		TweenType type;
 		double end;
+		int savedId;
 		double start;
 		Easing::easingFunction easeFunc;
 		std::map<std::string, int> vars;
@@ -132,6 +133,7 @@ namespace Tweening
 			tw.type = type;
 			tw.obj = toTween;
 			tw.end = e;
+			tw.savedId = toTween->id;
 			tw.call = false;
 			tw.start = s;
 			Easing::easingFunction ease = Easing::getEasingFunction(easeType);
@@ -160,7 +162,7 @@ namespace Tweening
 			double end = t.end;
 			double value = t.easeFunc(t.percnt);
 
-			if (!t.obj)
+			if (!Game::doesObjectExist(t.savedId))
 			{
 				tweenRemove.push_back(t);
 				return;
@@ -182,12 +184,6 @@ namespace Tweening
 					t.callback();
 				}
 
-			}
-
-			if (!t.obj)
-			{
-				tweenRemove.push_back(t);
-				return;
 			}
 
 			switch (t.type)

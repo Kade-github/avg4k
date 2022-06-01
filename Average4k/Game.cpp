@@ -420,16 +420,17 @@ void Game::update(Events::updateEvent update)
 	if (currentMenu != NULL)
 		if (SDL_GetTicks() > 1000 && currentMenu->created)
 		{
-			for (Tweening::Tween& tw : Tweening::TweenManager::activeTweens)
-			{
-				Tweening::TweenManager::updateTween(tw, Game::deltaTime);
-			}
-
 			for (Tweening::Tween tw : Tweening::TweenManager::tweenRemove)
 			{
 				Tweening::TweenManager::activeTweens.erase(std::remove(Tweening::TweenManager::activeTweens.begin(), Tweening::TweenManager::activeTweens.end(), tw), Tweening::TweenManager::activeTweens.end());
 			}
 			Tweening::TweenManager::tweenRemove.clear();
+
+			for (Tweening::Tween& tw : Tweening::TweenManager::activeTweens)
+			{
+				Tweening::TweenManager::updateTween(tw, Game::deltaTime);
+			}
+
 		}
 	if (currentMenu != NULL)
 	{

@@ -29,7 +29,7 @@ void MultiplayerLobby::refreshLobby(lobby l)
 	scrollAdd = 0;
 	people.clear();
 
-	for (int i = 0; i < (l.PlayerList.size() > 20 ? 20 : l.PlayerList.size()); i++)
+	for (int i = 0; i < l.PlayerList.size(); i++)
 	{
 		player& p = l.PlayerList[i];
 		if (i == 0)
@@ -47,7 +47,7 @@ void MultiplayerLobby::refreshLobby(lobby l)
 		spr->h = 46;
 
 		if (per.display->y > 720)
-			scrollAdd += 52;
+			scrollAdd += 46;
 
 		playerList->add(per.display);
 		playerList->add(spr);

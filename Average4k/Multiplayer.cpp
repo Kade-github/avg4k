@@ -519,7 +519,7 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
             break;
 
 
-        case eSPacketUpdateEncryptionParameters:
+        case eSPacketUpdateEncryptionParameters: {
 
             unpack(result, data, length);
 
@@ -540,6 +540,7 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
             }
 
             break;
+        }
         default:
             p.data = data;
             p.length = length;

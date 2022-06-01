@@ -36,7 +36,7 @@ enum PacketType
     eSPacketAvatarRequestResponse = -12,
     eSPacketOnChat = -13,
     eSPacketFuckYou = -14,
-    eSPacketUpdateEncryptionParameters = 15,
+    eSPacketUpdateEncryptionParameters = -15,
 
 
     //Other Server Packets

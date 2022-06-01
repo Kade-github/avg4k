@@ -521,6 +521,8 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
 
         case eSPacketUpdateEncryptionParameters: {
 
+
+
             unpack(result, data, length);
 
             obj = msgpack::object(result.get());

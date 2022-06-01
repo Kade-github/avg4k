@@ -289,6 +289,10 @@ void MainerMenu::create()
 			for (Song s : stuff)
 				asyncSongs->push_back(s);
 	}
+	bool addWorkshop = true;
+	for (Pack p : packs)
+		if (p.packName == "Workshop/Local")
+			addWorkshop = false;
 
 	if (Game::steam->subscribedList.size() > 0 && steamWorkshop.songs.size() == 0)
 	{
@@ -299,8 +303,8 @@ void MainerMenu::create()
 		steamWorkshop.isSteam = true;
 		steamWorkshop.songs = {};
 
-
-		packs.push_back(steamWorkshop);
+		if (addWorkshop)
+			packs.push_back(steamWorkshop);
 
 		addPack(steamWorkshop.packName, steamWorkshop.background, steamWorkshop.showName, true);
 	}
@@ -308,7 +312,8 @@ void MainerMenu::create()
 	{
 		if (steamWorkshop.songs.size() > 0)
 		{
-			packs.push_back(steamWorkshop);
+			if (addWorkshop)
+				packs.push_back(steamWorkshop);
 
 			addPack(steamWorkshop.packName, steamWorkshop.background, steamWorkshop.showName, true);
 		}

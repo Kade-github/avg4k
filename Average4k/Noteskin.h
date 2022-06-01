@@ -39,7 +39,11 @@ class Noteskin
 		static Texture* getMenuElement(noteskin_asset* as, std::string element)
 		{
 			if (as->skinpath == "default")
-				return Texture::createWithImage(std::filesystem::current_path().string() + "\\assets/skinDefaults/Menu/" + element);
+			{
+				Texture* t = Texture::createWithImage(std::filesystem::current_path().string() + "\\assets/skinDefaults/Menu/" + element);
+
+				return t;
+			}
 			return Texture::createWithImage(std::filesystem::current_path().string() + "\\assets/noteskin/" + as->name + "/" + as->skinpath + "/Menu/" + element);
 		}
 

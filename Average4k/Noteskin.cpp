@@ -68,6 +68,9 @@ noteskin_asset* loadSkin(noteskin_asset* as, std::string typ) {
 		config.close();
 	}
 	as->name = Noteskin::type;
+
+	std::cout << "[NOTESKIN] skinpath=" << as->skinpath << std::endl;
+
 	return as;
 }
 

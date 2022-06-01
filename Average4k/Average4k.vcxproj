@@ -173,7 +173,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
       <CallingConvention>StdCall</CallingConvention>
       <Optimization>Disabled</Optimization>
       <ExceptionHandling>Async</ExceptionHandling>
-      <SupportJustMyCode>true</SupportJustMyCode>
+      <SupportJustMyCode>false</SupportJustMyCode>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

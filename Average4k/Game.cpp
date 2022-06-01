@@ -118,6 +118,11 @@ void Game::asyncShowErrorWindow(std::string title, std::string description, bool
 
 void Game::showErrorWindow(std::string title, std::string description, bool major)
 {
+	std::string titlt = title;
+
+	if (titlt.size() > 24)
+		titlt = titlt.substr(0, 24);
+
 	if (!errorTitleText)
 		errorTitleText = new Text(0, 0, title, 18, "arial");
 	else

@@ -214,8 +214,8 @@ void SongGather::gatherSteamPacksAsync(std::vector<Pack>* packs)
 					s.steamIdPack = p.steamId;
 					p.songs.push_back(s);
 				}
-
-				packs->push_back(p);
+				if (packs)
+					packs->push_back(p);
 			}
 			packAsyncAlready = false;
 		});

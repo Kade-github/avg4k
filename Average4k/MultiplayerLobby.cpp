@@ -1,6 +1,7 @@
 #include "MultiplayerLobby.h"
 #include "AvgSprite.h"
 #include "MainerMenu.h"
+#include "SPacketFuckYou.h"
 
 bool MultiplayerLobby::inLobby = false;
 lobby MultiplayerLobby::CurrentLobby;
@@ -11,9 +12,12 @@ AvgGroup* playerList;
 
 bool isAwaitingPack = false;
 
+int scrollAdd = 0;
+int scroll = 0;
+
 void MultiplayerLobby::refreshLobby(lobby l)
 {
-	MUTATE_START
+	STR_ENCRYPT_START
 	CurrentLobby = l;
 	inLobby = true;
 
@@ -23,9 +27,10 @@ void MultiplayerLobby::refreshLobby(lobby l)
 		playerList->removeObj(p.display);
 	}
 
+	scrollAdd = 0;
 	people.clear();
 
-	for (int i = 0; i < (l.PlayerList.size() > 20 ? 20 : l.PlayerList.size()); i++)
+	for (int i = 0; i < l.PlayerList.size(); i++)
 	{
 		player& p = l.PlayerList[i];
 		if (i == 0)
@@ -41,6 +46,10 @@ void MultiplayerLobby::refreshLobby(lobby l)
 			per.avatar = NULL;
 		spr->w = 46;
 		spr->h = 46;
+
+		if (per.display->y > 720)
+			scrollAdd += 46;
+
 		playerList->add(per.display);
 		playerList->add(spr);
 		people.push_back(per);
@@ -58,7 +67,7 @@ void MultiplayerLobby::refreshLobby(lobby l)
 
 	helpDisplay->setText("Lobby: " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ") " + (isHost ? "You are the host!" : ""));
 	//warningDisplay->setText("");
-	MUTATE_END
+	STR_ENCRYPT_END
 }
 
 void MultiplayerLobby::onSteam(std::string s) {
@@ -93,16 +102,31 @@ void MultiplayerLobby::onSteam(std::string s) {
 	VM_END
 }
 
+void MultiplayerLobby::mouseWheel(float wheel)
+{
+	if (wheel < 0)
+		scroll+= 10;
+	else if (wheel > 0)
+		scroll-= 10;
+
+	if (scroll < 0)
+		scroll = 0;
+
+	if (scroll > scrollAdd)
+		scroll = scrollAdd;
+}
+
 void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 {
 	if (!this)
 		return;
-	MUTATE_START
 	//MUTATE_START
+	STR_ENCRYPT_START
 	SPacketUpdateLobbyData update;
 	SPacketWtfAmInReply reply;
 	SPacketUpdateLobbyChart cc;
 	SPacketStatus f;
+	SPacketFuckYou fuckyou;
 	CPacketHostStartGame start;
 	msgpack::unpacked result;
 
@@ -240,9 +264,33 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 
 
 		break;
+	case eSPacketFuckYou:
+		msgpack::unpack(result, data, length);
+
+		obj = msgpack::object(result.get());
+
+		obj.convert(fuckyou);
+
+		if (fuckyou.demotion)
+		{
+			Game::asyncShowErrorWindow("Host switch", "You are no longer the host.", false);
+			isHost = false;
+		}
+		else if (fuckyou.lobbyKick)
+		{
+			Game::asyncShowErrorWindow("Kicked!", "You have been kicked from the lobby!", true);
+			MainerMenu::isInLobby = false;
+
+			Game::instance->transitionToMenu(new MultiplayerLobbies());
+
+			people.clear();
+			inLobby = false;
+		}
+		break;
+
 	}
 
-	MUTATE_END
+	STR_ENCRYPT_END
 	
 }
 
@@ -255,6 +303,8 @@ MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted, bool backFromSelect = f
 
 void MultiplayerLobby::create() {
 	
+	MUTATE_START
+
 	if (!waitingForStart)
 		MainerMenu::currentSelectedSong = Chart();
 	playerList = new AvgGroup(0, 0, 1280, 720);
@@ -313,11 +363,13 @@ void MultiplayerLobby::create() {
 	chat = new ChatObject(0, 0);
 	chat->create();
 	add(chat);
+
+	MUTATE_END
 }
 
 void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 {
-	MUTATE_START
+	
 	CPacketHostStartGame start;
 	switch (event.keysym.sym)
 	{
@@ -380,18 +432,26 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 
 			break;
 	}
-	MUTATE_END
+	
 }
 
 void MultiplayerLobby::update(Events::updateEvent event)
 {
+	MUTATE_START
+	int i = 0;
+
+	warningDisplay->y = 125 - scroll;
+	helpDisplay->y = 100 - scroll;
+
 	for (person& p : people)
 	{
 		AvgSprite* spr = p.avatar;
 		spr->x = p.display->x - 58;
-		spr->y = p.display->y - 8;
+		p.display->y = (192 + (46 * i)) - scroll;
+		spr->y = (p.display->y - 8);
 		spr->w = 46;
 		spr->h = 46;
+		i++;
 	}
 
 	if (downloading)
@@ -410,4 +470,5 @@ void MultiplayerLobby::update(Events::updateEvent event)
 			warningDisplay->color = c;
 		}
 	}
+	MUTATE_END
 }

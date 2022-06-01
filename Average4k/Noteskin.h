@@ -32,29 +32,37 @@ class Noteskin
 
 		static Texture* getGameplayElement(noteskin_asset* as, std::string element)
 		{
+			VM_START
 			if (as->skinpath == "default")
 				return Texture::createWithImage("assets/skinDefaults/Gameplay/" + element);
 			return Texture::createWithImage("assets/noteskin/" + as->name + "/" + as->skinpath + "/Gameplay/" + element);
+			VM_END
 		}
 		static Texture* getMenuElement(noteskin_asset* as, std::string element)
 		{
+			VM_START
 			if (as->skinpath == "default")
 				return Texture::createWithImage("assets/skinDefaults/Menu/" + element);
 			return Texture::createWithImage("assets/noteskin/" + as->name + "/" + as->skinpath + "/Menu/" + element);
+			VM_END
 		}
 
 		static Texture* getStartElement(noteskin_asset* as, std::string element)
 		{
+			VM_START
 			if (as->skinpath == "default")
 				return Texture::createWithImage("assets/skinDefaults/Start/" + element);
 			return Texture::createWithImage("assets/noteskin/" + as->name + "/" + as->skinpath + "/Start/" + element);
+			VM_END
 		}
 
 		static std::string getMusicElement(noteskin_asset* as, std::string element)
 		{
+			VM_START
 			if (as->skinpath == "default")
 				return "assets/skinDefaults/Music/" + element;
 			return "assets/noteskin/" + as->name + "/" + as->skinpath + "/Music/" + element;
+			VM_END
 		}
 };
 

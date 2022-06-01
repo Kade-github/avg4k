@@ -137,5 +137,3 @@
 #endif
 
 #undef BOOST_ALL_DYN_LINK
-
-#define BOOST_ALL_DYN_LINK

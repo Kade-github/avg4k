@@ -30,6 +30,7 @@ bool convertStringBool(std::string text) {
 }
 
 noteskin_asset* loadSkin(noteskin_asset* as, std::string typ) {
+	VM_START
 	as = new noteskin_asset();
 	Noteskin::type = typ;
 	as->fourth = getAsset("assets/noteskin/" + Noteskin::type + "/4th.png");
@@ -68,11 +69,16 @@ noteskin_asset* loadSkin(noteskin_asset* as, std::string typ) {
 		config.close();
 	}
 	as->name = Noteskin::type;
+
+	std::cout << "[NOTESKIN] skinpath=" << as->skinpath << std::endl;
+
 	return as;
+	VM_END
 }
 
 noteskin_asset* Noteskin::getNoteskin()
 {
+	VM_START
 	if (type != Game::save->GetString("Noteskin"))
 	{
 		type = Game::save->GetString("Noteskin");
@@ -95,4 +101,5 @@ noteskin_asset* Noteskin::getNoteskin()
 		std::cout << "done noteskin" << std::endl;
 	}
 	return asset;
+	VM_END
 }

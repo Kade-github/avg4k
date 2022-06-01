@@ -212,10 +212,11 @@ void SongGather::gatherSteamPacksAsync(std::vector<Pack>* packs)
 				for (Song s : songs)
 				{
 					s.steamIdPack = p.steamId;
+					s.isSteam = true;
 					p.songs.push_back(s);
 				}
-
-				packs->push_back(p);
+				if (packs)
+					packs->push_back(p);
 			}
 			packAsyncAlready = false;
 		});
@@ -352,7 +353,7 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 					{
 						Song s;
 						QuaverFile file = QuaverFile();
-						chartMeta m = file.returnChart(bruh);
+						chartMeta m = file.returnChart(entry.path().string());
 						s.c = Chart(m);
 						s.path = bruh;
 						songs.push_back(s);

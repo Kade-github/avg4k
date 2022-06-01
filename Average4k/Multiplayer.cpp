@@ -3,7 +3,6 @@
 #include "Gameplay.h"
 
 
-
 bool Multiplayer::connectedToServer = false;
 
 bool Multiplayer::loggedIn = false;
@@ -31,11 +30,9 @@ unsigned char* keykey;
 
 unsigned char iv[] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 
-std::queue<PacketData> Multiplayer::sendQueue;
-std::mutex Multiplayer::sendQueueLock;
+boost::lockfree::queue<PacketData*> Multiplayer::sendQueue;
 
 std::mutex ConnectionLock;
-
 std::mutex unfuckPlease;
 
 void Multiplayer::InitCrypto() {
@@ -91,29 +88,30 @@ DWORD WINAPI SendPacketT(LPVOID param) {
 
     
         while (true) {
-        VM_START
+        
           
         if (!connectionData) {
             Sleep(1);
             continue;
         }
         
+        
 
-        Multiplayer::sendQueueLock.lock();
+         
+           
+        PacketData* packetData;
 
-            if (Multiplayer::sendQueue.empty()) {
-                Multiplayer::sendQueueLock.unlock();
-                Sleep(1);
-                continue;
-            }
+        if (!Multiplayer::sendQueue.pop(packetData)) {
+            Sleep(1);
+            continue;
+           }
 
-            PacketData packetData = Multiplayer::sendQueue.front();
 
-            Multiplayer::sendQueueLock.unlock();
+            VM_START
 
             websocketpp::lib::error_code ec;
 
-            std::string dataStr = packetData.data;
+            std::string dataStr = packetData->data;
 
             char* sendData = (char*)malloc(dataStr.length() + 8);
 
@@ -125,7 +123,7 @@ DWORD WINAPI SendPacketT(LPVOID param) {
             char* writeTo = (char*)(((__int64)sendData) + 8);
 
             __int32* dataPtrs = (__int32*)sendData;
-            dataPtrs[0] = packetData.packetType;
+            dataPtrs[0] = packetData->packetType;
             dataPtrs[1] = (__int32)dataStr.length();
 
             memcpy(writeTo, dataStr.c_str(), dataStr.length());
@@ -217,10 +215,13 @@ DWORD WINAPI SendPacketT(LPVOID param) {
             catch (std::exception ex) {
                 std::cout << "something something problem send: " << ex.what() << std::endl;
             }
-            if (success) {
-                Multiplayer::sendQueueLock.lock();
-                Multiplayer::sendQueue.pop();
-                Multiplayer::sendQueueLock.unlock();
+
+            if (!success && packetData->attempts < 5) {
+                packetData->attempts++;
+                Multiplayer::sendQueue.push(packetData);
+            }
+            else {
+                delete packetData;
             }
             unfuckPlease.unlock();
             free(cipherplusIV);
@@ -234,13 +235,11 @@ DWORD WINAPI SendPacketT(LPVOID param) {
 void Multiplayer::SendPacket(std::string data, PacketType packet) {
 
      MUTATE_START
-    PacketData packetData = PacketData();
-    packetData.data = data;
-    packetData.packetType = packet;
+    PacketData* packetData = new PacketData();
+    packetData->data = data;
+    packetData->packetType = packet;
 
-    Multiplayer::sendQueueLock.lock();
     Multiplayer::sendQueue.push(packetData);
-    Multiplayer::sendQueueLock.unlock();
     MUTATE_END
 }
 
@@ -470,6 +469,12 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
             case 3304:
                 vm = true;
                 break;
+            case 3305:
+                Game::asyncShowErrorWindow("Message", status.Status, true);
+                break;
+            case 3306:
+                Game::asyncShowErrorWindow("Message", status.Status, false);
+                break;
             }
             p.data = data;
             p.length = length;
@@ -630,6 +635,13 @@ bool firstConnection = false;
 DWORD WINAPI Multiplayer::connect(LPVOID agh)
 {
 
+    std::string build = Game::version;
+    bool debug = false;
+    UNPROTECTED_START
+    build = "(DEBUG) " + build;
+    debug = true;
+    UNPROTECTED_END
+
     VM_START
     connectedToServer = false;
 
@@ -695,7 +707,9 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
             }
             con->append_header("Encrypted", "1");
             con->append_header("IV", "dynamic");
-            con->append_header("Version", Game::version);
+            con->append_header("Version", build);
+            if (debug)
+                con->append_header("Debug", "");
 
            // UNPROTECTED_START
            //     con->append_header("DebugBuild", "1");
@@ -723,6 +737,7 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
             std::string base64Encoded = macaron::Base64::Encode(encryptedData);
             //std::cout << "Base64: " << base64Encoded << std::endl;
             con->append_header("Key", base64Encoded);
+           
 
             OPENSSL_free(out);
             // Note that connect here only requests a connection. No network messages are

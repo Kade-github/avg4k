@@ -20,6 +20,7 @@ public:
 
 	AvgCheckBox(int _x, int _y, bool _def)
 	{
+		MUTATE_START
 		x = _x;
 		y = _y;
 		def = _def;
@@ -34,6 +35,7 @@ public:
 		textPart->setCharacterSpacing(1.67);
 		textPart->color = { 13, 28, 64 };
 		time = 500;
+		MUTATE_END
 	}
 	~AvgCheckBox()
 	{
@@ -45,6 +47,7 @@ public:
 
 	void mouseDown()
 	{
+		MUTATE_START
 		int _x, _y;
 		Game::GetMousePos(&_x, &_y);
 
@@ -71,6 +74,7 @@ public:
 
 			time = 0;
 		}
+		MUTATE_END
 	}
 
 	void draw()

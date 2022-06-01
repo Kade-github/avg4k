@@ -1,6 +1,10 @@
 #include "SMFile.h"
+#include "Game.h"
+
 
 SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
+
+    MUTATE_START
 
     if(path.find("\\") != std::string::npos)
         path.replace(path.find("\\"), sizeof("\\") - 1, "/");
@@ -29,7 +33,7 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
 
     // I don't want to talk about this code >:(
 
-    bool isSingled = false;
+    bool doubleChart = false;
 
     bool skippingDiff = false;
 
@@ -41,11 +45,18 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
 
         if (iss.str().find("//") != std::string::npos)
             cont = false;
-        else if (iss.str().find("dance-single") != std::string::npos)
+        if (s.find("dance-double") != std::string::npos && !doubleChart)
         {
-            isSingled = true;
+            std::cout << "[CHART PARSING ERROR] " << path << " contains a double chart!" << std::endl;
+            Game::asyncShowErrorWindow("Chart parsing error! (" + (meta.songName != "" ? meta.songName : "unavailable chart") + ")", "Check log.txt for details. (probably double chart)", false);
+            
+            doubleChart = true;
         }
 
+        if (doubleChart)
+        {
+            continue;
+        }
 
         if (iss.str().find(",") != std::string::npos)
             cont = true;
@@ -175,7 +186,7 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                                 diff.charter = "n/a";
                                 diff.name = "n/a";
                                 meta.difficulties.push_back(diff);
-                                isSingled = false;
+                                
                             }
                             if (stuff.size() != 1)
                             {
@@ -286,4 +297,6 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
         }
     }
     infile.close();
+
+    MUTATE_END
 }

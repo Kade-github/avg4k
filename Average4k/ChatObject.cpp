@@ -30,6 +30,7 @@ std::string fuckin;
 
 ChatObject::ChatObject(float _x, float _y)
 {
+	MUTATE_START
 	x = _x;
 	y = _y;
 
@@ -73,15 +74,20 @@ ChatObject::ChatObject(float _x, float _y)
 	add(chatNotif);
 	add(notifText);
 	add(notifRank);
+	MUTATE_END
 }
 
 ChatObject::~ChatObject()
 {
+	Tweening::TweenManager::removeTween("chat_openBody");
+	Tweening::TweenManager::removeTween("chat_closeBody");
+	Tweening::TweenManager::removeTween("chat_notif");
 	messages.clear();
 }
 
 void ChatObject::open()
 {
+	MUTATE_START
 	Tweening::TweenManager::removeTween("chat_notif");
 	chatNotif->alpha = 0;
 
@@ -91,18 +97,22 @@ void ChatObject::open()
 	startTween = false;
 	shouldNotif = false;
 	opened = !opened;
-	Tweening::TweenManager::createNewTween("chat_openBody", chatBody, Tweening::tt_Y, 500, Game::gameHeight + h, Game::gameHeight - h, NULL, Easing::EaseInSine);
+	Tweening::TweenManager::createNewTween("chat_openBody", chatBody, Tweening::tt_Y, 500, Game::gameHeight + h, Game::gameHeight - h, NULL, Easing::EaseInSine, false);
+	MUTATE_END
 }
 
 void ChatObject::close()
 {
+	MUTATE_START
 	shouldNotif = false;
 	opened = !opened;
-	Tweening::TweenManager::createNewTween("chat_closeBody", chatBody, Tweening::tt_Y, 500, Game::gameHeight - h, Game::gameHeight + h, NULL, Easing::EaseInSine);
+	Tweening::TweenManager::createNewTween("chat_closeBody", chatBody, Tweening::tt_Y, 500, Game::gameHeight - h, Game::gameHeight + h, NULL, Easing::EaseInSine, false);
+	MUTATE_END
 }
 
 void ChatObject::addMessage(SPacketOnChat packetChat)
 {
+	MUTATE_START
 	Text* tag;
 	Text* text;
 
@@ -160,12 +170,14 @@ void ChatObject::addMessage(SPacketOnChat packetChat)
 		notifRank->setText(msg.tag);
 		notifText->setText(msg.name);
 	}
+	MUTATE_END
 }
 
 void ChatObject::onPacket(PacketType pt, char* data, int32_t length)
 {
 	if (pt != eSPacketOnChat)
 		return;
+	VM_START
 	SPacketOnChat chat;
 	msgpack::unpacked result;
 
@@ -177,10 +189,12 @@ void ChatObject::onPacket(PacketType pt, char* data, int32_t length)
 	obj.convert(chat);
 
 	addMessage(chat);
+	VM_END
 }
 
 void ChatObject::draw()
 {
+	MUTATE_START
 	chatSend->h = sendText->surfH + 8;
 	chatSend->y = (chatBody->y + chatBody->h) - chatSend->h;
 
@@ -218,7 +232,7 @@ void ChatObject::draw()
 			if (!startTween && shouldNotif)
 			{
 				startTween = true;
-				Tweening::TweenManager::createNewTween("chat_notif", chatNotif, Tweening::tt_Alpha, 1000, 1, 0, NULL, Easing::EaseInSine);
+				Tweening::TweenManager::createNewTween("chat_notif", chatNotif, Tweening::tt_Alpha, 1000, 1, 0, NULL, Easing::EaseInSine, false);
 			}
 		}
 		else if (wait < 1000 && !startTween)
@@ -234,12 +248,14 @@ void ChatObject::draw()
 		else
 			msg.text->x = 0;
 	}
+	MUTATE_END
 }
 
 void ChatObject::keyDown(SDL_KeyboardEvent ev)
 {
 	if (!opened)
 		return;
+	MUTATE_START
 	switch (ev.keysym.sym)
 	{
 	case SDLK_BACKSPACE:
@@ -270,16 +286,18 @@ void ChatObject::keyDown(SDL_KeyboardEvent ev)
 		typing = !typing;
 		break;
 	}
-
+	MUTATE_END
 }
 
 void ChatObject::textInput(SDL_TextInputEvent ev)
 {
 	if (typing)
 	{
+		MUTATE_START
 		if (fuckin.size() + 1 > 128)
 			return;
 		fuckin += ev.text;
 		sendText->setText(Multiplayer::username + ": " + fuckin + "_");
+		MUTATE_END
 	}
 }

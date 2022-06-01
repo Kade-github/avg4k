@@ -8,6 +8,7 @@
 #include "Base64.h"
 #include <iostream>
 #include "GL.h"
+#include <boost_static/lockfree/queue.hpp>
 
 typedef websocketpp::client<websocketpp::config::asio_tls_client> client;
 typedef websocketpp::lib::shared_ptr<websocketpp::lib::asio::ssl::context> context_ptr;
@@ -19,14 +20,14 @@ using websocketpp::lib::bind;
 struct PacketData {
 	std::string data;
 	PacketType packetType;
+	int attempts;
 };
 
 class Multiplayer
 {
 public:
 	static bool connectedToServer;
-	static std::queue<PacketData> sendQueue;
-	static std::mutex sendQueueLock;
+	static boost::lockfree::queue<PacketData*> sendQueue;
 	static DWORD WINAPI connect(LPVOID agh);
 
 	static std::string currentUserAvatar;

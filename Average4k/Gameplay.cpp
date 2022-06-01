@@ -213,10 +213,6 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 
 					if (spot.rankin > rankin)
 					{
-						// create little splash (TODO)
-						for (leaderboardhighlight& highlight : highlights)
-							if (highlight.spot == rankin)
-								highlight.time = 500; // make it done NOW
 						leaderboardhighlight high;
 						high.rect = new AvgRect(0, y, 227, 82);
 						high.time = 0;
@@ -1106,6 +1102,8 @@ void Gameplay::update(Events::updateEvent event)
 }
 void Gameplay::cleanUp()
 {
+
+	MUTATE_START
 	spawnedNotes.clear();
 	notesToPlay.clear();
 
@@ -1124,6 +1122,8 @@ void Gameplay::cleanUp()
 	
 	//if (background)
 	//	SDL_DestroyTexture(background);
+
+	MUTATE_END
 }
 
 void Gameplay::keyDown(SDL_KeyboardEvent event)

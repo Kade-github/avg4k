@@ -43,6 +43,7 @@ using namespace std;
 #pragma comment(lib,"x64_static\\brotlienc-static.lib")
 #pragma comment(lib,"x64_static\\lua.lib")
 #pragma comment(lib,"x64_static\\libpng16.lib")
+#pragma comment(lib, "x64_static\\boost_atomic-vc140-mt.lib")
 #pragma comment(lib, "dbghelp.lib")
 #pragma comment(lib, "kernel32.lib")
 #pragma comment(lib, "winmm.lib")
@@ -163,8 +164,9 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	PSTR lpCmdLine, INT nCmdShow)
 {
 	
-		
 
+	std::string cmdLine(lpCmdLine);
+	
 	SetUnhandledExceptionFilter(UnhandledExceptionFilterHandler);
 	//AddVectoredExceptionHandler(1, &PvectoredExceptionHandler);
 
@@ -178,10 +180,16 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	freopen("log.txt", "w", stdout);
 	std::cout << "log init" << std::endl;
 #ifndef NOBUF
-	std::streambuf* origBuf = std::cout.rdbuf();
-	log_stream* logstream = new log_stream(origBuf);
-	std::cout.set_rdbuf(logstream);
-	outstream = logstream;
+
+	if (cmdLine.find("-nologbuf") != std::string::npos) {
+		std::cout << "Not using log buffers - could introduce stuttering." << std::endl;
+	}
+	else {
+		std::streambuf* origBuf = std::cout.rdbuf();
+		log_stream* logstream = new log_stream(origBuf);
+		std::cout.set_rdbuf(logstream);
+		outstream = logstream;
+	}
 #endif
 #endif
 	
@@ -384,7 +392,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			Rendering::drawBatch();
 
 			ImGui::Render();
-			glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 			SDL_GL_SwapWindow(window);

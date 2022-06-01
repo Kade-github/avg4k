@@ -23,7 +23,7 @@ bool Game::gameplayEvents_DB = false;
 
 AvgRect* __transRect;
 
-vector<Object*>* objects;
+vector<Object*>* Game::objects;
 
 bool Game::errorWindowOpen = false;
 
@@ -118,6 +118,11 @@ void Game::asyncShowErrorWindow(std::string title, std::string description, bool
 
 void Game::showErrorWindow(std::string title, std::string description, bool major)
 {
+	std::string titlt = title;
+
+	if (titlt.size() > 24)
+		titlt = titlt.substr(0, 24);
+
 	if (!errorTitleText)
 		errorTitleText = new Text(0, 0, title, 18, "arial");
 	else
@@ -194,7 +199,7 @@ void Game::transitionToMenu(Menu* m)
 	Tweening::tweenCallback callback = (Tweening::tweenCallback)transCall;
 	transitioning = true;
 	Tweening::TweenManager::activeTweens.clear();
-	Tweening::TweenManager::createNewTween("_trans", __transRect, Tweening::tt_Alpha, 235, 0, 1, callback, Easing::EaseInSine);
+	Tweening::TweenManager::createNewTween("_trans", __transRect, Tweening::tt_Alpha, 235, 0, 1, callback, Easing::EaseInSine, false);
 	MUTATE_END
 }
 
@@ -215,6 +220,7 @@ void Game::switchMenu(Menu* m)
 
 void Game::createGame()
 {
+	VM_START
 	objects = new std::vector<Object*>();
 	steam = new Steam();
 	steam->InitSteam();
@@ -274,6 +280,7 @@ void Game::createGame()
 	alphaWatermark->borderColor = { 255,255,255 };
 	multi = new Multiplayer();
 	multiThreadHandle = CreateThread(NULL, NULL, Multiplayer::connect, NULL, NULL, NULL);
+	VM_END
 }
 
 
@@ -330,6 +337,7 @@ void Game::update(Events::updateEvent update)
 
 	if (transitioning && transCompleted)
 	{
+		transitioning = false;
 		transCompleted = false;
 		Tweening::TweenManager::createNewTween("_trans", __transRect, Tweening::tt_Alpha, 235, 255, 0, []()->void {
 			Game::instance->transitioning = false;
@@ -410,19 +418,22 @@ void Game::update(Events::updateEvent update)
 		}
 	}
 
-	if (SDL_GetTicks() > 1000)
-	{
-		for (Tweening::Tween& tw : Tweening::TweenManager::activeTweens)
+	if (currentMenu != NULL)
+		if (SDL_GetTicks() > 1000)
 		{
-			Tweening::TweenManager::updateTween(tw, Game::deltaTime);
-		}
 
-		for (Tweening::Tween tw : Tweening::TweenManager::tweenRemove)
-		{
-			Tweening::TweenManager::activeTweens.erase(std::remove(Tweening::TweenManager::activeTweens.begin(), Tweening::TweenManager::activeTweens.end(), tw), Tweening::TweenManager::activeTweens.end());
+			for (Tweening::Tween& tw : Tweening::TweenManager::activeTweens)
+			{
+				Tweening::TweenManager::updateTween(tw, Game::deltaTime);
+			}
+
+			for (Tweening::Tween tw : Tweening::TweenManager::tweenRemove)
+			{
+				Tweening::TweenManager::activeTweens.erase(std::remove(Tweening::TweenManager::activeTweens.begin(), Tweening::TweenManager::activeTweens.end(), tw), Tweening::TweenManager::activeTweens.end());
+			}
+			Tweening::TweenManager::tweenRemove.clear();
+
 		}
-		Tweening::TweenManager::tweenRemove.clear();
-	}
 	if (currentMenu != NULL)
 	{
 		if (currentMenu->created)

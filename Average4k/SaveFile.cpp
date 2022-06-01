@@ -15,6 +15,7 @@ bool contains(std::vector<T> vec, const T& elem)
 
 SaveFile::SaveFile()
 {
+    VM_START
     // default settings
 
     // {takesActive, takesString, takesDouble, defaultActive, defaultString, defaultDouble, defaultMin, defaultMax, defaultIncrm, unique, suffix, isDropdown}
@@ -77,11 +78,12 @@ SaveFile::SaveFile()
         }
         Save();
     }
-
+    VM_END
 }
 
 void SaveFile::Save()
 {
+    VM_START
     std::ofstream of("settings.avg2");
 
     std::stringstream bitch;
@@ -91,6 +93,7 @@ void SaveFile::Save()
     of << bitch.str();
 
     of.close();
+    VM_END
 }
 
 void SaveFile::SetString(std::string sett, std::string value)
@@ -148,6 +151,7 @@ setting& SaveFile::getSetting(std::string sett)
 
 std::vector<std::string> SaveFile::ObtainDropDownSettingList(std::string set)
 {
+    VM_START
     if (set == "Noteskin")
     {
         std::vector<std::string> noteskins;
@@ -201,12 +205,14 @@ std::vector<std::string> SaveFile::ObtainDropDownSettingList(std::string set)
         return {"Fullscreen", "Windowed", "Borderless"};
     }
     return std::vector<std::string>();
+    VM_END
 }
 
 std::vector<int> SaveFile::ObtainResolution()
 {
+    STR_ENCRYPT_START
     std::string resText = GetString("Resolution");
-
+    STR_ENCRYPT_END
     return { std::stoi(resText.substr(0,resText.find("x"))), std::stoi(resText.substr(resText.find("x") + 1,resText.length()))};
 }
 

@@ -24,6 +24,7 @@ public:
 
 	SoundChannel(std::string path)
 	{
+		MUTATE_START
 		if (path.ends_with(".mp3"))
 		{
 			type = MP3;
@@ -39,6 +40,7 @@ public:
 		{
 			type = UNSUPPORTED;
 		}
+		MUTATE_END
 	}
 
 	void play()

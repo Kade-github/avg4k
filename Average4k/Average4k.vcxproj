@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -322,6 +322,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="SPacketAvatarRequestResponse.h" />
     <ClInclude Include="SPacketFinalizeChart.h" />
+    <ClInclude Include="SPacketFuckYou.h" />
     <ClInclude Include="SPacketHello.h" />
     <ClInclude Include="SPacketHostServerReply.h" />
     <ClInclude Include="SPacketInvalidPacket.h" />

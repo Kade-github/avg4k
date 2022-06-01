@@ -322,6 +322,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="SPacketAvatarRequestResponse.h" />
     <ClInclude Include="SPacketFinalizeChart.h" />
+    <ClInclude Include="SPacketFuckYou.h" />
     <ClInclude Include="SPacketHello.h" />
     <ClInclude Include="SPacketHostServerReply.h" />
     <ClInclude Include="SPacketInvalidPacket.h" />

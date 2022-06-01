@@ -272,7 +272,10 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		obj.convert(fuckyou);
 
 		if (fuckyou.demotion)
+		{
 			Game::asyncShowErrorWindow("Host switch", "You are no longer the host.", false);
+			isHost = false;
+		}
 		else if (fuckyou.lobbyKick)
 		{
 			Game::asyncShowErrorWindow("Kicked!", "You have been kicked from the lobby!", true);

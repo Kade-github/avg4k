@@ -418,7 +418,7 @@ void Game::update(Events::updateEvent update)
 	}
 
 	if (currentMenu != NULL)
-		if (SDL_GetTicks() > 1000 && currentMenu->created)
+		if (SDL_GetTicks() > 1000)
 		{
 			for (Tweening::Tween tw : Tweening::TweenManager::tweenRemove)
 			{

@@ -30,7 +30,7 @@ unsigned char* keykey;
 
 unsigned char iv[] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 
-boost::lockfree::queue<PacketData> Multiplayer::sendQueue;
+boost::lockfree::queue<PacketData*> Multiplayer::sendQueue;
 
 std::mutex ConnectionLock;
 std::mutex unfuckPlease;
@@ -99,7 +99,7 @@ DWORD WINAPI SendPacketT(LPVOID param) {
 
          
            
-        PacketData packetData;
+        PacketData* packetData;
 
         if (!Multiplayer::sendQueue.pop(packetData)) {
             Sleep(1);
@@ -111,7 +111,7 @@ DWORD WINAPI SendPacketT(LPVOID param) {
 
             websocketpp::lib::error_code ec;
 
-            std::string dataStr = packetData.data;
+            std::string dataStr = packetData->data;
 
             char* sendData = (char*)malloc(dataStr.length() + 8);
 
@@ -123,7 +123,7 @@ DWORD WINAPI SendPacketT(LPVOID param) {
             char* writeTo = (char*)(((__int64)sendData) + 8);
 
             __int32* dataPtrs = (__int32*)sendData;
-            dataPtrs[0] = packetData.packetType;
+            dataPtrs[0] = packetData->packetType;
             dataPtrs[1] = (__int32)dataStr.length();
 
             memcpy(writeTo, dataStr.c_str(), dataStr.length());
@@ -216,9 +216,12 @@ DWORD WINAPI SendPacketT(LPVOID param) {
                 std::cout << "something something problem send: " << ex.what() << std::endl;
             }
 
-            if (!success && packetData.attempts < 5) {
-                packetData.attempts++;
+            if (!success && packetData->attempts < 5) {
+                packetData->attempts++;
                 Multiplayer::sendQueue.push(packetData);
+            }
+            else {
+                delete packetData;
             }
             unfuckPlease.unlock();
             free(cipherplusIV);
@@ -232,9 +235,9 @@ DWORD WINAPI SendPacketT(LPVOID param) {
 void Multiplayer::SendPacket(std::string data, PacketType packet) {
 
      MUTATE_START
-    PacketData packetData = PacketData();
-    packetData.data = data;
-    packetData.packetType = packet;
+    PacketData* packetData = new PacketData();
+    packetData->data = data;
+    packetData->packetType = packet;
 
     Multiplayer::sendQueue.push(packetData);
     MUTATE_END

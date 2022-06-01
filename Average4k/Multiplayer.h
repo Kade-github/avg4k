@@ -27,7 +27,7 @@ class Multiplayer
 {
 public:
 	static bool connectedToServer;
-	static boost::lockfree::queue<PacketData> sendQueue;
+	static boost::lockfree::queue<PacketData*> sendQueue;
 	static DWORD WINAPI connect(LPVOID agh);
 
 	static std::string currentUserAvatar;

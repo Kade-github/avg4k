@@ -18,11 +18,11 @@
 #include <boost/type_traits/has_trivial_destructor.hpp>
 #include <boost/config.hpp> // for BOOST_LIKELY & BOOST_ALIGNMENT
 
-#include <boost/lockfree/detail/atomic.hpp>
-#include <boost/lockfree/detail/copy_payload.hpp>
-#include <boost/lockfree/detail/freelist.hpp>
-#include <boost/lockfree/detail/parameter.hpp>
-#include <boost/lockfree/detail/tagged_ptr.hpp>
+#include "include/boost/lockfree/detail/atomic.hpp"
+#include "include/boost/lockfree/detail/copy_payload.hpp"
+#include "include/boost/lockfree/detail/freelist.hpp"
+#include "include/boost/lockfree/detail/parameter.hpp"
+#include "include/boost/lockfree/detail/tagged_ptr.hpp"
 
 #include <boost/lockfree/lockfree_forward.hpp>
 

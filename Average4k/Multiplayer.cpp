@@ -1,7 +1,7 @@
 #include "Multiplayer.h"
 #include "Game.h"
 #include "Gameplay.h"
-
+#include <boost_static/lockfree/queue.hpp>
 
 
 bool Multiplayer::connectedToServer = false;
@@ -97,6 +97,7 @@ DWORD WINAPI SendPacketT(LPVOID param) {
             Sleep(1);
             continue;
         }
+        
         
 
         Multiplayer::sendQueueLock.lock();

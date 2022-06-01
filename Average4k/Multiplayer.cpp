@@ -1,7 +1,7 @@
 #include "Multiplayer.h"
 #include "Game.h"
 #include "Gameplay.h"
-
+#include <boost_static/lockfree/queue.hpp>
 
 
 bool Multiplayer::connectedToServer = false;
@@ -91,25 +91,28 @@ DWORD WINAPI SendPacketT(LPVOID param) {
 
     
         while (true) {
-        VM_START
+        
           
         if (!connectionData) {
             Sleep(1);
             continue;
         }
         
+        
 
         Multiplayer::sendQueueLock.lock();
 
             if (Multiplayer::sendQueue.empty()) {
                 Multiplayer::sendQueueLock.unlock();
-                Sleep(1);
+                Sleep(50);
                 continue;
             }
-
+           
             PacketData packetData = Multiplayer::sendQueue.front();
 
             Multiplayer::sendQueueLock.unlock();
+
+            VM_START
 
             websocketpp::lib::error_code ec;
 

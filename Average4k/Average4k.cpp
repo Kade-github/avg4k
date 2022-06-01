@@ -43,6 +43,7 @@ using namespace std;
 #pragma comment(lib,"x64_static\\brotlienc-static.lib")
 #pragma comment(lib,"x64_static\\lua.lib")
 #pragma comment(lib,"x64_static\\libpng16.lib")
+#pragma comment(lib, "x64_static\\boost_atomic-vc140-mt.lib")
 #pragma comment(lib, "dbghelp.lib")
 #pragma comment(lib, "kernel32.lib")
 #pragma comment(lib, "winmm.lib")

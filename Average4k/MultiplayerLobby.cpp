@@ -17,7 +17,7 @@ int scroll = 0;
 
 void MultiplayerLobby::refreshLobby(lobby l)
 {
-	MUTATE_START
+	STR_ENCRYPT_START
 	CurrentLobby = l;
 	inLobby = true;
 
@@ -67,7 +67,7 @@ void MultiplayerLobby::refreshLobby(lobby l)
 
 	helpDisplay->setText("Lobby: " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ") " + (isHost ? "You are the host!" : ""));
 	//warningDisplay->setText("");
-	MUTATE_END
+	STR_ENCRYPT_END
 }
 
 void MultiplayerLobby::onSteam(std::string s) {
@@ -120,8 +120,8 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 {
 	if (!this)
 		return;
-	MUTATE_START
 	//MUTATE_START
+	STR_ENCRYPT_START
 	SPacketUpdateLobbyData update;
 	SPacketWtfAmInReply reply;
 	SPacketUpdateLobbyChart cc;
@@ -286,10 +286,11 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 			people.clear();
 			inLobby = false;
 		}
+		break;
 
 	}
 
-	MUTATE_END
+	STR_ENCRYPT_END
 	
 }
 
@@ -302,7 +303,7 @@ MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted, bool backFromSelect = f
 
 void MultiplayerLobby::create() {
 	
-	VM_START
+	MUTATE_START
 
 	if (!waitingForStart)
 		MainerMenu::currentSelectedSong = Chart();
@@ -363,12 +364,12 @@ void MultiplayerLobby::create() {
 	chat->create();
 	add(chat);
 
-	VM_END
+	MUTATE_END
 }
 
 void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 {
-	MUTATE_START
+	
 	CPacketHostStartGame start;
 	switch (event.keysym.sym)
 	{
@@ -431,7 +432,7 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 
 			break;
 	}
-	MUTATE_END
+	
 }
 
 void MultiplayerLobby::update(Events::updateEvent event)

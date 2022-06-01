@@ -122,6 +122,14 @@ void CrashDmp(_EXCEPTION_POINTERS* ExceptionInfo) {
 #ifdef _DEBUG
 	return;
 #endif
+
+	if (!ExceptionInfo)
+	{
+		std::cout << "no crash :)" << std::endl;
+		if (outstream)
+			outstream->dump();
+		return;
+	}
 	OFSTRUCT data;
 	HANDLE file = CreateFile(L"crash.dmp", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
@@ -133,7 +141,7 @@ void CrashDmp(_EXCEPTION_POINTERS* ExceptionInfo) {
 
 	MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), file, MiniDumpWithFullMemory, &info, NULL, NULL);
 	CloseHandle(file);
-
+	std::cout << "Dumped crashlog" << std::endl;
 
 	if (outstream)
 		outstream->dump();

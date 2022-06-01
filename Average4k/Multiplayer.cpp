@@ -429,6 +429,7 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
 
         SPacketStatus status;
         SPacketHello helloBack;
+        SPacketUpdateEncryptionParameters enc;
         Events::packetEvent p;
 
         msgpack::unpacked result;
@@ -515,6 +516,29 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
             Multiplayer::currentUserAvatar = helloBack.avatarURL;
 
             std::cout << helloBack.Message << ". hello server, fuck you too! " << std::endl;
+            break;
+
+
+        case eSPacketUpdateEncryptionParameters:
+
+            unpack(result, data, length);
+
+            obj = msgpack::object(result.get());
+
+            obj.convert(enc);
+
+
+            std::string out;
+            std::string empty = macaron::Base64::Decode(enc.key, out);
+
+            memcpy(key, out.c_str(), out.length());
+
+            RAND_bytes(keykey, 32);
+
+            for (int i = 0; i < 32; i++) {
+                key[i] = key[i] ^ keykey[i];
+            }
+
             break;
         default:
             p.data = data;
@@ -708,6 +732,7 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
             con->append_header("Encrypted", "1");
             con->append_header("IV", "dynamic");
             con->append_header("Version", build);
+            con->append_header("ProtoVersion", "1");
             if (debug)
                 con->append_header("Debug", "");
 

@@ -72,4 +72,5 @@
 #include "CPacketChartAcquired.h"
 #include "CPacketHostChangeChart.h"
 #include "CPacketHostStartGame.h"
+#include "SPacketUpdateEncryptionParameters.h"
 #include <io.h>

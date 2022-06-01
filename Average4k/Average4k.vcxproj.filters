@@ -569,6 +569,9 @@
     <ClInclude Include="SPacketFuckYou.h">
       <Filter>Source Files\Average4k\Multiplayer\Packets\Server</Filter>
     </ClInclude>
+    <ClInclude Include="SPacketUpdateEncryptionParameters.h">
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Server</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Average4k.rc">

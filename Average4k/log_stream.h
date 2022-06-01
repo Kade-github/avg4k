@@ -35,6 +35,7 @@ public:
 
 
     void dump() {
+
         std::string push;
         while (!this->queue.empty()) {
            char top = this->queue.front();

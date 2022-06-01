@@ -332,6 +332,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="SPacketServerListReply.h" />
     <ClInclude Include="SPacketStartLobbyGame.h" />
     <ClInclude Include="SPacketStatus.h" />
+    <ClInclude Include="SPacketUpdateEncryptionParameters.h" />
     <ClInclude Include="SPacketUpdateLeaderboard.h" />
     <ClInclude Include="SPacketUpdateLobbyChart.h" />
     <ClInclude Include="SPacketUpdateLobbyData.h" />

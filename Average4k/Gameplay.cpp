@@ -213,10 +213,6 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 
 					if (spot.rankin > rankin)
 					{
-						// create little splash (TODO)
-						for (leaderboardhighlight& highlight : highlights)
-							if (highlight.spot == rankin)
-								highlight.time = 500; // make it done NOW
 						leaderboardhighlight high;
 						high.rect = new AvgRect(0, y, 227, 82);
 						high.time = 0;

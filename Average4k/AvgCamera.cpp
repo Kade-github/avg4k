@@ -87,8 +87,13 @@ void AvgCamera::draw()
 
 	Rendering::drawBatch();
 
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, fb);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, intme);
+	glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, Game::wW, Game::wH);
+
 	Rendering::setBlend();
 
 
@@ -129,7 +134,7 @@ void AvgCamera::draw()
 		Rendering::SetClipRect(&clipRect);
 
 
-	Rendering::PushQuad(&dstRect, &srcRect, ctb, GL::genShader);
+	Rendering::PushQuad(&dstRect, &srcRect, ctbMSAA, GL::genShader);
 
 	//if (!glGetError())
 		//std::cout << "opgl error: " << glGetError() << std::endl;

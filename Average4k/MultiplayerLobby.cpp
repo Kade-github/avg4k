@@ -11,6 +11,9 @@ AvgGroup* playerList;
 
 bool isAwaitingPack = false;
 
+int scrollAdd = 0;
+int scroll = 0;
+
 void MultiplayerLobby::refreshLobby(lobby l)
 {
 	MUTATE_START
@@ -23,6 +26,7 @@ void MultiplayerLobby::refreshLobby(lobby l)
 		playerList->removeObj(p.display);
 	}
 
+	scrollAdd = 0;
 	people.clear();
 
 	for (int i = 0; i < (l.PlayerList.size() > 20 ? 20 : l.PlayerList.size()); i++)
@@ -41,6 +45,10 @@ void MultiplayerLobby::refreshLobby(lobby l)
 			per.avatar = NULL;
 		spr->w = 46;
 		spr->h = 46;
+
+		if (per.display->y > 720)
+			scrollAdd += 52;
+
 		playerList->add(per.display);
 		playerList->add(spr);
 		people.push_back(per);
@@ -91,6 +99,20 @@ void MultiplayerLobby::onSteam(std::string s) {
 		Multiplayer::sendMessage<CPacketClientChartAcquired>(acquired);
 	}
 	VM_END
+}
+
+void MultiplayerLobby::mouseWheel(float wheel)
+{
+	if (wheel < 0)
+		scroll+= 10;
+	else if (wheel > 0)
+		scroll-= 10;
+
+	if (scroll < 0)
+		scroll = 0;
+
+	if (scroll > scrollAdd)
+		scroll = scrollAdd;
 }
 
 void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
@@ -390,13 +412,20 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 void MultiplayerLobby::update(Events::updateEvent event)
 {
 	MUTATE_START
+	int i = 0;
+
+	warningDisplay->y = 125 - scroll;
+	helpDisplay->y = 100 - scroll;
+
 	for (person& p : people)
 	{
 		AvgSprite* spr = p.avatar;
 		spr->x = p.display->x - 58;
-		spr->y = p.display->y - 8;
+		p.display->y = (192 + (46 * i)) - scroll;
+		spr->y = (p.display->y - 8);
 		spr->w = 46;
 		spr->h = 46;
+		i++;
 	}
 
 	if (downloading)

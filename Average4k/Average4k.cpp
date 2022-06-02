@@ -226,6 +226,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	
 
 	BASS_Init(-1,44100,0,NULL,NULL);
+	BASS_SetConfig(BASS_CONFIG_ASYNCFILE_BUFFER, 16777216); //16MB
 
 	int test = 123;
 

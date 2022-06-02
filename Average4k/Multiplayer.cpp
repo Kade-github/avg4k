@@ -30,7 +30,7 @@ unsigned char* keykey;
 
 unsigned char iv[] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 
-boost::lockfree::queue<PacketData*> Multiplayer::sendQueue;
+boost::lockfree::queue<PacketData*> Multiplayer::sendQueue(0);
 
 std::mutex ConnectionLock;
 std::mutex unfuckPlease;

@@ -37,6 +37,7 @@ using namespace std;
 #pragma comment(lib,"x64_static\\boost_date_time-vc140-mt.lib")
 #pragma comment(lib,"x64_static\\boost_random-vc140-mt.lib")
 #pragma comment(lib,"x64_static\\brotlicommon-static.lib")
+#pragma comment(lib,"x64_static\\discord_game_sdk.lib")
 #pragma comment(lib,"x64_static\\bz2.lib")
 #pragma comment(lib,"x64_static\\zlib.lib")
 //brotlidec-static.lib

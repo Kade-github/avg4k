@@ -115,6 +115,9 @@
     <Filter Include="Source Files\Average4k\Structs\Chart\Pack">
       <UniqueIdentifier>{f6150430-8318-434a-b7e7-daf0a3b0686f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Discord">
+      <UniqueIdentifier>{68c4428a-874b-4cb2-b23e-4401301214cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Average4k.cpp">
@@ -263,6 +266,48 @@
     </ClCompile>
     <ClCompile Include="AvgContainer.cpp">
       <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="discord_sdk\achievement_manager.cpp">
+      <Filter>Discord</Filter>
+    </ClCompile>
+    <ClCompile Include="discord_sdk\activity_manager.cpp">
+      <Filter>Discord</Filter>
+    </ClCompile>
+    <ClCompile Include="discord_sdk\application_manager.cpp">
+      <Filter>Discord</Filter>
+    </ClCompile>
+    <ClCompile Include="discord_sdk\core.cpp">
+      <Filter>Discord</Filter>
+    </ClCompile>
+    <ClCompile Include="discord_sdk\image_manager.cpp">
+      <Filter>Discord</Filter>
+    </ClCompile>
+    <ClCompile Include="discord_sdk\lobby_manager.cpp">
+      <Filter>Discord</Filter>
+    </ClCompile>
+    <ClCompile Include="discord_sdk\network_manager.cpp">
+      <Filter>Discord</Filter>
+    </ClCompile>
+    <ClCompile Include="discord_sdk\overlay_manager.cpp">
+      <Filter>Discord</Filter>
+    </ClCompile>
+    <ClCompile Include="discord_sdk\relationship_manager.cpp">
+      <Filter>Discord</Filter>
+    </ClCompile>
+    <ClCompile Include="discord_sdk\storage_manager.cpp">
+      <Filter>Discord</Filter>
+    </ClCompile>
+    <ClCompile Include="discord_sdk\store_manager.cpp">
+      <Filter>Discord</Filter>
+    </ClCompile>
+    <ClCompile Include="discord_sdk\types.cpp">
+      <Filter>Discord</Filter>
+    </ClCompile>
+    <ClCompile Include="discord_sdk\user_manager.cpp">
+      <Filter>Discord</Filter>
+    </ClCompile>
+    <ClCompile Include="discord_sdk\voice_manager.cpp">
+      <Filter>Discord</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -571,6 +616,57 @@
     </ClInclude>
     <ClInclude Include="SPacketUpdateEncryptionParameters.h">
       <Filter>Source Files\Average4k\Multiplayer\Packets\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="discord_sdk\achievement_manager.h">
+      <Filter>Discord</Filter>
+    </ClInclude>
+    <ClInclude Include="discord_sdk\activity_manager.h">
+      <Filter>Discord</Filter>
+    </ClInclude>
+    <ClInclude Include="discord_sdk\application_manager.h">
+      <Filter>Discord</Filter>
+    </ClInclude>
+    <ClInclude Include="discord_sdk\core.h">
+      <Filter>Discord</Filter>
+    </ClInclude>
+    <ClInclude Include="discord_sdk\discord.h">
+      <Filter>Discord</Filter>
+    </ClInclude>
+    <ClInclude Include="discord_sdk\event.h">
+      <Filter>Discord</Filter>
+    </ClInclude>
+    <ClInclude Include="discord_sdk\ffi.h">
+      <Filter>Discord</Filter>
+    </ClInclude>
+    <ClInclude Include="discord_sdk\image_manager.h">
+      <Filter>Discord</Filter>
+    </ClInclude>
+    <ClInclude Include="discord_sdk\lobby_manager.h">
+      <Filter>Discord</Filter>
+    </ClInclude>
+    <ClInclude Include="discord_sdk\network_manager.h">
+      <Filter>Discord</Filter>
+    </ClInclude>
+    <ClInclude Include="discord_sdk\overlay_manager.h">
+      <Filter>Discord</Filter>
+    </ClInclude>
+    <ClInclude Include="discord_sdk\relationship_manager.h">
+      <Filter>Discord</Filter>
+    </ClInclude>
+    <ClInclude Include="discord_sdk\storage_manager.h">
+      <Filter>Discord</Filter>
+    </ClInclude>
+    <ClInclude Include="discord_sdk\store_manager.h">
+      <Filter>Discord</Filter>
+    </ClInclude>
+    <ClInclude Include="discord_sdk\types.h">
+      <Filter>Discord</Filter>
+    </ClInclude>
+    <ClInclude Include="discord_sdk\user_manager.h">
+      <Filter>Discord</Filter>
+    </ClInclude>
+    <ClInclude Include="discord_sdk\voice_manager.h">
+      <Filter>Discord</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

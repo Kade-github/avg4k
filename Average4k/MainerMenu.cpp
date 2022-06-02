@@ -62,7 +62,7 @@ void resetStuff()
 	lobbyUp = false;
 	lastTrans = 0;
 	selectedContainerIndex = 0;
-	packIndex = 0;
+	((MainerMenu*)Game::instance)->clearPacks();
 	lastHeight = 0;
 	catIndex = 0;
 }
@@ -95,7 +95,9 @@ void selectedSongCallback(int sId)
 	}
 	for (Object* obj : cont->below)
 	{
-		cont->removeObject(obj, true);;
+		cont->removeObject(obj, true);
+		if (obj)
+			delete obj;
 	}
 	cont->items.clear();
 	cont->above.clear();
@@ -111,7 +113,7 @@ void selectedSongCallback(int sId)
 	background->y = (cont->h / 2) - background->h / 2;
 	background->alpha = 0;
 
-	Tweening::TweenManager::createNewTween("fuckyoutween", background, Tweening::tt_Alpha, 500, 0, 1, NULL, Easing::EaseInSine);
+	Tweening::TweenManager::createNewTween("fuckyoutween", background, Tweening::tt_Alpha, 500, 0, 1, NULL, Easing::EaseInSine, false);
 
 	cont->addObject(background, "background", true);
 
@@ -798,6 +800,8 @@ void MainerMenu::onSteam(std::string s)
 void MainerMenu::clearPacks()
 {
 	MUTATE_START
+	if (packIndex == 0)
+		return;
 	packIndex = 0;
 	AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");
 	for (Object* obj : packContainer->above)

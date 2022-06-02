@@ -371,6 +371,9 @@ void Gameplay::create() {
 	background = new AvgSprite(0, 0, bg);
 	background->w = Game::gameWidth;
 	background->h = Game::gameHeight;
+
+	background->alpha = Game::save->GetDouble("Background Transparency");
+
 	add(background);
 
 	if (background->tex->pixels)
@@ -382,16 +385,29 @@ void Gameplay::create() {
 		darkestColor.g *= 0.46;
 		darkestColor.b *= 0.46;
 
-		darkestAccent = stbi_h::getAccentPixel(background->tex->pixels, background->tex->width, background->tex->height, lightestColor, darkestColor);
-		Pixel p;
-		p.r = darkestAccent.r += 20;
-		p.g = darkestAccent.g += 20;
-		p.b = darkestAccent.b += 20;
-		lighterAccent = stbi_h::getAccentPixel(background->tex->pixels, background->tex->width, background->tex->height, lightestColor, p);
-		p.r = lighterAccent.r += 40;
-		p.g = lighterAccent.g += 40;
-		p.b = lighterAccent.b += 40;
-		lightestAccent = stbi_h::getAccentPixel(background->tex->pixels, background->tex->width, background->tex->height, lightestColor, p);
+		if (Game::save->GetBool("Auto Accent Colors"))
+		{
+
+			darkestAccent = stbi_h::getAccentPixel(background->tex->pixels, background->tex->width, background->tex->height, lightestColor, darkestColor);
+			Pixel p;
+			p.r = darkestAccent.r += 20;
+			p.g = darkestAccent.g += 20;
+			p.b = darkestAccent.b += 20;
+			lighterAccent = stbi_h::getAccentPixel(background->tex->pixels, background->tex->width, background->tex->height, lightestColor, p);
+			p.r = lighterAccent.r += 40;
+			p.g = lighterAccent.g += 40;
+			p.b = lighterAccent.b += 40;
+			lightestAccent = stbi_h::getAccentPixel(background->tex->pixels, background->tex->width, background->tex->height, lightestColor, p);
+		}
+		else
+		{
+			darkestAccent = {(int)Game::save->GetDouble("Accent Color R"),(int)Game::save->GetDouble("Accent Color G"),(int)Game::save->GetDouble("Accent Color B") };
+			darkestAccent.a = Game::save->GetDouble("Lane Underway Transparency");
+			darkestColor = darkestAccent;
+			lightestColor = darkestAccent;
+			lighterAccent = darkestAccent;
+			lightestAccent = darkestAccent;
+		}
 	}
 
 	AvgRect* rOverlay = new AvgRect(0, 0, background->w, background->h);
@@ -431,7 +447,7 @@ void Gameplay::create() {
 
 	AvgSprite* lunder = new AvgSprite(laneUnderway.x, laneUnderway.y, Noteskin::getGameplayElement(Game::noteskin, "underway.png"));
 	add(lunder);
-	lunder->alpha = 0.8;
+	lunder->alpha = Game::save->GetDouble("Lane Underway Transparency");
 
 	lunder->colorR = darkestColor.r;
 	lunder->colorG = darkestColor.g;
@@ -439,7 +455,7 @@ void Gameplay::create() {
 
 	AvgSprite* lunderBorder = new AvgSprite(laneUnderway.x, laneUnderway.y, Noteskin::getGameplayElement(Game::noteskin, "underwayBorder.png"));
 	add(lunderBorder);
-	lunderBorder->alpha = 1;
+	lunderBorder->alpha = 1 * (0.8 / Game::save->GetDouble("Lane Underway Transparency"));
 
 	lunderBorder->colorR = lightestAccent.r;
 	lunderBorder->colorG = lightestAccent.g;
@@ -471,6 +487,7 @@ void Gameplay::create() {
 	rightGrad->colorR = darkestColor.r;
 	rightGrad->colorG = darkestColor.g;
 	rightGrad->colorB = darkestColor.b;
+	rightGrad->alpha = Game::save->GetDouble("Lane Underway Transparency");
 	add(rightGrad);
 
 	if (MultiplayerLobby::inLobby)
@@ -479,13 +496,14 @@ void Gameplay::create() {
 		leftGrad->colorR = darkestColor.r;
 		leftGrad->colorG = darkestColor.g;
 		leftGrad->colorB = darkestColor.b;
-		leftGrad->alpha = 0.8;
+		leftGrad->alpha = Game::save->GetDouble("Lane Underway Transparency");
 		add(leftGrad);
 
 		AvgSprite* leftGradBorder = new AvgSprite(0, 0, Noteskin::getGameplayElement(Game::noteskin, "leftBorder.png"));
 		leftGradBorder->colorR = lightestAccent.r;
 		leftGradBorder->colorG = lightestAccent.g;
 		leftGradBorder->colorB = lightestAccent.b;
+		leftGradBorder->alpha = (0.8 / Game::save->GetDouble("Lane Underway Transparency"));
 		add(leftGradBorder);
 
 		for (int i = 0; i < MultiplayerLobby::CurrentLobby.PlayerList.size(); i++)
@@ -652,7 +670,7 @@ void Gameplay::update(Events::updateEvent event)
 		}
 		else
 			positionInSong += (Game::deltaTime - Game::save->GetDouble("offset"));*/
-		positionInSong = song->getPos();
+		positionInSong = song->getPos() + Game::save->GetDouble("offset");
 	}
 	else
 		positionInSong += Game::deltaTime;

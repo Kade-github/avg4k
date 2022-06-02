@@ -21,7 +21,7 @@ SaveFile::SaveFile()
     // {takesActive, takesString, takesDouble, defaultActive, defaultString, defaultDouble, defaultMin, defaultMax, defaultIncrm, unique, suffix, isDropdown}
 
     settingHeader defaultHeader;
-    defaultHeader.settingsVersion = "v2.2";
+    defaultHeader.settingsVersion = "v2.3";
 
     defaultSettings.push_back(CreateSetting("Downscroll",{true}));
     defaultSettings.push_back(CreateSetting("Scrollspeed",{false,false,true,false,"",800,200,1900}));
@@ -34,6 +34,13 @@ SaveFile::SaveFile()
     defaultSettings.push_back(CreateSetting("Fullscreen", { false,true,false,false, "Windowed",0,0,0,0,false,"",true }));
     defaultSettings.push_back(CreateSetting("Music Volume", { false,false,true,false,"",1,0.1,1,0.1,false}));
     defaultSettings.push_back(CreateSetting("Hitsounds Volume", { false,false,true,false,"",1,0.1,1,0.1,false }));
+    defaultSettings.push_back(CreateSetting("Auto Accent Colors", { true, false, false, true }));
+    defaultSettings.push_back(CreateSetting("Accent Color R", { false,false,true,false,"",0,0,255,1,false }));
+    defaultSettings.push_back(CreateSetting("Accent Color G", { false,false,true,false,"",0,0,255,1,false }));
+    defaultSettings.push_back(CreateSetting("Accent Color B", { false,false,true,false,"",0,0,255,1,false }));
+    defaultSettings.push_back(CreateSetting("Lane Underway Transparency", { false,false,true,false,"",0.8,0,1,0.1,false }));
+    defaultSettings.push_back(CreateSetting("Background Transparency", { false,false,true,false,"",1,0,1,0.1,false }));
+    defaultSettings.push_back(CreateSetting("FPS Limit", { false,false,true,false,"",240,10,500,1 }));
     defaultSettings.push_back(CreateSetting("nonChange_chartTheme", {}));
     defaultSettings.push_back(CreateSetting("nonChange_chartHistory",{}));
     defaultSettings.push_back(CreateSetting("nonChange_chartWaveform", {true}));

@@ -159,10 +159,7 @@ public:
 
 		for (Object* obj : above)
 		{
-			AvgContainer* objb = dynamic_cast<AvgContainer*>(obj);
-			if (objb == NULL)
-				continue;
-			objb->mouseWheel(amount);
+			obj->mouseWheel(amount);
 		}
 	}
 };

@@ -182,10 +182,9 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	SetUnhandledExceptionFilter(UnhandledExceptionFilterHandler);
 
-	if (cmdLine.find("-vechandler") != std::string::npos)
-	{
-		AddVectoredExceptionHandler(1, &PvectoredExceptionHandler);
-	}
+	AddVectoredExceptionHandler(1, &PvectoredExceptionHandler);
+
+
 	std::atexit(&atexit_handler);
 	std::at_quick_exit(atexit_handler);
 

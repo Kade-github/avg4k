@@ -652,7 +652,7 @@ void Gameplay::update(Events::updateEvent event)
 		}
 		else
 			positionInSong += (Game::deltaTime - Game::save->GetDouble("offset"));*/
-		positionInSong = song->getPos();
+		positionInSong = song->getPos() + Game::save->GetDouble("offset");
 	}
 	else
 		positionInSong += Game::deltaTime;

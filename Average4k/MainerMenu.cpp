@@ -355,6 +355,7 @@ void MainerMenu::create()
 	// create settings
 
 	std::vector<setting> gameplaySettings;
+	//gameplaySettings.push_back(Game::save->getSetting("FPS Limit"));
 	gameplaySettings.push_back(Game::save->getSetting("scrollspeed"));
 	gameplaySettings.push_back(Game::save->getSetting("downscroll"));
 	gameplaySettings.push_back(Game::save->getSetting("offset"));
@@ -368,6 +369,14 @@ void MainerMenu::create()
 	appearnSettings.push_back(Game::save->getSetting("Noteskin"));
 	appearnSettings.push_back(Game::save->getSetting("Resolution"));
 	appearnSettings.push_back(Game::save->getSetting("Fullscreen"));
+	appearnSettings.push_back(Game::save->getSetting("Auto Accent Colors"));
+
+	appearnSettings.push_back(Game::save->getSetting("Accent Color R"));
+	appearnSettings.push_back(Game::save->getSetting("Accent Color G"));
+	appearnSettings.push_back(Game::save->getSetting("Accent Color B"));
+
+	appearnSettings.push_back(Game::save->getSetting("Background Transparency"));
+	appearnSettings.push_back(Game::save->getSetting("Lane Underway Transparency"));
 
 	addSettings("Appearance", appearnSettings);
 
@@ -444,6 +453,9 @@ void MainerMenu::update(Events::updateEvent ev)
 			ch->setVolume(Game::save->GetDouble("Music Volume"));
 		}
 	}
+
+	//if (Game::frameLimit != Game::save->GetDouble("FPS Limit") && Game::save->GetDouble("FPS Limit") > 10)
+	//	Game::frameLimit = Game::save->GetDouble("FPS Limit");
 
 	if (asyncPacks->size() != 0 || asyncSongs->size() != 0)
 	{

@@ -42,6 +42,8 @@ Game* Game::instance = NULL;
 chartMeta Game::loadedChart;
 bool Game::patched = false;
 
+int Game::frameLimit = 240;
+
 Texture* error_button;
 Texture* error_major;
 Texture* error_minor;
@@ -239,6 +241,7 @@ void Game::createGame()
 	else if (fsType == "Fullscreen")
 		fs = 1;
 
+	//frameLimit = Game::save->GetDouble("FPS Limit");
 
 	noteskin = Noteskin::getNoteskin();
 
@@ -354,10 +357,8 @@ void Game::update(Events::updateEvent update)
 		currentMenu->imguiUpdate(Game::deltaTime);
 	}
 
-	if (!transitioning && SDL_GetTicks() % 250 == 0)
+	if (!transitioning)
 	{
-		if (gameFPS > 240)
-			gameFPS = 240;
 		fpsText->setText("FPS: " + std::to_string((int)gameFPS));
 	}
 

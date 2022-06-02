@@ -33,6 +33,8 @@ public:
 	bool isSteam = true;
 	bool flowtime = false;
 
+	static int frameLimit;
+
 	Menu* menuToDelete;
 
 	bool transitioning;

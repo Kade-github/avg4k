@@ -117,6 +117,38 @@ public:
 		MUTATE_END
 	}
 
+
+	void mouseWheel(float amount)
+	{
+		if (wheelObjects.size() == 0)
+			return;
+
+		int mx, my;
+
+		Game::GetMousePos(&mx, &my);
+
+		mx -= parent->x;
+		my -= parent->y;
+
+		if (mx > x && my > y && mx < x + w && my < y + h)
+		{
+
+			if (amount > 0)
+				selectedIndex--;
+			if (amount < 0)
+				selectedIndex++;
+
+
+			if (selectedIndex > wheelObjects.size() - 1)
+				selectedIndex = 0;
+
+			if (selectedIndex < 0)
+				selectedIndex = wheelObjects.size() - 1;
+
+			callSelect(selectedIndex);
+		}
+	}
+
 	void draw()
 	{
 		if (wheelObjects.size() == 0)

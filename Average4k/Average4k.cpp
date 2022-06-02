@@ -425,7 +425,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			timestamps[frames] = frames;
 			fps[frames] = Game::gameFPS;
 			deltaTimes[frames] = Game::deltaTime;
-			next_tick += (1000.0 / 240.0);
+			next_tick += (1000.0 / Game::frameLimit);
 		}
 		else
 		{

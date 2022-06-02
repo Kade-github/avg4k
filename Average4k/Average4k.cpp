@@ -7,6 +7,7 @@
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
 #include "log_stream.h"
+#include "Helpers.h"
 using namespace std;
 
 //#define NOBUF
@@ -430,6 +431,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		else
 		{
 			SDL_Delay((int)(next_tick - now_tick));
+			//Helpers::preciseSleep((next_tick - now_tick));
 		}
 
 

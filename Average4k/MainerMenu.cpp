@@ -355,7 +355,7 @@ void MainerMenu::create()
 	// create settings
 
 	std::vector<setting> gameplaySettings;
-	//gameplaySettings.push_back(Game::save->getSetting("FPS Limit"));
+	gameplaySettings.push_back(Game::save->getSetting("FPS Limit"));
 	gameplaySettings.push_back(Game::save->getSetting("scrollspeed"));
 	gameplaySettings.push_back(Game::save->getSetting("downscroll"));
 	gameplaySettings.push_back(Game::save->getSetting("offset"));
@@ -454,8 +454,10 @@ void MainerMenu::update(Events::updateEvent ev)
 		}
 	}
 
-	//if (Game::frameLimit != Game::save->GetDouble("FPS Limit") && Game::save->GetDouble("FPS Limit") > 10)
-	//	Game::frameLimit = Game::save->GetDouble("FPS Limit");
+	double fl = Game::save->GetDouble("FPS Limit");
+
+	if (Game::frameLimit != fl && fl > 10)
+		Game::frameLimit = fl;
 
 	if (asyncPacks->size() != 0 || asyncSongs->size() != 0)
 	{

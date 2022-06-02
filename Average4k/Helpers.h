@@ -42,7 +42,7 @@ public:
 		return true;
 	}
 
-	void preciseSleep(double seconds) {
+	static void preciseSleep(double seconds) {
 		using namespace std;
 		using namespace std::chrono;
 
@@ -53,7 +53,7 @@ public:
 
 		while (seconds > estimate) {
 			auto start = high_resolution_clock::now();
-			_sleep(1);
+			Sleep(1);
 			auto end = high_resolution_clock::now();
 
 			double observed = (end - start).count() / 1e9;

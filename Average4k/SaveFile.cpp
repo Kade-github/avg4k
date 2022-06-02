@@ -21,7 +21,7 @@ SaveFile::SaveFile()
     // {takesActive, takesString, takesDouble, defaultActive, defaultString, defaultDouble, defaultMin, defaultMax, defaultIncrm, unique, suffix, isDropdown}
 
     settingHeader defaultHeader;
-    defaultHeader.settingsVersion = "v2.3";
+    defaultHeader.settingsVersion = "v2.8";
 
     defaultSettings.push_back(CreateSetting("Downscroll",{true}));
     defaultSettings.push_back(CreateSetting("Scrollspeed",{false,false,true,false,"",800,200,1900}));
@@ -40,7 +40,7 @@ SaveFile::SaveFile()
     defaultSettings.push_back(CreateSetting("Accent Color B", { false,false,true,false,"",0,0,255,1,false }));
     defaultSettings.push_back(CreateSetting("Lane Underway Transparency", { false,false,true,false,"",0.8,0,1,0.1,false }));
     defaultSettings.push_back(CreateSetting("Background Transparency", { false,false,true,false,"",1,0,1,0.1,false }));
-    defaultSettings.push_back(CreateSetting("FPS Limit", { false,false,true,false,"",240,10,500,1 }));
+    defaultSettings.push_back(CreateSetting("FPS Limit", { false,false,true,false,"",240,10,4000 }));
     defaultSettings.push_back(CreateSetting("nonChange_chartTheme", {}));
     defaultSettings.push_back(CreateSetting("nonChange_chartHistory",{}));
     defaultSettings.push_back(CreateSetting("nonChange_chartWaveform", {true}));
@@ -50,7 +50,7 @@ SaveFile::SaveFile()
     defaultSettings.push_back(CreateSetting("nonChange_colorShit", { false,true,false,false,"128,128,255"}));
     defaultSettings.push_back(CreateSetting("nonChange_minimap", { false }));
     defaultHeader.settings = defaultSettings;
-    std::ifstream ifs("settings.avg2");
+    std::ifstream ifs("settings.avg2", std::ios::binary | std::ios::in | std::ios::out);
     if (!ifs.good())
     {
         currentHeader = defaultHeader;
@@ -61,6 +61,8 @@ SaveFile::SaveFile()
     std::stringstream buffer;
     buffer << ifs.rdbuf();
 
+    ifs.close();
+    std::cout << "Size: " << buffer.str().size() << std::endl;
     msgpack::unpacked upd = msgpack::unpack(buffer.str().data(), buffer.str().size());
     upd.get().convert(currentHeader);
 
@@ -91,7 +93,7 @@ SaveFile::SaveFile()
 void SaveFile::Save()
 {
     VM_START
-    std::ofstream of("settings.avg2");
+    std::ofstream of("settings.avg2", std::ios::binary | std::ios::out);
 
     std::stringstream bitch;
 

@@ -123,7 +123,7 @@ void CrashDmp(_EXCEPTION_POINTERS* ExceptionInfo) {
 	return;
 #endif
 
-	if (!ExceptionInfo)
+	if (!ExceptionInfo )
 	{
 		std::cout << "no crash :)" << std::endl;
 		if (outstream)
@@ -143,6 +143,7 @@ void CrashDmp(_EXCEPTION_POINTERS* ExceptionInfo) {
 	CloseHandle(file);
 	std::cout << "Dumped crashlog" << std::endl;
 
+
 	if (outstream)
 		outstream->dump();
 }
@@ -151,14 +152,18 @@ LONG PvectoredExceptionHandler(
 	_EXCEPTION_POINTERS* ExceptionInfo
 )
 {
+	if (ExceptionInfo->ExceptionRecord->ExceptionCode == 0x40010006)
+		return EXCEPTION_CONTINUE_SEARCH;
+
+
 	CrashDmp(ExceptionInfo);
-	return 0;
+	return EXCEPTION_CONTINUE_SEARCH;
 }
 
 long WINAPI UnhandledExceptionFilterHandler(LPEXCEPTION_POINTERS ex) {
 
 	CrashDmp(ex);
-	return 0;
+	return EXCEPTION_CONTINUE_SEARCH;
 }
 
 void atexit_handler()
@@ -183,7 +188,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	}
 	std::atexit(&atexit_handler);
 	std::at_quick_exit(atexit_handler);
-	
+
 #ifdef  _DEBUG
 	AllocConsole();
 	freopen("conout$", "w", stdout);
@@ -330,6 +335,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		double now_tick = (double)SDL_GetTicks();
 		if (now_tick >= next_tick)
 		{
+
 			glViewport(0, 0, game->wW, game->wH);
 			bruh = time;
 			const Uint32 startTime = SDL_GetTicks();

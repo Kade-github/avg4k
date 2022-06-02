@@ -328,6 +328,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	double next_tick = (double)SDL_GetTicks();
 	SDL_GL_SetSwapInterval(0);
 
+	int lastFramelimit = 240;
+
 	VM_END
 	MUTATE_START
 	while (run)
@@ -335,7 +337,12 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		double now_tick = (double)SDL_GetTicks();
 		if (now_tick >= next_tick)
 		{
-
+			if (lastFramelimit != Game::frameLimit)
+			{
+				lastFramelimit = Game::frameLimit;
+				now_tick = SDL_GetTicks();
+				next_tick = SDL_GetTicks();
+			}
 			glViewport(0, 0, game->wW, game->wH);
 			bruh = time;
 			const Uint32 startTime = SDL_GetTicks();

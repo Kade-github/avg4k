@@ -11,6 +11,8 @@
 #include "TweenManager.h"
 #include "imgui_impl_sdl.h"
 #include "Helpers.h"
+#include "discord_sdk/discord.h"
+
 using namespace std;
 
 mutex pog;
@@ -26,6 +28,8 @@ AvgRect* __transRect;
 vector<Object*>* Game::objects;
 
 bool Game::errorWindowOpen = false;
+
+
 
 std::vector<Events::packetEvent> packetsToBeHandeld;
 std::map<std::string,Texture*> texturesToCreate;
@@ -47,6 +51,8 @@ int Game::frameLimit = 240;
 Texture* error_button;
 Texture* error_major;
 Texture* error_minor;
+
+discord::Core* core{};
 
 Rect errorButtonRect;
 bool errorType;
@@ -220,6 +226,8 @@ void Game::switchMenu(Menu* m)
 	currentMenu->created = true;
 }
 
+bool isDiscordRunning = true;
+
 void Game::createGame()
 {
 	VM_START
@@ -227,6 +235,10 @@ void Game::createGame()
 	steam = new Steam();
 	steam->InitSteam();
 	
+
+	discord::Result resu = discord::Core::Create(981919302234021909, DiscordCreateFlags_NoRequireDiscord, &core);
+	if (resu == discord::Result::NotRunning)
+		isDiscordRunning = false;
 
 
 	save = new SaveFile();
@@ -321,6 +333,9 @@ void Game::update(Events::updateEvent update)
 	MUTATE_START
 		if (Multiplayer::connectedToServer)
 			SteamAPI_RunCallbacks();
+
+	if (isDiscordRunning)
+		::core->RunCallbacks();
 
 	if (!Multiplayer::connectedToServer && startConnect)
 	{
@@ -857,6 +872,11 @@ bool Game::getKey(int code)
 	if (controls.count(code) != 1)
 		return false;
 	return controls[code];
+}
+
+void Game::DiscordUpdatePresence(std::string state, std::string details, long startTimestamp, long endTimestamp, std::string smallImageText, std::string partyId, int partySize, int partyMax, std::string joinSecret)
+{
+
 }
 
 void Game::textInput(SDL_TextInputEvent event)

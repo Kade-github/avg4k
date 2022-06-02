@@ -237,7 +237,7 @@ void Game::createGame()
 	
 
 	discord::Result resu = discord::Core::Create(981919302234021909, DiscordCreateFlags_NoRequireDiscord, &core);
-	if (resu == discord::Result::NotRunning)
+	if (resu != discord::Result::Ok)
 		isDiscordRunning = false;
 
 

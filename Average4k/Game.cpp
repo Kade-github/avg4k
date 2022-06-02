@@ -11,7 +11,7 @@
 #include "TweenManager.h"
 #include "imgui_impl_sdl.h"
 #include "Helpers.h"
-#include "discord_sdk/discord.h"
+#include "discord_sdk\discord.h"
 
 using namespace std;
 

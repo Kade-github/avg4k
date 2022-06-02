@@ -241,7 +241,7 @@ void Game::createGame()
 	else if (fsType == "Fullscreen")
 		fs = 1;
 
-	//frameLimit = Game::save->GetDouble("FPS Limit");
+	frameLimit = Game::save->GetDouble("FPS Limit");
 
 	noteskin = Noteskin::getNoteskin();
 

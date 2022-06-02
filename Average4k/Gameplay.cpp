@@ -955,7 +955,8 @@ void Gameplay::update(Events::updateEvent event)
 	}
 	else
 	{
-		if (!ended && notesToPlay.size() == 0 && positionInSong >= song->length - Game::save->GetDouble("offset"))
+
+		if (!ended && notesToPlay.size() == 0 && positionInSong - Game::save->GetDouble("offset") >= song->length)
 		{
 			ended = true;
 			if (!MultiplayerLobby::inLobby)

@@ -16,6 +16,8 @@ public:
 
 	float detectedBPMProg = 0;
 
+	char* musicFile;
+
 	std::string path;
 	Channel(unsigned long channelId)
 	{
@@ -39,6 +41,11 @@ public:
 		if (decodeChan != -1)
 			BASS_ChannelFree(decodeChan);
 		BASS_ChannelFree(id);
+
+		if (musicFile) {
+			std::free(musicFile);
+			musicFile = nullptr;
+		}
 	}
 
 	void play()
@@ -196,10 +203,38 @@ public:
 	{
 		if (channels[name] != NULL)
 			delete channels[name];
+		//channels[name] = new Channel(BASS_StreamCreateFile(false, path.c_str(), 0, 0, BASS_STREAM_PRESCAN | BASS_SAMPLE_FLOAT | BASS_STREAM_AUTOFREE | BASS_ASYNCFILE));
+		auto flags = BASS_STREAM_PRESCAN | BASS_SAMPLE_FLOAT;
+
 		if (autoFree)
-			channels[name] = new Channel(BASS_StreamCreateFile(false, path.c_str(), 0, 0, BASS_STREAM_PRESCAN | BASS_SAMPLE_FLOAT | BASS_STREAM_AUTOFREE | BASS_ASYNCFILE));
-		else
-			channels[name] = new Channel(BASS_StreamCreateFile(false, path.c_str(), 0, 0, BASS_STREAM_PRESCAN | BASS_SAMPLE_FLOAT  | BASS_ASYNCFILE));
+			flags |= BASS_STREAM_AUTOFREE;
+
+		
+		std::ostringstream buf;
+		std::ifstream inputFile(path, std::ios::binary | std::ios::in);
+		buf << inputFile.rdbuf();
+		inputFile.close();
+
+		std::cout << "doing thing with " << path.c_str() << " size: " << buf.str().size() << std::endl;
+
+		char* buff = (char*)std::malloc(buf.str().size());
+		
+		memcpy(buff, buf.str().data(), buf.str().size());
+
+		auto val = BASS_StreamCreateFile(true, buff, 0, buf.str().size(), flags);
+
+		if (val == 0) {
+			auto error = BASS_ErrorGetCode();
+
+			std::cout << "Bass error! " << error << std::endl;
+			std::free(buff);
+			return nullptr;
+		}
+
+		channels[name] = new Channel(val);
+		
+		channels[name]->musicFile = buff;
+
 		channels[name]->path = path;
 		channels[name]->setVolume(0.2);
 		return channels[name];

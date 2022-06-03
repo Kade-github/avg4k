@@ -439,10 +439,11 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			fps[frames] = Game::gameFPS;
 			deltaTimes[frames] = Game::deltaTime;
 			next_tick = now_tick + std::chrono::milliseconds((int)(1000.0 / Game::frameLimit));
+			Helpers::preciseSleep((1000.0 / Game::frameLimit) / 1000.0f * (2.0/3.0));
 		}
 		else
 		{
-		Helpers::preciseSleep((1000.0 / Game::frameLimit) / 1000.0f * 0.5);
+		
 		}
 
 

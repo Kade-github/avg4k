@@ -8,6 +8,7 @@
 #include "imgui_impl_opengl3.h"
 #include "log_stream.h"
 #include "Helpers.h"
+#include <timeapi.h>
 using namespace std;
 
 //#define NOBUF
@@ -229,7 +230,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	curl_global_init(CURL_GLOBAL_ALL);
 	Multiplayer::InitCrypto();
 
-	
+	Game::frameLimit = 10;
 
 	BASS_Init(-1,44100,0,NULL,NULL);
 	BASS_SetConfig(BASS_CONFIG_ASYNCFILE_BUFFER, 16777216); //16MB
@@ -244,6 +245,12 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 		Game::patched = true;
 		//FUCK SHIT WE PATCHED
+	}
+
+	bool disableFrameSleeping = cmdLine.find("-disableframesleep") != std::string::npos;
+
+	if (disableFrameSleeping) {
+		std::cout << "Frame sleep disabled, increased cpu usage expected." << std::endl;
 	}
 
 	bool fullscreen = false;
@@ -338,7 +345,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	double performanceFrequency = SDL_GetPerformanceFrequency();
 
-	int lastFramelimit = 240;
+	int lastFramelimit = 0;
 
 	VM_END
 	MUTATE_START
@@ -355,16 +362,17 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			}
 			glViewport(0, 0, game->wW, game->wH);
 			bruh = time;
-			const Uint32 startTime = SDL_GetTicks();
+			const Uint32 startTick = SDL_GetTicks();
 			LAST = NOW;
 			NOW = SDL_GetPerformanceCounter();
-			Game::startTick = startTime;
+			Game::startTick = startTick;
 			SDL_Event event;
 			int wheel = 0;
 
 			while (SDL_PollEvent(&event) > 0)
 			{
-				ImGui_ImplSDL2_ProcessEvent(&event);
+				if(Game::useImGUI)
+					ImGui_ImplSDL2_ProcessEvent(&event);
 				switch (event.type) {
 				case SDL_QUIT: {
 					run = false;
@@ -446,11 +454,17 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			timestamps[frames] = frames;
 			fps[frames] = Game::gameFPS;
 			deltaTimes[frames] = Game::deltaTime;
-			next_tick = now_tick + std::chrono::microseconds((int)(1000000.0 / Game::frameLimit));
 
-			//dont want the task scheduler to fuck us here for high framerates
-			if(next_tick - now_tick > std::chrono::milliseconds(10))
-				Helpers::preciseSleep((1000.0 / Game::frameLimit) / 1000.0f);
+			if (Clock::now() - startTime < std::chrono::seconds(5))
+				Game::frameLimit = 60;
+
+			next_tick = now_tick + std::chrono::nanoseconds((int)(1e9 / Game::frameLimit));
+
+			if (!disableFrameSleeping) {
+				timeBeginPeriod(1);
+				Helpers::preciseSleep(std::chrono::duration_cast<std::chrono::microseconds>(next_tick - Clock::now()).count() / 1e6);
+				timeEndPeriod(1);
+			}
 		}
 		else
 		{

@@ -18,6 +18,8 @@ public:
 
 	char* musicFile;
 
+	bool isFreed = false;
+
 	std::string path;
 	Channel(unsigned long channelId)
 	{
@@ -41,8 +43,10 @@ public:
 		if (decodeChan != -1)
 			BASS_ChannelFree(decodeChan);
 		BASS_ChannelFree(id);
+		id = -1;
 
-		if (musicFile) {
+		if (musicFile && !isFreed) {
+			isFreed = true;
 			std::free(musicFile);
 			musicFile = nullptr;
 		}

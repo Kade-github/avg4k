@@ -119,7 +119,7 @@ public:
 			{
 				std::string keyToAdd = std::string(SDL_GetKeyName(ev.keysym.sym));
 
-				if (type.contains(keyToAdd.c_str()))
+				if (type.find(keyToAdd.c_str()) != std::string::npos)
 					return;
 
 				switch (ev.keysym.sym)

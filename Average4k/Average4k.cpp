@@ -173,6 +173,7 @@ void atexit_handler()
 	if (outstream)
 		outstream->dump();
 }
+typedef std::chrono::high_resolution_clock Clock;
 
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
@@ -327,8 +328,10 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 	float time = 0;
 	float bruh = 0;
-	double next_tick = (double)SDL_GetTicks();
+	auto next_tick = Clock::now();
 	SDL_GL_SetSwapInterval(0);
+
+	double performanceFrequency = SDL_GetPerformanceFrequency();
 
 	int lastFramelimit = 240;
 
@@ -336,14 +339,14 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	MUTATE_START
 	while (run)
 	{
-		double now_tick = (double)SDL_GetTicks();
+		auto now_tick = Clock::now();
 		if (now_tick >= next_tick)
 		{
 			if (lastFramelimit != Game::frameLimit)
 			{
 				lastFramelimit = Game::frameLimit;
-				now_tick = SDL_GetTicks();
-				next_tick = SDL_GetTicks();
+				now_tick = Clock::now();
+				next_tick = Clock::now();
 			}
 			glViewport(0, 0, game->wW, game->wH);
 			bruh = time;
@@ -422,7 +425,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 			SDL_GL_SwapWindow(window);
 
-			Game::deltaTime = (double)((NOW - LAST) * 1000 / (double)SDL_GetPerformanceFrequency());
+			Game::deltaTime = (double)((NOW - LAST) * 1000 / (double)performanceFrequency);
 
 			fpsthink();
 
@@ -435,12 +438,11 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			timestamps[frames] = frames;
 			fps[frames] = Game::gameFPS;
 			deltaTimes[frames] = Game::deltaTime;
-			next_tick += (1000.0 / Game::frameLimit);
+			next_tick = now_tick + std::chrono::milliseconds((int)(1000.0 / Game::frameLimit));
 		}
 		else
 		{
-			SDL_Delay((int)(next_tick - now_tick));
-			//Helpers::preciseSleep((next_tick - now_tick));
+		Helpers::preciseSleep((1000.0 / Game::frameLimit) / 2000.0f);
 		}
 
 

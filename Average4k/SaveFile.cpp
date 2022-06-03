@@ -21,7 +21,7 @@ SaveFile::SaveFile()
     // {takesActive, takesString, takesDouble, defaultActive, defaultString, defaultDouble, defaultMin, defaultMax, defaultIncrm, unique, suffix, isDropdown}
 
     settingHeader defaultHeader;
-    defaultHeader.settingsVersion = "v2.8";
+    defaultHeader.settingsVersion = "v2.9";
 
     defaultSettings.push_back(CreateSetting("Downscroll",{true}));
     defaultSettings.push_back(CreateSetting("Scrollspeed",{false,false,true,false,"",800,200,1900}));

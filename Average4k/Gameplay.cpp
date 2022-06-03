@@ -629,7 +629,10 @@ void Gameplay::create() {
 	songPosOutline->c.b = 255;
 	created = true;
 
-	positionInSong = -1500;
+	if (MultiplayerLobby::inLobby)
+		positionInSong = -5000;
+	else
+		positionInSong = -(Game::save->GetDouble("Start Delay") * 1000);
 	updateAccuracy(0);
 	MUTATE_END
 }
@@ -645,7 +648,7 @@ void Gameplay::update(Events::updateEvent event)
 {
 	MUTATE_START
 
-	if (!song)
+	if (!song || Game::instance->transitioning)
 		return;
 
 	if (positionInSong >= startTime)

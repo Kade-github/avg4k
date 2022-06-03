@@ -186,7 +186,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 				int realRank = rankin + 1;
 				Placement->setText(std::to_string(realRank) + std::string(ordinal_suffix(realRank)) + " Place");
 				Placement->x = (Game::gameWidth - Placement->surfW) - 24;
-				Game::DiscordUpdatePresence(MainerMenu::currentSelectedSong.meta.songName, "Playing Multiplayer (" + Placement->text + " Place", "Average4K", MultiplayerLobby::CurrentLobby.Players, MultiplayerLobby::CurrentLobby.MaxPlayers, "");
+				Game::DiscordUpdatePresence(MainerMenu::currentSelectedSong.meta.songName, "Playing Multiplayer (" + Placement->text + ")", "Average4K", MultiplayerLobby::CurrentLobby.Players, MultiplayerLobby::CurrentLobby.MaxPlayers, "");
 			}
 			bool found = false;
 			int index = 0;

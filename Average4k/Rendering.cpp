@@ -208,6 +208,25 @@ void Rendering::PushQuad(Rect* dstRect, Rect* srcRect, Texture* tex, Shader* sha
 	
 }
 
+void Rendering::PushQuad(std::vector<GL_Vertex> vertices, Texture* tex, Shader* shad)
+{
+	if (tex == nullptr)
+		tex = white;
+	if (shad == nullptr)
+		shad = GL::genShader;
+
+	if (batch_texture != tex || batch_shader != shad)
+	{
+		drawBatch();
+
+		batch_texture = tex;
+		batch_shader = shad;
+	}
+
+	for (GL_Vertex vert : vertices)
+		batch_buffer.push_back(vert);
+}
+
 void Rendering::PushQuad(Rect* dstRect, Rect* srcRect, Texture* tex, Shader* shad) {
 
 	

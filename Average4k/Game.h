@@ -35,7 +35,7 @@ public:
 
 	static int frameLimit;
 
-
+	static bool useImGUI;
 
 	Menu* menuToDelete;
 

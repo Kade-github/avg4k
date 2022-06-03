@@ -825,6 +825,7 @@ void window_notif() {
 
 void FuckinEditor::create()
 {
+	Game::useImGUI = true;
 	Game::showErrorWindow("Warning", "editor is super wip, your game is fucked.", false);
 	noteZoom = 1;
 	
@@ -1610,6 +1611,7 @@ void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 	{
 		if (selectedChart)
 			selectedChart->destroy();
+		Game::useImGUI = false;
 		Game::instance->transitionToMenu(new MainMenu());
 
 	}

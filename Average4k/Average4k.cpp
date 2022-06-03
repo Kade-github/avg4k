@@ -359,7 +359,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 			while (SDL_PollEvent(&event) > 0)
 			{
-				ImGui_ImplSDL2_ProcessEvent(&event);
+				if (Game::useImGUI)
+					ImGui_ImplSDL2_ProcessEvent(&event);
 				switch (event.type) {
 				case SDL_QUIT: {
 					run = false;
@@ -406,9 +407,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 				create = true;
 			}
 
-			ImGui_ImplOpenGL3_NewFrame();
-			ImGui_ImplSDL2_NewFrame();
-			ImGui::NewFrame();
 
 			
 			glClear(GL_COLOR_BUFFER_BIT);
@@ -416,12 +414,21 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 			game->update(updateEvent);
 
+			if (Game::useImGUI)
+			{
+				ImGui_ImplOpenGL3_NewFrame();
+				ImGui_ImplSDL2_NewFrame();
+				ImGui::NewFrame();
+			}
 
 
 			Rendering::drawBatch();
 
-			ImGui::Render();
-			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+			if (Game::useImGUI)
+			{
+				ImGui::Render();
+				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+			}
 
 			SDL_GL_SwapWindow(window);
 

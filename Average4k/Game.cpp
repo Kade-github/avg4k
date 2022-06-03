@@ -57,6 +57,8 @@ discord::Core* core{};
 Rect errorButtonRect;
 bool errorType;
 
+bool Game::useImGUI = false;
+
 Text* errorTitleText;
 Text* errorDescriptionText;
 Text* errorButtonText;

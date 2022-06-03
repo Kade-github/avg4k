@@ -93,7 +93,7 @@ public:
 
 	static bool getKey(int code);
 
-	static void DiscordUpdatePresence(std::string state, std::string details, long startTimestamp, long endTimestamp, std::string smallImageText, std::string partyId, int partySize, int partyMax, std::string joinSecret);
+	static void DiscordUpdatePresence(std::string state, std::string details, std::string smallImageText, int partySize, int partyMax, std::string joinSecret);
 
 	static SDL_Renderer* renderer;
 	static SDL_Window* window;

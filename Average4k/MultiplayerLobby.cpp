@@ -305,6 +305,8 @@ void MultiplayerLobby::create() {
 	
 	MUTATE_START
 
+	Game::DiscordUpdatePresence(CurrentLobby.LobbyName, "Playing Multiplayer", "Average4K", MultiplayerLobby::CurrentLobby.Players, MultiplayerLobby::CurrentLobby.MaxPlayers, "");
+
 	if (!waitingForStart)
 		MainerMenu::currentSelectedSong = Chart();
 	playerList = new AvgGroup(0, 0, 1280, 720);

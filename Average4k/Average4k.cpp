@@ -442,7 +442,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		}
 		else
 		{
-		Helpers::preciseSleep((1000.0 / Game::frameLimit) / 2000.0f);
+		Helpers::preciseSleep((1000.0 / Game::frameLimit) / 1000.0f * 0.5);
 		}
 
 

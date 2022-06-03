@@ -240,7 +240,7 @@ void Steam::uploadPack(Pack* pac, PublishedFileId_t id)
         else
             desc += s.c.meta.songName + " by a unknown artist\n";
     }
-    desc += "\nThis is a pack sumbission; This contains multiple songs and could be very large.";
+    desc += "\nThis is a pack submission; This contains multiple songs and could be very large.";
 
     SteamUGC()->SetItemDescription(handle, desc.c_str());
     SteamUGC()->SetItemUpdateLanguage(handle, "english");

@@ -28,7 +28,7 @@ SaveFile::SaveFile()
     defaultSettings.push_back(CreateSetting("Offset",{false,false,true,false,"",0,-1000,1000}));
     defaultSettings.push_back(CreateSetting("Hitsounds", {true}));
     defaultSettings.push_back(CreateSetting("Note Size",{false,false,true,false,"",1,0.8,1.8,0.1,false,"x"}));
-    defaultSettings.push_back(CreateSetting("Keybinds", {false,true,false,false,"DFJK", 0, 0, 4, 0, true}));
+    defaultSettings.push_back(CreateSetting("Keybinds ", {false,true,false,false,"D-F-J-K", 0, 0, 4, 0, true}));
     defaultSettings.push_back(CreateSetting("Noteskin", {false,true,false,false, "arrow",0,0,0,0,false,"",true}));
     defaultSettings.push_back(CreateSetting("Resolution", { false,true,false,false, "1280x720",0,0,0,0,false,"",true }));
     defaultSettings.push_back(CreateSetting("Fullscreen", { false,true,false,false, "Windowed",0,0,0,0,false,"",true }));
@@ -41,6 +41,7 @@ SaveFile::SaveFile()
     defaultSettings.push_back(CreateSetting("Lane Underway Transparency", { false,false,true,false,"",0.8,0,1,0.1,false }));
     defaultSettings.push_back(CreateSetting("Background Transparency", { false,false,true,false,"",1,0,1,0.1,false }));
     defaultSettings.push_back(CreateSetting("FPS Limit", { false,false,true,false,"",240,10,4000 }));
+    defaultSettings.push_back(CreateSetting("Start Delay", { false,false,true,false,"",5,0,10,1,false,"s"}));
     defaultSettings.push_back(CreateSetting("nonChange_chartTheme", {}));
     defaultSettings.push_back(CreateSetting("nonChange_chartHistory",{}));
     defaultSettings.push_back(CreateSetting("nonChange_chartWaveform", {true}));

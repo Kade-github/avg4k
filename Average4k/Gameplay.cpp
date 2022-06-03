@@ -558,7 +558,7 @@ void Gameplay::create() {
 		Placement->borderSize = 2;
 	}
 	else
-		Game::DiscordUpdatePresence(MainerMenu::currentSelectedSong.meta.artist + " - " + MainerMenu::currentSelectedSong.meta.songName, "Playing Solo Play", "Average4K", -1, -1, "");
+		Game::DiscordUpdatePresence((MainerMenu::currentSelectedSong.meta.artist.size() == 0 ? "No Artist" : MainerMenu::currentSelectedSong.meta.artist) + " - " + MainerMenu::currentSelectedSong.meta.songName, "Playing Solo Play", "Average4K", -1, -1, "");
 
 	ScoreText = new Text(Game::gameWidth - 200, 10, "", 36, "Futura Bold");
 	add(ScoreText);

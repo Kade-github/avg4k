@@ -619,8 +619,10 @@ void MainerMenu::update(Events::updateEvent ev)
 			if (SoundManager::getChannelByName("prevSong") == NULL)
 			{
 				Channel* real = SoundManager::createChannel(selectedSong.c.meta.folder + "/" + selectedSong.c.meta.audio, "prevSong");
-				real->play();
-				real->setPos(selectedSong.c.meta.start);
+				if (real) {
+					real->play();
+					real->setPos(selectedSong.c.meta.start);
+				}
 			}
 		}
 	}

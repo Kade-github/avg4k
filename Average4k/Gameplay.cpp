@@ -186,7 +186,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 				int realRank = rankin + 1;
 				Placement->setText(std::to_string(realRank) + std::string(ordinal_suffix(realRank)) + " Place");
 				Placement->x = (Game::gameWidth - Placement->surfW) - 24;
-				Game::DiscordUpdatePresence(MainerMenu::currentSelectedSong.meta.songName, "Playing Multiplayer (" + Placement->text + ")", "Average4K", MultiplayerLobby::CurrentLobby.Players, MultiplayerLobby::CurrentLobby.MaxPlayers, "");
+				Game::DiscordUpdatePresence(MainerMenu::currentSelectedSong.meta.songName + " in " + MultiplayerLobby::CurrentLobby.LobbyName, "Playing Multiplayer (" + Placement->text + ")", "Average4K", MultiplayerLobby::CurrentLobby.Players, MultiplayerLobby::CurrentLobby.MaxPlayers, "");
 			}
 			bool found = false;
 			int index = 0;
@@ -493,7 +493,7 @@ void Gameplay::create() {
 
 	if (MultiplayerLobby::inLobby)
 	{
-		Game::DiscordUpdatePresence(MainerMenu::currentSelectedSong.meta.songName, "Playing Multiplayer", "Average4K", MultiplayerLobby::CurrentLobby.Players, MultiplayerLobby::CurrentLobby.MaxPlayers, "");
+		Game::DiscordUpdatePresence(MainerMenu::currentSelectedSong.meta.songName + " in " + MultiplayerLobby::CurrentLobby.LobbyName, "Playing Multiplayer", "Average4K", MultiplayerLobby::CurrentLobby.Players, MultiplayerLobby::CurrentLobby.MaxPlayers, "");
 		AvgSprite* leftGrad = new AvgSprite(0, 0, Noteskin::getGameplayElement(Game::noteskin, "leftGraid.png"));
 		leftGrad->colorR = darkestColor.r;
 		leftGrad->colorG = darkestColor.g;

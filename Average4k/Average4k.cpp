@@ -71,12 +71,16 @@ using namespace std;
 #pragma comment(lib, "dbghelp.lib")
 #endif
 
+typedef std::chrono::high_resolution_clock Clock;
+
 #define FRAME_VALUES 60
 
 
-Uint32 frametimes[FRAME_VALUES];
+double frametimes[FRAME_VALUES];
 
-Uint32 frametimelast;
+double frametimelast;
+
+std::chrono::steady_clock::time_point startTime;
 
 Uint32 framecount;
 
@@ -87,22 +91,21 @@ log_stream* outstream;
 void fpsinit() {
 	memset(frametimes, 0, sizeof(frametimes));
 	framecount = 0;
-	frametimelast = SDL_GetTicks();
+	frametimelast = 0;
 }
 
 void fpsthink() {
 	Uint32 frametimesindex;
-	Uint32 getticks;
 	Uint32 count;
 	Uint32 i;
 
 	frametimesindex = framecount % FRAME_VALUES;
 
-	getticks = SDL_GetTicks();
+	double nowmills = (double)(std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - startTime).count());
 
-	frametimes[frametimesindex] = getticks - frametimelast;
+	frametimes[frametimesindex] = nowmills - frametimelast;
 
-	frametimelast = getticks;
+	frametimelast = nowmills;
 
 	framecount++;
 
@@ -173,7 +176,7 @@ void atexit_handler()
 	if (outstream)
 		outstream->dump();
 }
-typedef std::chrono::high_resolution_clock Clock;
+
 
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
@@ -212,6 +215,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #endif
 	
 	VM_START
+
+	startTime = Clock::now();
 
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		std::cout << "SDL2 video subsystem couldn't be initialized. Error: "
@@ -407,11 +412,11 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			}
 
 
-
-			ImGui_ImplOpenGL3_NewFrame();
-			ImGui_ImplSDL2_NewFrame();
-			ImGui::NewFrame();
-
+			if (Game::useImGUI) {
+				ImGui_ImplOpenGL3_NewFrame();
+				ImGui_ImplSDL2_NewFrame();
+				ImGui::NewFrame();
+			}
 			glClear(GL_COLOR_BUFFER_BIT);
 
 
@@ -430,7 +435,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			SDL_GL_SwapWindow(window);
 
 			Game::deltaTime = (double)((NOW - LAST) * 1000 / (double)performanceFrequency);
-
 			fpsthink();
 
 
@@ -442,8 +446,11 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			timestamps[frames] = frames;
 			fps[frames] = Game::gameFPS;
 			deltaTimes[frames] = Game::deltaTime;
-			next_tick = now_tick + std::chrono::milliseconds((int)(1000.0 / Game::frameLimit));
-			Helpers::preciseSleep((1000.0 / Game::frameLimit) / 1000.0f * (2.0/3.0));
+			next_tick = now_tick + std::chrono::microseconds((int)(1000000.0 / Game::frameLimit));
+
+			//dont want the task scheduler to fuck us here for high framerates
+			if(next_tick - now_tick > std::chrono::milliseconds(10))
+				Helpers::preciseSleep((1000.0 / Game::frameLimit) / 1000.0f);
 		}
 		else
 		{

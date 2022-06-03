@@ -232,7 +232,7 @@ public:
 
 			std::cout << "Bass error! " << error << std::endl;
 			std::free(buff);
-			return nullptr;
+			return new Channel(-1);
 		}
 
 		channels[name] = new Channel(val);

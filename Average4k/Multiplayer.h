@@ -31,7 +31,7 @@ public:
 	static DWORD WINAPI connect(LPVOID agh);
 
 	static std::string currentUserAvatar;
-
+	static bool integ;
 	static std::string username;
 	static std::string tag;
 	static Color tagColor;

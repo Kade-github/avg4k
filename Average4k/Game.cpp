@@ -621,7 +621,7 @@ void Game::update(Events::updateEvent update)
 
 void Game::keyDown(SDL_KeyboardEvent ev)
 {
-	if (transitioning || !currentMenu || errorWindowOpen)
+	if (transitioning || !currentMenu || errorWindowOpen || Multiplayer::integ)
 		return;
 	if (!currentMenu->created)
 		return;
@@ -766,7 +766,7 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 
 void Game::keyUp(SDL_KeyboardEvent ev)
 {
-	if (transitioning || !currentMenu || errorWindowOpen)
+	if (transitioning || !currentMenu || errorWindowOpen || Multiplayer::integ)
 		return;
 	if (!currentMenu->created)
 		return;
@@ -783,7 +783,7 @@ void Game::keyUp(SDL_KeyboardEvent ev)
 }
 void Game::mouseWheel(float wheel)
 {
-	if (!currentMenu || errorWindowOpen)
+	if (!currentMenu || errorWindowOpen || Multiplayer::integ)
 		return;
 	if (currentMenu->created)
 	{
@@ -794,7 +794,7 @@ void Game::mouseWheel(float wheel)
 }
 void Game::mouseButtonUp()
 {
-	if (currentMenu || errorWindowOpen)
+	if (currentMenu || errorWindowOpen || Multiplayer::integ)
 		currentMenu->leftMouseUp();
 }
 

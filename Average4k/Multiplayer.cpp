@@ -243,7 +243,7 @@ void Multiplayer::SendPacket(std::string data, PacketType packet) {
     MUTATE_END
 }
 
-bool integ = false;
+bool Multiplayer::integ = false;
 bool prot = false;
 bool debugger = false;
 bool vm = false;
@@ -271,7 +271,7 @@ DWORD WINAPI NewThread(LPVOID param) {
         int cockmonkey = 567;
         int monkeysexCock = 7372;
 
-        if (integ) {
+        if (Multiplayer::integ) {
             CHECK_CODE_INTEGRITY(monkey, 64);
 
             if (monkey != 64) {
@@ -282,7 +282,7 @@ DWORD WINAPI NewThread(LPVOID param) {
                 send.Status = "ok";
                 Multiplayer::sendMessage<CPacketStatus>(send);
             }
-            integ = false;
+            Multiplayer::integ = false;
         }
         if (prot) {
             CHECK_PROTECTION(cock, 76);
@@ -459,7 +459,7 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
                 std::cout << "not found" << std::endl;
                 break;
             case 3301:             
-                integ = true;
+                Multiplayer::integ = true;
                 break;
             case 3302:
                 prot = true;

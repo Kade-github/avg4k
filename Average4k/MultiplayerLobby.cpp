@@ -67,6 +67,7 @@ void MultiplayerLobby::refreshLobby(lobby l)
 
 	helpDisplay->setText("Lobby: " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ") " + (isHost ? "You are the host!" : ""));
 	//warningDisplay->setText("");
+	Game::DiscordUpdatePresence(CurrentLobby.LobbyName, "Playing Multiplayer", "Average4K", MultiplayerLobby::CurrentLobby.Players, MultiplayerLobby::CurrentLobby.MaxPlayers, "");
 	STR_ENCRYPT_END
 }
 
@@ -275,6 +276,7 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		{
 			Game::asyncShowErrorWindow("Host switch", "You are no longer the host.", false);
 			isHost = false;
+			helpDisplay->setText("Lobby: " + CurrentLobby.LobbyName + " (" + std::to_string(CurrentLobby.Players) + "/" + std::to_string(CurrentLobby.MaxPlayers) + ") " + (isHost ? "You are the host!" : ""));
 		}
 		else if (fuckyou.lobbyKick)
 		{
@@ -304,8 +306,6 @@ MultiplayerLobby::MultiplayerLobby(lobby l, bool hosted, bool backFromSelect = f
 void MultiplayerLobby::create() {
 	
 	MUTATE_START
-
-	Game::DiscordUpdatePresence(CurrentLobby.LobbyName, "Playing Multiplayer", "Average4K", MultiplayerLobby::CurrentLobby.Players, MultiplayerLobby::CurrentLobby.MaxPlayers, "");
 
 	if (!waitingForStart)
 		MainerMenu::currentSelectedSong = Chart();

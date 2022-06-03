@@ -882,8 +882,6 @@ void Game::DiscordUpdatePresence(std::string state, std::string details, std::st
 
 	act.SetState(state.c_str());
 	act.SetDetails(details.c_str());
-	act.GetAssets().SetSmallText(smallImageText.c_str());
-	act.GetAssets().SetSmallImage("icon");
 	act.GetAssets().SetLargeImage("banner");
 	if (partyMax != -1)
 	{

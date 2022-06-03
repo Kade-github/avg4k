@@ -718,7 +718,8 @@ void Gameplay::update(Events::updateEvent event)
 		return;
 
 	curSeg = MainerMenu::currentSelectedSong.getSegmentFromTime(positionInSong);
-	beat = MainerMenu::currentSelectedSong.getBeatFromTimeOffset(positionInSong, curSeg);
+	beat = MainerMenu::currentSelectedSong.getBeatFromTime(positionInSong, curSeg);
+
 	if (lastBPM != curSeg.bpm)
 	{
 		song->bpm = curSeg.bpm;

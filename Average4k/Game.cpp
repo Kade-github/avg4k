@@ -240,7 +240,6 @@ void Game::createGame()
 	if (resu != discord::Result::Ok)
 		isDiscordRunning = false;
 
-
 	save = new SaveFile();
 
 	std::vector<int> res = save->ObtainResolution();
@@ -874,9 +873,24 @@ bool Game::getKey(int code)
 	return controls[code];
 }
 
-void Game::DiscordUpdatePresence(std::string state, std::string details, long startTimestamp, long endTimestamp, std::string smallImageText, std::string partyId, int partySize, int partyMax, std::string joinSecret)
+void Game::DiscordUpdatePresence(std::string state, std::string details, std::string smallImageText, int partySize, int partyMax, std::string joinSecret)
 {
+	if (!isDiscordRunning)
+		return;
 
+	discord::Activity act{};
+
+	act.SetState(state.c_str());
+	act.SetDetails(details.c_str());
+	act.GetAssets().SetLargeImage("banner");
+	if (partyMax != -1)
+	{
+		act.GetParty().GetSize().SetMaxSize(partyMax);
+		act.GetParty().GetSize().SetCurrentSize(partySize);
+	}
+
+	::core->ActivityManager().UpdateActivity(act, [](discord::Result result) {
+	});
 }
 
 void Game::textInput(SDL_TextInputEvent event)

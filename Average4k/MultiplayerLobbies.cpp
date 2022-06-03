@@ -29,7 +29,7 @@ void MultiplayerLobbies::create()
 {
 	MUTATE_START;
 	
-
+	Game::DiscordUpdatePresence("Browsing lobbies", "Playing Multiplayer", "Average4K", -1, -1, "");
 
 	refreshTimer = 3000;
 	if (Multiplayer::loggedIn)

@@ -204,7 +204,9 @@ void selectedSongCallback(int sId)
 void MainerMenu::create()
 {
 	VM_START
-	resetStuff();
+
+	Game::DiscordUpdatePresence("In the Main Menu", "Browsing Charts", "Average4K", -1, -1, "");
+
 	bg = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "darkmodebg.png"));
 	bg->create();
 	bg->w = 1286;
@@ -272,65 +274,6 @@ void MainerMenu::create()
 
 	soloContainer->addObject(packContainer, "packContainer");
 
-
-
-	// create packs
-	if (!asyncPacks)
-	{
-		asyncPacks = new std::vector<Pack>();
-		asyncSongs = new std::vector<Song>();
-
-		SongGather::gatherPacksAsync(asyncPacks);
-		SongGather::gatherSteamPacksAsync(asyncPacks);
-
-		SongGather::gatherNoPackSteamSongsAsync(asyncSongs);
-	}
-
-
-	std::vector<Song> stuff = SongGather::gatherNoPackSongs();
-	{
-		std::lock_guard cock(packMutex);
-		if (stuff.size() > 0)
-			for (Song s : stuff)
-				asyncSongs->push_back(s);
-	}
-	bool addWorkshop = true;
-	for (Pack p : packs)
-		if (p.packName == "Workshop/Local")
-			addWorkshop = false;
-
-	if (Game::steam->subscribedList.size() > 0 && steamWorkshop.songs.size() == 0)
-	{
-		steamWorkshop.background = "";
-		steamWorkshop.metaPath = "unfl";
-		steamWorkshop.packName = "Workshop/Local";
-		steamWorkshop.showName = true;
-		steamWorkshop.isSteam = true;
-		steamWorkshop.songs = {};
-
-		if (addWorkshop)
-			packs.push_back(steamWorkshop);
-
-		addPack(steamWorkshop.packName, steamWorkshop.background, steamWorkshop.showName, true);
-	}
-	else
-	{
-		if (steamWorkshop.songs.size() > 0)
-		{
-			if (addWorkshop)
-				packs.push_back(steamWorkshop);
-
-			addPack(steamWorkshop.packName, steamWorkshop.background, steamWorkshop.showName, true);
-		}
-	}
-
-
-
-	for (Pack p : packs)
-	{
-		if (p.packName != "Workshop/Local")
-			addPack(p.packName, p.background, p.showName, p.isSteam);
-	}
 
 
 
@@ -438,6 +381,65 @@ void MainerMenu::create()
 	Tweening::TweenManager::createNewTween("movingContainer2", settingsContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("movingContainer1", multiContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("movingContainer", soloContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
+
+	resetStuff();
+	// create packs
+	if (!asyncPacks)
+	{
+		asyncPacks = new std::vector<Pack>();
+		asyncSongs = new std::vector<Song>();
+
+		SongGather::gatherPacksAsync(asyncPacks);
+		SongGather::gatherSteamPacksAsync(asyncPacks);
+
+		SongGather::gatherNoPackSteamSongsAsync(asyncSongs);
+	}
+
+
+	std::vector<Song> stuff = SongGather::gatherNoPackSongs();
+	{
+		std::lock_guard cock(packMutex);
+		if (stuff.size() > 0)
+			for (Song s : stuff)
+				asyncSongs->push_back(s);
+	}
+	bool addWorkshop = true;
+	for (Pack p : packs)
+		if (p.packName == "Workshop/Local")
+			addWorkshop = false;
+
+	if (Game::steam->subscribedList.size() > 0 && steamWorkshop.songs.size() == 0)
+	{
+		steamWorkshop.background = "";
+		steamWorkshop.metaPath = "unfl";
+		steamWorkshop.packName = "Workshop/Local";
+		steamWorkshop.showName = true;
+		steamWorkshop.isSteam = true;
+		steamWorkshop.songs = {};
+
+		if (addWorkshop)
+			packs.push_back(steamWorkshop);
+
+		addPack(steamWorkshop.packName, steamWorkshop.background, steamWorkshop.showName, true);
+	}
+	else
+	{
+		if (steamWorkshop.songs.size() > 0)
+		{
+			if (addWorkshop)
+				packs.push_back(steamWorkshop);
+
+			addPack(steamWorkshop.packName, steamWorkshop.background, steamWorkshop.showName, true);
+		}
+	}
+
+
+
+	for (Pack p : packs)
+	{
+		if (p.packName != "Workshop/Local")
+			addPack(p.packName, p.background, p.showName, p.isSteam);
+	}
 
 	VM_END
 }

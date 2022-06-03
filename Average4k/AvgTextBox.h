@@ -21,9 +21,16 @@ public:
 
 	int spacedOut = 32;
 
+	bool extend = false;
+
 	Texture* searchBar;
 
 	bool typing = false;
+
+	int settingsAdded = 4;
+
+
+	int currentMultiplier = 1;
 
 	AvgTextBar(int _x, int _y, std::string _def, Texture* searchTex)
 	{
@@ -42,6 +49,7 @@ public:
 		setText(true, false, true);
 		textPart->setCharacterSpacing(2.33);
 		textPart->color = { 13, 28, 64 };
+
 		MUTATE_END
 	}
 	~AvgTextBar()
@@ -59,6 +67,7 @@ public:
 	{
 		MUTATE_START
 		std::string todo = de ? def : type;
+
 		if (todo.size() == 0 && !include_)
 			return;
 
@@ -77,6 +86,8 @@ public:
 			}
 		}
 		textPart->setText(todo + (include_ ? "_" : "") + suffix);
+	
+
 		MUTATE_END
 	}
 
@@ -92,7 +103,45 @@ public:
 				Game::save->SetString(toModify.name, type);
 				Game::save->Save();
 			}
+			if (toModify.name == "Keybinds ")
+			{
+				def = "D-F-J-K";
+				type = "";
+				Game::save->SetString(toModify.name, type);
+				Game::save->Save();
+				settingsAdded = 0;
+			}
 			setText();
+		}
+		else if (typing && toModify.name == "Keybinds ")
+		{
+			if (settingsAdded < 4)
+			{
+				std::string keyToAdd = std::string(SDL_GetKeyName(ev.keysym.sym));
+
+				if (type.contains(keyToAdd.c_str()))
+					return;
+
+				switch (ev.keysym.sym)
+				{
+				case SDLK_MINUS:
+				case SDLK_BACKQUOTE:
+				case SDLK_ESCAPE:
+				case SDLK_F11:
+				case SDLK_F1:
+					return;
+				}
+
+				type += (type.size() > 0 ? "-" : "") + keyToAdd;
+				settingsAdded++;
+				if (settingsAdded == 4)
+				{
+					def = type;
+					Game::save->SetString(toModify.name, type);
+					Game::save->Save();
+				}
+				setText();
+			}
 		}
 		if (typing && ev.keysym.sym == SDLK_MINUS)
 		{
@@ -106,13 +155,15 @@ public:
 			}
 			setText(false,true,true);
 		}
+
+
 		MUTATE_END
 	}
 
 	void textInput(SDL_TextInputEvent event)
 	{
 		MUTATE_START
-		if (typing)
+		if (typing && toModify.name != "Keybinds ")
 		{
 			if (unique)
 			{
@@ -175,7 +226,7 @@ public:
 		int relX = _x - parent->x;
 		int relY = _y - parent->y + scrll;
 
-		if ((relX > x && relY > y) && (relX < x + w && relY < y + h))
+		if ((relX > x && relY > y) && (relX < x + (w + ((w / 2) * currentMultiplier)) && relY < y + h))
 		{
 			if (toModify.name != "none")
 				type = def;
@@ -240,6 +291,27 @@ public:
 			textPart->alpha = alpha != 0 ? 0.5 : 0;
 
 		Rendering::PushQuad(&dstRect, &srcRect, searchBar, GL::genShader);
+
+		if (textPart->w > w / 2)
+		{
+			for (int i = 1; i < 7; i++)
+			{
+				Rect r = dstRect;
+				r.x += (r.w - 25);
+
+				dstRect.x += dstRect.w / 2;
+
+				if (textPart->w  > dstRect.w / 2 + ((dstRect.w / 2) * i))
+				{
+					currentMultiplier = i;
+					Rendering::SetClipRect(&r);
+					Rendering::PushQuad(&dstRect, &srcRect, searchBar, GL::genShader);
+					Rendering::SetClipRect(&((AvgContainer*)parent)->clipRect);
+				}
+			}
+		}
+		else
+			currentMultiplier = 1;
 
 		textPart->x = x + spacedOut;
 		textPart->y = y + 1 + ((h / 2) - (textPart->h / 2));

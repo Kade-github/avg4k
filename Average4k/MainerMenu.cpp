@@ -304,7 +304,7 @@ void MainerMenu::create()
 	gameplaySettings.push_back(Game::save->getSetting("scrollspeed"));
 	gameplaySettings.push_back(Game::save->getSetting("downscroll"));
 	gameplaySettings.push_back(Game::save->getSetting("offset"));
-	gameplaySettings.push_back(Game::save->getSetting("keybinds"));
+	gameplaySettings.push_back(Game::save->getSetting("keybinds "));
 
 	addSettings("Gameplay", gameplaySettings);
 

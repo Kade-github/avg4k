@@ -309,6 +309,9 @@
     <ClCompile Include="discord_sdk\voice_manager.cpp">
       <Filter>Discord</Filter>
     </ClCompile>
+    <ClCompile Include="VerticesTest.cpp">
+      <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes.h">
@@ -667,6 +670,9 @@
     </ClInclude>
     <ClInclude Include="discord_sdk\voice_manager.h">
       <Filter>Discord</Filter>
+    </ClInclude>
+    <ClInclude Include="VerticesTest.h">
+      <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

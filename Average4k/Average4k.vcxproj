@@ -253,6 +253,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TweenManager.cpp" />
+    <ClCompile Include="VerticesTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AvgButton.h" />
@@ -374,6 +375,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="Text.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TweenManager.h" />
+    <ClInclude Include="VerticesTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Average4k.rc" />

@@ -8,6 +8,7 @@
 #include "AvgRect.h"
 #include "msgpack.hpp"
 #include "FuckinEditor.h"
+#include "VerticesTest.h"
 #include "TweenManager.h"
 #include "imgui_impl_sdl.h"
 #include "Helpers.h"
@@ -723,6 +724,10 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 		else if (debug_string == "editor")
 		{
 			transitionToMenu(new FuckinEditor());
+		}
+		else if (debug_string == "verttest")
+		{
+			transitionToMenu(new VerticesTest());
 		}
 		else
 		{

@@ -26,6 +26,7 @@ struct leaderboardSpot {
 	Text* accuracy;
 	Text* scoreText;
 	PlayerScore score;
+	bool isHighlighted = false;
 	int rankin;
 
 	friend bool operator==(const leaderboardSpot& lhs, const leaderboardSpot& rhs)
@@ -36,6 +37,7 @@ struct leaderboardSpot {
 
 struct leaderboardhighlight
 {
+	leaderboardSpot* spotObj;
 	AvgRect* rect;
 	float time;
 	int spot;

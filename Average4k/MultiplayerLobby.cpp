@@ -99,6 +99,17 @@ void MultiplayerLobby::onSteam(std::string s) {
 		isAwaitingPack = false;
 		warningDisplay->color = c;
 		Multiplayer::sendMessage<CPacketClientChartAcquired>(acquired);
+		std::string path = MainerMenu::currentSelectedSong.meta.folder + "/" + MainerMenu::currentSelectedSong.meta.audio;
+		if (SoundManager::getChannelByName("prevSong") != NULL)
+		{
+			Channel* ch = SoundManager::getChannelByName("prevSong");
+			ch->stop();
+			ch->free();
+			SoundManager::removeChannel("prevSong");
+		}
+		Channel* ch = SoundManager::createChannel(path.c_str(), "prevSong");
+		ch->play();
+		ch->setVolume(Game::save->GetDouble("Music Volume"));
 	}
 	VM_END
 }

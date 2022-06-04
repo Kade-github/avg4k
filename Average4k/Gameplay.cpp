@@ -163,7 +163,6 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 	msgpack::unpacked result;
 
 	msgpack::object obj;
-	std::map<std::string, AvgSprite*> sprites;
 	std::map<std::string, AvgSprite*>::iterator it;
 	leaderboardSpot cspot;
 	std::vector<std::string> ids = {};
@@ -183,52 +182,67 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 
 		for (PlayerScore score : pack.orderedScores)
 		{
-			if (score.SteamID64 == std::to_string(SteamUser()->GetSteamID().ConvertToUint64()))
+			int realRank = rankin + 1;
+			std::string placementt = std::to_string(realRank) + std::string(ordinal_suffix(realRank)) + " Place";
+
+			if (score.SteamID64 == std::to_string(SteamUser()->GetSteamID().ConvertToUint64()) && Placement->text != placementt)
 			{
-				int realRank = rankin + 1;
-				Placement->setText(std::to_string(realRank) + std::string(ordinal_suffix(realRank)) + " Place");
+				Placement->setText(placementt);
 				Placement->x = (Game::gameWidth - Placement->surfW) - 24;
 				Game::DiscordUpdatePresence(MainerMenu::currentSelectedSong.meta.songName + " in " + MultiplayerLobby::CurrentLobby.LobbyName, "Playing Multiplayer (" + Placement->text + ")", "Average4K", MultiplayerLobby::CurrentLobby.Players, MultiplayerLobby::CurrentLobby.MaxPlayers, "");
 			}
 			bool found = false;
 			int index = 0;
-			for (leaderboardSpot& spot : leaderboard)
+
+			leaderboardSpot* spot = nullptr;
+
+			for (leaderboardSpot& sp : leaderboard)
 			{
-				if (spot.score.SteamID64 == score.SteamID64)
+				if (sp.score.SteamID64 == score.SteamID64)
 				{
-					if (rankin >= 10)
-					{
-						removeObj(spot.accuracy);
-						removeObj(spot.scoreText);
-						removeObj(spot.owner);
-						removeObj(spot.t);
-						leaderboard.erase(leaderboard.begin() + index);
-						continue;
-					}
+					spot = &sp;
+					found = true;
+				}
+			}
+
+			if (spot != nullptr)
+			{
+				if (rankin < 10)
+				{
 					std::string username = "";
 					if (score.Username.size() > 14)
 						username = score.Username.substr(0, 14) + "...";
 					else
 						username = score.Username;
-					spot.score = score; // copy it over
-					found = true;
+					int lastRank = spot->rankin;
+					spot->score = score; // copy it over
 					int y = ((leaderboardText->y + leaderboardText->h) + 24) + ((82 * rankin) + 4);
 
-					if (spot.rankin > rankin)
+					if (spot->rankin > rankin && !spot->isHighlighted)
 					{
 						leaderboardhighlight high;
 						high.rect = new AvgRect(0, y, 227, 82);
 						high.time = 0;
 						high.spot = rankin;
+						high.spotObj = spot;
 						high.rect->alpha = 0.8;
 						high.rect->c = { 255,255,255 };
 						add(high.rect);
 						highlights.push_back(high);
+						spot->isHighlighted = true;
 					}
 
-					if (rankin != spot.rankin)
-						Tweening::TweenManager::createNewTween("scoreboard" + score.SteamID64, spot.t, Tweening::tt_Y, 750, spot.t->y,y,NULL, Easing::EaseInCubic);
-					spot.rankin = rankin;
+					if (rankin != spot->rankin)
+					{
+						std::string test = "scoreboard" + score.SteamID64;
+						if (Tweening::TweenManager::doesTweenExist(test))
+						{
+							Tweening::TweenManager::removeTween(test);
+							spot->t->y = ((leaderboardText->y + leaderboardText->h) + 24) + ((82 * (lastRank)) + 4);
+						}
+						Tweening::TweenManager::createNewTween(test, spot->t, Tweening::tt_Y, 750, spot->t->y, y, NULL, Easing::EaseInCubic);
+					}
+					spot->rankin = rankin;
 
 					std::string format = "0";
 					if (score.Accuracy != 0)
@@ -240,13 +254,21 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 							format.erase(format.find_last_not_of('.') + 1, std::string::npos);
 					}
 
-					spot.accuracy->setText(format + "% accuracy");
-					spot.scoreText->setText(std::to_string(score.score));
-					spot.t->setText(username);
+					spot->accuracy->setText(format + "% accuracy");
+					spot->scoreText->setText(std::to_string(score.score));
+					spot->t->setText(username);
 				}
-				index++;
+				else if (found && rankin >= 10)
+				{
+					if (spot->rankin < 10)
+					{
+						int y = ((leaderboardText->y + leaderboardText->h) + 24) + ((82 * rankin) + 4);
+						Tweening::TweenManager::createNewTween("scoreboard" + score.SteamID64, spot->t, Tweening::tt_Y, 750, spot->t->y, y, NULL, Easing::EaseInCubic);
+					}
+				}
 			}
-			if (!found && rankin < 10)
+
+			if (!found)
 			{
 				int y = ((leaderboardText->y + leaderboardText->h) + 24) + ((82 * rankin) + 4);
 				std::string username = "";
@@ -280,7 +302,15 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 				cspot.accuracy = new Text(7 + off,cspot.owner->y + cspot.owner->surfH, format + "% accuracy", 16, "ariali");
 
 
+	
+
 				cspot.scoreText = new Text(7 + off, cspot.accuracy->y + cspot.accuracy->surfH, std::to_string(score.score), 16, "arialbd");
+
+				cspot.accuracy->setCharacterSpacing(3);
+				cspot.scoreText->setCharacterSpacing(3);
+				cspot.owner->setCharacterSpacing(3);
+				cspot.t->setCharacterSpacing(3);
+
 				leaderboard.push_back(cspot);
 				add(cspot.accuracy);
 				add(cspot.scoreText);
@@ -293,10 +323,6 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 					leaderboardCrown->y = (cspot.t->y - cspot.t->surfH) - 10;
 				}
 
-				cspot.accuracy->setCharacterSpacing(3);
-				cspot.scoreText->setCharacterSpacing(3);
-				cspot.owner->setCharacterSpacing(3);
-				cspot.t->setCharacterSpacing(3);
 			}
 			rankin++;
 		}
@@ -307,11 +333,11 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 			it->second->x = -1000;
 		}
 
-		for (leaderboardSpot& spot : leaderboard)
+		for (leaderboardSpot& spott : leaderboard)
 		{
-			avatars[spot.score.SteamID64]->y = spot.t->y;
-			avatars[spot.score.SteamID64]->x = 3;
-			//add(avatars[spot.score.SteamID64]);
+			avatars[spott.score.SteamID64]->y = spott.t->y;
+			avatars[spott.score.SteamID64]->x = 3;
+			//add(avatars[spot->score.SteamID64]);
 		}
 		break;
 	case eSPacketFinalizeChart:
@@ -346,8 +372,6 @@ void Gameplay::create() {
 	{
 		Channel* c = SoundManager::getChannelByName("prevSong");
 		c->stop();
-		c->free();
-		SoundManager::removeChannel("prevSong");
 	}
 
 	downscroll = Game::save->GetBool("downscroll");
@@ -423,8 +447,13 @@ void Gameplay::create() {
 	std::string path = MainerMenu::currentSelectedSong.meta.folder + "/" + MainerMenu::currentSelectedSong.meta.audio;
 
 	std::cout << "playing " << path << std::endl;
+	if (SoundManager::getChannelByName("prevSong") == NULL)
+	{
+		song = SoundManager::createChannel(path.c_str(), "prevSong");
+	}
+	else
+		song = SoundManager::getChannelByName("prevSong");
 
-	song = SoundManager::createChannel(path.c_str(), "gameplaySong");
 	clap = SoundManager::createChannel("assets/sounds/hitSound.wav", "clapFx");
 
 
@@ -804,6 +833,7 @@ void Gameplay::update(Events::updateEvent event)
 		{
 			if (light.time == -1)
 			{
+				light.spotObj->isHighlighted = false;
 				removeObj(highlights[index].rect);
 				highlights.erase(highlights.begin() + index);
 				index--;

@@ -61,9 +61,6 @@ void Gameplay::updateAccuracy(double hitWorth)
 	if (accuracy == (int)accuracy)
 		format.erase(format.find_last_not_of('.') + 1, std::string::npos);
 
-	ScoreText->setText(std::to_string(score));
-	ScoreText->x = (Game::gameWidth - ScoreText->surfW) - 24;
-
 	Accuracy->setText(format + "%");
 	Accuracy->x = (Game::gameWidth - Accuracy->surfW) - 24;
 
@@ -255,7 +252,6 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 					}
 
 					spot->accuracy->setText(format + "% accuracy");
-					spot->scoreText->setText(std::to_string(score.score));
 					spot->t->setText(username);
 				}
 				else if (found && rankin >= 10)
@@ -301,19 +297,12 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 
 				cspot.accuracy = new Text(7 + off,cspot.owner->y + cspot.owner->surfH, format + "% accuracy", 16, "ariali");
 
-
-	
-
-				cspot.scoreText = new Text(7 + off, cspot.accuracy->y + cspot.accuracy->surfH, std::to_string(score.score), 16, "arialbd");
-
 				cspot.accuracy->setCharacterSpacing(3);
-				cspot.scoreText->setCharacterSpacing(3);
 				cspot.owner->setCharacterSpacing(3);
 				cspot.t->setCharacterSpacing(3);
 
 				leaderboard.push_back(cspot);
 				add(cspot.accuracy);
-				add(cspot.scoreText);
 				add(cspot.owner);
 				add(cspot.t);
 
@@ -589,10 +578,6 @@ void Gameplay::create() {
 	else
 		Game::DiscordUpdatePresence((MainerMenu::currentSelectedSong.meta.artist.size() == 0 ? "No Artist" : MainerMenu::currentSelectedSong.meta.artist) + " - " + MainerMenu::currentSelectedSong.meta.songName, "Playing Solo Play", "Average4K", -1, -1, "");
 
-	ScoreText = new Text(Game::gameWidth - 200, 10, "", 36, "Futura Bold");
-	add(ScoreText);
-	ScoreText->setCharacterSpacing(6);
-
 
 	Accuracy = new Text(Game::gameWidth - 200, 46, "", 36, "Futura Bold");
 	add(Accuracy);
@@ -601,10 +586,6 @@ void Gameplay::create() {
 	Accuracy->border = true;
 	Accuracy->borderAlpha = 0.5;
 	Accuracy->borderSize = 2;
-
-	ScoreText->border = true;
-	ScoreText->borderAlpha = 0.5;
-	ScoreText->borderSize = 2;
 
 	ranking = new Text(0, 82, "", 36, "Futura Bold");
 	ranking->border = true;
@@ -617,7 +598,6 @@ void Gameplay::create() {
 	{
 		Accuracy->y += 36;
 		ranking->y += 36;
-		ScoreText->y += 36;
 	}
 
 
@@ -805,7 +785,6 @@ void Gameplay::update(Events::updateEvent event)
 			else
 				spot.owner->y = spot.t->y;
 			spot.accuracy->y = spot.owner->y + spot.owner->surfH;
-			spot.scoreText->y = spot.accuracy->y + spot.accuracy->surfH;
 
 			if (spot.rankin == 0)
 			{
@@ -1065,7 +1044,7 @@ void Gameplay::update(Events::updateEvent event)
 						(*Judgement).color.g = 255;
 						(*Judgement).color.b = 255;
 						Marvelous++;
-						score += Judge::scoreNote(diff);
+						//score += Judge::scoreNote(diff);
 						updateAccuracy(1);
 						note->active = false;
 
@@ -1307,7 +1286,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				closestObject->wasHit = true;
 
 				judgement judge = Judge::judgeNote(diff);
-				score += Judge::scoreNote(diff);
+				//score += Judge::scoreNote(diff);
 
 				std::string format = std::to_string(diff - fmod(diff, 0.01));
 				format.erase(format.find_last_not_of('0') + 1, std::string::npos);

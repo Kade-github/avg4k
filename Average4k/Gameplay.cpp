@@ -579,7 +579,7 @@ void Gameplay::create() {
 		Game::DiscordUpdatePresence((MainerMenu::currentSelectedSong.meta.artist.size() == 0 ? "No Artist" : MainerMenu::currentSelectedSong.meta.artist) + " - " + MainerMenu::currentSelectedSong.meta.songName, "Playing Solo Play", "Average4K", -1, -1, "");
 
 
-	Accuracy = new Text(Game::gameWidth - 200, 46, "", 36, "Futura Bold");
+	Accuracy = new Text(Game::gameWidth - 200, 2, "", 36, "Futura Bold");
 	add(Accuracy);
 	Accuracy->setCharacterSpacing(6);
 
@@ -587,7 +587,7 @@ void Gameplay::create() {
 	Accuracy->borderAlpha = 0.5;
 	Accuracy->borderSize = 2;
 
-	ranking = new Text(0, 82, "", 36, "Futura Bold");
+	ranking = new Text(0, 46, "", 36, "Futura Bold");
 	ranking->border = true;
 	ranking->borderAlpha = 0.5;
 	ranking->borderSize = 2;

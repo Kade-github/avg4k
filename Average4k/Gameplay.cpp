@@ -163,7 +163,6 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 	msgpack::unpacked result;
 
 	msgpack::object obj;
-	std::map<std::string, AvgSprite*> sprites;
 	std::map<std::string, AvgSprite*>::iterator it;
 	leaderboardSpot cspot;
 	std::vector<std::string> ids = {};
@@ -346,8 +345,6 @@ void Gameplay::create() {
 	{
 		Channel* c = SoundManager::getChannelByName("prevSong");
 		c->stop();
-		c->free();
-		SoundManager::removeChannel("prevSong");
 	}
 
 	downscroll = Game::save->GetBool("downscroll");
@@ -423,8 +420,13 @@ void Gameplay::create() {
 	std::string path = MainerMenu::currentSelectedSong.meta.folder + "/" + MainerMenu::currentSelectedSong.meta.audio;
 
 	std::cout << "playing " << path << std::endl;
+	if (SoundManager::getChannelByName("prevSong") == NULL)
+	{
+		song = SoundManager::createChannel(path.c_str(), "prevSong");
+	}
+	else
+		song = SoundManager::getChannelByName("prevSong");
 
-	song = SoundManager::createChannel(path.c_str(), "gameplaySong");
 	clap = SoundManager::createChannel("assets/sounds/hitSound.wav", "clapFx");
 
 

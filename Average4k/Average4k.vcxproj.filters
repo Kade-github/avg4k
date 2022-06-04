@@ -118,6 +118,9 @@
     <Filter Include="Discord">
       <UniqueIdentifier>{68c4428a-874b-4cb2-b23e-4401301214cc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Average4k\Structs\Chart\ChartParsers\Osu">
+      <UniqueIdentifier>{67f1f103-ecb9-478a-8b31-fdce7c7864b6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Average4k.cpp">

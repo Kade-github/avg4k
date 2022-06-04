@@ -158,6 +158,8 @@ public:
 
 	void create() override;
 
+	void loadPacks();
+
 	void update(Events::updateEvent ev) override;
 	void onSteam(std::string s) override;
 

@@ -131,7 +131,7 @@ void Game::showErrorWindow(std::string title, std::string description, bool majo
 {
 	std::string titlt = title;
 
-	if (titlt.size() > 24)
+	if (titlt.size() > 12)
 		titlt = titlt.substr(0, 24);
 
 	if (!errorTitleText)

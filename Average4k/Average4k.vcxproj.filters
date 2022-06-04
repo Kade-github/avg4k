@@ -530,9 +530,6 @@
     <ClInclude Include="AvgCamera.h">
       <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
     </ClInclude>
-    <ClInclude Include="Helpers.h">
-      <Filter>Source Files\Average4k\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="CPacketSendMessage.h">
       <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
     </ClInclude>
@@ -673,6 +670,9 @@
     </ClInclude>
     <ClInclude Include="VerticesTest.h">
       <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers.h">
+      <Filter>Source Files\Average4k\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

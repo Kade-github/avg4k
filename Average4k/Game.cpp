@@ -330,6 +330,8 @@ void Game::mouseButtonDown()
 	}
 }
 
+int lastFPS = 0;
+
 void Game::update(Events::updateEvent update)
 {
 	MUTATE_START
@@ -376,7 +378,13 @@ void Game::update(Events::updateEvent update)
 
 	if (!transitioning)
 	{
-		fpsText->setText("FPS: " + std::to_string((int)gameFPS));
+		if ((gameFPS > (lastFPS + -5) + 5) || (gameFPS < (lastFPS + -5) - 5))
+		{
+			lastFPS = gameFPS;
+			std::string text = "FPS: " + std::to_string((int)gameFPS);
+			if (fpsText->text != text)
+				fpsText->setText(text);
+		}
 	}
 
 	for (int i = 0; i < objects->size(); i++)

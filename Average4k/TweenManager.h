@@ -43,6 +43,17 @@ namespace Tweening
 
 		static std::vector<Tweening::Tween> tweenRemove;
 		static std::vector<Tween> activeTweens;
+		static bool doesTweenExist(std::string ident)
+		{
+			for (int i = 0; i < activeTweens.size(); i++)
+			{
+				Tween& t = activeTweens[i];
+				if (t.name == ident)
+					return true;
+			}
+			return false;
+		}
+
 		static void removeTween(std::string ident)
 		{
 			for (int i = 0; i < activeTweens.size(); i++)

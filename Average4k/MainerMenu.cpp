@@ -8,6 +8,7 @@
 #include "MainMenu.h"
 #include "Gameplay.h"
 #include "AvgDropDown.h"
+#include "Average4k.h"
 
 AvgContainer* soloContainer;
 AvgContainer* multiContainer;
@@ -743,6 +744,11 @@ void MainerMenu::addPack(std::string name, std::string bg, bool showText, bool i
 
 void MainerMenu::dropFile(SDL_DropEvent ev)
 {
+	if (SongGather::steamRegAsyncAlready)
+	{
+		Game::showErrorWindow("Busy!", "Please wait until all packs are loaded!", true);
+		return;
+	}
 	if (!SongUtils::IsDirectory(SongUtils::s2ws(std::string(ev.file))))
 	{
 		Chart c = SongGather::extractAndGetChart(std::string(ev.file));
@@ -757,6 +763,82 @@ void MainerMenu::dropFile(SDL_DropEvent ev)
 			std::cout << "Failed to import " << ev.file << std::endl;
 			Game::showErrorWindow("Failed to import chart", "Check log.txt", true);
 		}
+	}
+	else
+	{
+		bool shouldMove = false;
+		for (const auto& entry : std::filesystem::directory_iterator(std::string(ev.file)))
+		{
+			if (entry.path().string().contains("pack.meta")) {
+				shouldMove = true;
+				break;
+			}
+		}
+
+		std::vector<std::string> stuff = Chart::split(ev.file, '\\');
+		std::string newDir = stuff[stuff.size() - 1];
+		std::string toPath = (Average4k::path + "/assets/charts/" + newDir);
+		if (!CreateDirectoryA(toPath.c_str(), NULL))
+		{
+			std::cout << "Failed to import " << ev.file << ". Couldn't create the directory." << std::endl;
+			Game::showErrorWindow("Failed to import pack", "Check log.txt", true);
+			return;
+		}
+
+		std::string banner = "";
+
+		for (const auto& entry : std::filesystem::directory_iterator(std::string(ev.file)))
+		{
+			if ((SongUtils::ends_with(entry.path().string(), ".png") || SongUtils::ends_with(entry.path().string(), ".jpg")) && banner.size() == 0)
+			{
+				std::vector<std::string> stufff = Chart::split(entry.path().string(), '\\');
+				banner = stufff[stufff.size() - 1];
+			}
+			if (std::filesystem::is_directory(entry))
+			{
+				std::vector<std::string> stufff = Chart::split(entry.path().string(), '\\');
+				std::string newDirr = stufff[stufff.size() - 1];
+				std::string tooPath = (Average4k::path + "/assets/charts/" + newDir + "/" + newDirr);
+
+				if (!CreateDirectoryA(tooPath.c_str(), NULL))
+				{
+					std::cout << "Failed to import " << ev.file << ". Couldn't create the directory inside the root directory." << std::endl;
+					Game::showErrorWindow("Failed to import pack", "Check log.txt", true);
+					return;
+				}
+				for (const auto& e : std::filesystem::directory_iterator(entry.path()))
+				{
+					std::vector<std::string> files = Chart::split(e.path().string(), '\\');
+					std::string dirFile = files[files.size() - 1];
+					if (!std::filesystem::is_directory(e))
+					{
+						rename(e.path(), std::string(tooPath) + "/" + dirFile);
+					}
+				}
+			}
+			else
+			{
+				std::vector<std::string> files = Chart::split(entry.path().string(), '\\');
+				std::string dirFile = files[files.size() - 1];
+				if (!std::filesystem::is_directory(entry))
+				{
+					rename(entry.path(), std::string(toPath) + "/" + dirFile);
+				}
+			}
+		}
+		std::filesystem::remove_all(ev.file);
+
+		if (!shouldMove)
+		{
+			std::ofstream packMeta;
+			packMeta.open(toPath + "/pack.meta");
+
+			packMeta << "# Pack imported using the in game importer\nbanner: " + (banner.size() == 0 ? "No-Banner" : banner) + "\npackName: " + newDir + "\nshowName: " + (banner.size() == 0 ? "true" : "false");
+		}
+
+		resetStuff();
+		loadPacks();
+		Game::showErrorWindow("Pack imported", "Check your pack list", false, { 70, 116, 232 });
 	}
 }
 

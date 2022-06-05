@@ -8,8 +8,8 @@
 #include "OsuFile.h"
 #include "Average4k.h"
 
-bool packAsyncAlready;
-bool steamRegAsyncAlready;
+bool SongGather::packAsyncAlready;
+bool SongGather::steamRegAsyncAlready;
 
 void SongGather::gatherPacksAsync(std::vector<Pack>* packs)
 {

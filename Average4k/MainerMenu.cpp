@@ -214,15 +214,15 @@ void selectedSongCallback(int sId)
 	Text* chartType = new Text(0, 0, type, 14, "arial");
 	chartType->setCharacterSpacing(4.17);
 
-	chartType->x = 6;
-	chartType->y = cont->h - 18;
+	chartType->x = 12;
+	chartType->y = cont->h - 24;
 	cont->addObject(chartType, "chartType");
 
 	Text* localWorkshop = new Text(0, 0, MainerMenu::selectedSong.isSteam ? "Steam Workshop" : "Local", 14, "arial");
 	localWorkshop->setCharacterSpacing(4.17);
 
-	localWorkshop->x = ((cont->w) - localWorkshop->w) - 6;
-	localWorkshop->y = cont->h - 18;
+	localWorkshop->x = ((cont->w) - localWorkshop->w) - 12;
+	localWorkshop->y = cont->h - 24;
 	cont->addObject(localWorkshop, "localWorkshop");
 
 

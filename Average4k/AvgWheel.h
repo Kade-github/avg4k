@@ -165,11 +165,13 @@ public:
 
 		for (int i = 0; i < wheelObjects.size(); i++)
 		{
-			wheelObject& obj = wheelObjects[i];
 
 			float realIndex = fakeIndex + 1;
 
 			float away = (i + 1) - realIndex;
+
+			if (std::abs(away) > 15)
+				continue;
 
 			float rank = away / realIndex;
 
@@ -217,6 +219,7 @@ public:
 			if ((boxRect.y + boxRect.h < y) || (boxRect.y > y + h))
 				continue;
 
+			wheelObject& obj = wheelObjects[i];
 
 			Rendering::SetClipRect(&clipRect);
 

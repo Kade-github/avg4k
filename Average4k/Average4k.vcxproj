@@ -257,6 +257,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="VerticesTest.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Average4k.h" />
     <ClInclude Include="AvgButton.h" />
     <ClInclude Include="AvgCamera.h" />
     <ClInclude Include="AvgCheckBox.h" />

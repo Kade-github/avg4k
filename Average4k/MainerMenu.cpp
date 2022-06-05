@@ -741,6 +741,25 @@ void MainerMenu::addPack(std::string name, std::string bg, bool showText, bool i
 	VM_END
 }
 
+void MainerMenu::dropFile(SDL_DropEvent ev)
+{
+	if (!SongUtils::IsDirectory(SongUtils::s2ws(std::string(ev.file))))
+	{
+		Chart c = SongGather::extractAndGetChart(std::string(ev.file));
+		if (c.meta.songName.size() != 0)
+		{
+			resetStuff();
+			loadPacks();
+			Game::showErrorWindow("Chart imported", "Check in Workshop/Local", false, { 70, 116, 232 });
+		}
+		else
+		{
+			std::cout << "Failed to import " << ev.file << std::endl;
+			Game::showErrorWindow("Failed to import chart", "Check log.txt", true);
+		}
+	}
+}
+
 void MainerMenu::onSteam(std::string s)
 {
 	VM_START

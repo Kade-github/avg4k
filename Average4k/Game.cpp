@@ -13,7 +13,7 @@
 #include "imgui_impl_sdl.h"
 #include "Helpers.h"
 #include "discord_sdk\discord.h"
-
+#include "Average4k.h"
 using namespace std;
 
 mutex pog;
@@ -117,6 +117,8 @@ bool transCompleted = false;
 
 HANDLE multiThreadHandle;
 
+Color topHeaderColor;
+
 needWindowPop asyncPop;
 
 void Game::asyncShowErrorWindow(std::string title, std::string description, bool major)
@@ -127,12 +129,14 @@ void Game::asyncShowErrorWindow(std::string title, std::string description, bool
 	asyncPop.minor = major;
 }
 
-void Game::showErrorWindow(std::string title, std::string description, bool major)
+void Game::showErrorWindow(std::string title, std::string description, bool major, Color topColor)
 {
 	std::string titlt = title;
 
 	if (titlt.size() > 12)
 		titlt = titlt.substr(0, 24);
+
+	topHeaderColor = topColor;
 
 	if (!errorTitleText)
 		errorTitleText = new Text(0, 0, title, 18, "arial");
@@ -169,6 +173,7 @@ void Game::showErrorWindow(std::string title, std::string description, bool majo
 	errorButtonRect.w = 80;
 	errorButtonRect.h = 39;
 	errorWindowOpen = true;
+	Average4k::dumpOutstream();
 }
 
 void Game::GetMousePos(int* mx, int* my)
@@ -577,10 +582,10 @@ void Game::update(Events::updateEvent update)
 		topHeader.w = 433;
 		topHeader.h = 33;
 
-		topHeader.r = 255;
-		topHeader.g = 55;
-		topHeader.b = 79;
-
+		topHeader.r = topHeaderColor.r;
+		topHeader.g = topHeaderColor.g;
+		topHeader.b = topHeaderColor.b;
+		
 		Rendering::PushQuad(&overlay, &srcRect, NULL, GL::genShader);
 		Rendering::PushQuad(&mainBackground, &srcRect, NULL, GL::genShader);
 		Rendering::PushQuad(&topHeader, &srcRect, NULL, GL::genShader);
@@ -886,6 +891,14 @@ bool Game::getKey(int code)
 	if (controls.count(code) != 1)
 		return false;
 	return controls[code];
+}
+
+void Game::dropFile(SDL_DropEvent fileEvent)
+{
+	if (currentMenu && !errorWindowOpen)
+	{
+		currentMenu->dropFile(fileEvent);
+	}
 }
 
 void Game::DiscordUpdatePresence(std::string state, std::string details, std::string smallImageText, int partySize, int partyMax, std::string joinSecret)

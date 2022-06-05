@@ -150,6 +150,8 @@ public:
 
 	void selectContainer(int container);
 
+	void dropFile(SDL_DropEvent ev);
+
 	void selectPack(int index);
 	void addPack(std::string name, std::string bg, bool showText, bool isSteam);
 	void clearPacks();

@@ -61,6 +61,8 @@ public:
 
 	static std::vector<Song> gatherNoPackSongs();
 
+	static Chart extractAndGetChart(std::string file);
+
 	static void gatherSteamPacksAsync(std::vector<Pack>* packs);
 	
 	static void gatherNoPackSteamSongsAsync(std::vector<Song>* songs);

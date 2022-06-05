@@ -683,6 +683,9 @@
     <ClInclude Include="OsuFile.h">
       <Filter>Source Files\Average4k\Structs\Chart\ChartParsers\Osu</Filter>
     </ClInclude>
+    <ClInclude Include="Average4k.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Average4k.rc">

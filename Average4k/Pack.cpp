@@ -6,6 +6,7 @@
 #include "Steam.h"
 #include "Game.h"
 #include "OsuFile.h"
+#include "Average4k.h"
 
 bool packAsyncAlready;
 bool steamRegAsyncAlready;
@@ -160,6 +161,72 @@ std::vector<Song> SongGather::gatherNoPackSongs()
 	return gatherSongsInFolder();
 }
 
+Chart SongGather::extractAndGetChart(std::string file)
+{
+	std::string newFile = file;
+	std::vector<std::string> stuff = Chart::split(newFile, '\\');
+	std::string newDir = stuff[stuff.size() - 1];
+
+	newDir = newDir.substr(0, newDir.find_last_of("."));
+
+	std::string s = Average4k::path + "/assets/charts/" + newDir;
+	std::cout << "creating " << s << std::endl;
+	if (CreateDirectoryA(s.c_str(), NULL))
+	{
+		std::string path = file;
+		char buf[100];
+		struct zip_stat sb;
+		struct zip_file* zf;
+		int err = 0;
+		long long sum;
+		int len;
+		int fd;
+		zip* z = zip_open(path.c_str(), 0, &err);
+
+		if (z == NULL)
+		{
+			zip_error_to_str(buf, sizeof(buf), err, errno);
+			std::cout << "error opening zip archive " << path << " | " << buf << std::endl;
+			return Chart();
+		}
+
+		for (int i = 0; i < zip_get_num_entries(z, 0); i++) {
+			if (zip_stat_index(z, i, 0, &sb) == 0) {
+				zf = zip_fopen_index(z, i, 0);
+				if (!zf)
+				{
+					std::cout << "failed to open a file in a zip file " << path << std::endl;
+					continue;
+				}
+
+				std::ofstream fout;
+				fout.open(s + "/" + sb.name, std::ios::binary);
+
+				char* contents = new char[sb.size];
+				zip_fread(zf, contents, sb.size);
+				fout.write(contents, sb.size);
+				fout.close();
+
+				zip_fclose(zf);
+			}
+		}
+		zip_close(z);
+		remove(path.c_str());
+		if (SongUtils::ends_with(file, ".qp"))
+		{
+			QuaverFile file = QuaverFile();
+			chartMeta m = file.returnChart(s);
+			return Chart(m);
+		}
+		else
+		{
+			OsuFile file = OsuFile(s);
+			return Chart(file.meta);
+		}
+	}
+	return Chart();
+}
+
 void SongGather::gatherSteamPacksAsync(std::vector<Pack>* packs)
 {
 	if (!packAsyncAlready)
@@ -280,65 +347,14 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 		// qp (and osu zip files)
 		if (SongUtils::ends_with(entry.path().string(), ".qp") || SongUtils::ends_with(entry.path().string(), ".osz"))
 		{
-			std::string newDir = Chart::split(entry.path().string(), '.')[0];
-			std::cout << "creating " << newDir << std::endl;
-			if (CreateDirectory(SongUtils::s2ws(newDir).c_str(), NULL))
+			Chart c = extractAndGetChart(entry.path().string());
+			if (c.meta.songName.size() != 0)
 			{
-				std::string path = entry.path().string();
-				char buf[100];
-				struct zip_stat sb;
-				struct zip_file* zf;
-				int err = 0;
-				long long sum;
-				int len;
-				int fd;
-				zip* z = zip_open(path.c_str(), 0, &err);
-
-				if (z == NULL)
-				{
-					zip_error_to_str(buf, sizeof(buf), err, errno);
-					std::cout << "error opening zip archive " << path << " | " << buf << std::endl;
-					continue;
-				}
-
-				for (int i = 0; i < zip_get_num_entries(z, 0); i++) {
-					if (zip_stat_index(z, i, 0, &sb) == 0) {
-						zf = zip_fopen_index(z, i, 0);
-						if (!zf)
-						{
-							std::cout << "failed to open a file in a zip file " << path << std::endl;
-							continue;
-						}
-
-						std::ofstream fout;
-						fout.open(newDir + "/" + sb.name, std::ios::binary);
-
-						char* contents = new char[sb.size];
-						zip_fread(zf, contents, sb.size);
-						fout.write(contents, sb.size);
-						fout.close();
-
-						zip_fclose(zf);
-					}
-				}
-				zip_close(z);
-				remove(path.c_str());
 				Song s;
-				if (SongUtils::ends_with(entry.path().string(), ".qp"))
-				{
-					QuaverFile file = QuaverFile();
-					chartMeta m = file.returnChart(newDir);
-					s.c = Chart(m);
-				}
-				else
-				{
-					OsuFile file = OsuFile(newDir);
-					s.c = Chart(file.meta);
-				}
-				s.path = newDir;
+				s.c = c;
+				s.path = entry.path().string();
 				songs.push_back(s);
 			}
-
 		}
 		else
 		{

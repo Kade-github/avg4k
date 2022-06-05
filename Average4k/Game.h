@@ -47,7 +47,7 @@ public:
 	static Menu* toGoTo;
 
 	static void asyncShowErrorWindow(std::string title, std::string description, bool minor);
-	static void showErrorWindow(std::string title, std::string description, bool minor);
+	static void showErrorWindow(std::string title, std::string description, bool minor, Color topColor = { 255, 55, 79 });
 
 	static void GetMousePos(int* mx, int* my);
 
@@ -90,6 +90,8 @@ public:
 	static std::vector<Object*>* getGlobalObjects();
 	static void addGlobalObject(Object* obj);
 	static void removeGlobalObject(Object* obj);
+
+	void dropFile(SDL_DropEvent fileEvent);
 
 	static bool getKey(int code);
 

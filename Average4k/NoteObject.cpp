@@ -49,13 +49,6 @@ void NoteObject::draw() {
 
     float beatRow = (beat - stopOffset) * 48;
 
-    if (currentChart->meta.chartType == 1) // osu/quaver
-    {
-        float pos = (wh / 1000) - (bruh.startTime / 1000);
-        float bps = 60 / bruh.bpm;
-
-        beatRow = std::roundf(48 * (pos / bps));
-    }
     if (fmod(beatRow, (192 / 4)) == 0)
         texture = Game::noteskin->fourth;
     else if (fmod(beatRow, (192 / 8)) == 0)

@@ -585,8 +585,6 @@ void MainerMenu::update(Events::updateEvent ev)
 	}
 
 
-	if (SDL_GetTicks() % 3000)
-	{
 		if (selectedSong.path.size() != 0)
 		{
 			if (SoundManager::getChannelByName("prevSong") == NULL)
@@ -598,7 +596,6 @@ void MainerMenu::update(Events::updateEvent ev)
 				}
 			}
 		}
-	}
 
 	MUTATE_END
 }

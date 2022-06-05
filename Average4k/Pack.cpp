@@ -5,6 +5,7 @@
 #include "QuaverFile.h"
 #include "Steam.h"
 #include "Game.h"
+#include "OsuFile.h"
 
 bool packAsyncAlready;
 bool steamRegAsyncAlready;
@@ -277,7 +278,7 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 	for (const auto& entry : std::filesystem::directory_iterator(folder))
 	{
 		// qp (and osu zip files)
-		if (SongUtils::ends_with(entry.path().string(), ".qp"))
+		if (SongUtils::ends_with(entry.path().string(), ".qp") || SongUtils::ends_with(entry.path().string(), ".osz"))
 		{
 			std::string newDir = Chart::split(entry.path().string(), '.')[0];
 			std::cout << "creating " << newDir << std::endl;
@@ -323,9 +324,17 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 				zip_close(z);
 				remove(path.c_str());
 				Song s;
-				QuaverFile file = QuaverFile();
-				chartMeta m = file.returnChart(newDir);
-				s.c = Chart(m);
+				if (SongUtils::ends_with(entry.path().string(), ".qp"))
+				{
+					QuaverFile file = QuaverFile();
+					chartMeta m = file.returnChart(newDir);
+					s.c = Chart(m);
+				}
+				else
+				{
+					OsuFile file = OsuFile(newDir);
+					s.c = Chart(file.meta);
+				}
 				s.path = newDir;
 				songs.push_back(s);
 			}
@@ -355,6 +364,15 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 						QuaverFile file = QuaverFile();
 						chartMeta m = file.returnChart(entry.path().string());
 						s.c = Chart(m);
+						s.path = bruh;
+						songs.push_back(s);
+						break;
+					}
+					if (SongUtils::ends_with(bruh, ".osu"))
+					{
+						Song s;
+						OsuFile file = OsuFile(entry.path().string());
+						s.c = Chart(file.meta);
 						s.path = bruh;
 						songs.push_back(s);
 						break;

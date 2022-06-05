@@ -315,6 +315,9 @@
     <ClCompile Include="VerticesTest.cpp">
       <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
     </ClCompile>
+    <ClCompile Include="OsuFile.cpp">
+      <Filter>Source Files\Average4k\Structs\Chart\ChartParsers\Osu</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes.h">
@@ -676,6 +679,9 @@
     </ClInclude>
     <ClInclude Include="Helpers.h">
       <Filter>Source Files\Average4k\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="OsuFile.h">
+      <Filter>Source Files\Average4k\Structs\Chart\ChartParsers\Osu</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

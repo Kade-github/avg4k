@@ -37,8 +37,6 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
 
     bool skippingDiff = false;
 
-    std::vector<std::string> dieCharts = { "kb7-single", "dance-double", "dance-solo"};
-
     int lineNumber = 0;
 
     while (std::getline(infile, line)) {
@@ -56,7 +54,7 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                 if (iss.str().find("dance-single") == std::string::npos)
                 {
                     doubleChart = true;
-                    Game::asyncShowErrorWindow("Chart Parse Error (" + meta.songName + ")", "Line " + std::to_string(lineNumber) + " | Incorrect chart format", false);
+                    //Game::asyncShowErrorWindow("Chart Parse Error (" + meta.songName + ")", "Line " + std::to_string(lineNumber) + " | Incorrect chart format", false);
                     std::cout << path << " Has a non supported chart format on Line " << lineNumber << std::endl;
                 }
                 else

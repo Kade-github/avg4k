@@ -37,20 +37,29 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
 
     bool skippingDiff = false;
 
+    int lineNumber = 0;
+
     while (std::getline(infile, line)) {
         std::istringstream iss(line);
         std::string s = iss.str();
-
+        lineNumber++;
         bool cont = true;
 
         if (iss.str().find("//") != std::string::npos)
-            cont = false;
-        if (s.find("dance-double") != std::string::npos && !doubleChart)
         {
-            std::cout << "[CHART PARSING ERROR] " << path << " contains a double chart!" << std::endl;
-            Game::asyncShowErrorWindow("Chart parsing error! (" + (meta.songName != "" ? meta.songName : "unavailable chart") + ")", "Check log.txt for details. (probably double chart)", false);
-            
-            doubleChart = true;
+            cont = false;
+
+            if (iss.str().find("--") != std::string::npos)
+            {
+                if (iss.str().find("dance-single") == std::string::npos)
+                {
+                    doubleChart = true;
+                    //Game::asyncShowErrorWindow("Chart Parse Error (" + meta.songName + ")", "Line " + std::to_string(lineNumber) + " | Incorrect chart format", false);
+                    std::cout << path << " Has a non supported chart format on Line " << lineNumber << std::endl;
+                }
+                else
+                    doubleChart = false;
+            }
         }
 
         if (doubleChart)
@@ -232,6 +241,12 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                     if (iss.str().find(",") == std::string::npos && iss.str().find(";") == std::string::npos)
                         measure.push_back(iss.str());
                     else {
+                        if (measure.size() == 0)
+                        {
+                            cont = true;
+                            std::cout << path << " has no notes." << std::endl;
+                            continue;
+                        }
                         float lengthInRows = 192 / (measure.size());
 
                         int rowIndex = 0;

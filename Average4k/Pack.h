@@ -57,9 +57,14 @@ public:
 	static void gatherPacksAsync(std::vector<Pack>* packs);
 	static Pack gatherPack(std::string filePath);
 
+	static bool packAsyncAlready;
+	static bool steamRegAsyncAlready;
+
 	static std::vector<Pack> gatherPacks();
 
 	static std::vector<Song> gatherNoPackSongs();
+
+	static Chart extractAndGetChart(std::string file);
 
 	static void gatherSteamPacksAsync(std::vector<Pack>* packs);
 	

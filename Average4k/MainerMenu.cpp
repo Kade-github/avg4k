@@ -8,6 +8,7 @@
 #include "MainMenu.h"
 #include "Gameplay.h"
 #include "AvgDropDown.h"
+#include "Average4k.h"
 
 AvgContainer* soloContainer;
 AvgContainer* multiContainer;
@@ -198,6 +199,35 @@ void selectedSongCallback(int sId)
 			cont->addObject(diffSelectRight, "rightSelect");
 		}
 	}
+
+	std::string type = "StepMania";
+
+	switch (MainerMenu::selectedSong.c.meta.chartType)
+	{
+	case 1:
+		type = "Quaver";
+		break;
+	case 2:
+		type = "Osu!";
+		break;
+	}
+
+	Text* chartType = new Text(0, 0, type, 14, "arial");
+	chartType->setCharacterSpacing(4.17);
+
+	chartType->x = 12;
+	chartType->y = cont->h - 24;
+	cont->addObject(chartType, "chartType");
+
+	Text* localWorkshop = new Text(0, 0, MainerMenu::selectedSong.isSteam ? "Steam Workshop" : "Local", 14, "arial");
+	localWorkshop->setCharacterSpacing(4.17);
+
+	localWorkshop->x = ((cont->w) - localWorkshop->w) - 12;
+	localWorkshop->y = cont->h - 24;
+	cont->addObject(localWorkshop, "localWorkshop");
+
+
+
 	MUTATE_END
 }
 
@@ -384,64 +414,8 @@ void MainerMenu::create()
 	Tweening::TweenManager::createNewTween("movingContainer", soloContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 
 	resetStuff();
-	// create packs
-	if (!asyncPacks)
-	{
-		asyncPacks = new std::vector<Pack>();
-		asyncSongs = new std::vector<Song>();
-
-		SongGather::gatherPacksAsync(asyncPacks);
-		SongGather::gatherSteamPacksAsync(asyncPacks);
-
-		SongGather::gatherNoPackSteamSongsAsync(asyncSongs);
-	}
-
-
-	std::vector<Song> stuff = SongGather::gatherNoPackSongs();
-	{
-		std::lock_guard cock(packMutex);
-		if (stuff.size() > 0)
-			for (Song s : stuff)
-				asyncSongs->push_back(s);
-	}
-	bool addWorkshop = true;
-	for (Pack p : packs)
-		if (p.packName == "Workshop/Local")
-			addWorkshop = false;
-
-	if (Game::steam->subscribedList.size() > 0 && steamWorkshop.songs.size() == 0)
-	{
-		steamWorkshop.background = "";
-		steamWorkshop.metaPath = "unfl";
-		steamWorkshop.packName = "Workshop/Local";
-		steamWorkshop.showName = true;
-		steamWorkshop.isSteam = true;
-		steamWorkshop.songs = {};
-
-		if (addWorkshop)
-			packs.push_back(steamWorkshop);
-
-		addPack(steamWorkshop.packName, steamWorkshop.background, steamWorkshop.showName, true);
-	}
-	else
-	{
-		if (steamWorkshop.songs.size() > 0)
-		{
-			if (addWorkshop)
-				packs.push_back(steamWorkshop);
-
-			addPack(steamWorkshop.packName, steamWorkshop.background, steamWorkshop.showName, true);
-		}
-	}
-
-
-
-	for (Pack p : packs)
-	{
-		if (p.packName != "Workshop/Local")
-			addPack(p.packName, p.background, p.showName, p.isSteam);
-	}
-
+	
+	loadPacks();
 	VM_END
 }
 
@@ -612,8 +586,6 @@ void MainerMenu::update(Events::updateEvent ev)
 	}
 
 
-	if (SDL_GetTicks() % 3000)
-	{
 		if (selectedSong.path.size() != 0)
 		{
 			if (SoundManager::getChannelByName("prevSong") == NULL)
@@ -625,7 +597,6 @@ void MainerMenu::update(Events::updateEvent ev)
 				}
 			}
 		}
-	}
 
 	MUTATE_END
 }
@@ -677,6 +648,10 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 			break;
 		case SDLK_UP:
 
+			break;
+		case SDLK_F5:
+			resetStuff();
+			loadPacks();
 			break;
 		case SDLK_3:
 			Game::instance->steam->populateWorkshopItems(1);
@@ -767,6 +742,106 @@ void MainerMenu::addPack(std::string name, std::string bg, bool showText, bool i
 	VM_END
 }
 
+void MainerMenu::dropFile(SDL_DropEvent ev)
+{
+	if (SongGather::steamRegAsyncAlready)
+	{
+		Game::showErrorWindow("Busy!", "Please wait until all packs are loaded!", true);
+		return;
+	}
+	if (!SongUtils::IsDirectory(SongUtils::s2ws(std::string(ev.file))))
+	{
+		Chart c = SongGather::extractAndGetChart(std::string(ev.file));
+		if (c.meta.songName.size() != 0)
+		{
+			resetStuff();
+			loadPacks();
+			Game::showErrorWindow("Chart imported", "Check in Workshop/Local", false, { 70, 116, 232 });
+		}
+		else
+		{
+			std::cout << "Failed to import " << ev.file << std::endl;
+			Game::showErrorWindow("Failed to import chart", "Check log.txt", true);
+		}
+	}
+	else
+	{
+		bool shouldMove = false;
+		for (const auto& entry : std::filesystem::directory_iterator(std::string(ev.file)))
+		{
+			if (entry.path().string().contains("pack.meta")) {
+				shouldMove = true;
+				break;
+			}
+		}
+
+		std::vector<std::string> stuff = Chart::split(ev.file, '\\');
+		std::string newDir = stuff[stuff.size() - 1];
+		std::string toPath = (Average4k::path + "/assets/charts/" + newDir);
+		if (!CreateDirectoryA(toPath.c_str(), NULL))
+		{
+			std::cout << "Failed to import " << ev.file << ". Couldn't create the directory." << std::endl;
+			Game::showErrorWindow("Failed to import pack", "Check log.txt", true);
+			return;
+		}
+
+		std::string banner = "";
+
+		for (const auto& entry : std::filesystem::directory_iterator(std::string(ev.file)))
+		{
+			if ((SongUtils::ends_with(entry.path().string(), ".png") || SongUtils::ends_with(entry.path().string(), ".jpg")) && banner.size() == 0)
+			{
+				std::vector<std::string> stufff = Chart::split(entry.path().string(), '\\');
+				banner = stufff[stufff.size() - 1];
+			}
+			if (std::filesystem::is_directory(entry))
+			{
+				std::vector<std::string> stufff = Chart::split(entry.path().string(), '\\');
+				std::string newDirr = stufff[stufff.size() - 1];
+				std::string tooPath = (Average4k::path + "/assets/charts/" + newDir + "/" + newDirr);
+
+				if (!CreateDirectoryA(tooPath.c_str(), NULL))
+				{
+					std::cout << "Failed to import " << ev.file << ". Couldn't create the directory inside the root directory." << std::endl;
+					Game::showErrorWindow("Failed to import pack", "Check log.txt", true);
+					return;
+				}
+				for (const auto& e : std::filesystem::directory_iterator(entry.path()))
+				{
+					std::vector<std::string> files = Chart::split(e.path().string(), '\\');
+					std::string dirFile = files[files.size() - 1];
+					if (!std::filesystem::is_directory(e))
+					{
+						rename(e.path(), std::string(tooPath) + "/" + dirFile);
+					}
+				}
+			}
+			else
+			{
+				std::vector<std::string> files = Chart::split(entry.path().string(), '\\');
+				std::string dirFile = files[files.size() - 1];
+				if (!std::filesystem::is_directory(entry))
+				{
+					rename(entry.path(), std::string(toPath) + "/" + dirFile);
+				}
+			}
+		}
+		std::filesystem::remove_all(ev.file);
+
+		if (!shouldMove)
+		{
+			std::ofstream packMeta;
+			packMeta.open(toPath + "/pack.meta");
+
+			packMeta << "# Pack imported using the in game importer\nbanner: " + (banner.size() == 0 ? "No-Banner" : banner) + "\npackName: " + newDir + "\nshowName: " + (banner.size() == 0 ? "true" : "false");
+		}
+
+		resetStuff();
+		loadPacks();
+		Game::showErrorWindow("Pack imported", "Check your pack list", false, { 70, 116, 232 });
+	}
+}
+
 void MainerMenu::onSteam(std::string s)
 {
 	VM_START
@@ -800,6 +875,66 @@ void MainerMenu::onSteam(std::string s)
 		((Text*)soloContainer->findItemByName("uploadingProgress"))->text = "Uploaded!";
 	}
 	VM_END
+}
+
+void MainerMenu::loadPacks()
+{
+	// create packs
+	if (!asyncPacks)
+	{
+		asyncPacks = new std::vector<Pack>();
+		asyncSongs = new std::vector<Song>();
+	}
+
+	SongGather::gatherPacksAsync(asyncPacks);
+	SongGather::gatherSteamPacksAsync(asyncPacks);
+
+	SongGather::gatherNoPackSteamSongsAsync(asyncSongs);
+	
+
+
+	std::vector<Song> stuff = SongGather::gatherNoPackSongs();
+	{
+		std::lock_guard cock(packMutex);
+		if (stuff.size() > 0)
+			for (Song s : stuff)
+				asyncSongs->push_back(s);
+	}
+	bool addWorkshop = true;
+	for (Pack p : packs)
+		if (p.packName == "Workshop/Local")
+			addWorkshop = false;
+
+	if (Game::steam->subscribedList.size() > 0 && steamWorkshop.songs.size() == 0)
+	{
+		steamWorkshop.background = "";
+		steamWorkshop.metaPath = "unfl";
+		steamWorkshop.packName = "Workshop/Local";
+		steamWorkshop.showName = true;
+		steamWorkshop.isSteam = true;
+		steamWorkshop.songs = {};
+
+		if (addWorkshop)
+			packs.push_back(steamWorkshop);
+
+		addPack(steamWorkshop.packName, steamWorkshop.background, steamWorkshop.showName, true);
+	}
+	else
+	{
+		if (steamWorkshop.songs.size() > 0)
+		{
+			if (addWorkshop)
+				packs.push_back(steamWorkshop);
+
+			addPack(steamWorkshop.packName, steamWorkshop.background, steamWorkshop.showName, true);
+		}
+	}
+
+	for (Pack p : packs)
+	{
+		if (p.packName != "Workshop/Local")
+			addPack(p.packName, p.background, p.showName, p.isSteam);
+	}
 }
 
 void MainerMenu::clearPacks()

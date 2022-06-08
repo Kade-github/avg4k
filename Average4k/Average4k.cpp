@@ -9,6 +9,7 @@
 #include "log_stream.h"
 #include "Helpers.h"
 #include <timeapi.h>
+#include "Average4k.h"
 using namespace std;
 
 //#define NOBUF
@@ -84,6 +85,8 @@ double frametimelast;
 std::chrono::steady_clock::time_point startTime;
 
 Uint32 framecount;
+
+std::string Average4k::path = "";
 
 log_stream* outstream;
 
@@ -314,6 +317,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	game->gameWidth = 1280;
 	game->gameHeight = 720;
 
+	Average4k::path = std::filesystem::current_path().string();
+
 	SDL_StartTextInput();
 
 	bool run = true;
@@ -402,6 +407,9 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 					wheel = event.wheel.y;
 					game->mouseWheel(wheel);
 					break;
+				}
+				case SDL_DROPFILE: {
+					game->dropFile(event.drop);
 				}
 				}
 
@@ -496,4 +504,10 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 		
 	return 0;
+}
+
+void Average4k::dumpOutstream()
+{
+	if (outstream)
+		outstream->dump();
 }

@@ -7,11 +7,12 @@ void Text::setText(std::string temp)
 
 	text = temp;
 
-	for (int i = 0; i < text.size(); i++)
-	{
-		if ((char)text[i] > 128 || (char)text[i] < 0)
-			text[i] = '?';
-	}
+	if (!font.starts_with("arial")) // I only have unicode fonts for arial LOL
+		for (int i = 0; i < text.size(); i++)
+		{
+			if ((char)text[i] > 128 || (char)text[i] < 0)
+				text[i] = '?';
+		}
 
 	const char* c = text.c_str();
 	SDL_Surface* borderMe = nullptr;

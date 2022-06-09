@@ -14,6 +14,7 @@
 #include "Helpers.h"
 #include "discord_sdk\discord.h"
 #include "Average4k.h"
+#include "SPacketScoreResult.h"
 using namespace std;
 
 mutex pog;
@@ -438,6 +439,30 @@ void Game::update(Events::updateEvent update)
 				if (p.type != -42) // status packets
 					db_addLine("recieved " + std::to_string(p.type));
 			}
+
+			msgpack::unpacked result;
+
+			msgpack::object obj;
+
+			SPacketScoreResult res;
+
+			// global error packets
+			switch (p.type)
+			{
+			case eSPacketScoreResult:
+				msgpack::unpack(result, p.data, p.length);
+
+				obj = msgpack::object(result.get());
+
+				obj.convert(res);
+
+				if (!res.ok)
+				{
+					Game::showErrorWindow("Failed to submit score!", res.error, false);
+				}
+				break;
+			}
+
 			if (currentMenu != NULL)
 				currentMenu->onPacket(p.type, p.data, p.length);
 			for (int i = 0; i < objects->size(); i++)

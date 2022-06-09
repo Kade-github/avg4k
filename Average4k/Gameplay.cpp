@@ -5,10 +5,12 @@
 #include <chrono>
 #include "TweenManager.h"
 #include "MainerMenu.h"
-
+#include "CPacketSubmitScore.h"
 
 std::mutex weirdPog;
 
+
+std::vector<float> noteTimings;
 
 std::map<std::string, AvgSprite*> avatars;
 
@@ -352,6 +354,8 @@ Gameplay::Gameplay()
 void Gameplay::create() {
 
 	MUTATE_START
+
+	noteTimings.clear();
 	
 	initControls();
 
@@ -983,6 +987,17 @@ void Gameplay::update(Events::updateEvent event)
 				MainerMenu::currentSelectedSong.destroy();
 				cleanUp();
 				Game::instance->transitionToMenu(new MainerMenu());
+
+				if ((MainerMenu::selected.isSteam || MainerMenu::selectedSong.isSteam) && Game::save->GetBool("Submit Scores"))
+				{
+					CPacketSubmitScore submit;
+
+					submit.ChartId = (MainerMenu::selected.isSteam ? -1 : MainerMenu::selectedSong.steamId);
+					submit.chartIndex = (MainerMenu::selected.isSteam ? MainerMenu::packSongIndex : -1);
+					submit.timings = noteTimings;
+
+					Multiplayer::sendMessage<CPacketSubmitScore>(submit);
+				}
 			}
 			else
 			{
@@ -1282,8 +1297,11 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 			if (closestObject->active && diff <= hw && diff > -hw)
 			{
+
 				closestObject->active = false;
 				closestObject->wasHit = true;
+
+				noteTimings.push_back(diff);
 
 				judgement judge = Judge::judgeNote(diff);
 				//score += Judge::scoreNote(diff);

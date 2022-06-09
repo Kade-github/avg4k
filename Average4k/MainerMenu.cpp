@@ -228,7 +228,18 @@ void selectedSongCallback(int sId)
 	localWorkshop->y = cont->h - 24;
 	cont->addObject(localWorkshop, "localWorkshop");
 
+	if (MainerMenu::selectedSong.isSteam)
+	{
+		Text* leaderboardPt1 = new Text(cont->w / 2, cont->h - 100, "Press tab to", 14, "arial");
+		Text* leaderboardPt2 = new Text(cont->w / 2, cont->h - 80, "view scores", 14, "arial");
 
+		leaderboardPt1->centerX();
+		leaderboardPt2->centerX();
+
+
+		cont->addObject(leaderboardPt1, "leadpt1");
+		cont->addObject(leaderboardPt2, "leadpt2");
+	}
 
 	MUTATE_END
 }
@@ -913,7 +924,7 @@ void MainerMenu::loadPacks()
 		steamWorkshop.metaPath = "unfl";
 		steamWorkshop.packName = "Workshop/Local";
 		steamWorkshop.showName = true;
-		steamWorkshop.isSteam = true;
+		steamWorkshop.isSteam = false;
 		steamWorkshop.songs = {};
 
 		if (addWorkshop)

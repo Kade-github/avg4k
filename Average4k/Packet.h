@@ -1,5 +1,5 @@
 #pragma once
-
+#include <msgpack.hpp>
 
 enum PacketType
 {
@@ -37,6 +37,8 @@ enum PacketType
     eSPacketOnChat = -13,
     eSPacketFuckYou = -14,
     eSPacketUpdateEncryptionParameters = -15,
+    eSPacketScoreResult = -16,
+    eSPacketLeaderboardResponse = -17,
 
 
     //Other Server Packets

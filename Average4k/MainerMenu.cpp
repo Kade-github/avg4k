@@ -80,6 +80,8 @@ void selectedSongCallback(int sId)
 	if (!cont) // lol
 		return;
 
+
+
 	MainerMenu::selectedDiffIndex = 0;
 
 	MainerMenu::currentSelectedSong.destroy();

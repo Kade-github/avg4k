@@ -16,6 +16,8 @@ std::map<std::string, AvgSprite*> avatars;
 
 float Gameplay::rate = 1;
 
+float lastTime = 0;
+
 void CALLBACK bruh(HSYNC handle, DWORD channel, DWORD data, void* user)
 {
 	BASS_ChannelStop(channel);
@@ -357,6 +359,7 @@ Gameplay::Gameplay()
 void Gameplay::create() {
 
 	MUTATE_START
+	lastTime = 0;
 
 	noteTimings.clear();
 	
@@ -698,6 +701,7 @@ void Gameplay::update(Events::updateEvent event)
 		else
 			positionInSong += (Game::deltaTime - Game::save->GetDouble("offset"));*/
 		positionInSong = song->getPos() + Game::save->GetDouble("offset");
+		lastTime += Game::deltaTime;
 	}
 	else
 		positionInSong += Game::deltaTime;
@@ -982,7 +986,7 @@ void Gameplay::update(Events::updateEvent event)
 			}
 	}
 
-		if (!ended && (notesToPlay.size() == 0 || positionInSong >= songLength))
+		if (!ended && (notesToPlay.size() == 0 || (lastTime - positionInSong) > 4000) && positionInSong > 0)
 		{
 			ended = true;
 			if (!MultiplayerLobby::inLobby)

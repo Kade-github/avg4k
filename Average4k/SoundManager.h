@@ -10,6 +10,8 @@ public:
 	std::vector<double> bpmCan;
 	unsigned long id = -1;
 	unsigned long decodeChan = -1;
+
+	bool isPlaying = false;
 	double volume;
 	float rate = 1;
 	int length = 0;
@@ -21,14 +23,29 @@ public:
 	bool isFreed = false;
 
 	std::string path;
+
+	static void CALLBACK SyncProc(HSYNC handle, DWORD channel, DWORD data, void* user)
+	{
+		((Channel*)user)->isPlaying = false;
+	}
+
 	Channel(unsigned long channelId)
 	{
 		id = channelId;
+
+		setLength();
+
+		BASS_ChannelSetSync(id, BASS_SYNC_END, 0, SyncProc, this);
+	}
+
+	void setLength()
+	{
 		QWORD word = BASS_ChannelGetLength(id, BASS_POS_BYTE);
 
 
 		length = BASS_ChannelBytes2Seconds(id, word) * 1000;
 	}
+
 	~Channel()
 	{
 		if (id == -1)
@@ -57,6 +74,7 @@ public:
 		if (id == -1)
 			return;
 		BASS_ChannelPlay(id, false);
+		isPlaying = true;
 	}
 
 
@@ -241,6 +259,9 @@ public:
 
 		channels[name]->path = path;
 		channels[name]->setVolume(0.2);
+
+		channels[name]->setLength();
+
 		return channels[name];
 	}
 };

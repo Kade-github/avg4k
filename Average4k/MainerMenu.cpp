@@ -377,6 +377,11 @@ void MainerMenu::create()
 
 	addSettings("Audio", audioSettings);
 
+	std::vector<setting> miscSettings;
+	miscSettings.push_back(Game::save->getSetting("Submit Scores"));
+
+	addSettings("Misc", miscSettings);
+
 
 	// create text stuff
 
@@ -704,8 +709,10 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 			{
 				CPacketLeaderboardRequest req;
 
-				req.chartId = (MainerMenu::selected.isSteam ? -1 : MainerMenu::selectedSong.steamId);
+				req.chartId = (MainerMenu::selected.isSteam ? MainerMenu::selected.steamId : MainerMenu::selectedSong.steamId);
 				req.chartIndex = (MainerMenu::selected.isSteam ? MainerMenu::packSongIndex : -1);
+				req.Order = 0;
+				req.PacketType = eCPacketLeaderboardRequest;
 
 				Multiplayer::sendMessage<CPacketLeaderboardRequest>(req);
 			}

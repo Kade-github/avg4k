@@ -981,10 +981,8 @@ void Gameplay::update(Events::updateEvent event)
 				notesToPlay.erase(notesToPlay.begin());
 			}
 	}
-	else
-	{
 
-		if (!ended && notesToPlay.size() == 0 && positionInSong - Game::save->GetDouble("offset") >= song->length)
+		if (!ended && (notesToPlay.size() == 0 || positionInSong >= songLength))
 		{
 			ended = true;
 			if (!MultiplayerLobby::inLobby)
@@ -1012,14 +1010,15 @@ void Gameplay::update(Events::updateEvent event)
 				hasSubmited = true;
 				CPacketSubmitScore submit;
 
-				submit.ChartId = (MainerMenu::selected.isSteam ? -1 : MainerMenu::selectedSong.steamId);
+				submit.ChartId = (MainerMenu::selected.isSteam ? MainerMenu::selected.steamId : MainerMenu::selectedSong.steamId);
 				submit.chartIndex = (MainerMenu::selected.isSteam ? MainerMenu::packSongIndex : -1);
 				submit.timings = noteTimings;
+				submit.Order = 0;
+				submit.PacketType = eCPacketSubmitScore;
 
 				Multiplayer::sendMessage<CPacketSubmitScore>(submit);
 			}
 		}
-	}
 
 	for (int i = 0; i < receptors.size(); i++)
 	{

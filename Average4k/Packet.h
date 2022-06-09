@@ -19,6 +19,8 @@ enum PacketType
     eCPacketHostEndChart = 14,
     eCPacketRequestAvatar = 15,
     eCPacketSendMessage = 16,
+    eCPacketSubmitScore = 17,
+    eCPacketLeaderboardRequest = 18,
 
     //Server Packets
     eSPacketHello = -1,

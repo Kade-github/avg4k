@@ -42,6 +42,7 @@ SaveFile::SaveFile()
     defaultSettings.push_back(CreateSetting("Background Transparency", { false,false,true,false,"",1,0,1,0.1,false }));
     defaultSettings.push_back(CreateSetting("FPS Limit", { false,false,true,false,"",240,10,4000 }));
     defaultSettings.push_back(CreateSetting("Start Delay", { false,false,true,false,"",5,0,10,1,false,"s"}));
+    defaultSettings.push_back(CreateSetting("Submit Scores", { true }));
     defaultSettings.push_back(CreateSetting("nonChange_chartTheme", {}));
     defaultSettings.push_back(CreateSetting("nonChange_chartHistory",{}));
     defaultSettings.push_back(CreateSetting("nonChange_chartWaveform", {true}));

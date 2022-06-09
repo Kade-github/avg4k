@@ -376,11 +376,6 @@ void Game::update(Events::updateEvent update)
 	mainCamera->update(update);
 
 
-	if (currentMenu != nullptr && currentMenu->created)
-	{
-		currentMenu->update(update);
-		currentMenu->imguiUpdate(Game::deltaTime);
-	}
 
 	if (!transitioning)
 	{
@@ -404,6 +399,12 @@ void Game::update(Events::updateEvent update)
 		{
 
 		}
+	}
+
+	if (currentMenu != nullptr && currentMenu->created)
+	{
+		currentMenu->update(update);
+		currentMenu->imguiUpdate(Game::deltaTime);
 	}
 
 

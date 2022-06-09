@@ -122,6 +122,8 @@ void Gameplay::miss(NoteObject* object)
 		MUTATE_END
 	}
 
+	noteTimings.push_back(Judge::hitWindows[4]);
+
 	Misses++;
 	updateAccuracy(-0.4);
 	combo = 0;
@@ -173,6 +175,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 	switch (pt)
 	{
 	case eSPacketUpdateLeaderboard:
+
 		msgpack::unpack(result, data, length);
 
 		obj = msgpack::object(result.get());
@@ -657,6 +660,8 @@ float lerp(float a, float b, float f)
 
 float lastBPM = 0;
 
+bool hasSubmited = false;
+
 void Gameplay::update(Events::updateEvent event)
 {
 	MUTATE_START
@@ -988,16 +993,6 @@ void Gameplay::update(Events::updateEvent event)
 				cleanUp();
 				Game::instance->transitionToMenu(new MainerMenu());
 
-				if ((MainerMenu::selected.isSteam || MainerMenu::selectedSong.isSteam) && Game::save->GetBool("Submit Scores"))
-				{
-					CPacketSubmitScore submit;
-
-					submit.ChartId = (MainerMenu::selected.isSteam ? -1 : MainerMenu::selectedSong.steamId);
-					submit.chartIndex = (MainerMenu::selected.isSteam ? MainerMenu::packSongIndex : -1);
-					submit.timings = noteTimings;
-
-					Multiplayer::sendMessage<CPacketSubmitScore>(submit);
-				}
 			}
 			else
 			{
@@ -1010,6 +1005,18 @@ void Gameplay::update(Events::updateEvent event)
 				Combo->setText("Waiting for others to finish (" + std::to_string(combo) + ")");
 				Combo->setX((Game::gameWidth / 2) - (Combo->surfW / 2));
 				Combo->setY((Game::gameHeight / 2) + 40);
+			}
+
+			if ((MainerMenu::selected.isSteam || MainerMenu::selectedSong.isSteam) && Game::save->GetBool("Submit Scores") && !hasSubmited)
+			{
+				hasSubmited = true;
+				CPacketSubmitScore submit;
+
+				submit.ChartId = (MainerMenu::selected.isSteam ? -1 : MainerMenu::selectedSong.steamId);
+				submit.chartIndex = (MainerMenu::selected.isSteam ? MainerMenu::packSongIndex : -1);
+				submit.timings = noteTimings;
+
+				Multiplayer::sendMessage<CPacketSubmitScore>(submit);
 			}
 		}
 	}

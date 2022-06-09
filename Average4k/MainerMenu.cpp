@@ -9,7 +9,6 @@
 #include "Gameplay.h"
 #include "AvgDropDown.h"
 #include "Average4k.h"
-
 AvgContainer* soloContainer;
 AvgContainer* multiContainer;
 AvgContainer* settingsContainer;
@@ -48,6 +47,8 @@ int MainerMenu::selectedDiffIndex = 0;
 std::vector<steamItem> item;
 
 int selectedContainerIndex = 0;
+
+bool lockInput = false;
 
 bool chartUploading = false;
 
@@ -233,9 +234,8 @@ void selectedSongCallback(int sId)
 		Text* leaderboardPt1 = new Text(cont->w / 2, cont->h - 100, "Press tab to", 14, "arial");
 		Text* leaderboardPt2 = new Text(cont->w / 2, cont->h - 80, "view scores", 14, "arial");
 
-		leaderboardPt1->centerX();
-		leaderboardPt2->centerX();
-
+		leaderboardPt1->x = (cont->w / 2) - (leaderboardPt1->w / 2);
+		leaderboardPt2->x = (cont->w / 2) - (leaderboardPt2->w / 2);
 
 		cont->addObject(leaderboardPt1, "leadpt1");
 		cont->addObject(leaderboardPt2, "leadpt2");
@@ -436,6 +436,38 @@ void MainerMenu::update(Events::updateEvent ev)
 {
 
 	MUTATE_START
+
+
+	if (lockInput)
+	{
+		Rect big = { 0,0,1280,720,0,0,0,0.5 };
+
+
+		Rect src = { 0,0,1,1 };
+
+		Rendering::PushQuad(&big, &src, NULL, GL::genShader);
+
+
+		int ind = 0;
+		for (LeaderboardResult res : leaderboardResults)
+		{
+			Rect bg = { 0,200 * ind,1280,200,0,0,0,0.7 };
+
+			Rendering::PushQuad(&bg, &src, NULL, GL::genShader);
+
+			res.name->x = 14;
+			res.accuracy->x = 28 + res.name->w;
+
+			res.name->y = (200 * ind) + 96;
+			res.accuracy->y = res.name->y;
+
+			res.name->draw();
+			res.accuracy->draw();
+
+			ind++;
+		}
+	}
+
 	Channel* ch = SoundManager::getChannelByName("prevSong");
 
 	if (ch != NULL)
@@ -611,6 +643,7 @@ void MainerMenu::update(Events::updateEvent ev)
 			}
 		}
 
+
 	MUTATE_END
 }
 
@@ -652,6 +685,35 @@ void updateDiff()
 void MainerMenu::keyDown(SDL_KeyboardEvent event)
 {
 	MUTATE_START
+	switch (event.keysym.sym)
+	{
+	case SDLK_TAB:
+		if (MainerMenu::selectedSong.isSteam)
+		{
+			lockInput = !lockInput;
+
+			for (LeaderboardResult r : leaderboardResults)
+			{
+				delete r.name;
+				delete r.accuracy;
+			}
+
+			leaderboardResults.clear();
+
+			if (lockInput)
+			{
+				CPacketLeaderboardRequest req;
+
+				req.chartId = (MainerMenu::selected.isSteam ? -1 : MainerMenu::selectedSong.steamId);
+				req.chartIndex = (MainerMenu::selected.isSteam ? MainerMenu::packSongIndex : -1);
+
+				Multiplayer::sendMessage<CPacketLeaderboardRequest>(req);
+			}
+		}
+		break;
+	}
+	if (lockInput)
+		return;
 	if (selectedContainerIndex == 0)
 	{
 		switch (event.keysym.sym)
@@ -950,6 +1012,44 @@ void MainerMenu::loadPacks()
 	}
 }
 
+void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
+{
+	SPacketLeaderboardResponse res;
+
+	switch (pt)
+	{
+	case eSPacketLeaderboardResponse:
+		msgpack::unpacked result;
+
+		msgpack::object obj;
+		msgpack::unpack(result, data, length);
+
+		obj = msgpack::object(result.get());
+
+		obj.convert(res);
+
+		for (LeaderboardEntry entry : res.leaderboard.entires)
+		{
+			LeaderboardResult resu;
+			resu.entry = entry;
+			resu.accuracy = new Text(0, 0, std::to_string(entry.accuracy) + "%", 16, "arial");
+			resu.name = new Text(0, 0, entry.username, 16, "arialbd");
+
+			leaderboardResults.push_back(resu);
+		}
+
+		if (res.leaderboard.entires.size() == 0)
+		{
+			LeaderboardResult resu;
+			resu.entry = LeaderboardEntry();
+			resu.accuracy = new Text(0, 0, "", 16, "arial");
+			resu.name = new Text(0, 0, "No scores have been submited on this chart.", 16, "arialbd");
+			leaderboardResults.push_back(resu);
+		}
+		break;
+	}
+}
+
 void MainerMenu::clearPacks()
 {
 	MUTATE_START
@@ -1062,6 +1162,8 @@ void MainerMenu::selectContainer(int container)
 void MainerMenu::leftMouseDown()
 {
 	MUTATE_START
+	if (lockInput)
+		return;
 	int x, y;
 	Game::GetMousePos(&x, &y);
 

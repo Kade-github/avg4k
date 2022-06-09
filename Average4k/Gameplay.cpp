@@ -986,7 +986,7 @@ void Gameplay::update(Events::updateEvent event)
 			}
 	}
 
-		if (!ended && (notesToPlay.size() == 0 || (lastTime - positionInSong) > 4000) && positionInSong > 0)
+		if (!ended && ((notesToPlay.size() == 0 && spawnedNotes.size() == 0) || (lastTime - positionInSong) > 4000) && positionInSong > 0)
 		{
 			ended = true;
 			if (!MultiplayerLobby::inLobby)

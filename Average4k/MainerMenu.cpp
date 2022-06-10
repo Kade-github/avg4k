@@ -285,6 +285,7 @@ void MainerMenu::create()
 	testWorkshop = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/maincontainer_solo.png"));
 	testWorkshop->active = false;
 	testWorkshop->x = (Game::gameWidth / 2) - (testWorkshop->w / 2);
+	testWorkshop->create();
 	add(testWorkshop);
 
 	testWorkshop->addObject(new Text(12, 12, "Average4K Workshop", 34, "arialbd"), "title");
@@ -295,6 +296,7 @@ void MainerMenu::create()
 	soloContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/maincontainer_solo.png"));
 	soloContainer->alpha = 1;
 	soloContainer->x = (Game::gameWidth / 2) - (soloContainer->w / 2);
+	soloContainer->create();
 	add(soloContainer);
 
 	// solo creation
@@ -327,6 +329,7 @@ void MainerMenu::create()
 	multiContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Multi/maincontainer.png"));
 	multiContainer->x = (Game::gameWidth / 2) - (multiContainer->w / 2);
 	multiContainer->active = false;
+	multiContainer->create();
 	add(multiContainer);
 
 	// multi creation
@@ -335,6 +338,7 @@ void MainerMenu::create()
 	settingsContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Settings/maincontainer.png"));
 	settingsContainer->x = (Game::gameWidth / 2) - (settingsContainer->w / 2);
 	settingsContainer->active = false;
+	settingsContainer->create();
 	add(settingsContainer);
 
 	// settings creation

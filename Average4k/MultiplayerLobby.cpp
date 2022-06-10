@@ -330,9 +330,11 @@ void MultiplayerLobby::create() {
 		MainerMenu::currentSelectedSong = Chart();
 	playerList = new AvgGroup(0, 0, 1280, 720);
 	AvgSprite* sprite = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "darkmodebg.png"));
+	sprite->create();
 	add(sprite);
 	AvgRect* rect = new AvgRect(0, 0, 1280, 720);
 	rect->alpha = 0.3;
+	rect->create();
 	add(rect);
 
 	helpDisplay = new Text(24, 100, "Lobby: " + CurrentLobby.LobbyName + " (" + std::to_string(CurrentLobby.Players) + "/" + std::to_string(CurrentLobby.MaxPlayers) + ")", 24, "NotoSans-Regular");

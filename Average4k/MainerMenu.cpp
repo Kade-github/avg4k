@@ -769,7 +769,7 @@ void MainerMenu::dropFile(SDL_DropEvent ev)
 		bool shouldMove = false;
 		for (const auto& entry : std::filesystem::directory_iterator(std::string(ev.file)))
 		{
-			if (entry.path().string().contains("pack.meta")) {
+			if (entry.path().string().find("pack.meta") != std::string::npos) {
 				shouldMove = true;
 				break;
 			}

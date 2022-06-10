@@ -1178,9 +1178,7 @@ void Gameplay::cleanUp()
 	//}
 
 	song->free();
-	clap->free();
 
-	SoundManager::removeChannel("gameplaySong");
 	SoundManager::removeChannel("clapFx");
 
 	

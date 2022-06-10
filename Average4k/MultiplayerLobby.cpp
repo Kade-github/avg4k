@@ -175,7 +175,7 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 				return;
 
 			warningDisplay->color = c;
-			warningDisplay->setText("Everyone has the chart, you can now start. (Press enter to start, LSHIFT to reselect chart)");
+			warningDisplay->setText("Everyone has the chart, you can now start. (Press enter to start, LCTRL to reselect chart)");
 			break;
 		case 8876:
 			Color cc;
@@ -187,7 +187,7 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 			if (!isHost)
 				warningDisplay->setText("Unable to start, some players do not have the chart! " + std::string((MainerMenu::currentSelectedSong.meta.difficulties.size() != 0 ? "You have it!" : "You do not have it!")));
 			else
-				warningDisplay->setText("Unable to start, some players do not have the chart! press enter to start when they do, press shift to reselect.");
+				warningDisplay->setText("Unable to start, some players do not have the chart! press enter to start when they do, press LCTRL to reselect.");
 			break;
 		}
 
@@ -300,10 +300,12 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 			Game::asyncShowErrorWindow("Kicked!", "You have been kicked from the lobby!", true);
 			MainerMenu::isInLobby = false;
 
-			Game::instance->transitionToMenu(new MultiplayerLobbies());
-
 			people.clear();
 			inLobby = false;
+
+			Game::instance->transitionToMenu(new MultiplayerLobbies());
+
+
 		}
 		break;
 
@@ -404,10 +406,18 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 			MainerMenu::isInLobby = false;
 			SteamFriends()->SetRichPresence("steam_player_group", nullptr);
 			SteamFriends()->SetRichPresence("steam_player_group_size", nullptr);
-			Game::instance->transitionToMenu(new MultiplayerLobbies());
 
+			for (person& p : people)
+			{
+				playerList->removeObj(p.avatar);
+				playerList->removeObj(p.display);
+			}
+
+			scrollAdd = 0;
 			people.clear();
 			inLobby = false;
+
+			Game::instance->transitionToMenu(new MultiplayerLobbies());
 			break;
 		case SDLK_TAB:
 			if (chat->typing)
@@ -433,22 +443,38 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 			else
 			{
 				MainerMenu::isInLobby = true;
-				Game::instance->transitionToMenu(new MainerMenu());
 
+
+				for (person& p : people)
+				{
+					playerList->removeObj(p.avatar);
+					playerList->removeObj(p.display);
+				}
+
+				scrollAdd = 0;
 				people.clear();
+
+				Game::instance->transitionToMenu(new MainerMenu());
 
 			}
 			break;
-		case SDLK_LSHIFT:
+		case SDLK_LCTRL:
 			if (chat->typing || chat->opened)
 				return;
 			if (!isHost && !waitingForStart)
 				return;
 			MainerMenu::isInLobby = true;
-			Game::instance->transitionToMenu(new MainerMenu());
 
+			for (person& p : people)
+			{
+				playerList->removeObj(p.avatar);
+				playerList->removeObj(p.display);
+			}
 
+			scrollAdd = 0;
 			people.clear();
+
+			Game::instance->transitionToMenu(new MainerMenu());
 
 			break;
 	}

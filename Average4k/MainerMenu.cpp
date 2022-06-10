@@ -427,14 +427,15 @@ void MainerMenu::create()
 
 	currentContainer = soloContainer;
 
+	resetStuff();
+	
+	loadPacks();
+
 	Tweening::TweenManager::createNewTween("movingContainer3", testWorkshop, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("movingContainer2", settingsContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("movingContainer1", multiContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("movingContainer", soloContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 
-	resetStuff();
-	
-	loadPacks();
 	VM_END
 }
 
@@ -443,36 +444,6 @@ void MainerMenu::update(Events::updateEvent ev)
 
 	MUTATE_START
 
-
-	if (lockInput)
-	{
-		Rect big = { 0,0,1280,720,0,0,0,0.5 };
-
-
-		Rect src = { 0,0,1,1 };
-
-		Rendering::PushQuad(&big, &src, NULL, GL::genShader);
-
-
-		int ind = 0;
-		for (LeaderboardResult res : leaderboardResults)
-		{
-			Rect bg = { 0,200 * ind,1280,200,0,0,0,0.7 };
-
-			Rendering::PushQuad(&bg, &src, NULL, GL::genShader);
-
-			res.name->x = 14;
-			res.accuracy->x = 28 + res.name->w;
-
-			res.name->y = (200 * ind) + 96;
-			res.accuracy->y = res.name->y;
-
-			res.name->draw();
-			res.accuracy->draw();
-
-			ind++;
-		}
-	}
 
 	Channel* ch = SoundManager::getChannelByName("prevSong");
 
@@ -1037,17 +1008,17 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 
 		obj.convert(res);
 
-		for (LeaderboardEntry entry : res.leaderboard.entires)
+		for (LeaderboardEntry entry : res.leaderboard.entries)
 		{
 			LeaderboardResult resu;
 			resu.entry = entry;
-			resu.accuracy = new Text(0, 0, std::to_string(entry.accuracy) + "%", 16, "arial");
+			resu.accuracy = new Text(0, 0, std::to_string(entry.accuracy * 100) + "%", 16, "arial");
 			resu.name = new Text(0, 0, entry.username, 16, "arialbd");
 
 			leaderboardResults.push_back(resu);
 		}
 
-		if (res.leaderboard.entires.size() == 0)
+		if (res.leaderboard.entries.size() == 0)
 		{
 			LeaderboardResult resu;
 			resu.entry = LeaderboardEntry();
@@ -1056,6 +1027,56 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 			leaderboardResults.push_back(resu);
 		}
 		break;
+	}
+}
+
+int scrollLeaderboard = 0;
+
+void MainerMenu::postUpdate(Events::updateEvent ev)
+{
+
+	if (lockInput)
+	{
+		Rect big;
+		big.x = 0;
+		big.y = 0;
+		big.w = 1280;
+		big.h = 720;
+		big.r = 0;
+		big.g = 0;
+		big.b = 0;
+		big.a = 0.5;
+
+
+		Rect src;
+		src.x = 0;
+		src.y = 0;
+		src.w = 1;
+		src.h = 1;
+
+		Rendering::PushQuad(&big, &src, NULL, GL::genShader);
+
+		Rendering::drawBatch();
+
+		int ind = 0;
+		for (LeaderboardResult res : leaderboardResults)
+		{
+			Rect bg = { 0,80 * ind,1280,80,0,0,0,0.5 };
+
+			Rendering::PushQuad(&bg, &src, NULL, GL::genShader);
+			Rendering::drawBatch();
+			res.name->x = 14;
+			res.accuracy->x = 28 + res.name->w;
+
+			res.name->y = (80 * ind) + 36;
+			res.accuracy->y = res.name->y;
+
+			res.name->draw();
+			res.accuracy->draw();
+			Rendering::drawBatch();
+
+			ind++;
+		}
 	}
 }
 

@@ -167,6 +167,8 @@ public:
 
 	void onPacket(PacketType pt, char* data, int32_t length);
 
+	void postUpdate(Events::updateEvent ev) override;
+
 	void addSettings(std::string catNam, std::vector<setting> settings);
 
 	void create() override;

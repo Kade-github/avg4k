@@ -331,7 +331,6 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="Lobby.h" />
     <ClInclude Include="log_stream.h" />
     <ClInclude Include="luaaa.h" />
-    <ClInclude Include="AvgLua.h" />
     <ClInclude Include="MainerMenu.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Menu.h" />

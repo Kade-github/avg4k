@@ -10,6 +10,8 @@ public:
 	float defAlpha = 1;
 	float lightUpTimer;
 
+	Shader* customShader;
+
 	ReceptorObject(int _x, int _y, int _type) {
 		MUTATE_START
 		x = _x;

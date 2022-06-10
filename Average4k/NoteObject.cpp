@@ -82,6 +82,10 @@ void NoteObject::draw() {
 
     //Rendering::SetClipRect(&clipThingy);
 
+    Shader* sh = customShader;
+
+    if (!customShader)
+        sh = GL::genShader;
 
     int activeH = 0;
 
@@ -136,24 +140,24 @@ void NoteObject::draw() {
                 if (!downscroll)
                 {
                     srcRect.h = -1;
-                    Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->hold, GL::genShader);
+                    Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->hold, sh);
                     srcRect.h = 1;
                 }
                 else
                 {
-                    Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->hold, GL::genShader);
+                    Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->hold, sh);
                 }
             }
             else {
                 if (!downscroll)
                 {
                     srcRect.h = -1;
-                    Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->holdend, GL::genShader);
+                    Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->holdend, sh);
                     srcRect.h = 1;
                 }
                 else
                 {
-                    Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->holdend, GL::genShader);
+                    Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->holdend, sh);
                 }
             }
             Rendering::SetClipRect(NULL);
@@ -169,29 +173,29 @@ void NoteObject::draw() {
         if (Game::noteskin->rotate) {
             switch (lane) {
             case 0: // left
-                Rendering::PushQuad(&dstRect, &srcRect, texture, GL::genShader, 90);
+                Rendering::PushQuad(&dstRect, &srcRect, texture, sh, 90);
                 break;
             case 1: // down
-                Rendering::PushQuad(&dstRect, &srcRect, texture, GL::genShader);
+                Rendering::PushQuad(&dstRect, &srcRect, texture, sh);
                 break;
             case 2: // up
                 srcRect.h = -1;
-                Rendering::PushQuad(&dstRect, &srcRect, texture, GL::genShader);
+                Rendering::PushQuad(&dstRect, &srcRect, texture, sh);
                 srcRect.h = 1;
                 break;
             case 3: // right
-                Rendering::PushQuad(&dstRect, &srcRect, texture, GL::genShader, -90);
+                Rendering::PushQuad(&dstRect, &srcRect, texture, sh, -90);
                 break;
             }
         }
         else {
-            Rendering::PushQuad(&dstRect, &srcRect, texture, GL::genShader);
+            Rendering::PushQuad(&dstRect, &srcRect, texture, sh);
         }
 
         if (selected)
         {
             dstRect.a = 0.6;
-            Rendering::PushQuad(&dstRect, &srcRect, NULL, GL::genShader);
+            Rendering::PushQuad(&dstRect, &srcRect, NULL, sh);
             dstRect.a = alpha;
         }
     }

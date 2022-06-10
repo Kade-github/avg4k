@@ -1,7 +1,6 @@
 #pragma once
 #include "MainMenu.h"
 #include <windows.h>
-#include "AvgLua.h"
 #include "SPacketAvatarRequestResponse.h"
 #include "CPacketRequestAvatar.h"
 #include "AvgGroup.h"

@@ -36,6 +36,8 @@ class NoteObject : public Object
 		bool fboMode = true;
 		bool drawCall = true;
 
+		Shader* customShader;
+
 		Chart* currentChart;
 
 		float time;

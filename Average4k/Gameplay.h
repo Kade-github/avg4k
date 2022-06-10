@@ -118,6 +118,8 @@ class Gameplay :
 		AvgRect* songPosOutline;
 		AvgRect* songPosBar;
 
+		AvgGroup* gameplay;
+
 		AvgSprite* leaderboardCrown;
 
 		float heldEnd[4];

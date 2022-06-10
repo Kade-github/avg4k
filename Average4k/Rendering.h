@@ -28,6 +28,9 @@ public:
 	static Texture* batch_texture;
 	static Texture* white;
 
+	static float iBpm;
+	static float iBeat;
+
 
 
 	static void Render_GLInit(Shader* shad);

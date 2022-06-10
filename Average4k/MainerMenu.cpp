@@ -9,16 +9,18 @@
 #include "Gameplay.h"
 #include "AvgDropDown.h"
 #include "Average4k.h"
-AvgContainer* soloContainer;
-AvgContainer* multiContainer;
-AvgContainer* settingsContainer;
-AvgContainer* testWorkshop;
+AvgContainer* MainerMenu::soloContainer;
+AvgContainer* MainerMenu::multiContainer;
+AvgContainer* MainerMenu::settingsContainer;
+AvgContainer* MainerMenu::testWorkshop;
 
 std::mutex packMutex;
 
 bool uploading = false;
 
 Pack steamWorkshop;
+
+int scrollLeaderboard = 0;
 
 int packIndex = 0;
 int catIndex = 0;
@@ -48,7 +50,7 @@ std::vector<steamItem> item;
 
 int selectedContainerIndex = 0;
 
-bool lockInput = false;
+bool MainerMenu::lockInput = false;
 
 bool chartUploading = false;
 
@@ -77,7 +79,7 @@ void selectedSongCallback(int sId)
 
 	std::cout << "selected " << s.c.meta.songName << std::endl;
 
-	AvgContainer* cont = (AvgContainer*)soloContainer->findItemByName("songContainer");
+	AvgContainer* cont = (AvgContainer*)MainerMenu::soloContainer->findItemByName("songContainer");
 	if (!cont) // lol
 		return;
 
@@ -469,11 +471,14 @@ void MainerMenu::update(Events::updateEvent ev)
 		std::vector<Pack> gatheredPacks;
 		{
 			std::lock_guard cock(packMutex);
-			for (Pack p : (*asyncPacks))
+			if (asyncPacks)
 			{
-				gatheredPacks.push_back(p);
+				for (Pack p : (*asyncPacks))
+				{
+					gatheredPacks.push_back(p);
+				}
+				asyncPacks->clear();
 			}
-			asyncPacks->clear();
 		}
 
 		std::vector<Song> gatheredSongs;
@@ -639,7 +644,7 @@ void endTrans()
 void updateDiff()
 {
 	MUTATE_START
-	AvgContainer* cont = (AvgContainer*)soloContainer->findItemByName("songContainer");
+	AvgContainer* cont = (AvgContainer*)MainerMenu::soloContainer->findItemByName("songContainer");
 	if (!cont) // lol
 		return;
 
@@ -673,6 +678,8 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 		if (MainerMenu::selectedSong.isSteam)
 		{
 			lockInput = !lockInput;
+
+			scrollLeaderboard = 0;
 
 			for (LeaderboardResult r : leaderboardResults)
 			{
@@ -996,6 +1003,17 @@ void MainerMenu::loadPacks()
 	}
 }
 
+void MainerMenu::mouseWheel(float wheel)
+{
+	if (lockInput)
+	{
+		if (wheel < 0)
+			scrollLeaderboard += 10;
+		else if (wheel > 0)
+			scrollLeaderboard -= 10;
+	}
+}
+
 void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 {
 	SPacketLeaderboardResponse res;
@@ -1034,13 +1052,16 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 	}
 }
 
-int scrollLeaderboard = 0;
-
 void MainerMenu::postUpdate(Events::updateEvent ev)
 {
 
 	if (lockInput)
 	{
+		if (scrollLeaderboard < 0)
+			scrollLeaderboard = 0;
+
+		if (scrollLeaderboard > leaderboardResults.size() * 80)
+			scrollLeaderboard = leaderboardResults.size() * 80;
 		Rect big;
 		big.x = 0;
 		big.y = 0;
@@ -1065,14 +1086,14 @@ void MainerMenu::postUpdate(Events::updateEvent ev)
 		int ind = 0;
 		for (LeaderboardResult res : leaderboardResults)
 		{
-			Rect bg = { 0,80 * ind,1280,80,0,0,0,0.5 };
+			Rect bg = { 0,(80 * ind) - scrollLeaderboard,1280,80,0,0,0,0.5 };
 
 			Rendering::PushQuad(&bg, &src, NULL, GL::genShader);
 			Rendering::drawBatch();
 			res.name->x = 14;
 			res.accuracy->x = 28 + res.name->w;
 
-			res.name->y = (80 * ind) + 36;
+			res.name->y = (80 * ind) + 36 - scrollLeaderboard;
 			res.accuracy->y = res.name->y;
 
 			res.name->draw();
@@ -1129,16 +1150,16 @@ void transContainerThing()
 	switch (despawn)
 	{
 	case 0:
-		soloContainer->active = false;
+		MainerMenu::soloContainer->active = false;
 		break;
 	case 1:
-		multiContainer->active = false;
+		MainerMenu::multiContainer->active = false;
 		break;
 	case 2:
-		settingsContainer->active = false;
+		MainerMenu::settingsContainer->active = false;
 		break;
 	case 3:
-		testWorkshop->active = false;
+		MainerMenu::testWorkshop->active = false;
 		break;
 	}
 }

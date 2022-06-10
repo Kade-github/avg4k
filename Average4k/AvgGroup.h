@@ -15,6 +15,8 @@ public:
 	bool renderOnce = false;
 	bool flip = false;
 
+	Shader* customShader;
+
 	float newW, newH;
 	float initalW, initalH;
 

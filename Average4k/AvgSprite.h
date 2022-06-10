@@ -117,7 +117,10 @@ public:
 		if (!customShader)
 			Rendering::PushQuad(&dstRect, &srcRect, tex, GL::genShader, angle);
 		else
+		{
+			Rendering::drawBatch();
 			Rendering::PushQuad(&dstRect, &srcRect, tex, customShader, angle);
+		}
 
 		if (clipRect.w > 0 || clipRect.h > 0)
 			Rendering::SetClipRect(NULL);

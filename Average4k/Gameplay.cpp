@@ -193,6 +193,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 			{
 				Placement->setText(placementt);
 				Placement->x = (Game::gameWidth - Placement->surfW) - 24;
+				SteamFriends()->SetRichPresence("status", Placement->text.c_str());
 				Game::DiscordUpdatePresence(MainerMenu::currentSelectedSong.meta.songName + " in " + MultiplayerLobby::CurrentLobby.LobbyName, "Playing Multiplayer (" + Placement->text + ")", "Average4K", MultiplayerLobby::CurrentLobby.Players, MultiplayerLobby::CurrentLobby.MaxPlayers, "");
 			}
 			bool found = false;

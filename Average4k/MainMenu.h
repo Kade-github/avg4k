@@ -39,6 +39,8 @@ class MainMenu :
 		virtual void create();
 
 		int selectedIndex = 0;
+
+		void onPacket(PacketType pt, char* data, int32_t length);
 	
 		void onSteam(std::string s) override;
 		void update(Events::updateEvent event) override;

@@ -7,10 +7,16 @@
 #include "AvgGroup.h"
 #include "FuckinEditor.h"
 #include "MainerMenu.h"
+#include "CPacketJoinServer.h"
+#include "SPacketServerListReply.h"
+#include "MultiplayerLobby.h"
+#include "Average4k.h"
 
 float ddddtime = 0;
 
 bool MainMenu::first = false;
+
+bool dontAllowInput = false;
 
 MainMenu::MainMenu()
 {
@@ -86,6 +92,35 @@ void MainMenu::create() {
 
 void MainMenu::onSteam(std::string s)
 {
+}
+
+void MainMenu::onPacket(PacketType pt, char* data, int32_t length)
+{
+	SPacketServerListReply fuck;
+
+	msgpack::unpacked result;
+
+	dontAllowInput = false;
+
+	msgpack::object obj;
+	switch (pt)
+	{
+	case eSPacketJoinServerReply: {
+		lobby l;
+		l.LobbyID = 0;
+		l.LobbyName = "Waiting on refresh";
+		l.MaxPlayers = 1;
+		player p;
+		p.AvatarURL = "";
+		p.Name = "You!";
+		p.SteamID64 = SteamUser()->GetSteamID().ConvertToUint64();
+		l.PlayerList.push_back(p);
+		Game::instance->transitionToMenu(new MultiplayerLobby(l, false, false));
+
+		std::cout << "you joined!" << std::endl;
+		break;
+	}
+	}
 }
 
 // little helper for this shit
@@ -165,6 +200,26 @@ void MainMenu::update(Events::updateEvent event)
 			icon->w = 47;
 		}
 		Tweening::TweenManager::createNewTween("icon", icon, Tweening::tt_Alpha, 600, 0, 1, NULL, Easing::EaseInSine);
+		Average4k::dumpOutstream();
+		char ch[248];
+		SteamApps()->GetLaunchCommandLine(ch, 248);
+		std::string param = std::string(ch);
+		if (param.size() != 0)
+		{
+			dontAllowInput = true;
+			CPacketJoinServer list;
+			list.Order = 0;
+			list.PacketType = eCPacketJoinServer;
+			std::vector<std::string> st = Chart::split(param, ' ');
+			std::string sub = st[1];
+			list.LobbyID = std::stoul(sub);
+
+			std::cout << "trying to join " << list.LobbyID << " from command line" << std::endl;
+
+
+			Multiplayer::sendMessage<CPacketJoinServer>(list);
+		}
+		Average4k::dumpOutstream();
 	}
 
 
@@ -174,7 +229,7 @@ void MainMenu::update(Events::updateEvent event)
 void MainMenu::keyDown(SDL_KeyboardEvent event)
 {
 	MUTATE_START
-	if (!Multiplayer::loggedIn)
+	if (!Multiplayer::loggedIn || dontAllowInput)
 		return;
 	if (event.keysym.sym == SDLK_RETURN && !tweenDone && Multiplayer::loggedIn)
 	{

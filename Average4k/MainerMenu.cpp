@@ -249,6 +249,7 @@ void MainerMenu::create()
 	VM_START
 
 	Game::DiscordUpdatePresence("In the Main Menu", "Browsing Charts", "Average4K", -1, -1, "");
+	SteamFriends()->SetRichPresence("gamestatus", "Browsing Charts");
 
 	bg = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "darkmodebg.png"));
 	bg->create();

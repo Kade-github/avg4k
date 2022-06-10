@@ -1179,7 +1179,7 @@ void Gameplay::cleanUp()
 	//	SDL_DestroyTexture(avatars[k]);
 	//}
 
-	song->free();
+	clap->free();
 
 	SoundManager::removeChannel("clapFx");
 

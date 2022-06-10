@@ -20,13 +20,18 @@ public:
 
 	char* musicFile;
 
+	bool loop = false;
+
 	bool isFreed = false;
 
 	std::string path;
 
 	static void CALLBACK SyncProc(HSYNC handle, DWORD channel, DWORD data, void* user)
 	{
-		((Channel*)user)->isPlaying = false;
+		Channel* ch = ((Channel*)user);
+		ch->isPlaying = false;
+		if (ch->loop)
+			ch->play();
 	}
 
 	Channel(unsigned long channelId)

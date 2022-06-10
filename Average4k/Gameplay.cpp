@@ -454,6 +454,8 @@ void Gameplay::create() {
 	else
 		song = SoundManager::getChannelByName("prevSong");
 
+	song->loop = false;
+
 	clap = SoundManager::createChannel("assets/sounds/hitSound.wav", "clapFx");
 
 

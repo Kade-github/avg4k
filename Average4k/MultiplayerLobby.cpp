@@ -114,6 +114,7 @@ void MultiplayerLobby::onSteam(std::string s) {
 		}
 		Channel* ch = SoundManager::createChannel(path.c_str(), "prevSong");
 		ch->play();
+		ch->loop = true;
 		ch->setVolume(Game::save->GetDouble("Music Volume"));
 	}
 	VM_END

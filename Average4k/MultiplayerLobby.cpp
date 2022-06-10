@@ -68,6 +68,11 @@ void MultiplayerLobby::refreshLobby(lobby l)
 	helpDisplay->setText("Lobby: " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ") " + (isHost ? "You are the host!" : ""));
 	//warningDisplay->setText("");
 	Game::DiscordUpdatePresence(CurrentLobby.LobbyName, "Playing Multiplayer", "Average4K", MultiplayerLobby::CurrentLobby.Players, MultiplayerLobby::CurrentLobby.MaxPlayers, "");
+	SteamFriends()->SetRichPresence("gamestatus", "Playing Multiplayer");
+	SteamFriends()->SetRichPresence("steam_player_group", std::to_string(l.LobbyID).c_str());
+	SteamFriends()->SetRichPresence("steam_player_group_size", std::to_string(l.PlayerList.size()).c_str());
+	SteamFriends()->SetRichPresence("status", "In a lobby");
+	SteamFriends()->SetRichPresence("connect", ("-joinLobby " + std::to_string(l.LobbyID)).c_str());
 	STR_ENCRYPT_END
 }
 
@@ -109,6 +114,7 @@ void MultiplayerLobby::onSteam(std::string s) {
 		}
 		Channel* ch = SoundManager::createChannel(path.c_str(), "prevSong");
 		ch->play();
+		ch->loop = true;
 		ch->setVolume(Game::save->GetDouble("Music Volume"));
 	}
 	VM_END
@@ -396,7 +402,8 @@ void MultiplayerLobby::keyDown(SDL_KeyboardEvent event)
 			Multiplayer::sendMessage<CPacketLeave>(leave);
 
 			MainerMenu::isInLobby = false;
-
+			SteamFriends()->SetRichPresence("steam_player_group", nullptr);
+			SteamFriends()->SetRichPresence("steam_player_group_size", nullptr);
 			Game::instance->transitionToMenu(new MultiplayerLobbies());
 
 			people.clear();

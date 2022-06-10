@@ -5,14 +5,18 @@
 #include <chrono>
 #include "TweenManager.h"
 #include "MainerMenu.h"
-
+#include "CPacketSubmitScore.h"
 
 std::mutex weirdPog;
 
 
+std::vector<float> noteTimings;
+
 std::map<std::string, AvgSprite*> avatars;
 
 float Gameplay::rate = 1;
+
+float lastTime = 0;
 
 void CALLBACK bruh(HSYNC handle, DWORD channel, DWORD data, void* user)
 {
@@ -120,6 +124,8 @@ void Gameplay::miss(NoteObject* object)
 		MUTATE_END
 	}
 
+	noteTimings.push_back(Judge::hitWindows[4]);
+
 	Misses++;
 	updateAccuracy(-0.4);
 	combo = 0;
@@ -171,6 +177,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 	switch (pt)
 	{
 	case eSPacketUpdateLeaderboard:
+
 		msgpack::unpack(result, data, length);
 
 		obj = msgpack::object(result.get());
@@ -186,6 +193,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 			{
 				Placement->setText(placementt);
 				Placement->x = (Game::gameWidth - Placement->surfW) - 24;
+				SteamFriends()->SetRichPresence("status", Placement->text.c_str());
 				Game::DiscordUpdatePresence(MainerMenu::currentSelectedSong.meta.songName + " in " + MultiplayerLobby::CurrentLobby.LobbyName, "Playing Multiplayer (" + Placement->text + ")", "Average4K", MultiplayerLobby::CurrentLobby.Players, MultiplayerLobby::CurrentLobby.MaxPlayers, "");
 			}
 			bool found = false;
@@ -352,6 +360,9 @@ Gameplay::Gameplay()
 void Gameplay::create() {
 
 	MUTATE_START
+	lastTime = 0;
+
+	noteTimings.clear();
 	
 	initControls();
 
@@ -442,6 +453,8 @@ void Gameplay::create() {
 	}
 	else
 		song = SoundManager::getChannelByName("prevSong");
+
+	song->loop = false;
 
 	clap = SoundManager::createChannel("assets/sounds/hitSound.wav", "clapFx");
 
@@ -653,6 +666,8 @@ float lerp(float a, float b, float f)
 
 float lastBPM = 0;
 
+bool hasSubmited = false;
+
 void Gameplay::update(Events::updateEvent event)
 {
 	MUTATE_START
@@ -689,6 +704,7 @@ void Gameplay::update(Events::updateEvent event)
 		else
 			positionInSong += (Game::deltaTime - Game::save->GetDouble("offset"));*/
 		positionInSong = song->getPos() + Game::save->GetDouble("offset");
+		lastTime += Game::deltaTime;
 	}
 	else
 		positionInSong += Game::deltaTime;
@@ -972,10 +988,8 @@ void Gameplay::update(Events::updateEvent event)
 				notesToPlay.erase(notesToPlay.begin());
 			}
 	}
-	else
-	{
 
-		if (!ended && notesToPlay.size() == 0 && positionInSong - Game::save->GetDouble("offset") >= song->length)
+		if (!ended && ((notesToPlay.size() == 0 && spawnedNotes.size() == 0) || ((lastTime - positionInSong) > 4000 || !song->isPlaying)) && positionInSong > 0)
 		{
 			ended = true;
 			if (!MultiplayerLobby::inLobby)
@@ -983,6 +997,7 @@ void Gameplay::update(Events::updateEvent event)
 				MainerMenu::currentSelectedSong.destroy();
 				cleanUp();
 				Game::instance->transitionToMenu(new MainerMenu());
+
 			}
 			else
 			{
@@ -996,8 +1011,21 @@ void Gameplay::update(Events::updateEvent event)
 				Combo->setX((Game::gameWidth / 2) - (Combo->surfW / 2));
 				Combo->setY((Game::gameHeight / 2) + 40);
 			}
+
+			if ((MainerMenu::selected.isSteam || MainerMenu::selectedSong.isSteam) && Game::save->GetBool("Submit Scores") && !hasSubmited)
+			{
+				hasSubmited = true;
+				CPacketSubmitScore submit;
+
+				submit.ChartId = (MainerMenu::selected.isSteam ? MainerMenu::selected.steamId : MainerMenu::selectedSong.steamId);
+				submit.chartIndex = (MainerMenu::selected.isSteam ? MainerMenu::packSongIndex : -1);
+				submit.timings = noteTimings;
+				submit.Order = 0;
+				submit.PacketType = eCPacketSubmitScore;
+
+				Multiplayer::sendMessage<CPacketSubmitScore>(submit);
+			}
 		}
-	}
 
 	for (int i = 0; i < receptors.size(); i++)
 	{
@@ -1151,10 +1179,8 @@ void Gameplay::cleanUp()
 	//	SDL_DestroyTexture(avatars[k]);
 	//}
 
-	song->free();
 	clap->free();
 
-	SoundManager::removeChannel("gameplaySong");
 	SoundManager::removeChannel("clapFx");
 
 	
@@ -1282,8 +1308,11 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 			if (closestObject->active && diff <= hw && diff > -hw)
 			{
+
 				closestObject->active = false;
 				closestObject->wasHit = true;
+
+				noteTimings.push_back(diff);
 
 				judgement judge = Judge::judgeNote(diff);
 				//score += Judge::scoreNote(diff);

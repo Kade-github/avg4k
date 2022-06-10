@@ -686,6 +686,18 @@
     <ClInclude Include="Average4k.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CPacketSubmitScore.h">
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketLeaderboardResponse.h">
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketScoreResult.h">
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketLeaderboardRequest.h">
+      <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Average4k.rc">

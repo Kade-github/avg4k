@@ -7,8 +7,15 @@
 #include "AvgRect.h"
 #include "SaveFile.h"
 #include "AvgContainer.h"
-
+#include "CPacketLeaderboardRequest.h"
+#include "SPacketLeaderboardResponse.h"
 // Objects
+
+struct LeaderboardResult {
+	LeaderboardEntry entry;
+	Text* name;
+	Text* accuracy;
+};
 
 class PackObject : public Object
 {
@@ -146,6 +153,8 @@ public:
 	Text* settingsText;
 	AvgRect* selectSettings;
 
+	std::vector<LeaderboardResult> leaderboardResults;
+
 	AvgContainer* currentContainer;
 
 	void selectContainer(int container);
@@ -155,6 +164,8 @@ public:
 	void selectPack(int index);
 	void addPack(std::string name, std::string bg, bool showText, bool isSteam);
 	void clearPacks();
+
+	void onPacket(PacketType pt, char* data, int32_t length);
 
 	void addSettings(std::string catNam, std::vector<setting> settings);
 

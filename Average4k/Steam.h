@@ -63,7 +63,7 @@ private:
 	CCallResult<Steam, SteamUGCQueryCompleted_t> Name;
 	void OnName(SteamUGCQueryCompleted_t* result, bool bIOFailure);
 	CCallResult<Steam, SubmitItemUpdateResult_t> UploadedItemCallback;
-
+	STEAM_CALLBACK(Steam, OnInvite, GameRichPresenceJoinRequested_t);
 	void OnUploadedItemCallback(SubmitItemUpdateResult_t* result, bool bIOFailure);
 	CCallResult<Steam, SteamUGCQueryCompleted_t> UGCAllQueryCallback;
 	void OnUGCAllQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFailure);

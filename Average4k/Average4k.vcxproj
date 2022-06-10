@@ -279,6 +279,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="CPacketHostStartGame.h" />
     <ClInclude Include="CPacketHostUpdateLobby.h" />
     <ClInclude Include="CPacketJoinServer.h" />
+    <ClInclude Include="CPacketLeaderboardRequest.h" />
     <ClInclude Include="CPacketLeave.h" />
     <ClInclude Include="CPacketNoteHit.h" />
     <ClInclude Include="CPacketRequestAvatar.h" />
@@ -286,6 +287,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="CPacketServerList.h" />
     <ClInclude Include="CPacketSongFinished.h" />
     <ClInclude Include="CPacketStatus.h" />
+    <ClInclude Include="CPacketSubmitScore.h" />
     <ClInclude Include="CPacketWtfAmIn.h" />
     <ClInclude Include="discord_sdk\achievement_manager.h" />
     <ClInclude Include="discord_sdk\activity_manager.h" />
@@ -362,8 +364,10 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="SPacketHostServerReply.h" />
     <ClInclude Include="SPacketInvalidPacket.h" />
     <ClInclude Include="SPacketJoinServerReply.h" />
+    <ClInclude Include="SPacketLeaderboardResponse.h" />
     <ClInclude Include="SPacketOnChat.h" />
     <ClInclude Include="SPacketPlayerSongFinished.h" />
+    <ClInclude Include="SPacketScoreResult.h" />
     <ClInclude Include="SPacketServerListReply.h" />
     <ClInclude Include="SPacketStartLobbyGame.h" />
     <ClInclude Include="SPacketStatus.h" />

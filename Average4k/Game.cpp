@@ -14,6 +14,8 @@
 #include "Helpers.h"
 #include "discord_sdk\discord.h"
 #include "Average4k.h"
+#include "SPacketScoreResult.h"
+#include "SPacketServerListReply.h"
 using namespace std;
 
 mutex pog;
@@ -375,11 +377,6 @@ void Game::update(Events::updateEvent update)
 	mainCamera->update(update);
 
 
-	if (currentMenu != nullptr && currentMenu->created)
-	{
-		currentMenu->update(update);
-		currentMenu->imguiUpdate(Game::deltaTime);
-	}
 
 	if (!transitioning)
 	{
@@ -403,6 +400,12 @@ void Game::update(Events::updateEvent update)
 		{
 
 		}
+	}
+
+	if (currentMenu != nullptr && currentMenu->created)
+	{
+		currentMenu->update(update);
+		currentMenu->imguiUpdate(Game::deltaTime);
 	}
 
 
@@ -438,6 +441,47 @@ void Game::update(Events::updateEvent update)
 				if (p.type != -42) // status packets
 					db_addLine("recieved " + std::to_string(p.type));
 			}
+
+			msgpack::unpacked result;
+
+			msgpack::object obj;
+
+			SPacketScoreResult res;
+
+			SPacketServerListReply fuck;
+
+			// global error packets
+			switch (p.type)
+			{
+			case eSPacketScoreResult:
+				msgpack::unpack(result, p.data, p.length);
+
+				obj = msgpack::object(result.get());
+
+				obj.convert(res);
+
+				if (!res.ok)
+				{
+					Game::showErrorWindow("Failed to submit score!", res.error, false);
+				}
+				break;
+			case eSPacketJoinServerReply: {
+				lobby l;
+				l.LobbyID = 0;
+				l.LobbyName = "Waiting on refresh";
+				l.MaxPlayers = 1;
+				player p;
+				p.AvatarURL = "";
+				p.Name = "You!";
+				p.SteamID64 = SteamUser()->GetSteamID().ConvertToUint64();
+				l.PlayerList.push_back(p);
+				Game::instance->transitionToMenu(new MultiplayerLobby(l, false, false));
+
+				std::cout << "you joined!" << std::endl;
+				break;
+			}
+			}
+
 			if (currentMenu != NULL)
 				currentMenu->onPacket(p.type, p.data, p.length);
 			for (int i = 0; i < objects->size(); i++)

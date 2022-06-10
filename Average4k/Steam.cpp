@@ -2,6 +2,7 @@
 
 #include "Game.h"
 #include "Pack.h"
+#include "CPacketJoinServer.h"
 
 std::map<std::string, Texture*> Steam::pixelsForAvatar;
 
@@ -12,6 +13,11 @@ void Steam::InitSteam()
 	{
 		std::cout << "uh oh, you aren't on steam (or you don't own the game)" << std::endl;
 	}
+    else
+    {
+        
+    }
+
     MUTATE_END
 }
 
@@ -298,6 +304,20 @@ void Steam::OnCreateItemCallback(CreateItemResult_t* result, bool bIOFailure)
     if (Game::currentMenu != nullptr)
         Game::currentMenu->onSteam("createdItem");
     MUTATE_END
+}
+
+void Steam::OnInvite(GameRichPresenceJoinRequested_t* result)
+{
+    CPacketJoinServer list;
+    list.Order = 0;
+    list.PacketType = eCPacketJoinServer;
+    std::vector<std::string> st = Chart::split(result->m_rgchConnect, ' ');
+    std::string sub = st[1];
+    list.LobbyID = std::stoul(sub);
+
+    std::cout << "trying to join " << list.LobbyID << " from steam invite" << std::endl;
+
+    Multiplayer::sendMessage<CPacketJoinServer>(list);
 }
 
 void Steam::OnUploadedItemCallback(SubmitItemUpdateResult_t* result, bool bIOFailure)

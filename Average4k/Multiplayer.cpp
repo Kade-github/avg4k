@@ -1,6 +1,7 @@
 #include "Multiplayer.h"
 #include "Game.h"
 #include "Gameplay.h"
+#include "CPacketJoinServer.h"
 
 
 bool Multiplayer::connectedToServer = false;

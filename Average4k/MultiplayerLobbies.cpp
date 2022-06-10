@@ -30,7 +30,11 @@ void MultiplayerLobbies::create()
 	MUTATE_START;
 	
 	Game::DiscordUpdatePresence("Browsing lobbies", "Playing Multiplayer", "Average4K", -1, -1, "");
-
+	SteamFriends()->SetRichPresence("gamestatus", "Browsing lobbies");
+	SteamFriends()->SetRichPresence("steam_player_group", nullptr);
+	SteamFriends()->SetRichPresence("steam_player_group_size", nullptr);
+	SteamFriends()->SetRichPresence("status", nullptr);
+	SteamFriends()->SetRichPresence("connect", nullptr);
 	refreshTimer = 3000;
 	if (Multiplayer::loggedIn)
 		Game::steam->populateSubscribedItems();
@@ -114,20 +118,6 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 			std::cout << "updating lobbies" << std::endl;
 
 			updateList(fuck.Lobbies);
-			break;
-		}
-		case eSPacketJoinServerReply: {
-			Game::instance->transitionToMenu(new MultiplayerLobby(Lobbies[selectedIndex], false, false));
-			for (bruh t : avatars)
-			{
-				removeObj(t.avatar);
-				if (t.avatar)
-					delete t.avatar;
-			}
-
-			avatars.clear();
-
-			std::cout << "you joined!" << std::endl;
 			break;
 		}
 		case eSPacketHostServerReply: {

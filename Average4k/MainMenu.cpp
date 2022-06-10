@@ -96,31 +96,7 @@ void MainMenu::onSteam(std::string s)
 
 void MainMenu::onPacket(PacketType pt, char* data, int32_t length)
 {
-	SPacketServerListReply fuck;
-
-	msgpack::unpacked result;
-
 	dontAllowInput = false;
-
-	msgpack::object obj;
-	switch (pt)
-	{
-	case eSPacketJoinServerReply: {
-		lobby l;
-		l.LobbyID = 0;
-		l.LobbyName = "Waiting on refresh";
-		l.MaxPlayers = 1;
-		player p;
-		p.AvatarURL = "";
-		p.Name = "You!";
-		p.SteamID64 = SteamUser()->GetSteamID().ConvertToUint64();
-		l.PlayerList.push_back(p);
-		Game::instance->transitionToMenu(new MultiplayerLobby(l, false, false));
-
-		std::cout << "you joined!" << std::endl;
-		break;
-	}
-	}
 }
 
 // little helper for this shit
@@ -215,7 +191,6 @@ void MainMenu::update(Events::updateEvent event)
 			list.LobbyID = std::stoul(sub);
 
 			std::cout << "trying to join " << list.LobbyID << " from command line" << std::endl;
-
 
 			Multiplayer::sendMessage<CPacketJoinServer>(list);
 		}

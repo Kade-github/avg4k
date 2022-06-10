@@ -120,20 +120,6 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 			updateList(fuck.Lobbies);
 			break;
 		}
-		case eSPacketJoinServerReply: {
-			Game::instance->transitionToMenu(new MultiplayerLobby(Lobbies[selectedIndex], false, false));
-			for (bruh t : avatars)
-			{
-				removeObj(t.avatar);
-				if (t.avatar)
-					delete t.avatar;
-			}
-
-			avatars.clear();
-
-			std::cout << "you joined!" << std::endl;
-			break;
-		}
 		case eSPacketHostServerReply: {
 			Game::instance->transitionToMenu(new MultiplayerLobby(Lobbies[selectedIndex], true, false));
 

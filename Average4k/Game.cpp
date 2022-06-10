@@ -15,6 +15,7 @@
 #include "discord_sdk\discord.h"
 #include "Average4k.h"
 #include "SPacketScoreResult.h"
+#include "SPacketServerListReply.h"
 using namespace std;
 
 mutex pog;
@@ -447,6 +448,8 @@ void Game::update(Events::updateEvent update)
 
 			SPacketScoreResult res;
 
+			SPacketServerListReply fuck;
+
 			// global error packets
 			switch (p.type)
 			{
@@ -462,6 +465,21 @@ void Game::update(Events::updateEvent update)
 					Game::showErrorWindow("Failed to submit score!", res.error, false);
 				}
 				break;
+			case eSPacketJoinServerReply: {
+				lobby l;
+				l.LobbyID = 0;
+				l.LobbyName = "Waiting on refresh";
+				l.MaxPlayers = 1;
+				player p;
+				p.AvatarURL = "";
+				p.Name = "You!";
+				p.SteamID64 = SteamUser()->GetSteamID().ConvertToUint64();
+				l.PlayerList.push_back(p);
+				Game::instance->transitionToMenu(new MultiplayerLobby(l, false, false));
+
+				std::cout << "you joined!" << std::endl;
+				break;
+			}
 			}
 
 			if (currentMenu != NULL)

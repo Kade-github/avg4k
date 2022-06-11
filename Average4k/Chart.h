@@ -63,7 +63,15 @@ class Chart
 {
 	public:
 		Chart() {};
-		Chart(chartMeta m) { meta = m; };
+		Chart(chartMeta m, bool checkformod = true) { 
+			meta = m;
+			
+			if (std::filesystem::exists(m.folder + "/mod") && checkformod)
+			{
+				isModFile = true;
+				pathToLua = m.folder + "/mod/mod.lua";
+			}
+		};
 		chartMeta meta;
 
 		~Chart()
@@ -71,6 +79,10 @@ class Chart
 			// not much lol
 		}
 		static std::vector < std::string > split(std::string str, char delimiter);
+
+		bool isModFile = false;
+
+		std::string pathToLua = "";
 
 		float getTimeFromBeat(float beat, bpmSegment seg);
 		float getTimeFromBeatOffset(float beat, bpmSegment seg);

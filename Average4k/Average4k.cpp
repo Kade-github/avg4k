@@ -10,6 +10,7 @@
 #include "Helpers.h"
 #include <timeapi.h>
 #include "Average4k.h"
+#include "ModManager.h"
 using namespace std;
 
 //#define NOBUF

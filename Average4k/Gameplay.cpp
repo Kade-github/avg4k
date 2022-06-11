@@ -16,6 +16,8 @@ std::map<std::string, AvgSprite*> avatars;
 
 float Gameplay::rate = 1;
 
+Gameplay* Gameplay::instance = nullptr;
+
 float lastTime = 0;
 
 void CALLBACK bruh(HSYNC handle, DWORD channel, DWORD data, void* user)
@@ -364,6 +366,11 @@ void Gameplay::create() {
 	MUTATE_START
 		lastTime = 0;
 
+	instance = this;
+
+	ModManager::time = 0;
+	ModManager::beat = 0;
+
 	noteTimings.clear();
 
 	initControls();
@@ -661,7 +668,41 @@ void Gameplay::create() {
 	else
 		positionInSong = -(Game::save->GetDouble("Start Delay") * 1000);
 	updateAccuracy(0);
+
+	if (MainerMenu::currentSelectedSong.isModFile && !MultiplayerLobby::inLobby)
+	{
+		runModStuff = true;
+		ModManager::initLuaFunctions();
+		manager = ModManager(MainerMenu::currentSelectedSong.pathToLua);
+	}
+
+	callModEvent("create", 0);
+
 	MUTATE_END
+}
+
+void Gameplay::callModEvent(std::string name, std::string args)
+{
+	if (MainerMenu::currentSelectedSong.isModFile && !MultiplayerLobby::inLobby)
+	{
+		manager.callEvent(name, args);
+	}
+}
+
+void Gameplay::callModEvent(std::string name, int args)
+{
+	if (MainerMenu::currentSelectedSong.isModFile && !MultiplayerLobby::inLobby)
+	{
+		manager.callEvent(name, args);
+	}
+}
+
+void Gameplay::callModEvent(std::string name, float args)
+{
+	if (MainerMenu::currentSelectedSong.isModFile && !MultiplayerLobby::inLobby)
+	{
+		manager.callEvent(name, args);
+	}
 }
 
 float lerp(float a, float b, float f)
@@ -759,6 +800,24 @@ void Gameplay::update(Events::updateEvent event)
 
 	Rendering::iBeat = beat;
 	Rendering::iBpm = lastBPM;
+
+	ModManager::time = positionInSong;
+	ModManager::beat = beat;
+
+	if (runModStuff)
+	{
+		for (int i = 0; i < receptors.size(); i++)
+		{
+			manager.funkyPositions[i] = vec2(receptors[i]->x, receptors[i]->y);
+		}
+
+		for (NoteObject* obj : spawnedNotes)
+		{
+			manager.funkyPositions[obj->modId] = vec2(obj->x, obj->y);
+		}
+
+		manager.runMods();
+	}
 
 	if (Game::save->GetBool("Annoying bopping"))
 	{
@@ -1172,6 +1231,8 @@ void Gameplay::update(Events::updateEvent event)
 			}
 		}
 	}
+	callModEvent("update", Game::deltaTime);
+
 	MUTATE_END
 }
 void Gameplay::cleanUp()
@@ -1191,7 +1252,11 @@ void Gameplay::cleanUp()
 
 	SoundManager::removeChannel("clapFx");
 
-	
+	if (MainerMenu::currentSelectedSong.isModFile && !MultiplayerLobby::inLobby)
+	{
+		manager.destroy();
+	}
+
 	//if (background)
 	//	SDL_DestroyTexture(background);
 

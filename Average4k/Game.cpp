@@ -188,10 +188,24 @@ void Game::GetMousePos(int* mx, int* my)
 std::vector<Text*> lines;
 
 void Game::db_addLine(std::string s) {
+	std::map<int, Text*> toRemove;
+	int i = 0;
 	for (Text* t : lines)
+	{
 		t->y -= 16;
+		if (t->y < 0)
+			toRemove[i] = t;
+		i++;
+	}
 	Text* newLine = new Text(0, 204, s, 16, "NotoSans-Regular");
 	lines.push_back(newLine);
+
+	for (std::map<int, Text*>::iterator iter = toRemove.begin(); iter != toRemove.end(); ++iter)
+	{
+		lines.erase(lines.begin() + iter->first);
+		delete iter->second;
+	}
+	toRemove.clear();
 }
 
 void transCall() {
@@ -374,7 +388,11 @@ void Game::update(Events::updateEvent update)
 			}, Easing::EaseInSine);
 	}
 
-	mainCamera->update(update);
+	if (currentMenu != nullptr && currentMenu->created)
+	{
+		currentMenu->update(update);
+		currentMenu->imguiUpdate(Game::deltaTime);
+	}
 
 
 
@@ -402,13 +420,7 @@ void Game::update(Events::updateEvent update)
 		}
 	}
 
-	if (currentMenu != nullptr && currentMenu->created)
-	{
-		currentMenu->update(update);
-		currentMenu->imguiUpdate(Game::deltaTime);
-	}
-
-
+	mainCamera->update(update);
 
 	SDL_Rect DestR;
 

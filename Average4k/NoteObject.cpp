@@ -8,6 +8,23 @@
 #include "SongSelect.h"
 
 
+NoteObject::NoteObject()
+{
+    setX(0);
+    setY(0);
+    w = 64;
+    h = 64;
+    Object::currentId++;
+    id = Object::currentId;
+
+    if (Gameplay::instance->runModStuff)
+    {
+        Gameplay::instance->currentModId++;
+        modId = Gameplay::instance->currentModId;
+        Gameplay::instance->manager.funkyPositions[modId] = vec2(x, y);
+    }
+}
+
 void NoteObject::draw() {
     if (!drawCall)
         return;
@@ -66,8 +83,8 @@ void NoteObject::draw() {
 
     Rect dstRect;
     Rect srcRect;
-    dstRect.x = obj->x;
-    dstRect.y = rect.y;
+    dstRect.x = x;
+    dstRect.y = y;
     dstRect.w = rect.w;
     dstRect.h = rect.h;
     dstRect.r = 255;
@@ -79,6 +96,14 @@ void NoteObject::draw() {
     srcRect.y = 0;
     srcRect.w = 1;
     srcRect.h = 1;
+
+    if (Gameplay::instance->runModStuff)
+    {
+        dstRect.x = Gameplay::instance->manager.funkyPositions[modId].x;
+        dstRect.y = Gameplay::instance->manager.funkyPositions[modId].y;
+        receptor.x = Gameplay::instance->manager.funkyPositions[type].x;
+        receptor.y = Gameplay::instance->manager.funkyPositions[type].y;
+    }
 
     //Rendering::SetClipRect(&clipThingy);
 
@@ -109,6 +134,13 @@ void NoteObject::draw() {
             Rect r;
             r.x = obj->x;
             r.y = obj->y + (obj->h / 2);
+
+            if (Gameplay::instance->runModStuff)
+            {
+                r.x = Gameplay::instance->manager.funkyPositions[type].x;
+                r.y = Gameplay::instance->manager.funkyPositions[type].y - (obj->h / 2);
+            }
+
             r.w = 64 * size;
             r.h = Game::gameHeight;
 
@@ -120,6 +152,10 @@ void NoteObject::draw() {
                 {
                     r.y = 0;
                     r.h = obj->y + (obj->h / 2);
+
+                    if (Gameplay::instance->runModStuff)
+                        r.h = Gameplay::instance->manager.funkyPositions[type].y + (obj->h / 2);
+
                     Rendering::SetClipRect(&r);
                 }
             }
@@ -131,6 +167,7 @@ void NoteObject::draw() {
                 }
             }
             
+
 
             dstRect.h = 65 * size;
 
@@ -164,7 +201,7 @@ void NoteObject::draw() {
         }
     dstRect.h = rect.h;
 
-    dstRect.y = rect.y;
+    dstRect.y = y;
 
     //Rendering::SetClipRect(NULL);
 

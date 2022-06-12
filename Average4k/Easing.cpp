@@ -220,3 +220,49 @@ Easing::easingFunction Easing::getEasingFunction(easing_functions function)
     auto it = easingFunctions.find(function);
     return it == easingFunctions.end() ? nullptr : it->second;
 }
+
+Easing::easingFunction Easing::getEasingFunction(std::string function)
+{
+    static std::map<std::string,easingFunction> easingFunctions;
+    if (easingFunctions.empty())
+    {
+        easingFunctions.insert(std::make_pair("insine", easeInSine));
+        easingFunctions.insert(std::make_pair("outsine", easeOutSine));
+        easingFunctions.insert(std::make_pair("inoutsine", easeInOutSine));
+        easingFunctions.insert(std::make_pair("inquad", easeInQuad));
+        easingFunctions.insert(std::make_pair("outquad", easeOutQuad));
+        easingFunctions.insert(std::make_pair("inoutquad", easeInOutQuad));
+        easingFunctions.insert(std::make_pair("incubic", easeInCubic));
+        easingFunctions.insert(std::make_pair("outcubic", easeOutCubic));
+        easingFunctions.insert(std::make_pair("inoutcubic", easeInOutCubic));
+        easingFunctions.insert(std::make_pair("inquart", easeInQuart));
+        easingFunctions.insert(std::make_pair("outquart", easeOutQuart));
+        easingFunctions.insert(std::make_pair("inoutquart", easeInOutQuart));
+        easingFunctions.insert(std::make_pair("inquint", easeInQuint));
+        easingFunctions.insert(std::make_pair("outquint", easeOutQuint));
+        easingFunctions.insert(std::make_pair("inoutquint", easeInOutQuint));
+        easingFunctions.insert(std::make_pair("inexpo", easeInExpo));
+        easingFunctions.insert(std::make_pair("outexpo", easeOutExpo));
+        easingFunctions.insert(std::make_pair("inoutexpo", easeInOutExpo));
+        easingFunctions.insert(std::make_pair("incirc", easeInCirc));
+        easingFunctions.insert(std::make_pair("outcirc", easeOutCirc));
+        easingFunctions.insert(std::make_pair("inoutcirc", easeInOutCirc));
+        easingFunctions.insert(std::make_pair("inback", easeInBack));
+        easingFunctions.insert(std::make_pair("outback", easeOutBack));
+        easingFunctions.insert(std::make_pair("inoutback", easeInOutBack));
+        easingFunctions.insert(std::make_pair("inelastic", easeInElastic));
+        easingFunctions.insert(std::make_pair("outelastic", easeOutElastic));
+        easingFunctions.insert(std::make_pair("inoutelastic", easeInOutElastic));
+        easingFunctions.insert(std::make_pair("inbounce", easeInBounce));
+        easingFunctions.insert(std::make_pair("outbounce", easeOutBounce));
+        easingFunctions.insert(std::make_pair("inoutbounce", easeInOutBounce));
+
+    }
+
+    std::string findFunc = function;
+    std::transform(findFunc.begin(), findFunc.end(), findFunc.begin(),
+        [](unsigned char c) { return std::tolower(c); });
+
+    auto it = easingFunctions.find(findFunc);
+    return it == easingFunctions.end() ? nullptr : it->second;
+}

@@ -1256,7 +1256,7 @@ void MainerMenu::leftMouseDown()
 			int yy = obj->y - packContainer->scrollAddition;
 			if ((relX > obj->x && relY > yy) && (relX < obj->x + obj->w && relY < yy + obj->h))
 			{
-				if (isInLobby && !packs[i].isSteam)
+				if (isInLobby && (!packs[i].isSteam && packs[i].packName != "Workshop/Local"))
 					return;
 				wheel->setSongs(packs[i].songs);
 				selectPack(i);

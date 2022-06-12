@@ -16,6 +16,7 @@
 #include <SDL_image.h>
 #include "ReceptorObject.h"
 #include "stbi.h"
+#include "ModManager.h"
 struct gameplayControl {
 	int lane;
 	SDL_Keycode code;

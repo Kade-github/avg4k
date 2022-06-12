@@ -63,6 +63,8 @@ class Gameplay :
 
 		static float rate;
 
+		bool botplayOnce = false;
+
 		float scaleTime;
 
 		virtual void create();

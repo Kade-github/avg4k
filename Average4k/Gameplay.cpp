@@ -1020,7 +1020,7 @@ void Gameplay::update(Events::updateEvent event)
 				Combo->setY((Game::gameHeight / 2) + 40);
 			}
 
-			if ((MainerMenu::selected.isSteam || MainerMenu::selectedSong.isSteam) && Game::save->GetBool("Submit Scores") && !hasSubmited)
+			if ((MainerMenu::selected.isSteam || MainerMenu::selectedSong.isSteam) && Game::save->GetBool("Submit Scores") && !hasSubmited && !botplayOnce)
 			{
 				hasSubmited = true;
 				CPacketSubmitScore submit;
@@ -1223,6 +1223,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			if (MultiplayerLobby::inLobby)
 				return;
 			botplay = !botplay;
+			botplayOnce = true;
 			return;
 		case SDLK_F2:
 			debug = !debug;

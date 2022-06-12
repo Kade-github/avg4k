@@ -9,6 +9,7 @@
 
 std::mutex weirdPog;
 
+bool hasSubmited = false;
 
 std::vector<float> noteTimings;
 
@@ -671,8 +672,6 @@ float lerp(float a, float b, float f)
 }
 
 float lastBPM = 0;
-
-bool hasSubmited = false;
 
 void Gameplay::update(Events::updateEvent event)
 {

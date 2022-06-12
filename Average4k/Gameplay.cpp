@@ -462,6 +462,7 @@ void Gameplay::create() {
 
 	clap = SoundManager::createChannel("assets/sounds/hitSound.wav", "clapFx");
 
+	hasSubmited = false;
 
 	song->createFXStream();
 

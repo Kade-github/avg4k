@@ -509,7 +509,7 @@ void Game::update(Events::updateEvent update)
 			Tweening::TweenManager::tweenRemove.clear();
 
 		}
-	if (currentMenu != NULL)
+	if (currentMenu != NULL && Game::noteskin != NULL)
 	{
 		if (currentMenu->created)
 			for (int i = 0; i < currentMenu->children.size(); i++)

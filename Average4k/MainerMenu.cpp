@@ -9,16 +9,18 @@
 #include "Gameplay.h"
 #include "AvgDropDown.h"
 #include "Average4k.h"
-AvgContainer* soloContainer;
-AvgContainer* multiContainer;
-AvgContainer* settingsContainer;
-AvgContainer* testWorkshop;
+AvgContainer* MainerMenu::soloContainer;
+AvgContainer* MainerMenu::multiContainer;
+AvgContainer* MainerMenu::settingsContainer;
+AvgContainer* MainerMenu::testWorkshop;
 
 std::mutex packMutex;
 
 bool uploading = false;
 
 Pack steamWorkshop;
+
+int scrollLeaderboard = 0;
 
 int packIndex = 0;
 int catIndex = 0;
@@ -48,7 +50,7 @@ std::vector<steamItem> item;
 
 int selectedContainerIndex = 0;
 
-bool lockInput = false;
+bool MainerMenu::lockInput = false;
 
 bool chartUploading = false;
 
@@ -77,7 +79,7 @@ void selectedSongCallback(int sId)
 
 	std::cout << "selected " << s.c.meta.songName << std::endl;
 
-	AvgContainer* cont = (AvgContainer*)soloContainer->findItemByName("songContainer");
+	AvgContainer* cont = (AvgContainer*)MainerMenu::soloContainer->findItemByName("songContainer");
 	if (!cont) // lol
 		return;
 
@@ -285,6 +287,7 @@ void MainerMenu::create()
 	testWorkshop = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/maincontainer_solo.png"));
 	testWorkshop->active = false;
 	testWorkshop->x = (Game::gameWidth / 2) - (testWorkshop->w / 2);
+	testWorkshop->create();
 	add(testWorkshop);
 
 	testWorkshop->addObject(new Text(12, 12, "Average4K Workshop", 34, "arialbd"), "title");
@@ -295,6 +298,7 @@ void MainerMenu::create()
 	soloContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/maincontainer_solo.png"));
 	soloContainer->alpha = 1;
 	soloContainer->x = (Game::gameWidth / 2) - (soloContainer->w / 2);
+	soloContainer->create();
 	add(soloContainer);
 
 	// solo creation
@@ -327,6 +331,7 @@ void MainerMenu::create()
 	multiContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Multi/maincontainer.png"));
 	multiContainer->x = (Game::gameWidth / 2) - (multiContainer->w / 2);
 	multiContainer->active = false;
+	multiContainer->create();
 	add(multiContainer);
 
 	// multi creation
@@ -335,6 +340,7 @@ void MainerMenu::create()
 	settingsContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Settings/maincontainer.png"));
 	settingsContainer->x = (Game::gameWidth / 2) - (settingsContainer->w / 2);
 	settingsContainer->active = false;
+	settingsContainer->create();
 	add(settingsContainer);
 
 	// settings creation
@@ -427,14 +433,15 @@ void MainerMenu::create()
 
 	currentContainer = soloContainer;
 
+	resetStuff();
+	
+	loadPacks();
+
 	Tweening::TweenManager::createNewTween("movingContainer3", testWorkshop, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("movingContainer2", settingsContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("movingContainer1", multiContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("movingContainer", soloContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 
-	resetStuff();
-	
-	loadPacks();
 	VM_END
 }
 
@@ -443,36 +450,6 @@ void MainerMenu::update(Events::updateEvent ev)
 
 	MUTATE_START
 
-
-	if (lockInput)
-	{
-		Rect big = { 0,0,1280,720,0,0,0,0.5 };
-
-
-		Rect src = { 0,0,1,1 };
-
-		Rendering::PushQuad(&big, &src, NULL, GL::genShader);
-
-
-		int ind = 0;
-		for (LeaderboardResult res : leaderboardResults)
-		{
-			Rect bg = { 0,200 * ind,1280,200,0,0,0,0.7 };
-
-			Rendering::PushQuad(&bg, &src, NULL, GL::genShader);
-
-			res.name->x = 14;
-			res.accuracy->x = 28 + res.name->w;
-
-			res.name->y = (200 * ind) + 96;
-			res.accuracy->y = res.name->y;
-
-			res.name->draw();
-			res.accuracy->draw();
-
-			ind++;
-		}
-	}
 
 	Channel* ch = SoundManager::getChannelByName("prevSong");
 
@@ -494,11 +471,14 @@ void MainerMenu::update(Events::updateEvent ev)
 		std::vector<Pack> gatheredPacks;
 		{
 			std::lock_guard cock(packMutex);
-			for (Pack p : (*asyncPacks))
+			if (asyncPacks)
 			{
-				gatheredPacks.push_back(p);
+				for (Pack p : (*asyncPacks))
+				{
+					gatheredPacks.push_back(p);
+				}
+				asyncPacks->clear();
 			}
-			asyncPacks->clear();
 		}
 
 		std::vector<Song> gatheredSongs;
@@ -664,7 +644,7 @@ void endTrans()
 void updateDiff()
 {
 	MUTATE_START
-	AvgContainer* cont = (AvgContainer*)soloContainer->findItemByName("songContainer");
+	AvgContainer* cont = (AvgContainer*)MainerMenu::soloContainer->findItemByName("songContainer");
 	if (!cont) // lol
 		return;
 
@@ -698,6 +678,8 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 		if (MainerMenu::selectedSong.isSteam)
 		{
 			lockInput = !lockInput;
+
+			scrollLeaderboard = 0;
 
 			for (LeaderboardResult r : leaderboardResults)
 			{
@@ -1021,6 +1003,17 @@ void MainerMenu::loadPacks()
 	}
 }
 
+void MainerMenu::mouseWheel(float wheel)
+{
+	if (lockInput)
+	{
+		if (wheel < 0)
+			scrollLeaderboard += 10;
+		else if (wheel > 0)
+			scrollLeaderboard -= 10;
+	}
+}
+
 void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 {
 	SPacketLeaderboardResponse res;
@@ -1037,17 +1030,17 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 
 		obj.convert(res);
 
-		for (LeaderboardEntry entry : res.leaderboard.entires)
+		for (LeaderboardEntry entry : res.leaderboard.entries)
 		{
 			LeaderboardResult resu;
 			resu.entry = entry;
-			resu.accuracy = new Text(0, 0, std::to_string(entry.accuracy) + "%", 16, "arial");
+			resu.accuracy = new Text(0, 0, std::to_string(entry.accuracy * 100) + "%", 16, "arial");
 			resu.name = new Text(0, 0, entry.username, 16, "arialbd");
 
 			leaderboardResults.push_back(resu);
 		}
 
-		if (res.leaderboard.entires.size() == 0)
+		if (res.leaderboard.entries.size() == 0)
 		{
 			LeaderboardResult resu;
 			resu.entry = LeaderboardEntry();
@@ -1056,6 +1049,59 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 			leaderboardResults.push_back(resu);
 		}
 		break;
+	}
+}
+
+void MainerMenu::postUpdate(Events::updateEvent ev)
+{
+
+	if (lockInput)
+	{
+		if (scrollLeaderboard < 0)
+			scrollLeaderboard = 0;
+
+		if (scrollLeaderboard > leaderboardResults.size() * 80)
+			scrollLeaderboard = leaderboardResults.size() * 80;
+		Rect big;
+		big.x = 0;
+		big.y = 0;
+		big.w = 1280;
+		big.h = 720;
+		big.r = 0;
+		big.g = 0;
+		big.b = 0;
+		big.a = 0.5;
+
+
+		Rect src;
+		src.x = 0;
+		src.y = 0;
+		src.w = 1;
+		src.h = 1;
+
+		Rendering::PushQuad(&big, &src, NULL, GL::genShader);
+
+		Rendering::drawBatch();
+
+		int ind = 0;
+		for (LeaderboardResult res : leaderboardResults)
+		{
+			Rect bg = { 0,(80 * ind) - scrollLeaderboard,1280,80,0,0,0,0.5 };
+
+			Rendering::PushQuad(&bg, &src, NULL, GL::genShader);
+			Rendering::drawBatch();
+			res.name->x = 14;
+			res.accuracy->x = 28 + res.name->w;
+
+			res.name->y = (80 * ind) + 36 - scrollLeaderboard;
+			res.accuracy->y = res.name->y;
+
+			res.name->draw();
+			res.accuracy->draw();
+			Rendering::drawBatch();
+
+			ind++;
+		}
 	}
 }
 
@@ -1104,16 +1150,16 @@ void transContainerThing()
 	switch (despawn)
 	{
 	case 0:
-		soloContainer->active = false;
+		MainerMenu::soloContainer->active = false;
 		break;
 	case 1:
-		multiContainer->active = false;
+		MainerMenu::multiContainer->active = false;
 		break;
 	case 2:
-		settingsContainer->active = false;
+		MainerMenu::settingsContainer->active = false;
 		break;
 	case 3:
-		testWorkshop->active = false;
+		MainerMenu::testWorkshop->active = false;
 		break;
 	}
 }

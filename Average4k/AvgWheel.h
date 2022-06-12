@@ -120,7 +120,7 @@ public:
 
 	void mouseWheel(float amount)
 	{
-		if (wheelObjects.size() == 0)
+		if (wheelObjects.size() == 0 || MainerMenu::lockInput)
 			return;
 
 		int mx, my;

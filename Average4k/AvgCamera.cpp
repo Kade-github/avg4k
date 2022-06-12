@@ -73,7 +73,10 @@ void AvgCamera::draw()
 				else
 					Rendering::SetClipRect(NULL);
 
-				Rendering::PushQuad(&gdstRect, &gsrcRect, gr->ctb, GL::genShader);
+				if (gr->customShader)
+					Rendering::PushQuad(&gdstRect, &gsrcRect, gr->ctb, gr->customShader);
+				else
+					Rendering::PushQuad(&gdstRect, &gsrcRect, gr->ctb, GL::genShader);
 
 				if (gr->clipRect.w > 0 || gr->clipRect.h > 0)
 					Rendering::SetClipRect(NULL);

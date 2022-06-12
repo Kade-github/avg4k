@@ -8,6 +8,9 @@ Shader* Rendering::batch_shader = NULL;
 Texture* Rendering::batch_texture = NULL;
 Texture* Rendering::white = NULL;
 
+float Rendering::iBpm = 0;
+float Rendering::iBeat = 0;
+
 // alot is stolen from cucky
 // thanks cucky!
 
@@ -44,6 +47,9 @@ void Rendering::drawBatch()
 		glBindBuffer(GL_ARRAY_BUFFER, batch_vbo);
 
 		batch_shader->GL_Use();
+		batch_shader->SetUniform("iTime", (float)((float)SDL_GetTicks() / 1000.0f));
+		batch_shader->SetUniform("iBpm", (float)(iBpm));
+		batch_shader->SetUniform("iBeat", (float)(iBpm));
 		batch_texture->Bind();
 
 		//Set attribute pointers
@@ -132,9 +138,10 @@ void Rendering::PushQuad(Rect* dstRect, Rect* srcRect, Texture* tex, Shader* sha
 	if (batch_texture != tex || batch_shader != shad)
 	{
 		drawBatch();
-
-		batch_texture = tex;
-		batch_shader = shad;
+		if (batch_texture != tex)
+			batch_texture = tex;
+		if (batch_shader != shad)
+			batch_shader = shad;
 	}
 
 	GL_Vertex tl;

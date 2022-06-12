@@ -121,6 +121,9 @@
     <Filter Include="Source Files\Average4k\Structs\Chart\ChartParsers\Osu">
       <UniqueIdentifier>{67f1f103-ecb9-478a-8b31-fdce7c7864b6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Average4k\Lua\Mods">
+      <UniqueIdentifier>{0c7eb543-ca6d-4922-bee1-578b74bbb219}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Average4k.cpp">
@@ -493,9 +496,6 @@
     </ClInclude>
     <ClInclude Include="luaaa.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AvgLua.h">
-      <Filter>Source Files\Average4k\Lua</Filter>
     </ClInclude>
     <ClInclude Include="MenuCreator.h">
       <Filter>Source Files\Average4k\Screens\Menus\CreatingShit</Filter>

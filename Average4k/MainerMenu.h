@@ -140,6 +140,12 @@ public:
 	static bool isInLobby;
 	float lastBeat = 0;
 	bool started;
+
+	static AvgContainer* soloContainer;
+	static AvgContainer* multiContainer;
+	static AvgContainer* settingsContainer;
+	static AvgContainer* testWorkshop;
+
 	AvgSprite* icon;
 	AvgSprite* bg;
 	Text* hello;
@@ -151,6 +157,7 @@ public:
 	Text* multiText;
 	AvgRect* selectMulti;
 	Text* settingsText;
+	static bool lockInput;
 	AvgRect* selectSettings;
 
 	std::vector<LeaderboardResult> leaderboardResults;
@@ -161,11 +168,17 @@ public:
 
 	void dropFile(SDL_DropEvent ev);
 
+	void mouseWheel(float wheel) override;
+
+	
+
 	void selectPack(int index);
 	void addPack(std::string name, std::string bg, bool showText, bool isSteam);
 	void clearPacks();
 
 	void onPacket(PacketType pt, char* data, int32_t length);
+
+	void postUpdate(Events::updateEvent ev) override;
 
 	void addSettings(std::string catNam, std::vector<setting> settings);
 

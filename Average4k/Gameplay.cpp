@@ -104,7 +104,7 @@ void Gameplay::removeNote(NoteObject* object)
 			}),
 		spawnedNotes.end());
 	object->connected->killed = true;
-	removeObj(object);
+	gameplay->removeObj(object);
 
 }
 
@@ -357,16 +357,20 @@ Gameplay::Gameplay()
 {
 }
 
+Shader* shad = nullptr;
+
 void Gameplay::create() {
 
 	MUTATE_START
-	lastTime = 0;
+		lastTime = 0;
 
 	noteTimings.clear();
-	
+
 	initControls();
 
 	avatars.clear();
+
+	gameplay = new AvgGroup(0, 0, 1280, 720);
 
 	if (SoundManager::getChannelByName("prevSong") != NULL)
 	{
@@ -591,6 +595,7 @@ void Gameplay::create() {
 	else
 		Game::DiscordUpdatePresence((MainerMenu::currentSelectedSong.meta.artist.size() == 0 ? "No Artist" : MainerMenu::currentSelectedSong.meta.artist) + " - " + MainerMenu::currentSelectedSong.meta.songName, "Playing Solo Play", "Average4K", -1, -1, "");
 
+	add(gameplay);
 
 	Accuracy = new Text(Game::gameWidth - 200, 2, "", 36, "Futura Bold");
 	add(Accuracy);
@@ -628,7 +633,7 @@ void Gameplay::create() {
 		r->lightUpTimer = 0;
 		r->create();
 		receptors.push_back(r);
-		add(r);
+		gameplay->add(r);
 	}
 
 	add(Judgement);
@@ -745,12 +750,15 @@ void Gameplay::update(Events::updateEvent event)
 	curSeg = MainerMenu::currentSelectedSong.getSegmentFromTime(positionInSong);
 	beat = MainerMenu::currentSelectedSong.getBeatFromTime(positionInSong, curSeg);
 
+
 	if (lastBPM != curSeg.bpm)
 	{
 		song->bpm = curSeg.bpm;
 		lastBPM = curSeg.bpm;
 	}
 
+	Rendering::iBeat = beat;
+	Rendering::iBpm = lastBPM;
 
 	if (Game::save->GetBool("Annoying bopping"))
 	{
@@ -981,7 +989,7 @@ void Gameplay::update(Events::updateEvent event)
 				spawnedNotes.push_back(object);
 				object->create();
 				notesToPlay.erase(notesToPlay.begin());
-				add(object);
+				gameplay->add(object);
 			}
 			else if (n.type == Note_Tail || n.type == Note_Mine)
 			{
@@ -1019,7 +1027,7 @@ void Gameplay::update(Events::updateEvent event)
 
 				submit.ChartId = (MainerMenu::selected.isSteam ? MainerMenu::selected.steamId : MainerMenu::selectedSong.steamId);
 				submit.chartIndex = (MainerMenu::selected.isSteam ? MainerMenu::packSongIndex : -1);
-				submit.timings = noteTimings;
+				submit.noteTiming = noteTimings;
 				submit.Order = 0;
 				submit.PacketType = eCPacketSubmitScore;
 

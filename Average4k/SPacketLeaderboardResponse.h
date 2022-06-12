@@ -2,7 +2,8 @@
 #include "Packet.h"
 #include "includes.h"
 
-struct LeaderboardEntry {
+class LeaderboardEntry {
+public:
 	float accuracy;
 
 	std::string username;
@@ -12,14 +13,15 @@ struct LeaderboardEntry {
 	MSGPACK_DEFINE_MAP(accuracy, username, steamid);
 };
 
-struct Leaderboard {
+class Leaderboard {
+public:
 	long chartIndex;
 
 	unsigned long ChartId;
 
-	std::vector<LeaderboardEntry> entires;
+	std::vector<LeaderboardEntry> entries;
 
-	MSGPACK_DEFINE_MAP(chartIndex, ChartId, entires);
+	MSGPACK_DEFINE_MAP(chartIndex, ChartId, entries);
 };
 
 class SPacketLeaderboardResponse : public Packet

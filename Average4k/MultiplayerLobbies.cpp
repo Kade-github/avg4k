@@ -40,9 +40,11 @@ void MultiplayerLobbies::create()
 		Game::steam->populateSubscribedItems();
 
 	AvgSprite* sprite = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "darkmodebg.png"));
+	sprite->create();
 	add(sprite);
 	AvgRect* rect = new AvgRect(0, 0, 1280, 720);
 	rect->alpha = 0.3;
+	rect->create();
 	add(rect);
 	helpText = new Text(0, 46, "F1 to host a lobby, enter to join (F5 To refresh)", 24, "NotoSans-Regular");
 	helpText->create();

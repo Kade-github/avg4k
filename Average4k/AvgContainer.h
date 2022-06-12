@@ -72,6 +72,7 @@ public:
 		id.below = beloww;
 		id.obj = obj;
 		obj->parent = this;
+		obj->create();
 		items.push_back(id);
 		return obj;
 	}

@@ -17,6 +17,8 @@ std::map<std::string, AvgSprite*> avatars;
 
 float Gameplay::rate = 1;
 
+Gameplay* Gameplay::instance = nullptr;
+
 float lastTime = 0;
 
 void CALLBACK bruh(HSYNC handle, DWORD channel, DWORD data, void* user)
@@ -365,6 +367,11 @@ void Gameplay::create() {
 	MUTATE_START
 		lastTime = 0;
 
+	instance = this;
+
+	ModManager::time = 0;
+	ModManager::beat = 0;
+
 	noteTimings.clear();
 
 	initControls();
@@ -663,7 +670,41 @@ void Gameplay::create() {
 	else
 		positionInSong = -(Game::save->GetDouble("Start Delay") * 1000);
 	updateAccuracy(0);
+
+	if (MainerMenu::currentSelectedSong.isModFile && !MultiplayerLobby::inLobby)
+	{
+		runModStuff = true;
+		ModManager::initLuaFunctions();
+		manager = ModManager(MainerMenu::currentSelectedSong.pathToLua);
+	}
+
+	callModEvent("create", 0);
+
 	MUTATE_END
+}
+
+void Gameplay::callModEvent(std::string name, std::string args)
+{
+	if (MainerMenu::currentSelectedSong.isModFile && !MultiplayerLobby::inLobby)
+	{
+		manager.callEvent(name, args);
+	}
+}
+
+void Gameplay::callModEvent(std::string name, int args)
+{
+	if (MainerMenu::currentSelectedSong.isModFile && !MultiplayerLobby::inLobby)
+	{
+		manager.callEvent(name, args);
+	}
+}
+
+void Gameplay::callModEvent(std::string name, float args)
+{
+	if (MainerMenu::currentSelectedSong.isModFile && !MultiplayerLobby::inLobby)
+	{
+		manager.callEvent(name, args);
+	}
 }
 
 float lerp(float a, float b, float f)
@@ -759,6 +800,35 @@ void Gameplay::update(Events::updateEvent event)
 
 	Rendering::iBeat = beat;
 	Rendering::iBpm = lastBPM;
+
+	ModManager::time = positionInSong;
+	ModManager::beat = beat;
+
+	if (runModStuff)
+	{
+		for (int i = 0; i < receptors.size(); i++)
+		{
+			manager.funkyPositions[i] = vec2(receptors[i]->x, receptors[i]->y);
+		}
+
+		for (NoteObject* obj : spawnedNotes)
+		{
+			manager.funkyPositions[obj->modId] = vec2(obj->x, obj->y);
+			manager.funkyCMod[obj->modId] = obj->calcCMod();
+			for (holdTile& tile : obj->heldTilings)
+			{
+				manager.funkyPositions[obj->modId + (tile.index + 1)] = vec2(tile.rect.x, tile.rect.y);
+				float time = obj->currentChart->getTimeFromBeat(tile.beat, obj->currentChart->getSegmentFromBeat(tile.beat));
+				float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
+				float diff2 = time - obj->rTime;
+
+				float offsetFromY = (bps * (diff2 / 1000)) * (64 * Game::save->GetDouble("Note Size"));
+				manager.funkyCMod[obj->modId + (tile.index + 1)] = offsetFromY;
+			}
+		}
+
+		manager.runMods();
+	}
 
 	if (Game::save->GetBool("Annoying bopping"))
 	{
@@ -989,6 +1059,7 @@ void Gameplay::update(Events::updateEvent event)
 				spawnedNotes.push_back(object);
 				object->create();
 				notesToPlay.erase(notesToPlay.begin());
+				currentModId += object->heldTilings.size();
 				gameplay->add(object);
 			}
 			else if (n.type == Note_Tail || n.type == Note_Mine)
@@ -1172,6 +1243,8 @@ void Gameplay::update(Events::updateEvent event)
 			}
 		}
 	}
+	callModEvent("update", Game::deltaTime);
+
 	MUTATE_END
 }
 void Gameplay::cleanUp()
@@ -1191,7 +1264,11 @@ void Gameplay::cleanUp()
 
 	SoundManager::removeChannel("clapFx");
 
-	
+	if (MainerMenu::currentSelectedSong.isModFile && !MultiplayerLobby::inLobby)
+	{
+		manager.destroy();
+	}
+
 	//if (background)
 	//	SDL_DestroyTexture(background);
 

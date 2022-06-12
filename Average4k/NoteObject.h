@@ -21,17 +21,20 @@ struct holdTile {
 class NoteObject : public Object
 {
 	public:
-		NoteObject();
+		NoteObject()  {
+			setX(0);
+			setY(0);
+			w = 64;
+			h = 64;
+			Object::currentId++;
+			id = Object::currentId;
+		};
 		~NoteObject() {};
 		note* connected;
 		Text* debugText;
 
-		int modId = 0;
-
 		bool fboMode = true;
 		bool drawCall = true;
-
-		float calcCMod();
 
 		Shader* customShader;
 

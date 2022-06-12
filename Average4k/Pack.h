@@ -55,7 +55,7 @@ public:
 class SongGather {
 public:
 	static void gatherPacksAsync(std::vector<Pack>* packs);
-	static Pack gatherPack(std::string filePath, bool checkForMod = true);
+	static Pack gatherPack(std::string filePath);
 
 	static bool packAsyncAlready;
 	static bool steamRegAsyncAlready;

@@ -11,6 +11,8 @@
 bool SongGather::packAsyncAlready;
 bool SongGather::steamRegAsyncAlready;
 
+std::mutex lock;
+
 void SongGather::gatherPacksAsync(std::vector<Pack>* packs)
 {
 	if (!steamRegAsyncAlready)
@@ -57,8 +59,10 @@ void SongGather::gatherPacksAsync(std::vector<Pack>* packs)
 
 					for (Song s : songs)
 						p.songs.push_back(s);
-
-					packs->push_back(p);
+					{
+						std::lock_guard cock(lock);
+						packs->push_back(p);
+					}
 				}
 				steamRegAsyncAlready = false;
 			}
@@ -67,7 +71,7 @@ void SongGather::gatherPacksAsync(std::vector<Pack>* packs)
 	}
 }
 
-Pack SongGather::gatherPack(std::string filePath, bool checkForMod)
+Pack SongGather::gatherPack(std::string filePath)
 {
 	Pack p;
 
@@ -102,14 +106,7 @@ Pack SongGather::gatherPack(std::string filePath, bool checkForMod)
 		return p;
 
 	for (Song s : songs)
-	{
-		if (!checkForMod)
-		{
-			s.c.isModFile = false;
-			s.c.pathToLua = "";
-		}
 		p.songs.push_back(s);
-	}
 
 	return p;
 }
@@ -290,8 +287,10 @@ void SongGather::gatherSteamPacksAsync(std::vector<Pack>* packs)
 					s.isSteam = true;
 					p.songs.push_back(s);
 				}
-				if (packs)
+				{
+					std::lock_guard cock(lock);
 					packs->push_back(p);
+				}
 			}
 			packAsyncAlready = false;
 		});

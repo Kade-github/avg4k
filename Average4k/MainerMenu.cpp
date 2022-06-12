@@ -4,7 +4,6 @@
 #include "Pack.h"
 #include "AvgCheckBox.h"
 #include "MultiplayerLobby.h"
-#include "AvgWheel.h"
 #include "MainMenu.h"
 #include "Gameplay.h"
 #include "AvgDropDown.h"
@@ -36,12 +35,12 @@ bool MainerMenu::isInLobby = false;
 int MainerMenu::packSongIndex = 0;
 bool lobbyUp = false;
 
-std::vector<Pack> packs;
+std::vector<Pack> MainerMenu::packs;
 
-std::vector<Pack>* asyncPacks;
-std::vector<Song>* asyncSongs;
+std::vector<Pack>* MainerMenu::asyncPacks;
+std::vector<Song>* MainerMenu::asyncSongs;
 
-AvgWheel* wheel;
+AvgWheel* MainerMenu::wheel;
 
 Chart MainerMenu::currentSelectedSong;
 int MainerMenu::selectedDiffIndex = 0;
@@ -69,6 +68,13 @@ void resetStuff()
 	((MainerMenu*)Game::instance)->clearPacks();
 	lastHeight = 0;
 	catIndex = 0;
+}
+
+void endTrans()
+{
+	resetStuff();
+	Tweening::TweenManager::activeTweens.clear();
+	Game::instance->switchMenu(new MainMenu());
 }
 
 void selectedSongCallback(int sId)
@@ -259,6 +265,11 @@ void MainerMenu::create()
 	bg->h = 726;
 	add(bg);
 
+	bool whiteScreen = false;
+
+	if (stbi_h::get_error())
+		whiteScreen = true;
+
 	icon = new AvgSprite(16, 12, Noteskin::getMenuElement(Game::noteskin, "genericAvatar.png"));
 	icon->create();
 	add(icon);
@@ -434,13 +445,18 @@ void MainerMenu::create()
 	currentContainer = soloContainer;
 
 	resetStuff();
-	
+
 	loadPacks();
 
 	Tweening::TweenManager::createNewTween("movingContainer3", testWorkshop, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("movingContainer2", settingsContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("movingContainer1", multiContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("movingContainer", soloContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
+	
+	if (whiteScreen)
+	{
+		Game::asyncShowErrorWindow("White screen bug!", "idk how to fix this, just back out and back in.", true);
+	}
 
 	VM_END
 }
@@ -634,12 +650,6 @@ void MainerMenu::update(Events::updateEvent ev)
 	MUTATE_END
 }
 
-void endTrans()
-{
-	resetStuff();
-	Tweening::TweenManager::activeTweens.clear();
-	Game::instance->switchMenu(new MainMenu());
-}
 
 void updateDiff()
 {
@@ -703,7 +713,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 		}
 		break;
 	}
-	if (lockInput)
+	if (lockInput || lobbyUp)
 		return;
 	if (selectedContainerIndex == 0)
 	{
@@ -1217,7 +1227,7 @@ void MainerMenu::selectContainer(int container)
 void MainerMenu::leftMouseDown()
 {
 	MUTATE_START
-	if (lockInput)
+	if (lockInput || lobbyUp)
 		return;
 	int x, y;
 	Game::GetMousePos(&x, &y);
@@ -1246,7 +1256,7 @@ void MainerMenu::leftMouseDown()
 			int yy = obj->y - packContainer->scrollAddition;
 			if ((relX > obj->x && relY > yy) && (relX < obj->x + obj->w && relY < yy + obj->h))
 			{
-				if (isInLobby && !packs[i].isSteam)
+				if (isInLobby && (!packs[i].isSteam && packs[i].packName != "Workshop/Local"))
 					return;
 				wheel->setSongs(packs[i].songs);
 				selectPack(i);

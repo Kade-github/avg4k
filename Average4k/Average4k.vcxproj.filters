@@ -321,8 +321,8 @@
     <ClCompile Include="OsuFile.cpp">
       <Filter>Source Files\Average4k\Structs\Chart\ChartParsers\Osu</Filter>
     </ClCompile>
-    <ClCompile Include="ModManager.cpp">
-      <Filter>Source Files\Average4k\Lua\Mods</Filter>
+    <ClCompile Include="AvgWheel.cpp">
+      <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -700,9 +700,6 @@
     </ClInclude>
     <ClInclude Include="CPacketLeaderboardRequest.h">
       <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
-    </ClInclude>
-    <ClInclude Include="ModManager.h">
-      <Filter>Source Files\Average4k\Lua\Mods</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

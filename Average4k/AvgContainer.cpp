@@ -1,5 +1,39 @@
 #include "AvgContainer.h"
 #include "AvgDropDown.h"
+#include "MainerMenu.h"
+
+void AvgContainer::mouseWheel(float amount)
+	{
+		if (!active || MainerMenu::lockInput)
+			return;
+		int mx, my;
+		Game::GetMousePos(&mx, &my);
+
+		my -= y;
+		mx -= x;
+
+		int pH = h;
+
+		if (parent != NULL)
+			pH = parent->h;
+
+		bool one = (mx < w);
+		bool two = (my < pH * 1.3);
+		if (one && two && maxScroll > 0)
+		{
+			float max = (h - 15) - scrollAddition;
+			scrollAddition += -(amount * 40);
+			if (scrollAddition > maxScroll)
+				scrollAddition = maxScroll;
+			if (scrollAddition < 0)
+				scrollAddition = 0;
+		}
+
+		for (Object* obj : above)
+		{
+			obj->mouseWheel(amount);
+		}
+	}
 
 void AvgContainer::draw() {
 	if (!active)

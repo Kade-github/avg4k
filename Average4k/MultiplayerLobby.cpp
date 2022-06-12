@@ -8,7 +8,6 @@ lobby MultiplayerLobby::CurrentLobby;
 bool MultiplayerLobby::isHost = false;
 std::string MultiplayerLobby::hostSteamId;
 
-AvgGroup* playerList;
 
 bool isAwaitingPack = false;
 
@@ -39,11 +38,13 @@ void MultiplayerLobby::refreshLobby(lobby l)
 		per.display = new Text(82, 192 + (46 * i), p.Name, 24, "NotoSans-Regular");
 		per.display->create();
 		Texture* t = Steam::getAvatar(p.AvatarURL.c_str());
+		t->dontDelete = true;
 		AvgSprite* spr = new AvgSprite(0, 0, t);
 		if (t)
 			per.avatar = spr;
 		else
 			per.avatar = NULL;
+
 		spr->w = 46;
 		spr->h = 46;
 
@@ -136,8 +137,6 @@ void MultiplayerLobby::mouseWheel(float wheel)
 
 void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 {
-	if (!this)
-		return;
 	//MUTATE_START
 	STR_ENCRYPT_START
 	SPacketUpdateLobbyData update;

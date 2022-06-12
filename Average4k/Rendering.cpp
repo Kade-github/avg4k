@@ -25,6 +25,7 @@ void Rendering::Render_GLInit(Shader* shad) {
 	unsigned char c[] = { 255, 255, 255, 255 };
 
 	white = new Texture(c, 1, 1);
+	white->dontDelete = true;
 
 	glGenVertexArrays(1, &batch_vao);
 	glBindVertexArray(batch_vao);

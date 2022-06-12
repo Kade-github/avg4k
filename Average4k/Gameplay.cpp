@@ -814,6 +814,17 @@ void Gameplay::update(Events::updateEvent event)
 		for (NoteObject* obj : spawnedNotes)
 		{
 			manager.funkyPositions[obj->modId] = vec2(obj->x, obj->y);
+			manager.funkyCMod[obj->modId] = obj->calcCMod();
+			for (holdTile& tile : obj->heldTilings)
+			{
+				manager.funkyPositions[obj->modId + (tile.index + 1)] = vec2(tile.rect.x, tile.rect.y);
+				float time = obj->currentChart->getTimeFromBeat(tile.beat, obj->currentChart->getSegmentFromBeat(tile.beat));
+				float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
+				float diff2 = time - obj->rTime;
+
+				float offsetFromY = (bps * (diff2 / 1000)) * (64 * Game::save->GetDouble("Note Size"));
+				manager.funkyCMod[obj->modId + (tile.index + 1)] = offsetFromY;
+			}
 		}
 
 		manager.runMods();
@@ -1048,6 +1059,7 @@ void Gameplay::update(Events::updateEvent event)
 				spawnedNotes.push_back(object);
 				object->create();
 				notesToPlay.erase(notesToPlay.begin());
+				currentModId += object->heldTilings.size();
 				gameplay->add(object);
 			}
 			else if (n.type == Note_Tail || n.type == Note_Mine)

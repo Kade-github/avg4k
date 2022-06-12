@@ -2,6 +2,7 @@
 #include "includes.h"
 #include <sol.hpp>
 #include "Menu.h"
+#include "Easing.h"
 struct Mod {
 	std::string luaFunction;
 	std::string name;
@@ -9,9 +10,9 @@ struct Mod {
 
 struct AppliedMod {
 	Mod mod;
-	float beat;
-	float length;
-	bool custom = false;
+	float tweenStart;
+	float tweenLen;
+	Easing::easingFunction tweenCurve;
 };
 
 class ModManager
@@ -22,7 +23,12 @@ public:
 
 	std::map<std::string, sol::function>* luaMap;
 
-	std::map<int, vec2> funkyPositions;
+	std::map<int, float> storedCMod;
+	std::map<int, vec2> storedPositions; // storedMods
+	std::map<int, float> funkyCMod;
+	std::map<int, vec2> funkyPositions; // activeMods
+	std::map<std::string, std::map<int, float>> modCMod;
+	std::map<std::string, std::map<int, vec2>> modPositions; // targetMods
 
 	std::vector<Mod> mods;
 
@@ -31,6 +37,7 @@ public:
 
 	static float beat;
 	static float time;
+	static float bpm;
 
 	ModManager()
 	{
@@ -40,6 +47,8 @@ public:
 	ModManager(std::string modFile);
 
 	static void initLuaFunctions();
+
+	void storePositions();
 
 	void runMods();
 

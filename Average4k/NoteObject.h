@@ -31,6 +31,8 @@ class NoteObject : public Object
 		bool fboMode = true;
 		bool drawCall = true;
 
+		float calcCMod();
+
 		Shader* customShader;
 
 		Chart* currentChart;

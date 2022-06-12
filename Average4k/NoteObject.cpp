@@ -25,6 +25,21 @@ NoteObject::NoteObject()
     }
 }
 
+float NoteObject::calcCMod()
+{
+    bpmSegment bruh = currentChart->getSegmentFromBeat(beat);
+
+    float wh = currentChart->getTimeFromBeat(beat, bruh);
+
+    float diff = (wh)-(rTime);
+
+    float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
+
+    float noteOffset = (bps * (diff / 1000)) * (64 * size);
+
+    return noteOffset;
+}
+
 void NoteObject::draw() {
     if (!drawCall)
         return;
@@ -41,17 +56,17 @@ void NoteObject::draw() {
     receptor.w = obj->w;
     receptor.h = obj->h;
 
-    bpmSegment bruh = currentChart->getSegmentFromBeat(beat);
-
-    float wh = currentChart->getTimeFromBeat(beat, bruh);
-
-    float diff = (wh)-(position);
-
     float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
 
-    float noteOffset = (bps * (diff / 1000)) * (64 * size);
+    float noteOffset = calcCMod();
 
     bool downscroll = Game::save->GetBool("downscroll");
+
+    if (Gameplay::instance->runModStuff)
+    {
+        receptor.x = Gameplay::instance->manager.funkyPositions[type].x;
+        receptor.y = Gameplay::instance->manager.funkyPositions[type].y;
+    }
 
     if (downscroll)
         rect.y = (receptor.y - noteOffset);
@@ -100,9 +115,6 @@ void NoteObject::draw() {
     if (Gameplay::instance->runModStuff)
     {
         dstRect.x = Gameplay::instance->manager.funkyPositions[modId].x;
-        dstRect.y = Gameplay::instance->manager.funkyPositions[modId].y;
-        receptor.x = Gameplay::instance->manager.funkyPositions[type].x;
-        receptor.y = Gameplay::instance->manager.funkyPositions[type].y;
     }
 
     //Rendering::SetClipRect(&clipThingy);
@@ -173,6 +185,18 @@ void NoteObject::draw() {
 
             dstRect.y = tile.rect.y;
 
+            if (Gameplay::instance->runModStuff)
+            {
+                dstRect.x = Gameplay::instance->manager.funkyPositions[modId + (tile.index + 1)].x;
+                if (Gameplay::instance->manager.funkyCMod[modId + (tile.index + 1)] != offsetFromY)
+                {
+                    if (downscroll)
+                        dstRect.y = (Gameplay::instance->manager.funkyPositions[modId + (tile.index + 1)].y + offsetFromY) - Gameplay::instance->manager.funkyCMod[modId + (tile.index + 1)];
+                    else
+                        dstRect.y = (Gameplay::instance->manager.funkyPositions[modId + (tile.index + 1)].y - offsetFromY) + Gameplay::instance->manager.funkyCMod[modId + (tile.index + 1)];
+                }
+            }
+
             if (i != heldTilings.size() - 1) {
                 if (!downscroll)
                 {
@@ -201,7 +225,24 @@ void NoteObject::draw() {
         }
     dstRect.h = rect.h;
 
+    dstRect.x = x;
     dstRect.y = y;
+
+    if (Gameplay::instance->runModStuff)
+    {
+        dstRect.x = Gameplay::instance->manager.funkyPositions[modId].x;
+        float newCMod = 0;
+        if (Gameplay::instance->manager.funkyCMod[modId] != calcCMod())
+        {
+            newCMod = Gameplay::instance->manager.funkyCMod[modId];
+        }
+        if (downscroll)
+            dstRect.y = (Gameplay::instance->manager.funkyPositions[modId].y + (newCMod != 0 ? calcCMod() : 0)) - newCMod;
+        else
+            dstRect.y = (Gameplay::instance->manager.funkyPositions[modId].y - (newCMod != 0 ? calcCMod() : 0)) + newCMod;
+        
+    }
+
 
     //Rendering::SetClipRect(NULL);
 

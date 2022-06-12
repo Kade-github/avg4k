@@ -59,8 +59,8 @@ void ReceptorObject::draw() {
 
 	if (Gameplay::instance->runModStuff)
 	{
-		dstRect.x = Gameplay::instance->manager.funkyPositions[type].x;
-		dstRect.y = Gameplay::instance->manager.funkyPositions[type].y;
+		dstRect.x = Gameplay::instance->manager.funkyPositions[type].x + mpx;
+		dstRect.y = Gameplay::instance->manager.funkyPositions[type].y + mpy;
 	}
 
 

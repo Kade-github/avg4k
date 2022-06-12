@@ -232,6 +232,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="MenuCreator.cpp" />
     <ClCompile Include="MiniBpm.cpp" />
+    <ClCompile Include="ModManager.cpp" />
     <ClCompile Include="Multiplayer.cpp" />
     <ClCompile Include="MultiplayerLobbies.cpp" />
     <ClCompile Include="MultiplayerLobby.cpp" />
@@ -337,6 +338,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MenuCreator.h" />
     <ClInclude Include="MiniBpm.h" />
+    <ClInclude Include="ModManager.h" />
     <ClInclude Include="Multiplayer.h" />
     <ClInclude Include="MultiplayerLobbies.h" />
     <ClInclude Include="MultiplayerLobby.h" />

@@ -1,6 +1,26 @@
 #include "ReceptorObject.h"
 #include "Gameplay.h"
 
+
+ReceptorObject::ReceptorObject(int _x, int _y, int _type)
+{
+	MUTATE_START
+		x = _x;
+	y = _y;
+	// this does the same thing but im lazy and too lazy to check
+	setX(_x);
+	setY(_y);
+	w = (64 * Game::save->GetDouble("Note Size"));
+	h = (64 * Game::save->GetDouble("Note Size"));
+
+	if (Gameplay::instance->runModStuff)
+		Gameplay::instance->manager.funkyPositions[type] = vec2(x, y);
+
+	type = _type;
+	scale = 1;
+	MUTATE_END
+}
+
 void ReceptorObject::draw() {
 
 
@@ -20,6 +40,7 @@ void ReceptorObject::draw() {
 	Rect dstRect;
 	Rect srcRect;
 
+
 	dstRect.x = rect.x;
 	dstRect.y = rect.y;
 	dstRect.w = rect.w;
@@ -35,6 +56,12 @@ void ReceptorObject::draw() {
 	srcRect.y = 0;
 	srcRect.w = 1;
 	srcRect.h = 1;
+
+	if (Gameplay::instance->runModStuff)
+	{
+		dstRect.x = Gameplay::instance->manager.funkyPositions[type].x + mpx;
+		dstRect.y = Gameplay::instance->manager.funkyPositions[type].y + mpy;
+	}
 
 
 	Shader* sh = customShader;

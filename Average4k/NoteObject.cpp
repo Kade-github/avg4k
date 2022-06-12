@@ -92,7 +92,7 @@ void NoteObject::draw() {
     for (int i = 0; i < heldTilings.size(); i++) {
         holdTile& tile = heldTilings[i];
 
-        if (heldTilings[i].active)
+        if (tile.active || (downscroll ? tile.rect.y > obj->y + obj->h : tile.rect.y < obj->y + obj->h / 2))
             activeH++;
     }
     if (activeH != holdsActive)

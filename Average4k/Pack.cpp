@@ -71,7 +71,7 @@ void SongGather::gatherPacksAsync(std::vector<Pack>* packs)
 	}
 }
 
-Pack SongGather::gatherPack(std::string filePath, bool checkForMod)
+Pack SongGather::gatherPack(std::string filePath)
 {
 	Pack p;
 
@@ -106,14 +106,7 @@ Pack SongGather::gatherPack(std::string filePath, bool checkForMod)
 		return p;
 
 	for (Song s : songs)
-	{
-		if (!checkForMod)
-		{
-			s.c.isModFile = false;
-			s.c.pathToLua = "";
-		}
 		p.songs.push_back(s);
-	}
 
 	return p;
 }

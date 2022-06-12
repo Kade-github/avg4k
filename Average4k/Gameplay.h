@@ -11,7 +11,6 @@
 #include "Judge.h"
 #include <algorithm>
 #include "bass_fx.h"
-#include "ModManager.h"
 #include "SoundManager.h"
 #include <SDL_image.h>
 #include "ReceptorObject.h"
@@ -58,14 +57,6 @@ class Gameplay :
 
 		std::vector<leaderboardSpot> leaderboard;
 
-		static Gameplay* instance;
-
-		int currentModId = 3;
-
-		bool runModStuff = false;
-
-		ModManager manager;
-
 		bool playing = true;
 
 		AvgSprite* background;
@@ -77,9 +68,7 @@ class Gameplay :
 		float scaleTime;
 
 		virtual void create();
-		void callModEvent(std::string name, std::string args);
-		void callModEvent(std::string name, int args);
-		void callModEvent(std::string name, float args);
+
 		int noteId;
 
 		double songLength = 0;
@@ -183,3 +172,4 @@ class Gameplay :
 		void keyDown(SDL_KeyboardEvent event) override;
 		void keyUp(SDL_KeyboardEvent ev) override;
 };
+

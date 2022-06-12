@@ -10,7 +10,6 @@
 #include "Helpers.h"
 #include <timeapi.h>
 #include "Average4k.h"
-#include "ModManager.h"
 using namespace std;
 
 //#define NOBUF
@@ -229,7 +228,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			<< std::endl;
 		exit(1);
 	}
-	Game::version = "b11.0-lua_test_branch";
+	Game::version = "b11.0";
 
 	curl_global_init(CURL_GLOBAL_ALL);
 	Multiplayer::InitCrypto();

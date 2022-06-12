@@ -27,7 +27,7 @@ class MultiplayerLobby :
         bool downloading = true;
 
         int diff = 0;
-
+        AvgGroup* playerList;
         ChatObject* chat;
 
         Text* helpDisplay;

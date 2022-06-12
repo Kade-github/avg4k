@@ -61,11 +61,6 @@ extern "C"
 Texture* Steam::getAvatar(const char* url)
 {
     MUTATE_START
-    if (pixelsForAvatar[std::string(url)] != nullptr)
-    {
-        Game::currentMenu->onSteam("profileDownloaded");
-        return pixelsForAvatar[std::string(url)];
-    }
 
 	CURL* curlCtx = curl_easy_init();
 
@@ -99,10 +94,6 @@ Texture* Steam::getAvatar(const char* url)
 
     if (!tex)
         return NULL;
-
-    pixelsForAvatar[std::string(url)] = tex;
-    tex->dontDelete = true;
-
     free(chunk.memory);
 
     Game::currentMenu->onSteam("profileDownloaded");

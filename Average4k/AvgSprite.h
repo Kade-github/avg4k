@@ -130,7 +130,7 @@ public:
 	}
 
 	virtual void beforeDeath() {
-		if (!tex->dontDelete && tex->id != Rendering::white->id)
+		if (!tex->dontDelete)
 			delete tex;
 	}
 };

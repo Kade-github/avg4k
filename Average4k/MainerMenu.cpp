@@ -1136,7 +1136,7 @@ void MainerMenu::selectPack(int index)
 	AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");
 	int ind = 0;
 
-	if (isInLobby && !packs[index].isSteam)
+	if (isInLobby && (!packs[index].isSteam && packs[index].packName != "Workshop/Local"))
 		return;
 
 	selected = packs[index];

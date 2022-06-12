@@ -194,6 +194,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="AvgCamera.cpp" />
     <ClCompile Include="AvgContainer.cpp" />
     <ClCompile Include="AvgGroup.cpp" />
+    <ClCompile Include="AvgWheel.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Chart.cpp" />
     <ClCompile Include="ChatObject.cpp" />

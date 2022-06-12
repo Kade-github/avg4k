@@ -4,7 +4,6 @@
 #include "Pack.h"
 #include "AvgCheckBox.h"
 #include "MultiplayerLobby.h"
-#include "AvgWheel.h"
 #include "MainMenu.h"
 #include "Gameplay.h"
 #include "AvgDropDown.h"
@@ -36,12 +35,12 @@ bool MainerMenu::isInLobby = false;
 int MainerMenu::packSongIndex = 0;
 bool lobbyUp = false;
 
-std::vector<Pack> packs;
+std::vector<Pack> MainerMenu::packs;
 
-std::vector<Pack>* asyncPacks;
-std::vector<Song>* asyncSongs;
+std::vector<Pack>* MainerMenu::asyncPacks;
+std::vector<Song>* MainerMenu::asyncSongs;
 
-AvgWheel* wheel;
+AvgWheel* MainerMenu::wheel;
 
 Chart MainerMenu::currentSelectedSong;
 int MainerMenu::selectedDiffIndex = 0;

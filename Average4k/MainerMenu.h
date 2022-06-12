@@ -10,7 +10,7 @@
 #include "CPacketLeaderboardRequest.h"
 #include "SPacketLeaderboardResponse.h"
 // Objects
-
+#include "AvgWheel.h"
 struct LeaderboardResult {
 	LeaderboardEntry entry;
 	Text* name;
@@ -140,6 +140,13 @@ public:
 	static bool isInLobby;
 	float lastBeat = 0;
 	bool started;
+
+	static AvgWheel* wheel;
+
+	static std::vector<Pack> packs;
+
+	static std::vector<Pack>* asyncPacks;
+	static std::vector<Song>* asyncSongs;
 
 	static AvgContainer* soloContainer;
 	static AvgContainer* multiContainer;

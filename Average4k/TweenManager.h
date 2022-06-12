@@ -187,6 +187,43 @@ namespace Tweening
 				return;
 			}
 			
+
+			switch (t.type)
+			{
+			case tt_Alpha:
+				t.obj->setAlpha(start + ((end - start) * value));
+				break;
+			case tt_X:
+				t.obj->setX(start + ((end - start) * value));
+				if (start < end)
+				{
+					if (t.obj->x > end)
+						t.obj->x = end;
+				}
+				else if (start > end)
+				{
+					if (t.obj->x < end)
+						t.obj->x = end;
+				}
+				break;
+			case tt_Y:
+				t.obj->setY(start + ((end - start) * value));
+				if (start < end)
+				{
+					if (t.obj->y > end)
+						t.obj->y = end;
+				}
+				else if (start > end)
+				{
+					if (t.obj->y < end)
+						t.obj->y = end;
+				}
+				break;
+			case tt_scale:
+				t.obj->scale = start + ((end - start) * value);
+				break;
+			}
+
 			if (t.percnt >= 1.0)
 			{
 				// finished
@@ -197,22 +234,6 @@ namespace Tweening
 					t.callback();
 				}
 
-			}
-
-			switch (t.type)
-			{
-			case tt_Alpha:
-				t.obj->setAlpha(start + ((end - start) * value));
-				break;
-			case tt_X:
-				t.obj->setX(start + ((end - start) * value));
-				break;
-			case tt_Y:
-				t.obj->setY(start + ((end - start) * value));
-				break;
-			case tt_scale:
-				t.obj->scale = start + ((end - start) * value);
-				break;
 			}
 		}
 	};

@@ -70,6 +70,13 @@ void resetStuff()
 	catIndex = 0;
 }
 
+void endTrans()
+{
+	resetStuff();
+	Tweening::TweenManager::activeTweens.clear();
+	Game::instance->switchMenu(new MainMenu());
+}
+
 void selectedSongCallback(int sId)
 {
 	MUTATE_START
@@ -258,6 +265,11 @@ void MainerMenu::create()
 	bg->h = 726;
 	add(bg);
 
+	bool whiteScreen = false;
+
+	if (stbi_h::get_error())
+		whiteScreen = true;
+
 	icon = new AvgSprite(16, 12, Noteskin::getMenuElement(Game::noteskin, "genericAvatar.png"));
 	icon->create();
 	add(icon);
@@ -433,13 +445,18 @@ void MainerMenu::create()
 	currentContainer = soloContainer;
 
 	resetStuff();
-	
+
 	loadPacks();
 
 	Tweening::TweenManager::createNewTween("movingContainer3", testWorkshop, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("movingContainer2", settingsContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("movingContainer1", multiContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("movingContainer", soloContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
+	
+	if (whiteScreen)
+	{
+		Game::asyncShowErrorWindow("White screen bug!", "idk how to fix this, just back out and back in.", true);
+	}
 
 	VM_END
 }
@@ -633,12 +650,6 @@ void MainerMenu::update(Events::updateEvent ev)
 	MUTATE_END
 }
 
-void endTrans()
-{
-	resetStuff();
-	Tweening::TweenManager::activeTweens.clear();
-	Game::instance->switchMenu(new MainMenu());
-}
 
 void updateDiff()
 {
@@ -702,7 +713,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 		}
 		break;
 	}
-	if (lockInput)
+	if (lockInput || lobbyUp)
 		return;
 	if (selectedContainerIndex == 0)
 	{
@@ -1216,7 +1227,7 @@ void MainerMenu::selectContainer(int container)
 void MainerMenu::leftMouseDown()
 {
 	MUTATE_START
-	if (lockInput)
+	if (lockInput || lobbyUp)
 		return;
 	int x, y;
 	Game::GetMousePos(&x, &y);

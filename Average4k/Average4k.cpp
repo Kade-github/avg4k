@@ -228,7 +228,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			<< std::endl;
 		exit(1);
 	}
-	Game::version = "b11.0";
+	Game::version = "b11.1";
 
 	curl_global_init(CURL_GLOBAL_ALL);
 	Multiplayer::InitCrypto();

@@ -124,6 +124,12 @@
     <Filter Include="Source Files\Average4k\Lua\Mods">
       <UniqueIdentifier>{0c7eb543-ca6d-4922-bee1-578b74bbb219}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lua">
+      <UniqueIdentifier>{2cdfbf0e-bf67-4c00-90b3-6c34d614820f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lua\Mods">
+      <UniqueIdentifier>{291fb757-92b5-4625-a99a-d343b5d1529e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Average4k.cpp">
@@ -323,6 +329,9 @@
     </ClCompile>
     <ClCompile Include="AvgWheel.cpp">
       <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="ModManager.cpp">
+      <Filter>Lua\Mods</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -700,6 +709,9 @@
     </ClInclude>
     <ClInclude Include="CPacketLeaderboardRequest.h">
       <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="ModManager.h">
+      <Filter>Lua\Mods</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

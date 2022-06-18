@@ -831,7 +831,7 @@ void FuckinEditor::create()
 		c->stop();
 	}
 	Game::useImGUI = true;
-	Game::showErrorWindow("Warning", "editor is super wip, your game is fucked.", false);
+	//Game::showErrorWindow("Warning", "editor is super wip, your game is fucked.", false);
 	noteZoom = 1;
 	
 	downscroll = Game::save->GetBool("downscroll");

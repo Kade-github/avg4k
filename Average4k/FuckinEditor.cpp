@@ -492,11 +492,11 @@ void window_waveProperties() {
 	std::vector<std::string> colorSaved = Chart::split(bruh, ',');
 
 	float c[3] = {std::stof(colorSaved[0]) / 255,std::stof(colorSaved[1]) / 255,std::stof(colorSaved[2]) / 255 };
-
-	wavec = { static_cast<int>(std::stof(colorSaved[0])),static_cast<int>(std::stof(colorSaved[1])),static_cast<int>(std::stof(colorSaved[2]))};
 	ImGui::Text("Waveform Color:");
 	ImGui::ColorEdit3("##WaveformColor",(float*)&c);
 	Game::save->SetString("nonChange_colorShit", std::to_string(c[0] * 255) + "," + std::to_string(c[1] * 255) + "," + std::to_string(c[2] * 255));
+
+	wavec = { static_cast<int>(c[0] * 255),static_cast<int>(c[1] * 255),static_cast<int>(c[2] * 255) };
 }
 
 void window_chartProperties() {

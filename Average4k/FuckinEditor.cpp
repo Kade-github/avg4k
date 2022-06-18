@@ -493,7 +493,7 @@ void window_waveProperties() {
 
 	float c[3] = {std::stof(colorSaved[0]) / 255,std::stof(colorSaved[1]) / 255,std::stof(colorSaved[2]) / 255 };
 
-	wavec = { static_cast<int>(c[0]),static_cast<int>(c[1]),static_cast<int>(c[2])};
+	wavec = { static_cast<int>(std::stof(colorSaved[0])),static_cast<int>(std::stof(colorSaved[1])),static_cast<int>(std::stof(colorSaved[2]))};
 	ImGui::Text("Waveform Color:");
 	ImGui::ColorEdit3("##WaveformColor",(float*)&c);
 	Game::save->SetString("nonChange_colorShit", std::to_string(c[0] * 255) + "," + std::to_string(c[1] * 255) + "," + std::to_string(c[2] * 255));
@@ -1164,9 +1164,9 @@ void FuckinEditor::update(Events::updateEvent event)
 		seg.sprite->alpha = waveformAlpha;
 		if (!Game::save->GetBool("nonChange_chartWaveform"))
 			seg.sprite->alpha = 0;
-		seg.sprite->colorR = wavec.r * 255;
-		seg.sprite->colorG = wavec.g * 255;
-		seg.sprite->colorB = wavec.b * 255;
+		seg.sprite->colorR = wavec.r;
+		seg.sprite->colorG = wavec.g;
+		seg.sprite->colorB = wavec.b;
 
 		if (downscroll)
 			seg.sprite->y = ((fuck[0]->y + (64 * noteZoom)) - 715) - (noteOffset);

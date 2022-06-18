@@ -426,17 +426,13 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			}
 
 
-			if (Game::useImGUI) {
-				ImGui_ImplOpenGL3_NewFrame();
-				ImGui_ImplSDL2_NewFrame();
-				ImGui::NewFrame();
-			}
 			glClear(GL_COLOR_BUFFER_BIT);
 
+			ImGui_ImplOpenGL3_NewFrame();
+			ImGui_ImplSDL2_NewFrame();
+			ImGui::NewFrame();
 
 			game->update(updateEvent);
-			
-
 
 			Rendering::drawBatch();
 

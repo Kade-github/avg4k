@@ -825,6 +825,11 @@ void window_notif() {
 
 void FuckinEditor::create()
 {
+	if (SoundManager::getChannelByName("prevSong") != NULL)
+	{
+		Channel* c = SoundManager::getChannelByName("prevSong");
+		c->stop();
+	}
 	Game::useImGUI = true;
 	Game::showErrorWindow("Warning", "editor is super wip, your game is fucked.", false);
 	noteZoom = 1;
@@ -1296,6 +1301,7 @@ void openChart(std::string path, std::string folder) {
 	editor->song->createFXStream();
 	editor->generateWaveForm(0, editor->song->length);
 	editor->loadNotes(selectedChart->meta.difficulties[0]);
+	editor->song->setVolume(0.4);
 	currentDiff = 0;
 }
 

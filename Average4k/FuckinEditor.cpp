@@ -480,9 +480,9 @@ void createNote(int lane, float beat = currentBeat, noteType type = noteType::No
 	}
 }
 void window_waveProperties() {
-	bool shit = Game::save->GetBool("nonChange_waveform");
+	bool shit = Game::save->GetBool("nonChange_chartWaveform");
 	ImGui::Checkbox("Show Waveform", &shit);
-	Game::save->SetBool("nonChange_waveform", shit);
+	Game::save->SetBool("nonChange_chartWaveform", shit);
 
 	if (Game::save->GetString("nonChange_colorShit") == "")
 		Game::save->SetString("nonChange_colorShit", "128,128,255");
@@ -1162,10 +1162,11 @@ void FuckinEditor::update(Events::updateEvent event)
 		float noteOffset = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed") / 60, seg.time, currentTime, 64 * noteZoom);
 
 		seg.sprite->alpha = waveformAlpha;
-
-		seg.sprite->colorR = wavec.r;
-		seg.sprite->colorG = wavec.g;
-		seg.sprite->colorB = wavec.b;
+		if (!Game::save->GetBool("nonChange_chartWaveform"))
+			seg.sprite->alpha = 0;
+		seg.sprite->colorR = wavec.r * 255;
+		seg.sprite->colorG = wavec.g * 255;
+		seg.sprite->colorB = wavec.b * 255;
 
 		if (downscroll)
 			seg.sprite->y = ((fuck[0]->y + (64 * noteZoom)) - 715) - (noteOffset);

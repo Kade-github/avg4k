@@ -105,7 +105,7 @@ void NoteObject::draw() {
 
             float diff2 = time - position;
 
-            float offsetFromY = (bps * (diff2 / 1000)) * (64 * size);
+            float offsetFromY = ((bps * (diff2 / 1000)) * (64 * size)) - (32 * size);
             Rect r;
             r.x = obj->x;
             r.y = obj->y + (obj->h / 2);

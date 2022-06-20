@@ -928,18 +928,16 @@ void Gameplay::update(Events::updateEvent event)
 
 				if (object->type == Note_Head)
 				{
-
-					for (int i = std::floorf(object->time); i < std::floorf(object->endTime); i++)
+					float noteZoom = Game::save->GetDouble("Note Size");
+					for (float beat = object->beat; beat < object->endBeat; beat += 0.001)
 					{
-						bpmSegment holdSeg = MainerMenu::currentSelectedSong.getSegmentFromTime(i);
-
-						double beat = MainerMenu::currentSelectedSong.getBeatFromTimeOffset(i, holdSeg);
+						bpmSegment holdSeg = MainerMenu::currentSelectedSong.getSegmentFromBeat(beat);
 
 						float whHold = MainerMenu::currentSelectedSong.getTimeFromBeatOffset(beat, holdSeg);
 
 						float diff = whHold - (object->time);
 
-						float noteOffset = (bps * (diff / 1000)) * (64 * Game::save->GetDouble("Note Size"));
+						float noteOffset = ((bps * (diff / 1000)) * (64 * noteZoom));
 
 						float y = 0;
 						float yDiff = 0;
@@ -963,24 +961,24 @@ void Gameplay::update(Events::updateEvent event)
 						bool otherOne = false;
 
 						if (downscroll)
-							otherOne = yDiff <= -(64 * Game::save->GetDouble("Note Size"));
+							otherOne = yDiff <= -(64 * noteZoom);
 						else
-							otherOne = yDiff >= 64 * Game::save->GetDouble("Note Size");
+							otherOne = yDiff >= 64 * noteZoom;
 
 						if (otherOne || object->heldTilings.size() == 0)
 						{
-							object->holdHeight += 64 * Game::save->GetDouble("Note Size");
+							object->holdHeight += 64 * noteZoom;
 							holdTile tile;
 							SDL_FRect rect;
 							tile.active = true;
 							tile.fucked = false;
 							rect.y = y;
 							rect.x = 0;
-							rect.w = 64 * Game::save->GetDouble("Note Size");
-							rect.h = 64 * Game::save->GetDouble("Note Size");
+							rect.w = 64 * noteZoom;
+							rect.h = 68 * noteZoom;
 							tile.rect = rect;
 							tile.beat = beat;
-							tile.time = i;
+							tile.time = MainerMenu::currentSelectedSong.getTimeFromBeat(beat, holdSeg);
 							object->heldTilings.push_back(tile);
 						}
 					}

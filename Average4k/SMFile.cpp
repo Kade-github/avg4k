@@ -315,3 +315,136 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
 
     MUTATE_END
 }
+
+float getSmallestSnap(std::vector<note> notes)
+{
+    float smallestSnap = 1.0f;
+
+    if (notes.size() == 0)
+        return 1.0f;
+
+    for (note n : notes)
+    {
+        float beatRow = (n.beat) * 48;
+
+        float newSnap = 1.0f;
+
+        if (fmod(beatRow, (192 / 4)) == 0)
+            newSnap = 1.0f;
+        else if (fmod(beatRow, (192 / 8)) == 0)
+            newSnap = 2.0f;
+        else if (fmod(beatRow, (192 / 12)) == 0)
+            newSnap = 3.0f;
+        else if (fmod(beatRow, (192 / 16)) == 0)
+            newSnap = 4.0f;
+        else if (fmod(beatRow, (192 / 24)) == 0)
+            newSnap = 6.0f;
+        else if (fmod(beatRow, (192 / 32)) == 0)
+            newSnap = 8.0f;
+        else if (fmod(beatRow, (192 / 48)) == 0)
+            newSnap = 12.0f;
+        else if (fmod(beatRow, (192 / 64)) == 0)
+            newSnap = 16.0f;
+        else
+            newSnap = 48.0f;
+        if (smallestSnap < newSnap)
+            smallestSnap = newSnap;
+    }
+
+
+    return 1.0f / smallestSnap;
+}
+
+void SMFile::SaveSM(chartMeta meta, std::string outFile)
+{
+    std::ofstream ostream;
+
+    ostream.open(outFile, std::fstream::out);
+
+    if (ostream.is_open())
+    {
+        ostream << "#TITLE:" << meta.songName << ";" << std::endl;
+        ostream << "#ARTIST:" << meta.artist << ";" << std::endl;
+        ostream << "#MUSIC:" << meta.audio << ";" << std::endl;
+        ostream << "#BANNER:" << meta.banner << ";" << std::endl;
+        ostream << "#BACKGROUND:" << meta.background << ";" << std::endl;
+        ostream << "#SAMPLESTART:" << std::to_string(meta.start) << ";" << std::endl;
+        ostream << "#OFFSET:" << std::to_string(meta.chartOffset) << ";" << std::endl;
+        ostream << "#BPMS:";
+        for (bpmSegment seg : meta.bpms)
+        {
+            ostream << std::to_string(seg.startBeat) << "=" << std::to_string(seg.bpm) << ",";
+        }
+        ostream << ";" << std::endl;
+        ostream << "#STOPS:";
+        for (stopSegment seg : meta.stops)
+        {
+            ostream << std::to_string(seg.beat) << "=" << std::to_string(seg.length) << ",";
+        }
+        ostream << ";" << std::endl;
+
+        for (difficulty diff : meta.difficulties)
+        {
+            ostream << "//---------------dance-single - " << diff.charter << " ----------------" << std::endl;
+            ostream << "#NOTES:" << std::endl;
+            ostream << "     dance-single:" << std::endl;
+            ostream << "     " << diff.charter << ":" << std::endl;
+            ostream << "     " + diff.name << ":" << std::endl;
+            ostream << "     1:" << std::endl;
+            ostream << "     0.000,0.000,0.000,0.000,0.000:" << std::endl;
+            float lastBeat = diff.notes[(diff.notes.size() - 1)].beat;
+
+            float lastMeasure = lastBeat / 4;
+
+            for (int i = 0; i <= lastMeasure; i++)
+            {
+                int startRow = i * 192;
+                int lastRow = (i + 1) * 192 - 1;
+                std::vector<note> measureNotes;
+
+                float startBeat = startRow / 48.0f;
+
+                for (note n : diff.notes)
+                {
+                    if (n.beat >= startBeat && n.beat < startBeat + 4)
+                        measureNotes.push_back(n);
+                }
+
+                int rowSpacing = lround(getSmallestSnap(measureNotes) * 48);
+
+                for (int row = startRow; row <= lastRow; row += rowSpacing)
+                {
+                    float rowBeat = row / 48.0f;
+
+                    std::string directions[4] = { "0","0","0","0"};
+
+                    for (note& topNote : measureNotes)
+                    {
+                        if (topNote.beat == rowBeat)
+                        {
+                            switch (topNote.type)
+                            {
+                            case Note_Normal:
+                                directions[topNote.lane] = "1";
+                                break;
+                            case Note_Head:
+                                directions[topNote.lane] = "2";
+                                break;
+                            case Note_Tail:
+                                directions[topNote.lane] = "3";
+                                break;
+                            }
+                        }
+                    }
+                    
+                    for (int i = 0; i < 4; i++)
+                        ostream << directions[i];
+                    ostream << std::endl;
+                }
+                ostream << "," << std::endl;
+            }
+            ostream << ";" << std::endl;
+        }
+        ostream.close();
+    }
+}

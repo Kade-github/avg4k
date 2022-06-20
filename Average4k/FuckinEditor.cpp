@@ -1305,6 +1305,7 @@ void openChart(std::string path, std::string folder) {
 }
 
 void fileMenu() {
+	FuckinEditor* editor = (FuckinEditor*)Game::currentMenu;
 	if (ImGui::MenuItem("New Chart") && !openingFile) {
 		// TODO create a chart
 	}
@@ -1333,6 +1334,10 @@ void fileMenu() {
 				ind++;
 			}
 		ImGui::EndMenu();
+	}
+	if (ImGui::MenuItem("Save"))
+	{
+		SMFile::SaveSM(selectedChart->meta, editor->currentFile);
 	}
 }
 
@@ -1484,6 +1489,7 @@ void FuckinEditor::imguiUpdate(float elapsed)
 					if (selectedChart)
 						selectedChart->destroy();
 					openChart(filePathName, folder);
+					currentFile = filePathName;
 					Game::save->SetString("nonChange_chartHistory", copy + "$" + Game::save->GetString("nonChange_chartHistory"));
 					Game::save->Save();
 				}

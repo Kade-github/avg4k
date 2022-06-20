@@ -82,6 +82,8 @@ public:
 	std::vector<ReceptorObject*> fuck;
 	std::vector<editorWindow> windows;
 
+	std::string currentFile = "";
+
 	bool focused = false;
 	std::vector<line> miniMapLines;
 	std::vector<line> beatLines;

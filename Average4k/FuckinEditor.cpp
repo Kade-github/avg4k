@@ -519,12 +519,43 @@ void window_chartProperties() {
 			ImGui::InputText("##Background", buf, sizeof(buf));
 			selectedChart->meta.background = std::string(buf);
 
+			char buffff[32];
+			strcpy_s(buffff, selectedChart->meta.banner.c_str());
+			ImGui::PushItemWidth(180);
+			ImGui::Text("Chart Banner:");
+			ImGui::InputText("##Banner", buffff, sizeof(buffff));
+			selectedChart->meta.banner = std::string(buffff);
+
 			char buff[32];
 			strcpy_s(buff, selectedChart->meta.songName.c_str());
 			ImGui::PushItemWidth(180);
 			ImGui::Text("Song Title:");
 			ImGui::InputText("##Title", buff, sizeof(buff));
 			selectedChart->meta.songName = std::string(buff);
+
+
+			char bufff[32];
+			strcpy_s(bufff, selectedChart->meta.audio.c_str());
+			ImGui::PushItemWidth(180);
+			ImGui::Text("Song Audio:");
+			ImGui::InputText("##Audio", bufff, sizeof(bufff));
+			if (selectedChart->meta.audio != std::string(bufff))
+			{
+				selectedChart->meta.audio = std::string(bufff);
+				std::string pathj = selectedChart->meta.folder + "/" + selectedChart->meta.audio;
+
+				if (editor->song)
+				{
+					editor->song->stop();
+					editor->song->free();
+				}
+				editor->song = SoundManager::createChannel(pathj.c_str(), "editorSong");
+
+				editor->song->createFXStream();
+				editor->generateWaveForm(0, editor->song->length);
+				editor->song->setVolume(0.4);
+			}
+
 		}
 		else
 		{
@@ -629,11 +660,6 @@ void window_chartProperties() {
 					if (seg.bpm != d)
 					{
 						seg.bpm = d;
-						for (line t : editor->beatLines)
-						{
-							editor->gameplay->removeObj(t.rect);
-							editor->gameplay->removeObj(t.text);
-						}
 						resortBPMS();
 						editor->generateSnapLines(selectedChart, snapConvert[snap]);
 						editor->regenBeatLines(selectedChart);

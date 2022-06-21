@@ -57,6 +57,9 @@ public:
 	void leftMouseDown() override;
 	void leftMouseUp() override;
 	Channel* song;
+
+	std::vector<line> clappedLines;
+
 	std::vector<Channel*> clapChannels;
 	std::vector<float> beatsClapped;
 	bool findClapped(float beat)

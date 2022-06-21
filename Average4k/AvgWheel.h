@@ -27,6 +27,8 @@ public:
 
 	wheelSelectCallback callSelect;
 
+	Shader* shad;
+
 	int selectedIndex = 0;
 	float fakeIndex = 0;
 
@@ -40,6 +42,54 @@ public:
 
 		box = Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/wheelContainer.png");
 		topBox = Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/wheelTop.png");
+
+		shad = new Shader();
+
+		const char* vert = R"(
+		in vec2 v_position;
+		in vec2 v_uv;
+		in vec4 v_colour;
+		out vec2 f_uv;
+		out vec4 f_colour;
+		uniform mat4 u_projection;
+
+		void main()
+		{
+			f_uv = v_uv;
+			f_colour = v_colour;
+			gl_Position = u_projection * vec4(v_position.xy, 0.0, 1.0);
+		})";
+				const char* frag = R"(
+
+		precision mediump float;
+
+		uniform sampler2D u_texture;
+		uniform float radius;
+		uniform float centerX;
+		uniform float centerY;
+		in vec2 f_uv;
+		in vec4 f_colour;
+
+		out vec4 o_colour;
+		void main()
+		{
+			o_colour = texture(u_texture, f_uv) * f_colour;
+			if (o_colour.a == 0.0)
+				discard;
+
+			vec2 center = vec2(centerX, centerY);
+			vec2 dist = center - f_uv;
+			if (length(dist) > radius)
+				discard;
+		})";
+
+		shad->GL_CompileShader(vert, frag);
+		shad->setProject(GL::projection);
+
+		shad->SetUniform("centerX", 0.5f);
+		shad->SetUniform("centerY", 0.5f);
+		shad->SetUniform("radius", 0.651f);
+
 		MUTATE_END
 	}
 
@@ -53,6 +103,7 @@ public:
 			delete obj.title;
 		}
 		wheelObjects.clear();
+		delete shad;
 	}
 
 
@@ -210,13 +261,13 @@ public:
 				if (background.h < boxRect.h)
 					background.h = boxRect.h;
 
-				Rendering::PushQuad(&background, &src, obj.banner, GL::genShader);
+				Rendering::PushQuad(&background, &src, obj.banner, shad);
 
 				background.r = 0;
 				background.g = 0;
 				background.b = 0;
 				background.a = 0.5;
-				Rendering::PushQuad(&background, &src, obj.banner, GL::genShader);
+				Rendering::PushQuad(&background, &src, obj.banner, shad);
 
 				Rendering::PushQuad(&boxRect, &src, topBox, GL::genShader);
 			}

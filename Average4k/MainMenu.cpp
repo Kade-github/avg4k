@@ -38,6 +38,7 @@ void MainMenu::create() {
 	bg->y = Game::gameHeight;
 	bg->w = 1286;
 	bg->h = 726;
+
 	add(bg);
 
 
@@ -46,12 +47,62 @@ void MainMenu::create() {
 	thing->y -= thing->h / 2;
 	thing->alpha = 0;
 	thing->create();
+
+	shad = new Shader();
+
+	const char* vert = R"(
+in vec2 v_position;
+in vec2 v_uv;
+in vec4 v_colour;
+out vec2 f_uv;
+out vec4 f_colour;
+uniform mat4 u_projection;
+
+void main()
+{
+	f_uv = v_uv;
+	f_colour = v_colour;
+	gl_Position = u_projection * vec4(v_position.xy, 0.0, 1.0);
+})";
+	const char* frag = R"(
+
+precision mediump float;
+
+uniform sampler2D u_texture;
+uniform float radius;
+uniform float centerX;
+uniform float centerY;
+in vec2 f_uv;
+in vec4 f_colour;
+
+out vec4 o_colour;
+void main()
+{
+	o_colour = texture(u_texture, f_uv) * f_colour;
+	if (o_colour.a == 0.0)
+		discard;
+
+	vec2 center = vec2(centerX, centerY);
+	vec2 dist = center - f_uv;
+	if (length(dist) > radius)
+		discard;
+})";
+
+	shad->GL_CompileShader(vert, frag);
+	shad->setProject(GL::projection);
+
+	shad->SetUniform("centerX", 0.5f);
+	shad->SetUniform("centerY", 0.5f);
+	shad->SetUniform("radius", 0.8f);
+
 	add(thing);
 
 	
 	icon = new AvgSprite(16, 12, Noteskin::getMenuElement(Game::noteskin, "genericAvatar.png"));
 	icon->create();
 	add(icon);
+
+	icon->customShader = shad;
 
 	Rect clip;
 	clip.x = 18;

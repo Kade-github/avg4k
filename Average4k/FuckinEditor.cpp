@@ -29,6 +29,8 @@ int snap = 16;
 
 float speed = 1;
 
+int lastBeatClicked = 0;
+
 std::map<float, float> snapConvert;
 
 void changeTheme(int theme) {
@@ -647,11 +649,6 @@ void window_chartProperties() {
 					if (seg.startBeat != beat)
 					{
 						seg.startBeat = beat;
-						for (line t : editor->beatLines)
-						{
-							editor->gameplay->removeObj(t.rect);
-							editor->gameplay->removeObj(t.text);
-						}
 						resortBPMS();
 						editor->generateSnapLines(selectedChart, snapConvert[snap]);
 						editor->regenBeatLines(selectedChart);
@@ -1110,6 +1107,7 @@ void FuckinEditor::update(Events::updateEvent event)
 
 	}
 
+
 	int showBeatLines = Game::save->GetBool("nonChange_beatLines") ? 1 : 0;
 
 	for (line& l : snapBeat)
@@ -1133,6 +1131,28 @@ void FuckinEditor::update(Events::updateEvent event)
 		}
 		else
 			l.rect->drawCall = false;
+		if (Game::save->GetBool("nonChange_beatTick"))
+		{
+			bool clicked = false;
+			for (line ll : clappedLines)
+			{
+				if (ll.beat == l.beat)
+					clicked = true;
+			}
+			if (!clicked)
+			{
+				float diff = l.beat - currentBeat;
+
+				if (fabs(diff) < 0.1)
+				{
+					clappedLines.push_back(l);
+					Channel* c = SoundManager::createChannel("assets/sounds/beatTick.wav", "beat_click_" + std::to_string(currentBeat), true);
+					c->play();
+					c->setVolume(1);
+					clapChannels.push_back(c);
+				}
+			}
+		}
 	}
 
 
@@ -1160,6 +1180,29 @@ void FuckinEditor::update(Events::updateEvent event)
 		}
 		else
 			l.rect->drawCall = false;
+
+		if (Game::save->GetBool("nonChange_beatTick"))
+		{
+			bool clicked = false;
+			for (line ll : clappedLines)
+			{
+				if (ll.beat == l.beat)
+					clicked = true;
+			}
+			if (!clicked)
+			{
+				float diff = l.beat - currentBeat;
+
+				if (fabs(diff) < 0.1)
+				{
+					clappedLines.push_back(l);
+					Channel* c = SoundManager::createChannel("assets/sounds/beatTick.wav", "beat_click_" + std::to_string(currentBeat), true);
+					c->play();
+					c->setVolume(1);
+					clapChannels.push_back(c);
+				}
+			}
+		}
 	}
 
 	for (thingy& l : sideStuff)
@@ -1292,6 +1335,9 @@ bool openingFile = false;
 
 void openChart(std::string path, std::string folder) {
 	FuckinEditor* editor = (FuckinEditor*)Game::currentMenu;
+
+	editor->currentFile = path;
+
 	SMFile* file = new SMFile(path, folder, true);
 	if (selectedChart)
 	{
@@ -1693,6 +1739,7 @@ void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 				c->stop();
 				c->free();
 			}
+			clappedLines.clear();
 			clapChannels.clear();
 		}
 		else

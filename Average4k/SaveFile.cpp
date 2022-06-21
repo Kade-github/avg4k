@@ -49,6 +49,7 @@ SaveFile::SaveFile()
     defaultSettings.push_back(CreateSetting("nonChange_beatLines", { true }));
     defaultSettings.push_back(CreateSetting("nonChange_infoPanel", { true }));
     defaultSettings.push_back(CreateSetting("nonChange_noteTick", { false }));
+    defaultSettings.push_back(CreateSetting("nonChange_beatTick", { false }));
     defaultSettings.push_back(CreateSetting("nonChange_colorShit", { false,true,false,false,"128,128,255"}));
     defaultSettings.push_back(CreateSetting("nonChange_minimap", { false }));
     defaultHeader.settings = defaultSettings;

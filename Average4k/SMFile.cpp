@@ -371,15 +371,23 @@ void SMFile::SaveSM(chartMeta meta, std::string outFile)
         ostream << "#SAMPLESTART:" << std::to_string(meta.start) << ";" << std::endl;
         ostream << "#OFFSET:" << std::to_string(meta.chartOffset) << ";" << std::endl;
         ostream << "#BPMS:";
+        int ind = 0;
         for (bpmSegment seg : meta.bpms)
         {
-            ostream << std::to_string(seg.startBeat) << "=" << std::to_string(seg.bpm) << ",";
+            if (ind != 0)
+                ostream << ",";
+            ostream << std::to_string(seg.startBeat) << "=" << std::to_string(seg.bpm);
+            ind++;
         }
         ostream << ";" << std::endl;
+        ind = 0;
         ostream << "#STOPS:";
         for (stopSegment seg : meta.stops)
         {
+            if (ind != 0)
+                ostream << ",";
             ostream << std::to_string(seg.beat) << "=" << std::to_string(seg.length) << ",";
+            ind++;
         }
         ostream << ";" << std::endl;
 
@@ -391,7 +399,7 @@ void SMFile::SaveSM(chartMeta meta, std::string outFile)
             ostream << "     " << diff.charter << ":" << std::endl;
             ostream << "     " + diff.name << ":" << std::endl;
             ostream << "     1:" << std::endl;
-            ostream << "     0.000,0.000,0.000,0.000,0.000:" << std::endl;
+            ostream << "     0,0,0,0,0:" << std::endl;
             float lastBeat = diff.notes[(diff.notes.size() - 1)].beat;
 
             float lastMeasure = lastBeat / 4;

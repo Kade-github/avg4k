@@ -256,6 +256,53 @@ void MainerMenu::create()
 {
 	VM_START
 
+		shad = new Shader();
+
+	const char* vert = R"(
+in vec2 v_position;
+in vec2 v_uv;
+in vec4 v_colour;
+out vec2 f_uv;
+out vec4 f_colour;
+uniform mat4 u_projection;
+
+void main()
+{
+	f_uv = v_uv;
+	f_colour = v_colour;
+	gl_Position = u_projection * vec4(v_position.xy, 0.0, 1.0);
+})";
+	const char* frag = R"(
+
+precision mediump float;
+
+uniform sampler2D u_texture;
+uniform float radius;
+uniform float centerX;
+uniform float centerY;
+in vec2 f_uv;
+in vec4 f_colour;
+
+out vec4 o_colour;
+void main()
+{
+	o_colour = texture(u_texture, f_uv) * f_colour;
+	if (o_colour.a == 0.0)
+		discard;
+
+	vec2 center = vec2(centerX, centerY);
+	vec2 dist = center - f_uv;
+	if (length(dist) > radius)
+		discard;
+})";
+
+	shad->GL_CompileShader(vert, frag);
+	shad->setProject(GL::projection);
+
+	shad->SetUniform("centerX", 0.5f);
+	shad->SetUniform("centerY", 0.5f);
+	shad->SetUniform("radius", 0.8f);
+
 	Game::DiscordUpdatePresence("In the Main Menu", "Browsing Charts", "Average4K", -1, -1, "");
 	SteamFriends()->SetRichPresence("gamestatus", "Browsing Charts");
 
@@ -280,7 +327,7 @@ void MainerMenu::create()
 	clip.w = 43;
 	clip.h = 43;
 	icon->clipRect = clip;
-
+	icon->customShader = shad;
 	hello = new Text(16 + ((icon->w / 2) * 2.6), 16, "Refreshing avatar data...", 16, "arialbd");
 	hello->border = false;
 	hello->create();
@@ -769,7 +816,9 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 				{
 					resetStuff();
 					if (!isInLobby)
+					{
 						Game::instance->transitionToMenu(new Gameplay());
+					}
 					else if (isInLobby && selectedSong.isSteam)
 						Game::instance->transitionToMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, true));
 				}

@@ -145,6 +145,8 @@ public:
 
 	static std::vector<Pack> packs;
 
+	Shader* shad;
+
 	static std::vector<Pack>* asyncPacks;
 	static std::vector<Song>* asyncSongs;
 

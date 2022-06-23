@@ -18,7 +18,7 @@ public:
 	std::vector<Object*> children;
 
 	Object* parent;
-
+	int realPosX, realPosY;
 	bool isCreated;
 	void create();
 	virtual void update(Events::updateEvent ev) {};

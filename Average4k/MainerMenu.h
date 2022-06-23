@@ -132,23 +132,41 @@ public:
 class MainerMenu : public Menu
 {
 public:
+	static bool isInMainerMenu;
 	static Chart currentSelectedSong;
 	static Song selectedSong;
 	static Pack selected;
 	static int packSongIndex;
 	static int selectedDiffIndex;
 	static bool isInLobby;
+	static bool isHost;
 	float lastBeat = 0;
 	bool started;
-
+	bool justJoined = false;
 	static AvgWheel* wheel;
 
 	static std::vector<Pack> packs;
 
+	std::vector<lobby> Lobbies;
+	std::vector<AvgContainer*> LobbyContainers;
+
+	std::vector<Object*> multiplayerObjects;
+
+	std::vector<AvgSprite*> icons;
+
+
+	lobby currentLobby;
+
 	Shader* shad;
+	Shader* lobbyShader;
+
+	bool downloading;
+	bool downloadingPack;
 
 	static std::vector<Pack>* asyncPacks;
 	static std::vector<Song>* asyncSongs;
+
+	AvgContainer* lobbyContainer;
 
 	static AvgContainer* soloContainer;
 	static AvgContainer* multiContainer;
@@ -173,13 +191,16 @@ public:
 
 	AvgContainer* currentContainer;
 
+	void createNewLobbies();
+
 	void selectContainer(int container);
 
 	void dropFile(SDL_DropEvent ev);
 
 	void mouseWheel(float wheel) override;
 
-	
+	void createLobby();
+	void lobbyUpdatePlayers();
 
 	void selectPack(int index);
 	void addPack(std::string name, std::string bg, bool showText, bool isSteam);

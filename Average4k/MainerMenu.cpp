@@ -8,6 +8,9 @@
 #include "Gameplay.h"
 #include "AvgDropDown.h"
 #include "Average4k.h"
+#include "CPacketServerList.h"
+#include "SPacketServerListReply.h"
+#include "CPacketJoinServer.h"
 AvgContainer* MainerMenu::soloContainer;
 AvgContainer* MainerMenu::multiContainer;
 AvgContainer* MainerMenu::settingsContainer;
@@ -21,6 +24,9 @@ Pack steamWorkshop;
 
 int scrollLeaderboard = 0;
 
+
+bool MainerMenu::isInMainerMenu = false;
+
 int packIndex = 0;
 int catIndex = 0;
 
@@ -31,9 +37,11 @@ Song MainerMenu::selectedSong;
 Pack MainerMenu::selected;
 
 bool MainerMenu::isInLobby = false;
+bool MainerMenu::isHost = false;
 
 int MainerMenu::packSongIndex = 0;
 bool lobbyUp = false;
+
 
 std::vector<Pack> MainerMenu::packs;
 
@@ -57,6 +65,18 @@ bool chartUploading = false;
 int lastTrans = 0;
 int transToContainer = 0;
 int despawn = 0;
+
+void refreshLobbies() {
+	VM_START
+	std::cout << "refreshing lobbies" << std::endl;
+	CPacketServerList list;
+	list.Order = 0;
+	list.PacketType = eCPacketServerList;
+
+	Multiplayer::sendMessage<CPacketServerList>(list);
+	VM_END
+}
+
 
 void resetStuff()
 {
@@ -255,46 +275,49 @@ void selectedSongCallback(int sId)
 void MainerMenu::create()
 {
 	VM_START
+	isInMainerMenu = true;
+	shad = new Shader();
 
-		shad = new Shader();
+	currentLobby.LobbyID = 0;
 
 	const char* vert = R"(
-in vec2 v_position;
-in vec2 v_uv;
-in vec4 v_colour;
-out vec2 f_uv;
-out vec4 f_colour;
-uniform mat4 u_projection;
+	in vec2 v_position;
+	in vec2 v_uv;
+	in vec4 v_colour;
+	out vec2 f_uv;
+	out vec4 f_colour;
+	uniform mat4 u_projection;
 
-void main()
-{
-	f_uv = v_uv;
-	f_colour = v_colour;
-	gl_Position = u_projection * vec4(v_position.xy, 0.0, 1.0);
-})";
+	void main()
+	{
+		f_uv = v_uv;
+		f_colour = v_colour;
+		gl_Position = u_projection * vec4(v_position.xy, 0.0, 1.0);
+	})";
+
 	const char* frag = R"(
 
-precision mediump float;
+	precision mediump float;
 
-uniform sampler2D u_texture;
-uniform float radius;
-uniform float centerX;
-uniform float centerY;
-in vec2 f_uv;
-in vec4 f_colour;
+	uniform sampler2D u_texture;
+	uniform float radius;
+	uniform float centerX;
+	uniform float centerY;
+	in vec2 f_uv;
+	in vec4 f_colour;
 
-out vec4 o_colour;
-void main()
-{
-	o_colour = texture(u_texture, f_uv) * f_colour;
-	if (o_colour.a == 0.0)
-		discard;
+	out vec4 o_colour;
+	void main()
+	{
+		o_colour = texture(u_texture, f_uv) * f_colour;
+		if (o_colour.a == 0.0)
+			discard;
 
-	vec2 center = vec2(centerX, centerY);
-	vec2 dist = center - f_uv;
-	if (length(dist) > radius)
-		discard;
-})";
+		vec2 center = vec2(centerX, centerY);
+		vec2 dist = center - f_uv;
+		if (length(dist) > radius)
+			discard;
+	})";
 
 	shad->GL_CompileShader(vert, frag);
 	shad->setProject(GL::projection);
@@ -302,6 +325,15 @@ void main()
 	shad->SetUniform("centerX", 0.5f);
 	shad->SetUniform("centerY", 0.5f);
 	shad->SetUniform("radius", 0.8f);
+
+	lobbyShader = new Shader();
+
+	lobbyShader->GL_CompileShader(vert, frag);
+	lobbyShader->setProject(GL::projection);
+
+	lobbyShader->SetUniform("centerX", 0.5f);
+	lobbyShader->SetUniform("centerY", 0.5f);
+	lobbyShader->SetUniform("radius", 0.5f);
 
 	Game::DiscordUpdatePresence("In the Main Menu", "Browsing Charts", "Average4K", -1, -1, "");
 	SteamFriends()->SetRichPresence("gamestatus", "Browsing Charts");
@@ -393,6 +425,10 @@ void main()
 	add(multiContainer);
 
 	// multi creation
+
+	multiContainer->addObject(new AvgContainer(0, 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Multi/filtercontainer.png")), "filterContainer");
+	lobbyContainer = (AvgContainer*)multiContainer->addObject(new AvgContainer(275, 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Multi/lobbycontainer.png")), "lobbyContainer");
+
 
 
 	settingsContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Settings/maincontainer.png"));
@@ -500,11 +536,7 @@ void main()
 	Tweening::TweenManager::createNewTween("movingContainer1", multiContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("movingContainer", soloContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	
-	if (whiteScreen)
-	{
-		Game::asyncShowErrorWindow("White screen bug!", "idk how to fix this, just back out and back in.", true);
-	}
-
+	refreshLobbies();
 	VM_END
 }
 
@@ -512,7 +544,6 @@ void MainerMenu::update(Events::updateEvent ev)
 {
 
 	MUTATE_START
-
 
 	Channel* ch = SoundManager::getChannelByName("prevSong");
 
@@ -559,7 +590,10 @@ void MainerMenu::update(Events::updateEvent ev)
 			bool d = false;
 			for (Pack pp : packs)
 				if (pp.packName == p.packName)
-					d = true;
+				{
+					if (!p.isSteam)
+						d = true;
+				}
 			if (d)
 				continue;
 			addPack(p.packName, p.background, p.showName, p.isSteam);
@@ -693,6 +727,18 @@ void MainerMenu::update(Events::updateEvent ev)
 			}
 		}
 
+		if (justJoined)
+		{
+			justJoined = false;
+
+			CPacketWtfAmIn fuck;
+			fuck.Order = 0;
+			fuck.PacketType = eCPacketWtfAmIn;
+
+			Multiplayer::sendMessage<CPacketWtfAmIn>(fuck);
+			if (selectedContainerIndex != 1)
+				selectContainer(1);
+		}
 
 	MUTATE_END
 }
@@ -781,7 +827,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 			selectContainer(3);
 			break;
 		case SDLK_LSHIFT:
-			if (selected.metaPath.size() != 0 && selected.metaPath != "unfl" && !isInLobby)
+			if (selected.metaPath.size() != 0 && selected.metaPath != "unfl")
 			{
 
 
@@ -811,17 +857,41 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 			}
 			break;
 		case SDLK_RETURN:
-			if (!uploading)
+			if (!uploading && selectedContainerIndex == 0)
+			{
 				if (currentSelectedSong.meta.difficulties.size() != 0)
 				{
 					resetStuff();
 					if (!isInLobby)
 					{
 						Game::instance->transitionToMenu(new Gameplay());
+						delete lobbyShader;
 					}
-					else if (isInLobby && selectedSong.isSteam)
-						Game::instance->transitionToMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, true));
+					else if (selectedSong.isSteam || selected.isSteam)
+					{
+						selectContainer(1);
+						CPacketHostChangeChart chart;
+						chart.chartID = selectedSong.steamId;
+						chart.packID = selected.steamId;
+						chart.isPack = chart.packID != 0;
+						chart.chartIndex = packSongIndex;
+						chart.diff = selectedDiffIndex;
+						chart.Order = 0;
+						chart.PacketType = eCPacketHostChangeChart;
+						Multiplayer::sendMessage<CPacketHostChangeChart>(chart);
+
+						CPacketClientChartAcquired acquired;
+						acquired.PacketType = eCPacketClientChartAcquired;
+						acquired.Order = 1;
+
+						Multiplayer::sendMessage<CPacketClientChartAcquired>(acquired);
+					}
 				}
+			}
+			else if (selectedContainerIndex == 1 && !uploading)
+			{
+
+			}
 			break;
 		}
 	}
@@ -835,8 +905,6 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 			Tweening::TweenManager::createNewTween("movingContainer1", multiContainer, Tweening::tt_Y, 900, 160, Game::gameHeight + 200, NULL, Easing::EaseOutCubic);
 			Tweening::TweenManager::createNewTween("movingContainer", soloContainer, Tweening::tt_Y, 900, 160, Game::gameHeight + 200, NULL, Easing::EaseOutCubic);
 		}
-		else if (isInLobby)
-			Game::instance->transitionToMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, true));
 		break;
 	}
 
@@ -850,16 +918,7 @@ void MainerMenu::addPack(std::string name, std::string bg, bool showText, bool i
 	Texture* background = Texture::createWithImage(bg);
 	AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");
 	PackObject* obj = NULL;
-	if (isInLobby)
-		if (!isSteam)
-		{
-			background = Texture::createWithImage("");
-			obj = new PackObject(0, packIndex * 75, "Pack not available", background, true);
-		}
-		else
-			obj = new PackObject(0, packIndex * 75, name, background, showText);
-	else
-		obj = new PackObject(0, packIndex * 75, name, background, showText);
+	obj = new PackObject(0, packIndex * 75, name, background, showText);
 	obj->w = packContainer->w;
 	obj->h = 75;
 	packContainer->addObject(obj, "packInd" + packIndex);
@@ -998,7 +1057,129 @@ void MainerMenu::onSteam(std::string s)
 		uploading = false;
 		chartUploading = false;
 		((Text*)soloContainer->findItemByName("uploadingProgress"))->text = "Uploaded!";
+		resetStuff();
+		loadPacks();
 	}
+
+	if (s == "chartAquired")
+	{
+		if (downloadingPack)
+		{
+			selected = Game::steam->downloadedPack;
+			currentSelectedSong = selected.songs[MainerMenu::packSongIndex].c.meta;
+		}
+		else
+		{
+			currentSelectedSong = Game::steam->downloadedChart;
+		}
+		CPacketClientChartAcquired acquired;
+		acquired.PacketType = eCPacketClientChartAcquired;
+		acquired.Order = 0;
+		Color c;
+		c.r = 128;
+		c.g = 128;
+		c.b = 255;
+		downloading = false;
+		downloadingPack = false;
+		Multiplayer::sendMessage<CPacketClientChartAcquired>(acquired);
+		std::string path = currentSelectedSong.meta.folder + "/" + currentSelectedSong.meta.audio;
+		if (SoundManager::getChannelByName("prevSong") != NULL)
+		{
+			Channel* ch = SoundManager::getChannelByName("prevSong");
+			ch->stop();
+			ch->free();
+			SoundManager::removeChannel("prevSong");
+		}
+		Channel* ch = SoundManager::createChannel(path.c_str(), "prevSong");
+		ch->play();
+		ch->loop = true;
+		ch->setVolume(Game::save->GetDouble("Music Volume"));
+
+		AvgContainer* cont = (AvgContainer*)multiContainer->findItemByName("songContainer");
+
+		Object* bg = cont->findItemByName("background");
+
+		if (bg != nullptr)
+			cont->removeObject(bg);
+
+		AvgSprite* background = new AvgSprite(0, 0, Texture::createWithImage(currentSelectedSong.meta.folder + "/" + currentSelectedSong.meta.background));
+		if (background->w < cont->w)
+			background->w = cont->w;
+		if (background->h < cont->h)
+			background->h = cont->h;
+		background->x = (cont->w / 2) - background->w / 2;
+		background->y = (cont->h / 2) - background->h / 2;
+		background->alpha = 0;
+
+		Tweening::TweenManager::createNewTween("fuckyoutween", background, Tweening::tt_Alpha, 500, 0, 1, NULL, Easing::EaseInSine, false);
+
+		cont->addObject(background, "background", true);
+
+
+		std::string display = currentSelectedSong.meta.songName;
+		std::string secondLine = "";
+
+		if (display.size() > 25)
+		{
+			secondLine = display.substr(25, display.size());
+			display = display.substr(0, 25);
+			if (secondLine.size() > 22)
+				secondLine = secondLine.substr(0, 22) + "...";
+		}
+		Text* title = (Text*)cont->findItemByName("title");
+		title->setText(display);
+		title->setCharacterSpacing(3);
+		Text* artist = (Text*)cont->findItemByName("artist");
+		artist->setText(currentSelectedSong.meta.artist);
+		artist->setCharacterSpacing(2.33);
+
+		if (secondLine.size() != 0)
+		{
+			Text* title2 = (Text*)cont->findItemByName("title2");
+			title2->setText(secondLine);
+			title2->setCharacterSpacing(3);
+			artist->y += 20;
+		}
+
+
+		std::string diffDisplay = currentSelectedSong.meta.difficulties[selectedDiffIndex].name;
+		if (diffDisplay.size() > 14)
+			diffDisplay = diffDisplay.substr(0, 14) + "...";
+
+		Text* diff = (Text*)cont->findItemByName("diff");
+		diff->setText(diffDisplay);
+		diff->setCharacterSpacing(4.17);
+
+		diff->x = (cont->w / 2) - (diff->w / 2);
+		diff->y = 145;
+
+		std::string type = "StepMania";
+
+		switch (selectedSong.c.meta.chartType)
+		{
+		case 1:
+			type = "Quaver";
+			break;
+		case 2:
+			type = "Osu!";
+			break;
+		}
+
+		Text* chartType = (Text*)cont->findItemByName("chartType");
+		chartType->setText(type);
+		chartType->setCharacterSpacing(4.17);
+
+		chartType->x = 12;
+		chartType->y = cont->h - 24;
+
+		Text* localWorkshop = (Text*)cont->findItemByName("localWorkshop");
+		localWorkshop->setText("Steam Workshop");
+		localWorkshop->setCharacterSpacing(4.17);
+
+		localWorkshop->x = ((cont->w) - localWorkshop->w) - 12;
+		localWorkshop->y = cont->h - 24;
+	}
+
 	VM_END
 }
 
@@ -1076,9 +1257,75 @@ void MainerMenu::mouseWheel(float wheel)
 void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 {
 	SPacketLeaderboardResponse res;
+	SPacketServerListReply fuck;
+	SPacketStatus f;
+	SPacketUpdateLobbyData update;
+	SPacketWtfAmInReply reply;
+	SPacketUpdateLobbyChart cc;
+	msgpack::unpacked result;
 
+	msgpack::object obj;
 	switch (pt)
 	{
+	case eSPacketServerListReply:
+		msgpack::unpack(result, data, length);
+
+		obj = msgpack::object(result.get());
+
+		obj.convert(fuck);
+
+		Lobbies = fuck.Lobbies;
+
+		createNewLobbies();
+		break;
+	case eSPacketWtfAmInReply:
+		if (currentLobby.LobbyID == 0)
+		{
+			msgpack::unpack(result, data, length);
+
+			obj = msgpack::object(result.get());
+
+			obj.convert(reply);
+
+			isHost = reply.isHost;
+
+			currentLobby = reply.Lobby;
+
+			createLobby();
+		}
+		break;
+	case eSPacketUpdateLobbyData:
+		msgpack::unpack(result, data, length);
+
+		obj = msgpack::object(result.get());
+
+		obj.convert(update);
+
+		currentLobby = update.Lobby;
+
+		lobbyUpdatePlayers();
+		break;
+	case eSPacketUpdateLobbyChart:
+		msgpack::unpack(result, data, length);
+
+		obj = msgpack::object(result.get());
+
+		obj.convert(cc);
+		packSongIndex = cc.chartIndex;
+		selectedDiffIndex = cc.diff;
+		Color c;
+		c.r = 128;
+		c.g = 128;
+		c.b = 255;
+		if (cc.isPack)
+		{
+			Game::steam->LoadWorkshopChart((uint64_t)cc.packID);
+			downloadingPack = true;
+		}
+		else
+			Game::steam->LoadWorkshopChart((uint64_t)cc.chartID);
+		downloading = true;
+		break;
 	case eSPacketLeaderboardResponse:
 		msgpack::unpacked result;
 
@@ -1185,9 +1432,6 @@ void MainerMenu::selectPack(int index)
 	AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");
 	int ind = 0;
 
-	if (isInLobby && (!packs[index].isSteam && packs[index].packName != "Workshop/Local"))
-		return;
-
 	selected = packs[index];
 
 	for (Object* obj : packContainer->above)
@@ -1223,9 +1467,201 @@ void transContainerThing()
 	}
 }
 
+void lobbySelectedCallback(int mx, int my)
+{
+	MainerMenu* menu = (MainerMenu*)Game::instance->currentMenu;
+	if (menu->isInLobby)
+		return;
+	int selectedLobby = -1;
+	for (int i = 0; i < menu->LobbyContainers.size(); i++)
+	{
+		AvgContainer* cont = menu->LobbyContainers[i];
+		if (mx > cont->realPosX && my > cont->realPosY && mx < cont->realPosX + cont->w && my < cont->realPosY + cont->h)
+		{
+			selectedLobby = i;
+			break;
+		}
+	}
+
+	if (selectedLobby == -1)
+		return;
+
+	CPacketJoinServer list;
+	list.Order = 0;
+	list.PacketType = eCPacketJoinServer;
+	list.LobbyID = menu->Lobbies[selectedLobby].LobbyID;
+
+	std::cout << "trying to join " << list.LobbyID << std::endl;
+	menu->isInLobby = true;
+	Multiplayer::sendMessage<CPacketJoinServer>(list);
+}
+
+
+void MainerMenu::createNewLobbies()
+{
+	int ind = 0;
+
+
+	for (Object* obj : lobbyContainer->above)
+	{
+		delete obj;
+	}
+	lobbyContainer->above.clear();
+	lobbyContainer->items.clear();
+	LobbyContainers.clear();
+	for (lobby& l : Lobbies)
+	{
+		AvgContainer* cont = new AvgContainer(0, 92 * ind, NULL);
+		cont->callback = lobbySelectedCallback;
+		cont->shouldUseCallback = true;
+		cont->w = lobbyContainer->w;
+		cont->h = 92;
+		lobbyContainer->addObject(cont, "lobby" + std::to_string(ind));
+		Text* ln = (Text*)cont->addObject(new Text(107, 20, l.LobbyName, 16, "ANDALEMO"), "lobbyName" + std::to_string(l.LobbyID));
+		ln->setCharacterSpacing(2.67);
+		int y = l.Players == 0 ? 44 : 54;
+		Text* lm = (Text*)cont->addObject(new Text(107, y, std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers), 14, "arial"), "lobbyPlayers" + std::to_string(l.LobbyID));
+		lm->setCharacterSpacing(2);
+
+		AvgSprite* spr = (AvgSprite*)cont->addObject(new AvgSprite(38, 20, Steam::getAvatar(l.Host.Avatar.c_str())), "hostIcon" + std::to_string(l.LobbyID));
+		spr->w = 47;
+		spr->h = 47;
+		spr->customShader = lobbyShader;
+		spr->deleteShader = false;
+
+		AvgSprite* divider = (AvgSprite*)cont->addObject(new AvgSprite(0, 88, Noteskin::getMenuElement(Game::noteskin, "TheWhitePixel.png")), "divider" + std::to_string(l.LobbyID));
+		divider->w = lobbyContainer->w;
+		divider->h = 2;
+
+		ind++;
+
+		LobbyContainers.push_back(cont);
+	}
+	
+}
+
+void MainerMenu::createLobby()
+{
+	multiplayerObjects.push_back(multiContainer->addObject(new Text(28,28, currentLobby.LobbyName, 18, "arial"), "lobbyName"));
+	multiplayerObjects.push_back(multiContainer->addObject(new Text(28,50, std::to_string(currentLobby.Players) + "/" + std::to_string(currentLobby.MaxPlayers), 14, "ariali"), "lobbyPlayers"));
+
+	AvgContainer* filters = (AvgContainer*)multiContainer->findItemByName("filterContainer");
+	Tweening::TweenManager::createNewTween("filtersMoving", filters, Tweening::tt_Alpha, 250, 1, 0, NULL, Easing::EaseInSine);
+	Tweening::TweenManager::createNewTween("lobbiesMoving", lobbyContainer, Tweening::tt_Alpha, 250, 1, 0, NULL, Easing::EaseInSine);
+
+	for (AvgContainer* cont : LobbyContainers)
+		cont->shouldUseCallback = false;
+
+	soloText->setText("songs");
+	soloText->x = selectSolo->x + (selectSolo->w / 2) - (soloText->w / 2);
+
+	AvgContainer* iconContainers = (AvgContainer*)multiContainer->addObject(new AvgContainer(28, 128, NULL), "lobbyIcons");
+
+	multiplayerObjects.push_back(iconContainers);
+
+	iconContainers->w = multiContainer->w - 250;
+	iconContainers->h = multiContainer->h - 142;
+
+	lobbyUpdatePlayers();
+
+	AvgContainer* cont = (AvgContainer*)multiContainer->addObject(new AvgContainer(multiContainer->w, 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/songcontainer.png")), "songContainer");
+	cont->x -= cont->w;
+	multiplayerObjects.push_back(cont);
+
+	// text stuff
+
+	Text* title = new Text(12, 24, "", 18, "arialbd");
+	title->setCharacterSpacing(3);
+	Text* artist = new Text(12, 44, "", 14, "arial");
+	artist->setCharacterSpacing(2.33);
+
+	cont->addObject(title, "title");
+	Text* title2 = new Text(12, 42, "", 18, "arialbd");
+	title2->setCharacterSpacing(3);
+	cont->addObject(title2, "title2");
+	artist->y += 20;
+	cont->addObject(artist, "artist");
+
+
+	Text* diff = new Text(0, 0, "", 20, "arialblk");
+	diff->setCharacterSpacing(4.17);
+
+	diff->x = (cont->w / 2) - (diff->w / 2);
+	diff->y = 145;
+
+	cont->addObject(diff, "diff");
+
+	Text* chartType = new Text(0, 0, "", 14, "arial");
+	chartType->setCharacterSpacing(4.17);
+
+	chartType->x = 12;
+	chartType->y = cont->h - 24;
+	cont->addObject(chartType, "chartType");
+
+	Text* localWorkshop = new Text(0, 0, "", 14, "arial");
+	localWorkshop->setCharacterSpacing(4.17);
+
+	localWorkshop->x = ((cont->w) - localWorkshop->w) - 12;
+	localWorkshop->y = cont->h - 24;
+	cont->addObject(localWorkshop, "localWorkshop");
+	cont->alpha = 1;
+
+}
+
+void MainerMenu::lobbyUpdatePlayers()
+{
+	Text* ln = (Text*)multiContainer->findItemByName("lobbyName");
+	Text* lp = (Text*)multiContainer->findItemByName("lobbyPlayers");
+
+	ln->setText(currentLobby.LobbyName);
+	lp->setText(std::to_string(currentLobby.Players) + "/" + std::to_string(currentLobby.MaxPlayers));
+
+	AvgContainer* iconContainers = (AvgContainer*)multiContainer->findItemByName("lobbyIcons");
+
+	for (Object* obj : iconContainers->above)
+		delete obj;
+
+	iconContainers->items.clear();
+	iconContainers->above.clear();
+
+	AvgSprite* host = new AvgSprite(0, 0, Noteskin::getGameplayElement(Game::noteskin, "crown.png"));
+	host->w = 18;
+	host->h = 18;
+	host->colorR = 255;
+	host->colorG = 209;
+	host->colorB = 83;
+
+	int ind = 0;
+	for (player p : currentLobby.PlayerList)
+	{
+		Texture* avatar = Steam::getAvatar(p.Avatar.c_str());
+		AvgSprite* spr = new AvgSprite(16, 16 + (49 * ind), avatar);
+		spr->w = 47;
+		spr->h = 47;
+		spr->customShader = lobbyShader;
+		spr->deleteShader = false;
+		iconContainers->addObject(spr,"player_" + p.SteamID64);
+
+		Text* name = new Text(16 + spr->w + 18, (16 + (49 * ind)) + 10, p.Name, 16, "arial");
+		iconContainers->addObject(name, "playerName_" + p.SteamID64);
+
+		if (p.SteamID64 == currentLobby.Host.SteamID64)
+		{
+			host->x = spr->x - 9;
+			host->y = spr->y - 9;
+		}
+		ind++;
+	}
+	iconContainers->addObject(host, "hostCrown");
+}
+
 void MainerMenu::selectContainer(int container)
 {
 	MUTATE_START
+
+	if (!isHost && isInLobby && container == 0)
+		return;
+
 	selectedContainerIndex = container;
 	transToContainer = container;
 	despawn = lastTrans;
@@ -1243,13 +1679,12 @@ void MainerMenu::selectContainer(int container)
 		selectSettings->alpha = 0;
 		break;
 	case 1:
-		resetStuff();
-		selectedContainerIndex = 0;
-		if (!isInLobby)
-			Game::instance->transitionToMenu(new MultiplayerLobbies());
-		else
-			Game::instance->transitionToMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, true));
-		return;
+		currentContainer = multiContainer;
+		multiContainer->active = true;
+		selectSolo->alpha = 0;
+		selectMulti->alpha = 1;
+		selectSettings->alpha = 0;
+		break;
 	case 2:
 		currentContainer = settingsContainer;
 		settingsContainer->active = true;
@@ -1288,7 +1723,6 @@ void MainerMenu::leftMouseDown()
 		if ((x > selectMulti->x && y > multiText->y) && (x < selectMulti->x + selectMulti->w && y < selectMulti->y))
 		{
 			selectContainer(1);
-			return;
 		}
 	if (selectedContainerIndex != 2)
 		if ((x > selectSettings->x && y > settingsText->y) && (x < selectSettings->x + selectSettings->w && y < selectSettings->y))
@@ -1305,8 +1739,6 @@ void MainerMenu::leftMouseDown()
 			int yy = obj->y - packContainer->scrollAddition;
 			if ((relX > obj->x && relY > yy) && (relX < obj->x + obj->w && relY < yy + obj->h))
 			{
-				if (isInLobby && (!packs[i].isSteam && packs[i].packName != "Workshop/Local"))
-					return;
 				wheel->setSongs(packs[i].songs);
 				selectPack(i);
 				return;
@@ -1339,6 +1771,7 @@ void dropdown_callback(std::string set, std::string value)
 		Game::noteskin = Noteskin::getNoteskin();
 		resetStuff();
 		Game::instance->transitionToMenu(new MainMenu());
+		delete ((MainerMenu*)Game::instance->currentMenu)->lobbyShader;
 	}
 
 	Game::save->Save();

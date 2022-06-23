@@ -228,7 +228,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			<< std::endl;
 		exit(1);
 	}
-	Game::version = "b11.1";
+	Game::version = "b12.0";
 
 	curl_global_init(CURL_GLOBAL_ALL);
 	Multiplayer::InitCrypto();
@@ -236,7 +236,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	Game::frameLimit = 10;
 
 	BASS_Init(-1,44100,0,NULL,NULL);
-	BASS_SetConfig(BASS_CONFIG_ASYNCFILE_BUFFER, 16777216); //16MB
+	BASS_SetConfig(BASS_CONFIG_ASYNCFILE_BUFFER, 32000000); //32MB
 
 	int test = 123;
 

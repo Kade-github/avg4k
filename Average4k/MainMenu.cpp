@@ -232,17 +232,20 @@ void MainMenu::update(Events::updateEvent event)
 		std::string param = std::string(ch);
 		if (param.size() != 0)
 		{
-			dontAllowInput = true;
-			CPacketJoinServer list;
-			list.Order = 0;
-			list.PacketType = eCPacketJoinServer;
-			std::vector<std::string> st = Chart::split(param, ' ');
-			std::string sub = st[1];
-			list.LobbyID = std::stoul(sub);
+			if (param.starts_with("-joinLobby "))
+			{
+				dontAllowInput = true;
+				CPacketJoinServer list;
+				list.Order = 0;
+				list.PacketType = eCPacketJoinServer;
+				std::vector<std::string> st = Chart::split(param, ' ');
+				std::string sub = st[1];
+				list.LobbyID = std::stoul(sub);
 
-			std::cout << "trying to join " << list.LobbyID << " from command line" << std::endl;
+				std::cout << "trying to join " << list.LobbyID << " from command line" << std::endl;
 
-			Multiplayer::sendMessage<CPacketJoinServer>(list);
+				Multiplayer::sendMessage<CPacketJoinServer>(list);
+			}
 		}
 		Average4k::dumpOutstream();
 	}

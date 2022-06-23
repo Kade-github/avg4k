@@ -59,7 +59,7 @@ void Text::setCharacterSpacing(float spacing)
 
 void Text::draw()
 {
-	if (text.size() == 0 || text == " " || !message)
+	if (text.size() == 0 || text == " " || !message || !drawCall)
 		return;
 
 	Rect dstRect;

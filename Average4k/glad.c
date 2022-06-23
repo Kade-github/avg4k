@@ -77,6 +77,7 @@ void close_gl(void) {
 }
 #else
 #include <dlfcn.h>
+#include <iostream>
 static void* libGL;
 
 #if !defined(__APPLE__) && !defined(__HAIKU__)
@@ -1697,8 +1698,8 @@ static void find_coreGL(void) {
 int gladLoadGLLoader(GLADloadproc load) {
 	GLVersion.major = 0; GLVersion.minor = 0;
 	glGetString = (PFNGLGETSTRINGPROC)load("glGetString");
-	if(glGetString == NULL) return 0;
-	if(glGetString(GL_VERSION) == NULL) return 0;
+	if(glGetString == NULL) return -1;
+	if(glGetString(GL_VERSION) == NULL) return -2;
 	find_coreGL();
 	load_GL_VERSION_1_0(load);
 	load_GL_VERSION_1_1(load);
@@ -1712,7 +1713,7 @@ int gladLoadGLLoader(GLADloadproc load) {
 	load_GL_VERSION_3_1(load);
 	load_GL_VERSION_3_2(load);
 
-	if (!find_extensionsGL()) return 0;
-	return GLVersion.major != 0 || GLVersion.minor != 0;
+	if (!find_extensionsGL()) return -3;
+	return (GLVersion.major != 0 || GLVersion.minor != 0) ? 0 : 1;
 }
 

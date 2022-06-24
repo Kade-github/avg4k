@@ -32,6 +32,8 @@ int catIndex = 0;
 
 int lastHeight = 0;
 
+lobby MainerMenu::currentLobby;
+
 Song MainerMenu::selectedSong;
 
 Pack MainerMenu::selected;
@@ -537,6 +539,12 @@ void MainerMenu::create()
 	Tweening::TweenManager::createNewTween("movingContainer", soloContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	
 	refreshLobbies();
+
+	if (isInLobby)
+	{
+		justJoined = true;
+	}
+
 	VM_END
 }
 
@@ -856,8 +864,6 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 			}
 			break;
 		case SDLK_RETURN:
-			if (!uploading && selectedContainerIndex == 0)
-			{
 				if (currentSelectedSong.meta.difficulties.size() != 0)
 				{
 					resetStuff();
@@ -886,16 +892,24 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 						Multiplayer::sendMessage<CPacketClientChartAcquired>(acquired);
 					}
 				}
-			}
-			else if (selectedContainerIndex == 1 && !uploading)
-			{
-
-			}
 			break;
 		}
 	}
 	switch (event.keysym.sym)
 	{
+	case SDLK_RETURN:
+		if (selectedContainerIndex == 1)
+		{
+			if (isHost)
+			{
+				CPacketHostStartGame start;
+				start.Order = 0;
+				start.PacketType = eCPacketHostStartGame;
+
+				Multiplayer::sendMessage<CPacketHostStartGame>(start);
+			}
+		}
+		break;
 	case SDLK_ESCAPE:
 		if (!isInLobby && !lobbyUp)
 		{
@@ -1236,8 +1250,6 @@ void MainerMenu::loadPacks()
 	SongGather::gatherSteamPacksAsync();
 
 	SongGather::gatherNoPackSteamSongsAsync();
-	
-
 
 	std::vector<Song> stuff = SongGather::gatherNoPackSongs();
 	{
@@ -1318,6 +1330,8 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 
 		createNewLobbies();
 		break;
+	case eSPacketStartLobbyGame:
+		Game::instance->transitionToMenu(new Gameplay());
 	case eSPacketWtfAmInReply:
 		if (currentLobby.LobbyID == 0 && isInLobby)
 		{

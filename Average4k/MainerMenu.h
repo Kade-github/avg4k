@@ -156,7 +156,7 @@ public:
 
 	bool lobbyStuffCreated = false;
 
-	lobby currentLobby;
+	static lobby currentLobby;
 
 	Shader* shad;
 	Shader* lobbyShader;

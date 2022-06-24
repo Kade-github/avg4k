@@ -1,6 +1,5 @@
 #include "Gameplay.h"
 #include "SongSelect.h"
-#include "MultiplayerLobby.h"
 #include "CPacketHostEndChart.h"
 #include <chrono>
 #include "TweenManager.h"
@@ -111,7 +110,7 @@ void Gameplay::removeNote(NoteObject* object)
 
 void Gameplay::miss(NoteObject* object)
 {
-	if (MultiplayerLobby::inLobby)
+	if (MainerMenu::isInLobby)
 	{
 		MUTATE_START
 		noteId++;
@@ -158,7 +157,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 {
 	MUTATE_START
 
-	if (!MultiplayerLobby::inLobby || !created)
+	if (!MainerMenu::isInLobby || !created)
 		return;
 
 	SPacketUpdateLeaderboard pack;
@@ -195,7 +194,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 				Placement->setText(placementt);
 				Placement->x = (Game::gameWidth - Placement->surfW) - 24;
 				SteamFriends()->SetRichPresence("status", Placement->text.c_str());
-				Game::DiscordUpdatePresence(MainerMenu::currentSelectedSong.meta.songName + " in " + MultiplayerLobby::CurrentLobby.LobbyName, "Playing Multiplayer (" + Placement->text + ")", "Average4K", MultiplayerLobby::CurrentLobby.Players, MultiplayerLobby::CurrentLobby.MaxPlayers, "");
+				Game::DiscordUpdatePresence(MainerMenu::currentSelectedSong.meta.songName + " in " + MainerMenu::currentLobby.LobbyName, "Playing Multiplayer (" + Placement->text + ")", "Average4K", MainerMenu::currentLobby.Players, MainerMenu::currentLobby.MaxPlayers, "");
 			}
 			bool found = false;
 			int index = 0;
@@ -286,7 +285,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 				float off = (avatars[cspot.score.SteamID64]->w + 4);
 				cspot.t = new Text(7 + off, y + 4, username, 16, "arial");
 				cspot.owner = new Text(7 + off, cspot.t->y + cspot.t->surfH, "", 16, "arialbd");
-				if (MultiplayerLobby::hostSteamId == score.SteamID64)
+				if (MainerMenu::currentLobby.Host.SteamID64 == score.SteamID64)
 					cspot.owner->setText("lobby owner");
 				else
 				{
@@ -346,9 +345,8 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 		cleanUp();
 		std::cout << "go back" << std::endl;
 
-		MultiplayerLobby* lob = new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, false);
-
-		Game::instance->transitionToMenu(lob);
+		Game::instance->transitionToMenu(new MainerMenu());
+		MainerMenu::isInLobby = true;
 		break;
 	}
 	MUTATE_END
@@ -387,14 +385,7 @@ void Gameplay::create() {
 
 	if (MainerMenu::currentSelectedSong.meta.difficulties.size() == 0)
 	{
-		if (!MultiplayerLobby::inLobby)
-		{
-			Game::instance->transitionToMenu(new MainerMenu());
-		}
-		else
-		{
-			Game::instance->transitionToMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost,false));
-		}
+		Game::instance->transitionToMenu(new MainerMenu());
 		return;
 	}
 
@@ -530,9 +521,9 @@ void Gameplay::create() {
 	rightGrad->alpha = Game::save->GetDouble("Lane Underway Transparency");
 	add(rightGrad);
 
-	if (MultiplayerLobby::inLobby)
+	if (MainerMenu::isInLobby)
 	{
-		Game::DiscordUpdatePresence(MainerMenu::currentSelectedSong.meta.songName + " in " + MultiplayerLobby::CurrentLobby.LobbyName, "Playing Multiplayer", "Average4K", MultiplayerLobby::CurrentLobby.Players, MultiplayerLobby::CurrentLobby.MaxPlayers, "");
+		Game::DiscordUpdatePresence(MainerMenu::currentSelectedSong.meta.songName + " in " + MainerMenu::currentLobby.LobbyName, "Playing Multiplayer", "Average4K", MainerMenu::currentLobby.Players, MainerMenu::currentLobby.MaxPlayers, "");
 		AvgSprite* leftGrad = new AvgSprite(0, 0, Noteskin::getGameplayElement(Game::noteskin, "leftGraid.png"));
 		leftGrad->colorR = darkestColor.r;
 		leftGrad->colorG = darkestColor.g;
@@ -547,10 +538,10 @@ void Gameplay::create() {
 		leftGradBorder->alpha = (0.8 / Game::save->GetDouble("Lane Underway Transparency"));
 		add(leftGradBorder);
 
-		for (int i = 0; i < MultiplayerLobby::CurrentLobby.PlayerList.size(); i++)
+		for (int i = 0; i < MainerMenu::currentLobby.PlayerList.size(); i++)
 		{
-			player pp = MultiplayerLobby::CurrentLobby.PlayerList[i];
-			const char* pog = pp.AvatarURL.c_str();
+			player pp = MainerMenu::currentLobby.PlayerList[i];
+			const char* pog = pp.Avatar.c_str();
 			Texture* s = Steam::getAvatar(pog);
 			avatars[pp.SteamID64] = new AvgSprite(0, 0, s);
 			avatars[pp.SteamID64]->w = 52;
@@ -560,17 +551,17 @@ void Gameplay::create() {
 
 		if (avatars.size() == 0)
 		{
-			Game::instance->transitionToMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, false));
+			Game::instance->transitionToMenu(new MainerMenu());
 			return;
 		}
 		else
 		{
-			for (int i = 0; i < MultiplayerLobby::CurrentLobby.PlayerList.size(); i++)
+			for (int i = 0; i < MainerMenu::currentLobby.PlayerList.size(); i++)
 			{
-				player pp = MultiplayerLobby::CurrentLobby.PlayerList[i];
+				player pp = MainerMenu::currentLobby.PlayerList[i];
 				if (avatars[pp.SteamID64] == nullptr)
 				{
-					Game::instance->transitionToMenu(new MultiplayerLobby(MultiplayerLobby::CurrentLobby, MultiplayerLobby::isHost, false));
+					Game::instance->transitionToMenu(new MainerMenu());
 					return;
 				}
 			}
@@ -658,7 +649,7 @@ void Gameplay::create() {
 	songPosOutline->c.b = 255;
 	created = true;
 
-	if (MultiplayerLobby::inLobby)
+	if (MainerMenu::isInLobby)
 		positionInSong = -5000;
 	else
 		positionInSong = -(Game::save->GetDouble("Start Delay") * 1000);
@@ -800,7 +791,7 @@ void Gameplay::update(Events::updateEvent event)
 
 	// leaderboard
 
-	if (MultiplayerLobby::inLobby)
+	if (MainerMenu::isInLobby)
 	{
 		for (leaderboardSpot& spot : leaderboard)
 		{
@@ -998,7 +989,7 @@ void Gameplay::update(Events::updateEvent event)
 		if (!ended && ((notesToPlay.size() == 0 && spawnedNotes.size() == 0) || ((lastTime - positionInSong) > 4000 || !song->isPlaying)) && positionInSong > 0)
 		{
 			ended = true;
-			if (!MultiplayerLobby::inLobby)
+			if (!MainerMenu::isInLobby)
 			{
 				MainerMenu::currentSelectedSong.destroy();
 				cleanUp();
@@ -1204,7 +1195,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 	{
 		case SDLK_ESCAPE:
 			
-			if (MultiplayerLobby::inLobby) {
+			if (MainerMenu::isInLobby && MainerMenu::isHost) {
 				CPacketHostEndChart end;
 				end.Order = 0;
 				end.PacketType = eCPacketHostEndChart;
@@ -1218,7 +1209,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 		
 			return;
 		case SDLK_F1:
-			if (MultiplayerLobby::inLobby)
+			if (MainerMenu::isInLobby)
 				return;
 			botplay = !botplay;
 			botplayOnce = true;
@@ -1227,13 +1218,13 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			debug = !debug;
 			break;
 		case SDLK_BACKQUOTE:
-			if (MultiplayerLobby::inLobby)
+			if (MainerMenu::isInLobby)
 				return;
 			cleanUp();
 			Game::instance->transitionToMenu(new Gameplay());
 			return;
 		case SDLK_EQUALS:
-			if (Game::instance->flowtime && !MultiplayerLobby::inLobby)
+			if (Game::instance->flowtime && !MainerMenu::isInLobby)
 			{
 				if (playing)
 				{
@@ -1246,7 +1237,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			}
 			break;
 		case SDLK_MINUS:
-			if (Game::instance->flowtime && !MultiplayerLobby::inLobby)
+			if (Game::instance->flowtime && !MainerMenu::isInLobby)
 			{
 				if (playing)
 				{
@@ -1337,7 +1328,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 					}
 				}
 
-				if (MultiplayerLobby::inLobby)
+				if (MainerMenu::isInLobby)
 				{
 					CPacketNoteHit hit;
 					noteId++;

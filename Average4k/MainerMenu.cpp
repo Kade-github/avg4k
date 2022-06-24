@@ -543,6 +543,20 @@ void MainerMenu::create()
 	if (isInLobby)
 	{
 		justJoined = true;
+
+
+		Channel* ch = SoundManager::getChannelByName("prevSong");
+
+		if (ch != NULL)
+		{
+			ch->stop();
+			ch->free();
+			SoundManager::removeChannel("prevSong");
+		}
+		ch = SoundManager::createChannel(Noteskin::getMusicElement(Game::noteskin, "MenuTheme.wav"), "prevSong");
+		ch->play();
+
+		ch->bpm = 155;
 	}
 
 	VM_END
@@ -747,6 +761,21 @@ void MainerMenu::update(Events::updateEvent ev)
 				selectContainer(1);
 		}
 
+
+	if (isInLobby && downloading && lobbyStuffCreated)
+	{
+		float prog = Steam::CheckWorkshopDownload();
+		if (prog != 0)
+		{
+			AvgContainer* cont = (AvgContainer*)multiContainer->findItemByName("songContainer");
+
+			if (!downloadingPack)
+				((Text*)cont->findItemByName("title"))->setText("Downloading song...");
+			else
+				((Text*)cont->findItemByName("title"))->setText("Downloading pack...");
+			((Text*)cont->findItemByName("diff"))->setText(std::to_string(prog * 100).substr(0,2) + "%");
+		}
+	}
 	MUTATE_END
 }
 
@@ -961,6 +990,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 				isInLobby = false;
 				justJoined = false;
 				lobbyStuffCreated = false;
+				soloText->setText("solo");
 				currentLobby = {};
 			}
 		}
@@ -1509,6 +1539,7 @@ void MainerMenu::selectPack(int index)
 
 void transContainerThing()
 {
+	selectedContainerIndex = transToContainer;
 	MainerMenu* instance = (MainerMenu*)Game::currentMenu;
 	switch (despawn)
 	{
@@ -1630,7 +1661,7 @@ void MainerMenu::createLobby()
 
 	// text stuff
 
-	Text* title = new Text(12, 24, "", 18, "arialbd");
+	Text* title = new Text(12, 24, "No Song Selected", 18, "arialbd");
 	title->setCharacterSpacing(3);
 	Text* artist = new Text(12, 44, "", 14, "arial");
 	artist->setCharacterSpacing(2.33);
@@ -1722,7 +1753,6 @@ void MainerMenu::selectContainer(int container)
 	if (!isHost && isInLobby && container == 0)
 		return;
 
-	selectedContainerIndex = container;
 	transToContainer = container;
 	despawn = lastTrans;
 	if (transToContainer <= lastTrans)

@@ -164,8 +164,8 @@ public:
 	bool downloading;
 	bool downloadingPack;
 
-	static std::vector<Pack>* asyncPacks;
-	static std::vector<Song>* asyncSongs;
+	static std::vector<Pack> asyncPacks;
+	static std::vector<Song> asyncSongs;
 
 	AvgContainer* lobbyContainer;
 

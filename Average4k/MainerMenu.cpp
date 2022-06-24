@@ -45,8 +45,8 @@ bool lobbyUp = false;
 
 std::vector<Pack> MainerMenu::packs;
 
-std::vector<Pack>* MainerMenu::asyncPacks;
-std::vector<Song>* MainerMenu::asyncSongs;
+std::vector<Pack> MainerMenu::asyncPacks;
+std::vector<Song> MainerMenu::asyncSongs;
 
 AvgWheel* MainerMenu::wheel;
 
@@ -560,63 +560,62 @@ void MainerMenu::update(Events::updateEvent ev)
 	if (Game::frameLimit != fl && fl > 10)
 		Game::frameLimit = fl;
 
-	if (asyncPacks->size() != 0 || asyncSongs->size() != 0)
+	std::vector<Pack> gatheredPacks;
+	std::vector<Song> gatheredSongs;
+	if (asyncPacks.size() != 0)
 	{
-		std::vector<Pack> gatheredPacks;
 		{
 			std::lock_guard cock(packMutex);
-			if (asyncPacks)
+			for (Pack p : asyncPacks)
 			{
-				for (Pack p : (*asyncPacks))
-				{
 					gatheredPacks.push_back(p);
-				}
-				asyncPacks->clear();
 			}
+			asyncPacks.clear();
+			
 		}
-
-		std::vector<Song> gatheredSongs;
+	}
+	if (asyncSongs.size() != 0)
+	{
 		{
 			std::lock_guard cock(packMutex);
-			for (Song s : (*asyncSongs))
+			for (Song s : asyncSongs)
 			{
 				gatheredSongs.push_back(s);
 			}
-			asyncSongs->clear();
+			asyncSongs.clear();
 		}
-
-		for (Pack p : gatheredPacks)
-		{
-			bool d = false;
-			for (Pack pp : packs)
-				if (pp.packName == p.packName)
-				{
-					if (!p.isSteam)
-						d = true;
-				}
-			if (d)
-				continue;
-			addPack(p.packName, p.background, p.showName, p.isSteam);
-			packs.push_back(p);
-		}
-		for (Song s : gatheredSongs)
-		{
-			bool d = false;
-			for (Song pp : steamWorkshop.songs)
-				if (pp.c.meta.folder == s.c.meta.folder)
-					d = true;
-			if (d)
-				continue;
-			steamWorkshop.songs.push_back(s);
-			for (Pack& p : packs)
-				if (p.packName == "Workshop/Local")
-					p.songs = steamWorkshop.songs;
-		}
-
-
-		Text* t = (Text*)soloContainer->findItemByName("packsBottom");
-		t->setText(std::to_string(packs.size()) + " loaded");
 	}
+	for (Pack p : gatheredPacks)
+	{
+		bool d = false;
+		for (Pack pp : packs)
+			if (pp.packName == p.packName)
+			{
+				if (!p.isSteam)
+					d = true;
+			}
+		if (d)
+			continue;
+		addPack(p.packName, p.background, p.showName, p.isSteam);
+		packs.push_back(p);
+	}
+	for (Song s : gatheredSongs)
+	{
+		bool d = false;
+		for (Song pp : steamWorkshop.songs)
+			if (pp.c.meta.folder == s.c.meta.folder)
+				d = true;
+		if (d)
+			continue;
+		steamWorkshop.songs.push_back(s);
+		for (Pack& p : packs)
+			if (p.packName == "Workshop/Local")
+				p.songs = steamWorkshop.songs;
+	}
+
+
+	Text* t = (Text*)soloContainer->findItemByName("packsBottom");
+	t->setText(std::to_string(packs.size()) + " loaded");
 
 	if (uploading)
 	{
@@ -1232,16 +1231,11 @@ void MainerMenu::onSteam(std::string s)
 void MainerMenu::loadPacks()
 {
 	// create packs
-	if (!asyncPacks)
-	{
-		asyncPacks = new std::vector<Pack>();
-		asyncSongs = new std::vector<Song>();
-	}
 
-	SongGather::gatherPacksAsync(asyncPacks);
-	SongGather::gatherSteamPacksAsync(asyncPacks);
+	SongGather::gatherPacksAsync();
+	SongGather::gatherSteamPacksAsync();
 
-	SongGather::gatherNoPackSteamSongsAsync(asyncSongs);
+	SongGather::gatherNoPackSteamSongsAsync();
 	
 
 
@@ -1250,7 +1244,7 @@ void MainerMenu::loadPacks()
 		std::lock_guard cock(packMutex);
 		if (stuff.size() > 0)
 			for (Song s : stuff)
-				asyncSongs->push_back(s);
+				asyncSongs.push_back(s);
 	}
 	bool addWorkshop = true;
 	for (Pack p : packs)

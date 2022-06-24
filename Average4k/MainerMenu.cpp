@@ -1806,17 +1806,20 @@ void MainerMenu::leftMouseDown()
 	int x, y;
 	Game::GetMousePos(&x, &y);
 
-	if (selectedContainerIndex != 0)
-		if ((x > selectSolo->x && y > soloText->y) && (x < selectSolo->x + selectSolo->w && y < selectSolo->y))
-			selectContainer(0);
-	if (selectedContainerIndex != 1)
-		if ((x > selectMulti->x && y > multiText->y) && (x < selectMulti->x + selectMulti->w && y < selectMulti->y))
-		{
-			selectContainer(1);
-		}
-	if (selectedContainerIndex != 2)
-		if ((x > selectSettings->x && y > settingsText->y) && (x < selectSettings->x + selectSettings->w && y < selectSettings->y))
-			selectContainer(2);
+	if (selectedContainerIndex == transToContainer)
+	{
+		if (selectedContainerIndex != 0)
+			if ((x > selectSolo->x && y > soloText->y) && (x < selectSolo->x + selectSolo->w && y < selectSolo->y))
+				selectContainer(0);
+		if (selectedContainerIndex != 1)
+			if ((x > selectMulti->x && y > multiText->y) && (x < selectMulti->x + selectMulti->w && y < selectMulti->y))
+			{
+				selectContainer(1);
+			}
+		if (selectedContainerIndex != 2)
+			if ((x > selectSettings->x && y > settingsText->y) && (x < selectSettings->x + selectSettings->w && y < selectSettings->y))
+				selectContainer(2);
+	}
 
 	if (selectedContainerIndex == 0 && !uploading)
 	{

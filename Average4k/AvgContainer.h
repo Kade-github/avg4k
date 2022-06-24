@@ -34,7 +34,7 @@ public:
 	Texture* scrollAr;
 	Rect scrollBar;
 
-	AvgContainer(int _x, int _y, Texture* background)
+	AvgContainer(int _x, int _y, Texture* background) : Object(x,y)
 	{
 		MUTATE_START
 		x = _x;

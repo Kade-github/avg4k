@@ -175,13 +175,7 @@ namespace Tweening
 			double end = t.end;
 			double value = t.easeFunc(t.percnt);
 
-			if (!Game::doesObjectExist(t.savedId) && t.shouldBeId)
-			{
-				tweenRemove.push_back(t);
-				return;
-			}
-
-			if (t.obj->w < 0)
+			if (t.obj->w < 0 || t.obj->isDead)
 			{
 				tweenRemove.push_back(t);
 				return;

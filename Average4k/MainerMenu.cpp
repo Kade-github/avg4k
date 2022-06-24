@@ -905,6 +905,52 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 			Tweening::TweenManager::createNewTween("movingContainer1", multiContainer, Tweening::tt_Y, 900, 160, Game::gameHeight + 200, NULL, Easing::EaseOutCubic);
 			Tweening::TweenManager::createNewTween("movingContainer", soloContainer, Tweening::tt_Y, 900, 160, Game::gameHeight + 200, NULL, Easing::EaseOutCubic);
 		}
+		else if (isInLobby)
+		{
+			if (selectedContainerIndex != 1)
+			{
+				selectContainer(1);
+				Game::showErrorWindow("Notice", "Press escape again to leave.", false);
+			}
+			else
+			{
+				CPacketLeave leave;
+				leave.Order = 0;
+				leave.PacketType = eCPacketLeave;
+
+				lobbyStuffCreated = false;
+
+				Multiplayer::sendMessage<CPacketLeave>(leave);
+
+				int ind = 0;
+
+				std::vector<itemId> stuff = multiContainer->items;
+
+				for (itemId id : stuff)
+				{
+					if (id.name != "filterContainer" && id.name != "lobbyContainer")
+					{
+						multiContainer->removeObject(id.obj);
+					}
+					ind++;
+				}
+
+				stuff.clear();
+
+				for (Object* ob : multiplayerObjects)
+					delete ob;
+				multiplayerObjects.clear();
+
+				AvgContainer* filters = (AvgContainer*)multiContainer->findItemByName("filterContainer");
+				Tweening::TweenManager::createNewTween("filtersMoving", filters, Tweening::tt_Alpha, 250, 0, 1, NULL, Easing::EaseInSine);
+				Tweening::TweenManager::createNewTween("lobbiesMoving", lobbyContainer, Tweening::tt_Alpha, 250, 0, 1, NULL, Easing::EaseInSine);
+				refreshLobbies();
+				isInLobby = false;
+				justJoined = false;
+				lobbyStuffCreated = false;
+				currentLobby = {};
+			}
+		}
 		break;
 	}
 
@@ -1061,7 +1107,7 @@ void MainerMenu::onSteam(std::string s)
 		loadPacks();
 	}
 
-	if (s == "chartAquired")
+	if (s == "chartAquired" && isInLobby && lobbyStuffCreated)
 	{
 		if (downloadingPack)
 		{
@@ -1111,7 +1157,7 @@ void MainerMenu::onSteam(std::string s)
 		background->y = (cont->h / 2) - background->h / 2;
 		background->alpha = 0;
 
-		Tweening::TweenManager::createNewTween("fuckyoutween", background, Tweening::tt_Alpha, 500, 0, 1, NULL, Easing::EaseInSine, false);
+		Tweening::TweenManager::createNewTween("fuckyoutween", background, Tweening::tt_Alpha, 240, 0, 1, NULL, Easing::EaseInSine, false);
 
 		cont->addObject(background, "background", true);
 
@@ -1279,7 +1325,7 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 		createNewLobbies();
 		break;
 	case eSPacketWtfAmInReply:
-		if (currentLobby.LobbyID == 0)
+		if (currentLobby.LobbyID == 0 && isInLobby)
 		{
 			msgpack::unpack(result, data, length);
 
@@ -1295,36 +1341,42 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 		}
 		break;
 	case eSPacketUpdateLobbyData:
-		msgpack::unpack(result, data, length);
+		if (isInLobby)
+		{
+			msgpack::unpack(result, data, length);
 
-		obj = msgpack::object(result.get());
+			obj = msgpack::object(result.get());
 
-		obj.convert(update);
+			obj.convert(update);
 
-		currentLobby = update.Lobby;
+			currentLobby = update.Lobby;
 
-		lobbyUpdatePlayers();
+			lobbyUpdatePlayers();
+		}
 		break;
 	case eSPacketUpdateLobbyChart:
-		msgpack::unpack(result, data, length);
-
-		obj = msgpack::object(result.get());
-
-		obj.convert(cc);
-		packSongIndex = cc.chartIndex;
-		selectedDiffIndex = cc.diff;
-		Color c;
-		c.r = 128;
-		c.g = 128;
-		c.b = 255;
-		if (cc.isPack)
+		if (isInLobby)
 		{
-			Game::steam->LoadWorkshopChart((uint64_t)cc.packID);
-			downloadingPack = true;
+			msgpack::unpack(result, data, length);
+
+			obj = msgpack::object(result.get());
+
+			obj.convert(cc);
+			packSongIndex = cc.chartIndex;
+			selectedDiffIndex = cc.diff;
+			Color c;
+			c.r = 128;
+			c.g = 128;
+			c.b = 255;
+			if (cc.isPack)
+			{
+				Game::steam->LoadWorkshopChart((uint64_t)cc.packID);
+				downloadingPack = true;
+			}
+			else
+				Game::steam->LoadWorkshopChart((uint64_t)cc.chartID);
+			downloading = true;
 		}
-		else
-			Game::steam->LoadWorkshopChart((uint64_t)cc.chartID);
-		downloading = true;
 		break;
 	case eSPacketLeaderboardResponse:
 		msgpack::unpacked result;
@@ -1605,7 +1657,7 @@ void MainerMenu::createLobby()
 	localWorkshop->y = cont->h - 24;
 	cont->addObject(localWorkshop, "localWorkshop");
 	cont->alpha = 1;
-
+	lobbyStuffCreated = true;
 }
 
 void MainerMenu::lobbyUpdatePlayers()

@@ -186,25 +186,31 @@ void AvgContainer::draw() {
 	dropDownActive = false;
 	for (Object* a : above)
 	{
-		AvgDropDown* objb = dynamic_cast<AvgDropDown*>(a);
-		if (objb != NULL)
+		if (a != NULL)
 		{
-			if (objb->isActive)
+			if (a->id >= 0)
 			{
-				activeDrop = objb;
-				dropDownActive = true;
-				continue;
+				AvgDropDown* objb = dynamic_cast<AvgDropDown*>(a);
+				if (objb != NULL)
+				{
+					if (objb->isActive)
+					{
+						activeDrop = objb;
+						dropDownActive = true;
+						continue;
+					}
+				}
+				if (alpha > 0)
+				{
+					a->x += x + scrollBar.w;
+					a->y += y - scrollAddition;
+					a->realPosX = a->x;
+					a->realPosY = a->y;
+					a->draw();
+					a->x -= x + scrollBar.w;
+					a->y -= y - scrollAddition;
+				}
 			}
-		}
-		if (alpha > 0)
-		{
-			a->x += x + scrollBar.w;
-			a->y += y - scrollAddition;
-			a->realPosX = a->x;
-			a->realPosY = a->y;
-			a->draw();
-			a->x -= x + scrollBar.w;
-			a->y -= y - scrollAddition;
 		}
 	}
 

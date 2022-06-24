@@ -154,6 +154,7 @@ public:
 
 	std::vector<AvgSprite*> icons;
 
+	bool lobbyStuffCreated = false;
 
 	lobby currentLobby;
 

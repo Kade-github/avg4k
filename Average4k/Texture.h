@@ -17,6 +17,8 @@ class Texture
 
 		static Texture* createWithImage(std::string filePath);
 
+		void resizeTexture(int w, int h);
+
 		int width;
 		int height;
 		bool fromSTBI = false;

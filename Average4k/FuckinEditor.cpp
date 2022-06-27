@@ -1207,6 +1207,7 @@ void FuckinEditor::update(Events::updateEvent event)
 
 	for (thingy& l : sideStuff)
 	{
+		l.text->drawCall = true;
 		float noteOffset = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed") / 60, selectedChart->getTimeFromBeat(l.beat, selectedChart->getSegmentFromBeat(l.beat)) + (selectedChart->getStopOffsetFromBeat(l.beat)), currentTime, 64 * noteZoom);
 		if (downscroll)
 			l.background->y = (fuck[0]->y - noteOffset + (32 * noteZoom)) - 25;

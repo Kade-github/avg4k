@@ -219,6 +219,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="Gameplay.cpp" />
     <ClCompile Include="GL.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="Helper.cpp" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="ImGuiFileDialog.cpp" />
     <ClCompile Include="imgui_demo.cpp" />

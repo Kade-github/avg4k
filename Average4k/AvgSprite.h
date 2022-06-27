@@ -15,6 +15,7 @@ public:
 	bool round = false;
 	bool flip = false;
 	bool flipX = false;
+	bool deleteShader = true;
 	Shader* customShader;
 	std::string filePath;
 
@@ -62,7 +63,7 @@ public:
 		{
 			delete obj;
 		}
-		if (customShader)
+		if (customShader && deleteShader)
 			delete customShader;
 		beforeDeath();
 		die();

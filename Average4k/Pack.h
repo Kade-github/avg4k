@@ -54,7 +54,7 @@ public:
 
 class SongGather {
 public:
-	static void gatherPacksAsync(std::vector<Pack>* packs);
+	static void gatherPacksAsync();
 	static Pack gatherPack(std::string filePath);
 
 	static bool packAsyncAlready;
@@ -66,9 +66,9 @@ public:
 
 	static Chart extractAndGetChart(std::string file);
 
-	static void gatherSteamPacksAsync(std::vector<Pack>* packs);
+	static void gatherSteamPacksAsync();
 	
-	static void gatherNoPackSteamSongsAsync(std::vector<Song>* songs);
+	static void gatherNoPackSteamSongsAsync();
 
 	static std::vector<Song> gatherSongsInFolder(std::string folder = "");
 };

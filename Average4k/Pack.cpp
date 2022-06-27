@@ -7,18 +7,19 @@
 #include "Game.h"
 #include "OsuFile.h"
 #include "Average4k.h"
+#include "MainerMenu.h"
 
 bool SongGather::packAsyncAlready;
 bool SongGather::steamRegAsyncAlready;
 
 std::mutex lock;
 
-void SongGather::gatherPacksAsync(std::vector<Pack>* packs)
+void SongGather::gatherPacksAsync()
 {
 	if (!steamRegAsyncAlready)
 	{
 		steamRegAsyncAlready = true;
-		std::thread t([packs]() {
+		std::thread t([]() {
 			for (const auto& entry : std::filesystem::directory_iterator("assets/charts/"))
 			{
 				if (SongUtils::IsDirectory(entry.path()))
@@ -61,7 +62,7 @@ void SongGather::gatherPacksAsync(std::vector<Pack>* packs)
 						p.songs.push_back(s);
 					{
 						std::lock_guard cock(lock);
-						packs->push_back(p);
+						MainerMenu::asyncPacks.push_back(p);
 					}
 				}
 				steamRegAsyncAlready = false;
@@ -231,12 +232,12 @@ Chart SongGather::extractAndGetChart(std::string file)
 	return Chart();
 }
 
-void SongGather::gatherSteamPacksAsync(std::vector<Pack>* packs)
+void SongGather::gatherSteamPacksAsync()
 {
 	if (!packAsyncAlready)
 	{
 		packAsyncAlready = true;
-		std::thread t([packs]() {
+		std::thread t([]() {
 			for (int i = 0; i < Game::steam->subscribedList.size(); i++)
 			{
 				steamItem st = Game::steam->subscribedList[i];
@@ -289,7 +290,7 @@ void SongGather::gatherSteamPacksAsync(std::vector<Pack>* packs)
 				}
 				{
 					std::lock_guard cock(lock);
-					packs->push_back(p);
+					MainerMenu::asyncPacks.push_back(p);
 				}
 			}
 			packAsyncAlready = false;
@@ -298,9 +299,9 @@ void SongGather::gatherSteamPacksAsync(std::vector<Pack>* packs)
 	}
 }
 
-void SongGather::gatherNoPackSteamSongsAsync(std::vector<Song>* songs)
+void SongGather::gatherNoPackSteamSongsAsync()
 {
-	std::thread t([songs]() {
+	std::thread t([]() {
 		for (int i = 0; i < Game::steam->subscribedList.size(); i++)
 		{
 			steamItem st = Game::steam->subscribedList[i];
@@ -337,7 +338,7 @@ void SongGather::gatherNoPackSteamSongsAsync(std::vector<Song>* songs)
 			}
 
 			s.c = c;
-			songs->push_back(s);
+			MainerMenu::asyncSongs.push_back(s);
 		}
 		});
 	t.detach();

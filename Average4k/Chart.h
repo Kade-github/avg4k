@@ -61,6 +61,9 @@ public:
 
 class Chart
 {
+	private:
+		bpmSegment previouslyFound;
+		bpmSegment nextSeg;
 	public:
 		Chart() {};
 		Chart(chartMeta m) { meta = m; };

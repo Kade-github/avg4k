@@ -18,10 +18,6 @@ struct steamItem {
 class Steam
 {
 public:
-
-
-	static std::map<std::string, Texture*> pixelsForAvatar;
-
 	Steam() {};
 	void InitSteam();
 

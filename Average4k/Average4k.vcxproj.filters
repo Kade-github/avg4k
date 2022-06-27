@@ -324,6 +324,9 @@
     <ClCompile Include="AvgWheel.cpp">
       <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
     </ClCompile>
+    <ClCompile Include="Helper.cpp">
+      <Filter>Source Files\Average4k\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes.h">

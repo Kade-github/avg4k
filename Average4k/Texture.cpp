@@ -22,6 +22,13 @@ Texture* Texture::createWithImage(std::string filePath)
 	return t;
 }
 
+void Texture::resizeTexture(int w, int h)
+{
+	glDeleteTextures(1, &id);
+	glGenTextures(1, &id);
+	SetData(pixels, w, h);
+}
+
 Texture* Texture::createFromSurface(SDL_Surface* surf, bool free) {
 	if (surf == NULL)
 	{

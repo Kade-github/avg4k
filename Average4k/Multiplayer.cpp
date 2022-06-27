@@ -514,7 +514,7 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
             Multiplayer::tagColor = { (int)(helloBack.tagColor.red * 255),(int)(helloBack.tagColor.green * 255),(int)(helloBack.tagColor.blue * 255) };
             Multiplayer::nameColor = { (int)(helloBack.nameColor.red * 255),(int)(helloBack.nameColor.green * 255),(int)(helloBack.nameColor.blue * 255) };
 
-            Multiplayer::currentUserAvatar = helloBack.avatarURL;
+            Multiplayer::currentUserAvatar = helloBack.Avatar;
 
             std::cout << helloBack.Message << ". hello server, fuck you too! " << std::endl;
             break;

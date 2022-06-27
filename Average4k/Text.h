@@ -33,7 +33,7 @@ public:
 	TTF_Font* outlineArial;
 	Texture* message;
 	Texture* outline;
-
+	bool drawCall = true;
 	int borderSize = 1;
 	float borderW, borderH;
 	Color borderColor;

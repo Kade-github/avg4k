@@ -428,9 +428,26 @@ void MainerMenu::create()
 
 	// multi creation
 
-	multiContainer->addObject(new AvgContainer(0, 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Multi/filtercontainer.png")), "filterContainer");
+	AvgContainer* filters = (AvgContainer*)multiContainer->addObject(new AvgContainer(0, 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Multi/filtercontainer.png")), "filterContainer");
 	lobbyContainer = (AvgContainer*)multiContainer->addObject(new AvgContainer(275, 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Multi/lobbycontainer.png")), "lobbyContainer");
 
+	Text* lb = (Text*)filters->addObject(new Text(12, 12, "Lobby", 18, "arialbd"), "lobbyText");
+	lb->setCharacterSpacing(3);
+
+	Text* searchText = (Text*)filters->addObject(new Text(12, 42, "search", 14, "arial"), "searchText");
+	searchText->setCharacterSpacing(2.33);
+
+	AvgTextBar* searchBox = (AvgTextBar*)filters->addObject(new AvgTextBar(12, 42 + searchText->h + 12, "", Noteskin::getMenuElement(Game::noteskin, "MainMenu/Multi/lobbysearch.png")), "lobbySearch");
+	searchBox->callback = MainerMenu::createNewLobbies;
+
+	Text* sortText = (Text*)filters->addObject(new Text(12, searchBox->y + searchBox->h + 12, "sort by", 14, "arial"), "sortText");
+	sortText->setCharacterSpacing(2.33);
+
+	Text* filtersText = (Text*)filters->addObject(new Text(12 + sortText->w + 84, searchBox->y + searchBox->h + 12, "filters", 14, "arial"), "filtersText");
+	filtersText->setCharacterSpacing(2.33);
+
+	chat = new ChatObject(0, 0);
+	chat->create();
 
 
 	settingsContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Settings/maincontainer.png"));
@@ -558,6 +575,8 @@ void MainerMenu::create()
 
 		ch->bpm = 155;
 	}
+
+	add(chat);
 
 	VM_END
 }
@@ -840,6 +859,13 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 				Multiplayer::sendMessage<CPacketLeaderboardRequest>(req);
 			}
 		}
+		if (selectedContainerIndex == 1 && isInLobby)
+		{
+			if (chat->opened)
+				chat->close();
+			else
+				chat->open();
+		}
 		break;
 	}
 	if (lockInput || lobbyUp)
@@ -927,7 +953,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 	switch (event.keysym.sym)
 	{
 	case SDLK_RETURN:
-		if (selectedContainerIndex == 1)
+		if (selectedContainerIndex == 1 && !chat->opened)
 		{
 			if (isHost)
 			{
@@ -992,6 +1018,8 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 				lobbyStuffCreated = false;
 				soloText->setText("solo");
 				currentLobby = {};
+				if (chat->opened)
+					chat->close();
 			}
 		}
 		break;
@@ -1588,45 +1616,65 @@ void lobbySelectedCallback(int mx, int my)
 }
 
 
-void MainerMenu::createNewLobbies()
+void MainerMenu::createNewLobbies(std::string searchTerm)
 {
 	int ind = 0;
+	MainerMenu* menu = (MainerMenu*)Game::instance->currentMenu;
 
-
-	for (Object* obj : lobbyContainer->above)
+	for (Object* obj : menu->lobbyContainer->above)
 	{
 		delete obj;
 	}
-	lobbyContainer->above.clear();
-	lobbyContainer->items.clear();
-	LobbyContainers.clear();
-	for (lobby& l : Lobbies)
+	menu->lobbyContainer->above.clear();
+	menu->lobbyContainer->items.clear();
+	menu->LobbyContainers.clear();
+	for (lobby& l : menu->Lobbies)
 	{
+		if (searchTerm.size() != 0)
+			if (!l.LobbyName.contains(searchTerm))
+				continue;
 		AvgContainer* cont = new AvgContainer(0, 92 * ind, NULL);
 		cont->callback = lobbySelectedCallback;
 		cont->shouldUseCallback = true;
-		cont->w = lobbyContainer->w;
+		cont->w = menu->lobbyContainer->w;
 		cont->h = 92;
-		lobbyContainer->addObject(cont, "lobby" + std::to_string(ind));
+		menu->lobbyContainer->addObject(cont, "lobby" + std::to_string(ind));
 		Text* ln = (Text*)cont->addObject(new Text(107, 20, l.LobbyName, 16, "ANDALEMO"), "lobbyName" + std::to_string(l.LobbyID));
 		ln->setCharacterSpacing(2.67);
-		int y = l.Players == 0 ? 44 : 54;
+		int y = l.Players == 0 ? ln->y + ln->h + 2 : ln->y + ln->h + 34;
 		Text* lm = (Text*)cont->addObject(new Text(107, y, std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers), 14, "arial"), "lobbyPlayers" + std::to_string(l.LobbyID));
 		lm->setCharacterSpacing(2);
 
 		AvgSprite* spr = (AvgSprite*)cont->addObject(new AvgSprite(38, 20, Steam::getAvatar(l.Host.Avatar.c_str())), "hostIcon" + std::to_string(l.LobbyID));
 		spr->w = 47;
 		spr->h = 47;
-		spr->customShader = lobbyShader;
+		spr->customShader = menu->lobbyShader;
 		spr->deleteShader = false;
 
-		AvgSprite* divider = (AvgSprite*)cont->addObject(new AvgSprite(0, 88, Noteskin::getMenuElement(Game::noteskin, "TheWhitePixel.png")), "divider" + std::to_string(l.LobbyID));
-		divider->w = lobbyContainer->w;
+		AvgSprite* divider = (AvgSprite*)cont->addObject(new AvgSprite(0, 90, Noteskin::getMenuElement(Game::noteskin, "TheWhitePixel.png")), "divider" + std::to_string(l.LobbyID));
+		divider->w = menu->lobbyContainer->w;
 		divider->h = 2;
 
+		int indd = 0;
+		for (player p : l.PlayerList)
+		{
+			if (p.SteamID64 == l.Host.SteamID64)
+				continue;
+			if (indd > 6)
+				break;
+			Texture* avatar = Steam::getAvatar(p.Avatar.c_str());
+
+			AvgSprite* av = new AvgSprite(ln->x + (20 * indd), ln->y + ln->h, avatar);
+			av->w = 32;
+			av->h = 32;
+			av->customShader = menu->lobbyShader;
+			av->deleteShader = false;
+			cont->addObject(av, "playerIcon_" + p.SteamID64);
+			indd++;
+		}
 		ind++;
 
-		LobbyContainers.push_back(cont);
+		menu->LobbyContainers.push_back(cont);
 	}
 	
 }

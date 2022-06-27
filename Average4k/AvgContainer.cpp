@@ -38,10 +38,10 @@ void AvgContainer::mouseWheel(float amount)
 void AvgContainer::draw() {
 	if (!active)
 		return;
-	clipRect.x = x + 2;
+	clipRect.x = x + 1;
 	clipRect.y = y + 1;
-	clipRect.w = w - 4;
-	clipRect.h = h - 4;
+	clipRect.w = w - 2;
+	clipRect.h = h - 2;
 
 
 

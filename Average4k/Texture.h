@@ -25,6 +25,7 @@ class Texture
 		unsigned char* pixels;
 
 		Texture(unsigned char* data, const unsigned int width, const unsigned int height);
+		Texture(unsigned char* data, const unsigned int width, const unsigned int height, bool mssa);
 		~Texture();
 				
 		//Texture interface

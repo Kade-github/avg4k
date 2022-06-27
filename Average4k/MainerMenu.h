@@ -8,6 +8,7 @@
 #include "SaveFile.h"
 #include "AvgContainer.h"
 #include "CPacketLeaderboardRequest.h"
+#include "ChatObject.h"
 #include "SPacketLeaderboardResponse.h"
 // Objects
 #include "AvgWheel.h"
@@ -147,6 +148,8 @@ public:
 
 	static std::vector<Pack> packs;
 
+	ChatObject* chat;
+
 	std::vector<lobby> Lobbies;
 	std::vector<AvgContainer*> LobbyContainers;
 
@@ -192,7 +195,7 @@ public:
 
 	AvgContainer* currentContainer;
 
-	void createNewLobbies();
+	static void createNewLobbies(std::string searchTerm = "");
 
 	void selectContainer(int container);
 

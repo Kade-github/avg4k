@@ -280,6 +280,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
 
 	SDL_GLContext gl_context = SDL_GL_CreateContext(window);
 	
@@ -297,11 +298,15 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	}
 	
 
+
 	//NO MORE SDL RENDERER!!!! IT IS MUTUALLY EXCLUSIVE TO OPENGL!!! READ THE FUCKING DOCS KADE!!!!!!!
 	//SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	
 	std::cout << "OpenGL version loaded: " << GLVersion.major << "."
 		<< GLVersion.minor << std::endl;
+
+	glEnable(GL_MULTISAMPLE);
+
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;

@@ -51,7 +51,7 @@ void Object::drawChildren()
 			obj->draw();
 			Rendering::drawBatch();
 			Rendering::setBlend();
-			glBindFramebuffer(GL_FRAMEBUFFER, Game::mainCamera->fb);
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 			AvgGroup* gr = (AvgGroup*)obj;
 

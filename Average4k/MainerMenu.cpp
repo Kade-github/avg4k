@@ -1631,7 +1631,7 @@ void MainerMenu::createNewLobbies(std::string searchTerm)
 	for (lobby& l : menu->Lobbies)
 	{
 		if (searchTerm.size() != 0)
-			if (!l.LobbyName.contains(searchTerm))
+			if (l.LobbyName.find(searchTerm) == std::string::npos)
 				continue;
 		AvgContainer* cont = new AvgContainer(0, 92 * ind, NULL);
 		cont->callback = lobbySelectedCallback;

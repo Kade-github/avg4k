@@ -232,6 +232,7 @@ void ChatObject::draw()
 			if (!startTween && shouldNotif)
 			{
 				startTween = true;
+				Tweening::TweenManager::removeTween("chat_notif");
 				Tweening::TweenManager::createNewTween("chat_notif", chatNotif, Tweening::tt_Alpha, 3500, 1, 0, NULL, Easing::EaseInSine, false);
 			}
 		}

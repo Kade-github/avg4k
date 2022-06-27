@@ -79,6 +79,11 @@ void refreshLobbies() {
 	VM_END
 }
 
+void shittyShitShit(std::string s)
+{
+	MainerMenu* menu = (MainerMenu*)Game::instance->currentMenu;
+	menu->createNewLobbies(s);
+}
 
 void resetStuff()
 {
@@ -438,7 +443,7 @@ void MainerMenu::create()
 	searchText->setCharacterSpacing(2.33);
 
 	AvgTextBar* searchBox = (AvgTextBar*)filters->addObject(new AvgTextBar(12, 42 + searchText->h + 12, "", Noteskin::getMenuElement(Game::noteskin, "MainMenu/Multi/lobbysearch.png")), "lobbySearch");
-	searchBox->callback = MainerMenu::createNewLobbies;
+	searchBox->callback = shittyShitShit;
 
 	Text* sortText = (Text*)filters->addObject(new Text(12, searchBox->y + searchBox->h + 12, "sort by", 14, "arial"), "sortText");
 	sortText->setCharacterSpacing(2.33);
@@ -1595,7 +1600,19 @@ void lobbySelectedCallback(int mx, int my)
 	for (int i = 0; i < menu->LobbyContainers.size(); i++)
 	{
 		AvgContainer* cont = menu->LobbyContainers[i];
-		if (mx > cont->realPosX && my > cont->realPosY && mx < cont->realPosX + cont->w && my < cont->realPosY + cont->h)
+		float scrll = ((AvgContainer*)cont->parent)->scrollAddition;
+
+		int relX = mx - cont->parent->x;
+		int relY = my - cont->parent->y + scrll;
+
+		if (((AvgContainer*)cont->parent)->parent != NULL)
+		{
+			AvgContainer* parentParent = (AvgContainer*)((AvgContainer*)cont->parent)->parent;
+			relX -= parentParent->x;
+			relY -= parentParent->y;
+		}
+
+		if ((relX > cont->x && relY > cont->y) && (relX < cont->x + cont->w && relY < cont->y + cont->h))
 		{
 			selectedLobby = i;
 			break;
@@ -1619,16 +1636,15 @@ void lobbySelectedCallback(int mx, int my)
 void MainerMenu::createNewLobbies(std::string searchTerm)
 {
 	int ind = 0;
-	MainerMenu* menu = (MainerMenu*)Game::instance->currentMenu;
 
-	for (Object* obj : menu->lobbyContainer->above)
+	for (Object* obj : lobbyContainer->above)
 	{
 		delete obj;
 	}
-	menu->lobbyContainer->above.clear();
-	menu->lobbyContainer->items.clear();
-	menu->LobbyContainers.clear();
-	for (lobby& l : menu->Lobbies)
+	lobbyContainer->above.clear();
+	lobbyContainer->items.clear();
+	LobbyContainers.clear();
+	for (lobby& l : Lobbies)
 	{
 		if (searchTerm.size() != 0)
 			if (!l.LobbyName.contains(searchTerm))
@@ -1636,9 +1652,9 @@ void MainerMenu::createNewLobbies(std::string searchTerm)
 		AvgContainer* cont = new AvgContainer(0, 92 * ind, NULL);
 		cont->callback = lobbySelectedCallback;
 		cont->shouldUseCallback = true;
-		cont->w = menu->lobbyContainer->w;
+		cont->w = lobbyContainer->w;
 		cont->h = 92;
-		menu->lobbyContainer->addObject(cont, "lobby" + std::to_string(ind));
+		lobbyContainer->addObject(cont, "lobby" + std::to_string(ind));
 		Text* ln = (Text*)cont->addObject(new Text(107, 20, l.LobbyName, 16, "ANDALEMO"), "lobbyName" + std::to_string(l.LobbyID));
 		ln->setCharacterSpacing(2.67);
 		int y = l.Players == 0 ? ln->y + ln->h + 2 : ln->y + ln->h + 34;
@@ -1648,11 +1664,11 @@ void MainerMenu::createNewLobbies(std::string searchTerm)
 		AvgSprite* spr = (AvgSprite*)cont->addObject(new AvgSprite(38, 20, Steam::getAvatar(l.Host.Avatar.c_str())), "hostIcon" + std::to_string(l.LobbyID));
 		spr->w = 47;
 		spr->h = 47;
-		spr->customShader = menu->lobbyShader;
+		spr->customShader = lobbyShader;
 		spr->deleteShader = false;
 
 		AvgSprite* divider = (AvgSprite*)cont->addObject(new AvgSprite(0, 90, Noteskin::getMenuElement(Game::noteskin, "TheWhitePixel.png")), "divider" + std::to_string(l.LobbyID));
-		divider->w = menu->lobbyContainer->w;
+		divider->w = lobbyContainer->w;
 		divider->h = 2;
 
 		int indd = 0;
@@ -1667,14 +1683,14 @@ void MainerMenu::createNewLobbies(std::string searchTerm)
 			AvgSprite* av = new AvgSprite(ln->x + (20 * indd), ln->y + ln->h, avatar);
 			av->w = 32;
 			av->h = 32;
-			av->customShader = menu->lobbyShader;
+			av->customShader = lobbyShader;
 			av->deleteShader = false;
 			cont->addObject(av, "playerIcon_" + p.SteamID64);
 			indd++;
 		}
 		ind++;
 
-		menu->LobbyContainers.push_back(cont);
+		LobbyContainers.push_back(cont);
 	}
 	
 }

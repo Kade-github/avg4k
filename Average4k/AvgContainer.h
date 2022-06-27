@@ -127,7 +127,19 @@ public:
 		{
 			int mx, my;
 			Game::GetMousePos(&mx, &my);
-			if (mx > realPosX && my > realPosY && mx < realPosX + w && my < realPosY + h)
+			float scrll = ((AvgContainer*)parent)->scrollAddition;
+
+			int relX = mx - parent->x;
+			int relY = my - parent->y + scrll;
+
+			if (((AvgContainer*)parent)->parent != NULL)
+			{
+				AvgContainer* parentParent = (AvgContainer*)((AvgContainer*)parent)->parent;
+				relX -= parentParent->x;
+				relY -= parentParent->y;
+			}
+
+			if ((relX > x && relY > y) && (relX < x + w && relY < y + h))
 			{
 				callback(mx,my);
 			}

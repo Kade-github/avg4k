@@ -258,7 +258,7 @@ public:
 			typing = true;
 			setText();
 		}
-		else
+		else if (typing)
 		{
 			typing = false;
 

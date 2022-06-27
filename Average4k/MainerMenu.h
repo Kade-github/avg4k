@@ -195,7 +195,7 @@ public:
 
 	AvgContainer* currentContainer;
 
-	static void createNewLobbies(std::string searchTerm = "");
+	void createNewLobbies(std::string searchTerm = "");
 
 	void selectContainer(int container);
 

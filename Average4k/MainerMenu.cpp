@@ -641,7 +641,7 @@ void MainerMenu::update(Events::updateEvent ev)
 			for (Pack pp : packs)
 				if (pp.packName == p.packName)
 				{
-					if (!p.isSteam)
+					if (!p.isSteam || pp.isSteam)
 						d = true;
 				}
 			if (d)

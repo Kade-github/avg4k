@@ -454,6 +454,7 @@ void MainerMenu::create()
 
 	chat = new ChatObject(0, 0);
 	chat->create();
+	chat->showNotifs = false;
 
 
 	settingsContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Settings/maincontainer.png"));
@@ -1683,6 +1684,7 @@ void lobbySelectedCallback(int mx, int my)
 
 	std::cout << "trying to join " << list.LobbyID << std::endl;
 	menu->isInLobby = true;
+	menu->chat->showNotifs = true;
 	Multiplayer::sendMessage<CPacketJoinServer>(list);
 }
 
@@ -1705,7 +1707,6 @@ void MainerMenu::createNewLobbies(std::string searchTerm)
 				continue;
 		AvgContainer* cont = new AvgContainer(0, 92 * ind, NULL);
 		cont->callback = lobbySelectedCallback;
-		cont->shouldUseCallback = true;
 		cont->w = lobbyContainer->w;
 		cont->h = 92;
 		lobbyContainer->addObject(cont, "lobby" + std::to_string(ind));
@@ -1890,6 +1891,7 @@ void MainerMenu::cleanLobby()
 	Tweening::TweenManager::createNewTween("lobbiesMoving", lobbyContainer, Tweening::tt_Alpha, 250, 0, 1, NULL, Easing::EaseInSine);
 	refreshLobbies();
 	isInLobby = false;
+	chat->showNotifs = false;
 	justJoined = false;
 	lobbyStuffCreated = false;
 	soloText->setText("solo");
@@ -1904,6 +1906,21 @@ void MainerMenu::selectContainer(int container)
 
 	if (!isHost && isInLobby && container == 0)
 		return;
+
+	if (container == 1 && !isInLobby)
+	{
+		for (AvgContainer* con : LobbyContainers)
+		{
+			con->shouldUseCallback = true;
+		}
+	}
+	else
+	{
+		for (AvgContainer* con : LobbyContainers)
+		{
+			con->shouldUseCallback = false;
+		}
+	}
 
 	transToContainer = container;
 	despawn = lastTrans;

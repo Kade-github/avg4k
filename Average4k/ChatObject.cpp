@@ -149,7 +149,7 @@ void ChatObject::addMessage(SPacketOnChat packetChat)
 
 	messages.push_back(msg);
 	
-	if (!opened)
+	if (!opened && showNotifs)
 	{
 		chatNotif->alpha = 0.8;
 

@@ -68,6 +68,7 @@ public:
 
 	bool isDead = false;
 
+	bool isActive = true;
 
 	virtual void die();
 

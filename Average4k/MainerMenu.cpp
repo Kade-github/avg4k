@@ -481,6 +481,7 @@ void MainerMenu::create()
 
 
 	std::vector<setting> appearnSettings;
+	appearnSettings.push_back(Game::save->getSetting("Show Judgement Count"));
 	appearnSettings.push_back(Game::save->getSetting("Note Size"));
 	appearnSettings.push_back(Game::save->getSetting("Noteskin"));
 	appearnSettings.push_back(Game::save->getSetting("Resolution"));
@@ -1919,6 +1920,21 @@ void MainerMenu::selectContainer(int container)
 		for (AvgContainer* con : LobbyContainers)
 		{
 			con->shouldUseCallback = false;
+		}
+	}
+
+	if (container == 2)
+	{
+		for (Object* obj : settingsContainer->above)
+		{
+			obj->isActive = true;
+		}
+	}
+	else
+	{
+		for (Object* obj : settingsContainer->above)
+		{
+			obj->isActive = false;
 		}
 	}
 

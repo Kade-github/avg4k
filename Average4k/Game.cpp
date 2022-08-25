@@ -880,9 +880,9 @@ void Game::mouseButtonUp()
 void Game::resizeGame(int w, int h, int fullscreen)
 {
 
-	wW = w;
-	wH = h;
-	SDL_SetWindowSize(window, w, h);
+	wW = 1280;
+	wH = 720;
+	SDL_SetWindowSize(window, 1280, 720);
 	multiplierx = (float)1280 / (float)w;
 	multipliery = (float)720 / (float)h;
 	switch (fullscreen)

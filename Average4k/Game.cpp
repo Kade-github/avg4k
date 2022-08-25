@@ -895,14 +895,15 @@ void Game::resizeGame(int w, int h, int fullscreen)
 		break;
 	case 2:
 		// get resolution
-		int www, hhh;
+		/*int www, hhh;
 		Helpers::GetDesktopResolution(www, hhh);
 		wW = www;
 		wH = hhh;
 		SDL_SetWindowSize(window, wW, wH);
 		multiplierx = (float)1280 / (float)wW;
 		multipliery = (float)720 / (float)wH;
-		SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_FULLSCREEN_DESKTOP);*/
+		SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_FULLSCREEN);
 		break;
 	}
 }

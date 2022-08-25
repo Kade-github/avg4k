@@ -254,6 +254,14 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		std::cout << "Frame sleep disabled, increased cpu usage expected." << std::endl;
 	}
 
+	bool disableFrameWaiting = cmdLine.find("-disableframewait") != std::string::npos;
+
+
+	if (disableFrameWaiting) {
+		disableFrameSleeping = true;
+		std::cout << "Not waiting for frames - frame counter is ignored.";
+	}
+
 	const char* (CDECL * pwine_get_version)(void);
 	HMODULE hntdll = GetModuleHandle(L"ntdll.dll");
 	if (!hntdll)
@@ -391,7 +399,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	while (run)
 	{
 		auto now_tick = Clock::now();
-		if (now_tick >= next_tick)
+		if (now_tick >= next_tick || disableFrameWaiting)
 		{
 			if (lastFramelimit != Game::frameLimit)
 			{

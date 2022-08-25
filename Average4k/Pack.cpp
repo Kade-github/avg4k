@@ -58,10 +58,13 @@ void SongGather::gatherPacksAsync()
 					if (songs.size() == 0)
 						continue;
 
+
 					for (Song s : songs)
-						p.songs.push_back(s);
 					{
-						std::lock_guard cock(lock);
+						p.songs.push_back(s);
+					}
+					std::lock_guard cock(lock);
+					{
 						MainerMenu::asyncPacks.push_back(p);
 					}
 				}

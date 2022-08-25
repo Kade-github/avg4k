@@ -51,7 +51,7 @@ public:
 		int _x, _y;
 		Game::GetMousePos(&_x, &_y);
 
-		if (parent == NULL)
+		if (parent == NULL || !isActive)
 			return;
 
 		float scrll = ((AvgContainer*)parent)->scrollAddition;

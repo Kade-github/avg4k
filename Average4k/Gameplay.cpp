@@ -93,6 +93,12 @@ void Gameplay::updateAccuracy(double hitWorth)
 	ranking->setText(rank);
 	ranking->x = (Game::gameWidth - ranking->surfW) - 24;
 
+	Mrv->setText("Marvelous: " + std::to_string(Marvelous));
+	Prf->setText("Perfect: " + std::to_string(Perfect));
+	God->setText("Great: " + std::to_string(Great));
+	Ehh->setText("Eh: " + std::to_string(Eh));
+	Yke->setText("Yikes: " + std::to_string(Yikes));
+
 	MUTATE_END
 }
 
@@ -509,6 +515,21 @@ void Gameplay::create() {
 	Combo->create();
 
 
+	Mrv = new Text(12, (Game::gameHeight / 2) - 12, "Marvelous: 0", 24, "Futura Bold");
+	Mrv->create();
+
+	Prf = new Text(12, (Game::gameHeight / 2) + 12, "Perfect: 0", 24, "Futura Bold");
+	Prf->create();
+
+	God = new Text(12, (Game::gameHeight / 2) + 36, "Great: 0", 24, "Futura Bold");
+	God->create();
+
+	Ehh = new Text(12, (Game::gameHeight / 2) + 60, "Eh: 0", 24, "Futura Bold");
+	Ehh->create();
+
+	Yke = new Text(12, (Game::gameHeight / 2) + 82, "Yikes: 0", 24, "Futura Bold");
+	Yke->create();
+
 	Combo->borderSize = 1;
 	Combo->border = true;
 
@@ -537,6 +558,12 @@ void Gameplay::create() {
 		leftGradBorder->colorB = lightestAccent.b;
 		leftGradBorder->alpha = (0.8 / Game::save->GetDouble("Lane Underway Transparency"));
 		add(leftGradBorder);
+
+		Mrv->x = leftGradBorder->x + leftGradBorder->w + 12;
+		Prf->x = Mrv->x;
+		God->x = Mrv->x;
+		Ehh->x = Mrv->x;
+		Yke->x = Mrv->x;
 
 		for (int i = 0; i < MainerMenu::currentLobby.PlayerList.size(); i++)
 		{
@@ -631,6 +658,14 @@ void Gameplay::create() {
 
 	add(Judgement);
 	add(Combo);
+	if (Game::save->GetBool("Show Judgement Count"))
+	{
+		add(Mrv);
+		add(Prf);
+		add(God);
+		add(Ehh);
+		add(Yke);
+	}
 
 	songPosBar = new AvgRect(receptors[0]->x, 24, ((receptors[3]->x + (64 * Game::save->GetDouble("Note Size"))) - receptors[0]->x) * (positionInSong / (songLength)), 24);
 	//add(songPosBar);

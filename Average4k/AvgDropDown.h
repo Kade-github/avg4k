@@ -20,8 +20,6 @@ public:
 
 	int addHeight = 0;
 
-	bool isActive = false;
-
 	std::vector<Text*> otherTexts;
 
 	setting toModify;

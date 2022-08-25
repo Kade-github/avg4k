@@ -11,6 +11,7 @@
 #include "CPacketServerList.h"
 #include "SPacketServerListReply.h"
 #include "CPacketJoinServer.h"
+#include "SPacketFuckYou.h"
 AvgContainer* MainerMenu::soloContainer;
 AvgContainer* MainerMenu::multiContainer;
 AvgContainer* MainerMenu::settingsContainer;
@@ -453,6 +454,7 @@ void MainerMenu::create()
 
 	chat = new ChatObject(0, 0);
 	chat->create();
+	chat->showNotifs = false;
 
 
 	settingsContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Settings/maincontainer.png"));
@@ -479,6 +481,7 @@ void MainerMenu::create()
 
 
 	std::vector<setting> appearnSettings;
+	appearnSettings.push_back(Game::save->getSetting("Show Judgement Count"));
 	appearnSettings.push_back(Game::save->getSetting("Note Size"));
 	appearnSettings.push_back(Game::save->getSetting("Noteskin"));
 	appearnSettings.push_back(Game::save->getSetting("Resolution"));
@@ -608,57 +611,60 @@ void MainerMenu::update(Events::updateEvent ev)
 
 	std::vector<Pack> gatheredPacks;
 	std::vector<Song> gatheredSongs;
-	if (asyncPacks.size() != 0)
+	if (selectedContainerIndex == 0)
 	{
+		std::lock_guard cock(packMutex);
 		{
-			std::lock_guard cock(packMutex);
-			for (Pack p : asyncPacks)
+			if (asyncPacks.size() != 0)
 			{
-					gatheredPacks.push_back(p);
-			}
-			asyncPacks.clear();
-			
-		}
-	}
-	if (asyncSongs.size() != 0)
-	{
-		{
-			std::lock_guard cock(packMutex);
-			for (Song s : asyncSongs)
-			{
-				gatheredSongs.push_back(s);
-			}
-			asyncSongs.clear();
-		}
-	}
-	for (Pack p : gatheredPacks)
-	{
-		bool d = false;
-		for (Pack pp : packs)
-			if (pp.packName == p.packName)
-			{
-				if (!p.isSteam)
-					d = true;
-			}
-		if (d)
-			continue;
-		addPack(p.packName, p.background, p.showName, p.isSteam);
-		packs.push_back(p);
-	}
-	for (Song s : gatheredSongs)
-	{
-		bool d = false;
-		for (Song pp : steamWorkshop.songs)
-			if (pp.c.meta.folder == s.c.meta.folder)
-				d = true;
-		if (d)
-			continue;
-		steamWorkshop.songs.push_back(s);
-		for (Pack& p : packs)
-			if (p.packName == "Workshop/Local")
-				p.songs = steamWorkshop.songs;
-	}
+				{
+					for (Pack p : asyncPacks)
+					{
+						gatheredPacks.push_back(p);
+					}
+					asyncPacks.clear();
 
+				}
+			}
+			if (asyncSongs.size() != 0)
+			{
+				{
+					for (Song s : asyncSongs)
+					{
+						gatheredSongs.push_back(s);
+					}
+					asyncSongs.clear();
+				}
+			}
+		}
+		for (Pack p : gatheredPacks)
+		{
+			bool d = false;
+			for (Pack pp : packs)
+				if (pp.packName == p.packName)
+				{
+					if (!p.isSteam || pp.isSteam)
+						d = true;
+				}
+			if (d)
+				continue;
+			addPack(p.packName, p.background, p.showName, p.isSteam);
+			packs.push_back(p);
+		}
+		for (Song s : gatheredSongs)
+		{
+			bool d = false;
+			for (Song pp : steamWorkshop.songs)
+				if (pp.c.meta.folder == s.c.meta.folder)
+					d = true;
+			if (d)
+				continue;
+			steamWorkshop.songs.push_back(s);
+			for (Pack& p : packs)
+				if (p.packName == "Workshop/Local")
+					p.songs = steamWorkshop.songs;
+		}
+	}
 
 	Text* t = (Text*)soloContainer->findItemByName("packsBottom");
 	t->setText(std::to_string(packs.size()) + " loaded");
@@ -864,7 +870,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 				Multiplayer::sendMessage<CPacketLeaderboardRequest>(req);
 			}
 		}
-		if (selectedContainerIndex == 1 && isInLobby)
+		if (isInLobby)
 		{
 			if (chat->opened)
 				chat->close();
@@ -991,40 +997,8 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 				leave.Order = 0;
 				leave.PacketType = eCPacketLeave;
 
-				lobbyStuffCreated = false;
-
 				Multiplayer::sendMessage<CPacketLeave>(leave);
-
-				int ind = 0;
-
-				std::vector<itemId> stuff = multiContainer->items;
-
-				for (itemId id : stuff)
-				{
-					if (id.name != "filterContainer" && id.name != "lobbyContainer")
-					{
-						multiContainer->removeObject(id.obj);
-					}
-					ind++;
-				}
-
-				stuff.clear();
-
-				for (Object* ob : multiplayerObjects)
-					delete ob;
-				multiplayerObjects.clear();
-
-				AvgContainer* filters = (AvgContainer*)multiContainer->findItemByName("filterContainer");
-				Tweening::TweenManager::createNewTween("filtersMoving", filters, Tweening::tt_Alpha, 250, 0, 1, NULL, Easing::EaseInSine);
-				Tweening::TweenManager::createNewTween("lobbiesMoving", lobbyContainer, Tweening::tt_Alpha, 250, 0, 1, NULL, Easing::EaseInSine);
-				refreshLobbies();
-				isInLobby = false;
-				justJoined = false;
-				lobbyStuffCreated = false;
-				soloText->setText("solo");
-				currentLobby = {};
-				if (chat->opened)
-					chat->close();
+				cleanLobby();
 			}
 		}
 		break;
@@ -1194,6 +1168,14 @@ void MainerMenu::onSteam(std::string s)
 		{
 			currentSelectedSong = Game::steam->downloadedChart;
 		}
+
+		if (currentSelectedSong.meta.difficulties.size() == 0)
+		{
+			Game::showErrorWindow("Steam Error!", "Steam failed to download the song.", true);
+			currentSelectedSong.destroy();
+			return;
+		}
+
 		CPacketClientChartAcquired acquired;
 		acquired.PacketType = eCPacketClientChartAcquired;
 		acquired.Order = 0;
@@ -1377,11 +1359,61 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 	SPacketUpdateLobbyData update;
 	SPacketWtfAmInReply reply;
 	SPacketUpdateLobbyChart cc;
+	SPacketFuckYou fuckyou;
 	msgpack::unpacked result;
 
 	msgpack::object obj;
 	switch (pt)
 	{
+	case eSPacketStatus:
+		msgpack::unpack(result, data, length);
+
+		obj = msgpack::object(result.get());
+
+		obj.convert(f);
+		switch (f.code)
+		{
+		case 803:
+			// we host pog
+			std::cout << "host me" << std::endl;
+			isHost = true;
+			currentLobby.Host.SteamID64 = std::to_string(SteamUser()->GetSteamID().ConvertToUint64());
+			if (lobbyStuffCreated)
+				lobbyUpdatePlayers();
+			break;
+		case 1337:
+			Color c;
+			c.r = 0;
+			c.g = 255;
+			c.b = 0;
+
+			if (!isHost)
+				return;
+			break;
+		case 8876:
+			Color cc;
+			cc.r = 255;
+			cc.g = 0;
+			cc.b = 0;
+			Game::showErrorWindow("Starting... failed!", "Wait for everyone to download the chart!)", false);
+			break;
+		}
+
+		if (f.code >= 9000)
+		{
+			std::cout << "got status for " << f.code << std::endl;
+			peopleWhoHaveChart++;
+			SPacketOnChat onChat;
+			onChat.tagColor = { 0, 228, 255 };
+			onChat.color = { 225, 247, 255 };
+			onChat.tagText = "[LOBBY]";
+			if (peopleWhoHaveChart > peopleWhoNeedChart)
+				peopleWhoHaveChart = peopleWhoNeedChart;
+			onChat.message = std::to_string(peopleWhoHaveChart) + " out of " + std::to_string(peopleWhoNeedChart) + " players have aquired the chart. " + (peopleWhoHaveChart == peopleWhoNeedChart ? "The game can now start." : "");
+			chat->addMessage(onChat);
+		}
+
+		break;
 	case eSPacketServerListReply:
 		msgpack::unpack(result, data, length);
 
@@ -1398,6 +1430,7 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 	case eSPacketWtfAmInReply:
 		if (currentLobby.LobbyID == 0 && isInLobby)
 		{
+			peopleWhoHaveChart = 0;
 			msgpack::unpack(result, data, length);
 
 			obj = msgpack::object(result.get());
@@ -1407,13 +1440,33 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 			isHost = reply.isHost;
 
 			currentLobby = reply.Lobby;
-
+			peopleWhoNeedChart = currentLobby.Players;
 			createLobby();
+		}
+		break;
+	case eSPacketFuckYou:
+		msgpack::unpack(result, data, length);
+
+		obj = msgpack::object(result.get());
+
+		obj.convert(fuckyou);
+
+		if (fuckyou.demotion)
+		{
+			Game::asyncShowErrorWindow("Host switch", "You are no longer the host.", false);
+			isHost = false;
+		}
+		else if (fuckyou.lobbyKick)
+		{
+			Game::asyncShowErrorWindow("Kicked!", "You have been kicked from the lobby!", true);
+			isInLobby = false;
+			cleanLobby();
 		}
 		break;
 	case eSPacketUpdateLobbyData:
 		if (isInLobby)
 		{
+			peopleWhoHaveChart = 0;
 			msgpack::unpack(result, data, length);
 
 			obj = msgpack::object(result.get());
@@ -1422,12 +1475,15 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 
 			currentLobby = update.Lobby;
 
+			peopleWhoNeedChart = currentLobby.Players;
+
 			lobbyUpdatePlayers();
 		}
 		break;
 	case eSPacketUpdateLobbyChart:
 		if (isInLobby)
 		{
+			peopleWhoHaveChart = 0;
 			msgpack::unpack(result, data, length);
 
 			obj = msgpack::object(result.get());
@@ -1629,6 +1685,7 @@ void lobbySelectedCallback(int mx, int my)
 
 	std::cout << "trying to join " << list.LobbyID << std::endl;
 	menu->isInLobby = true;
+	menu->chat->showNotifs = true;
 	Multiplayer::sendMessage<CPacketJoinServer>(list);
 }
 
@@ -1651,7 +1708,6 @@ void MainerMenu::createNewLobbies(std::string searchTerm)
 				continue;
 		AvgContainer* cont = new AvgContainer(0, 92 * ind, NULL);
 		cont->callback = lobbySelectedCallback;
-		cont->shouldUseCallback = true;
 		cont->w = lobbyContainer->w;
 		cont->h = 92;
 		lobbyContainer->addObject(cont, "lobby" + std::to_string(ind));
@@ -1810,12 +1866,77 @@ void MainerMenu::lobbyUpdatePlayers()
 	iconContainers->addObject(host, "hostCrown");
 }
 
+void MainerMenu::cleanLobby()
+{
+	int ind = 0;
+
+	std::vector<itemId> stuff = multiContainer->items;
+
+	for (itemId id : stuff)
+	{
+		if (id.name != "filterContainer" && id.name != "lobbyContainer")
+		{
+			multiContainer->removeObject(id.obj);
+		}
+		ind++;
+	}
+
+	stuff.clear();
+
+	for (Object* ob : multiplayerObjects)
+		delete ob;
+	multiplayerObjects.clear();
+
+	AvgContainer* filters = (AvgContainer*)multiContainer->findItemByName("filterContainer");
+	Tweening::TweenManager::createNewTween("filtersMoving", filters, Tweening::tt_Alpha, 250, 0, 1, NULL, Easing::EaseInSine);
+	Tweening::TweenManager::createNewTween("lobbiesMoving", lobbyContainer, Tweening::tt_Alpha, 250, 0, 1, NULL, Easing::EaseInSine);
+	refreshLobbies();
+	isInLobby = false;
+	chat->showNotifs = false;
+	justJoined = false;
+	lobbyStuffCreated = false;
+	soloText->setText("solo");
+	currentLobby = {};
+	if (chat->opened)
+		chat->close();
+}
+
 void MainerMenu::selectContainer(int container)
 {
 	MUTATE_START
 
 	if (!isHost && isInLobby && container == 0)
 		return;
+
+	if (container == 1 && !isInLobby)
+	{
+		for (AvgContainer* con : LobbyContainers)
+		{
+			con->shouldUseCallback = true;
+		}
+	}
+	else
+	{
+		for (AvgContainer* con : LobbyContainers)
+		{
+			con->shouldUseCallback = false;
+		}
+	}
+
+	if (container == 2)
+	{
+		for (Object* obj : settingsContainer->above)
+		{
+			obj->isActive = true;
+		}
+	}
+	else
+	{
+		for (Object* obj : settingsContainer->above)
+		{
+			obj->isActive = false;
+		}
+	}
 
 	transToContainer = container;
 	despawn = lastTrans;

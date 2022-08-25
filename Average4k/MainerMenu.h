@@ -191,6 +191,9 @@ public:
 	static bool lockInput;
 	AvgRect* selectSettings;
 
+	int peopleWhoHaveChart = 0;
+	int peopleWhoNeedChart = 0;
+
 	std::vector<LeaderboardResult> leaderboardResults;
 
 	AvgContainer* currentContainer;
@@ -205,6 +208,7 @@ public:
 
 	void createLobby();
 	void lobbyUpdatePlayers();
+	void cleanLobby();
 
 	void selectPack(int index);
 	void addPack(std::string name, std::string bg, bool showText, bool isSteam);

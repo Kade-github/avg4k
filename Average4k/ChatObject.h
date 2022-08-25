@@ -15,6 +15,7 @@ public:
 	int h;
 
 	int wait = 0;
+	bool showNotifs = false;
 	bool startTween = false;
 
 	ChatObject(float _x, float _y);

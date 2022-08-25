@@ -1238,9 +1238,12 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				Multiplayer::sendMessage<CPacketHostEndChart>(end);
 				return;
 			}
-			MainerMenu::currentSelectedSong.destroy();
-			cleanUp();
-			Game::instance->transitionToMenu(new MainerMenu());
+			else if (MainerMenu::isInLobby)
+			{
+				MainerMenu::currentSelectedSong.destroy();
+				cleanUp();
+				Game::instance->transitionToMenu(new MainerMenu());
+			}
 		
 			return;
 		case SDLK_F1:

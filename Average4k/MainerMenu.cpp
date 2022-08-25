@@ -844,7 +844,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 	switch (event.keysym.sym)
 	{
 	case SDLK_TAB:
-		if (MainerMenu::selectedSong.isSteam)
+		if (MainerMenu::selectedSong.isSteam && currentContainer == 0)
 		{
 			lockInput = !lockInput;
 

@@ -109,7 +109,10 @@ public:
 
 		if (def)
 		{
-			toggleRect.x = std::lerp(x + 2, (x + (w / 2)) - 4, time / 500);
+			float shi = time / 500;
+			if (shi > 1)
+				shi = 1;
+			toggleRect.x = std::lerp(x + 2, (x + (w / 2)) - 4, shi);
 			textPart->x = (x + (textPart->w / 2));
 		}
 

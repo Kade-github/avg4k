@@ -955,7 +955,7 @@ void Gameplay::update(Events::updateEvent event)
 				if (object->type == Note_Head)
 				{
 					float noteZoom = Game::save->GetDouble("Note Size");
-					for (float beat = object->beat; beat < object->endBeat; beat += 0.001)
+					for (float beat = object->beat; beat < object->endBeat; beat += 0.008)
 					{
 						bpmSegment holdSeg = MainerMenu::currentSelectedSong.getSegmentFromBeat(beat);
 
@@ -1001,7 +1001,7 @@ void Gameplay::update(Events::updateEvent event)
 							rect.y = y;
 							rect.x = 0;
 							rect.w = 64 * noteZoom;
-							rect.h = 68 * noteZoom;
+							rect.h = 64 * noteZoom;
 							tile.rect = rect;
 							tile.beat = beat;
 							tile.time = MainerMenu::currentSelectedSong.getTimeFromBeat(beat, holdSeg);

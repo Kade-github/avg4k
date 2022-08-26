@@ -104,21 +104,27 @@ void NoteObject::draw() {
 
         for (int i = 0; i < heldTilings.size(); i++) {
             holdTile& tile = heldTilings[i];
-            float time = currentChart->getTimeFromBeat(tile.beat, currentChart->getSegmentFromBeat(tile.beat));
 
-            float diff2 = time - position;
 
-            float offsetFromY = ((bps * (diff2 / 1000)) * (64 * size)) - (32 * size);
+            if (i == 0)
+                tile.rect.y = y + h;
+            else
+                tile.rect.y = heldTilings[i - 1].rect.y + h + (20 * size);
+
             Rect r;
             r.x = obj->x;
             r.y = obj->y + (obj->h / 2);
             r.w = 64 * size;
             r.h = Game::gameHeight;
 
-            tile.rect.y = (receptor.y + (64 * size)) + offsetFromY;
+
             if (downscroll)
             {
-                tile.rect.y = (receptor.y - (64 * size)) - offsetFromY;
+                if (i == 0)
+                    tile.rect.y = y - h;
+                else
+                    tile.rect.y = heldTilings[i - 1].rect.y - h - (20 * size);
+
                 if (!tile.active)
                 {
                     r.y = 0;
@@ -135,7 +141,7 @@ void NoteObject::draw() {
             }
             
 
-            dstRect.h = 65 * size;
+            dstRect.h = 64 * size;
 
             dstRect.y = tile.rect.y;
 

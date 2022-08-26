@@ -217,7 +217,6 @@ chartMeta QuaverFile::returnChart(std::string path)
         std::sort(diff.notes.begin(), diff.notes.end(), &note_sort);
     }
     
-    return meta;
-
     MUTATE_END
+    return meta;
 }

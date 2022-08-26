@@ -156,14 +156,8 @@ DLL_IMPORT void STDCALL_CONVENTION SECheckDebugger(int *user_var, int user_value
 // ***********************************************
 
  #define VM_START VMStart();
- #define VM_END vmendshit();
+ #define VM_END VMEnd();
  #define VM_START_WITHLEVEL(x) VMStart();
-
-#pragma optimize( "", off )
-  void __forceinline vmendshit() {
-      VMEnd(); 
-      __nop();
-    }
 
  #define CODEREPLACE_START CodeReplaceStart();
  #define CODEREPLACE_END CodeReplaceEnd();
@@ -175,13 +169,7 @@ DLL_IMPORT void STDCALL_CONVENTION SECheckDebugger(int *user_var, int user_value
  #define ENCODE_END EncodeEnd();
 
  #define MUTATE_START MutateStart();
- #define MUTATE_END mutateendshit();
-
-#pragma optimize( "", off )
-  void __forceinline mutateendshit() {
-      MutateEnd();
-      __nop();
-  }
+ #define MUTATE_END MutateEnd();
 
  #define STR_ENCRYPT_START StrEncryptStart();
  #define STR_ENCRYPT_END StrEncryptEnd();

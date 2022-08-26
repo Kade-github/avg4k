@@ -217,8 +217,8 @@ std::vector<std::string> SaveFile::ObtainDropDownSettingList(std::string set)
     {
         return {"Fullscreen", "Windowed", "Borderless"};
     }
-    return std::vector<std::string>();
     VM_END
+    return std::vector<std::string>();
 }
 
 std::vector<int> SaveFile::ObtainResolution()

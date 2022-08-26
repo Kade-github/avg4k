@@ -72,9 +72,8 @@ Texture* Steam::getAvatar(const char* base64Encode)
 
     Game::currentMenu->onSteam("profileDownloaded");
 
-    return tex;
-
     MUTATE_END
+    return tex;
 }
 
 void Steam::doesWorkshopItemExist(std::string name)

@@ -161,8 +161,8 @@ bpmSegment getBPMSegmentFromChart(Chart chart)
 	}
 	float pos = ch->getPos();
 	bpmSegment seg = chart.getSegmentFromTime(pos);
-	return seg;
 	VM_END
+	return seg;
 }
 
 void MainMenu::update(Events::updateEvent event)

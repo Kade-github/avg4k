@@ -69,9 +69,8 @@ namespace macaron {
                 }
                 *p++ = '=';
             }
-
-            return ret;
             VM_END
+            return ret;
         }
 
         static std::string Decode(const std::string& input, std::string& out) {
@@ -116,9 +115,8 @@ namespace macaron {
                 if (j < out_len) out[j++] = (triple >> 1 * 8) & 0xFF;
                 if (j < out_len) out[j++] = (triple >> 0 * 8) & 0xFF;
             }
-
-            return "";
             VM_END
+            return "";
         }
 
     };

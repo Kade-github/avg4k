@@ -92,11 +92,14 @@ void NoteObject::draw() {
     for (int i = 0; i < heldTilings.size(); i++) {
         holdTile& tile = heldTilings[i];
 
-        if (tile.active || (downscroll ? tile.rect.y > obj->y + obj->h : tile.rect.y < obj->y + obj->h / 2))
+        if (tile.active)
             activeH++;
     }
     if (activeH != holdsActive)
+    {
         holdsActive = activeH;
+        //std::cout << "holds active " << holdsActive << std::endl;
+    }
 
 
         for (int i = 0; i < heldTilings.size(); i++) {

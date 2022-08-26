@@ -1238,7 +1238,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				Multiplayer::sendMessage<CPacketHostEndChart>(end);
 				return;
 			}
-			else if (MainerMenu::isInLobby)
+			else if (!MainerMenu::isInLobby)
 			{
 				MainerMenu::currentSelectedSong.destroy();
 				cleanUp();

@@ -880,11 +880,14 @@ void Game::mouseButtonUp()
 void Game::resizeGame(int w, int h, int fullscreen)
 {
 
-	wW = 1280;
-	wH = 720;
-	SDL_SetWindowSize(window, 1280, 720);
+	wW = w;
+	wH = h;
+	SDL_SetWindowSize(window, w, h);
 	multiplierx = (float)1280 / (float)w;
 	multipliery = (float)720 / (float)h;
+
+
+
 	switch (fullscreen)
 	{
 	case 0:
@@ -895,17 +898,19 @@ void Game::resizeGame(int w, int h, int fullscreen)
 		break;
 	case 2:
 		// get resolution
-		/*int www, hhh;
+		int www, hhh;
 		Helpers::GetDesktopResolution(www, hhh);
 		wW = www;
 		wH = hhh;
 		SDL_SetWindowSize(window, wW, wH);
 		multiplierx = (float)1280 / (float)wW;
 		multipliery = (float)720 / (float)wH;
-		SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_FULLSCREEN_DESKTOP);*/
-		SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_FULLSCREEN);
+		SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 		break;
 	}
+
+	GL::projection = glm::ortho(0.0f, wW, wH, 0.0f, -1.0f, 1.0f);
+	GL::genShader->setProject(GL::projection);
 }
 
 //asd

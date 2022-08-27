@@ -1,5 +1,5 @@
 #pragma once 
-
+#include "includes.h"
 class Easing {
 	public:
 	enum easing_functions
@@ -39,4 +39,5 @@ class Easing {
 	typedef double(*easingFunction)(double);
 
 	static easingFunction getEasingFunction(easing_functions function);
+	static easingFunction getEasingFunction(std::string function);
 };

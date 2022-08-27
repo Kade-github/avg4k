@@ -1,5 +1,5 @@
 #include "OsuFile.h"
-
+#include "Helpers.h"
 bool osuCompareNoteByBeat(const note a, const note b)
 {
 	return a.beat < b.beat;
@@ -53,6 +53,9 @@ OsuFile::OsuFile(std::string path)
 	meta.chartType = 2;
 	meta.folder = path;
 	meta.difficulties = diffs;
+
+	meta.ext = Chart::split(meta.audio, '.')[1];
+	std::transform(meta.ext.begin(), meta.ext.end(), meta.ext.begin(), Helpers::asciitolower);
 }
 
 difficulty OsuFile::generateDiff(std::string file, chartMeta* toAdd)

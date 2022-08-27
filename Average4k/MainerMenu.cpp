@@ -100,9 +100,9 @@ void resetStuff()
 
 void endTrans()
 {
-	resetStuff();
 	Tweening::TweenManager::activeTweens.clear();
 	Game::instance->switchMenu(new MainMenu());
+	resetStuff();
 }
 
 void selectedSongCallback(int sId)
@@ -1024,11 +1024,6 @@ void MainerMenu::addPack(std::string name, std::string bg, bool showText, bool i
 
 void MainerMenu::dropFile(SDL_DropEvent ev)
 {
-	if (SongGather::steamRegAsyncAlready)
-	{
-		Game::showErrorWindow("Busy!", "Please wait until all packs are loaded!", true);
-		return;
-	}
 	if (!SongUtils::IsDirectory(SongUtils::s2ws(std::string(ev.file))))
 	{
 		Chart c = SongGather::extractAndGetChart(std::string(ev.file));

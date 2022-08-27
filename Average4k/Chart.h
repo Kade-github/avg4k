@@ -51,6 +51,7 @@ public:
 		std::string background;
 		std::string banner;
 		std::string artist;
+		std::string ext;
 		std::vector<bpmSegment> bpms;
 		std::vector<stopSegment> stops;
 		std::vector<difficulty> difficulties;
@@ -65,8 +66,19 @@ class Chart
 		bpmSegment previouslyFound;
 		bpmSegment nextSeg;
 	public:
+
+		float BASS_OFFSET;
+
 		Chart() {};
-		Chart(chartMeta m) { meta = m; };
+		Chart(chartMeta m) { meta = m; 
+		
+		// mp3/other bass offsets
+
+		if (m.ext == "mp3")
+			BASS_OFFSET = 0.034f * 2.5f;
+		else
+			BASS_OFFSET = 0.034f;
+		};
 		chartMeta meta;
 
 		~Chart()

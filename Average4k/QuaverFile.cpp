@@ -1,5 +1,5 @@
 #include "QuaverFile.h"
-
+#include "Helpers.h"
 
 QuaverFile::QuaverFile()
 {
@@ -216,6 +216,9 @@ chartMeta QuaverFile::returnChart(std::string path)
     {
         std::sort(diff.notes.begin(), diff.notes.end(), &note_sort);
     }
+
+    meta.ext = Chart::split(meta.audio, '.')[1];
+    std::transform(meta.ext.begin(), meta.ext.end(), meta.ext.begin(), Helpers::asciitolower);
     
     MUTATE_END
     return meta;

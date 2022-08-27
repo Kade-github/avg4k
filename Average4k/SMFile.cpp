@@ -1,6 +1,6 @@
 #include "SMFile.h"
 #include "Game.h"
-
+#include "Helpers.h"
 
 SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
 
@@ -38,6 +38,7 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
     bool skippingDiff = false;
 
     int lineNumber = 0;
+
 
     while (std::getline(infile, line)) {
         std::istringstream iss(line);
@@ -312,6 +313,9 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
         }
     }
     infile.close();
+
+    meta.ext = Chart::split(meta.audio, '.')[1];
+    std::transform(meta.ext.begin(), meta.ext.end(), meta.ext.begin(), Helpers::asciitolower);
 
     MUTATE_END
 }

@@ -504,6 +504,11 @@ void window_waveProperties() {
 void window_chartProperties() {
 	FuckinEditor* editor = (FuckinEditor*)Game::currentMenu;
 	ImGui::BeginTabBar("##Chart Metadata");
+	if (ImGui::BeginTabItem("Editor"))
+	{
+		ImGui::Text("Bass Offset (debug):");
+		ImGui::InputFloat("##BassOffset", &selectedChart->BASS_OFFSET, 0.001, 0.01);
+	}
 	if (ImGui::BeginTabItem("Metadata"))
 	{
 		if (selectedChart)
@@ -848,6 +853,7 @@ void window_notif() {
 
 void FuckinEditor::create()
 {
+	selectedChart = NULL;
 	if (SoundManager::getChannelByName("prevSong") != NULL)
 	{
 		Channel* c = SoundManager::getChannelByName("prevSong");

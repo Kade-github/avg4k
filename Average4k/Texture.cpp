@@ -22,6 +22,13 @@ Texture* Texture::createWithImage(std::string filePath)
 	return t;
 }
 
+void Texture::resizeTexture(int w, int h)
+{
+	glDeleteTextures(1, &id);
+	glGenTextures(1, &id);
+	SetData(pixels, w, h);
+}
+
 Texture* Texture::createFromSurface(SDL_Surface* surf, bool free) {
 	if (surf == NULL)
 	{
@@ -41,6 +48,19 @@ Texture::Texture(unsigned char* data, const unsigned int width, const unsigned i
 	//Create texture object and use given data
 	glGenTextures(1, &id);
 	SetData(data, width, height);
+}
+
+Texture::Texture(unsigned char* data, const unsigned int _width, const unsigned int _height, bool mssa)
+{
+	pixels = data;
+	width = _width;
+	height = _height;
+
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, id);
+	glEnable(GL_TEXTURE_2D_MULTISAMPLE);
+
+	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA, _width, _height, GL_TRUE);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 }
 
 

@@ -10,16 +10,21 @@ struct itemId {
 	bool below;
 };
 
+typedef void(__cdecl* clickHoverCallback)(int, int);
+
 class AvgContainer : public Object
 {
 public:
 	Rect clipRect;
+	bool shouldUseCallback = false;
+	clickHoverCallback callback;
 	Texture* tex;
 	float scrollProg = 0;
 	float scrollAddition = 0;
 	float maxScroll = 0;
 
 	bool active = true;
+	bool topAlphas = true;
 
 	std::vector<itemId> items;
 
@@ -29,14 +34,17 @@ public:
 	Texture* scrollAr;
 	Rect scrollBar;
 
-	AvgContainer(int _x, int _y, Texture* background)
+	AvgContainer(int _x, int _y, Texture* background) : Object(x,y)
 	{
 		MUTATE_START
 		x = _x;
 		y = _y;
-		tex = background;
-		w = tex->width;
-		h = tex->height;
+		if (background != nullptr)
+		{
+			tex = background;
+			w = tex->width;
+			h = tex->height;
+		}
 		customDraw = true;
 		scrollAr = Noteskin::getMenuElement(Game::noteskin, "Container/scroll_arrow.png");
 		MUTATE_END
@@ -115,6 +123,27 @@ public:
 	{
 		if (!active)
 			return;
+		if (shouldUseCallback)
+		{
+			int mx, my;
+			Game::GetMousePos(&mx, &my);
+			float scrll = ((AvgContainer*)parent)->scrollAddition;
+
+			int relX = mx - parent->x;
+			int relY = my - parent->y + scrll;
+
+			if (((AvgContainer*)parent)->parent != NULL)
+			{
+				AvgContainer* parentParent = (AvgContainer*)((AvgContainer*)parent)->parent;
+				relX -= parentParent->x;
+				relY -= parentParent->y;
+			}
+
+			if ((relX > x && relY > y) && (relX < x + w && relY < y + h))
+			{
+				callback(mx,my);
+			}
+		}
 		for (Object* obj : above)
 		{
 			obj->mouseDown();

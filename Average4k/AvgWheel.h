@@ -27,6 +27,8 @@ public:
 
 	wheelSelectCallback callSelect;
 
+	Shader* shad;
+
 	int selectedIndex = 0;
 	float fakeIndex = 0;
 
@@ -40,6 +42,7 @@ public:
 
 		box = Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/wheelContainer.png");
 		topBox = Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/wheelTop.png");
+
 		MUTATE_END
 	}
 
@@ -115,6 +118,7 @@ public:
 
 			wheelObjects.push_back(obj);
 		}
+
 		MUTATE_END
 	}
 

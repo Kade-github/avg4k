@@ -4,7 +4,7 @@
 void AvgCamera::draw()
 {
 	Rendering::drawBatch();
-	glBindFramebuffer(GL_FRAMEBUFFER, fb);
+	//glBindFramebuffer(GL_FRAMEBUFFER, fb);
 	glViewport(0, 0, 1280, 720);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glClearColor(0, 0, 0, 0);
@@ -31,7 +31,7 @@ void AvgCamera::draw()
 			{
 				Rendering::drawBatch();
 				Rendering::setBlend();
-				glBindFramebuffer(GL_FRAMEBUFFER, fb);
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 				AvgGroup* gr = (AvgGroup*)obj;
 
@@ -90,12 +90,12 @@ void AvgCamera::draw()
 
 	Rendering::drawBatch();
 
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, fb);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, intme);
+	/*glBindFramebuffer(GL_READ_FRAMEBUFFER, fb);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, ifb);
 	glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, Game::wW, Game::wH);
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);*/
 
 	Rendering::setBlend();
 
@@ -135,9 +135,6 @@ void AvgCamera::draw()
 
 	if (clipRect.w > 0 || clipRect.h > 0)
 		Rendering::SetClipRect(&clipRect);
-
-
-	Rendering::PushQuad(&dstRect, &srcRect, ctbMSAA, GL::genShader);
 
 	//if (!glGetError())
 		//std::cout << "opgl error: " << glGetError() << std::endl;

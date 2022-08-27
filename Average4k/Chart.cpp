@@ -1,7 +1,5 @@
 #include "Chart.h"
 
-
-
 std::vector<std::string> Chart::split(std::string str, char delimiter)
 {
     std::vector < std::string > internal;
@@ -18,35 +16,40 @@ std::vector<std::string> Chart::split(std::string str, char delimiter)
 
 float Chart::getTimeFromBeat(float beat, bpmSegment seg) {
     float beatThing = (beat - seg.startBeat) / (seg.bpm / 60);
-    return (seg.startTime + (beatThing * 1000) - (meta.chartOffset * 1000)) - (0.034 * 1000);
+    return (seg.startTime + (beatThing * 1000) - (meta.chartOffset * 1000)) - (BASS_OFFSET * 1000);
 }
 
 float Chart::getTimeFromBeatOffset(float beat, bpmSegment seg) {
     float beatThing = (beat - seg.startBeat) / (seg.bpm / 60);
-    return (seg.startTime + (beatThing * 1000)) - (0.034 * 1000);
+    return (seg.startTime + (beatThing * 1000)) - (BASS_OFFSET * 1000);
 }
 
 float Chart::getBeatFromTime(float timestamp, bpmSegment seg) {
-    float result = seg.startBeat + (((((timestamp - (0.034 * 1000)) / 1000) - ((seg.startTime / 1000) - (meta.chartOffset))) * (seg.bpm / 60)));
+    float result = seg.startBeat + (((((timestamp - (BASS_OFFSET * 1000)) / 1000) - (((seg.startTime - (BASS_OFFSET * 1000)) / 1000) - (meta.chartOffset))) * (seg.bpm / 60)));
     return result;
 }
 
 float Chart::getBeatFromTimeOffset(float timestamp, bpmSegment seg) {
-    return seg.startBeat + ((((timestamp / 1000) - ((seg.startTime / 1000))) * (seg.bpm / 60)));
+    return seg.startBeat + (((((timestamp - (BASS_OFFSET * 1000)) / 1000) - (((seg.startTime - (BASS_OFFSET * 1000))/ 1000))) * (seg.bpm / 60)));
 }
 
 bpmSegment Chart::getSegmentFromTime(float time) {
+    if ((time - (BASS_OFFSET * 1000)) >= previouslyFound.startTime && (time - (BASS_OFFSET * 1000)) < ((previouslyFound.startTime - (BASS_OFFSET * 1000)) + previouslyFound.length))
+        return previouslyFound;
     bpmSegment seg;
     seg.bpm = meta.bpms[0].bpm;
     seg.startBeat = 0;
     seg.startTime = 0;
     seg.endBeat = INT_MAX;
     seg.length = INT_MAX;
-
     for (int i = 0; i < meta.bpms.size(); i++) {
         bpmSegment segment = meta.bpms[i];
-        if ((time - (0.034 * 1000)) >= segment.startTime && (time - (0.034 * 1000)) < ((segment.startTime - (0.034 * 1000)) + segment.length))
+        if ((time - (BASS_OFFSET * 1000)) >= segment.startTime && (time - (BASS_OFFSET * 1000)) < ((segment.startTime - (BASS_OFFSET * 1000)) + segment.length))
+        {
             seg = segment;
+            previouslyFound = segment;
+            break;
+        }
     }
 
 
@@ -81,6 +84,8 @@ float Chart::getStopOffsetFromBeat(float beat)
 
 bpmSegment Chart::getSegmentFromBeat(float beat)
 {
+    if (beat >= previouslyFound.startBeat && beat < previouslyFound.endBeat)
+        return previouslyFound;
     bpmSegment seg;
     seg.bpm = meta.bpms[0].bpm;
     seg.startBeat = 0;
@@ -91,7 +96,11 @@ bpmSegment Chart::getSegmentFromBeat(float beat)
     for (int i = 0; i < meta.bpms.size(); i++) {
         bpmSegment segment = meta.bpms[i];
         if (beat >= segment.startBeat && beat < segment.endBeat)
+        {
             seg = segment;
+            previouslyFound = segment;
+            break;
+        }
     }
 
 

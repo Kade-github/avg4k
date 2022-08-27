@@ -3,9 +3,7 @@
 #include "Game.h"
 #include "Pack.h"
 #include "CPacketJoinServer.h"
-
-std::map<std::string, Texture*> Steam::pixelsForAvatar;
-
+#include "Helpers.h"
 void Steam::InitSteam()
 {
     MUTATE_START
@@ -58,49 +56,24 @@ extern "C"
 }
 
 
-Texture* Steam::getAvatar(const char* url)
+Texture* Steam::getAvatar(const char* base64Encode)
 {
     MUTATE_START
 
-	CURL* curlCtx = curl_easy_init();
+    size_t outLength;
 
-    struct MemoryStruct chunk;
+    char* img = Helpers::base64_decode(base64Encode, std::string(base64Encode).length(), &outLength);
 
-    chunk.memory = (char*)malloc(1); 
-    chunk.size = 0; 
-
-    std::cout << "loading " << url << std::endl;
-
-    curl_easy_setopt(curlCtx, CURLOPT_URL, url);
-    curl_easy_setopt(curlCtx, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
-    curl_easy_setopt(curlCtx, CURLOPT_WRITEDATA, (void*)&chunk);
-    curl_easy_setopt(curlCtx, CURLOPT_USERAGENT, "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36");
-
-    std::cout << "downloading avatar" << std::endl;
-
-    CURLcode rc = curl_easy_perform(curlCtx);
-    if (rc != CURLE_OK)
-        fprintf(stderr, "curl_easy_perform() failed: %s\n",
-            curl_easy_strerror(rc));
-
-    std::cout << "downloaded! " << chunk.size << std::endl;
-
-    curl_easy_cleanup(curlCtx);
-
-    std::cout << "trying to texture bruh" << std::endl;
-
-    Texture* tex = stbi_h::stbi_load_memory(chunk.memory, chunk.size);
-    std::cout << "textured " << std::endl;
+    Texture* tex = stbi_h::stbi_load_memory(img, outLength);
 
     if (!tex)
         return NULL;
-    free(chunk.memory);
+    free(img);
 
     Game::currentMenu->onSteam("profileDownloaded");
 
-    return tex;
-
     MUTATE_END
+    return tex;
 }
 
 void Steam::doesWorkshopItemExist(std::string name)

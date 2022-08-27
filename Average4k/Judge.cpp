@@ -30,8 +30,8 @@ int Judge::scoreNote(float difff)
 		if (diff >= nextWindow && diff <= window)
 			return scoreWindows[i];
 	}
-	return -1;
 	MUTATE_END
+	return -1;
 }
 
 judgement Judge::judgeNote(float difference) {
@@ -48,7 +48,6 @@ judgement Judge::judgeNote(float difference) {
 		if (diff >= nextWindow && diff <= window)
 			return (judgement)i;
 	}
-	
-	return (judgement)-1;
 	MUTATE_END
+	return (judgement)-1;
 }

@@ -16,6 +16,7 @@
 #include "Average4k.h"
 #include "SPacketScoreResult.h"
 #include "SPacketServerListReply.h"
+#include "MainerMenu.h"
 using namespace std;
 
 mutex pog;
@@ -216,6 +217,7 @@ void transCall() {
 	delete Game::currentMenu;
 	Game::currentMenu = Game::toGoTo;
 	Game::currentMenu->addCamera(Game::mainCamera);
+	MainerMenu::isInMainerMenu = false;
 	Game::currentMenu->create();
 	Game::currentMenu->created = true;
 	__transRect->alpha = 0;
@@ -407,6 +409,23 @@ void Game::update(Events::updateEvent update)
 		}
 	}
 
+	if (currentMenu != NULL)
+		if (SDL_GetTicks() > 1000)
+		{
+
+			for (Tweening::Tween& tw : Tweening::TweenManager::activeTweens)
+			{
+				Tweening::TweenManager::updateTween(tw, Game::deltaTime);
+			}
+
+			for (Tweening::Tween tw : Tweening::TweenManager::tweenRemove)
+			{
+				Tweening::TweenManager::activeTweens.erase(std::remove(Tweening::TweenManager::activeTweens.begin(), Tweening::TweenManager::activeTweens.end(), tw), Tweening::TweenManager::activeTweens.end());
+			}
+			Tweening::TweenManager::tweenRemove.clear();
+
+		}
+
 	for (int i = 0; i < objects->size(); i++)
 	{
 		try
@@ -487,7 +506,19 @@ void Game::update(Events::updateEvent update)
 				p.Name = "You!";
 				p.SteamID64 = SteamUser()->GetSteamID().ConvertToUint64();
 				l.PlayerList.push_back(p);
-				Game::instance->transitionToMenu(new MultiplayerLobby(l, false, false));
+				if (!MainerMenu::isInMainerMenu)
+				{
+					MainerMenu* m = new MainerMenu();
+					Game::instance->transitionToMenu(m);
+					m->isInLobby = true;
+					m->justJoined = true;
+				}
+				else
+				{
+					MainerMenu* m = (MainerMenu*)currentMenu;
+					m->isInLobby = true;
+					m->justJoined = true;
+				}
 
 				std::cout << "you joined!" << std::endl;
 				break;
@@ -505,22 +536,6 @@ void Game::update(Events::updateEvent update)
 		}
 	}
 
-	if (currentMenu != NULL)
-		if (SDL_GetTicks() > 1000)
-		{
-
-			for (Tweening::Tween& tw : Tweening::TweenManager::activeTweens)
-			{
-				Tweening::TweenManager::updateTween(tw, Game::deltaTime);
-			}
-
-			for (Tweening::Tween tw : Tweening::TweenManager::tweenRemove)
-			{
-				Tweening::TweenManager::activeTweens.erase(std::remove(Tweening::TweenManager::activeTweens.begin(), Tweening::TweenManager::activeTweens.end(), tw), Tweening::TweenManager::activeTweens.end());
-			}
-			Tweening::TweenManager::tweenRemove.clear();
-
-		}
 	if (currentMenu != NULL && Game::noteskin != NULL)
 	{
 		if (currentMenu->created)
@@ -882,6 +897,9 @@ void Game::resizeGame(int w, int h, int fullscreen)
 	SDL_SetWindowSize(window, w, h);
 	multiplierx = (float)1280 / (float)w;
 	multipliery = (float)720 / (float)h;
+
+
+
 	switch (fullscreen)
 	{
 	case 0:
@@ -902,6 +920,9 @@ void Game::resizeGame(int w, int h, int fullscreen)
 		SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 		break;
 	}
+
+	GL::projection = glm::ortho(0.0f, wW, wH, 0.0f, -1.0f, 1.0f);
+	GL::genShader->setProject(GL::projection);
 }
 
 //asd

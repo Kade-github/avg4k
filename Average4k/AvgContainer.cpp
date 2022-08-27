@@ -38,10 +38,10 @@ void AvgContainer::mouseWheel(float amount)
 void AvgContainer::draw() {
 	if (!active)
 		return;
-	clipRect.x = x + 2;
+	clipRect.x = x + 1;
 	clipRect.y = y + 1;
-	clipRect.w = w - 4;
-	clipRect.h = h - 4;
+	clipRect.w = w - 2;
+	clipRect.h = h - 2;
 
 
 
@@ -86,7 +86,10 @@ void AvgContainer::draw() {
 		{
 			continue;
 		}
-		i.obj->alpha = alpha;
+		if (parent != nullptr && topAlphas)
+		{
+			i.obj->alpha = alpha;
+		}
 		i.obj->parent = this;
 		if (i.obj->y > h || i.obj->y < 0) // yes!
 		{
@@ -114,9 +117,19 @@ void AvgContainer::draw() {
 
 	if (clipRect.w > 0 || clipRect.h > 0)
 		Rendering::SetClipRect(NULL);
-
-	Rendering::PushQuad(&dstRect, &srcRect, tex, GL::genShader, angle);
-
+	if (tex != nullptr)
+		Rendering::PushQuad(&dstRect, &srcRect, tex, GL::genShader, angle);
+	if (shouldUseCallback)
+	{
+		int mx, my;
+		Game::GetMousePos(&mx, &my);
+		if (mx > realPosX && my > realPosY && mx < realPosX + w && my < realPosY + h)
+		{
+			dstRect.a = 0.5;
+			Rendering::PushQuad(&dstRect, &srcRect, NULL, GL::genShader, angle);
+			dstRect.a = alpha;
+		}
+	}
 
 	if (scroll && !fail)
 	{
@@ -173,21 +186,32 @@ void AvgContainer::draw() {
 	dropDownActive = false;
 	for (Object* a : above)
 	{
-		AvgDropDown* objb = dynamic_cast<AvgDropDown*>(a);
-		if (objb != NULL)
+		if (a != NULL)
 		{
-			if (objb->isActive)
+			if (a->id >= 0)
 			{
-				activeDrop = objb;
-				dropDownActive = true;
-				continue;
+				AvgDropDown* objb = dynamic_cast<AvgDropDown*>(a);
+				if (objb != NULL)
+				{
+					if (objb->isActive)
+					{
+						activeDrop = objb;
+						dropDownActive = true;
+						continue;
+					}
+				}
+				if (alpha > 0)
+				{
+					a->x += x + scrollBar.w;
+					a->y += y - scrollAddition;
+					a->realPosX = a->x;
+					a->realPosY = a->y;
+					a->draw();
+					a->x -= x + scrollBar.w;
+					a->y -= y - scrollAddition;
+				}
 			}
 		}
-		a->x += x + scrollBar.w;
-		a->y += y - scrollAddition;
-		a->draw();
-		a->x -= x + scrollBar.w;
-		a->y -= y - scrollAddition;
 	}
 
 	if (activeDrop != NULL)

@@ -57,6 +57,9 @@ public:
 	void leftMouseDown() override;
 	void leftMouseUp() override;
 	Channel* song;
+
+	std::vector<line> clappedLines;
+
 	std::vector<Channel*> clapChannels;
 	std::vector<float> beatsClapped;
 	bool findClapped(float beat)
@@ -81,6 +84,8 @@ public:
 	void imguiUpdate(float elapsed) override;
 	std::vector<ReceptorObject*> fuck;
 	std::vector<editorWindow> windows;
+
+	std::string currentFile = "";
 
 	bool focused = false;
 	std::vector<line> miniMapLines;
@@ -108,20 +113,18 @@ public:
 		}
 		snapBeat.clear();
 		int lastBeat = -1;
-		for (int i = 0; i < song->length; i++)
-		{
-			bpmSegment seg = selectedChart->getSegmentFromTime(i);
-			float beat = selectedChart->getBeatFromTime(i, seg);
-			if (beat < 0)
-				continue;
+		bpmSegment seg = selectedChart->getSegmentFromTime(song->length);
+		float endBeat = selectedChart->getBeatFromTime(song->length, seg);
 
-			float diff = i;
+		for (int beat = 0; beat < endBeat; beat++)
+		{
+			float diff = selectedChart->getTimeFromBeat(beat, selectedChart->getSegmentFromBeat(beat));
 
 			float bps = (Game::save->GetDouble("scrollspeed") / 60);
 
 			float noteOffset = (bps * (diff / 1000)) * (64 * noteZoom);
 
-			if (lastBeat != (int)beat)
+			if (lastBeat != (int)beat && ((int)beat) % 4 != 0)
 			{
 				lastBeat = (int)beat;
 				AvgRect* rect = new AvgRect(((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) - 4, fuck[0]->y + noteOffset + (32 * noteZoom), 0, 2);
@@ -129,7 +132,7 @@ public:
 				rect->w = (((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) + ((64 * noteZoom + 12) * 3) - rect->x) + (68 * noteZoom + 12);
 				line l;
 				l.rect = rect;
-				l.time = i;
+				l.time = selectedChart->getTimeFromBeat(beat, selectedChart->getSegmentFromBeat(beat));
 				l.beat = beat;
 				//l.text = new Text(rect->x - 10, rect->y, std::to_string((int)snappedBeat), 16, "Futura Bold");
 				lines->add(rect);
@@ -159,17 +162,22 @@ public:
 		beatLines.clear();
 
 		int lastBeat = -1;
-		for (int i = 0; i < song->length; i++)
+
+		bpmSegment seg = selectedChart->getSegmentFromTime(song->length);
+		float endBeat = selectedChart->getBeatFromTime(song->length, seg);
+
+		for (int beat = 0; beat < endBeat; beat++)
 		{
-			bpmSegment seg = selectedChart->getSegmentFromTime(i);
-			float beat = selectedChart->getBeatFromTime(i, seg);
-			if (beat < 0)
-				continue;
-			float diff = i;
+			float diff = selectedChart->getTimeFromBeat(beat, selectedChart->getSegmentFromBeat(beat));
 
 			float bps = (Game::save->GetDouble("scrollspeed") / 60);
 
 			float noteOffset = (bps * (diff / 1000)) * (64 * noteZoom);
+
+			if (beat >= 299)
+			{
+				std::cout << "hello" << std::endl;
+			}
 
 			if (((int)beat % 4 == 0 || lastBeat == -1) && lastBeat != (int)beat)
 			{
@@ -179,7 +187,7 @@ public:
 				rect->w = (((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) + ((64 * noteZoom + 12) * 3) - rect->x) + (68 * noteZoom + 12);
 				line l;
 				l.rect = rect;
-				l.time = i;
+				l.time = selectedChart->getTimeFromBeat(beat, selectedChart->getSegmentFromBeat(beat));
 				l.beat = beat;
 				l.text = new Text(rect->x - 10, rect->y, std::to_string((int)beat), 16, "Futura Bold");
 				lines->add(rect);
@@ -355,18 +363,15 @@ public:
 
 		if (object->type == Note_Head)
 		{
-
-			for (int i = std::floorf(object->time); i < std::floorf(object->endTime); i++)
+			for (float beat = object->beat; beat < object->tailBeat; beat += 0.001)
 			{
-				bpmSegment holdSeg = selectedChart->getSegmentFromTime(i);
-
-				double beat = selectedChart->getBeatFromTimeOffset(i, holdSeg);
+				bpmSegment holdSeg = selectedChart->getSegmentFromBeat(beat);
 
 				float whHold = selectedChart->getTimeFromBeatOffset(beat, holdSeg);
 
 				float diff = whHold - (object->time);
 
-				float noteOffset = (bps * (diff / 1000)) * (64 * noteZoom);
+				float noteOffset = ((bps * (diff / 1000)) * (64 * noteZoom)) ;
 
 				float y = 0;
 				float yDiff = 0;
@@ -407,7 +412,7 @@ public:
 					rect.h = 68 * noteZoom;
 					tile.rect = rect;
 					tile.beat = beat;
-					tile.time = i;
+					tile.time = selectedChart->getTimeFromBeat(beat, holdSeg);
 					object->heldTilings.push_back(tile);
 				}
 			}

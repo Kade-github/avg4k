@@ -71,9 +71,8 @@ noteskin_asset* loadSkin(noteskin_asset* as, std::string typ) {
 	as->name = Noteskin::type;
 
 	std::cout << "[NOTESKIN] skinpath=" << as->skinpath << std::endl;
-
-	return as;
 	VM_END
+	return as;
 }
 
 noteskin_asset* Noteskin::getNoteskin()
@@ -100,6 +99,6 @@ noteskin_asset* Noteskin::getNoteskin()
 		asset = loadSkin(asset, type);
 		std::cout << "done noteskin" << std::endl;
 	}
-	return asset;
 	VM_END
+	return asset;
 }

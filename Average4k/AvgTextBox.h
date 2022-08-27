@@ -6,12 +6,21 @@
 #include "Text.h"
 #include "Helpers.h"
 
+typedef void(__cdecl* doneTypingCallback)(std::string);
+
+void doneTyping(std::string s)
+{
+
+}
+
 class AvgTextBar : public Object {
 public:
 	std::string def;
 
 	std::string type;
 	std::string suffix = "";
+
+	doneTypingCallback callback;
 
 	Text* textPart;
 
@@ -32,9 +41,11 @@ public:
 
 	int currentMultiplier = 1;
 
+
 	AvgTextBar(int _x, int _y, std::string _def, Texture* searchTex)
 	{
 		MUTATE_START
+		callback = doneTyping;
 		x = _x;
 		y = _y;
 		def = _def;
@@ -94,6 +105,13 @@ public:
 	void keyDown(SDL_KeyboardEvent ev)
 	{
 		MUTATE_START
+
+		if (typing && ev.keysym.sym == SDLK_RETURN)
+		{
+			typing = false;
+			callback(type);
+		}
+
 		if (typing && ev.keysym.sym == SDLK_BACKSPACE && type.size() > 0)
 		{
 			type.pop_back();
@@ -226,6 +244,13 @@ public:
 		int relX = _x - parent->x;
 		int relY = _y - parent->y + scrll;
 
+		if (((AvgContainer*)parent)->parent != NULL)
+		{
+			AvgContainer* parentParent = (AvgContainer*)((AvgContainer*)parent)->parent;
+			relX -= parentParent->x;
+			relY -= parentParent->y;
+		}
+
 		if ((relX > x && relY > y) && (relX < x + (w + ((w / 2) * currentMultiplier)) && relY < y + h))
 		{
 			if (toModify.name != "none")
@@ -233,7 +258,7 @@ public:
 			typing = true;
 			setText();
 		}
-		else
+		else if (typing)
 		{
 			typing = false;
 
@@ -250,6 +275,8 @@ public:
 				Game::save->SetDouble(toModify.name, std::stod(std::string(type)));
 				Game::save->Save();
 			}
+
+			callback(type);
 
 			if (type.size() == 0)
 				setText(true,false,true);

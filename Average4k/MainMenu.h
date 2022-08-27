@@ -22,6 +22,7 @@ class MainMenu :
 		AvgSprite* icon;
 		AvgSprite* bg;
 		std::vector<Tweening::AvgButtonTweenable*> buttons;
+		Shader* shad;
 		Text* hello;
 		Text* bottom;
 		SDL_Texture* avatar;

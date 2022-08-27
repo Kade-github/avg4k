@@ -162,7 +162,7 @@ LONG PvectoredExceptionHandler(
 	_EXCEPTION_POINTERS* ExceptionInfo
 )
 {
-	if (ExceptionInfo->ExceptionRecord->ExceptionCode == 0x40010006)
+	if (ExceptionInfo->ExceptionRecord->ExceptionCode == 0x40010006 || ExceptionInfo->ExceptionRecord->ExceptionCode == 0x80000003)
 		return EXCEPTION_CONTINUE_SEARCH;
 
 
@@ -171,6 +171,9 @@ LONG PvectoredExceptionHandler(
 }
 
 long WINAPI UnhandledExceptionFilterHandler(LPEXCEPTION_POINTERS ex) {
+
+	if (ex->ExceptionRecord->ExceptionCode == 0x40010006 || ex->ExceptionRecord->ExceptionCode == 0x80000003)
+		return EXCEPTION_CONTINUE_SEARCH;
 
 	CrashDmp(ex);
 	return EXCEPTION_CONTINUE_SEARCH;
@@ -181,8 +184,6 @@ void atexit_handler()
 	if (outstream)
 		outstream->dump();
 }
-
-
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	PSTR lpCmdLine, INT nCmdShow)
@@ -237,7 +238,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	Game::frameLimit = 10;
 
 	BASS_Init(-1,44100,0,NULL,NULL);
-	BASS_SetConfig(BASS_CONFIG_ASYNCFILE_BUFFER, 16777216); //16MB
+	BASS_SetConfig(BASS_CONFIG_ASYNCFILE_BUFFER, 32000000); //32MB
 
 	int test = 123;
 
@@ -257,32 +258,78 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		std::cout << "Frame sleep disabled, increased cpu usage expected." << std::endl;
 	}
 
+	bool disableFrameWaiting = cmdLine.find("-disableframewait") != std::string::npos;
+
+
+	if (disableFrameWaiting) {
+		disableFrameSleeping = true;
+		std::cout << "Not waiting for frames - frame counter is ignored.";
+	}
+
+	const char* (CDECL * pwine_get_version)(void);
+	HMODULE hntdll = GetModuleHandle(L"ntdll.dll");
+	if (!hntdll)
+	{
+		std::cout << "Error retrieving NTDLL handle" << std::endl;
+	}
+	
+	pwine_get_version = (const char* (*)())GetProcAddress(hntdll, "wine_get_version");
+
+	if (pwine_get_version) {
+		std::cout << "Running on wine version " << pwine_get_version() << std::endl;
+	}
+
 	bool fullscreen = false;
 
 	TTF_Init();
 
 	fpsinit();
-
-	SDL_Window* window = SDL_CreateWindow("Average4k", SDL_WINDOWPOS_UNDEFINED,
-		SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI);
+	
+	SDL_Window* window = SDL_CreateWindow("Average4k", SDL_WINDOWPOS_CENTERED,
+		SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 
-	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-	// Create a OpenGL context on SDL2
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
+
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
+
+	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+
+
 	SDL_GLContext gl_context = SDL_GL_CreateContext(window);
-	SDL_GL_MakeCurrent(window, gl_context);
-	// Load GL extensions using glad
-	if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-		std::cerr << "Failed to initialize the OpenGL context." << std::endl;
+	
+	int status = gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
+
+	if (status != 0) {
+		std::cout << "Failed to initialize the OpenGL context (" << status << ")" << std::endl;
 		exit(1);
 	}
 
+	status = SDL_GL_MakeCurrent(window, gl_context);
+	
+	if (status != 0) {
+		std::cout << "Error making current: " << SDL_GetError() << std::endl;
+	}
+	
+
+
+	//NO MORE SDL RENDERER!!!! IT IS MUTUALLY EXCLUSIVE TO OPENGL!!! READ THE FUCKING DOCS KADE!!!!!!!
+	//SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+	
 	std::cout << "OpenGL version loaded: " << GLVersion.major << "."
 		<< GLVersion.minor << std::endl;
+
+	glEnable(GL_MULTISAMPLE);
+
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -341,7 +388,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	Uint64 LAST = 0;
 
 	bool create = false;
-	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+	//SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 	float time = 0;
 	float bruh = 0;
 	auto next_tick = Clock::now();
@@ -356,7 +403,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	while (run)
 	{
 		auto now_tick = Clock::now();
-		if (now_tick >= next_tick)
+		if (now_tick >= next_tick || disableFrameWaiting)
 		{
 			if (lastFramelimit != Game::frameLimit)
 			{
@@ -416,7 +463,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 			Events::updateEvent updateEvent;
 
-			updateEvent.renderer = renderer;
+			updateEvent.renderer = nullptr;
 			updateEvent.window = window;
 
 			if (!create)
@@ -427,25 +474,18 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			}
 
 
-			if (Game::useImGUI) {
-				ImGui_ImplOpenGL3_NewFrame();
-				ImGui_ImplSDL2_NewFrame();
-				ImGui::NewFrame();
-			}
 			glClear(GL_COLOR_BUFFER_BIT);
 
+			ImGui_ImplOpenGL3_NewFrame();
+			ImGui_ImplSDL2_NewFrame();
+			ImGui::NewFrame();
 
 			game->update(updateEvent);
-			
-
 
 			Rendering::drawBatch();
 
-			if (Game::useImGUI)
-			{
-				ImGui::Render();
-				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-			}
+			ImGui::Render();
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 			SDL_GL_SwapWindow(window);
 
@@ -491,7 +531,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	ImGui::DestroyContext();
 
 	SDL_GL_DeleteContext(gl_context);
-	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 
 	SDL_Quit();

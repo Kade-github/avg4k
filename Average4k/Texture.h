@@ -17,12 +17,15 @@ class Texture
 
 		static Texture* createWithImage(std::string filePath);
 
+		void resizeTexture(int w, int h);
+
 		int width;
 		int height;
 		bool fromSTBI = false;
 		unsigned char* pixels;
 
 		Texture(unsigned char* data, const unsigned int width, const unsigned int height);
+		Texture(unsigned char* data, const unsigned int width, const unsigned int height, bool mssa);
 		~Texture();
 				
 		//Texture interface

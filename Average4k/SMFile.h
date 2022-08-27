@@ -9,5 +9,8 @@ class SMFile
 	public:
 		chartMeta meta;
 		SMFile(std::string path, std::string folder, bool doReplace);
+
+
+		static void SaveSM(chartMeta meta, std::string outFile);
 };
 

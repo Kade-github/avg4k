@@ -210,6 +210,7 @@ public:
 
 	void setProject(glm::mat4 proj)
 	{
+		GL_Use();
 		glUniformMatrix4fv(glGetUniformLocation(this->program, "u_projection"), 1, GL_FALSE, &proj[0][0]);
 	}
 };

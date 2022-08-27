@@ -43,12 +43,14 @@ SaveFile::SaveFile()
     defaultSettings.push_back(CreateSetting("FPS Limit", { false,false,true,false,"",240,10,4000 }));
     defaultSettings.push_back(CreateSetting("Start Delay", { false,false,true,false,"",5,0,10,1,false,"s"}));
     defaultSettings.push_back(CreateSetting("Submit Scores", { true }));
+    defaultSettings.push_back(CreateSetting("Show Judgement Count", { true }));
     defaultSettings.push_back(CreateSetting("nonChange_chartTheme", {}));
     defaultSettings.push_back(CreateSetting("nonChange_chartHistory",{}));
     defaultSettings.push_back(CreateSetting("nonChange_chartWaveform", {true}));
     defaultSettings.push_back(CreateSetting("nonChange_beatLines", { true }));
     defaultSettings.push_back(CreateSetting("nonChange_infoPanel", { true }));
     defaultSettings.push_back(CreateSetting("nonChange_noteTick", { false }));
+    defaultSettings.push_back(CreateSetting("nonChange_beatTick", { false }));
     defaultSettings.push_back(CreateSetting("nonChange_colorShit", { false,true,false,false,"128,128,255"}));
     defaultSettings.push_back(CreateSetting("nonChange_minimap", { false }));
     defaultHeader.settings = defaultSettings;
@@ -215,8 +217,8 @@ std::vector<std::string> SaveFile::ObtainDropDownSettingList(std::string set)
     {
         return {"Fullscreen", "Windowed", "Borderless"};
     }
-    return std::vector<std::string>();
     VM_END
+    return std::vector<std::string>();
 }
 
 std::vector<int> SaveFile::ObtainResolution()

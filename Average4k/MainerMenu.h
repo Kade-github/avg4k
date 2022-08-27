@@ -8,6 +8,7 @@
 #include "SaveFile.h"
 #include "AvgContainer.h"
 #include "CPacketLeaderboardRequest.h"
+#include "ChatObject.h"
 #include "SPacketLeaderboardResponse.h"
 // Objects
 #include "AvgWheel.h"
@@ -132,21 +133,44 @@ public:
 class MainerMenu : public Menu
 {
 public:
+	static bool isInMainerMenu;
 	static Chart currentSelectedSong;
 	static Song selectedSong;
 	static Pack selected;
 	static int packSongIndex;
 	static int selectedDiffIndex;
 	static bool isInLobby;
+	static bool isHost;
 	float lastBeat = 0;
 	bool started;
-
+	bool justJoined = false;
 	static AvgWheel* wheel;
 
 	static std::vector<Pack> packs;
 
-	static std::vector<Pack>* asyncPacks;
-	static std::vector<Song>* asyncSongs;
+	ChatObject* chat;
+
+	std::vector<lobby> Lobbies;
+	std::vector<AvgContainer*> LobbyContainers;
+
+	std::vector<Object*> multiplayerObjects;
+
+	std::vector<AvgSprite*> icons;
+
+	bool lobbyStuffCreated = false;
+
+	static lobby currentLobby;
+
+	Shader* shad;
+	Shader* lobbyShader;
+
+	bool downloading;
+	bool downloadingPack;
+
+	static std::vector<Pack> asyncPacks;
+	static std::vector<Song> asyncSongs;
+
+	AvgContainer* lobbyContainer;
 
 	static AvgContainer* soloContainer;
 	static AvgContainer* multiContainer;
@@ -167,9 +191,14 @@ public:
 	static bool lockInput;
 	AvgRect* selectSettings;
 
+	int peopleWhoHaveChart = 0;
+	int peopleWhoNeedChart = 0;
+
 	std::vector<LeaderboardResult> leaderboardResults;
 
 	AvgContainer* currentContainer;
+
+	void createNewLobbies(std::string searchTerm = "");
 
 	void selectContainer(int container);
 
@@ -177,7 +206,9 @@ public:
 
 	void mouseWheel(float wheel) override;
 
-	
+	void createLobby();
+	void lobbyUpdatePlayers();
+	void cleanLobby();
 
 	void selectPack(int index);
 	void addPack(std::string name, std::string bg, bool showText, bool isSteam);

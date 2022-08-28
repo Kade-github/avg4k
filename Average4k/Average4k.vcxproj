@@ -199,6 +199,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ArrowEffects.cpp" />
     <ClCompile Include="Average4k.cpp" />
     <ClCompile Include="AvgCamera.cpp" />
     <ClCompile Include="AvgContainer.cpp" />
@@ -242,6 +243,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="MenuCreator.cpp" />
     <ClCompile Include="MiniBpm.cpp" />
+    <ClCompile Include="ModEditor.cpp" />
     <ClCompile Include="ModManager.cpp" />
     <ClCompile Include="Multiplayer.cpp" />
     <ClCompile Include="MultiplayerLobbies.cpp" />
@@ -269,6 +271,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="VerticesTest.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ArrowEffects.h" />
     <ClInclude Include="Average4k.h" />
     <ClInclude Include="AvgButton.h" />
     <ClInclude Include="AvgCamera.h" />
@@ -348,6 +351,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MenuCreator.h" />
     <ClInclude Include="MiniBpm.h" />
+    <ClInclude Include="ModEditor.h" />
     <ClInclude Include="ModManager.h" />
     <ClInclude Include="Multiplayer.h" />
     <ClInclude Include="MultiplayerLobbies.h" />

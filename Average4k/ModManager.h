@@ -3,15 +3,14 @@
 #include <sol.hpp>
 #include "Menu.h"
 #include "Easing.h"
-struct Mod {
-	std::string luaFunction;
-	std::string name;
-};
 
 struct AppliedMod {
-	Mod mod;
+	std::string mod;
 	float tweenStart;
 	float tweenLen;
+	float amount;
+	float modStartAmount;
+	bool done = false;
 	Easing::easingFunction tweenCurve;
 };
 
@@ -22,15 +21,6 @@ public:
 	std::unique_ptr<sol::state> lua;
 
 	std::map<std::string, sol::function>* luaMap;
-
-	std::map<int, float> storedCMod;
-	std::map<int, vec2> storedPositions; // storedMods
-	std::map<int, float> funkyCMod;
-	std::map<int, vec2> funkyPositions; // activeMods
-	std::map<std::string, std::map<int, float>> modCMod;
-	std::map<std::string, std::map<int, vec2>> modPositions; // targetMods
-
-	std::vector<Mod> mods;
 
 	std::vector<AppliedMod> appliedMods;
 
@@ -47,8 +37,6 @@ public:
 	ModManager(std::string modFile);
 
 	static void initLuaFunctions();
-
-	void storePositions();
 
 	void runMods();
 

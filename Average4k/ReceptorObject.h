@@ -10,6 +10,11 @@ public:
 	float defAlpha = 1;
 	float lightUpTimer;
 
+	float modX, modY;
+
+	float endX = 0;
+	float endY = 0;
+
 	Shader* customShader;
 
 	ReceptorObject(int _x, int _y, int _type);

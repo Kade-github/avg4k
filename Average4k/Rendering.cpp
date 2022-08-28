@@ -39,6 +39,7 @@ void Rendering::Render_GLInit(Shader* shad) {
 	
 }
 
+
 void Rendering::drawBatch()
 {
 	
@@ -63,6 +64,7 @@ void Rendering::drawBatch()
 		glDrawArrays(GL_TRIANGLES, 0, batch_buffer.size());
 
 		batch_buffer.clear(); // clear it out
+		glUseProgram(NULL);
 	}
 	batch_texture = NULL;
 	batch_shader = NULL;

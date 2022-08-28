@@ -1,5 +1,6 @@
 #include "ReceptorObject.h"
 #include "Gameplay.h"
+#include "ArrowEffects.h"
 
 
 ReceptorObject::ReceptorObject(int _x, int _y, int _type)
@@ -13,8 +14,12 @@ ReceptorObject::ReceptorObject(int _x, int _y, int _type)
 	w = (64 * Game::save->GetDouble("Note Size"));
 	h = (64 * Game::save->GetDouble("Note Size"));
 
-	if (Gameplay::instance->runModStuff)
-		Gameplay::instance->manager.funkyPositions[type] = vec2(x, y);
+	if (Gameplay::instance != NULL)
+		if (Gameplay::instance->runModStuff)
+		{
+			modX = x;
+			modY = y;
+		}
 
 	type = _type;
 	scale = 1;
@@ -57,12 +62,16 @@ void ReceptorObject::draw() {
 	srcRect.w = 1;
 	srcRect.h = 1;
 
-	if (Gameplay::instance->runModStuff)
-	{
-		dstRect.x = Gameplay::instance->manager.funkyPositions[type].x + mpx;
-		dstRect.y = Gameplay::instance->manager.funkyPositions[type].y + mpy;
-	}
+	if (Gameplay::instance != NULL)
+		if (Gameplay::instance->runModStuff)
+		{
+			ArrowEffects::Arrow a = ArrowEffects::finishEffects(x, y, type, Gameplay::instance->positionInSong);
+			dstRect.x = a.x + mpx;
+			dstRect.y = a.y + mpy;
+		}
 
+	modX = dstRect.x;
+	modY = dstRect.y;
 
 	Shader* sh = customShader;
 

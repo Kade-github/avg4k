@@ -1587,6 +1587,11 @@ void FuckinEditor::imguiUpdate(float elapsed)
 		}
 		if (ImGui::BeginMenu("Edit"))
 		{
+			if (ImGui::MenuItem("Mods") && !openingFile) {
+				//Game::instance->transitionToMenu(new ModEditor());
+				return;
+			}
+			ImGui::Separator();
 			if (ImGui::MenuItem("Undo") && !openingFile) {
 				undo();
 			}

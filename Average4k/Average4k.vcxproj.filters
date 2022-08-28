@@ -85,9 +85,6 @@
     <Filter Include="Source Files\Average4k\Utils\Tweening">
       <UniqueIdentifier>{63e1e72e-90df-4eb9-8e8d-6da62c350621}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Average4k\Lua">
-      <UniqueIdentifier>{369d31f2-f1c2-45ea-893a-70ecafbb473a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Average4k\Screens\Menus\CreatingShit">
       <UniqueIdentifier>{631c23dd-33ca-4ce2-8468-9b13b08da477}</UniqueIdentifier>
     </Filter>
@@ -120,9 +117,6 @@
     </Filter>
     <Filter Include="Source Files\Average4k\Structs\Chart\ChartParsers\Osu">
       <UniqueIdentifier>{67f1f103-ecb9-478a-8b31-fdce7c7864b6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Average4k\Lua\Mods">
-      <UniqueIdentifier>{0c7eb543-ca6d-4922-bee1-578b74bbb219}</UniqueIdentifier>
     </Filter>
     <Filter Include="Lua">
       <UniqueIdentifier>{2cdfbf0e-bf67-4c00-90b3-6c34d614820f}</UniqueIdentifier>
@@ -334,6 +328,12 @@
       <Filter>Source Files\Average4k\Utils</Filter>
     </ClCompile>
     <ClCompile Include="ModManager.cpp">
+      <Filter>Lua\Mods</Filter>
+    </ClCompile>
+    <ClCompile Include="ModEditor.cpp">
+      <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
+    </ClCompile>
+    <ClCompile Include="ArrowEffects.cpp">
       <Filter>Lua\Mods</Filter>
     </ClCompile>
   </ItemGroup>
@@ -714,6 +714,12 @@
       <Filter>Source Files\Average4k\Multiplayer\Packets\Client</Filter>
     </ClInclude>
     <ClInclude Include="ModManager.h">
+      <Filter>Lua\Mods</Filter>
+    </ClInclude>
+    <ClInclude Include="ModEditor.h">
+      <Filter>Source Files\Average4k\Screens\Menus\Gaming</Filter>
+    </ClInclude>
+    <ClInclude Include="ArrowEffects.h">
       <Filter>Lua\Mods</Filter>
     </ClInclude>
   </ItemGroup>

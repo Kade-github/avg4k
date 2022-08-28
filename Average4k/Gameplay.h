@@ -51,6 +51,8 @@ class Gameplay :
 	public:
 		std::vector<gameplayControl> controls;
 
+		bool paused = false;
+
 		std::vector<ReceptorObject*> receptors;
 
 		std::vector<note> notesToPlay;

@@ -371,8 +371,7 @@ void Gameplay::create() {
 
 	MUTATE_START
 
-	ArrowEffects::drunk = 0;
-	ArrowEffects::tipsy = 0;
+		ArrowEffects::resetEffects();
 
 	lastTime = 0;
 

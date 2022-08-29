@@ -8,6 +8,7 @@ struct AppliedMod {
 	std::string mod;
 	float tweenStart;
 	float tweenLen;
+	int col;
 	float amount;
 	float modStartAmount;
 	bool done = false;

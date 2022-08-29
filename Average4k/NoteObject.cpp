@@ -84,6 +84,15 @@ void NoteObject::draw() {
     if (Gameplay::instance != NULL)
         if (Gameplay::instance->runModStuff)
         {
+            if (ArrowEffects::reverse[lane] >= 0.5)
+                downscroll = true;
+            else
+                downscroll = false;
+        }
+
+    if (Gameplay::instance != NULL)
+        if (Gameplay::instance->runModStuff)
+        {
             receptor.x = obj->modX;
             receptor.y = obj->modY;
         }
@@ -154,7 +163,7 @@ void NoteObject::draw() {
     if (Gameplay::instance != NULL)
         if (Gameplay::instance->runModStuff)
         {
-            ArrowEffects::Arrow a = ArrowEffects::finishEffects(obj->x, obj->y, noteOffset, obj->type, -1, position);
+            ArrowEffects::Arrow a = ArrowEffects::finishEffects(obj->x, obj->y, noteOffset, obj->type, -1, position, obj->modY);
             dstRect.x = a.x;
             dstRect.y = a.y;
         }
@@ -218,29 +227,52 @@ void NoteObject::draw() {
                     {
                         float ttime = currentChart->getTimeFromBeat(holdBeat, currentChart->getSegmentFromBeat(holdBeat));
                         float cmodHold = calcCMod(ttime - position);
-                        ArrowEffects::Arrow a = ArrowEffects::finishEffects(obj->x, obj->y, cmodHold, obj->type, time, position);
+                        ArrowEffects::Arrow a = ArrowEffects::finishEffects(obj->x, obj->y, cmodHold, obj->type, time, position, obj->modY);
                         square.x = a.x;
                         square.y = a.y;
 
                         if (bodies.size() == 0)
                         {
-                            if (beat < currentBeat)
+                            if (!downscroll)
                             {
-                                body.skewTL = -(square.x - obj->modX);
-                                body.skewTR = -((square.x + square.w) - (obj->modX + dstRect.w));
+                                if (beat < currentBeat)
+                                {
+                                    body.skewTL = -(square.x - obj->modX);
+                                    body.skewTR = -((square.x + square.w) - (obj->modX + dstRect.w));
+                                }
+                                else
+                                {
+                                    body.skewTL = -(square.x - dstRect.x);
+                                    body.skewTR = -((square.x + square.w) - (dstRect.x + dstRect.w));
+                                }
                             }
                             else
                             {
-                                body.skewTL = -(square.x - dstRect.x);
-                                body.skewTR = -((square.x + square.w) - (dstRect.x + dstRect.w));
+                                if (beat < currentBeat)
+                                {
+                                    body.skewTL = (square.x - obj->modX);
+                                    body.skewTR = ((square.x + square.w) - (obj->modX + dstRect.w));
+                                }
+                                else
+                                {
+                                    body.skewTL = (square.x - dstRect.x);
+                                    body.skewTR = ((square.x + square.w) - (dstRect.x + dstRect.w));
+                                }
                             }
                         }
                         else
                         {
                             holdBody lastBody = bodies.back();
-
-                            body.skewTL = -(square.x - lastBody.x);
-                            body.skewTR = -((square.x + square.w) - (lastBody.x + lastBody.w));
+                            if (!downscroll)
+                            {
+                                body.skewTL = -(square.x - lastBody.x);
+                                body.skewTR = -((square.x + square.w) - (lastBody.x + lastBody.w));
+                            }
+                            else
+                            {
+                                body.skewTL = (square.x - lastBody.x);
+                                body.skewTR = ((square.x + square.w) - (lastBody.x + lastBody.w));
+                            }
                         }
                     }
 

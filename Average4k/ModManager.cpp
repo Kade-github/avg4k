@@ -116,6 +116,8 @@ void ModManager::runMods()
 				ArrowEffects::drunk = std::lerp(m.modStartAmount, m.amount, tween);
 			if (m.mod == "tipsy")
 				ArrowEffects::tipsy = std::lerp(m.modStartAmount, m.amount, tween);
+			if (m.mod == "reverse")
+				ArrowEffects::reverse[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 
 			if (perc >= 1)
 			{
@@ -160,6 +162,21 @@ void ModManager::createFunctions()
 			aMod.modStartAmount = ArrowEffects::drunk;
 		if (name == "tipsy")
 			aMod.modStartAmount = ArrowEffects::tipsy;
+
+		Gameplay::instance->manager.appliedMods.push_back(aMod);
+
+	});
+
+	lua->set_function("activateModMap", [](std::string name, float tweenStart, float tweenLen, std::string easingFunc, float amount, int col) {
+		AppliedMod aMod;
+		aMod.mod = name;
+		aMod.tweenStart = tweenStart;
+		aMod.tweenLen = tweenLen;
+		aMod.tweenCurve = Easing::getEasingFunction(easingFunc);
+		aMod.col = col;
+		aMod.amount = amount;
+		if (name == "reverse")
+			aMod.modStartAmount = ArrowEffects::reverse[col];
 
 		Gameplay::instance->manager.appliedMods.push_back(aMod);
 

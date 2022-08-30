@@ -1,6 +1,12 @@
 #pragma once
 #include "Includes.h"
 
+struct texData
+{
+	unsigned char* data;
+	int w, h;
+};
+
 class Texture
 {
 	public:
@@ -16,6 +22,10 @@ class Texture
 		static Texture* createFromSurface(SDL_Surface* surf, bool free);
 
 		static Texture* createWithImage(std::string filePath);
+
+		static Texture* loadTextureFromData(unsigned char* data, int w, int h);
+
+		static texData getTextureData(std::string filePath);
 
 		void resizeTexture(int w, int h);
 

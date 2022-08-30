@@ -358,11 +358,11 @@ int lastFPS = 0;
 void Game::update(Events::updateEvent update)
 {
 	MUTATE_START
-		if (Multiplayer::connectedToServer)
-			SteamAPI_RunCallbacks();
+	if (Multiplayer::connectedToServer)
+		SteamAPI_RunCallbacks();
 
 	if (isDiscordRunning)
-		::core->RunCallbacks();
+		core->RunCallbacks();
 
 	if (!Multiplayer::connectedToServer && startConnect)
 	{

@@ -1,11 +1,14 @@
 #pragma once
 #include "includes.h"
 #include "Chart.h"
+#include "Texture.h"
 struct Song {
 	std::string path;
 	bool isSteam = false;
 	uint64_t steamId;
 	uint64_t steamIdPack;
+	texData banner;
+	texData background;
 	std::string folder;
 	Chart c;
 };
@@ -16,6 +19,7 @@ struct Pack {
 	std::string folder;
 	std::string background;
 	std::string packName;
+	texData banner;
 	uint64_t steamId;
 	bool isSteam = false;
 	bool showName;
@@ -54,6 +58,7 @@ public:
 
 class SongGather {
 public:
+	static int loaded;
 	static void gatherPacksAsync();
 	static Pack gatherPack(std::string filePath, bool checkForMod = true);
 
@@ -66,10 +71,6 @@ public:
 	static std::vector<Song> gatherNoPackSongs();
 
 	static Chart extractAndGetChart(std::string file);
-
-	static void gatherSteamPacksAsync();
-	
-	static void gatherNoPackSteamSongsAsync();
 
 	static std::vector<Song> gatherSongsInFolder(std::string folder = "");
 };

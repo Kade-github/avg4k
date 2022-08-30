@@ -81,21 +81,16 @@ void NoteObject::draw() {
 
     bool downscroll = Game::save->GetBool("downscroll");
 
-    if (Gameplay::instance != NULL)
-        if (Gameplay::instance->runModStuff)
-        {
-            if (ArrowEffects::reverse[lane] >= 0.5)
-                downscroll = true;
-            else
-                downscroll = false;
-        }
+    if (ModManager::doMods)
+    {
+        if (ArrowEffects::reverse[lane] >= 0.5)
+            downscroll = true;
+        else
+            downscroll = false;
 
-    if (Gameplay::instance != NULL)
-        if (Gameplay::instance->runModStuff)
-        {
-            receptor.x = obj->modX;
-            receptor.y = obj->modY;
-        }
+        receptor.x = obj->modX;
+        receptor.y = obj->modY;
+    }
 
     if (downscroll)
         rect.y = (receptor.y - noteOffset);
@@ -160,13 +155,15 @@ void NoteObject::draw() {
     dstRect.x = x;
     dstRect.y = y;
 
-    if (Gameplay::instance != NULL)
-        if (Gameplay::instance->runModStuff)
-        {
-            ArrowEffects::Arrow a = ArrowEffects::finishEffects(obj->x, obj->y, noteOffset, obj->type, -1, position, obj->modY);
-            dstRect.x = a.x;
-            dstRect.y = a.y;
-        }
+    float drawAngle = 0;
+
+    if (ModManager::doMods)
+    {
+        ArrowEffects::Arrow a = ArrowEffects::finishEffects(obj->x, obj->y, noteOffset, obj->type, -1, position, diff);
+        dstRect.x = a.x;
+        dstRect.y = a.y;
+        drawAngle = a.rot;
+    }
 
 
     Rect line;
@@ -222,12 +219,12 @@ void NoteObject::draw() {
 
                 holdBody body;
                 body.beat = holdBeat;
-                if (Gameplay::instance != NULL)
-                    if (Gameplay::instance->runModStuff)
-                    {
+                if (ModManager::doMods)
+                {
                         float ttime = currentChart->getTimeFromBeat(holdBeat, currentChart->getSegmentFromBeat(holdBeat));
-                        float cmodHold = calcCMod(ttime - position);
-                        ArrowEffects::Arrow a = ArrowEffects::finishEffects(obj->x, obj->y, cmodHold, obj->type, time, position, obj->modY);
+                        float holdDiff = ttime - position;
+                        float cmodHold = calcCMod(holdDiff);
+                        ArrowEffects::Arrow a = ArrowEffects::finishEffects(obj->x, obj->y, cmodHold, obj->type, time, position, holdDiff);
                         square.x = a.x;
                         square.y = a.y;
 
@@ -250,13 +247,13 @@ void NoteObject::draw() {
                             {
                                 if (beat < currentBeat)
                                 {
-                                    body.skewTL = (square.x - obj->modX);
-                                    body.skewTR = ((square.x + square.w) - (obj->modX + dstRect.w));
+                                    body.skewBL = -(square.x - obj->modX);
+                                    body.skewBR = -((square.x + square.w) - (obj->modX + dstRect.w));
                                 }
                                 else
                                 {
-                                    body.skewTL = (square.x - dstRect.x);
-                                    body.skewTR = ((square.x + square.w) - (dstRect.x + dstRect.w));
+                                    body.skewBL = -(square.x - dstRect.x);
+                                    body.skewBR = -((square.x + square.w) - (dstRect.x + dstRect.w));
                                 }
                             }
                         }
@@ -270,8 +267,8 @@ void NoteObject::draw() {
                             }
                             else
                             {
-                                body.skewTL = (square.x - lastBody.x);
-                                body.skewTR = ((square.x + square.w) - (lastBody.x + lastBody.w));
+                                body.skewBL = -(square.x - lastBody.x);
+                                body.skewBR = -((square.x + square.w) - (lastBody.x + lastBody.w));
                             }
                         }
                     }
@@ -359,18 +356,18 @@ void NoteObject::draw() {
         if (Game::noteskin->rotate) {
             switch (lane) {
             case 0: // left
-                Rendering::PushQuad(&dstRect, &srcRect, texture, sh, 90);
+                Rendering::PushQuad(&dstRect, &srcRect, texture, sh, 90 + drawAngle);
                 break;
             case 1: // down
-                Rendering::PushQuad(&dstRect, &srcRect, texture, sh);
+                Rendering::PushQuad(&dstRect, &srcRect, texture, sh, drawAngle);
                 break;
             case 2: // up
                 srcRect.h = -1;
-                Rendering::PushQuad(&dstRect, &srcRect, texture, sh);
+                Rendering::PushQuad(&dstRect, &srcRect, texture, sh, drawAngle);
                 srcRect.h = 1;
                 break;
             case 3: // right
-                Rendering::PushQuad(&dstRect, &srcRect, texture, sh, -90);
+                Rendering::PushQuad(&dstRect, &srcRect, texture, sh, -90 + drawAngle);
                 break;
             }
         }

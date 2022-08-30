@@ -44,6 +44,8 @@ struct line {
 class FuckinEditor : public Menu
 {
 public:
+	static Chart* selectedChart;
+	static bool dontDeleteChart;
 	float lastBeatMin = -1;
 	float lastBeatMax = -1;
 	bool triedBPM = false;
@@ -361,63 +363,6 @@ public:
 
 		float time = SDL_GetTicks();
 
-		if (object->type == Note_Head)
-		{
-			for (float beat = object->beat; beat < object->tailBeat; beat += 0.001)
-			{
-				bpmSegment holdSeg = selectedChart->getSegmentFromBeat(beat);
-
-				float whHold = selectedChart->getTimeFromBeatOffset(beat, holdSeg);
-
-				float diff = whHold - (object->time);
-
-				float noteOffset = ((bps * (diff / 1000)) * (64 * noteZoom)) ;
-
-				float y = 0;
-				float yDiff = 0;
-				if (object->heldTilings.size() != 0)
-				{
-					if (downscroll)
-						y = object->rect.y - noteOffset;
-					else
-						y = object->rect.y + noteOffset;
-					yDiff = y - object->heldTilings.back().rect.y;
-				}
-				else
-				{
-					if (downscroll)
-						y = object->rect.y - noteOffset;
-					else
-						y = object->rect.y + noteOffset;
-					yDiff = y - object->rect.y;
-				}
-
-				bool otherOne = false;
-
-				if (downscroll)
-					otherOne = yDiff <= -(64 * noteZoom);
-				else
-					otherOne = yDiff >= 64 * noteZoom;
-
-				if (otherOne || object->heldTilings.size() == 0)
-				{
-					object->holdHeight += 64 * noteZoom;
-					holdTile tile;
-					SDL_FRect rect;
-					tile.active = true;
-					tile.fucked = false;
-					rect.y = y;
-					rect.x = 0;
-					rect.w = 64 * noteZoom;
-					rect.h = 68 * noteZoom;
-					tile.rect = rect;
-					tile.beat = beat;
-					tile.time = selectedChart->getTimeFromBeat(beat, holdSeg);
-					object->heldTilings.push_back(tile);
-				}
-			}
-		}
-
 		// generate minimap line
 
 		line l;
@@ -446,8 +391,6 @@ public:
 		miniMapLines.push_back(l);
 		miniMap->add(l.rect);
 
-
-		std::sort(object->heldTilings.begin(), object->heldTilings.end());
 		notes.push_back(object);
 		object->create();
 		gameplay->add(object);

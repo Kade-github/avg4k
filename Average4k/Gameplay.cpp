@@ -703,11 +703,15 @@ void Gameplay::create() {
 
 	if (MainerMenu::currentSelectedSong.isModFile && !MainerMenu::isInLobby)
 	{
+		ModManager::doMods = true;
 		runModStuff = true;
 		ModManager::initLuaFunctions();
 		manager = ModManager(MainerMenu::currentSelectedSong.pathToLua);
 	}
-
+	else
+	{
+		ModManager::doMods = false;
+	}
 	callModEvent("create", 0);
 
 	MUTATE_END
@@ -826,7 +830,7 @@ void Gameplay::update(Events::updateEvent event)
 
 	if (debug)
 	{
-		Combo->setText("Drunk: " + std::to_string(ArrowEffects::drunk) + " | Tipsy: " + std::to_string(ArrowEffects::tipsy));
+		Combo->setText("Reverse: " + std::to_string(ArrowEffects::reverse[0]) + "-" + std::to_string(ArrowEffects::reverse[1]) + "-" + std::to_string(ArrowEffects::reverse[2]) + "-" + std::to_string(ArrowEffects::reverse[3]));
 		Combo->centerX();
 	}
 

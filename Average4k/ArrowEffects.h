@@ -14,9 +14,12 @@ public:
 		float cmod;
 	};
 
-	static float drunk, tipsy, adrunk, atipsy;
+	static float drunk, tipsy, dizzy;
 
 	static std::map<int, float> reverse;
+	static std::map<int, float> confusion;
+	static std::map<int, float> movex;
+	static std::map<int, float> movey;
 
 	static void resetEffects();
 

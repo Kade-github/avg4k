@@ -10,6 +10,7 @@ struct AppliedMod {
 	float tweenLen;
 	int col;
 	float amount;
+	bool started = false;
 	float modStartAmount;
 	bool done = false;
 	Easing::easingFunction tweenCurve;
@@ -18,7 +19,7 @@ struct AppliedMod {
 class ModManager
 {
 public:
-
+	static bool doMods;
 	std::unique_ptr<sol::state> lua;
 
 	std::map<std::string, sol::function>* luaMap;

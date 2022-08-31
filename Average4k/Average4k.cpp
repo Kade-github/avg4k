@@ -230,7 +230,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			<< std::endl;
 		exit(1);
 	}
-	Game::version = "b11.1-lua_test_branch";
+	Game::version = "b12";
 
 	curl_global_init(CURL_GLOBAL_ALL);
 	Multiplayer::InitCrypto();

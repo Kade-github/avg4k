@@ -59,6 +59,7 @@ void SongGather::gatherPacksAsync()
 						{
 							p.background = entry.path().string() + "/" + end;
 							p.banner = Texture::getTextureData(p.background);
+							p.hasBanner = true;
 						}
 						if (split[0] == "packName")
 							p.packName = end;
@@ -69,7 +70,10 @@ void SongGather::gatherPacksAsync()
 					for (Song s : songs)
 					{
 						if (s.c.meta.banner.size() > 0)
+						{
 							s.banner = Texture::getTextureData(s.c.meta.folder + "/" + s.c.meta.banner);
+							s.hasBanner = true;
+						}
 						p.songs.push_back(s);
 					}
 					std::lock_guard cock(lock);
@@ -119,6 +123,7 @@ void SongGather::gatherPacksAsync()
 					{
 						p.background = folder + "/" + end;
 						p.banner = Texture::getTextureData(p.background);
+						p.hasBanner = true;
 					}
 					if (split[0] == "packName")
 						p.packName = end;
@@ -132,7 +137,10 @@ void SongGather::gatherPacksAsync()
 					s.steamIdPack = p.steamId;
 					s.isSteam = true;
 					if (s.c.meta.banner.size() > 0)
+					{
 						s.banner = Texture::getTextureData(s.c.meta.folder + "/" + s.c.meta.banner);
+						s.hasBanner = true;
+					}
 					p.songs.push_back(s);
 				}
 				{

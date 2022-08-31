@@ -9,6 +9,7 @@ struct Song {
 	uint64_t steamIdPack;
 	texData banner;
 	texData background;
+	bool hasBanner = false;
 	std::string folder;
 	Chart c;
 };
@@ -19,6 +20,7 @@ struct Pack {
 	std::string folder;
 	std::string background;
 	std::string packName;
+	bool hasBanner = false;
 	texData banner;
 	uint64_t steamId;
 	bool isSteam = false;

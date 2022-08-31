@@ -908,6 +908,14 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 			{
 				actuallyLoad = true;
 				resetStuff();
+				for (Pack& p : packs)
+				{
+					if (p.hasBanner)
+						stbi_h::stbi_free(p.banner.data);
+					for (Song& s : p.songs)
+						if (s.hasBanner)
+							stbi_h::stbi_free(s.banner.data);
+				}
 				packs.clear();
 				loadPacks();
 			}

@@ -1054,9 +1054,7 @@ void MainerMenu::dropFile(SDL_DropEvent ev)
 		Chart c = SongGather::extractAndGetChart(std::string(ev.file));
 		if (c.meta.songName.size() != 0)
 		{
-			resetStuff();
-			loadPacks();
-			Game::showErrorWindow("Chart imported", "Check in Workshop/Local", false, { 70, 116, 232 });
+			Game::showErrorWindow("Chart imported", "local songs were removed, will fix later!", false, { 70, 116, 232 });
 		}
 		else
 		{
@@ -1066,6 +1064,11 @@ void MainerMenu::dropFile(SDL_DropEvent ev)
 	}
 	else
 	{
+		if (SongGather::steamRegAsyncAlready)
+		{
+			Game::showErrorWindow("Please wait!", "Please wait until all packs are loaded!", true);
+			return;
+		}
 		bool shouldMove = false;
 		for (const auto& entry : std::filesystem::directory_iterator(std::string(ev.file)))
 		{

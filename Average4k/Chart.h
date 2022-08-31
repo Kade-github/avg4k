@@ -70,14 +70,20 @@ class Chart
 		float BASS_OFFSET;
 
 		Chart() {};
-		Chart(chartMeta m) { meta = m; 
-		
-		// mp3/other bass offsets
+		Chart(chartMeta m, bool checkformod = true) { 
+			meta = m;
+			
+			if (std::filesystem::exists(m.folder + "/mod") && checkformod)
+			{
+				isModFile = true;
+				pathToLua = m.folder + "/mod/mod.lua";
+			}
+      // mp3/other bass offsets
 
-		if (m.ext == "mp3")
-			BASS_OFFSET = 0.034f * 2.5f;
-		else
-			BASS_OFFSET = 0.034f;
+      if (m.ext == "mp3")
+        BASS_OFFSET = 0.034f * 2.5f;
+      else
+        BASS_OFFSET = 0.034f;
 		};
 		chartMeta meta;
 
@@ -86,6 +92,10 @@ class Chart
 			// not much lol
 		}
 		static std::vector < std::string > split(std::string str, char delimiter);
+
+		bool isModFile = false;
+
+		std::string pathToLua = "";
 
 		float getTimeFromBeat(float beat, bpmSegment seg);
 		float getTimeFromBeatOffset(float beat, bpmSegment seg);

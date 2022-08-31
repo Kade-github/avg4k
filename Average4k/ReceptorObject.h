@@ -10,21 +10,14 @@ public:
 	float defAlpha = 1;
 	float lightUpTimer;
 
+	float modX, modY;
+
+	float endX = 0;
+	float endY = 0;
+
 	Shader* customShader;
 
-	ReceptorObject(int _x, int _y, int _type) {
-		MUTATE_START
-		x = _x;
-		y = _y;
-		// this does the same thing but im lazy and too lazy to check
-		setX(_x);
-		setY(_y);
-		w = (64 * Game::save->GetDouble("Note Size"));
-		h = (64 * Game::save->GetDouble("Note Size"));
-		type = _type;
-		scale = 1;
-		MUTATE_END
-	}
+	ReceptorObject(int _x, int _y, int _type);
 
 	void light()
 	{

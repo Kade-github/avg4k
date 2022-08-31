@@ -12,13 +12,19 @@
 bool SongGather::packAsyncAlready;
 bool SongGather::steamRegAsyncAlready;
 
+int SongGather::loaded = 0;
+
 std::mutex lock;
 
 void SongGather::gatherPacksAsync()
 {
 	if (!steamRegAsyncAlready)
 	{
+		loaded = 0;
 		steamRegAsyncAlready = true;
+
+		MainerMenu::asyncPacks.clear();
+
 		std::thread t([]() {
 			for (const auto& entry : std::filesystem::directory_iterator("assets/charts/"))
 			{
@@ -38,6 +44,11 @@ void SongGather::gatherPacksAsync()
 
 					std::string str;
 
+					std::vector<Song> songs = gatherSongsInFolder(entry.path().string() + "/");
+
+					if (songs.size() == 0)
+						continue;
+
 					while (std::getline(fs, str))
 					{
 						if (str.starts_with("#"))
@@ -45,37 +56,99 @@ void SongGather::gatherPacksAsync()
 						std::vector<std::string> split = Chart::split(str, ':');
 						std::string end = split[1].erase(0, 1);
 						if (split[0] == "banner")
+						{
 							p.background = entry.path().string() + "/" + end;
+							p.banner = Texture::getTextureData(p.background);
+						}
 						if (split[0] == "packName")
 							p.packName = end;
 						if (split[0] == "showName")
 							p.showName = (end == "false" ? false : true);
 					}
 
-
-					std::vector<Song> songs = gatherSongsInFolder(entry.path().string() + "/");
-
-					if (songs.size() == 0)
-						continue;
-
-
 					for (Song s : songs)
 					{
+						if (s.c.meta.banner.size() > 0)
+							s.banner = Texture::getTextureData(s.c.meta.folder + "/" + s.c.meta.banner);
 						p.songs.push_back(s);
 					}
 					std::lock_guard cock(lock);
 					{
 						MainerMenu::asyncPacks.push_back(p);
 					}
+					loaded++;
 				}
-				steamRegAsyncAlready = false;
 			}
+
+			for (int i = 0; i < Game::steam->subscribedList.size(); i++)
+			{
+				steamItem st = Game::steam->subscribedList[i];
+
+				if (!st.isPackFolder)
+					continue;
+
+				Pack p;
+				p.steamId = (uint64_t)st.details.m_nPublishedFileId;
+				p.isSteam = true;
+
+				std::string folder = std::string(st.folder);
+
+				std::ifstream fs;
+				// meta
+				fs.open(folder + "/pack.meta");
+
+				if (!fs.good())
+					continue;
+
+				p.metaPath = folder + "/pack.meta";
+
+				std::string str;
+
+				std::vector<Song> songs = gatherSongsInFolder(folder + "/");
+
+				if (songs.size() == 0)
+					continue;
+
+				while (std::getline(fs, str))
+				{
+					if (str.starts_with("#"))
+						continue;
+					std::vector<std::string> split = Chart::split(str, ':');
+					std::string end = split[1].erase(0, 1);
+					if (split[0] == "banner")
+					{
+						p.background = folder + "/" + end;
+						p.banner = Texture::getTextureData(p.background);
+					}
+					if (split[0] == "packName")
+						p.packName = end;
+					if (split[0] == "showName")
+						p.showName = (end == "false" ? false : true);
+				}
+
+
+				for (Song s : songs)
+				{
+					s.steamIdPack = p.steamId;
+					s.isSteam = true;
+					if (s.c.meta.banner.size() > 0)
+						s.banner = Texture::getTextureData(s.c.meta.folder + "/" + s.c.meta.banner);
+					p.songs.push_back(s);
+				}
+				{
+					std::lock_guard cock(lock);
+					MainerMenu::asyncPacks.push_back(p);
+				}
+				loaded++;
+			}
+
+			steamRegAsyncAlready = false;
 			});
 		t.detach();
 	}
 }
 
-Pack SongGather::gatherPack(std::string filePath)
+Pack SongGather::gatherPack(std::string filePath, bool checkForMod)
 {
 	Pack p;
 
@@ -110,7 +183,14 @@ Pack SongGather::gatherPack(std::string filePath)
 		return p;
 
 	for (Song s : songs)
+	{
+		if (!checkForMod)
+		{
+			s.c.isModFile = false;
+			s.c.pathToLua = "";
+		}
 		p.songs.push_back(s);
+	}
 
 	return p;
 }
@@ -233,118 +313,6 @@ Chart SongGather::extractAndGetChart(std::string file)
 		}
 	}
 	return Chart();
-}
-
-void SongGather::gatherSteamPacksAsync()
-{
-	if (!packAsyncAlready)
-	{
-		packAsyncAlready = true;
-		std::thread t([]() {
-			for (int i = 0; i < Game::steam->subscribedList.size(); i++)
-			{
-				steamItem st = Game::steam->subscribedList[i];
-
-				if (!st.isPackFolder)
-					continue;
-
-				Pack p;
-				p.steamId = (uint64_t) st.details.m_nPublishedFileId;
-				p.isSteam = true;
-
-				std::string folder = std::string(st.folder);
-
-				std::ifstream fs;
-				// meta
-				fs.open(folder + "/pack.meta");
-
-				if (!fs.good())
-					continue;
-
-				p.metaPath = folder + "/pack.meta";
-
-				std::string str;
-
-				while (std::getline(fs, str))
-				{
-					if (str.starts_with("#"))
-						continue;
-					std::vector<std::string> split = Chart::split(str, ':');
-					std::string end = split[1].erase(0, 1);
-					if (split[0] == "banner")
-						p.background = folder + "/" + end;
-					if (split[0] == "packName")
-						p.packName = end;
-					if (split[0] == "showName")
-						p.showName = (end == "false" ? false : true);
-				}
-
-
-				std::vector<Song> songs = gatherSongsInFolder(folder + "/");
-
-				if (songs.size() == 0)
-					continue;
-
-				for (Song s : songs)
-				{
-					s.steamIdPack = p.steamId;
-					s.isSteam = true;
-					p.songs.push_back(s);
-				}
-				{
-					std::lock_guard cock(lock);
-					MainerMenu::asyncPacks.push_back(p);
-				}
-			}
-			packAsyncAlready = false;
-		});
-		t.detach();
-	}
-}
-
-void SongGather::gatherNoPackSteamSongsAsync()
-{
-	std::thread t([]() {
-		for (int i = 0; i < Game::steam->subscribedList.size(); i++)
-		{
-			steamItem st = Game::steam->subscribedList[i];
-
-			if (st.isPackFolder)
-				continue;
-
-			Song s;
-
-			s.isSteam = true;
-
-			s.steamId = st.details.m_nPublishedFileId;
-
-			std::string path(st.folder);
-
-			if (path == "")
-				continue;
-			std::string fullPath = path + "\\" + st.chartFile;
-
-			std::string replaced = Steam::ReplaceString(fullPath, "\\", "/");
-			std::string replaced2 = Steam::ReplaceString(path, "\\", "/");
-			s.path = replaced;
-			Chart c;
-			if (st.chartType == "qv" || st.chartType == "qp")
-			{
-				QuaverFile f = QuaverFile();
-				c = f.returnChart(replaced2);
-			}
-			if (st.chartType == "sm")
-			{
-				SMFile f = SMFile(s.path, replaced2, false);
-				c = Chart();
-				c.meta = f.meta;
-			}
-
-			s.c = c;
-			MainerMenu::asyncSongs.push_back(s);
-		}
-		});
-	t.detach();
 }
 
 std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)

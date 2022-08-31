@@ -1,5 +1,29 @@
 #include "ReceptorObject.h"
 #include "Gameplay.h"
+#include "ArrowEffects.h"
+
+
+ReceptorObject::ReceptorObject(int _x, int _y, int _type)
+{
+	MUTATE_START
+		x = _x;
+	y = _y;
+	// this does the same thing but im lazy and too lazy to check
+	setX(_x);
+	setY(_y);
+	w = (64 * Game::save->GetDouble("Note Size"));
+	h = (64 * Game::save->GetDouble("Note Size"));
+
+	if (ModManager::doMods)
+	{
+		modX = x;
+		modY = y;
+	}
+
+	type = _type;
+	scale = 1;
+	MUTATE_END
+}
 
 void ReceptorObject::draw() {
 
@@ -20,6 +44,7 @@ void ReceptorObject::draw() {
 	Rect dstRect;
 	Rect srcRect;
 
+
 	dstRect.x = rect.x;
 	dstRect.y = rect.y;
 	dstRect.w = rect.w;
@@ -36,6 +61,18 @@ void ReceptorObject::draw() {
 	srcRect.w = 1;
 	srcRect.h = 1;
 
+	float drawAngle = 0;
+
+	if (ModManager::doMods)
+	{
+		ArrowEffects::Arrow a = ArrowEffects::finishEffects(x, y, type, Gameplay::instance->positionInSong);
+		dstRect.x = a.x + mpx;
+		dstRect.y = a.y + mpy;
+		drawAngle = a.rot;
+	}
+
+	modX = dstRect.x;
+	modY = dstRect.y;
 
 	Shader* sh = customShader;
 
@@ -50,45 +87,45 @@ void ReceptorObject::draw() {
 		{
 		case 0:
 			dstRect.a = defAlpha;
-			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh, 90);
+			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh, 90 + drawAngle);
 			dstRect.a = alpha;
 			if (lightUpTimer > 0)
-				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh, 90);
+				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh, 90 + drawAngle);
 			
 
 			break;
 		case 1:
 			dstRect.a = defAlpha;
-			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh);
+			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh, drawAngle);
 			dstRect.a = alpha;
 			if (lightUpTimer > 0)
-				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh);
+				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh, drawAngle);
 			break;
 		case 2:
 			srcRect.h = -1;
 			dstRect.a = defAlpha;
-			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh);
+			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh, drawAngle);
 			dstRect.a = alpha;
 			if (lightUpTimer > 0)
-				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh);
+				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh, drawAngle);
 			srcRect.h = 1;
 			break;
 		case 3:
 			dstRect.a = defAlpha;
-			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh, -90);
+			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh, -90 + drawAngle);
 			dstRect.a = alpha;
 			if (lightUpTimer > 0)
-				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh, -90);
+				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh, -90 + drawAngle);
 			break;
 		}
 	}
 	else
 	{
 		dstRect.a = defAlpha;
-		Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh);
+		Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh, drawAngle);
 		dstRect.a = alpha;
 		if (lightUpTimer > 0)
-			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh);
+			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh, drawAngle);
 	}
 
 	if (lightUpTimer > 0)

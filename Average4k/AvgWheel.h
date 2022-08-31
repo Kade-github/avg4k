@@ -108,7 +108,7 @@ public:
 			if (s.c.meta.banner.size() != 0)
 			{
 				obj.drawBanner = true;
-				obj.banner = Texture::createWithImage(s.c.meta.folder + "/" + s.c.meta.banner);
+				obj.banner = Texture::loadTextureFromData(s.banner.data, s.banner.w, s.banner.h);
 			}
 
 			obj.artist = new Text(0, 0, s.c.meta.artist, 14, "arial");

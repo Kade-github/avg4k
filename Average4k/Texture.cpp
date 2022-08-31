@@ -22,6 +22,20 @@ Texture* Texture::createWithImage(std::string filePath)
 	return t;
 }
 
+Texture* Texture::loadTextureFromData(unsigned char* data, int w, int h)
+{
+	return new Texture(data, w, h);
+}
+
+texData Texture::getTextureData(std::string filePath)
+{
+	texData data;
+	data.w = 0;
+	data.h = 0;
+	data.data = stbi_h::stbi_load_file_data(filePath, &data.w, &data.h);
+	return data;
+}
+
 void Texture::resizeTexture(int w, int h)
 {
 	glDeleteTextures(1, &id);

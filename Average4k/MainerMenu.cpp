@@ -28,6 +28,8 @@ int scrollLeaderboard = 0;
 
 bool MainerMenu::isInMainerMenu = false;
 
+bool MainerMenu::actuallyLoad = true;
+
 int packIndex = 0;
 int catIndex = 0;
 
@@ -556,7 +558,16 @@ void MainerMenu::create()
 
 	resetStuff();
 
-	loadPacks();
+
+	if (!actuallyLoad)
+	{
+		for (Pack p : packs)
+		{
+			addPack(p.packName, p.banner, p.showName, p.isSteam);
+		}
+	}
+	else
+		loadPacks();
 
 	Tweening::TweenManager::createNewTween("movingContainer3", testWorkshop, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
 	Tweening::TweenManager::createNewTween("movingContainer2", settingsContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
@@ -611,63 +622,71 @@ void MainerMenu::update(Events::updateEvent ev)
 
 	std::vector<Pack> gatheredPacks;
 	std::vector<Song> gatheredSongs;
-	if (selectedContainerIndex == 0)
+	if (!SongGather::steamRegAsyncAlready && !stop)
 	{
-		std::lock_guard cock(packMutex);
+		if (selectedContainerIndex == 0)
 		{
-			if (asyncPacks.size() != 0)
+			std::lock_guard cock(packMutex);
 			{
+				if (asyncPacks.size() != 0)
 				{
-					for (Pack p : asyncPacks)
 					{
-						gatheredPacks.push_back(p);
-					}
-					asyncPacks.clear();
+						for (Pack p : asyncPacks)
+						{
+							gatheredPacks.push_back(p);
+						}
+						asyncPacks.clear();
 
-				}
-			}
-			if (asyncSongs.size() != 0)
-			{
-				{
-					for (Song s : asyncSongs)
-					{
-						gatheredSongs.push_back(s);
 					}
-					asyncSongs.clear();
+				}
+				if (asyncSongs.size() != 0)
+				{
+					{
+						for (Song s : asyncSongs)
+						{
+							gatheredSongs.push_back(s);
+						}
+						asyncSongs.clear();
+					}
 				}
 			}
-		}
-		for (Pack p : gatheredPacks)
-		{
-			bool d = false;
-			for (Pack pp : packs)
-				if (pp.packName == p.packName)
-				{
-					if (!p.isSteam || pp.isSteam)
+			for (Pack p : gatheredPacks)
+			{
+				bool d = false;
+				for (Pack pp : packs)
+					if (pp.packName == p.packName)
+					{
+						if (!p.isSteam || pp.isSteam)
+							d = true;
+					}
+				if (d)
+					continue;
+				addPack(p.packName, p.banner, p.showName, p.isSteam);
+				packs.push_back(p);
+			}
+			for (Song s : gatheredSongs)
+			{
+				bool d = false;
+				for (Song pp : steamWorkshop.songs)
+					if (pp.c.meta.folder == s.c.meta.folder)
 						d = true;
-				}
-			if (d)
-				continue;
-			addPack(p.packName, p.background, p.showName, p.isSteam);
-			packs.push_back(p);
+				if (d)
+					continue;
+				steamWorkshop.songs.push_back(s);
+				for (Pack& p : packs)
+					if (p.packName == "Workshop/Local")
+						p.songs = steamWorkshop.songs;
+			}
 		}
-		for (Song s : gatheredSongs)
-		{
-			bool d = false;
-			for (Song pp : steamWorkshop.songs)
-				if (pp.c.meta.folder == s.c.meta.folder)
-					d = true;
-			if (d)
-				continue;
-			steamWorkshop.songs.push_back(s);
-			for (Pack& p : packs)
-				if (p.packName == "Workshop/Local")
-					p.songs = steamWorkshop.songs;
-		}
+		Text* t = (Text*)soloContainer->findItemByName("packsBottom");
+		t->setText("Stuff was loaded!");
 	}
-
-	Text* t = (Text*)soloContainer->findItemByName("packsBottom");
-	t->setText(std::to_string(packs.size()) + " loaded");
+	else
+	{
+		Text* t = (Text*)soloContainer->findItemByName("packsBottom");
+		if (t->text != "Loading stuff (" + std::to_string(SongGather::loaded) + ")...")
+			t->setText("Loading stuff (" + std::to_string(SongGather::loaded) + ")...");
+	}
 
 	if (uploading)
 	{
@@ -683,13 +702,6 @@ void MainerMenu::update(Events::updateEvent ev)
 			t->setText(newTe);
 		}
 	}
-	else
-	{
-		Text* t = ((Text*)soloContainer->findItemByName("uploadingProgress"));
-		if (t->text != "Nothing being uploaded :) (ALT + LSHIFT to upload (only packs rn))")
-			t->setText("Nothing being uploaded :) (ALT + LSHIFT to upload (only packs rn))");
-	}
-
 	for (steamItem it : Game::steam->downloadedList)
 	{
 		bool dont = false;
@@ -892,8 +904,13 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 
 			break;
 		case SDLK_F5:
-			resetStuff();
-			loadPacks();
+			if (!SongGather::steamRegAsyncAlready)
+			{
+				actuallyLoad = true;
+				resetStuff();
+				packs.clear();
+				loadPacks();
+			}
 			break;
 		case SDLK_3:
 			Game::instance->steam->populateWorkshopItems(1);
@@ -1008,10 +1025,10 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 }
 
 
-void MainerMenu::addPack(std::string name, std::string bg, bool showText, bool isSteam)
+void MainerMenu::addPack(std::string name, texData bg, bool showText, bool isSteam)
 {
 	VM_START
-	Texture* background = Texture::createWithImage(bg);
+	Texture* background = Texture::loadTextureFromData(bg.data,bg.w,bg.h);
 	AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");
 	PackObject* obj = NULL;
 	obj = new PackObject(0, packIndex * 75, name, background, showText);
@@ -1198,8 +1215,8 @@ void MainerMenu::onSteam(std::string s)
 
 		Object* bg = cont->findItemByName("background");
 
-		if (bg != nullptr)
-			cont->removeObject(bg);
+		if (cont->doesObjectExist("background"))
+			cont->removeObject(bg, true);
 
 		AvgSprite* background = new AvgSprite(0, 0, Texture::createWithImage(currentSelectedSong.meta.folder + "/" + currentSelectedSong.meta.background));
 		if (background->w < cont->w)
@@ -1284,54 +1301,18 @@ void MainerMenu::onSteam(std::string s)
 
 void MainerMenu::loadPacks()
 {
+	if (!actuallyLoad)
+		return;
+	actuallyLoad = false;
 	// create packs
 
 	SongGather::gatherPacksAsync();
-	SongGather::gatherSteamPacksAsync();
 
-	SongGather::gatherNoPackSteamSongsAsync();
-
-	std::vector<Song> stuff = SongGather::gatherNoPackSongs();
-	{
-		std::lock_guard cock(packMutex);
-		if (stuff.size() > 0)
-			for (Song s : stuff)
-				asyncSongs.push_back(s);
-	}
-	bool addWorkshop = true;
-	for (Pack p : packs)
-		if (p.packName == "Workshop/Local")
-			addWorkshop = false;
-
-	if (Game::steam->subscribedList.size() > 0 && steamWorkshop.songs.size() == 0)
-	{
-		steamWorkshop.background = "";
-		steamWorkshop.metaPath = "unfl";
-		steamWorkshop.packName = "Workshop/Local";
-		steamWorkshop.showName = true;
-		steamWorkshop.isSteam = false;
-		steamWorkshop.songs = {};
-
-		if (addWorkshop)
-			packs.push_back(steamWorkshop);
-
-		addPack(steamWorkshop.packName, steamWorkshop.background, steamWorkshop.showName, true);
-	}
-	else
-	{
-		if (steamWorkshop.songs.size() > 0)
-		{
-			if (addWorkshop)
-				packs.push_back(steamWorkshop);
-
-			addPack(steamWorkshop.packName, steamWorkshop.background, steamWorkshop.showName, true);
-		}
-	}
+	stop = false;
 
 	for (Pack p : packs)
 	{
-		if (p.packName != "Workshop/Local")
-			addPack(p.packName, p.background, p.showName, p.isSteam);
+		addPack(p.packName, p.banner, p.showName, p.isSteam);
 	}
 }
 
@@ -1588,8 +1569,7 @@ void MainerMenu::postUpdate(Events::updateEvent ev)
 void MainerMenu::clearPacks()
 {
 	MUTATE_START
-	if (packIndex == 0)
-		return;
+	stop = true;
 	packIndex = 0;
 	AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");
 	for (Object* obj : packContainer->above)
@@ -2014,6 +1994,7 @@ void MainerMenu::leftMouseDown()
 			{
 				wheel->setSongs(packs[i].songs);
 				selectPack(i);
+				wheel->callSelect(0);
 				return;
 			}
 		}

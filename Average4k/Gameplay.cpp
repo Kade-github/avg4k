@@ -4,6 +4,7 @@
 #include <chrono>
 #include "TweenManager.h"
 #include "MainerMenu.h"
+#include "ArrowEffects.h"
 #include "CPacketSubmitScore.h"
 
 std::mutex weirdPog;
@@ -15,6 +16,8 @@ std::vector<float> noteTimings;
 std::map<std::string, AvgSprite*> avatars;
 
 float Gameplay::rate = 1;
+
+Gameplay* Gameplay::instance = nullptr;
 
 float lastTime = 0;
 
@@ -367,7 +370,15 @@ Shader* shad = nullptr;
 void Gameplay::create() {
 
 	MUTATE_START
-		lastTime = 0;
+
+		ArrowEffects::resetEffects();
+
+	lastTime = 0;
+
+	instance = this;
+
+	ModManager::time = 0;
+	ModManager::beat = 0;
 
 	noteTimings.clear();
 
@@ -689,7 +700,45 @@ void Gameplay::create() {
 	else
 		positionInSong = -(Game::save->GetDouble("Start Delay") * 1000);
 	updateAccuracy(0);
+
+	if (MainerMenu::currentSelectedSong.isModFile && !MainerMenu::isInLobby)
+	{
+		ModManager::doMods = true;
+		runModStuff = true;
+		ModManager::initLuaFunctions();
+		manager = ModManager(MainerMenu::currentSelectedSong.pathToLua);
+	}
+	else
+	{
+		ModManager::doMods = false;
+	}
+	callModEvent("create", 0);
+
 	MUTATE_END
+}
+
+void Gameplay::callModEvent(std::string name, std::string args)
+{
+	if (MainerMenu::currentSelectedSong.isModFile && !MainerMenu::isInLobby)
+	{
+		manager.callEvent(name, args);
+	}
+}
+
+void Gameplay::callModEvent(std::string name, int args)
+{
+	if (MainerMenu::currentSelectedSong.isModFile && !MainerMenu::isInLobby)
+	{
+		manager.callEvent(name, args);
+	}
+}
+
+void Gameplay::callModEvent(std::string name, float args)
+{
+	if (MainerMenu::currentSelectedSong.isModFile && !MainerMenu::isInLobby)
+	{
+		manager.callEvent(name, args);
+	}
 }
 
 float lerp(float a, float b, float f)
@@ -734,8 +783,11 @@ void Gameplay::update(Events::updateEvent event)
 		}
 		else
 			positionInSong += (Game::deltaTime - Game::save->GetDouble("offset"));*/
-		positionInSong = song->getPos() + Game::save->GetDouble("offset");
-		lastTime += Game::deltaTime;
+		if (!paused)
+		{
+			positionInSong = song->getPos() + Game::save->GetDouble("offset");
+			lastTime += Game::deltaTime;
+		}
 	}
 	else
 		positionInSong += Game::deltaTime;
@@ -776,6 +828,11 @@ void Gameplay::update(Events::updateEvent event)
 	curSeg = MainerMenu::currentSelectedSong.getSegmentFromTime(positionInSong);
 	beat = MainerMenu::currentSelectedSong.getBeatFromTime(positionInSong, curSeg);
 
+	if (debug)
+	{
+		Combo->setText("Reverse: " + std::to_string(ArrowEffects::reverse[0]) + "-" + std::to_string(ArrowEffects::reverse[1]) + "-" + std::to_string(ArrowEffects::reverse[2]) + "-" + std::to_string(ArrowEffects::reverse[3]));
+		Combo->centerX();
+	}
 
 	if (lastBPM != curSeg.bpm)
 	{
@@ -785,6 +842,41 @@ void Gameplay::update(Events::updateEvent event)
 
 	Rendering::iBeat = beat;
 	Rendering::iBpm = lastBPM;
+
+	ModManager::time = positionInSong;
+	ModManager::beat = beat;
+
+	if (runModStuff)
+	{
+		for (int i = 0; i < receptors.size(); i++)
+		{
+			ReceptorObject* rec = receptors[i];
+			rec->modX = rec->x;
+			rec->modY = rec->y;
+			rec->endX = rec->modX;
+			rec->endY = rec->modY;
+		}
+
+		for (NoteObject* obj : spawnedNotes)
+		{
+			obj->modX = obj->x;
+			obj->modY = obj->y;
+			obj->endX = obj->modX;
+			obj->endY = obj->modY;
+			obj->modCMOD = obj->cmod;
+			obj->endCMOD = obj->modCMOD;
+
+			for (holdTile& tile : obj->heldTilings)
+			{
+				tile.modX = tile.ogX;
+				tile.modY = tile.ogY;
+				tile.endX = tile.modX;
+				tile.endY = tile.modY;
+			}
+		}
+
+		manager.runMods();
+	}
 
 	if (Game::save->GetBool("Annoying bopping"))
 	{
@@ -952,74 +1044,18 @@ void Gameplay::update(Events::updateEvent event)
 
 				float time = SDL_GetTicks();
 
-				if (object->type == Note_Head)
-				{
-					float noteZoom = Game::save->GetDouble("Note Size");
-					for (float beat = object->beat; beat < object->endBeat; beat += 0.008)
-					{
-						bpmSegment holdSeg = MainerMenu::currentSelectedSong.getSegmentFromBeat(beat);
 
-						float whHold = MainerMenu::currentSelectedSong.getTimeFromBeatOffset(beat, holdSeg);
-
-						float diff = whHold - (object->time);
-
-						float noteOffset = ((bps * (diff / 1000)) * (64 * noteZoom));
-
-						float y = 0;
-						float yDiff = 0;
-						if (object->heldTilings.size() != 0)
-						{
-							if (downscroll)
-								y = object->rect.y - noteOffset;
-							else
-								y = object->rect.y + noteOffset;
-							yDiff = y - object->heldTilings.back().rect.y;
-						}
-						else
-						{
-							if (downscroll)
-								y = object->rect.y - noteOffset;
-							else
-								y = object->rect.y + noteOffset;
-							yDiff = y - object->rect.y;
-						}
-
-						bool otherOne = false;
-
-						if (downscroll)
-							otherOne = yDiff <= -(64 * noteZoom);
-						else
-							otherOne = yDiff >= 64 * noteZoom;
-
-						if (otherOne || object->heldTilings.size() == 0)
-						{
-							object->holdHeight += 64 * noteZoom;
-							holdTile tile;
-							SDL_FRect rect;
-							tile.active = true;
-							tile.fucked = false;
-							rect.y = y;
-							rect.x = 0;
-							rect.w = 64 * noteZoom;
-							rect.h = 64 * noteZoom;
-							tile.rect = rect;
-							tile.beat = beat;
-							tile.time = MainerMenu::currentSelectedSong.getTimeFromBeat(beat, holdSeg);
-							object->heldTilings.push_back(tile);
-						}
-					}
-				}
-				std::sort(object->heldTilings.begin(), object->heldTilings.end());
 				spawnedNotes.push_back(object);
 				object->create();
 				notesToPlay.erase(notesToPlay.begin());
+				currentModId += object->heldTilings.size();
 				gameplay->add(object);
 			}
 			else if (n.type == Note_Tail || n.type == Note_Mine)
 			{
 				notesToPlay.erase(notesToPlay.begin());
 			}
-	}
+		}
 
 		if (!ended && ((notesToPlay.size() == 0 && spawnedNotes.size() == 0) || ((lastTime - positionInSong) > 4000 || !song->isPlaying)) && positionInSong > 0)
 		{
@@ -1128,26 +1164,41 @@ void Gameplay::update(Events::updateEvent event)
 
 				}
 
-				// BEFORE DRAW, CHECK HELD NOTES!!
-
 				if (note->type == Note_Head)
 				{
-					if (holding[note->lane] || botplay) // holding that lane!
+					float startTime = MainerMenu::currentSelectedSong.getTimeFromBeat(note->beat, MainerMenu::currentSelectedSong.getSegmentFromBeat(note->beat));
+					float endTime = MainerMenu::currentSelectedSong.getTimeFromBeat(note->endBeat, MainerMenu::currentSelectedSong.getSegmentFromBeat(note->endBeat));
+
+					if (startTime < positionInSong + Judge::hitWindows[2] && positionInSong < endTime + Judge::hitWindows[2])
 					{
-						for (int i = 0; i < note->heldTilings.size(); i++)
+						if (holding[note->lane] || (botplay && startTime < positionInSong + Judge::hitWindows[1] && positionInSong < endTime + Judge::hitWindows[2])) // holding that lane!
 						{
-							holdTile& tile = note->heldTilings[i];
-							float wh = MainerMenu::currentSelectedSong.getTimeFromBeat(tile.beat, MainerMenu::currentSelectedSong.getSegmentFromBeat(tile.beat));
-							float offset = wh;
-							if (botplay && offset - positionInSong > 0 && offset - positionInSong < (Judge::hitWindows[1] * 0.5))
+							if (botplay)
 							{
 								receptors[note->lane]->lightUpTimer = 195;
 							}
-							if (offset - positionInSong <= Judge::hitWindows[1] * 0.1 && !tile.fucked)
-							{
-								tile.active = false;
-							}
+							note->holding = true;
 						}
+						else if (positionInSong >= startTime && !holding[note->lane])
+						{
+							note->holdstoppedbeat = beat;
+							note->holding = false;
+							note->fuckTimer += Game::deltaTime / 1000;
+							if (note->fuckTimer == 1)
+							{
+								note->active = false;
+								note->missHold = true;
+								miss(note);
+							}
+
+							if (note->holdPerc >= 0.9)
+								removeNote(note);
+						}
+					}
+
+					if (note->holdPerc >= 1 && positionInSong > endTime * 1.05)
+					{
+						removeNote(note);
 					}
 				}
 
@@ -1172,30 +1223,16 @@ void Gameplay::update(Events::updateEvent event)
 				bool condition = true;
 
 
-				if ((wh - positionInSong <= -1000 && !note->active) && note->holdsActive == 0 && playing)
+				if ((wh - positionInSong <= -1000 && !note->active) && note->endBeat == -1 && playing)
 				{
 					removeNote(note);
 					//std::cout << "remove note " << wh << " " << positionInSong << std::endl;
 				}
-
-				for (int i = 0; i < note->heldTilings.size(); i++)
-				{
-					holdTile& tile = note->heldTilings[i];
-
-					float whHold = MainerMenu::currentSelectedSong.getTimeFromBeat(tile.beat, MainerMenu::currentSelectedSong.getSegmentFromBeat(tile.beat));
-					float diff = whHold - positionInSong;
-
-					if (diff < -Judge::hitWindows[4] * 1.5 && tile.active && playing)
-					{
-						//std::cout << note->lane << " fucked " << diff << " time: " << whHold << " song: " << positionInSong << std::endl;
-						miss(note);
-						removeNote(note);
-						break;
-					}
-				}
 			}
 		}
 	}
+	callModEvent("update", Game::deltaTime);
+
 	MUTATE_END
 }
 void Gameplay::cleanUp()
@@ -1215,7 +1252,11 @@ void Gameplay::cleanUp()
 
 	SoundManager::removeChannel("clapFx");
 
-	
+	if (MainerMenu::currentSelectedSong.isModFile && !MainerMenu::isInLobby)
+	{
+		manager.destroy();
+	}
+
 	//if (background)
 	//	SDL_DestroyTexture(background);
 
@@ -1253,6 +1294,8 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			botplayOnce = true;
 			return;
 		case SDLK_F2:
+			if (MainerMenu::isInLobby)
+				return;
 			debug = !debug;
 			break;
 		case SDLK_BACKQUOTE:
@@ -1261,6 +1304,20 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			cleanUp();
 			Game::instance->transitionToMenu(new Gameplay());
 			return;
+		case SDLK_SPACE:
+			if (debug)
+			{
+				paused = !paused;
+
+				if (paused)
+					song->stop();
+				else
+				{
+					song->play();
+					song->setPos(positionInSong);
+				}
+			}
+			break;
 		case SDLK_EQUALS:
 			if (Game::instance->flowtime && !MainerMenu::isInLobby)
 			{
@@ -1321,9 +1378,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			if (!keys[control.lane])
 			{
 				keys[control.lane] = true;
-				if (closestObject)
-					if (closestObject->holdsActive > 0)
-						holding[control.lane] = true;
+				holding[control.lane] = true;
 
 			}
 			else

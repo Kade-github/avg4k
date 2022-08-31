@@ -2,7 +2,9 @@
 #include "includes.h"
 #include "SMFile.h"
 #include "MainMenu.h"
+#include "ReceptorObject.h"
 #include "Chart.h"
+#include "AvgSprite.h"
 
 struct holdTile {
 	float time;
@@ -11,6 +13,13 @@ struct holdTile {
 	bool fucked;
 	int index;
 	SDL_FRect rect;
+
+	float ogX, ogY;
+
+	float modX, modY;
+
+	float endX = 0;
+	float endY = 0;
 
 	bool operator<(const holdTile& a) const
 	{
@@ -21,20 +30,36 @@ struct holdTile {
 class NoteObject : public Object
 {
 	public:
-		NoteObject()  {
-			setX(0);
-			setY(0);
-			w = 64;
-			h = 64;
-			Object::currentId++;
-			id = Object::currentId;
+		NoteObject();
+		~NoteObject() {
+		
+			delete thingy;
 		};
-		~NoteObject() {};
+
+		Texture* holdTexture;
+
+		bool holding;
+
+		float fuckTimer;
+		int holds;
+		float holdstoppedbeat = -1;
+		float holdPerc;
+
+		bool missHold;
+
 		note* connected;
 		Text* debugText;
 
+		int modId = 0;
+		float cmodOffset;
+
+		AvgGroup* thingy;
+
 		bool fboMode = true;
 		bool drawCall = true;
+
+
+		float calcCMod(float diff);
 
 		Shader* customShader;
 
@@ -44,7 +69,7 @@ class NoteObject : public Object
 
 		bool selected = false;
 
-		Object* connectedReceptor;
+		ReceptorObject* connectedReceptor;
 
 		float stopOffset;
 
@@ -71,6 +96,18 @@ class NoteObject : public Object
 		SDL_FRect rect;
 		std::vector<holdTile> heldTilings;
 
+		float reverse = 0;
+
+		float endX = 0;
+		float endY = 0;
+
+		float modX = 0;
+		float modY = 0;
+
+		float cmod;
+
+		float modCMOD;
+		float endCMOD;
 
 		virtual void draw();
 };

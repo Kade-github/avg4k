@@ -10,6 +10,7 @@
 #include "Helpers.h"
 #include <timeapi.h>
 #include "Average4k.h"
+#include "ModManager.h"
 using namespace std;
 
 //#define NOBUF
@@ -229,7 +230,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			<< std::endl;
 		exit(1);
 	}
-	Game::version = "b11.1";
+	Game::version = "b12";
 
 	curl_global_init(CURL_GLOBAL_ALL);
 	Multiplayer::InitCrypto();
@@ -343,8 +344,11 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	ImGui::StyleColorsDark();
 
-
+	glLoadIdentity();
+	glOrtho(0, 1280, 0, 720, 0, 1);
 	GL::projection = glm::ortho(0.0f, 1280.0f, 720.0f, 0.0f, -1.0f, 1.0f);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 
 	GL::genShader = new Shader();
 	GL::genShader->GL_CompileShader(NULL, NULL);

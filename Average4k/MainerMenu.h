@@ -210,8 +210,12 @@ public:
 	void lobbyUpdatePlayers();
 	void cleanLobby();
 
+	static bool actuallyLoad;
+
+	bool stop = false;
+
 	void selectPack(int index);
-	void addPack(std::string name, std::string bg, bool showText, bool isSteam);
+	void addPack(std::string name, texData bg, bool showText, bool isSteam);
 	void clearPacks();
 
 	void onPacket(PacketType pt, char* data, int32_t length);

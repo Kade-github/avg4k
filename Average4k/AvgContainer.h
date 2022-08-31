@@ -61,6 +61,14 @@ public:
 		above.clear();
 	}
 	
+	bool doesObjectExist(std::string name)
+	{
+		for (itemId i : items)
+			if (i.name == name)
+				return true;
+		return false;
+	}
+
 	Object* findItemByName(std::string name)
 	{
 		for (itemId i : items)

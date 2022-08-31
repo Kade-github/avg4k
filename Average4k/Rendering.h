@@ -31,8 +31,6 @@ public:
 	static float iBpm;
 	static float iBeat;
 
-
-
 	static void Render_GLInit(Shader* shad);
 
 	static void drawBatch();

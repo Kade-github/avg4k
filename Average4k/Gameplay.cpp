@@ -707,6 +707,7 @@ void Gameplay::create() {
 		runModStuff = true;
 		ModManager::initLuaFunctions();
 		manager = ModManager(MainerMenu::currentSelectedSong.pathToLua);
+		manager.instance = &manager;
 	}
 	else
 	{
@@ -851,6 +852,7 @@ void Gameplay::update(Events::updateEvent event)
 		for (int i = 0; i < receptors.size(); i++)
 		{
 			ReceptorObject* rec = receptors[i];
+			rec->positionInSong = positionInSong;
 			rec->modX = rec->x;
 			rec->modY = rec->y;
 			rec->endX = rec->modX;

@@ -755,7 +755,7 @@ void Gameplay::update(Events::updateEvent event)
 	if (!song || Game::instance->transitioning)
 		return;
 
-	if (positionInSong >= startTime)
+	if (positionInSong >= startTime + Game::save->GetDouble("offset"))
 	{
 		if (!play)
 		{

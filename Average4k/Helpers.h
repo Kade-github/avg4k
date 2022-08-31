@@ -23,6 +23,18 @@ public:
 		free(decoding_table);
 	}
 
+	static std::wstring s2ws(const std::string& s, bool isUtf8 = true)
+	{
+		int len;
+		int slength = (int)s.length() + 1;
+		len = MultiByteToWideChar(isUtf8 ? CP_UTF8 : CP_ACP, 0, s.c_str(), slength, 0, 0);
+		std::wstring buf;
+		buf.resize(len);
+		MultiByteToWideChar(isUtf8 ? CP_UTF8 : CP_ACP, 0, s.c_str(), slength,
+			const_cast<wchar_t*>(buf.c_str()), len);
+		return buf;
+	}
+
 
 	static char* base64_decode(const char* data,
 		size_t input_length,

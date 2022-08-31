@@ -856,7 +856,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 	switch (event.keysym.sym)
 	{
 	case SDLK_TAB:
-		if (MainerMenu::selectedSong.isSteam && currentContainer == 0)
+		if (MainerMenu::selectedSong.isSteam && selectedContainerIndex == 0)
 		{
 			lockInput = !lockInput;
 
@@ -882,7 +882,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 				Multiplayer::sendMessage<CPacketLeaderboardRequest>(req);
 			}
 		}
-		if (isInLobby)
+		if (isInLobby && selectedContainerIndex == 1)
 		{
 			if (chat->opened)
 				chat->close();
@@ -955,11 +955,11 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 			}
 			break;
 		case SDLK_RETURN:
-				if (currentSelectedSong.meta.difficulties.size() != 0)
+				if (currentSelectedSong.meta.difficulties.size() != 0 && !chat->opened)
 				{
-					resetStuff();
 					if (!isInLobby)
 					{
+						resetStuff();
 						Game::instance->transitionToMenu(new Gameplay());
 						delete lobbyShader;
 					}
@@ -1002,7 +1002,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 		}
 		break;
 	case SDLK_ESCAPE:
-		if (!isInLobby && !lobbyUp)
+		if (!isInLobby && !lobbyUp && !SongGather::steamRegAsyncAlready)
 		{
 			lobbyUp = true;
 			Tweening::TweenManager::createNewTween("movingContainer2", settingsContainer, Tweening::tt_Y, 1000, 160, Game::gameHeight + 200, (Tweening::tweenCallback)endTrans, Easing::EaseOutCubic);
@@ -1933,6 +1933,8 @@ void MainerMenu::selectContainer(int container)
 	switch (container)
 	{
 	case 0:
+		if (chat->opened)
+			chat->close();
 		currentContainer = soloContainer;
 		soloContainer->active = true;
 		selectSolo->alpha = 1;

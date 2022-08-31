@@ -58,6 +58,7 @@ class SaveFile
 
 		void Save();
 
+		std::string getPath();
 
 		void SetString(std::string setting, std::string value);
 		void SetDouble(std::string setting, double value);

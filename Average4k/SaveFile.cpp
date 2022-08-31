@@ -1,6 +1,7 @@
 #include "SaveFile.h"
 #include "Helpers.h"
 #include "Chart.h"
+#include <shlobj.h>
 template <typename T>
 bool contains(std::vector<T> vec, const T& elem)
 {
@@ -21,7 +22,7 @@ SaveFile::SaveFile()
     // {takesActive, takesString, takesDouble, defaultActive, defaultString, defaultDouble, defaultMin, defaultMax, defaultIncrm, unique, suffix, isDropdown}
 
     settingHeader defaultHeader;
-    defaultHeader.settingsVersion = "v2.9";
+    defaultHeader.settingsVersion = "v3"; // KADE PLEASE FUCKING CHANGE THIS GOD DAMN IT - kade from the past
 
     defaultSettings.push_back(CreateSetting("Downscroll",{true}));
     defaultSettings.push_back(CreateSetting("Scrollspeed",{false,false,true,false,"",800,200,1900}));
@@ -54,7 +55,10 @@ SaveFile::SaveFile()
     defaultSettings.push_back(CreateSetting("nonChange_colorShit", { false,true,false,false,"128,128,255"}));
     defaultSettings.push_back(CreateSetting("nonChange_minimap", { false }));
     defaultHeader.settings = defaultSettings;
-    std::ifstream ifs("settings.avg2", std::ios::binary | std::ios::in | std::ios::out);
+
+    std::string bang = getPath();
+
+    std::ifstream ifs(bang + "settings.avg2", std::ios::binary | std::ios::in | std::ios::out);
     if (!ifs.good())
     {
         currentHeader = defaultHeader;
@@ -97,7 +101,10 @@ SaveFile::SaveFile()
 void SaveFile::Save()
 {
     VM_START
-    std::ofstream of("settings.avg2", std::ios::binary | std::ios::out);
+
+    std::string bath = getPath();
+
+    std::ofstream of(bath + "settings.avg2", std::ios::binary | std::ios::out);
 
     std::stringstream bitch;
 
@@ -107,6 +114,38 @@ void SaveFile::Save()
 
     of.close();
     VM_END
+}
+
+std::string SaveFile::getPath()
+{
+    PWSTR   docs;
+
+    HRESULT hr = SHGetKnownFolderPath(FOLDERID_Documents, 0, NULL, &docs);
+
+
+    std::string bangerPath = "";
+
+
+    if (SUCCEEDED(hr)) {
+        std::wstring str = std::wstring(docs);
+
+        bangerPath = std::string(str.begin(), str.end()) + "/My Games/";
+
+        if (CreateDirectory(Helpers::s2ws((bangerPath)).c_str(), NULL) || ERROR_ALREADY_EXISTS == GetLastError())
+        {
+            bangerPath.append("/Average4K/");
+            if (CreateDirectory(Helpers::s2ws((bangerPath)).c_str(), NULL) || ERROR_ALREADY_EXISTS == GetLastError())
+            {
+                // too lazy
+            }
+            else
+                bangerPath = "";
+        }
+        else
+            bangerPath = "";
+    }
+
+    return bangerPath;
 }
 
 void SaveFile::SetString(std::string sett, std::string value)

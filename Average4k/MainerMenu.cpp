@@ -1215,8 +1215,8 @@ void MainerMenu::onSteam(std::string s)
 
 		Object* bg = cont->findItemByName("background");
 
-		if (bg != nullptr)
-			cont->removeObject(bg);
+		if (cont->doesObjectExist("background"))
+			cont->removeObject(bg, true);
 
 		AvgSprite* background = new AvgSprite(0, 0, Texture::createWithImage(currentSelectedSong.meta.folder + "/" + currentSelectedSong.meta.background));
 		if (background->w < cont->w)

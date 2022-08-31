@@ -1176,6 +1176,7 @@ void MainerMenu::onSteam(std::string s)
 		uploading = false;
 		chartUploading = false;
 		((Text*)soloContainer->findItemByName("uploadingProgress"))->text = "Uploaded!";
+		actuallyLoad = true;
 		resetStuff();
 		loadPacks();
 	}

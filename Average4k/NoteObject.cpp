@@ -196,156 +196,159 @@ void NoteObject::draw() {
 
         std::vector<holdBody> bodies;
 
-
-        for (int i = 0; i < amountToDraw; i++)
+        if (amountToDraw > 1)
         {
-            Rect square;
-            square.w = 64 * size;
-            square.h = 64 * size;
-            square.x = x;
-            square.y = line.y + ((64 * size) * i);
-            if (downscroll)
-                square.y = line.y - ((64 * size) * i);
 
-            float perc = (float)(i + 1.f) / (float)amountToDraw;
-
-            float holdBeat = beat + ((endBeat - beat) * perc);
-            if (holdBeat < currentBeat)
+            for (int i = 0; i < amountToDraw; i++)
             {
-                holds++;
-                holdPerc = holds / amountToDraw;
-            }
- 
+                Rect square;
+                square.w = 64 * size;
+                square.h = 64 * size;
+                square.x = x;
+                square.y = line.y + ((64 * size) * i);
+                if (downscroll)
+                    square.y = line.y - ((64 * size) * i);
+
+                float perc = (float)(i + 1.f) / (float)amountToDraw;
+
+                float holdBeat = beat + ((endBeat - beat) * perc);
+                if (holdBeat < currentBeat)
+                {
+                    holds++;
+                    holdPerc = holds / amountToDraw;
+                }
+
 
                 holdBody body;
                 body.beat = holdBeat;
                 if (ModManager::doMods)
                 {
-                        float ttime = currentChart->getTimeFromBeat(holdBeat, currentChart->getSegmentFromBeat(holdBeat));
-                        float holdDiff = ttime - position;
-                        float cmodHold = calcCMod(holdDiff);
-                        ArrowEffects::Arrow a = ArrowEffects::finishEffects(obj->x, obj->y, cmodHold, obj->type, time, position, holdDiff);
-                        square.x = a.x;
-                        square.y = a.y;
+                    float ttime = currentChart->getTimeFromBeat(holdBeat, currentChart->getSegmentFromBeat(holdBeat));
+                    float holdDiff = ttime - position;
+                    float cmodHold = calcCMod(holdDiff);
+                    ArrowEffects::Arrow a = ArrowEffects::finishEffects(obj->x, obj->y, cmodHold, obj->type, time, position, holdDiff);
+                    square.x = a.x;
+                    square.y = a.y;
 
-                        if (bodies.size() == 0)
+                    if (bodies.size() == 0)
+                    {
+                        if (!downscroll)
                         {
-                            if (!downscroll)
+                            if (beat < currentBeat)
                             {
-                                if (beat < currentBeat)
-                                {
-                                    body.skewTL = -(square.x - obj->modX);
-                                    body.skewTR = -((square.x + square.w) - (obj->modX + dstRect.w));
-                                }
-                                else
-                                {
-                                    body.skewTL = -(square.x - dstRect.x);
-                                    body.skewTR = -((square.x + square.w) - (dstRect.x + dstRect.w));
-                                }
+                                body.skewTL = -(square.x - obj->modX);
+                                body.skewTR = -((square.x + square.w) - (obj->modX + dstRect.w));
                             }
                             else
                             {
-                                if (beat < currentBeat)
-                                {
-                                    body.skewBL = -(square.x - obj->modX);
-                                    body.skewBR = -((square.x + square.w) - (obj->modX + dstRect.w));
-                                }
-                                else
-                                {
-                                    body.skewBL = -(square.x - dstRect.x);
-                                    body.skewBR = -((square.x + square.w) - (dstRect.x + dstRect.w));
-                                }
+                                body.skewTL = -(square.x - dstRect.x);
+                                body.skewTR = -((square.x + square.w) - (dstRect.x + dstRect.w));
                             }
                         }
                         else
                         {
-                            holdBody lastBody = bodies.back();
-                            if (!downscroll)
+                            if (beat < currentBeat)
                             {
-                                body.skewTL = -(square.x - lastBody.x);
-                                body.skewTR = -((square.x + square.w) - (lastBody.x + lastBody.w));
+                                body.skewBL = -(square.x - obj->modX);
+                                body.skewBR = -((square.x + square.w) - (obj->modX + dstRect.w));
                             }
                             else
                             {
-                                body.skewBL = -(square.x - lastBody.x);
-                                body.skewBR = -((square.x + square.w) - (lastBody.x + lastBody.w));
+                                body.skewBL = -(square.x - dstRect.x);
+                                body.skewBR = -((square.x + square.w) - (dstRect.x + dstRect.w));
                             }
                         }
                     }
+                    else
+                    {
+                        holdBody lastBody = bodies.back();
+                        if (!downscroll)
+                        {
+                            body.skewTL = -(square.x - lastBody.x);
+                            body.skewTR = -((square.x + square.w) - (lastBody.x + lastBody.w));
+                        }
+                        else
+                        {
+                            body.skewBL = -(square.x - lastBody.x);
+                            body.skewBR = -((square.x + square.w) - (lastBody.x + lastBody.w));
+                        }
+                    }
+                }
 
                 body.x = square.x;
                 body.y = square.y;
                 body.w = square.w;
                 body.h = square.h;
                 bodies.push_back(body);
-        }
-        int i = 0;
-        for (holdBody body : bodies)
-        {
-            std::vector<GL_Vertex> verts;
+            }
+            int i = 0;
+            for (holdBody body : bodies)
+            {
+                std::vector<GL_Vertex> verts;
 
-            verts.push_back({ body.x + body.skewTL, body.y,
-                0, 0,
-                1.f,1.f,1.f,1.f }); //tl
-            if (!downscroll)
-            {
-                verts.push_back({ body.x + body.skewBL, body.y + body.h,
-                    0, -1,
-                    1.f,1.f,1.f,1.f }); //bl
-            }
-            else
-            {
-                verts.push_back({ body.x + body.skewBL, body.y + body.h,
-                    0, 1,
-                    1.f,1.f,1.f,1.f }); //bl
-            }
-            verts.push_back({ body.x + body.skewTR + body.w, body.y,
-                1, 0,
-                1.f,1.f,1.f,1.f }); //tr
-            verts.push_back({ body.x + body.skewTR + body.w, body.y,
-                1, 0,
-                1.f,1.f,1.f,1.f }); //tr
-            if (!downscroll)
-            {
-                verts.push_back({ body.x + body.skewBL, body.y + body.h,
-                    0, -1,
-                    1.f,1.f,1.f,1.f }); //bl
-                verts.push_back({ body.x + body.skewBR + body.w, body.y + body.h,
-                    1, -1,
-                    1.f,1.f,1.f,1.f }); //br
-            }
-            else
-            {
-                verts.push_back({ body.x + body.skewBL, body.y + body.h,
-                    0, 1,
-                    1.f,1.f,1.f,1.f }); //bl
-                verts.push_back({ body.x + body.skewBR + body.w, body.y + body.h,
-                    1, 1,
-                    1.f,1.f,1.f,1.f }); //br
-            }
+                verts.push_back({ body.x + body.skewTL, body.y,
+                    0, 0,
+                    1.f,1.f,1.f,1.f }); //tl
+                if (!downscroll)
+                {
+                    verts.push_back({ body.x + body.skewBL, body.y + body.h,
+                        0, -1,
+                        1.f,1.f,1.f,1.f }); //bl
+                }
+                else
+                {
+                    verts.push_back({ body.x + body.skewBL, body.y + body.h,
+                        0, 1,
+                        1.f,1.f,1.f,1.f }); //bl
+                }
+                verts.push_back({ body.x + body.skewTR + body.w, body.y,
+                    1, 0,
+                    1.f,1.f,1.f,1.f }); //tr
+                verts.push_back({ body.x + body.skewTR + body.w, body.y,
+                    1, 0,
+                    1.f,1.f,1.f,1.f }); //tr
+                if (!downscroll)
+                {
+                    verts.push_back({ body.x + body.skewBL, body.y + body.h,
+                        0, -1,
+                        1.f,1.f,1.f,1.f }); //bl
+                    verts.push_back({ body.x + body.skewBR + body.w, body.y + body.h,
+                        1, -1,
+                        1.f,1.f,1.f,1.f }); //br
+                }
+                else
+                {
+                    verts.push_back({ body.x + body.skewBL, body.y + body.h,
+                        0, 1,
+                        1.f,1.f,1.f,1.f }); //bl
+                    verts.push_back({ body.x + body.skewBR + body.w, body.y + body.h,
+                        1, 1,
+                        1.f,1.f,1.f,1.f }); //br
+                }
 
-            Rect test;
-            test.x = 0;
-            test.y = obj->modY + (32 * size);
-            test.w = 1280;
-            test.h = 720;
-            if (downscroll)
-            {
-                test.y = 0;
-                test.h = obj->modY + (32 * size);
-            }
+                Rect test;
+                test.x = 0;
+                test.y = obj->modY + (32 * size);
+                test.w = 1280;
+                test.h = 720;
+                if (downscroll)
+                {
+                    test.y = 0;
+                    test.h = obj->modY + (32 * size);
+                }
 
-            if (holding || body.beat < holdstoppedbeat)
-                Rendering::SetClipRect(&test);
+                if (holding || body.beat < holdstoppedbeat)
+                    Rendering::SetClipRect(&test);
 
-            if (i != bodies.size() - 1)
-                Rendering::PushQuad(verts, Game::noteskin->hold, GL::genShader);
-            else
-            {
-                Rendering::PushQuad(verts, Game::noteskin->holdend, GL::genShader);
+                if (i != bodies.size() - 1)
+                    Rendering::PushQuad(verts, Game::noteskin->hold, GL::genShader);
+                else
+                {
+                    Rendering::PushQuad(verts, Game::noteskin->holdend, GL::genShader);
+                }
+                Rendering::SetClipRect(NULL);
+                i++;
             }
-            Rendering::SetClipRect(NULL);
-            i++;
         }
     }
 

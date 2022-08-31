@@ -102,9 +102,9 @@ void resetStuff()
 
 void endTrans()
 {
+	resetStuff();
 	Tweening::TweenManager::activeTweens.clear();
 	Game::instance->switchMenu(new MainMenu());
-	resetStuff();
 }
 
 void selectedSongCallback(int sId)

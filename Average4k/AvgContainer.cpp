@@ -91,7 +91,7 @@ void AvgContainer::draw() {
 			i.obj->alpha = alpha;
 		}
 		i.obj->parent = this;
-		if (i.obj->y + i.obj->h > h || i.obj->y < 0) // yes!
+		if (i.obj->y > h || i.obj->y < 0) // yes!
 		{
 			scroll = true;
 			if (i.obj->y > 0)
@@ -99,7 +99,7 @@ void AvgContainer::draw() {
 				lastItem = i;
 				float first = ((i.obj->y + i.obj->h));
 				float second = h;
-				maxScroll = (first - second) + 42;
+				maxScroll = (first - second) + 60;
 				fail = false;
 			}
 		}

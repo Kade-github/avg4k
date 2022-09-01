@@ -186,6 +186,8 @@ void NoteObject::draw() {
         line.w = 4;
         line.x = x + (32 * size);
         line.y = dstRect.y + (32 * size);
+        if (downscroll)
+            line.y = dstRect.y - (32 * size);
 
         //Rendering::PushQuad(&line, &srcRect, NULL, NULL);
 
@@ -207,7 +209,7 @@ void NoteObject::draw() {
                 square.x = x;
                 square.y = line.y + ((64 * size) * i);
                 if (downscroll)
-                    square.y = (line.y + (32 * size)) - ((64 * size) * i);
+                    square.y = (line.y) - ((64 * size) * i);
 
                 float perc = (float)(i + 1.f) / (float)amountToDraw;
 
@@ -229,14 +231,14 @@ void NoteObject::draw() {
                         if (!downscroll)
                         {
                             body.skewTL = -(square.x - dstRect.x);
-                            body.skewTR = -((square.x + square.w) - (dstRect.x + dstRect.w));
-                            body.skewYTL = -(square.y - (dstRect.y + dstRect.h / 2));
-                            body.skewYTR = -(square.y - (dstRect.y + dstRect.h / 2));
+                            body.skewTR = -((square.x + square.w) - (dstRect.x + (64 * size)));
+                            body.skewYTL = -(square.y - (dstRect.y + (32 * size)));
+                            body.skewYTR = -(square.y - (dstRect.y + (32 * size)));
                         }
                         else
                         {
                             body.skewBL = -(square.x - dstRect.x);
-                            body.skewBR = -((square.x + square.w) - (dstRect.x + dstRect.w));
+                            body.skewBR = -((square.x + square.w) - (dstRect.x + (64 * size)));
                         }
                     }
                     else
@@ -253,8 +255,8 @@ void NoteObject::draw() {
                         {
                             body.skewBL = -(square.x - lastBody.x);
                             body.skewBR = -((square.x + square.w) - (lastBody.x + lastBody.w));
-                            lastBody.skewYTL = -(lastBody.y - (square.y + square.h));
-                            lastBody.skewYTR = -(lastBody.y - (square.y + square.h));
+                            lastBody.skewYTL = (-(lastBody.y - (square.y + square.h)));
+                            lastBody.skewYTR = (-(lastBody.y - (square.y + square.h)));
                         }
                     }
                 }

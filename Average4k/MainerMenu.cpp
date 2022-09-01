@@ -114,6 +114,8 @@ void selectedSongCallback(int sId)
 {
 	MUTATE_START
 	MainerMenu::packSongIndex = sId;
+	if (MainerMenu::selected.songs.size() == 0)
+		return;
 	Song s = MainerMenu::selected.songs[sId];
 
 	std::cout << "selected " << s.c.meta.songName << std::endl;
@@ -1354,9 +1356,11 @@ void MainerMenu::loadPacks()
 		steamWorkshop.songs = {};
 
 		if (addWorkshop)
+		{
 			packs.push_back(steamWorkshop);
 
-		addPack(steamWorkshop.packName, steamWorkshop.banner, steamWorkshop.showName, true);
+			addPack(steamWorkshop.packName, steamWorkshop.banner, steamWorkshop.showName, true);
+		}
 	}
 	else
 	{

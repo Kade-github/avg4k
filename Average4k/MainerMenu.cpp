@@ -170,6 +170,8 @@ void selectedSongCallback(int sId)
 		SoundManager::removeChannel("prevSong");
 	}
 
+	SoundManager::createChannelThread(MainerMenu::selectedSong.c.meta.folder + "/" + MainerMenu::selectedSong.c.meta.audio);
+
 	// text stuff
 
 	std::string display = s.c.meta.songName;
@@ -674,7 +676,7 @@ void MainerMenu::update(Events::updateEvent ev)
 					continue;
 				steamWorkshop.songs.push_back(s);
 				for (Pack& p : packs)
-					if (p.packName == "Workshop/Local")
+					if (p.packName == "Workshop Songs")
 						p.songs = steamWorkshop.songs;
 			}
 		}
@@ -781,11 +783,25 @@ void MainerMenu::update(Events::updateEvent ev)
 		{
 			if (SoundManager::getChannelByName("prevSong") == NULL)
 			{
-				Channel* real = SoundManager::createChannel(selectedSong.c.meta.folder + "/" + selectedSong.c.meta.audio, "prevSong");
-				if (real) {
-					real->play();
-					real->loop = true;
-					real->setPos(selectedSong.c.meta.start);
+				if (SoundManager::isThreadDone)
+				{
+					if (SoundManager::threadLoaded != NULL)
+					{
+						std::string path = MainerMenu::selectedSong.c.meta.folder + "/" + MainerMenu::selectedSong.c.meta.audio;
+						if (SoundManager::threadPath == path)
+						{
+							SoundManager::throwShitOntoVector(SoundManager::threadLoaded, "prevSong");
+							Channel* real = SoundManager::getChannelByName("prevSong");
+							real->play();
+							real->loop = true;
+							real->setPos(selectedSong.c.meta.start);
+							SoundManager::threadLoaded = NULL;
+						}
+						else
+						{
+							SoundManager::threadLoaded = NULL;
+						}
+					}
 				}
 			}
 		}
@@ -1322,9 +1338,40 @@ void MainerMenu::loadPacks()
 
 	stop = false;
 
+	bool addWorkshop = true;
+	for (Pack p : packs)
+		if (p.packName == "Workshop Songs")
+			addWorkshop = false;
+
+	if (Game::steam->subscribedList.size() > 0 && steamWorkshop.songs.size() == 0)
+	{
+		steamWorkshop.background = "";
+		steamWorkshop.metaPath = "unfl";
+		steamWorkshop.packName = "Workshop Songs";
+		steamWorkshop.showName = true;
+		steamWorkshop.isSteam = false;
+		steamWorkshop.songs = {};
+
+		if (addWorkshop)
+			packs.push_back(steamWorkshop);
+
+		addPack(steamWorkshop.packName, steamWorkshop.banner, steamWorkshop.showName, true);
+	}
+	else
+	{
+		if (steamWorkshop.songs.size() > 0)
+		{
+			if (addWorkshop)
+				packs.push_back(steamWorkshop);
+
+			addPack(steamWorkshop.packName, steamWorkshop.banner, steamWorkshop.showName, true);
+		}
+	}
+
 	for (Pack p : packs)
 	{
-		addPack(p.packName, p.banner, p.showName, p.isSteam);
+		if (p.packName != "Workshop Songs")
+			addPack(p.packName, p.banner, p.showName, p.isSteam);
 	}
 }
 

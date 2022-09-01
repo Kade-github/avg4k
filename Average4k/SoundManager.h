@@ -197,6 +197,9 @@ public:
 class SoundManager
 {
 public:
+	static Channel* threadLoaded;
+	static std::string threadPath;
+	static bool isThreadDone;
 	static std::map<std::string, Channel*> channels;
 
 	static Channel* getChannelByName(std::string name)
@@ -224,6 +227,72 @@ public:
 				delete pair.second;
 		}
 		channels.erase(name);
+	}
+
+	static void throwShitOntoVector(Channel* ch, std::string name)
+	{
+		if (channels[name] != NULL)
+			delete channels[name];
+
+		channels[name] = ch;
+	}
+
+	static void createChannelThread(std::string path, bool autoFree = false)
+	{
+		std::thread t([path,autoFree]() {
+			if (!isThreadDone)
+			{
+				while (!isThreadDone)
+				{
+					// sit around sucking a thumb or smth you can only thread load one song at a time
+					// muhahahaha
+					Sleep(10);
+				}
+			}
+			isThreadDone = false;
+			//channels[name] = new Channel(BASS_StreamCreateFile(false, path.c_str(), 0, 0, BASS_STREAM_PRESCAN | BASS_SAMPLE_FLOAT | BASS_STREAM_AUTOFREE | BASS_ASYNCFILE));
+			auto flags = BASS_STREAM_PRESCAN | BASS_SAMPLE_FLOAT;
+
+			if (autoFree)
+				flags |= BASS_STREAM_AUTOFREE;
+
+
+			std::ostringstream buf;
+			std::ifstream inputFile(path, std::ios::binary | std::ios::in);
+			buf << inputFile.rdbuf();
+			inputFile.close();
+
+			std::cout << "doing thing with " << path.c_str() << " size: " << buf.str().size() << std::endl;
+
+			char* buff = (char*)std::malloc(buf.str().size());
+
+			memcpy(buff, buf.str().data(), buf.str().size());
+
+			auto val = BASS_StreamCreateFile(true, buff, 0, buf.str().size(), flags);
+
+			if (val == 0) {
+				auto error = BASS_ErrorGetCode();
+
+				std::cout << "Bass error! " << error << std::endl;
+				std::free(buff);
+				return new Channel(-1);
+			}
+
+			Channel* ch = new Channel(val);
+
+			ch->musicFile = buff;
+
+			ch->path = path;
+			ch->setVolume(0.2);
+
+			ch->setLength();
+
+			threadLoaded = ch;
+			isThreadDone = true;
+			threadPath = path;
+
+			});
+		t.detach();
 	}
 
 	static Channel* createChannel(std::string path, std::string name, bool autoFree = false)

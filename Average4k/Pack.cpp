@@ -150,6 +150,52 @@ void SongGather::gatherPacksAsync()
 				loaded++;
 			}
 
+			for (int i = 0; i < Game::steam->subscribedList.size(); i++)
+			{
+				steamItem st = Game::steam->subscribedList[i];
+
+				if (st.isPackFolder)
+					continue;
+
+				Song s;
+
+				s.isSteam = true;
+
+				s.steamId = st.details.m_nPublishedFileId;
+
+				std::string path(st.folder);
+
+				if (path == "")
+					continue;
+				std::string fullPath = path + "\\" + st.chartFile;
+
+				std::string replaced = Steam::ReplaceString(fullPath, "\\", "/");
+				std::string replaced2 = Steam::ReplaceString(path, "\\", "/");
+				s.path = replaced;
+				Chart c;
+				if (st.chartType == "qv" || st.chartType == "qp")
+				{
+					QuaverFile f = QuaverFile();
+					c = f.returnChart(replaced2);
+				}
+				if (st.chartType == "sm")
+				{
+					SMFile f = SMFile(s.path, replaced2, false);
+					c = Chart();
+					c.meta = f.meta;
+				}
+
+				if (s.c.meta.banner.size() > 0)
+				{
+					s.banner = Texture::getTextureData(s.c.meta.folder + "/" + s.c.meta.banner);
+					s.hasBanner = true;
+				}
+
+				s.c = c;
+				MainerMenu::asyncSongs.push_back(s);
+				loaded++;
+			}
+
 			steamRegAsyncAlready = false;
 			});
 		t.detach();

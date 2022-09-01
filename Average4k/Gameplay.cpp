@@ -395,7 +395,8 @@ void Gameplay::create() {
 	}
 
 	downscroll = Game::save->GetBool("downscroll");
-
+	if (MainerMenu::currentSelectedSong.isModFile)
+		downscroll = false;
 	Judge::initJudge();
 
 	Judge::judgeNote(174);

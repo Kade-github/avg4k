@@ -14,6 +14,8 @@ struct holdBody {
     float w, h;
     float skewTL = 0, skewTR = 0;
     float skewBL = 0, skewBR = 0;
+    float skewYTL = 0, skewYTR = 0;
+    float skewYBL = 0, skewYBR = 0;
     float beat;
 };
 
@@ -184,8 +186,6 @@ void NoteObject::draw() {
         line.w = 4;
         line.x = x + (32 * size);
         line.y = dstRect.y + (32 * size);
-        if (downscroll)
-            line.y = dstRect.y - (32 * size);
 
         //Rendering::PushQuad(&line, &srcRect, NULL, NULL);
 
@@ -207,7 +207,7 @@ void NoteObject::draw() {
                 square.x = x;
                 square.y = line.y + ((64 * size) * i);
                 if (downscroll)
-                    square.y = line.y - ((64 * size) * i);
+                    square.y = (line.y + (32 * size)) - ((64 * size) * i);
 
                 float perc = (float)(i + 1.f) / (float)amountToDraw;
 
@@ -234,43 +234,33 @@ void NoteObject::draw() {
                     {
                         if (!downscroll)
                         {
-                            if (beat < currentBeat)
-                            {
-                                body.skewTL = -(square.x - obj->modX);
-                                body.skewTR = -((square.x + square.w) - (obj->modX + dstRect.w));
-                            }
-                            else
-                            {
-                                body.skewTL = -(square.x - dstRect.x);
-                                body.skewTR = -((square.x + square.w) - (dstRect.x + dstRect.w));
-                            }
+                            body.skewTL = -(square.x - dstRect.x);
+                            body.skewTR = -((square.x + square.w) - (dstRect.x + dstRect.w));
+                            body.skewYTL = -(square.y - (dstRect.y + dstRect.h / 2));
+                            body.skewYTR = -(square.y - (dstRect.y + dstRect.h / 2));
                         }
                         else
                         {
-                            if (beat < currentBeat)
-                            {
-                                body.skewBL = -(square.x - obj->modX);
-                                body.skewBR = -((square.x + square.w) - (obj->modX + dstRect.w));
-                            }
-                            else
-                            {
-                                body.skewBL = -(square.x - dstRect.x);
-                                body.skewBR = -((square.x + square.w) - (dstRect.x + dstRect.w));
-                            }
+                            body.skewBL = -(square.x - dstRect.x);
+                            body.skewBR = -((square.x + square.w) - (dstRect.x + dstRect.w));
                         }
                     }
                     else
                     {
-                        holdBody lastBody = bodies.back();
+                        holdBody& lastBody = bodies.back();
                         if (!downscroll)
                         {
                             body.skewTL = -(square.x - lastBody.x);
                             body.skewTR = -((square.x + square.w) - (lastBody.x + lastBody.w));
+                            lastBody.skewYBL = -((lastBody.y + lastBody.h) - square.y);
+                            lastBody.skewYBR = -((lastBody.y + lastBody.h) - square.y);
                         }
                         else
                         {
                             body.skewBL = -(square.x - lastBody.x);
                             body.skewBR = -((square.x + square.w) - (lastBody.x + lastBody.w));
+                            lastBody.skewYTL = -(lastBody.y - (square.y + square.h));
+                            lastBody.skewYTR = -(lastBody.y - (square.y + square.h));
                         }
                     }
                 }
@@ -286,42 +276,42 @@ void NoteObject::draw() {
             {
                 std::vector<GL_Vertex> verts;
 
-                verts.push_back({ body.x + body.skewTL, body.y,
+                verts.push_back({ body.x + body.skewTL, body.y + body.skewYTL,
                     0, 0,
                     1.f,1.f,1.f,1.f }); //tl
                 if (!downscroll)
                 {
-                    verts.push_back({ body.x + body.skewBL, body.y + body.h,
+                    verts.push_back({ body.x + body.skewBL, body.y + body.h + body.skewYBL,
                         0, -1,
                         1.f,1.f,1.f,1.f }); //bl
                 }
                 else
                 {
-                    verts.push_back({ body.x + body.skewBL, body.y + body.h,
+                    verts.push_back({ body.x + body.skewBL, body.y + body.h + body.skewYBL,
                         0, 1,
                         1.f,1.f,1.f,1.f }); //bl
                 }
-                verts.push_back({ body.x + body.skewTR + body.w, body.y,
+                verts.push_back({ body.x + body.skewTR + body.w, body.y + body.skewYTR,
                     1, 0,
                     1.f,1.f,1.f,1.f }); //tr
-                verts.push_back({ body.x + body.skewTR + body.w, body.y,
+                verts.push_back({ body.x + body.skewTR + body.w, body.y + body.skewYTR,
                     1, 0,
                     1.f,1.f,1.f,1.f }); //tr
                 if (!downscroll)
                 {
-                    verts.push_back({ body.x + body.skewBL, body.y + body.h,
+                    verts.push_back({ body.x + body.skewBL, body.y + body.h + body.skewYBL,
                         0, -1,
                         1.f,1.f,1.f,1.f }); //bl
-                    verts.push_back({ body.x + body.skewBR + body.w, body.y + body.h,
+                    verts.push_back({ body.x + body.skewBR + body.w, body.y + body.h + body.skewYBR,
                         1, -1,
                         1.f,1.f,1.f,1.f }); //br
                 }
                 else
                 {
-                    verts.push_back({ body.x + body.skewBL, body.y + body.h,
+                    verts.push_back({ body.x + body.skewBL, body.y + body.h + body.skewYBL,
                         0, 1,
                         1.f,1.f,1.f,1.f }); //bl
-                    verts.push_back({ body.x + body.skewBR + body.w, body.y + body.h,
+                    verts.push_back({ body.x + body.skewBR + body.w, body.y + body.h + body.skewYBR,
                         1, 1,
                         1.f,1.f,1.f,1.f }); //br
                 }

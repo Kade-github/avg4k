@@ -95,7 +95,10 @@ void resetStuff()
 	lobbyUp = false;
 	lastTrans = 0;
 	selectedContainerIndex = 0;
-	((MainerMenu*)Game::instance)->clearPacks();
+
+	MainerMenu* menu = ((MainerMenu*)Game::instance);
+	menu->wheel->setSongs({});
+	menu->clearPacks();
 	lastHeight = 0;
 	catIndex = 0;
 }
@@ -929,6 +932,9 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 							stbi_h::stbi_free(s.banner.data);
 				}
 				packs.clear();
+				Channel* ch = SoundManager::getChannelByName("prevSong");
+				if (ch != NULL)
+					ch->stop();
 				loadPacks();
 			}
 			break;
@@ -1190,6 +1196,10 @@ void MainerMenu::onSteam(std::string s)
 		((Text*)soloContainer->findItemByName("uploadingProgress"))->text = "Uploaded!";
 		actuallyLoad = true;
 		resetStuff();
+		packs.clear();
+		Channel* ch = SoundManager::getChannelByName("prevSong");
+		if (ch != NULL)
+			ch->stop();
 		loadPacks();
 	}
 

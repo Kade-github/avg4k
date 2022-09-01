@@ -99,8 +99,8 @@ void Gameplay::updateAccuracy(double hitWorth)
 	Mrv->setText("Marvelous: " + std::to_string(Marvelous));
 	Prf->setText("Perfect: " + std::to_string(Perfect));
 	God->setText("Great: " + std::to_string(Great));
-	Ehh->setText("Eh: " + std::to_string(Eh));
-	Yke->setText("Yikes: " + std::to_string(Yikes));
+	Ehh->setText("Good: " + std::to_string(Eh));
+	Yke->setText("Bad: " + std::to_string(Yikes));
 
 	MUTATE_END
 }
@@ -537,10 +537,10 @@ void Gameplay::create() {
 	God = new Text(12, (Game::gameHeight / 2) + 36, "Great: 0", 24, "Futura Bold");
 	God->create();
 
-	Ehh = new Text(12, (Game::gameHeight / 2) + 60, "Eh: 0", 24, "Futura Bold");
+	Ehh = new Text(12, (Game::gameHeight / 2) + 60, "Good: 0", 24, "Futura Bold");
 	Ehh->create();
 
-	Yke = new Text(12, (Game::gameHeight / 2) + 82, "Yikes: 0", 24, "Futura Bold");
+	Yke = new Text(12, (Game::gameHeight / 2) + 82, "Bad: 0", 24, "Futura Bold");
 	Yke->create();
 
 	Combo->borderSize = 1;
@@ -1474,7 +1474,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 						(*Judgement).color.r = 255;
 						(*Judgement).color.g = 0;
 						(*Judgement).color.b = 0;
-						Judgement->setText("eh");
+						Judgement->setText("good");
 						Eh++;
 						updateAccuracy(0.35);
 						break;
@@ -1483,7 +1483,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 						(*Judgement).color.r = 128;
 						(*Judgement).color.g = 0;
 						(*Judgement).color.b = 0;
-						Judgement->setText("yikes");
+						Judgement->setText("bad");
 						Yikes++;
 						updateAccuracy(0.1);
 						break;

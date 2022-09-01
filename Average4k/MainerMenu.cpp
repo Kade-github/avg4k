@@ -486,7 +486,7 @@ void MainerMenu::create()
 	appearnSettings.push_back(Game::save->getSetting("Show Judgement Count"));
 	appearnSettings.push_back(Game::save->getSetting("Note Size"));
 	appearnSettings.push_back(Game::save->getSetting("Noteskin"));
-	appearnSettings.push_back(Game::save->getSetting("Resolution"));
+	//appearnSettings.push_back(Game::save->getSetting("Resolution"));
 	appearnSettings.push_back(Game::save->getSetting("Fullscreen"));
 	appearnSettings.push_back(Game::save->getSetting("Auto Accent Colors"));
 

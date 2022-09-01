@@ -705,7 +705,7 @@ void Gameplay::create() {
 		positionInSong = -(Game::save->GetDouble("Start Delay") * 1000);
 	updateAccuracy(0);
 
-	if (MainerMenu::currentSelectedSong.isModFile && !MainerMenu::isInLobby)
+	if (MainerMenu::currentSelectedSong.isModFile)
 	{
 		ModManager::doMods = true;
 		runModStuff = true;
@@ -724,7 +724,7 @@ void Gameplay::create() {
 
 void Gameplay::callModEvent(std::string name, std::string args)
 {
-	if (MainerMenu::currentSelectedSong.isModFile && !MainerMenu::isInLobby)
+	if (MainerMenu::currentSelectedSong.isModFile)
 	{
 		manager.callEvent(name, args);
 	}
@@ -732,7 +732,7 @@ void Gameplay::callModEvent(std::string name, std::string args)
 
 void Gameplay::callModEvent(std::string name, int args)
 {
-	if (MainerMenu::currentSelectedSong.isModFile && !MainerMenu::isInLobby)
+	if (MainerMenu::currentSelectedSong.isModFile)
 	{
 		manager.callEvent(name, args);
 	}
@@ -740,7 +740,7 @@ void Gameplay::callModEvent(std::string name, int args)
 
 void Gameplay::callModEvent(std::string name, float args)
 {
-	if (MainerMenu::currentSelectedSong.isModFile && !MainerMenu::isInLobby)
+	if (MainerMenu::currentSelectedSong.isModFile)
 	{
 		manager.callEvent(name, args);
 	}

@@ -65,7 +65,7 @@ void ReceptorObject::draw() {
 
 	if (ModManager::doMods)
 	{
-		ArrowEffects::Arrow a = ArrowEffects::finishEffects(x, y, type, Gameplay::instance->positionInSong);
+		ArrowEffects::Arrow a = ArrowEffects::finishEffects(x, y, type, positionInSong);
 		dstRect.x = a.x + mpx;
 		dstRect.y = a.y + mpy;
 		drawAngle = a.rot;

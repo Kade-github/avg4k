@@ -95,16 +95,19 @@ void resetStuff()
 	lobbyUp = false;
 	lastTrans = 0;
 	selectedContainerIndex = 0;
-	((MainerMenu*)Game::instance)->clearPacks();
+
+	MainerMenu* menu = ((MainerMenu*)Game::instance);
+	menu->wheel->setSongs({});
+	menu->clearPacks();
 	lastHeight = 0;
 	catIndex = 0;
 }
 
 void endTrans()
 {
+	resetStuff();
 	Tweening::TweenManager::activeTweens.clear();
 	Game::instance->switchMenu(new MainMenu());
-	resetStuff();
 }
 
 void selectedSongCallback(int sId)
@@ -169,6 +172,8 @@ void selectedSongCallback(int sId)
 		ch->free();
 		SoundManager::removeChannel("prevSong");
 	}
+
+	SoundManager::createChannelThread(MainerMenu::selectedSong.c.meta.folder + "/" + MainerMenu::selectedSong.c.meta.audio);
 
 	// text stuff
 
@@ -486,7 +491,7 @@ void MainerMenu::create()
 	appearnSettings.push_back(Game::save->getSetting("Show Judgement Count"));
 	appearnSettings.push_back(Game::save->getSetting("Note Size"));
 	appearnSettings.push_back(Game::save->getSetting("Noteskin"));
-	appearnSettings.push_back(Game::save->getSetting("Resolution"));
+	//appearnSettings.push_back(Game::save->getSetting("Resolution"));
 	appearnSettings.push_back(Game::save->getSetting("Fullscreen"));
 	appearnSettings.push_back(Game::save->getSetting("Auto Accent Colors"));
 
@@ -615,10 +620,6 @@ void MainerMenu::update(Events::updateEvent ev)
 		}
 	}
 
-	double fl = Game::save->GetDouble("FPS Limit");
-
-	if (Game::frameLimit != fl && fl > 10)
-		Game::frameLimit = fl;
 
 	std::vector<Pack> gatheredPacks;
 	std::vector<Song> gatheredSongs;
@@ -674,7 +675,7 @@ void MainerMenu::update(Events::updateEvent ev)
 					continue;
 				steamWorkshop.songs.push_back(s);
 				for (Pack& p : packs)
-					if (p.packName == "Workshop/Local")
+					if (p.packName == "Workshop Songs")
 						p.songs = steamWorkshop.songs;
 			}
 		}
@@ -781,11 +782,25 @@ void MainerMenu::update(Events::updateEvent ev)
 		{
 			if (SoundManager::getChannelByName("prevSong") == NULL)
 			{
-				Channel* real = SoundManager::createChannel(selectedSong.c.meta.folder + "/" + selectedSong.c.meta.audio, "prevSong");
-				if (real) {
-					real->play();
-					real->loop = true;
-					real->setPos(selectedSong.c.meta.start);
+				if (SoundManager::isThreadDone)
+				{
+					if (SoundManager::threadLoaded != NULL)
+					{
+						std::string path = MainerMenu::selectedSong.c.meta.folder + "/" + MainerMenu::selectedSong.c.meta.audio;
+						if (SoundManager::threadPath == path)
+						{
+							SoundManager::throwShitOntoVector(SoundManager::threadLoaded, "prevSong");
+							Channel* real = SoundManager::getChannelByName("prevSong");
+							real->play();
+							real->loop = true;
+							real->setPos(selectedSong.c.meta.start);
+							SoundManager::threadLoaded = NULL;
+						}
+						else
+						{
+							SoundManager::threadLoaded = NULL;
+						}
+					}
 				}
 			}
 		}
@@ -856,7 +871,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 	switch (event.keysym.sym)
 	{
 	case SDLK_TAB:
-		if (MainerMenu::selectedSong.isSteam && currentContainer == 0)
+		if (MainerMenu::selectedSong.isSteam && selectedContainerIndex == 0)
 		{
 			lockInput = !lockInput;
 
@@ -882,7 +897,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 				Multiplayer::sendMessage<CPacketLeaderboardRequest>(req);
 			}
 		}
-		if (isInLobby)
+		if (isInLobby && selectedContainerIndex == 1)
 		{
 			if (chat->opened)
 				chat->close();
@@ -906,6 +921,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 		case SDLK_F5:
 			if (!SongGather::steamRegAsyncAlready)
 			{
+				Game::instance->steam->populateSubscribedItems();
 				actuallyLoad = true;
 				resetStuff();
 				for (Pack& p : packs)
@@ -955,11 +971,11 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 			}
 			break;
 		case SDLK_RETURN:
-				if (currentSelectedSong.meta.difficulties.size() != 0)
+				if (currentSelectedSong.meta.difficulties.size() != 0 && !chat->opened && SoundManager::isThreadDone)
 				{
-					resetStuff();
 					if (!isInLobby)
 					{
+						resetStuff();
 						Game::instance->transitionToMenu(new Gameplay());
 						delete lobbyShader;
 					}
@@ -1002,7 +1018,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 		}
 		break;
 	case SDLK_ESCAPE:
-		if (!isInLobby && !lobbyUp)
+		if (!isInLobby && !lobbyUp && !SongGather::steamRegAsyncAlready)
 		{
 			lobbyUp = true;
 			Tweening::TweenManager::createNewTween("movingContainer2", settingsContainer, Tweening::tt_Y, 1000, 160, Game::gameHeight + 200, (Tweening::tweenCallback)endTrans, Easing::EaseOutCubic);
@@ -1176,7 +1192,9 @@ void MainerMenu::onSteam(std::string s)
 		uploading = false;
 		chartUploading = false;
 		((Text*)soloContainer->findItemByName("uploadingProgress"))->text = "Uploaded!";
+		actuallyLoad = true;
 		resetStuff();
+		packs.clear();
 		loadPacks();
 	}
 
@@ -1321,9 +1339,40 @@ void MainerMenu::loadPacks()
 
 	stop = false;
 
+	bool addWorkshop = true;
+	for (Pack p : packs)
+		if (p.packName == "Workshop Songs")
+			addWorkshop = false;
+
+	if (Game::steam->subscribedList.size() > 0 && steamWorkshop.songs.size() == 0)
+	{
+		steamWorkshop.background = "";
+		steamWorkshop.metaPath = "unfl";
+		steamWorkshop.packName = "Workshop Songs";
+		steamWorkshop.showName = true;
+		steamWorkshop.isSteam = false;
+		steamWorkshop.songs = {};
+
+		if (addWorkshop)
+			packs.push_back(steamWorkshop);
+
+		addPack(steamWorkshop.packName, steamWorkshop.banner, steamWorkshop.showName, true);
+	}
+	else
+	{
+		if (steamWorkshop.songs.size() > 0)
+		{
+			if (addWorkshop)
+				packs.push_back(steamWorkshop);
+
+			addPack(steamWorkshop.packName, steamWorkshop.banner, steamWorkshop.showName, true);
+		}
+	}
+
 	for (Pack p : packs)
 	{
-		addPack(p.packName, p.banner, p.showName, p.isSteam);
+		if (p.packName != "Workshop Songs")
+			addPack(p.packName, p.banner, p.showName, p.isSteam);
 	}
 }
 
@@ -1933,6 +1982,8 @@ void MainerMenu::selectContainer(int container)
 	switch (container)
 	{
 	case 0:
+		if (chat->opened)
+			chat->close();
 		currentContainer = soloContainer;
 		soloContainer->active = true;
 		selectSolo->alpha = 1;

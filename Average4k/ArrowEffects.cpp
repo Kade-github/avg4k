@@ -3,6 +3,9 @@
 float ArrowEffects::drunk = 0;
 float ArrowEffects::tipsy = 0;
 float ArrowEffects::dizzy = 0;
+float ArrowEffects::amovex = 0;
+float ArrowEffects::amovey = 0;
+float ArrowEffects::aconfusion = 0;
 
 std::map<int, float> ArrowEffects::reverse = { {0,0}, {1,0}, {2,0}, {3,0} };
 std::map<int, float> ArrowEffects::confusion = { {0,0}, {1,0}, {2,0}, {3,0} };
@@ -23,6 +26,9 @@ ArrowEffects::Arrow ArrowEffects::ArrowEff(float ydiff, int col, float pos)
 	if (dizzy != 0)
 		a.rot += dizzy * ydiff;
 
+	if (aconfusion != 0)
+		a.rot += aconfusion;
+
 	if (drunk != 0)
 		a.x += drunk * (std::cos(pos * 0.001 + col * (0.2) + ydiff * (10) / 720) * (ARROW_SIZE / 2));
 	if (tipsy != 0)
@@ -33,6 +39,12 @@ ArrowEffects::Arrow ArrowEffects::ArrowEff(float ydiff, int col, float pos)
 
 	if (movey[col] != 0)
 		a.y += movey[col];
+
+	if (amovex != 0)
+		a.x += amovex;
+
+	if (amovey != 0)
+		a.y += amovey;
 
 	if (reverse[col] != 0)
 	{
@@ -52,6 +64,9 @@ void ArrowEffects::resetEffects()
 	ArrowEffects::drunk = 0;
 	ArrowEffects::tipsy = 0;
 	ArrowEffects::dizzy = 0;
+	ArrowEffects::amovex = 0;
+	ArrowEffects::amovey = 0;
+	ArrowEffects::aconfusion = 0;
 }
 
 ArrowEffects::Arrow ArrowEffects::finishEffects(float defX, float defY, int col, float curTime)

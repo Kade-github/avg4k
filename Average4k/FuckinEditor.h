@@ -44,6 +44,7 @@ struct line {
 class FuckinEditor : public Menu
 {
 public:
+	static int currentDiff;
 	static Chart* selectedChart;
 	static bool dontDeleteChart;
 	float lastBeatMin = -1;

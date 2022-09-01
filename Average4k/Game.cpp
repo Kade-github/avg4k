@@ -400,6 +400,11 @@ void Game::update(Events::updateEvent update)
 
 	if (!transitioning)
 	{
+		double fl = Game::save->GetDouble("FPS Limit");
+
+		if (Game::frameLimit != fl && fl > 10)
+			Game::frameLimit = fl;
+
 		if ((gameFPS > (lastFPS + -5) + 5) || (gameFPS < (lastFPS + -5) - 5))
 		{
 			lastFPS = gameFPS;
@@ -892,11 +897,11 @@ void Game::mouseButtonUp()
 void Game::resizeGame(int w, int h, int fullscreen)
 {
 
-	wW = w;
-	wH = h;
-	SDL_SetWindowSize(window, w, h);
-	multiplierx = (float)1280 / (float)w;
-	multipliery = (float)720 / (float)h;
+	wW = 1280;
+	wH = 720;
+	SDL_SetWindowSize(window, wW, wH);
+	multiplierx = (float)1280 / (float)wW;
+	multipliery = (float)720 / (float)wH;
 
 
 
@@ -910,14 +915,14 @@ void Game::resizeGame(int w, int h, int fullscreen)
 		break;
 	case 2:
 		// get resolution
-		int www, hhh;
+		/*int www, hhh;
 		Helpers::GetDesktopResolution(www, hhh);
 		wW = www;
 		wH = hhh;
 		SDL_SetWindowSize(window, wW, wH);
 		multiplierx = (float)1280 / (float)wW;
-		multipliery = (float)720 / (float)wH;
-		SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		multipliery = (float)720 / (float)wH;*/
+		SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_FULLSCREEN);
 		break;
 	}
 

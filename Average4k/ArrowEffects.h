@@ -14,7 +14,7 @@ public:
 		float cmod;
 	};
 
-	static float drunk, tipsy, dizzy;
+	static float drunk, tipsy, dizzy, amovex, amovey, aconfusion;
 
 	static std::map<int, float> reverse;
 	static std::map<int, float> confusion;

@@ -105,7 +105,7 @@ public:
 			wheelObject obj;
 			obj.s = s;
 
-			if (s.c.meta.banner.size() != 0)
+			if (s.c.meta.banner.size() != 0 && s.hasBanner)
 			{
 				obj.drawBanner = true;
 				obj.banner = Texture::loadTextureFromData(s.banner.data, s.banner.w, s.banner.h);

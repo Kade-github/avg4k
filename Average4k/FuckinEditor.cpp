@@ -4,6 +4,8 @@
 #include "Judge.h"
 #include "ModEditor.h"
 
+#include "ArrowEffects.h"
+
 // window draws
 
 Chart* FuckinEditor::selectedChart = NULL;
@@ -27,7 +29,7 @@ note tails[4] = {};
 bool downscroll = false;
 
 bool topLayer = false;
-int currentDiff = 0;
+int FuckinEditor::currentDiff = 0;
 int snap = 16;
 
 float speed = 1;
@@ -366,7 +368,7 @@ note findNote(int lane, float beat)
 {
 	note struc;
 	struc.beat = -1;
-	for (note& n : FuckinEditor::selectedChart->meta.difficulties[currentDiff].notes)
+	for (note& n : FuckinEditor::selectedChart->meta.difficulties[FuckinEditor::currentDiff].notes)
 		if (n.beat == beat && n.lane == lane)
 			return n;
 	return struc;
@@ -439,11 +441,11 @@ void getShitBetween()
 
 void deleteNote(int lane, float beat)
 {
-	FuckinEditor::selectedChart->meta.difficulties[currentDiff].notes.erase(
-		std::remove_if(FuckinEditor::selectedChart->meta.difficulties[currentDiff].notes.begin(), FuckinEditor::selectedChart->meta.difficulties[currentDiff].notes.end(), [&](note n) {
+	FuckinEditor::selectedChart->meta.difficulties[FuckinEditor::currentDiff].notes.erase(
+		std::remove_if(FuckinEditor::selectedChart->meta.difficulties[FuckinEditor::currentDiff].notes.begin(), FuckinEditor::selectedChart->meta.difficulties[FuckinEditor::currentDiff].notes.end(), [&](note n) {
 			return n.beat == beat && n.lane == lane;
 			}),
-		FuckinEditor::selectedChart->meta.difficulties[currentDiff].notes.end());
+		FuckinEditor::selectedChart->meta.difficulties[FuckinEditor::currentDiff].notes.end());
 	deleteVisualNote(lane, beat);
 }
 
@@ -454,9 +456,9 @@ void createNote(int lane, float beat = currentBeat, noteType type = noteType::No
 	n.lane = lane;
 	n.type = type;
 	n.connectedBeat = connectedBeat;
-	FuckinEditor::selectedChart->meta.difficulties[currentDiff].notes.push_back(n);
+	FuckinEditor::selectedChart->meta.difficulties[FuckinEditor::currentDiff].notes.push_back(n);
 	FuckinEditor* editor = (FuckinEditor*)Game::currentMenu;
-	editor->generateNoteObject(n, FuckinEditor::selectedChart->meta.difficulties[currentDiff], FuckinEditor::selectedChart, notes, findTail);
+	editor->generateNoteObject(n, FuckinEditor::selectedChart->meta.difficulties[FuckinEditor::currentDiff], FuckinEditor::selectedChart, notes, findTail);
 	std::sort(notes.begin(), notes.end(), compareNoteByBeat);
 	for (NoteObject* obj : notes)
 	{
@@ -600,7 +602,7 @@ void window_chartProperties() {
 					if (ImGui::Button(("Load Difficulty##DiffLoad" + std::to_string(ind)).c_str()))
 					{
 						FuckinEditor* editor = (FuckinEditor*)Game::currentMenu;
-						currentDiff = ind;
+						FuckinEditor::currentDiff = ind;
 						editor->loadNotes(diff);
 					}
 					if (ImGui::Button(("Delete Difficulty##DiffDelete" + std::to_string(ind)).c_str()))
@@ -731,7 +733,7 @@ void window_chartProperties() {
 						editor->sideStuff.clear();
 						editor->regenThings(FuckinEditor::selectedChart);
 						float prevTime = currentTime;
-						editor->loadNotes(FuckinEditor::selectedChart->meta.difficulties[currentDiff]);
+						editor->loadNotes(FuckinEditor::selectedChart->meta.difficulties[FuckinEditor::currentDiff]);
 						currentTime = prevTime;
 					}
 					if (seg.beat != beat)
@@ -747,7 +749,7 @@ void window_chartProperties() {
 						editor->regenThings(FuckinEditor::selectedChart);
 
 						float prevTime = currentTime;
-						editor->loadNotes(FuckinEditor::selectedChart->meta.difficulties[currentDiff]);
+						editor->loadNotes(FuckinEditor::selectedChart->meta.difficulties[FuckinEditor::currentDiff]);
 						currentTime = prevTime;
 					}
 				}
@@ -760,7 +762,7 @@ void window_chartProperties() {
 				seg.length = 0.01;
 				FuckinEditor::selectedChart->meta.stops.push_back(seg);
 				float prevTime = currentTime;
-				editor->loadNotes(FuckinEditor::selectedChart->meta.difficulties[currentDiff]);
+				editor->loadNotes(FuckinEditor::selectedChart->meta.difficulties[FuckinEditor::currentDiff]);
 				currentTime = prevTime;
 			}
 		}
@@ -896,13 +898,13 @@ void openChart(std::string path, std::string folder) {
 	editor->generateWaveForm(0, editor->song->length);
 	editor->loadNotes(FuckinEditor::selectedChart->meta.difficulties[0]);
 	editor->song->setVolume(0.4);
-	currentDiff = 0;
+	FuckinEditor::currentDiff = 0;
 }
 
 
 void FuckinEditor::create()
 {
-
+	ArrowEffects::resetEffects();	
 	if (SoundManager::getChannelByName("prevSong") != NULL)
 	{
 		Channel* c = SoundManager::getChannelByName("prevSong");
@@ -1295,7 +1297,7 @@ void FuckinEditor::update(Events::updateEvent event)
 	{
 		float bps = (Game::save->GetDouble("scrollspeed") / 60);
 
-		float noteOffset = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed") / 60, seg.time, currentTime, 64 * noteZoom);
+		float noteOffset = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed") / 60, seg.time, currentTime - (selectedChart->BASS_OFFSET * 1000), 64 * noteZoom);
 
 		seg.sprite->alpha = waveformAlpha;
 		if (!Game::save->GetBool("nonChange_chartWaveform"))
@@ -1328,7 +1330,7 @@ void FuckinEditor::update(Events::updateEvent event)
 
 	if (songPlaying)
 	{
-		float songPos = song->getPos();
+		float songPos = song->getPos() + (selectedChart->BASS_OFFSET * 1000);
 
 		currentTime = songPos;
 		bpmSegment curSeg = FuckinEditor::selectedChart->getSegmentFromTime(currentTime);
@@ -1366,7 +1368,7 @@ void FuckinEditor::update(Events::updateEvent event)
 			deleteNote(n.lane, n.beat);
 			createNote(n.lane, n.beat, noteType::Note_Head);
 
-			for (note nn : FuckinEditor::selectedChart->meta.difficulties[currentDiff].notes)
+			for (note nn : FuckinEditor::selectedChart->meta.difficulties[FuckinEditor::currentDiff].notes)
 			{
 				if (nn.beat > n.beat && nn.beat < tails[n.lane].beat && nn.lane == n.lane)
 					deleteNote(nn.lane, nn.beat);
@@ -1507,9 +1509,9 @@ void paste()
 	{
 		note copiedN = n;
 		copiedN.beat = currentBeat + copiedN.beat;
-		FuckinEditor::selectedChart->meta.difficulties[currentDiff].notes.push_back(copiedN);
+		FuckinEditor::selectedChart->meta.difficulties[FuckinEditor::currentDiff].notes.push_back(copiedN);
 		pastedNotes.push_back(copiedN);
-		editor->generateNoteObject(copiedN, FuckinEditor::selectedChart->meta.difficulties[currentDiff], FuckinEditor::selectedChart, notes);
+		editor->generateNoteObject(copiedN, FuckinEditor::selectedChart->meta.difficulties[FuckinEditor::currentDiff], FuckinEditor::selectedChart, notes);
 	}
 	std::sort(notes.begin(), notes.end(), compareNoteByBeat);
 	std::cout << "pasted " << pastedNotes.size() << " deleted " << deletedNotes.size() << std::endl;
@@ -1532,8 +1534,8 @@ void undo()
 	{
 		note copiedN = n;
 		copiedN.beat = copiedN.beat;
-		FuckinEditor::selectedChart->meta.difficulties[currentDiff].notes.push_back(copiedN);
-		editor->generateNoteObject(copiedN, FuckinEditor::selectedChart->meta.difficulties[currentDiff], FuckinEditor::selectedChart, notes);
+		FuckinEditor::selectedChart->meta.difficulties[FuckinEditor::currentDiff].notes.push_back(copiedN);
+		editor->generateNoteObject(copiedN, FuckinEditor::selectedChart->meta.difficulties[FuckinEditor::currentDiff], FuckinEditor::selectedChart, notes);
 	}
 	std::sort(notes.begin(), notes.end(), compareNoteByBeat);
 	std::cout << "deleted " << pastedNotes.size() << " pasted " << deletedNotes.size() << std::endl;
@@ -1760,6 +1762,8 @@ void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 	{
 		if (FuckinEditor::selectedChart)
 			FuckinEditor::selectedChart->destroy();
+		notes.clear();
+		sideStuff.clear();
 		Game::useImGUI = false;
 		Game::instance->transitionToMenu(new MainMenu());
 		return;
@@ -1790,7 +1794,7 @@ void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 		{
 			if (currentTime < 0)
 				currentTime = 0;
-			song->setPos(currentTime);
+			song->setPos(currentTime - (selectedChart->BASS_OFFSET * 1000));
 			song->play();
 		}
 
@@ -2049,6 +2053,8 @@ void FuckinEditor::loadNotes(difficulty diff)
 	{
 		generateNoteObject(n, diff, FuckinEditor::selectedChart, notes);
 	}
+
+	mouseWheel(1);
 }
 
 void FuckinEditor::generateWaveForm(int start, int end)

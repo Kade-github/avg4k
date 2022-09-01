@@ -43,6 +43,7 @@ class NoteObject : public Object
 		float fuckTimer;
 		int holds;
 		float holdstoppedbeat = -1;
+		float holdstoppedtime = -1;
 		float holdPerc;
 
 		bool missHold;

@@ -99,8 +99,8 @@ void Gameplay::updateAccuracy(double hitWorth)
 	Mrv->setText("Marvelous: " + std::to_string(Marvelous));
 	Prf->setText("Perfect: " + std::to_string(Perfect));
 	God->setText("Great: " + std::to_string(Great));
-	Ehh->setText("Eh: " + std::to_string(Eh));
-	Yke->setText("Yikes: " + std::to_string(Yikes));
+	Ehh->setText("Good: " + std::to_string(Eh));
+	Yke->setText("Bad: " + std::to_string(Yikes));
 
 	MUTATE_END
 }
@@ -494,7 +494,8 @@ void Gameplay::create() {
 	laneUnderway.h = 1280;
 
 	AvgSprite* lunder = new AvgSprite(laneUnderway.x, laneUnderway.y, Noteskin::getGameplayElement(Game::noteskin, "underway.png"));
-	add(lunder);
+	if (!MainerMenu::currentSelectedSong.isModFile)
+		add(lunder);
 	lunder->alpha = Game::save->GetDouble("Lane Underway Transparency");
 
 	lunder->colorR = darkestColor.r;
@@ -502,7 +503,8 @@ void Gameplay::create() {
 	lunder->colorB = darkestColor.b;
 
 	AvgSprite* lunderBorder = new AvgSprite(laneUnderway.x, laneUnderway.y, Noteskin::getGameplayElement(Game::noteskin, "underwayBorder.png"));
-	add(lunderBorder);
+	if (!MainerMenu::currentSelectedSong.isModFile)
+		add(lunderBorder);
 	lunderBorder->alpha = 1 * (0.8 / Game::save->GetDouble("Lane Underway Transparency"));
 
 	lunderBorder->colorR = lightestAccent.r;
@@ -535,10 +537,10 @@ void Gameplay::create() {
 	God = new Text(12, (Game::gameHeight / 2) + 36, "Great: 0", 24, "Futura Bold");
 	God->create();
 
-	Ehh = new Text(12, (Game::gameHeight / 2) + 60, "Eh: 0", 24, "Futura Bold");
+	Ehh = new Text(12, (Game::gameHeight / 2) + 60, "Good: 0", 24, "Futura Bold");
 	Ehh->create();
 
-	Yke = new Text(12, (Game::gameHeight / 2) + 82, "Yikes: 0", 24, "Futura Bold");
+	Yke = new Text(12, (Game::gameHeight / 2) + 82, "Bad: 0", 24, "Futura Bold");
 	Yke->create();
 
 	Combo->borderSize = 1;
@@ -551,6 +553,8 @@ void Gameplay::create() {
 	rightGrad->colorG = darkestColor.g;
 	rightGrad->colorB = darkestColor.b;
 	rightGrad->alpha = Game::save->GetDouble("Lane Underway Transparency");
+	if (MainerMenu::currentSelectedSong.isModFile)
+		rightGrad->alpha = 0;
 	add(rightGrad);
 
 	if (MainerMenu::isInLobby)
@@ -707,6 +711,7 @@ void Gameplay::create() {
 		runModStuff = true;
 		ModManager::initLuaFunctions();
 		manager = ModManager(MainerMenu::currentSelectedSong.pathToLua);
+		manager.instance = &manager;
 	}
 	else
 	{
@@ -755,7 +760,7 @@ void Gameplay::update(Events::updateEvent event)
 	if (!song || Game::instance->transitioning)
 		return;
 
-	if (positionInSong >= startTime)
+	if (positionInSong >= (startTime + (MainerMenu::currentSelectedSong.BASS_OFFSET * 1000)) + Game::save->GetDouble("offset"))
 	{
 		if (!play)
 		{
@@ -785,7 +790,7 @@ void Gameplay::update(Events::updateEvent event)
 			positionInSong += (Game::deltaTime - Game::save->GetDouble("offset"));*/
 		if (!paused)
 		{
-			positionInSong = song->getPos() + Game::save->GetDouble("offset");
+			positionInSong = (song->getPos() + (MainerMenu::currentSelectedSong.BASS_OFFSET * 1000)) + Game::save->GetDouble("offset");
 			lastTime += Game::deltaTime;
 		}
 	}
@@ -846,11 +851,12 @@ void Gameplay::update(Events::updateEvent event)
 	ModManager::time = positionInSong;
 	ModManager::beat = beat;
 
-	if (runModStuff)
+	if (runModStuff && !ended)
 	{
 		for (int i = 0; i < receptors.size(); i++)
 		{
 			ReceptorObject* rec = receptors[i];
+			rec->positionInSong = positionInSong;
 			rec->modX = rec->x;
 			rec->modY = rec->y;
 			rec->endX = rec->modX;
@@ -974,7 +980,7 @@ void Gameplay::update(Events::updateEvent event)
 	if (notesToPlay.size() > 0)
 	{
 		note& n = notesToPlay[0];
-		if (n.beat < beat + 16 && (n.type != Note_Tail && n.type != Note_Mine)) // if its in 16 beats
+		if (n.beat < beat + 6 && (n.type != Note_Tail && n.type != Note_Mine)) // if its in 16 beats
 		{
 				NoteObject* object = new NoteObject();
 				object->currentChart = &MainerMenu::currentSelectedSong;
@@ -1171,6 +1177,7 @@ void Gameplay::update(Events::updateEvent event)
 
 					if (startTime < positionInSong + Judge::hitWindows[2] && positionInSong < endTime + Judge::hitWindows[2])
 					{
+						note->holdPerc = beat / note->endBeat;
 						if (holding[note->lane] || (botplay && startTime < positionInSong + Judge::hitWindows[1] && positionInSong < endTime + Judge::hitWindows[2])) // holding that lane!
 						{
 							if (botplay)
@@ -1178,21 +1185,24 @@ void Gameplay::update(Events::updateEvent event)
 								receptors[note->lane]->lightUpTimer = 195;
 							}
 							note->holding = true;
-						}
-						else if (positionInSong >= startTime && !holding[note->lane])
-						{
 							note->holdstoppedbeat = beat;
+							note->holdstoppedtime = positionInSong;
+						}
+						else if (positionInSong >= startTime + Judge::hitWindows[4] && !holding[note->lane])
+						{
 							note->holding = false;
-							note->fuckTimer += Game::deltaTime / 1000;
-							if (note->fuckTimer == 1)
+							note->fuckTimer = positionInSong / (note->holdstoppedtime + 250);
+
+							if (note->fuckTimer >= 1)
 							{
 								note->active = false;
 								note->missHold = true;
 								miss(note);
 							}
-
-							if (note->holdPerc >= 0.9)
+							if (note->holdstoppedtime + 250 > endTime)
+							{
 								removeNote(note);
+							}
 						}
 					}
 
@@ -1231,7 +1241,8 @@ void Gameplay::update(Events::updateEvent event)
 			}
 		}
 	}
-	callModEvent("update", Game::deltaTime);
+	if (!ended)
+		callModEvent("update", (float)beat);
 
 	MUTATE_END
 }
@@ -1314,7 +1325,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				else
 				{
 					song->play();
-					song->setPos(positionInSong);
+					song->setPos(positionInSong - (MainerMenu::currentSelectedSong.BASS_OFFSET * 1000));
 				}
 			}
 			break;
@@ -1467,7 +1478,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 						(*Judgement).color.r = 255;
 						(*Judgement).color.g = 0;
 						(*Judgement).color.b = 0;
-						Judgement->setText("eh");
+						Judgement->setText("good");
 						Eh++;
 						updateAccuracy(0.35);
 						break;
@@ -1476,7 +1487,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 						(*Judgement).color.r = 128;
 						(*Judgement).color.g = 0;
 						(*Judgement).color.b = 0;
-						Judgement->setText("yikes");
+						Judgement->setText("bad");
 						Yikes++;
 						updateAccuracy(0.1);
 						break;

@@ -15,6 +15,8 @@ public:
 	float endX = 0;
 	float endY = 0;
 
+	float positionInSong;
+
 	Shader* customShader;
 
 	ReceptorObject(int _x, int _y, int _type);

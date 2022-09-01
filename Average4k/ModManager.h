@@ -12,13 +12,22 @@ struct AppliedMod {
 	float amount;
 	bool started = false;
 	float modStartAmount;
+	float repeatEndBeat = -1;
+	int tweenOffset = 0;
+	std::string function = "-1";
 	bool done = false;
 	Easing::easingFunction tweenCurve;
+
+	inline bool operator() (const AppliedMod& struct1, const AppliedMod& struct2)
+	{
+		return (struct1.tweenStart < struct2.tweenStart);
+	}
 };
 
 class ModManager
 {
 public:
+	static ModManager* instance;
 	static bool doMods;
 	std::unique_ptr<sol::state> lua;
 
@@ -40,7 +49,11 @@ public:
 
 	static void initLuaFunctions();
 
+	void kill();
+
 	void runMods();
+
+	void runMods(AppliedMod mod, float beat);
 
 	void createFunctions();
 	void populateLuaMap();

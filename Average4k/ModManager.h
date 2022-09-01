@@ -49,6 +49,8 @@ public:
 
 	static void initLuaFunctions();
 
+	void kill();
+
 	void runMods();
 
 	void runMods(AppliedMod mod, float beat);

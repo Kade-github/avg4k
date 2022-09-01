@@ -1185,16 +1185,13 @@ void Gameplay::update(Events::updateEvent event)
 								receptors[note->lane]->lightUpTimer = 195;
 							}
 							note->holding = true;
+							note->holdstoppedbeat = beat;
+							note->holdstoppedtime = positionInSong;
 						}
-						else if (positionInSong >= startTime && !holding[note->lane])
+						else if (positionInSong >= startTime + Judge::hitWindows[4] && !holding[note->lane])
 						{
-							if (holding[note->lane])
-							{
-								note->holdstoppedbeat = beat;
-								note->holdstoppedtime = positionInSong;
-							}
 							note->holding = false;
-							note->fuckTimer = positionInSong / (note->holdstoppedtime + 2450);
+							note->fuckTimer = positionInSong / (note->holdstoppedtime + 250);
 
 							if (note->fuckTimer >= 1)
 							{
@@ -1202,9 +1199,10 @@ void Gameplay::update(Events::updateEvent event)
 								note->missHold = true;
 								miss(note);
 							}
-
-							if (note->holdPerc >= 0.9)
+							if (note->holdstoppedtime + 250 > endTime)
+							{
 								removeNote(note);
+							}
 						}
 					}
 

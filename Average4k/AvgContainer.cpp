@@ -91,7 +91,7 @@ void AvgContainer::draw() {
 			i.obj->alpha = alpha;
 		}
 		i.obj->parent = this;
-		if (i.obj->y > h || i.obj->y < 0) // yes!
+		if (i.obj->y + i.obj->h > h || i.obj->y < 0) // yes!
 		{
 			scroll = true;
 			if (i.obj->y > 0)

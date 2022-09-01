@@ -1524,6 +1524,12 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 		if (isInLobby)
 		{
 			peopleWhoHaveChart = 0;
+			SPacketOnChat onChat;
+			onChat.tagColor = { 0, 228, 255 };
+			onChat.color = { 225, 247, 255 };
+			onChat.tagText = "[LOBBY]";
+			onChat.message = std::to_string(peopleWhoHaveChart) + " out of " + std::to_string(peopleWhoNeedChart) + " players have aquired the chart. " + (peopleWhoHaveChart == peopleWhoNeedChart ? "The game can now start." : "");
+			chat->addMessage(onChat);
 			msgpack::unpack(result, data, length);
 
 			obj = msgpack::object(result.get());
@@ -1960,6 +1966,21 @@ void MainerMenu::selectContainer(int container)
 		{
 			con->shouldUseCallback = false;
 		}
+	}
+
+	if (container != 0)
+	{
+		lockInput = false;
+
+		scrollLeaderboard = 0;
+
+		for (LeaderboardResult r : leaderboardResults)
+		{
+			delete r.name;
+			delete r.accuracy;
+		}
+
+		leaderboardResults.clear();
 	}
 
 	if (container == 2)

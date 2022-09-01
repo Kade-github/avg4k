@@ -921,6 +921,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 		case SDLK_F5:
 			if (!SongGather::steamRegAsyncAlready)
 			{
+				Game::instance->steam->populateSubscribedItems();
 				actuallyLoad = true;
 				resetStuff();
 				for (Pack& p : packs)

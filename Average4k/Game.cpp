@@ -400,6 +400,11 @@ void Game::update(Events::updateEvent update)
 
 	if (!transitioning)
 	{
+		double fl = Game::save->GetDouble("FPS Limit");
+
+		if (Game::frameLimit != fl && fl > 10)
+			Game::frameLimit = fl;
+
 		if ((gameFPS > (lastFPS + -5) + 5) || (gameFPS < (lastFPS + -5) - 5))
 		{
 			lastFPS = gameFPS;

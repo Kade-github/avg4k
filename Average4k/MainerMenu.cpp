@@ -617,10 +617,6 @@ void MainerMenu::update(Events::updateEvent ev)
 		}
 	}
 
-	double fl = Game::save->GetDouble("FPS Limit");
-
-	if (Game::frameLimit != fl && fl > 10)
-		Game::frameLimit = fl;
 
 	std::vector<Pack> gatheredPacks;
 	std::vector<Song> gatheredSongs;
@@ -971,7 +967,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 			}
 			break;
 		case SDLK_RETURN:
-				if (currentSelectedSong.meta.difficulties.size() != 0 && !chat->opened)
+				if (currentSelectedSong.meta.difficulties.size() != 0 && !chat->opened && SoundManager::isThreadDone)
 				{
 					if (!isInLobby)
 					{

@@ -34,6 +34,7 @@ void StartMenu::create()
 	ch->bpm = 155;
 
 	Tweening::TweenManager::createNewTween("opglLogo", opgl, Tweening::tt_Alpha, 6000, 0, 1, NULL, Easing::EaseInSine);
+
 	MUTATE_END
 }
 

@@ -494,7 +494,8 @@ void Gameplay::create() {
 	laneUnderway.h = 1280;
 
 	AvgSprite* lunder = new AvgSprite(laneUnderway.x, laneUnderway.y, Noteskin::getGameplayElement(Game::noteskin, "underway.png"));
-	add(lunder);
+	if (!MainerMenu::currentSelectedSong.isModFile)
+		add(lunder);
 	lunder->alpha = Game::save->GetDouble("Lane Underway Transparency");
 
 	lunder->colorR = darkestColor.r;
@@ -502,7 +503,8 @@ void Gameplay::create() {
 	lunder->colorB = darkestColor.b;
 
 	AvgSprite* lunderBorder = new AvgSprite(laneUnderway.x, laneUnderway.y, Noteskin::getGameplayElement(Game::noteskin, "underwayBorder.png"));
-	add(lunderBorder);
+	if (!MainerMenu::currentSelectedSong.isModFile)
+		add(lunderBorder);
 	lunderBorder->alpha = 1 * (0.8 / Game::save->GetDouble("Lane Underway Transparency"));
 
 	lunderBorder->colorR = lightestAccent.r;
@@ -551,6 +553,8 @@ void Gameplay::create() {
 	rightGrad->colorG = darkestColor.g;
 	rightGrad->colorB = darkestColor.b;
 	rightGrad->alpha = Game::save->GetDouble("Lane Underway Transparency");
+	if (MainerMenu::currentSelectedSong.isModFile)
+		rightGrad->alpha = 0;
 	add(rightGrad);
 
 	if (MainerMenu::isInLobby)
@@ -756,7 +760,7 @@ void Gameplay::update(Events::updateEvent event)
 	if (!song || Game::instance->transitioning)
 		return;
 
-	if (positionInSong >= startTime + Game::save->GetDouble("offset"))
+	if (positionInSong >= (startTime + (MainerMenu::currentSelectedSong.BASS_OFFSET * 1000)) + Game::save->GetDouble("offset"))
 	{
 		if (!play)
 		{
@@ -847,7 +851,7 @@ void Gameplay::update(Events::updateEvent event)
 	ModManager::time = positionInSong;
 	ModManager::beat = beat;
 
-	if (runModStuff)
+	if (runModStuff && !ended)
 	{
 		for (int i = 0; i < receptors.size(); i++)
 		{
@@ -976,7 +980,7 @@ void Gameplay::update(Events::updateEvent event)
 	if (notesToPlay.size() > 0)
 	{
 		note& n = notesToPlay[0];
-		if (n.beat < beat + 16 && (n.type != Note_Tail && n.type != Note_Mine)) // if its in 16 beats
+		if (n.beat < beat + 6 && (n.type != Note_Tail && n.type != Note_Mine)) // if its in 16 beats
 		{
 				NoteObject* object = new NoteObject();
 				object->currentChart = &MainerMenu::currentSelectedSong;
@@ -1233,7 +1237,8 @@ void Gameplay::update(Events::updateEvent event)
 			}
 		}
 	}
-	callModEvent("update", (float)beat);
+	if (!ended)
+		callModEvent("update", (float)beat);
 
 	MUTATE_END
 }
@@ -1253,6 +1258,11 @@ void Gameplay::cleanUp()
 	clap->free();
 
 	SoundManager::removeChannel("clapFx");
+
+	if (runModStuff)
+	{
+		manager.kill();
+	}
 
 	if (MainerMenu::currentSelectedSong.isModFile && !MainerMenu::isInLobby)
 	{

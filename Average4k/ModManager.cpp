@@ -48,6 +48,8 @@ ModManager::ModManager(std::string luaPath)
 		return;
 	}
 
+
+
 	luaMap = new std::map<std::string, sol::function>();
 
 	populateLuaMap();
@@ -100,6 +102,11 @@ void ModManager::initLuaFunctions()
 	};
 }
 
+void ModManager::kill()
+{
+	lua_close(lua->lua_state());
+}
+
 void consolePrint(std::string print)
 {
 	Game::instance->db_addLine("[LUA] " + print);
@@ -110,7 +117,7 @@ void ModManager::runMods()
 {
 	for (AppliedMod& m : appliedMods)
 	{
-		if (beat >= m.tweenStart && ((beat < m.tweenStart + m.tweenLen) || (beat < m.repeatEndBeat)))
+		if (beat >= m.tweenStart && ((beat < m.tweenStart + m.tweenLen)))
 		{
 				if (!m.started)
 				{
@@ -131,6 +138,10 @@ void ModManager::runMods()
 						m.modStartAmount = ArrowEffects::movex[m.col];
 					if (m.mod == "movey")
 						m.modStartAmount = ArrowEffects::movey[m.col];
+					if (m.mod == "confusion")
+						m.modStartAmount = ArrowEffects::confusion[m.col];
+					if (m.mod == "aconfusion")
+						m.modStartAmount = ArrowEffects::aconfusion;
 				}
 
 				float dur = (beat - m.tweenStart);
@@ -145,6 +156,8 @@ void ModManager::runMods()
 					ArrowEffects::tipsy = std::lerp(m.modStartAmount, m.amount, tween);
 				if (m.mod == "dizzy")
 					ArrowEffects::dizzy = std::lerp(m.modStartAmount, m.amount, tween);
+				if (m.mod == "confusion")
+					ArrowEffects::confusion[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 				if (m.mod == "reverse")
 					ArrowEffects::reverse[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 				if (m.mod == "movex")
@@ -155,6 +168,9 @@ void ModManager::runMods()
 					ArrowEffects::amovex = std::lerp(m.modStartAmount, m.amount, tween);
 				if (m.mod == "amovey")
 					ArrowEffects::amovey = std::lerp(m.modStartAmount, m.amount, tween);
+				if (m.mod == "aconfusion")
+					ArrowEffects::aconfusion = std::lerp(m.modStartAmount, m.amount, tween);
+
 			}
 
 	}
@@ -162,33 +178,30 @@ void ModManager::runMods()
 
 void ModManager::runMods(AppliedMod m, float beat)
 {
-		if (m.mod == "drunk")
-			m.modStartAmount = ArrowEffects::drunk;
-		if (m.mod == "tipsy")
-			m.modStartAmount = ArrowEffects::tipsy;
-		if (m.mod == "dizzy")
-			m.modStartAmount = ArrowEffects::dizzy;
-		if (m.mod == "reverse")
-			m.modStartAmount = ArrowEffects::reverse[m.col];
-		if (m.mod == "movex")
-			m.modStartAmount = ArrowEffects::movex[m.col];
-		if (m.mod == "movey")
-			m.modStartAmount = ArrowEffects::movey[m.col];
-		if (m.mod == "amovex")
-			m.modStartAmount = ArrowEffects::amovex;
-		if (m.mod == "amovey")
-			m.modStartAmount = ArrowEffects::amovey;
+	if (m.mod == "drunk")
+		m.modStartAmount = ArrowEffects::drunk;
+	if (m.mod == "tipsy")
+		m.modStartAmount = ArrowEffects::tipsy;
+	if (m.mod == "dizzy")
+		m.modStartAmount = ArrowEffects::dizzy;
+	if (m.mod == "amovex")
+		m.modStartAmount = ArrowEffects::amovex;
+	if (m.mod == "amovey")
+		m.modStartAmount = ArrowEffects::amovey;
+	if (m.mod == "reverse")
+		m.modStartAmount = ArrowEffects::reverse[m.col];
+	if (m.mod == "movex")
+		m.modStartAmount = ArrowEffects::movex[m.col];
+	if (m.mod == "movey")
+		m.modStartAmount = ArrowEffects::movey[m.col];
+	if (m.mod == "confusion")
+		m.modStartAmount = ArrowEffects::confusion[m.col];
+	if (m.mod == "aconfusion")
+		m.modStartAmount = ArrowEffects::aconfusion;
 
 		float dur = (beat - m.tweenStart);
 
-		float realDur = dur - m.tweenOffset;
-
-		if (realDur > 1 && m.repeatEndBeat != -1)
-		{
-			m.tweenOffset = dur;
-		}
-
-		float perc = realDur / m.tweenLen;
+		float perc = dur / m.tweenLen;
 
 		float tween = m.tweenCurve(perc);
 
@@ -198,6 +211,8 @@ void ModManager::runMods(AppliedMod m, float beat)
 			ArrowEffects::tipsy = std::lerp(m.modStartAmount, m.amount, tween);
 		if (m.mod == "dizzy")
 			ArrowEffects::dizzy = std::lerp(m.modStartAmount, m.amount, tween);
+		if (m.mod == "confusion")
+			ArrowEffects::confusion[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 		if (m.mod == "reverse")
 			ArrowEffects::reverse[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 		if (m.mod == "movex")
@@ -208,6 +223,8 @@ void ModManager::runMods(AppliedMod m, float beat)
 			ArrowEffects::amovex = std::lerp(m.modStartAmount, m.amount, tween);
 		if (m.mod == "amovey")
 			ArrowEffects::amovey = std::lerp(m.modStartAmount, m.amount, tween);
+		if (m.mod == "aconfusion")
+			ArrowEffects::aconfusion = std::lerp(m.modStartAmount, m.amount, tween);
 }
 
 
@@ -243,7 +260,6 @@ void ModManager::createFunctions()
 		aMod.modStartAmount = -999;
 
 		instance->appliedMods.push_back(aMod);
-		consolePrint(name + " | Mod applied! " + std::to_string(instance->appliedMods.size()));
 	});
 
 	lua->set_function("activateModMap", [](std::string name, float tweenStart, float tweenLen, std::string easingFunc, float amount, int col) {
@@ -258,7 +274,6 @@ void ModManager::createFunctions()
 
 
 		instance->appliedMods.push_back(aMod);
-		consolePrint(name + " | Mod applied! " + std::to_string(instance->appliedMods.size()));
 	});
 
 }

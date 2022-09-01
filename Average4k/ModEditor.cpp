@@ -59,8 +59,10 @@ void ModEditor::create()
 
 void ModEditor::doModsUntilThisPos()
 {
+	ArrowEffects::resetEffects();
 	for (AppliedMod& mod : manager.appliedMods)
 	{
+		mod.started = false;
 		float endMod = mod.tweenStart + mod.tweenLen;
 
 		if (mod.tweenStart + mod.tweenLen < beat)
@@ -124,9 +126,8 @@ void ModEditor::move(float amount)
 	beat = FuckinEditor::selectedChart->getBeatFromTime(currentTime, curSeg);
 
 	lastPos = currentTime;
-	song->setPos(currentTime - (FuckinEditor::selectedChart->BASS_OFFSET * 1000));
+	song->setPos(currentTime);
 
-	ArrowEffects::resetEffects();
 	doModsUntilThisPos();
 }
 
@@ -264,7 +265,7 @@ void ModEditor::update(Events::updateEvent event)
 
 	for (NoteObject* obj : notes)
 	{
-		if (obj->beat > beat + 16 || obj->beat < beat - 16)
+		if (obj->beat > beat + 6 || obj->beat < beat - 6)
 		{
 			obj->drawCall = false;
 			continue;
@@ -344,6 +345,7 @@ void ModEditor::imguiUpdate(float elapsed)
 	{
 		ImGui::Begin("Arrow Effects");
 		{
+			ImGui::PushItemWidth(400);
 			float drunk = ArrowEffects::drunk;
 			ImGui::Text("Drunk %.2f", drunk);
 			ImGui::SliderFloat("##Drunk", &drunk, -20, 20);
@@ -356,6 +358,14 @@ void ModEditor::imguiUpdate(float elapsed)
 			float amovey = ArrowEffects::amovey;
 			ImGui::Text("Amovey %.2f", amovey);
 			ImGui::SliderFloat("##Amovey", &amovey, -720, 1440);
+
+			for (int i = 0; i < 4; i++)
+			{
+				float col = ArrowEffects::reverse[i];
+				ImGui::Text("Col %d reverse %.2f", i, col);
+				ImGui::SliderFloat(("##Reverse0" + std::to_string(i)).c_str(), & col, -1, 1);
+			}
+
 		}
 	}
 
@@ -383,7 +393,7 @@ void ModEditor::keyDown(SDL_KeyboardEvent ev)
 		{
 			playing = true;
 			song->play();
-			song->setPos(lastPos - (FuckinEditor::selectedChart->BASS_OFFSET * 1000));
+			song->setPos(lastPos);
 		}
 	}
 

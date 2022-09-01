@@ -933,9 +933,6 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 							stbi_h::stbi_free(s.banner.data);
 				}
 				packs.clear();
-				Channel* ch = SoundManager::getChannelByName("prevSong");
-				if (ch != NULL)
-					ch->stop();
 				loadPacks();
 			}
 			break;
@@ -1198,9 +1195,6 @@ void MainerMenu::onSteam(std::string s)
 		actuallyLoad = true;
 		resetStuff();
 		packs.clear();
-		Channel* ch = SoundManager::getChannelByName("prevSong");
-		if (ch != NULL)
-			ch->stop();
 		loadPacks();
 	}
 

@@ -49,6 +49,10 @@ void ModEditor::create()
 
 	song->createFXStream();
 
+	lastPos = 0;
+	currentTime = 0;
+	song->setPos(0);
+
 	ModManager::doMods = true;
 	ModManager::initLuaFunctions();
 	manager = ModManager(currentChart->pathToLua);

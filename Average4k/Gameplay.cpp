@@ -1259,11 +1259,6 @@ void Gameplay::cleanUp()
 
 	SoundManager::removeChannel("clapFx");
 
-	if (runModStuff)
-	{
-		manager.kill();
-	}
-
 	if (MainerMenu::currentSelectedSong.isModFile && !MainerMenu::isInLobby)
 	{
 		manager.destroy();

@@ -1193,15 +1193,11 @@ void Gameplay::update(Events::updateEvent event)
 							note->holding = false;
 							note->fuckTimer = positionInSong / (note->holdstoppedtime + 250);
 
-							if (note->fuckTimer >= 1)
+							if (note->fuckTimer >= 1 && note->holdstoppedtime + 250 < endTime)
 							{
 								note->active = false;
 								note->missHold = true;
 								miss(note);
-							}
-							if (note->holdstoppedtime + 250 > endTime)
-							{
-								removeNote(note);
 							}
 						}
 					}

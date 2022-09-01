@@ -1760,6 +1760,8 @@ void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 	{
 		if (FuckinEditor::selectedChart)
 			FuckinEditor::selectedChart->destroy();
+		notes.clear();
+		sideStuff.clear();
 		Game::useImGUI = false;
 		Game::instance->transitionToMenu(new MainMenu());
 		return;

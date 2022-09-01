@@ -365,7 +365,7 @@ void NoteObject::draw() {
             }
         }
         else {
-            Rendering::PushQuad(&dstRect, &srcRect, texture, sh);
+            Rendering::PushQuad(&dstRect, &srcRect, texture, sh, drawAngle);
         }
 
         if (selected)

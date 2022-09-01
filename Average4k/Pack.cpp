@@ -190,6 +190,10 @@ void SongGather::gatherPacksAsync()
 					s.banner = Texture::getTextureData(s.c.meta.folder + "/" + s.c.meta.banner);
 					s.hasBanner = true;
 				}
+				else
+				{
+					s.hasBanner = false;
+				}
 
 				s.c = c;
 				MainerMenu::asyncSongs.push_back(s);

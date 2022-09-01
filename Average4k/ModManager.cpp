@@ -46,7 +46,7 @@ ModManager::ModManager(std::string luaPath)
 		Game::instance->db_addLine("Lua Error");
 		Game::instance->db_addLine(error.what());
 		Game::instance->transitionToMenu(new MainerMenu());
-		Game::instance->asyncShowErrorWindow("Lua Error", "F11 to check the console", true);
+		Game::instance->asyncShowErrorWindow("Lua Error Start", "F11 to check the console", true);
 		return;
 	}
 
@@ -67,12 +67,6 @@ void ModManager::populateLuaMap()
 void ModManager::callEvent(std::string event, std::string args)
 {
 	sol::protected_function f((*luaMap)[event](args));
-	sol::protected_function_result result = f(-500);
-	if (!result.valid()) {
-		Game::instance->transitionToMenu(new MainerMenu());
-		Game::instance->asyncShowErrorWindow("Lua Error", "F11 to check the console", true);
-		return;
-	}
 
 	std::sort(appliedMods.begin(), appliedMods.end(), AppliedMod());
 }
@@ -80,24 +74,12 @@ void ModManager::callEvent(std::string event, std::string args)
 void ModManager::callEvent(std::string event, int args)
 {
 	sol::protected_function f((*luaMap)[event](args));
-	sol::protected_function_result result = f(-500);
-	if (!result.valid()) {
-		Game::instance->transitionToMenu(new MainerMenu());
-		Game::instance->asyncShowErrorWindow("Lua Error", "F11 to check the console", true);
-		return;
-	}
 	std::sort(appliedMods.begin(), appliedMods.end(), AppliedMod());
 }
 
 void ModManager::callEvent(std::string event, float args)
 {
 	sol::protected_function f((*luaMap)[event](args));
-	sol::protected_function_result result = f(-500);
-	if (!result.valid()) {
-		Game::instance->transitionToMenu(new MainerMenu());
-		Game::instance->asyncShowErrorWindow("Lua Error", "F11 to check the console", true);
-		return;
-	}
 	std::sort(appliedMods.begin(), appliedMods.end(), AppliedMod());
 }
 

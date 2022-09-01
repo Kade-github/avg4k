@@ -299,6 +299,7 @@ void Steam::OnUploadedItemCallback(SubmitItemUpdateResult_t* result, bool bIOFai
         }
         else
         {
+            populateSubscribedItems();
             SteamUGC()->SubscribeItem(createdId);
             Game::currentMenu->onSteam("uploadItem");
         }

@@ -16,25 +16,25 @@ std::vector<std::string> Chart::split(std::string str, char delimiter)
 
 float Chart::getTimeFromBeat(float beat, bpmSegment seg) {
     float beatThing = (beat - seg.startBeat) / (seg.bpm / 60);
-    return (seg.startTime + (beatThing * 1000) - (meta.chartOffset * 1000)) - (BASS_OFFSET * 1000);
+    return (seg.startTime + (beatThing * 1000) - (meta.chartOffset * 1000)) ;
 }
 
 float Chart::getTimeFromBeatOffset(float beat, bpmSegment seg) {
     float beatThing = (beat - seg.startBeat) / (seg.bpm / 60);
-    return (seg.startTime + (beatThing * 1000)) - (BASS_OFFSET * 1000);
+    return (seg.startTime + (beatThing * 1000)) ;
 }
 
 float Chart::getBeatFromTime(float timestamp, bpmSegment seg) {
-    float result = seg.startBeat + (((((timestamp - (BASS_OFFSET * 1000)) / 1000) - (((seg.startTime - (BASS_OFFSET * 1000)) / 1000) - (meta.chartOffset))) * (seg.bpm / 60)));
+    float result = seg.startBeat + (((((timestamp ) / 1000) - ((seg.startTime / 1000) - (meta.chartOffset))) * (seg.bpm / 60)));
     return result;
 }
 
 float Chart::getBeatFromTimeOffset(float timestamp, bpmSegment seg) {
-    return seg.startBeat + (((((timestamp - (BASS_OFFSET * 1000)) / 1000) - (((seg.startTime - (BASS_OFFSET * 1000))/ 1000))) * (seg.bpm / 60)));
+    return seg.startBeat + (((((timestamp ) / 1000) - (((seg.startTime)/ 1000))) * (seg.bpm / 60)));
 }
 
 bpmSegment Chart::getSegmentFromTime(float time) {
-    if ((time - (BASS_OFFSET * 1000)) >= previouslyFound.startTime && (time - (BASS_OFFSET * 1000)) < ((previouslyFound.startTime - (BASS_OFFSET * 1000)) + previouslyFound.length))
+    if ((time ) >= previouslyFound.startTime && (time ) < ((previouslyFound.startTime) + previouslyFound.length))
         return previouslyFound;
     bpmSegment seg;
     seg.bpm = meta.bpms[0].bpm;
@@ -44,7 +44,7 @@ bpmSegment Chart::getSegmentFromTime(float time) {
     seg.length = INT_MAX;
     for (int i = 0; i < meta.bpms.size(); i++) {
         bpmSegment segment = meta.bpms[i];
-        if ((time - (BASS_OFFSET * 1000)) >= segment.startTime && (time - (BASS_OFFSET * 1000)) < ((segment.startTime - (BASS_OFFSET * 1000)) + segment.length))
+        if ((time ) >= segment.startTime && (time ) < ((segment.startTime) + segment.length))
         {
             seg = segment;
             previouslyFound = segment;

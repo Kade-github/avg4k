@@ -786,7 +786,7 @@ void Gameplay::update(Events::updateEvent event)
 			positionInSong += (Game::deltaTime - Game::save->GetDouble("offset"));*/
 		if (!paused)
 		{
-			positionInSong = song->getPos() + Game::save->GetDouble("offset");
+			positionInSong = (song->getPos() + (MainerMenu::currentSelectedSong.BASS_OFFSET * 1000)) + Game::save->GetDouble("offset");
 			lastTime += Game::deltaTime;
 		}
 	}
@@ -1233,7 +1233,7 @@ void Gameplay::update(Events::updateEvent event)
 			}
 		}
 	}
-	callModEvent("update", Game::deltaTime);
+	callModEvent("update", (float)beat);
 
 	MUTATE_END
 }
@@ -1316,7 +1316,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				else
 				{
 					song->play();
-					song->setPos(positionInSong);
+					song->setPos(positionInSong - (MainerMenu::currentSelectedSong.BASS_OFFSET * 1000));
 				}
 			}
 			break;

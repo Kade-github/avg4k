@@ -1295,7 +1295,7 @@ void FuckinEditor::update(Events::updateEvent event)
 	{
 		float bps = (Game::save->GetDouble("scrollspeed") / 60);
 
-		float noteOffset = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed") / 60, seg.time, currentTime, 64 * noteZoom);
+		float noteOffset = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed") / 60, seg.time, currentTime - (selectedChart->BASS_OFFSET * 1000), 64 * noteZoom);
 
 		seg.sprite->alpha = waveformAlpha;
 		if (!Game::save->GetBool("nonChange_chartWaveform"))
@@ -1328,7 +1328,7 @@ void FuckinEditor::update(Events::updateEvent event)
 
 	if (songPlaying)
 	{
-		float songPos = song->getPos();
+		float songPos = song->getPos() + (selectedChart->BASS_OFFSET * 1000);
 
 		currentTime = songPos;
 		bpmSegment curSeg = FuckinEditor::selectedChart->getSegmentFromTime(currentTime);
@@ -1790,7 +1790,7 @@ void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 		{
 			if (currentTime < 0)
 				currentTime = 0;
-			song->setPos(currentTime);
+			song->setPos(currentTime - (selectedChart->BASS_OFFSET * 1000));
 			song->play();
 		}
 
@@ -2049,6 +2049,8 @@ void FuckinEditor::loadNotes(difficulty diff)
 	{
 		generateNoteObject(n, diff, FuckinEditor::selectedChart, notes);
 	}
+
+	mouseWheel(1);
 }
 
 void FuckinEditor::generateWaveForm(int start, int end)

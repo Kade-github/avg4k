@@ -110,50 +110,58 @@ void ModManager::runMods()
 {
 	for (AppliedMod& m : appliedMods)
 	{
-		if (beat >= m.tweenStart && beat < m.tweenStart + m.tweenLen)
+		if (beat >= m.tweenStart && ((beat < m.tweenStart + m.tweenLen) || (beat < m.repeatEndBeat)))
 		{
-			if (!m.started)
-			{
-				m.started = true;
+				if (!m.started)
+				{
+					m.started = true;
+					if (m.mod == "drunk")
+						m.modStartAmount = ArrowEffects::drunk;
+					if (m.mod == "tipsy")
+						m.modStartAmount = ArrowEffects::tipsy;
+					if (m.mod == "dizzy")
+						m.modStartAmount = ArrowEffects::dizzy;
+					if (m.mod == "amovex")
+						m.modStartAmount = ArrowEffects::amovex;
+					if (m.mod == "amovey")
+						m.modStartAmount = ArrowEffects::amovey;
+					if (m.mod == "reverse")
+						m.modStartAmount = ArrowEffects::reverse[m.col];
+					if (m.mod == "movex")
+						m.modStartAmount = ArrowEffects::movex[m.col];
+					if (m.mod == "movey")
+						m.modStartAmount = ArrowEffects::movey[m.col];
+				}
+
+				float dur = (beat - m.tweenStart);
+
+				float perc = dur / m.tweenLen;
+
+				float tween = m.tweenCurve(perc);
+
 				if (m.mod == "drunk")
-					m.modStartAmount = ArrowEffects::drunk;
+					ArrowEffects::drunk = std::lerp(m.modStartAmount, m.amount, tween);
 				if (m.mod == "tipsy")
-					m.modStartAmount = ArrowEffects::tipsy;
+					ArrowEffects::tipsy = std::lerp(m.modStartAmount, m.amount, tween);
 				if (m.mod == "dizzy")
-					m.modStartAmount = ArrowEffects::dizzy;
+					ArrowEffects::dizzy = std::lerp(m.modStartAmount, m.amount, tween);
 				if (m.mod == "reverse")
-					m.modStartAmount = ArrowEffects::reverse[m.col];
+					ArrowEffects::reverse[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 				if (m.mod == "movex")
-					m.modStartAmount = ArrowEffects::movex[m.col];
+					ArrowEffects::movex[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 				if (m.mod == "movey")
-					m.modStartAmount = ArrowEffects::movey[m.col];
+					ArrowEffects::movey[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+				if (m.mod == "amovex")
+					ArrowEffects::amovex = std::lerp(m.modStartAmount, m.amount, tween);
+				if (m.mod == "amovey")
+					ArrowEffects::amovey = std::lerp(m.modStartAmount, m.amount, tween);
 			}
 
-			float dur = beat - m.tweenStart;
-
-			float perc = dur / m.tweenLen;
-
-			float tween = m.tweenCurve(perc);
-
-			if (m.mod == "drunk")
-				ArrowEffects::drunk = std::lerp(m.modStartAmount, m.amount, tween);
-			if (m.mod == "tipsy")
-				ArrowEffects::tipsy = std::lerp(m.modStartAmount, m.amount, tween);
-			if (m.mod == "dizzy")
-				ArrowEffects::dizzy = std::lerp(m.modStartAmount, m.amount, tween);
-			if (m.mod == "reverse")
-				ArrowEffects::reverse[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
-			if (m.mod == "movex")
-				ArrowEffects::movex[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
-			if (m.mod == "movey")
-				ArrowEffects::movey[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
-		}
 	}
 }
 
 void ModManager::runMods(AppliedMod m, float beat)
 {
-
 		if (m.mod == "drunk")
 			m.modStartAmount = ArrowEffects::drunk;
 		if (m.mod == "tipsy")
@@ -166,10 +174,21 @@ void ModManager::runMods(AppliedMod m, float beat)
 			m.modStartAmount = ArrowEffects::movex[m.col];
 		if (m.mod == "movey")
 			m.modStartAmount = ArrowEffects::movey[m.col];
+		if (m.mod == "amovex")
+			m.modStartAmount = ArrowEffects::amovex;
+		if (m.mod == "amovey")
+			m.modStartAmount = ArrowEffects::amovey;
 
-		float dur = beat - m.tweenStart;
+		float dur = (beat - m.tweenStart);
 
-		float perc = dur / m.tweenLen;
+		float realDur = dur - m.tweenOffset;
+
+		if (realDur > 1 && m.repeatEndBeat != -1)
+		{
+			m.tweenOffset = dur;
+		}
+
+		float perc = realDur / m.tweenLen;
 
 		float tween = m.tweenCurve(perc);
 
@@ -185,6 +204,10 @@ void ModManager::runMods(AppliedMod m, float beat)
 			ArrowEffects::movex[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 		if (m.mod == "movey")
 			ArrowEffects::movey[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+		if (m.mod == "amovex")
+			ArrowEffects::amovex = std::lerp(m.modStartAmount, m.amount, tween);
+		if (m.mod == "amovey")
+			ArrowEffects::amovey = std::lerp(m.modStartAmount, m.amount, tween);
 }
 
 

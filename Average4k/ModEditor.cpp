@@ -59,7 +59,6 @@ void ModEditor::create()
 
 void ModEditor::doModsUntilThisPos()
 {
-	beat = FuckinEditor::selectedChart->getBeatFromTime(currentTime, FuckinEditor::selectedChart->getSegmentFromTime(currentTime));
 	for (AppliedMod& mod : manager.appliedMods)
 	{
 		float endMod = mod.tweenStart + mod.tweenLen;
@@ -118,10 +117,14 @@ void ModEditor::move(float amount)
 	float nextTime = currentTime + amount;
 
 	currentTime = nextTime;
-	if (currentTime < 0)
-		currentTime = 0;
+	if (currentTime < FuckinEditor::selectedChart->meta.chartOffset)
+		currentTime = FuckinEditor::selectedChart->meta.chartOffset;
+	bpmSegment curSeg = FuckinEditor::selectedChart->getSegmentFromTime(currentTime);
+
+	beat = FuckinEditor::selectedChart->getBeatFromTime(currentTime, curSeg);
+
 	lastPos = currentTime;
-	song->setPos(nextTime);
+	song->setPos(currentTime - (FuckinEditor::selectedChart->BASS_OFFSET * 1000));
 
 	ArrowEffects::resetEffects();
 	doModsUntilThisPos();
@@ -153,7 +156,6 @@ void ModEditor::generateNoteObject(note n, difficulty diff, Chart* selectedChart
 	object->stopOffset = stopBeatOffset;
 
 	object->beat = (double)n.beat + stopBeatOffset;
-	object->time = selectedChart->getTimeFromBeat(object->beat, selectedChart->getSegmentFromBeat(object->beat));
 	object->lane = n.lane;
 	object->connectedReceptor = receptors[n.lane];
 	object->type = n.type;
@@ -173,7 +175,7 @@ void ModEditor::generateNoteObject(note n, difficulty diff, Chart* selectedChart
 
 	bpmSegment bruh = selectedChart->getSegmentFromBeat(object->beat);
 
-	float wh = selectedChart->getTimeFromBeat(n.beat, bruh);
+	float wh = selectedChart->getTimeFromBeatOffset(n.beat, bruh);
 
 	float bps = (Game::save->GetDouble("scrollspeed") / 60);
 
@@ -252,7 +254,13 @@ void ModEditor::generateNoteObject(note n, difficulty diff, Chart* selectedChart
 void ModEditor::update(Events::updateEvent event)
 {
 	if (playing)
-		currentTime = song->getPos() + Game::instance->save->GetDouble("Offset");
+	{
+		currentTime = song->getPos() + (FuckinEditor::selectedChart->BASS_OFFSET * 1000);
+
+		bpmSegment curSeg = FuckinEditor::selectedChart->getSegmentFromTime(currentTime);
+
+ 		beat = FuckinEditor::selectedChart->getBeatFromTime(currentTime, curSeg);
+	}
 
 	for (NoteObject* obj : notes)
 	{
@@ -294,13 +302,12 @@ void ModEditor::update(Events::updateEvent event)
 		}
 	}
 
-	beat = FuckinEditor::selectedChart->getBeatFromTime(currentTime, FuckinEditor::selectedChart->getSegmentFromTime(currentTime));
 
 	manager.beat = beat;
 	manager.time = currentTime;
 
 	manager.runMods();
-
+	callModEvent("update", beat);
 }
 
 void ModEditor::imguiUpdate(float elapsed)
@@ -332,10 +339,38 @@ void ModEditor::imguiUpdate(float elapsed)
 
 		ImGui::TextColored({0.5,0.5,1,1},("Controls: Space to pause/play, scrollwheel to move up or down | Current Beat: " + std::to_string(beat)).c_str());
 	}
+
+	if (showDebug)
+	{
+		ImGui::Begin("Arrow Effects");
+		{
+			float drunk = ArrowEffects::drunk;
+			ImGui::Text("Drunk %.2f", drunk);
+			ImGui::SliderFloat("##Drunk", &drunk, -20, 20);
+			float tipsy = ArrowEffects::tipsy;
+			ImGui::Text("Tipsy %.2f", tipsy);
+			ImGui::SliderFloat("##Tipsy", &tipsy, -20, 20);
+			float amovex = ArrowEffects::amovex;
+			ImGui::Text("Amovex %.2f", amovex);
+			ImGui::SliderFloat("##Amovex", &amovex, -1280, 2560);
+			float amovey = ArrowEffects::amovey;
+			ImGui::Text("Amovey %.2f", amovey);
+			ImGui::SliderFloat("##Amovey", &amovey, -720, 1440);
+		}
+	}
+
 }
 
 void ModEditor::keyDown(SDL_KeyboardEvent ev)
 {
+	if (ev.keysym.sym == SDLK_ESCAPE)
+	{
+		ArrowEffects::resetEffects();
+		FuckinEditor::dontDeleteChart = true;
+		Game::instance->transitionToMenu(new FuckinEditor());
+		return;
+	}
+
 	if (ev.keysym.sym == SDLK_SPACE)
 	{
 		if (playing)
@@ -348,7 +383,7 @@ void ModEditor::keyDown(SDL_KeyboardEvent ev)
 		{
 			playing = true;
 			song->play();
-			song->setPos(lastPos);
+			song->setPos(lastPos - (FuckinEditor::selectedChart->BASS_OFFSET * 1000));
 		}
 	}
 
@@ -365,6 +400,9 @@ void ModEditor::keyDown(SDL_KeyboardEvent ev)
 		if (ssnapSelect > 6)
 			ssnapSelect = 0;
 	}
+
+	if (ev.keysym.sym == SDLK_F2)
+		showDebug = !showDebug;
 
 	auto it = ssnapConvert.begin();
 	std::advance(it, ssnapSelect);

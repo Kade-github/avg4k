@@ -80,10 +80,10 @@ class Chart
 			}
       // mp3/other bass offsets
 
-      if (m.ext == "mp3")
-        BASS_OFFSET = 0.034f * 2.5f;
-      else
-        BASS_OFFSET = 0.034f;
+		  if (m.ext == "mp3")
+			BASS_OFFSET = 0.034f * 2.5f;
+		  else
+			BASS_OFFSET = 0.034f;
 		};
 		chartMeta meta;
 

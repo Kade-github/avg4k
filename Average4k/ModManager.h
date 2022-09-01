@@ -12,6 +12,9 @@ struct AppliedMod {
 	float amount;
 	bool started = false;
 	float modStartAmount;
+	float repeatEndBeat = -1;
+	int tweenOffset = 0;
+	std::string function = "-1";
 	bool done = false;
 	Easing::easingFunction tweenCurve;
 

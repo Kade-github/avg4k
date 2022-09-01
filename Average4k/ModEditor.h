@@ -20,6 +20,10 @@ public:
 	float currentTime = 0;
 	float beat = 0;
 
+	bool showDebug = false;
+
+	float startTime = 0;
+
 	void doModsUntilThisPos();
 
 	void callModEvent(std::string name, std::string args);

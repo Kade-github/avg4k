@@ -4,6 +4,8 @@
 #include "Judge.h"
 #include "ModEditor.h"
 
+#include "ArrowEffects.h"
+
 // window draws
 
 Chart* FuckinEditor::selectedChart = NULL;
@@ -902,7 +904,7 @@ void openChart(std::string path, std::string folder) {
 
 void FuckinEditor::create()
 {
-
+	ArrowEffects::resetEffects();	
 	if (SoundManager::getChannelByName("prevSong") != NULL)
 	{
 		Channel* c = SoundManager::getChannelByName("prevSong");

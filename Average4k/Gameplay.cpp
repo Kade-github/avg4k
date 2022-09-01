@@ -1177,6 +1177,7 @@ void Gameplay::update(Events::updateEvent event)
 
 					if (startTime < positionInSong + Judge::hitWindows[2] && positionInSong < endTime + Judge::hitWindows[2])
 					{
+						note->holdPerc = beat / note->endBeat;
 						if (holding[note->lane] || (botplay && startTime < positionInSong + Judge::hitWindows[1] && positionInSong < endTime + Judge::hitWindows[2])) // holding that lane!
 						{
 							if (botplay)
@@ -1187,10 +1188,15 @@ void Gameplay::update(Events::updateEvent event)
 						}
 						else if (positionInSong >= startTime && !holding[note->lane])
 						{
-							note->holdstoppedbeat = beat;
+							if (holding[note->lane])
+							{
+								note->holdstoppedbeat = beat;
+								note->holdstoppedtime = positionInSong;
+							}
 							note->holding = false;
-							note->fuckTimer += Game::deltaTime / 1000;
-							if (note->fuckTimer == 1)
+							note->fuckTimer = positionInSong / (note->holdstoppedtime + 2450);
+
+							if (note->fuckTimer >= 1)
 							{
 								note->active = false;
 								note->missHold = true;

@@ -212,12 +212,6 @@ void NoteObject::draw() {
                 float perc = (float)(i + 1.f) / (float)amountToDraw;
 
                 float holdBeat = beat + ((endBeat - beat) * perc);
-                if (holdBeat < currentBeat)
-                {
-                    holds++;
-                    holdPerc = holds / amountToDraw;
-                }
-
 
                 holdBody body;
                 body.beat = holdBeat;

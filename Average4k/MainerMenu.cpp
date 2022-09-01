@@ -1450,7 +1450,8 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 			if (peopleWhoHaveChart > peopleWhoNeedChart)
 				peopleWhoHaveChart = peopleWhoNeedChart;
 			onChat.message = std::to_string(peopleWhoHaveChart) + " out of " + std::to_string(peopleWhoNeedChart) + " players have aquired the chart. " + (peopleWhoHaveChart == peopleWhoNeedChart ? "The game can now start." : "");
-			chat->addMessage(onChat);
+			if (isHost)
+				chat->addMessage(onChat);
 		}
 
 		break;
@@ -1529,7 +1530,8 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 			onChat.color = { 225, 247, 255 };
 			onChat.tagText = "[LOBBY]";
 			onChat.message = std::to_string(peopleWhoHaveChart) + " out of " + std::to_string(peopleWhoNeedChart) + " players have aquired the chart. " + (peopleWhoHaveChart == peopleWhoNeedChart ? "The game can now start." : "");
-			chat->addMessage(onChat);
+			if (isHost)
+				chat->addMessage(onChat);
 			msgpack::unpack(result, data, length);
 
 			obj = msgpack::object(result.get());

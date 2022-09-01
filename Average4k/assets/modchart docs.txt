@@ -1,12 +1,18 @@
-To create a modchart, go into a chart and add a mod folder. 
+To create a modchart, go into a chart and add a folder called "mod". 
 
 Create a file called "mod.lua" and paste in this template:
+
+"
 
 function create()
 
 end
 
+"
+
 Not going to teach you how to use lua but if you already know the stuff you can do is pretty simple.
+
+(function)
 
 activateMod(modName,beat,beatLength,easingType,amount)
 
@@ -18,10 +24,14 @@ https://craftedcart.gitlab.io/notitg_docs/modifiers.html to figure out what they
 
 For column specific mods use
 
+(function)
+
 activateModMap(modName,beat,beatLength,easingType,amount, col)
 
 same thing but different mods,
 
 those are: reverse, confusion, movex, movey
 
-That is basically it, you can look at https://pastebin.com/sGB5T97k for an example.
+That is basically it (for now), you can look at https://pastebin.com/sGB5T97k for an example.
+
+planning on support for sprites and more mods later, but right now it's still pretty alright.

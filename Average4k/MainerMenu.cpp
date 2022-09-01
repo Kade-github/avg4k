@@ -2009,7 +2009,6 @@ void MainerMenu::selectContainer(int container)
 	case 0:
 		if (chat->opened)
 			chat->close();
-		wheel->callSelect(wheel->selectedIndex);
 		currentContainer = soloContainer;
 		soloContainer->active = true;
 		selectSolo->alpha = 1;

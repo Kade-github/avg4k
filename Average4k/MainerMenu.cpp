@@ -1451,7 +1451,7 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 				onChat.tagColor = { 0, 228, 255 };
 				onChat.color = { 225, 247, 255 };
 				onChat.tagText = "[LOBBY]";
-				onChat.message = currentLobby.PlayerList[f.code].Name + " has the chart!";
+				onChat.message = currentLobby.PlayerList[f.code - 9000].Name + " has the chart!";
 				if (isHost)
 					chat->addMessage(onChat);
 			}

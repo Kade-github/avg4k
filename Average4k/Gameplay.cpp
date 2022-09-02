@@ -1199,6 +1199,7 @@ void Gameplay::update(Events::updateEvent event)
 								note->active = false;
 								note->missHold = true;
 								miss(note);
+								removeNote(note);
 							}
 						}
 					}

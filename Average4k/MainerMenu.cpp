@@ -876,7 +876,6 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 		{
 			lockInput = !lockInput;
 
-			fetchingScores = true;
 			scrollLeaderboard = 0;
 
 			for (LeaderboardResult r : leaderboardResults)
@@ -890,6 +889,8 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 			if (lockInput)
 			{
 				CPacketLeaderboardRequest req;
+
+				fetchingScores = true;
 
 				req.chartId = (MainerMenu::selected.isSteam ? MainerMenu::selected.steamId : MainerMenu::selectedSong.steamId);
 				req.chartIndex = (MainerMenu::selected.isSteam ? MainerMenu::packSongIndex : -1);

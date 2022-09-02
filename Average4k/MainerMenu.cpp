@@ -20,6 +20,7 @@ AvgContainer* MainerMenu::testWorkshop;
 std::mutex packMutex;
 
 bool uploading = false;
+bool fetchingScores = false;
 
 Pack steamWorkshop;
 
@@ -291,6 +292,7 @@ void selectedSongCallback(int sId)
 
 void MainerMenu::create()
 {
+	fetchingScores = false;
 	VM_START
 	isInMainerMenu = true;
 	shad = new Shader();
@@ -873,10 +875,11 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 	switch (event.keysym.sym)
 	{
 	case SDLK_TAB:
-		if (MainerMenu::selectedSong.isSteam && selectedContainerIndex == 0)
+		if (MainerMenu::selectedSong.isSteam && selectedContainerIndex == 0 && !fetchingScores)
 		{
 			lockInput = !lockInput;
 
+			fetchingScores = true;
 			scrollLeaderboard = 0;
 
 			for (LeaderboardResult r : leaderboardResults)
@@ -1574,6 +1577,7 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 			resu.name = new Text(0, 0, "No scores have been submited on this chart.", 16, "arialbd");
 			leaderboardResults.push_back(resu);
 		}
+		fetchingScores = false;
 		break;
 	}
 }

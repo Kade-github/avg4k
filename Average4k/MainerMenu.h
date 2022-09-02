@@ -148,6 +148,10 @@ public:
 
 	static std::vector<Pack> packs;
 
+	bool fetchingScores;
+
+	bool uploading;
+
 	ChatObject* chat;
 
 	std::vector<lobby> Lobbies;

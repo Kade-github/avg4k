@@ -19,9 +19,6 @@ AvgContainer* MainerMenu::testWorkshop;
 
 std::mutex packMutex;
 
-bool uploading = false;
-bool fetchingScores = false;
-
 Pack steamWorkshop;
 
 int scrollLeaderboard = 0;

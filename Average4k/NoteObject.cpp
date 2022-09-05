@@ -159,12 +159,26 @@ void NoteObject::draw() {
 
     float drawAngle = 0;
 
+    float white = 0;
+
+    float ogAlpha = alpha;
+
     if (ModManager::doMods)
     {
         ArrowEffects::Arrow a = ArrowEffects::finishEffects(obj->x, obj->y, noteOffset, obj->type, -1, position, diff);
         dstRect.x = a.x;
         dstRect.y = a.y;
+        white = a.whiteV;
+        dstRect.a = a.opac;
+        ogAlpha = dstRect.a;
         drawAngle = a.rot;
+
+        Game::instance->whiteShader->GL_Use();
+
+        if (white > dstRect.a)
+            white = dstRect.a;
+
+        Game::instance->whiteShader->SetUniform("yomamam", white);
     }
 
 
@@ -274,42 +288,42 @@ void NoteObject::draw() {
 
                 verts.push_back({ body.x + body.skewTL, body.y + body.skewYTL,
                     0, 0,
-                    1.f,1.f,1.f,1.f }); //tl
+                    (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //tl
                 if (!downscroll)
                 {
                     verts.push_back({ body.x + body.skewBL, body.y + body.h + body.skewYBL,
                         0, -1,
-                        1.f,1.f,1.f,1.f }); //bl
+                        (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a)}); //bl
                 }
                 else
                 {
                     verts.push_back({ body.x + body.skewBL, body.y + body.h + body.skewYBL,
                         0, 1,
-                        1.f,1.f,1.f,1.f }); //bl
+                        (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //bl
                 }
                 verts.push_back({ body.x + body.skewTR + body.w, body.y + body.skewYTR,
                     1, 0,
-                    1.f,1.f,1.f,1.f }); //tr
+                   (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //tr
                 verts.push_back({ body.x + body.skewTR + body.w, body.y + body.skewYTR,
                     1, 0,
-                    1.f,1.f,1.f,1.f }); //tr
+                    (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //tr
                 if (!downscroll)
                 {
                     verts.push_back({ body.x + body.skewBL, body.y + body.h + body.skewYBL,
                         0, -1,
-                        1.f,1.f,1.f,1.f }); //bl
+                        (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //bl
                     verts.push_back({ body.x + body.skewBR + body.w, body.y + body.h + body.skewYBR,
                         1, -1,
-                        1.f,1.f,1.f,1.f }); //br
+                       (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //br
                 }
                 else
                 {
                     verts.push_back({ body.x + body.skewBL, body.y + body.h + body.skewYBL,
                         0, 1,
-                        1.f,1.f,1.f,1.f }); //bl
+                        (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //bl
                     verts.push_back({ body.x + body.skewBR + body.w, body.y + body.h + body.skewYBR,
                         1, 1,
-                        1.f,1.f,1.f,1.f }); //br
+                        (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //br
                 }
 
                 Rect test;
@@ -327,10 +341,32 @@ void NoteObject::draw() {
                     Rendering::SetClipRect(&test);
 
                 if (i != bodies.size() - 1)
+                {
                     Rendering::PushQuad(verts, Game::noteskin->hold, GL::genShader);
+                    if (white != 0)
+                    {
+                        Rendering::drawBatch();
+                        for (GL_Vertex& vert : verts)
+                            vert.a = 1;
+                        Rendering::PushQuad(verts, Game::noteskin->hold, Game::instance->whiteShader);
+                        for (GL_Vertex& vert : verts)
+                            vert.a = ogAlpha;
+                        Rendering::drawBatch();
+                    }
+                }
                 else
                 {
                     Rendering::PushQuad(verts, Game::noteskin->holdend, GL::genShader);
+                    if (white != 0)
+                    {
+                        Rendering::drawBatch();
+                        for (GL_Vertex& vert : verts)
+                            vert.a = 1;
+                        Rendering::PushQuad(verts, Game::noteskin->holdend, Game::instance->whiteShader);
+                        for (GL_Vertex& vert : verts)
+                            vert.a = ogAlpha;
+                        Rendering::drawBatch();
+                    }
                 }
                 Rendering::SetClipRect(NULL);
                 i++;
@@ -346,22 +382,62 @@ void NoteObject::draw() {
             switch (lane) {
             case 0: // left
                 Rendering::PushQuad(&dstRect, &srcRect, texture, sh, 90 + drawAngle);
+                if (white != 0)
+                {
+                    Rendering::drawBatch();
+                    dstRect.a = 1;
+                    Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, 90 + drawAngle);
+                    dstRect.a = ogAlpha;
+                    Rendering::drawBatch();
+                }
                 break;
             case 1: // down
                 Rendering::PushQuad(&dstRect, &srcRect, texture, sh, drawAngle);
+                if (white != 0)
+                {
+                    Rendering::drawBatch();
+                    dstRect.a = 1;
+                    Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, drawAngle);
+                    dstRect.a = ogAlpha;
+                    Rendering::drawBatch();
+                }
                 break;
             case 2: // up
                 srcRect.h = -1;
                 Rendering::PushQuad(&dstRect, &srcRect, texture, sh, drawAngle);
+                if (white != 0)
+                {
+                    Rendering::drawBatch();
+                    dstRect.a = 1;
+                    Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, drawAngle);
+                    dstRect.a = ogAlpha;
+                    Rendering::drawBatch();
+                }
                 srcRect.h = 1;
                 break;
             case 3: // right
                 Rendering::PushQuad(&dstRect, &srcRect, texture, sh, -90 + drawAngle);
+                if (white != 0)
+                {
+                    Rendering::drawBatch();
+                    dstRect.a = 1;
+                    Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, -90 + drawAngle);
+                    dstRect.a = ogAlpha;
+                    Rendering::drawBatch();
+                }
                 break;
             }
         }
         else {
             Rendering::PushQuad(&dstRect, &srcRect, texture, sh, drawAngle);
+            if (white != 0)
+            {
+                Rendering::drawBatch();
+                dstRect.a = 1;
+                Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, drawAngle);
+                dstRect.a = ogAlpha;
+                Rendering::drawBatch();
+            }
         }
 
         if (selected)

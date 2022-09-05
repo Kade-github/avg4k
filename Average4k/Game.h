@@ -27,6 +27,8 @@ public:
 	static float multiplierx;
 	static float multipliery;
 
+	Shader* whiteShader;
+
 	static float wW, wH;
 	static bool errorWindowOpen;
 

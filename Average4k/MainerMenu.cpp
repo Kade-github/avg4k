@@ -1068,12 +1068,20 @@ void MainerMenu::addPack(std::string name, texData bg, bool showText, bool isSte
 
 void MainerMenu::dropFile(SDL_DropEvent ev)
 {
+	if (!SongGather::steamRegAsyncAlready)
+	{
+		Game::showErrorWindow("Please wait..", "Please wait for all charts to load.", false);
+		return;
+	}
 	if (!SongUtils::IsDirectory(SongUtils::s2ws(std::string(ev.file))))
 	{
 		Chart c = SongGather::extractAndGetChart(std::string(ev.file));
 		if (c.meta.songName.size() != 0)
 		{
-			Game::showErrorWindow("Chart imported", "local songs were removed, will fix later!", false, { 70, 116, 232 });
+			actuallyLoad = true;
+			resetStuff();
+			loadPacks();
+			Game::showErrorWindow("Chart imported", "Check in Workshop/Local", false, { 70, 116, 232 });
 		}
 		else
 		{
@@ -1158,6 +1166,7 @@ void MainerMenu::dropFile(SDL_DropEvent ev)
 			packMeta << "# Pack imported using the in game importer\nbanner: " + (banner.size() == 0 ? "No-Banner" : banner) + "\npackName: " + newDir + "\nshowName: " + (banner.size() == 0 ? "true" : "false");
 		}
 
+		actuallyLoad = true;
 		resetStuff();
 		loadPacks();
 		Game::showErrorWindow("Pack imported", "Check your pack list", false, { 70, 116, 232 });

@@ -513,6 +513,7 @@ void window_chartProperties() {
 	{
 		ImGui::Text("Bass Offset (debug):");
 		ImGui::InputFloat("##BassOffset", &FuckinEditor::selectedChart->BASS_OFFSET, 0.001, 0.01);
+		ImGui::EndTabItem();
 	}
 	if (ImGui::BeginTabItem("Metadata"))
 	{

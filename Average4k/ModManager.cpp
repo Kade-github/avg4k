@@ -120,7 +120,7 @@ void ModManager::runMods()
 {
 	for (AppliedMod& m : appliedMods)
 	{
-		if (beat >= m.tweenStart && ((beat < m.tweenStart + m.tweenLen)))
+		if (beat >= m.tweenStart && ((beat < m.tweenStart + m.tweenLen + 0.2)))
 		{
 				if (!m.started)
 				{
@@ -145,11 +145,20 @@ void ModManager::runMods()
 						m.modStartAmount = ArrowEffects::confusion[m.col];
 					if (m.mod == "aconfusion")
 						m.modStartAmount = ArrowEffects::aconfusion;
+					if (m.mod == "stealthWhite")
+						m.modStartAmount = ArrowEffects::stealthWhite[m.col];
+					if (m.mod == "stealthOpacity")
+						m.modStartAmount = ArrowEffects::stealthOpacity[m.col];
+					if (m.mod == "stealthReceptorOpacity")
+						m.modStartAmount = ArrowEffects::stealthReceptorOpacity[m.col];
 				}
 
 				float dur = (beat - m.tweenStart);
 
 				float perc = dur / m.tweenLen;
+
+				if (perc > 1)
+					perc = 1;
 
 				float tween = m.tweenCurve(perc);
 
@@ -173,6 +182,12 @@ void ModManager::runMods()
 					ArrowEffects::amovey = std::lerp(m.modStartAmount, m.amount, tween);
 				if (m.mod == "aconfusion")
 					ArrowEffects::aconfusion = std::lerp(m.modStartAmount, m.amount, tween);
+				if (m.mod == "stealthWhite")
+					ArrowEffects::stealthWhite[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+				if (m.mod == "stealthReceptorOpacity")
+					ArrowEffects::stealthReceptorOpacity[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+				if (m.mod == "stealthOpacity")
+					ArrowEffects::stealthOpacity[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 
 			}
 
@@ -201,6 +216,12 @@ void ModManager::runMods(AppliedMod m, float beat)
 		m.modStartAmount = ArrowEffects::confusion[m.col];
 	if (m.mod == "aconfusion")
 		m.modStartAmount = ArrowEffects::aconfusion;
+	if (m.mod == "stealthWhite")
+		m.modStartAmount = ArrowEffects::stealthWhite[m.col];
+	if (m.mod == "stealthOpacity")
+		m.modStartAmount = ArrowEffects::stealthOpacity[m.col];
+	if (m.mod == "stealthReceptorOpacity")
+		m.modStartAmount = ArrowEffects::stealthReceptorOpacity[m.col];
 
 		float dur = (beat - m.tweenStart);
 
@@ -228,6 +249,12 @@ void ModManager::runMods(AppliedMod m, float beat)
 			ArrowEffects::amovey = std::lerp(m.modStartAmount, m.amount, tween);
 		if (m.mod == "aconfusion")
 			ArrowEffects::aconfusion = std::lerp(m.modStartAmount, m.amount, tween);
+		if (m.mod == "stealthWhite")
+			ArrowEffects::stealthWhite[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+		if (m.mod == "stealthReceptorOpacity")
+			ArrowEffects::stealthReceptorOpacity[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+		if (m.mod == "stealthOpacity")
+			ArrowEffects::stealthOpacity[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 }
 
 

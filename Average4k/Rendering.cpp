@@ -36,6 +36,8 @@ void Rendering::Render_GLInit(Shader* shad) {
 
 
 	glGenBuffers(1, &batch_vbo);
+
+	shad->SetUniform("white", 0);
 	
 }
 

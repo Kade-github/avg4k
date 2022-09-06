@@ -25,7 +25,8 @@ class lobby {
 		player Host;
 		int MaxPlayers;
 		int Players;
+		bool IsStarted;
 		std::vector<player> PlayerList;
 
-		MSGPACK_DEFINE_MAP(LobbyID, LobbyName, Host, MaxPlayers, Players, PlayerList);
+		MSGPACK_DEFINE_MAP(LobbyID, LobbyName, Host, MaxPlayers, Players, IsStarted, PlayerList);
 };

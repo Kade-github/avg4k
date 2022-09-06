@@ -289,6 +289,7 @@ void selectedSongCallback(int sId)
 
 void MainerMenu::create()
 {
+	isTransDone = true;
 	fetchingScores = false;
 	VM_START
 	isInMainerMenu = true;
@@ -1693,6 +1694,7 @@ void transContainerThing()
 {
 	selectedContainerIndex = transToContainer;
 	MainerMenu* instance = (MainerMenu*)Game::currentMenu;
+	instance->isTransDone = true;
 	switch (despawn)
 	{
 	case 0:
@@ -1976,8 +1978,10 @@ void MainerMenu::selectContainer(int container)
 {
 	MUTATE_START
 
-	if (!isHost && isInLobby && container == 0)
+	if (!isHost && isInLobby && container == 0 && isTransDone)
 		return;
+
+	isTransDone = false;
 
 	if (container == 1 && !isInLobby)
 	{

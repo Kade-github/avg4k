@@ -140,6 +140,7 @@ public:
 	static int packSongIndex;
 	static int selectedDiffIndex;
 	static bool isInLobby;
+	bool isTransDone = false;
 	static bool isHost;
 	float lastBeat = 0;
 	bool started;

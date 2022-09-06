@@ -79,7 +79,10 @@ ChatObject::ChatObject(float _x, float _y)
 
 ChatObject::~ChatObject()
 {
-	clearMessages();
+	Tweening::TweenManager::removeTween("chat_openBody");
+	Tweening::TweenManager::removeTween("chat_closeBody");
+	Tweening::TweenManager::removeTween("chat_notif");
+	messages.clear();
 }
 
 void ChatObject::open()

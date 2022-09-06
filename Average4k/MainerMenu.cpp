@@ -1250,17 +1250,17 @@ void MainerMenu::onSteam(std::string s)
 		downloadingPack = false;
 		Multiplayer::sendMessage<CPacketClientChartAcquired>(acquired);
 		std::string path = currentSelectedSong.meta.folder + "/" + currentSelectedSong.meta.audio;
-		if (SoundManager::getChannelByName("prevSong") != NULL)
+
+		Channel* ch = SoundManager::getChannelByName("prevSong");
+
+		if (ch != NULL)
 		{
-			Channel* ch = SoundManager::getChannelByName("prevSong");
 			ch->stop();
 			ch->free();
 			SoundManager::removeChannel("prevSong");
 		}
-		Channel* ch = SoundManager::createChannel(path.c_str(), "prevSong");
-		ch->play();
-		ch->loop = true;
-		ch->setVolume(Game::save->GetDouble("Music Volume"));
+
+		SoundManager::createChannelThread(MainerMenu::selectedSong.c.meta.folder + "/" + MainerMenu::selectedSong.c.meta.audio);
 
 		AvgContainer* cont = (AvgContainer*)multiContainer->findItemByName("songContainer");
 

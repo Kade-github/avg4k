@@ -1437,8 +1437,7 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 			std::cout << "host me" << std::endl;
 			isHost = true;
 			currentLobby.Host.SteamID64 = std::to_string(SteamUser()->GetSteamID().ConvertToUint64());
-			if (lobbyStuffCreated)
-				lobbyUpdatePlayers();
+			lobbyUpdatePlayers();
 			break;
 		case 1337:
 			Color c;

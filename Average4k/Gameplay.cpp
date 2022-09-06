@@ -171,7 +171,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 
 	SPacketUpdateLeaderboard pack;
 	SPacketFinalizeChart ch;
-
+	SPacketStatus f;
 	msgpack::unpacked result;
 
 	msgpack::object obj;
@@ -186,6 +186,19 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 	std::vector<leaderboardSpot> toRemove;
 	switch (pt)
 	{
+	case eSPacketStatus:
+		msgpack::unpack(result, data, length);
+
+		obj = msgpack::object(result.get());
+
+		obj.convert(f);
+		switch (f.code)
+		{
+		case 803:
+			std::cout << "host me" << std::endl;
+			MainerMenu::isHost = true;
+			break;
+		}
 	case eSPacketUpdateLeaderboard:
 
 		msgpack::unpack(result, data, length);

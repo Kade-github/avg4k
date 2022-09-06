@@ -122,79 +122,28 @@ void ModManager::runMods()
 	{
 		if (beat >= m.tweenStart && ((beat < m.tweenStart + m.tweenLen + 0.2)))
 		{
-				if (!m.started)
-				{
-					m.started = true;
-					if (m.mod == "drunk")
-						m.modStartAmount = ArrowEffects::drunk;
-					if (m.mod == "tipsy")
-						m.modStartAmount = ArrowEffects::tipsy;
-					if (m.mod == "dizzy")
-						m.modStartAmount = ArrowEffects::dizzy;
-					if (m.mod == "amovex")
-						m.modStartAmount = ArrowEffects::amovex;
-					if (m.mod == "amovey")
-						m.modStartAmount = ArrowEffects::amovey;
-					if (m.mod == "reverse")
-						m.modStartAmount = ArrowEffects::reverse[m.col];
-					if (m.mod == "movex")
-						m.modStartAmount = ArrowEffects::movex[m.col];
-					if (m.mod == "movey")
-						m.modStartAmount = ArrowEffects::movey[m.col];
-					if (m.mod == "confusion")
-						m.modStartAmount = ArrowEffects::confusion[m.col];
-					if (m.mod == "aconfusion")
-						m.modStartAmount = ArrowEffects::aconfusion;
-					if (m.mod == "stealthWhite")
-						m.modStartAmount = ArrowEffects::stealthWhite[m.col];
-					if (m.mod == "stealthOpacity")
-						m.modStartAmount = ArrowEffects::stealthOpacity[m.col];
-					if (m.mod == "stealthReceptorOpacity")
-						m.modStartAmount = ArrowEffects::stealthReceptorOpacity[m.col];
-				}
-
-				float dur = (beat - m.tweenStart);
-
-				float perc = dur / m.tweenLen;
-
-				if (perc > 1)
-					perc = 1;
-
-				float tween = m.tweenCurve(perc);
-
-				if (m.mod == "drunk")
-					ArrowEffects::drunk = std::lerp(m.modStartAmount, m.amount, tween);
-				if (m.mod == "tipsy")
-					ArrowEffects::tipsy = std::lerp(m.modStartAmount, m.amount, tween);
-				if (m.mod == "dizzy")
-					ArrowEffects::dizzy = std::lerp(m.modStartAmount, m.amount, tween);
-				if (m.mod == "confusion")
-					ArrowEffects::confusion[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
-				if (m.mod == "reverse")
-					ArrowEffects::reverse[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
-				if (m.mod == "movex")
-					ArrowEffects::movex[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
-				if (m.mod == "movey")
-					ArrowEffects::movey[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
-				if (m.mod == "amovex")
-					ArrowEffects::amovex = std::lerp(m.modStartAmount, m.amount, tween);
-				if (m.mod == "amovey")
-					ArrowEffects::amovey = std::lerp(m.modStartAmount, m.amount, tween);
-				if (m.mod == "aconfusion")
-					ArrowEffects::aconfusion = std::lerp(m.modStartAmount, m.amount, tween);
-				if (m.mod == "stealthWhite")
-					ArrowEffects::stealthWhite[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
-				if (m.mod == "stealthReceptorOpacity")
-					ArrowEffects::stealthReceptorOpacity[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
-				if (m.mod == "stealthOpacity")
-					ArrowEffects::stealthOpacity[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
-
+			if (!m.started)
+			{
+				m.started = true;
+				setModStart(m);
 			}
+
+			float dur = (beat - m.tweenStart);
+
+			float perc = dur / m.tweenLen;
+
+			if (perc > 1)
+				perc = 1;
+
+			float tween = m.tweenCurve(perc);
+
+			setModProperties(m, tween);
+		}
 
 	}
 }
 
-void ModManager::runMods(AppliedMod m, float beat)
+void ModManager::setModStart(AppliedMod& m)
 {
 	if (m.mod == "drunk")
 		m.modStartAmount = ArrowEffects::drunk;
@@ -222,39 +171,52 @@ void ModManager::runMods(AppliedMod m, float beat)
 		m.modStartAmount = ArrowEffects::stealthOpacity[m.col];
 	if (m.mod == "stealthReceptorOpacity")
 		m.modStartAmount = ArrowEffects::stealthReceptorOpacity[m.col];
+}
 
-		float dur = (beat - m.tweenStart);
+void ModManager::setModProperties(AppliedMod& m, float tween)
+{
+	if (m.mod == "drunk")
+		ArrowEffects::drunk = std::lerp(m.modStartAmount, m.amount, tween);
+	if (m.mod == "tipsy")
+		ArrowEffects::tipsy = std::lerp(m.modStartAmount, m.amount, tween);
+	if (m.mod == "dizzy")
+		ArrowEffects::dizzy = std::lerp(m.modStartAmount, m.amount, tween);
+	if (m.mod == "confusion")
+		ArrowEffects::confusion[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+	if (m.mod == "reverse")
+		ArrowEffects::reverse[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+	if (m.mod == "movex")
+		ArrowEffects::movex[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+	if (m.mod == "movey")
+		ArrowEffects::movey[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+	if (m.mod == "amovex")
+		ArrowEffects::amovex = std::lerp(m.modStartAmount, m.amount, tween);
+	if (m.mod == "amovey")
+		ArrowEffects::amovey = std::lerp(m.modStartAmount, m.amount, tween);
+	if (m.mod == "aconfusion")
+		ArrowEffects::aconfusion = std::lerp(m.modStartAmount, m.amount, tween);
+	if (m.mod == "stealthWhite")
+		ArrowEffects::stealthWhite[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+	if (m.mod == "stealthReceptorOpacity")
+		ArrowEffects::stealthReceptorOpacity[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+	if (m.mod == "stealthOpacity")
+		ArrowEffects::stealthOpacity[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+}
 
-		float perc = dur / m.tweenLen;
+void ModManager::runMods(AppliedMod m, float beat)
+{
+	setModStart(m);
 
-		float tween = m.tweenCurve(perc);
+	float dur = (beat - m.tweenStart);
 
-		if (m.mod == "drunk")
-			ArrowEffects::drunk = std::lerp(m.modStartAmount, m.amount, tween);
-		if (m.mod == "tipsy")
-			ArrowEffects::tipsy = std::lerp(m.modStartAmount, m.amount, tween);
-		if (m.mod == "dizzy")
-			ArrowEffects::dizzy = std::lerp(m.modStartAmount, m.amount, tween);
-		if (m.mod == "confusion")
-			ArrowEffects::confusion[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
-		if (m.mod == "reverse")
-			ArrowEffects::reverse[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
-		if (m.mod == "movex")
-			ArrowEffects::movex[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
-		if (m.mod == "movey")
-			ArrowEffects::movey[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
-		if (m.mod == "amovex")
-			ArrowEffects::amovex = std::lerp(m.modStartAmount, m.amount, tween);
-		if (m.mod == "amovey")
-			ArrowEffects::amovey = std::lerp(m.modStartAmount, m.amount, tween);
-		if (m.mod == "aconfusion")
-			ArrowEffects::aconfusion = std::lerp(m.modStartAmount, m.amount, tween);
-		if (m.mod == "stealthWhite")
-			ArrowEffects::stealthWhite[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
-		if (m.mod == "stealthReceptorOpacity")
-			ArrowEffects::stealthReceptorOpacity[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
-		if (m.mod == "stealthOpacity")
-			ArrowEffects::stealthOpacity[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+	float perc = dur / m.tweenLen;
+
+	if (perc > 1)
+		perc = 1;
+
+	float tween = m.tweenCurve(perc);
+
+	setModProperties(m, tween);
 }
 
 

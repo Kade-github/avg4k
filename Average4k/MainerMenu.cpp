@@ -603,6 +603,11 @@ void MainerMenu::create()
 
 	add(chat);
 
+	for (Object* obj : settingsContainer->above)
+	{
+		obj->isActive = false;
+	}
+
 	VM_END
 }
 

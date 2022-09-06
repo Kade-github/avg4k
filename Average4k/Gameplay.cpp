@@ -357,10 +357,10 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 			//add(avatars[spot->score.SteamID64]);
 		}
 
-		for (leaderboardSpot spot : toRemove)
+		for (leaderboardSpot& spot : toRemove)
 		{
 			leaderboard.erase(std::remove_if(leaderboard.begin(), leaderboard.end(),
-				[spot](leaderboardSpot& i) { return i.score.SteamID64 == spot.score.SteamID64; }));
+				[&spot](leaderboardSpot& i) { return i.score.SteamID64 == spot.score.SteamID64; }));
 		}
 		toRemove.clear();
 		break;

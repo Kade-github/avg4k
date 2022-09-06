@@ -349,12 +349,6 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 			rankin++;
 		}
 
-
-		for (it = avatars.begin(); it != avatars.end(); it++)
-		{
-			it->second->x = -1000;
-		}
-
 		if (spots.size() > 0)
 		{
 			for (leaderboardSpot& spott : leaderboard)
@@ -367,7 +361,6 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 				}
 				if (!found)
 					toRemove.push_back(spott);
-				avatars[spott.score.SteamID64]->y = spott.t->y;
 				avatars[spott.score.SteamID64]->x = 3;
 				//add(avatars[spot->score.SteamID64]);
 			}

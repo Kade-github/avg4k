@@ -1461,7 +1461,7 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 		if (f.code >= 9000)
 		{
 			std::cout << "got status for " << f.code << std::endl;
-			if (isHost)
+			if (isHost && currentLobby.PlayerList.size() > 0)
 			{
 				SPacketOnChat onChat;
 				onChat.tagColor = { 0, 228, 255 };

@@ -355,30 +355,33 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 			it->second->x = -1000;
 		}
 
-		for (leaderboardSpot& spott : leaderboard)
+		if (spots.size() > 0)
 		{
-			bool found = false;
-			for (std::string s : spots)
+			for (leaderboardSpot& spott : leaderboard)
 			{
-				if (s == spott.score.SteamID64)
-					found = true;
+				bool found = false;
+				for (std::string s : spots)
+				{
+					if (s == spott.score.SteamID64)
+						found = true;
+				}
+				if (!found)
+					toRemove.push_back(spott);
+				avatars[spott.score.SteamID64]->y = spott.t->y;
+				avatars[spott.score.SteamID64]->x = 3;
+				//add(avatars[spot->score.SteamID64]);
 			}
-			if (!found)
-				toRemove.push_back(spott);
-			avatars[spott.score.SteamID64]->y = spott.t->y;
-			avatars[spott.score.SteamID64]->x = 3;
-			//add(avatars[spot->score.SteamID64]);
-		}
 
-		for (leaderboardSpot& spot : toRemove)
-		{
-			removeObj(spot.accuracy);
-			removeObj(spot.owner);
-			removeObj(spot.t);
-			removeObj(avatars[spot.score.SteamID64]);
-			avatars.erase(spot.score.SteamID64);
-			leaderboard.erase(std::remove_if(leaderboard.begin(), leaderboard.end(),
-				[&spot](leaderboardSpot& i) { return i.score.SteamID64 == spot.score.SteamID64; }));
+			for (leaderboardSpot& spot : toRemove)
+			{
+				removeObj(spot.accuracy);
+				removeObj(spot.owner);
+				removeObj(spot.t);
+				removeObj(avatars[spot.score.SteamID64]);
+				avatars.erase(spot.score.SteamID64);
+				leaderboard.erase(std::remove_if(leaderboard.begin(), leaderboard.end(),
+					[&spot](leaderboardSpot& i) { return i.score.SteamID64 == spot.score.SteamID64; }));
+			}
 		}
 		toRemove.clear();
 		break;

@@ -785,7 +785,7 @@ void MainerMenu::update(Events::updateEvent ev)
 	}
 
 
-		if (selectedSong.path.size() != 0)
+		if (currentSelectedSong.meta.audio.size() != 0)
 		{
 			if (SoundManager::getChannelByName("prevSong") == NULL)
 			{
@@ -793,7 +793,7 @@ void MainerMenu::update(Events::updateEvent ev)
 				{
 					if (SoundManager::threadLoaded != NULL)
 					{
-						std::string path = MainerMenu::selectedSong.c.meta.folder + "/" + MainerMenu::selectedSong.c.meta.audio;
+						std::string path = MainerMenu::currentSelectedSong.meta.folder + "/" + MainerMenu::currentSelectedSong.meta.audio;
 						if (SoundManager::threadPath == path)
 						{
 							SoundManager::throwShitOntoVector(SoundManager::threadLoaded, "prevSong");
@@ -805,6 +805,7 @@ void MainerMenu::update(Events::updateEvent ev)
 						}
 						else
 						{
+							SoundManager::createChannelThread(path);
 							SoundManager::threadLoaded = NULL;
 						}
 					}
@@ -1232,6 +1233,8 @@ void MainerMenu::onSteam(std::string s)
 			currentSelectedSong = Game::steam->downloadedChart;
 		}
 
+		selectedSong = Song();
+
 		if (currentSelectedSong.meta.difficulties.size() == 0)
 		{
 			Game::showErrorWindow("Steam Error!", "Steam failed to download the song.", true);
@@ -1260,7 +1263,7 @@ void MainerMenu::onSteam(std::string s)
 			SoundManager::removeChannel("prevSong");
 		}
 
-		SoundManager::createChannelThread(MainerMenu::selectedSong.c.meta.folder + "/" + MainerMenu::selectedSong.c.meta.audio);
+		SoundManager::createChannelThread(MainerMenu::currentSelectedSong.meta.folder + "/" + MainerMenu::currentSelectedSong.meta.audio);
 
 		AvgContainer* cont = (AvgContainer*)multiContainer->findItemByName("songContainer");
 
@@ -1322,7 +1325,7 @@ void MainerMenu::onSteam(std::string s)
 
 		std::string type = "StepMania";
 
-		switch (selectedSong.c.meta.chartType)
+		switch (currentSelectedSong.meta.chartType)
 		{
 		case 1:
 			type = "Quaver";

@@ -193,8 +193,11 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 
 		obj.convert(pack);
 
+		std::vector<std::string> spots;
+
 		for (PlayerScore score : pack.orderedScores)
 		{
+			spots.push_back(score.SteamID64);
 			int realRank = rankin + 1;
 			std::string placementt = std::to_string(realRank) + std::string(ordinal_suffix(realRank)) + " Place";
 
@@ -254,7 +257,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 							Tweening::TweenManager::removeTween(test);
 							spot->t->y = ((leaderboardText->y + leaderboardText->h) + 24) + ((82 * (lastRank)) + 4);
 						}
-						Tweening::TweenManager::createNewTween(test, spot->t, Tweening::tt_Y, 750, spot->t->y, y, NULL, Easing::EaseInCubic);
+						Tweening::TweenManager::createNewTween(test, spot->t, Tweening::tt_Y, 250, spot->t->y, y, NULL, Easing::EaseOutCubic);
 					}
 					spot->rankin = rankin;
 
@@ -339,12 +342,29 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 			it->second->x = -1000;
 		}
 
+		std::vector<leaderboardSpot> toRemove;
+
 		for (leaderboardSpot& spott : leaderboard)
 		{
+			bool found = false;
+			for (std::string s : spots)
+			{
+				if (s == spott.score.SteamID64)
+					found = true;
+			}
+			if (!found)
+				toRemove.push_back(spott);
 			avatars[spott.score.SteamID64]->y = spott.t->y;
 			avatars[spott.score.SteamID64]->x = 3;
 			//add(avatars[spot->score.SteamID64]);
 		}
+
+		for (leaderboardSpot spot : toRemove)
+		{
+			leaderboard.erase(std::remove_if(leaderboard.begin(), leaderboard.end(),
+				[spot](leaderboardSpot& i) { return i.score.SteamID64 == spot.score.SteamID64; }));
+		}
+		toRemove.clear();
 		break;
 	case eSPacketFinalizeChart:
 

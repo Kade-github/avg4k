@@ -1663,6 +1663,7 @@ void MainerMenu::clearPacks()
 		packContainer->removeObject(obj);
 		delete obj;
 	}
+	packContainer->items.clear();
 	MUTATE_END
 }
 

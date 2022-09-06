@@ -9,6 +9,8 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		KadeDebug|x64 = KadeDebug|x64
+		KadeDebug|x86 = KadeDebug|x86
 		KadeRelease|x64 = KadeRelease|x64
 		KadeRelease|x86 = KadeRelease|x86
 		LemonDebug|x64 = LemonDebug|x64
@@ -23,6 +25,10 @@ Global
 		{70D63F3E-D17C-4DCD-925D-1493526457C8}.Debug|x64.Build.0 = Debug|x64
 		{70D63F3E-D17C-4DCD-925D-1493526457C8}.Debug|x86.ActiveCfg = Debug|Win32
 		{70D63F3E-D17C-4DCD-925D-1493526457C8}.Debug|x86.Build.0 = Debug|Win32
+		{70D63F3E-D17C-4DCD-925D-1493526457C8}.KadeDebug|x64.ActiveCfg = KadeDebug|x64
+		{70D63F3E-D17C-4DCD-925D-1493526457C8}.KadeDebug|x64.Build.0 = KadeDebug|x64
+		{70D63F3E-D17C-4DCD-925D-1493526457C8}.KadeDebug|x86.ActiveCfg = KadeDebug|Win32
+		{70D63F3E-D17C-4DCD-925D-1493526457C8}.KadeDebug|x86.Build.0 = KadeDebug|Win32
 		{70D63F3E-D17C-4DCD-925D-1493526457C8}.KadeRelease|x64.ActiveCfg = KadeRelease|x64
 		{70D63F3E-D17C-4DCD-925D-1493526457C8}.KadeRelease|x64.Build.0 = KadeRelease|x64
 		{70D63F3E-D17C-4DCD-925D-1493526457C8}.KadeRelease|x86.ActiveCfg = KadeRelease|Win32

@@ -801,11 +801,11 @@ void MainerMenu::update(Events::updateEvent ev)
 							real->play();
 							real->loop = true;
 							real->setPos(selectedSong.c.meta.start);
-							SoundManager::threadLoaded = NULL;
 						}
 						else
 						{
 							SoundManager::createChannelThread(path);
+							delete SoundManager::threadLoaded;
 							SoundManager::threadLoaded = NULL;
 						}
 					}
@@ -932,7 +932,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 
 			break;
 		case SDLK_F5:
-			if (!SongGather::steamRegAsyncAlready)
+			if (!SongGather::steamRegAsyncAlready && selectedContainerIndex == 0)
 			{
 				Game::instance->steam->populateSubscribedItems();
 				actuallyLoad = true;
@@ -947,6 +947,10 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 				}
 				packs.clear();
 				loadPacks();
+			}
+			if (selectedContainerIndex == 1 && !isInLobby)
+			{
+				refreshLobbies();
 			}
 			break;
 		case SDLK_3:

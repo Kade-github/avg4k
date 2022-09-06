@@ -55,7 +55,8 @@ public:
 	{
 		if (id == -1)
 			return;
-		BASS_ChannelFree(id);
+		free();
+		std::cout << "[BASS] deleted " << path << std::endl;
 	}
 
 	void free()
@@ -237,62 +238,56 @@ public:
 		channels[name] = ch;
 	}
 
-	static void createChannelThread(std::string path, bool autoFree = false)
+	static void createChannelThread(std::string path, bool autoFree = true)
 	{
-		std::thread t([path,autoFree]() {
-			if (!isThreadDone)
-			{
-				while (!isThreadDone)
-				{
-					// sit around sucking a thumb or smth you can only thread load one song at a time
-					// muhahahaha
-					Sleep(10);
-				}
-			}
+		if (isThreadDone)
+		{
 			isThreadDone = false;
-			//channels[name] = new Channel(BASS_StreamCreateFile(false, path.c_str(), 0, 0, BASS_STREAM_PRESCAN | BASS_SAMPLE_FLOAT | BASS_STREAM_AUTOFREE | BASS_ASYNCFILE));
-			auto flags = BASS_STREAM_PRESCAN | BASS_SAMPLE_FLOAT;
+			std::thread t([path, autoFree]() {
+				//channels[name] = new Channel(BASS_StreamCreateFile(false, path.c_str(), 0, 0, BASS_STREAM_PRESCAN | BASS_SAMPLE_FLOAT | BASS_STREAM_AUTOFREE | BASS_ASYNCFILE));
+				auto flags = BASS_STREAM_PRESCAN | BASS_SAMPLE_FLOAT;
 
-			if (autoFree)
-				flags |= BASS_STREAM_AUTOFREE;
+				if (autoFree)
+					flags |= BASS_STREAM_AUTOFREE;
 
 
-			std::ostringstream buf;
-			std::ifstream inputFile(path, std::ios::binary | std::ios::in);
-			buf << inputFile.rdbuf();
-			inputFile.close();
+				std::ostringstream buf;
+				std::ifstream inputFile(path, std::ios::binary | std::ios::in);
+				buf << inputFile.rdbuf();
+				inputFile.close();
 
-			std::cout << "doing thing with " << path.c_str() << " size: " << buf.str().size() << std::endl;
+				char* buff = (char*)std::malloc(buf.str().size());
 
-			char* buff = (char*)std::malloc(buf.str().size());
+				memcpy(buff, buf.str().data(), buf.str().size());
 
-			memcpy(buff, buf.str().data(), buf.str().size());
+				auto val = BASS_StreamCreateFile(true, buff, 0, buf.str().size(), flags);
 
-			auto val = BASS_StreamCreateFile(true, buff, 0, buf.str().size(), flags);
+				std::cout << "[BASS] Loading " << path.c_str() << " size: " << buf.str().size() << " by threading." << std::endl;
 
-			if (val == 0) {
-				auto error = BASS_ErrorGetCode();
+				if (val == 0) {
+					auto error = BASS_ErrorGetCode();
 
-				std::cout << "Bass error! " << error << std::endl;
-				std::free(buff);
-				return new Channel(-1);
-			}
+					std::cout << "Bass error! " << error << std::endl;
+					std::free(buff);
+					return new Channel(-1);
+				}
 
-			Channel* ch = new Channel(val);
+				Channel* ch = new Channel(val);
 
-			ch->musicFile = buff;
+				ch->musicFile = buff;
 
-			ch->path = path;
-			ch->setVolume(0.2);
+				ch->path = path;
+				ch->setVolume(0.2);
 
-			ch->setLength();
+				ch->setLength();
 
-			threadLoaded = ch;
-			isThreadDone = true;
-			threadPath = path;
+				threadLoaded = ch;
+				isThreadDone = true;
+				threadPath = path;
 
-			});
-		t.detach();
+				});
+			t.detach();
+		}
 	}
 
 	static Channel* createChannel(std::string path, std::string name, bool autoFree = false)
@@ -311,7 +306,7 @@ public:
 		buf << inputFile.rdbuf();
 		inputFile.close();
 
-		std::cout << "doing thing with " << path.c_str() << " size: " << buf.str().size() << std::endl;
+		std::cout << "[BASS] Loading " << path.c_str() << " size: " << buf.str().size() << std::endl;
 
 		char* buff = (char*)std::malloc(buf.str().size());
 		

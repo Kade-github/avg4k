@@ -1437,7 +1437,8 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 			std::cout << "host me" << std::endl;
 			isHost = true;
 			currentLobby.Host.SteamID64 = std::to_string(SteamUser()->GetSteamID().ConvertToUint64());
-			lobbyUpdatePlayers();
+			if (lobbyStuffCreated)
+				lobbyUpdatePlayers();
 			break;
 		case 1337:
 			Color c;
@@ -1513,8 +1514,9 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 		if (fuckyou.demotion)
 		{
 			Game::asyncShowErrorWindow("Host switch", "You are no longer the host.", false);
-			lobbyUpdatePlayers();
 			isHost = false;
+			currentLobby = fuckyou.lobby;
+			lobbyUpdatePlayers();
 		}
 		else if (fuckyou.lobbyKick)
 		{

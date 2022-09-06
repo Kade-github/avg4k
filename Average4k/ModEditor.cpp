@@ -311,66 +311,143 @@ void ModEditor::update(Events::updateEvent event)
 	manager.beat = beat;
 	manager.time = currentTime;
 
-	manager.runMods();
-	callModEvent("update", beat);
+	if (playing)
+	{
+		manager.runMods();
+		callModEvent("update", beat);
+	}
 }
 
 void ModEditor::imguiUpdate(float elapsed)
 {
-	ImGui::BeginMainMenuBar();
+	if (!showDebug)
 	{
-		if (ImGui::MenuItem("Go Back"))
+		ImGui::BeginMainMenuBar();
 		{
-			ArrowEffects::resetEffects();
-			FuckinEditor::dontDeleteChart = true;
-			Game::instance->transitionToMenu(new FuckinEditor());
-			return;
-		}
-		if (ImGui::MenuItem("Refresh Modfile"))
-		{
-			lastPos = currentTime;
-			playing = false;
-			ArrowEffects::resetEffects();
-			song->stop();
-			ModManager::doMods = true;
-			ModManager::initLuaFunctions();
-			manager = ModManager(FuckinEditor::selectedChart->pathToLua);
-			manager.instance = &manager;
-			callModEvent("create", 0);
-			Game::instance->db_addLine("[Mod Editor] Refreshed modfile!");
-
-			doModsUntilThisPos();
-		}
-
-		ImGui::TextColored({0.5,0.5,1,1},("Controls: Space to pause/play, scrollwheel to move up or down | Current Beat: " + std::to_string(beat)).c_str());
-	}
-
-	if (showDebug)
-	{
-		ImGui::Begin("Arrow Effects");
-		{
-			ImGui::PushItemWidth(400);
-			float drunk = ArrowEffects::drunk;
-			ImGui::Text("Drunk %.2f", drunk);
-			ImGui::SliderFloat("##Drunk", &drunk, -20, 20);
-			float tipsy = ArrowEffects::tipsy;
-			ImGui::Text("Tipsy %.2f", tipsy);
-			ImGui::SliderFloat("##Tipsy", &tipsy, -20, 20);
-			float amovex = ArrowEffects::amovex;
-			ImGui::Text("Amovex %.2f", amovex);
-			ImGui::SliderFloat("##Amovex", &amovex, -1280, 2560);
-			float amovey = ArrowEffects::amovey;
-			ImGui::Text("Amovey %.2f", amovey);
-			ImGui::SliderFloat("##Amovey", &amovey, -720, 1440);
-
-			for (int i = 0; i < 4; i++)
+			if (ImGui::MenuItem("Go Back"))
 			{
-				float col = ArrowEffects::reverse[i];
-				ImGui::Text("Col %d reverse %.2f", i, col);
-				ImGui::SliderFloat(("##Reverse0" + std::to_string(i)).c_str(), & col, -1, 1);
+				ArrowEffects::resetEffects();
+				FuckinEditor::dontDeleteChart = true;
+				Game::instance->transitionToMenu(new FuckinEditor());
+				return;
+			}
+			if (ImGui::MenuItem("Refresh Modfile"))
+			{
+				lastPos = currentTime;
+				playing = false;
+				ArrowEffects::resetEffects();
+				song->stop();
+				ModManager::doMods = true;
+				ModManager::initLuaFunctions();
+				manager = ModManager(FuckinEditor::selectedChart->pathToLua);
+				manager.instance = &manager;
+				callModEvent("create", 0);
+				Game::instance->db_addLine("[Mod Editor] Refreshed modfile!");
+
+				doModsUntilThisPos();
 			}
 
+			ImGui::TextColored({ 0.5,0.5,1,1 }, ("Controls: Space to pause/play, scrollwheel to move up or down | Current Beat: " + std::to_string(beat)).c_str());
+			ImGui::EndMainMenuBar();
 		}
+	}
+	if (showDebug)
+	{
+
+			ImGui::PushItemWidth(400);
+			ImGui::BeginMainMenuBar();
+			{
+				if (ImGui::BeginMenu("Drunk"))
+				{
+					ImGui::Text("Drunk");
+					ImGui::SliderFloat("##Drunk", &ArrowEffects::drunk, -20, 20);
+					if (ImGui::Button("Reset"))
+					{
+						ArrowEffects::drunk = 0;
+					}
+					ImGui::EndMenu();
+				}
+				if (ImGui::BeginMenu("Tipsy"))
+				{
+					ImGui::Text("Tipsy");
+					ImGui::SliderFloat("##Tipsy", &ArrowEffects::tipsy, -20, 20);
+					if (ImGui::Button("Reset"))
+					{
+						ArrowEffects::tipsy = 0;
+					}
+					ImGui::EndMenu();
+				}
+				if (ImGui::BeginMenu("AMove"))
+				{
+					ImGui::Text("Amovex");
+					ImGui::InputFloat("##Amovex", &ArrowEffects::amovex, 1, 10);
+					ImGui::Text("Amovey");
+					ImGui::InputFloat("##Amovey", &ArrowEffects::amovey, 1, 10);
+					ImGui::EndMenu();
+				}
+
+				if (ImGui::BeginMenu("Move"))
+				{
+					for (int i = 0; i < 4; i++)
+					{
+						ImGui::Text("Col %d's movex", i);
+						ImGui::InputFloat (("##Movex" + std::to_string(i)).c_str(), &ArrowEffects::movex[i], 1, 10);
+						ImGui::Text("Col %d's movey", i);
+						ImGui::InputFloat(("##Movey" + std::to_string(i)).c_str(), &ArrowEffects::movey[i], 1, 10);
+					}
+					ImGui::EndMenu();
+				}
+
+				if (ImGui::BeginMenu("Reverse"))
+				{
+					for (int i = 0; i < 4; i++)
+					{
+						ImGui::Text("Col %d reverse", i);
+						ImGui::SliderFloat(("##Reverse" + std::to_string(i)).c_str(), &ArrowEffects::reverse[i], -1, 1);
+						if (ImGui::Button(("Reset ##" + std::to_string(i)).c_str()))
+						{
+							ArrowEffects::reverse[i] = 0;
+						}
+					}
+					ImGui::EndMenu();
+				}
+
+				if (ImGui::BeginMenu("Stealth White"))
+				{
+					for (int i = 0; i < 4; i++)
+					{
+						ImGui::Text("Col %d stealthWhite", i);
+						ImGui::SliderFloat(("##stealthWhite" + std::to_string(i)).c_str(), &ArrowEffects::stealthWhite[i], 0, 1);
+						if (ImGui::Button(("Reset ##" + std::to_string(i)).c_str()))
+						{
+							ArrowEffects::stealthWhite[i] = 0;
+						}
+					}
+					ImGui::EndMenu();
+				}
+
+				if (ImGui::BeginMenu("Stealth Opacity"))
+				{
+					for (int i = 0; i < 4; i++)
+					{
+						ImGui::Text("Col %d stealthOpacity", i);
+						ImGui::SliderFloat(("##stealthOpacity" + std::to_string(i)).c_str(), &ArrowEffects::stealthOpacity[i], 0, 1);
+						if (ImGui::Button(("Reset ##" + std::to_string(i)).c_str()))
+						{
+							ArrowEffects::stealthOpacity[i] = 1;
+						}
+						ImGui::Text("Receptor %d stealthReceptorOpacity", i);
+						ImGui::SliderFloat(("##stealthReceptorOpacity" + std::to_string(i)).c_str(), &ArrowEffects::stealthReceptorOpacity[i], 0, 1);
+						if (ImGui::Button(("Reset ##" + std::to_string(i)).c_str()))
+						{
+							ArrowEffects::stealthReceptorOpacity[i] = 1;
+						}
+					}
+					ImGui::EndMenu();
+				}
+
+			}
+			ImGui::EndMainMenuBar();
 	}
 
 }

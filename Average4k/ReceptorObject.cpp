@@ -68,6 +68,7 @@ void ReceptorObject::draw() {
 		ArrowEffects::Arrow a = ArrowEffects::finishEffects(x, y, type, positionInSong);
 		dstRect.x = a.x + mpx;
 		dstRect.y = a.y + mpy;
+		defAlpha = a.opac;
 		drawAngle = a.rot;
 	}
 
@@ -88,7 +89,7 @@ void ReceptorObject::draw() {
 		case 0:
 			dstRect.a = defAlpha;
 			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh, 90 + drawAngle);
-			dstRect.a = alpha;
+			dstRect.a = alpha * defAlpha;
 			if (lightUpTimer > 0)
 				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh, 90 + drawAngle);
 			
@@ -97,7 +98,7 @@ void ReceptorObject::draw() {
 		case 1:
 			dstRect.a = defAlpha;
 			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh, drawAngle);
-			dstRect.a = alpha;
+			dstRect.a = alpha * defAlpha;
 			if (lightUpTimer > 0)
 				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh, drawAngle);
 			break;
@@ -105,7 +106,7 @@ void ReceptorObject::draw() {
 			srcRect.h = -1;
 			dstRect.a = defAlpha;
 			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh, drawAngle);
-			dstRect.a = alpha;
+			dstRect.a = alpha * defAlpha;
 			if (lightUpTimer > 0)
 				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh, drawAngle);
 			srcRect.h = 1;
@@ -113,7 +114,7 @@ void ReceptorObject::draw() {
 		case 3:
 			dstRect.a = defAlpha;
 			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh, -90 + drawAngle);
-			dstRect.a = alpha;
+			dstRect.a = alpha * defAlpha;
 			if (lightUpTimer > 0)
 				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh, -90 + drawAngle);
 			break;
@@ -123,7 +124,7 @@ void ReceptorObject::draw() {
 	{
 		dstRect.a = defAlpha;
 		Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh, drawAngle);
-		dstRect.a = alpha;
+		dstRect.a = alpha * defAlpha;
 		if (lightUpTimer > 0)
 			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh, drawAngle);
 	}

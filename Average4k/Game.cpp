@@ -31,6 +31,37 @@ AvgRect* __transRect;
 
 vector<Object*>* Game::objects;
 
+static const char* white_vert = R"(
+in vec2 v_position;
+in vec2 v_uv;
+in vec4 v_colour;
+out vec2 f_uv;
+out vec4 f_colour;
+uniform mat4 u_projection;
+
+void main()
+{
+	f_uv = v_uv;
+	f_colour = v_colour;
+	gl_Position = u_projection * vec4(v_position.xy, 0.0, 1.0);
+})";
+
+static const char* white_frag = R"(
+uniform sampler2D u_texture;
+uniform float yomamam;
+in vec2 f_uv;
+in vec4 f_colour;
+
+out vec4 o_colour;
+void main()
+{
+	o_colour = texture(u_texture, f_uv) * f_colour;
+	if (o_colour.a < 0.35)
+		discard;
+	o_colour = vec4(1,1,1,(1 * yomamam));
+		
+})";
+
 bool Game::errorWindowOpen = false;
 
 
@@ -320,6 +351,11 @@ void Game::createGame()
 	alphaWatermark->borderColor = { 255,255,255 };
 	multi = new Multiplayer();
 	multiThreadHandle = CreateThread(NULL, NULL, Multiplayer::connect, NULL, NULL, NULL);
+
+	whiteShader = new Shader();
+	whiteShader->GL_CompileShader(white_vert, white_frag);
+	whiteShader->setProject(GL::projection);
+
 	VM_END
 }
 

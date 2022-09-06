@@ -7,6 +7,9 @@ float ArrowEffects::amovex = 0;
 float ArrowEffects::amovey = 0;
 float ArrowEffects::aconfusion = 0;
 
+std::map<int, float> ArrowEffects::stealthWhite = { {0,0}, {1,0}, {2,0}, {3,0} };
+std::map<int, float> ArrowEffects::stealthReceptorOpacity = { {0,1}, {1,1}, {2,1}, {3,1} };
+std::map<int, float> ArrowEffects::stealthOpacity = { {0,1}, {1,1}, {2,1}, {3,1} };
 std::map<int, float> ArrowEffects::reverse = { {0,0}, {1,0}, {2,0}, {3,0} };
 std::map<int, float> ArrowEffects::confusion = { {0,0}, {1,0}, {2,0}, {3,0} };
 std::map<int, float> ArrowEffects::movex = { {0,0}, {1,0}, {2,0}, {3,0} };
@@ -28,6 +31,14 @@ ArrowEffects::Arrow ArrowEffects::ArrowEff(float ydiff, int col, float pos)
 
 	if (aconfusion != 0)
 		a.rot += aconfusion;
+
+	if (stealthOpacity[col] != 1)
+		a.opac = stealthOpacity[col];
+
+	if (stealthWhite[col] != 0)
+	{
+		a.whiteV = stealthWhite[col];
+	}
 
 	if (drunk != 0)
 		a.x += drunk * (std::cos(pos * 0.001 + col * (0.2) + ydiff * (10) / 720) * (ARROW_SIZE / 2));
@@ -57,6 +68,9 @@ ArrowEffects::Arrow ArrowEffects::ArrowEff(float ydiff, int col, float pos)
 
 void ArrowEffects::resetEffects()
 {
+	ArrowEffects::stealthWhite = { {0,0}, {1,0}, {2,0}, {3,0} };
+	ArrowEffects::stealthReceptorOpacity = { {0,1}, {1,1}, {2,1}, {3,1} };
+	ArrowEffects::stealthOpacity = { {0,1}, {1,1}, {2,1}, {3,1} };
 	ArrowEffects::reverse = { {0,0}, {1,0}, {2,0}, {3,0} };
 	ArrowEffects::confusion = { {0,0}, {1,0}, {2,0}, {3,0} };
 	ArrowEffects::movex = { {0,0}, {1,0}, {2,0}, {3,0} };
@@ -74,6 +88,9 @@ ArrowEffects::Arrow ArrowEffects::finishEffects(float defX, float defY, int col,
 	Arrow a;
 
 	Arrow aEff = ArrowEff(0, col, curTime);
+
+	if (stealthReceptorOpacity[col] != 1)
+		a.opac = stealthReceptorOpacity[col];
 
 	a.x = defX + aEff.x;
 	a.y = defY + aEff.y;
@@ -101,6 +118,8 @@ ArrowEffects::Arrow ArrowEffects::finishEffects(float defX, float defY, float cm
 	yPos = defY + calcCMod(aEff.cmod, diff);
 
 	Arrow a;
+	a.whiteV = aEff.whiteV;
+	a.opac = aEff.opac;
 	a.x = defX + aEff.x;
 	a.y = yPos + aEff.y;
 	a.rot = aEff.rot;

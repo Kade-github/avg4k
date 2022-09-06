@@ -17,6 +17,7 @@ void main()
 })";
 static const char* generic_shader_frag = R"(
 uniform sampler2D u_texture;
+uniform float white;
 in vec2 f_uv;
 in vec4 f_colour;
 
@@ -26,6 +27,9 @@ void main()
 	o_colour = texture(u_texture, f_uv) * f_colour;
 	if (o_colour.a == 0.0)
 		discard;
+	if (white >= 0.9)
+		o_colour = vec4(1,1,1,o_colour.a);
+		
 })";
 
 class Shader {

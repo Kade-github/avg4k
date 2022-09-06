@@ -175,7 +175,7 @@ namespace Tweening
 			double end = t.end;
 			double value = t.easeFunc(t.percnt);
 
-			if (t.obj->w < 0 || t.obj->isDead)
+			if ((t.obj->w < 0 || t.obj->isDead) && t.name != "")
 			{
 				tweenRemove.push_back(t);
 				return;

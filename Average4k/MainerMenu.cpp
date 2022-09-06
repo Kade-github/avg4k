@@ -12,6 +12,7 @@
 #include "SPacketServerListReply.h"
 #include "CPacketJoinServer.h"
 #include "SPacketFuckYou.h"
+#include "CPacketHostServer.h"
 AvgContainer* MainerMenu::soloContainer;
 AvgContainer* MainerMenu::multiContainer;
 AvgContainer* MainerMenu::settingsContainer;
@@ -85,6 +86,17 @@ void shittyShitShit(std::string s)
 	MainerMenu* menu = (MainerMenu*)Game::instance->currentMenu;
 	menu->createNewLobbies(s);
 }
+
+void shittyCreateLobby(std::string s)
+{
+	CPacketHostServer host;
+	host.LobbyName = s;
+	host.Order = 0;
+	host.PacketType = eCPacketHostServer;
+
+	Multiplayer::sendMessage<CPacketHostServer>(host);
+}
+
 
 void resetStuff()
 {
@@ -460,6 +472,12 @@ void MainerMenu::create()
 
 	Text* filtersText = (Text*)filters->addObject(new Text(12 + sortText->w + 84, searchBox->y + searchBox->h + 12, "filters", 14, "arial"), "filtersText");
 	filtersText->setCharacterSpacing(2.33);
+
+	Text* createLobbyText = (Text*)filters->addObject(new Text(12, filtersText->y + 42, "create lobby (enter = done)", 14, "arial"), "createLobbyText");
+	searchText->setCharacterSpacing(2.33);
+
+	AvgTextBar* createLobby = (AvgTextBar*)filters->addObject(new AvgTextBar(12, createLobbyText->y + 32, "", Noteskin::getMenuElement(Game::noteskin, "MainMenu/Multi/lobbysearch.png")), "createLobby");
+	createLobby->callback = shittyCreateLobby;
 
 	chat = new ChatObject(0, 0);
 	chat->create();
@@ -1497,7 +1515,6 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 			isHost = reply.isHost;
 
 			currentLobby = reply.Lobby;
-			peopleWhoNeedChart = currentLobby.Players;
 			createLobby();
 		}
 		break;
@@ -1513,7 +1530,8 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 			Game::asyncShowErrorWindow("Host switch", "You are no longer the host.", false);
 			isHost = false;
 			currentLobby = fuckyou.lobby;
-			lobbyUpdatePlayers();
+			if (lobbyStuffCreated)
+				lobbyUpdatePlayers();
 		}
 		else if (fuckyou.lobbyKick)
 		{
@@ -1523,7 +1541,7 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 		}
 		break;
 	case eSPacketUpdateLobbyData:
-		if (isInLobby)
+		if (isInLobby && currentLobby.LobbyID != 0)
 		{
 			peopleWhoHaveChart = 0;
 			msgpack::unpack(result, data, length);
@@ -1536,7 +1554,8 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 
 			peopleWhoNeedChart = currentLobby.Players;
 
-			lobbyUpdatePlayers();
+			if (lobbyStuffCreated)
+				lobbyUpdatePlayers();
 		}
 		break;
 	case eSPacketUpdateLobbyChart:
@@ -1762,10 +1781,17 @@ void MainerMenu::createNewLobbies(std::string searchTerm)
 	lobbyContainer->above.clear();
 	lobbyContainer->items.clear();
 	LobbyContainers.clear();
+
+	std::string search = searchTerm;
+
+	std::transform(search.begin(), search.end(), search.begin(), Helpers::asciitolower);
+
 	for (lobby& l : Lobbies)
 	{
-		if (searchTerm.size() != 0)
-			if (l.LobbyName.find(searchTerm) == std::string::npos)
+		std::string name = l.LobbyName;
+		std::transform(name.begin(), name.end(), name.begin(), Helpers::asciitolower);
+		if (search.size() != 0)
+			if (name.find(search) == std::string::npos)
 				continue;
 		AvgContainer* cont = new AvgContainer(0, 92 * ind, NULL);
 		cont->callback = lobbySelectedCallback;
@@ -1886,6 +1912,7 @@ void MainerMenu::createLobby()
 	cont->addObject(localWorkshop, "localWorkshop");
 	cont->alpha = 1;
 	lobbyStuffCreated = true;
+	lobbyUpdatePlayers();
 }
 
 void MainerMenu::lobbyUpdatePlayers()

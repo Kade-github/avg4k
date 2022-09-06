@@ -537,7 +537,8 @@ void Game::update(Events::updateEvent update)
 					Game::showErrorWindow("Failed to submit score!", res.error, false);
 				}
 				break;
-			case eSPacketJoinServerReply: {
+			case eSPacketJoinServerReply:
+			case eSPacketHostServerReply:
 				lobby l;
 				l.LobbyID = 0;
 				l.LobbyName = "Waiting on refresh";
@@ -563,7 +564,6 @@ void Game::update(Events::updateEvent update)
 
 				std::cout << "you joined!" << std::endl;
 				break;
-			}
 			}
 
 			if (currentMenu != NULL)

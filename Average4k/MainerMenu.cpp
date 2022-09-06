@@ -614,10 +614,7 @@ void MainerMenu::create()
 			ch->free();
 			SoundManager::removeChannel("prevSong");
 		}
-		ch = SoundManager::createChannel(Noteskin::getMusicElement(Game::noteskin, "MenuTheme.wav"), "prevSong");
-		ch->play();
-
-		ch->bpm = 155;
+		SoundManager::createChannelThread(Noteskin::getMusicElement(Game::noteskin, "MenuTheme.wav"), "prevSong");
 	}
 
 	add(chat);
@@ -803,22 +800,24 @@ void MainerMenu::update(Events::updateEvent ev)
 	}
 
 
-		if (currentSelectedSong.meta.audio.size() != 0)
-		{
+
 			if (SoundManager::getChannelByName("prevSong") == NULL)
 			{
 				if (SoundManager::isThreadDone)
 				{
 					if (SoundManager::threadLoaded != NULL)
 					{
-						std::string path = MainerMenu::currentSelectedSong.meta.folder + "/" + MainerMenu::currentSelectedSong.meta.audio;
-						if (SoundManager::threadPath == path)
+						std::string path = "";
+						if (currentSelectedSong.meta.audio.size() != 0)
+							path = MainerMenu::currentSelectedSong.meta.folder + "/" + MainerMenu::currentSelectedSong.meta.audio;
+						if (SoundManager::threadPath == path || path == "")
 						{
 							SoundManager::throwShitOntoVector(SoundManager::threadLoaded, "prevSong");
 							Channel* real = SoundManager::getChannelByName("prevSong");
 							real->play();
 							real->loop = true;
-							real->setPos(selectedSong.c.meta.start);
+							if (path != "")
+								real->setPos(currentSelectedSong.meta.start);
 						}
 						else
 						{
@@ -829,7 +828,6 @@ void MainerMenu::update(Events::updateEvent ev)
 					}
 				}
 			}
-		}
 
 		if (justJoined)
 		{

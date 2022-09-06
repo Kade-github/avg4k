@@ -831,7 +831,8 @@ void MainerMenu::update(Events::updateEvent ev)
 				((Text*)cont->findItemByName("title"))->setText("Downloading song...");
 			else
 				((Text*)cont->findItemByName("title"))->setText("Downloading pack...");
-			((Text*)cont->findItemByName("diff"))->setText(std::to_string(prog * 100).substr(0,2) + "%");
+			((Text*)cont->findItemByName("diff"))->setText(std::to_string(prog * 100).substr(0,3) + "%");
+			((Text*)cont->findItemByName("diff"))->centerX();
 		}
 	}
 	MUTATE_END
@@ -1043,6 +1044,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 
 				Multiplayer::sendMessage<CPacketLeave>(leave);
 				cleanLobby();
+
 			}
 		}
 		break;
@@ -1798,6 +1800,14 @@ void MainerMenu::createNewLobbies(std::string searchTerm)
 		ind++;
 
 		LobbyContainers.push_back(cont);
+	}
+
+	if (selectedContainerIndex == 1)
+	{
+		for (AvgContainer* con : LobbyContainers)
+		{
+			con->shouldUseCallback = true;
+		}
 	}
 	
 }

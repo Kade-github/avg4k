@@ -179,6 +179,11 @@ void AvgContainer::draw() {
 
 		Rendering::PushQuad(&scrollBar, &srcRect, NULL, GL::genShader, angle);
 	}
+	else
+	{
+		scrollBar.w = 0;
+		maxScroll = 0;
+	}
 
 	if (clipRect.w > 0 || clipRect.h > 0)
 		Rendering::SetClipRect(&clipRect);
@@ -207,6 +212,8 @@ void AvgContainer::draw() {
 					a->realPosX = a->x;
 					a->realPosY = a->y;
 					a->draw();
+					if (clipRect.w > 0 || clipRect.h > 0)
+						Rendering::SetClipRect(&clipRect);
 					a->x -= x + scrollBar.w;
 					a->y -= y - scrollAddition;
 				}

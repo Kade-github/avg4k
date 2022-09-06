@@ -60,6 +60,30 @@ public:
 		below.clear();
 		above.clear();
 	}
+
+	Rect convertClipRect(Rect prevClip)
+	{
+		Rect newC = prevClip;
+		if (newC.x < x)
+		{
+			newC.w = newC.w - (x - newC.x);
+			newC.x = x;
+		}
+		if (newC.y - 1 < y - 1)
+		{
+			newC.h = newC.h - ((y - 1) - (newC.y - 1));
+			newC.y = y - 1;
+		}
+
+		// basically takes the difference if its above the max and slices it off
+
+		int fullHeight = newC.y + newC.h;
+		int fullMaxHeight = (y - 1) + (h + 1);
+
+		if (fullHeight > fullMaxHeight)
+			newC.h = newC.h - (fullHeight - fullMaxHeight);
+		return newC;
+	}
 	
 	bool doesObjectExist(std::string name)
 	{

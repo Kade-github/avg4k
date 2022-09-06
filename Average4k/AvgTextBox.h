@@ -319,30 +319,23 @@ public:
 
 		Rendering::PushQuad(&dstRect, &srcRect, searchBar, GL::genShader);
 
-		if (textPart->w > w / 2)
-		{
-			for (int i = 1; i < 7; i++)
-			{
-				Rect r = dstRect;
-				r.x += (r.w - 25);
 
-				dstRect.x += dstRect.w / 2;
-
-				if (textPart->w  > dstRect.w / 2 + ((dstRect.w / 2) * i))
-				{
-					currentMultiplier = i;
-					Rendering::SetClipRect(&r);
-					Rendering::PushQuad(&dstRect, &srcRect, searchBar, GL::genShader);
-					Rendering::SetClipRect(&((AvgContainer*)parent)->clipRect);
-				}
-			}
-		}
-		else
-			currentMultiplier = 1;
-
-		textPart->x = x + spacedOut;
+		textPart->x = (x + spacedOut);
+		float drawX = textPart->x - (textPart->x + textPart->w > x + w ? (textPart->x + textPart->w) - (x + w) : 0);
 		textPart->y = y + 1 + ((h / 2) - (textPart->h / 2));
 
+		Rect r;
+		r.x = x + spacedOut;
+		r.y = y;
+		r.w = w - spacedOut;
+		r.h = h;
+
+		r = ((AvgContainer*)parent)->convertClipRect(r);
+
+		Rendering::SetClipRect(&r);
+		textPart->x = drawX;
 		textPart->draw();
+		Rendering::SetClipRect(NULL);
+
 	}
 };

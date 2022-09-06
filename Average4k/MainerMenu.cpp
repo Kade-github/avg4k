@@ -1514,6 +1514,7 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 		if (fuckyou.demotion)
 		{
 			Game::asyncShowErrorWindow("Host switch", "You are no longer the host.", false);
+			lobbyUpdatePlayers();
 			isHost = false;
 		}
 		else if (fuckyou.lobbyKick)

@@ -37,6 +37,8 @@ public:
 	static Color tagColor;
 	static Color nameColor;
 
+	static int DetectSpeedhack(std::vector<char>* function);
+
 	static void InitCrypto();
 
 	static void SendPacket(std::string data, PacketType packet);

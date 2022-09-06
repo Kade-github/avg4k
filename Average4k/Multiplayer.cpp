@@ -84,6 +84,94 @@ void Multiplayer::InitCrypto() {
     
 }
 
+bool IsPointerBad(void* p)
+{
+    VM_START
+    MEMORY_BASIC_INFORMATION mbi = { 0 };
+    if (::VirtualQuery(p, &mbi, sizeof(mbi)))
+    {
+        DWORD mask = (PAGE_READONLY | PAGE_READWRITE | PAGE_WRITECOPY | PAGE_EXECUTE_READ | PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY);
+        bool b = !(mbi.Protect & mask);
+        // check the page is not a guard page
+        if (mbi.Protect & (PAGE_GUARD | PAGE_NOACCESS)) b = true;
+
+        return b;
+    }
+    VM_END
+    return true;
+}
+
+typedef BOOL WINAPI RtlQueryPerformanceCounter_t(LARGE_INTEGER* ticks);
+int Multiplayer::DetectSpeedhack(std::vector<char>* function) {
+
+    VM_START
+        RtlQueryPerformanceCounter_t* perfCounter = (RtlQueryPerformanceCounter_t*)GetProcAddress(GetModuleHandleA("ntdll"), "RtlQueryPerformanceCounter");
+        
+    if (!perfCounter)
+        return -1;
+
+    int iptr = 0;
+
+    bool flag = false;
+
+    do {
+
+        uint8_t* byte = (uint8_t*)perfCounter + iptr;
+
+        unsigned char b = *byte;
+
+        if (b == (unsigned char)0xE9 && iptr == 0) {
+
+            int32_t* followThrough = (int32_t*)((uint8_t*)perfCounter + 1);
+
+            int32_t offsetOfHook = *followThrough;
+
+            if (IsPointerBad((void*)(offsetOfHook + (uint64_t)followThrough))) {
+                return 0;
+            }
+
+            __try {
+
+                unsigned char* addr = (unsigned char*)offsetOfHook + (uint64_t)followThrough;
+                addr += 4;
+
+                while (addr[0] == (unsigned char)0xFF && addr[1] == (unsigned char)0x25) {
+                    //Trampoline 14byte jump
+                   
+                    //FF25 is the opcode for the 14 byte jump followed by 4 bytes of 0 followed by the address to jmp to
+                    addr = (unsigned char*)(*(uint64_t*)(addr + 6));
+               }
+
+               
+                for (int i = 0; i < 5000; i++) {
+
+                    
+                    unsigned char byte = addr[i];
+
+                    
+                    function->push_back(byte);
+                    
+                    if ((unsigned char)byte == (unsigned char)0xC9)
+                        break;
+                }
+
+            }
+            __except (1) {
+
+            }
+
+            if (function->size() > 0)
+                return 1;
+
+        }
+
+        iptr++;
+    } while (iptr < 50);
+
+    VM_END
+        return 0;
+}
+
 
 DWORD WINAPI SendPacketT(LPVOID param) {
 
@@ -248,6 +336,7 @@ bool Multiplayer::integ = false;
 bool prot = false;
 bool debugger = false;
 bool vm = false;
+bool speed = false;
 
 DWORD WINAPI NewThread(LPVOID param) {
     for (;;) {
@@ -284,6 +373,50 @@ DWORD WINAPI NewThread(LPVOID param) {
                 Multiplayer::sendMessage<CPacketStatus>(send);
             }
             Multiplayer::integ = false;
+        }
+
+        if (speed) {
+            speed = false;
+            std::vector<char>* funcDump = new std::vector<char>();
+
+            int ret = Multiplayer::DetectSpeedhack(funcDump);
+
+            if (ret > 0 && funcDump->size() > 0) {
+
+                CPacketStatus status;
+                status.PacketType = eCPacketStatus;
+                status.code = 3307;
+                status.Status = macaron::Base64::Encode(std::string(funcDump->data(), funcDump->size()));
+                Multiplayer::sendMessage<CPacketStatus>(status);
+            }
+            else if (ret > 0) {
+
+                CPacketStatus status;
+                status.PacketType = eCPacketStatus;
+                status.code = 3307;
+                status.Status = "Error with pointer result";
+                Multiplayer::sendMessage<CPacketStatus>(status);
+               
+            }
+            else if (ret == 0)
+            {
+                CPacketStatus status;
+                status.PacketType = eCPacketStatus;
+                status.code = 3307;
+                status.Status = "ok";
+                Multiplayer::sendMessage<CPacketStatus>(status);
+               
+            }
+            else if (ret < 0)
+            {
+                CPacketStatus status;
+                status.PacketType = eCPacketStatus;
+                status.code = 3307;
+                status.Status = "Error occured: " + std::to_string(ret);
+                Multiplayer::sendMessage<CPacketStatus>(status);   
+            }
+            delete funcDump;
+           
         }
         if (prot) {
             CHECK_PROTECTION(cock, 76);
@@ -476,6 +609,9 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
                 break;
             case 3306:
                 Game::asyncShowErrorWindow("Message", status.Status, false);
+                break;
+            case 3307:
+                speed = true;
                 break;
             }
             p.data = data;

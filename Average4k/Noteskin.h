@@ -14,6 +14,13 @@ public:
 	Texture* receptor;
 	Texture* holdend;
 	Texture* light;
+
+	Texture* left;
+	Texture* down;
+	Texture* up;
+	Texture* right;
+
+	bool disableQuant = false;
 	bool rotate;
 	bool bounce;
 	bool shrink;

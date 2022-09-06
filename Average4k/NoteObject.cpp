@@ -120,27 +120,48 @@ void NoteObject::draw() {
     srcRect.h = 1;
 
 
-    Texture* texture;
+    Texture* texture = NULL;
 
     // get quant
 
-    float beatRow = (beat - stopOffset) * 48;
+    if (!Game::noteskin->disableQuant)
+    {
 
-    if (fmod(beatRow, (192 / 4)) == 0)
-        texture = Game::noteskin->fourth;
-    else if (fmod(beatRow, (192 / 8)) == 0)
-        texture = Game::noteskin->eighth;
-    else if (fmod(beatRow, (192 / 12)) == 0)
-        texture = Game::noteskin->twelfth;
-    else if (fmod(beatRow, (192 / 16)) == 0)
-        texture = Game::noteskin->sixteenth;
-    else if (fmod(beatRow, (192 / 24)) == 0)
-        texture = Game::noteskin->twelfth;
-    else if (fmod(beatRow, (192 / 32)) == 0)
-        texture = Game::noteskin->thirty2nd;
+        float beatRow = (beat - stopOffset) * 48;
+
+        if (fmod(beatRow, (192 / 4)) == 0)
+            texture = Game::noteskin->fourth;
+        else if (fmod(beatRow, (192 / 8)) == 0)
+            texture = Game::noteskin->eighth;
+        else if (fmod(beatRow, (192 / 12)) == 0)
+            texture = Game::noteskin->twelfth;
+        else if (fmod(beatRow, (192 / 16)) == 0)
+            texture = Game::noteskin->sixteenth;
+        else if (fmod(beatRow, (192 / 24)) == 0)
+            texture = Game::noteskin->twelfth;
+        else if (fmod(beatRow, (192 / 32)) == 0)
+            texture = Game::noteskin->thirty2nd;
+        else
+            texture = Game::noteskin->none;
+    }
     else
-        texture = Game::noteskin->none;
-
+    {
+        switch (lane)
+        {
+        case 0:
+            texture = Game::noteskin->left;
+            break;
+        case 1:
+            texture = Game::noteskin->down;
+            break;
+        case 2:
+            texture = Game::noteskin->up;
+            break;
+        case 3:
+            texture = Game::noteskin->right;
+            break;
+        }
+    }
     //Rendering::SetClipRect(&clipThingy);
 
     Shader* sh = customShader;

@@ -33,16 +33,11 @@ noteskin_asset* loadSkin(noteskin_asset* as, std::string typ) {
 	VM_START
 	as = new noteskin_asset();
 	Noteskin::type = typ;
-	as->fourth = getAsset("assets/noteskin/" + Noteskin::type + "/4th.png");
-	as->eighth = getAsset("assets/noteskin/" + Noteskin::type + "/8th.png");
-	as->twelfth = getAsset("assets/noteskin/" + Noteskin::type + "/12th.png");
-	as->sixteenth = getAsset("assets/noteskin/" + Noteskin::type + "/16th.png");
-	as->thirty2nd = getAsset("assets/noteskin/" + Noteskin::type + "/32nd.png");
-	as->none = getAsset("assets/noteskin/" + Noteskin::type + "/idfk.png");
-	as->receptor = getAsset("assets/noteskin/" + Noteskin::type + "/Receptor.png");
-	as->hold = getAsset("assets/noteskin/" + Noteskin::type + "/hold.png");
-	as->holdend = getAsset("assets/noteskin/" + Noteskin::type + "/holdend.png");
-	as->light = getAsset("assets/noteskin/" + Noteskin::type + "/lit.png");
+
+	std::string left;
+	std::string right;
+	std::string up;
+	std::string down;
 
 	std::ifstream config("assets/noteskin/" + Noteskin::type + "/config.skin");
 	std::string line;
@@ -50,7 +45,7 @@ noteskin_asset* loadSkin(noteskin_asset* as, std::string typ) {
 	{
 		while (getline(config, line))
 		{
-			if (line.find("#") != std::string::npos)
+			if (line.find("#") != std::string::npos || line.size() == 0)
 				continue;
 			std::vector<std::string> split = Chart::split(line, ' ');
 			std::string first = split[0].substr(0,split[0].size() - 1);
@@ -63,12 +58,47 @@ noteskin_asset* loadSkin(noteskin_asset* as, std::string typ) {
 				as->bounce = convertStringBool(second);
 			if (first == "shrink")
 				as->shrink = convertStringBool(second);
+			if (first == "disablequant")
+				as->disableQuant = convertStringBool(second);
+			if (first == "up")
+				up = second;
+			if (first == "left")
+				left = second;
+			if (first == "down")
+				down = second;
+			if (first == "right")
+				right = second;
 			if (first == "path")
 				as->skinpath = second;
 		}
 		config.close();
 	}
 	as->name = Noteskin::type;
+
+	if (!as->disableQuant)
+	{
+		as->fourth = getAsset("assets/noteskin/" + Noteskin::type + "/4th.png");
+		as->eighth = getAsset("assets/noteskin/" + Noteskin::type + "/8th.png");
+		as->twelfth = getAsset("assets/noteskin/" + Noteskin::type + "/12th.png");
+		as->sixteenth = getAsset("assets/noteskin/" + Noteskin::type + "/16th.png");
+		as->thirty2nd = getAsset("assets/noteskin/" + Noteskin::type + "/32nd.png");
+		as->none = getAsset("assets/noteskin/" + Noteskin::type + "/idfk.png");
+		as->receptor = getAsset("assets/noteskin/" + Noteskin::type + "/Receptor.png");
+		as->hold = getAsset("assets/noteskin/" + Noteskin::type + "/hold.png");
+		as->holdend = getAsset("assets/noteskin/" + Noteskin::type + "/holdend.png");
+		as->light = getAsset("assets/noteskin/" + Noteskin::type + "/lit.png");
+	}
+	else
+	{
+		as->up = getAsset("assets/noteskin/" + Noteskin::type + "/" + up + ".png");
+		as->left = getAsset("assets/noteskin/" + Noteskin::type + "/" + left + ".png");
+		as->down = getAsset("assets/noteskin/" + Noteskin::type + "/" + down + ".png");
+		as->right = getAsset("assets/noteskin/" + Noteskin::type + "/" + right + ".png");
+		as->receptor = getAsset("assets/noteskin/" + Noteskin::type + "/Receptor.png");
+		as->hold = getAsset("assets/noteskin/" + Noteskin::type + "/hold.png");
+		as->holdend = getAsset("assets/noteskin/" + Noteskin::type + "/holdend.png");
+		as->light = getAsset("assets/noteskin/" + Noteskin::type + "/lit.png");
+	}
 
 	std::cout << "[NOTESKIN] skinpath=" << as->skinpath << std::endl;
 	VM_END

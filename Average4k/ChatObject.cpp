@@ -79,10 +79,7 @@ ChatObject::ChatObject(float _x, float _y)
 
 ChatObject::~ChatObject()
 {
-	Tweening::TweenManager::removeTween("chat_openBody");
-	Tweening::TweenManager::removeTween("chat_closeBody");
-	Tweening::TweenManager::removeTween("chat_notif");
-	messages.clear();
+	clearMessages();
 }
 
 void ChatObject::open()
@@ -108,6 +105,19 @@ void ChatObject::close()
 	opened = !opened;
 	Tweening::TweenManager::createNewTween("chat_closeBody", chatBody, Tweening::tt_Y, 500, Game::gameHeight - h, Game::gameHeight + h, NULL, Easing::EaseInSine, false);
 	MUTATE_END
+}
+
+void ChatObject::clearMessages()
+{
+	Tweening::TweenManager::removeTween("chat_openBody");
+	Tweening::TweenManager::removeTween("chat_closeBody");
+	Tweening::TweenManager::removeTween("chat_notif");
+	for (message& mess : messages)
+	{
+		delete mess.tagT;
+		delete mess.text;
+	}
+	messages.clear();
 }
 
 void ChatObject::addMessage(SPacketOnChat packetChat)

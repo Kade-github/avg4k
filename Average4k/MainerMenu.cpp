@@ -810,6 +810,8 @@ void MainerMenu::update(Events::updateEvent ev)
 		{
 			justJoined = false;
 
+			chat->clearMessages();
+
 			CPacketWtfAmIn fuck;
 			fuck.Order = 0;
 			fuck.PacketType = eCPacketWtfAmIn;

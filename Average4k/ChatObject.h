@@ -25,6 +25,8 @@ public:
 
 	void close();
 
+	void clearMessages();
+
 	void addMessage(SPacketOnChat packetChat);
 	void onPacket(PacketType pt, char* data, int32_t length) override;
 	void draw();

@@ -824,8 +824,6 @@ void MainerMenu::update(Events::updateEvent ev)
 			fuck.PacketType = eCPacketWtfAmIn;
 
 			Multiplayer::sendMessage<CPacketWtfAmIn>(fuck);
-			if (selectedContainerIndex != 1)
-				selectContainer(1);
 		}
 
 
@@ -1044,21 +1042,12 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 		}
 		else if (isInLobby)
 		{
-			if (selectedContainerIndex != 1)
-			{
-				selectContainer(1);
-				Game::showErrorWindow("Notice", "Press escape again to leave.", false);
-			}
-			else
-			{
-				CPacketLeave leave;
-				leave.Order = 0;
-				leave.PacketType = eCPacketLeave;
+			CPacketLeave leave;
+			leave.Order = 0;
+			leave.PacketType = eCPacketLeave;
 
-				Multiplayer::sendMessage<CPacketLeave>(leave);
-				cleanLobby();
-
-			}
+			Multiplayer::sendMessage<CPacketLeave>(leave);
+			cleanLobby();
 		}
 		break;
 	}

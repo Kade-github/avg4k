@@ -1139,6 +1139,7 @@ void Gameplay::update(Events::updateEvent event)
 		if (keys[i] || holding[i])
 		{
 			receptors[i]->light();
+			receptors[i]->loop = false;
 			if (Game::noteskin->shrink)
 				receptors[i]->scale = 0.85;
 		}
@@ -1153,6 +1154,9 @@ void Gameplay::update(Events::updateEvent event)
 					receptors[i]->scale = 1;
 			}
 		}
+
+		if (receptors[i]->lightUpTimer < 1)
+			receptors[i]->hit = false;
 	}
 
 	{
@@ -1182,6 +1186,9 @@ void Gameplay::update(Events::updateEvent event)
 						//score += Judge::scoreNote(diff);
 						updateAccuracy(1);
 						note->active = false;
+
+						receptors[note->lane]->loop = false;
+						receptors[note->lane]->hit = true;
 
 						combo++;
 						if (Game::noteskin->bounce)
@@ -1217,6 +1224,8 @@ void Gameplay::update(Events::updateEvent event)
 							{
 								receptors[note->lane]->lightUpTimer = 195;
 							}
+							receptors[note->lane]->loop = true;
+							receptors[note->lane]->hit = true;
 							note->holding = true;
 							note->holdstoppedbeat = beat;
 							note->holdstoppedtime = positionInSong;
@@ -1440,6 +1449,9 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 			if (closestObject->active && diff <= hw && diff > -hw)
 			{
+
+				receptors[closestObject->lane]->loop = false;
+				receptors[closestObject->lane]->hit = true;
 
 				closestObject->active = false;
 				closestObject->wasHit = true;

@@ -3,11 +3,22 @@
 #include "Object.h"
 #include "GL.h"
 #include "Game.h"
+#include "AvgFrame.h"
 
 class AvgSprite : public Object
 {
+private:
+	float animStartTime = 0;
+	float animTime = 0;
 public:
 	Texture* tex;
+
+	AvgSparrow* sparrow;
+	int frame;
+	int fps;
+
+	bool loop;
+	bool animationFinished;
 
 	int borderSize = 4;
 	//Color borderColor;
@@ -77,13 +88,30 @@ public:
 		h = tex->height;
 	}
 
+	void setSparrow(std::string xml)
+	{
+		sparrow = new AvgSparrow(xml, tex->width, tex->height);
+		AvgFrame firstFrame = sparrow->animations.begin()->second.frames[0];
+		w = firstFrame.frameRect.w;
+		h = firstFrame.frameRect.h;
+	}
+
+	void playAnim(std::string name, int _fps, bool _loop)
+	{
+		animTime = 0;
+		animationFinished = false;
+		sparrow->playAnim(name);
+		fps = _fps;
+		loop = _loop;
+	}
+
 	virtual void draw() {
 		if (!drawCall)
 			return;
 
 		Rect dstRect;
 		Rect srcRect;
-
+		float uX = x, uY = y;
 
 		float mpx = (w * (1 - scale)) / 2;
 		float mpy = (h * (1 - scale)) / 2;
@@ -100,6 +128,38 @@ public:
 		dstRect.g = colorG;
 		dstRect.b = colorB;
 		dstRect.a = alpha;
+
+		if (sparrow)
+		{
+			if (!animationFinished || loop)
+			{
+				animTime += Game::deltaTime;
+				frame = (animTime * fps / 1000);
+				int size = sparrow->animations[sparrow->currentAnim].frames.size();
+				if (frame > size - 1)
+				{
+					if (!loop)
+					{
+						animationFinished = true;
+						frame = size - 1;
+					}
+					else
+					{
+						animTime = 0;
+					}
+				}
+				if (frame > size - 1)
+					frame = 0;
+			}
+			AvgFrame fr = sparrow->getRectFromFrame(frame);
+			srcRect = fr.srcRect;
+			dstRect.x = uX + ((fr.frameRect.x * scale) + mpx);
+			dstRect.y = uY + ((fr.frameRect.y * scale) + mpy);
+
+			dstRect.w = (int)(fr.frameRect.w * scale);
+			dstRect.h = (int)(fr.frameRect.h * scale);
+			//Game::mainCamera->clipRect = dstRect;
+		}
 
 		srcRect.x = 0;
 		srcRect.y = 0;

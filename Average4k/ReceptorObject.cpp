@@ -28,6 +28,8 @@ ReceptorObject::ReceptorObject(int _x, int _y, int _type)
 void ReceptorObject::draw() {
 
 
+	bool sparrow = Game::noteskin->sparrowImg;
+
 	SDL_FRect rect;
 
 	float mpx = (w * (1 - scale)) / 2;
@@ -80,55 +82,153 @@ void ReceptorObject::draw() {
 	if (!sh)
 		sh = GL::genShader;
 
-	Texture* receptor = Game::noteskin->receptor;
 
-	if (Game::noteskin->rotate)
+	if (!sparrow)
 	{
-		switch (type)
-		{
-		case 0:
-			dstRect.a = defAlpha;
-			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh, 90 + drawAngle);
-			dstRect.a = alpha * defAlpha;
-			if (lightUpTimer > 0)
-				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh, 90 + drawAngle);
-			
 
-			break;
-		case 1:
+		Texture* receptor = Game::noteskin->receptor;
+
+		if (Game::noteskin->rotate)
+		{
+			switch (type)
+			{
+			case 0:
+				dstRect.a = defAlpha;
+				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh, 90 + drawAngle);
+				dstRect.a = alpha * defAlpha;
+				if (lightUpTimer > 0)
+					Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh, 90 + drawAngle);
+
+
+				break;
+			case 1:
+				dstRect.a = defAlpha;
+				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh, drawAngle);
+				dstRect.a = alpha * defAlpha;
+				if (lightUpTimer > 0)
+					Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh, drawAngle);
+				break;
+			case 2:
+				srcRect.h = -1;
+				dstRect.a = defAlpha;
+				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh, drawAngle);
+				dstRect.a = alpha * defAlpha;
+				if (lightUpTimer > 0)
+					Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh, drawAngle);
+				srcRect.h = 1;
+				break;
+			case 3:
+				dstRect.a = defAlpha;
+				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh, -90 + drawAngle);
+				dstRect.a = alpha * defAlpha;
+				if (lightUpTimer > 0)
+					Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh, -90 + drawAngle);
+				break;
+			}
+		}
+		else
+		{
 			dstRect.a = defAlpha;
 			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh, drawAngle);
 			dstRect.a = alpha * defAlpha;
 			if (lightUpTimer > 0)
 				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh, drawAngle);
-			break;
-		case 2:
-			srcRect.h = -1;
-			dstRect.a = defAlpha;
-			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh, drawAngle);
-			dstRect.a = alpha * defAlpha;
-			if (lightUpTimer > 0)
-				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh, drawAngle);
-			srcRect.h = 1;
-			break;
-		case 3:
-			dstRect.a = defAlpha;
-			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh, -90 + drawAngle);
-			dstRect.a = alpha * defAlpha;
-			if (lightUpTimer > 0)
-				Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh, -90 + drawAngle);
-			break;
 		}
 	}
 	else
 	{
-		dstRect.a = defAlpha;
-		Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->receptor, sh, drawAngle);
-		dstRect.a = alpha * defAlpha;
-		if (lightUpTimer > 0)
-			Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->light, sh, drawAngle);
-	}
+		AvgSparrow* sparrow = Game::noteskin->sparrow;
 
+		dstRect.a = defAlpha;
+
+		animTime += Game::deltaTime;
+		frame = (animTime * fps / 1000);
+
+		std::string anim = "";
+
+		switch (type)
+		{
+		case 0:
+			anim = Game::noteskin->receptorLeft;
+			break;
+		case 1:
+			anim = Game::noteskin->receptorDown;
+			break;
+		case 2:
+			anim = Game::noteskin->receptorUp;
+			break;
+		case 3:
+			anim = Game::noteskin->receptorRight;
+			break;
+		}
+
+		if (lightUpTimer > 0)
+		{
+			switch (type)
+			{
+			case 0:
+				if (!hit)
+					anim = Game::noteskin->receptorLitLeft;
+				else
+					anim = Game::noteskin->receptorHitLeft;
+				break;
+			case 1:
+				if (!hit)
+					anim = Game::noteskin->receptorLitDown;
+				else
+					anim = Game::noteskin->receptorHitDown;
+				break;
+			case 2:
+				if (!hit)
+					anim = Game::noteskin->receptorLitUp;
+				else
+					anim = Game::noteskin->receptorHitUp;
+				break;
+			case 3:
+				if (!hit)
+					anim = Game::noteskin->receptorLitRight;
+				else
+					anim = Game::noteskin->receptorHitRight;
+				break;
+			}
+		}
+
+		if (lastFrame != anim)
+		{
+			animTime = 0;
+			frame = 0;
+		}
+
+		lastFrame = anim;
+
+		int size = sparrow->animations[anim].frames.size();
+		if (frame > size - 1 && loop)
+		{
+			animTime = 0;
+			frame = 0;
+		}
+		else if (frame > size - 1)
+		{
+			frame = size - 1;
+		}
+
+
+		float mpx = (w * ((1 - Game::noteskin->hitReceptorScale))) / 2;
+		float mpy = (h * ((1 - Game::noteskin->hitReceptorScale))) / 2;
+
+		if (hit)
+		{
+			dstRect.w = w * Game::noteskin->hitReceptorScale;
+			dstRect.h = h * Game::noteskin->hitReceptorScale;
+			dstRect.x += mpx - Game::noteskin->offsetXReceptorHit;
+			dstRect.y += mpy - Game::noteskin->offsetYReceptorHit;
+		}
+
+		AvgFrame fr = sparrow->getRectFromFrame(anim, frame);
+		srcRect = fr.srcRect;
+
+		Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->sparrowImg, sh, drawAngle);
+	}
 	if (lightUpTimer > 0)
 	{
 		lightUpTimer = lightUpTimer - Game::deltaTime;

@@ -2,7 +2,21 @@
 #include "includes.h"
 #include "Game.h"
 class ReceptorObject : public Object {
+private:
+	float animStartTime = 0;
+	float animTime = 0;
 public:
+
+	int frame;
+	int fps = 24;
+
+	bool loop = true;
+	bool animationFinished;
+
+	bool hit = false;
+
+	std::string lastFrame = "";
+
 	int x;
 	int y;
 

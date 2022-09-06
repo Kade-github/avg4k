@@ -124,6 +124,9 @@
     <Filter Include="Lua\Mods">
       <UniqueIdentifier>{291fb757-92b5-4625-a99a-d343b5d1529e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Assets\Sparrow">
+      <UniqueIdentifier>{11bbd295-a119-4072-a559-a974e0cdce0f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Average4k.cpp">
@@ -335,6 +338,9 @@
     </ClCompile>
     <ClCompile Include="ArrowEffects.cpp">
       <Filter>Lua\Mods</Filter>
+    </ClCompile>
+    <ClCompile Include="pugixml.cpp">
+      <Filter>Source Files\Assets\Sparrow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -721,6 +727,15 @@
     </ClInclude>
     <ClInclude Include="ArrowEffects.h">
       <Filter>Lua\Mods</Filter>
+    </ClInclude>
+    <ClInclude Include="AvgFrame.h">
+      <Filter>Source Files\Assets\Sparrow</Filter>
+    </ClInclude>
+    <ClInclude Include="pugixml.hpp">
+      <Filter>Source Files\Assets\Sparrow</Filter>
+    </ClInclude>
+    <ClInclude Include="pugiconfig.hpp">
+      <Filter>Source Files\Assets\Sparrow</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

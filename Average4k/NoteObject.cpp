@@ -57,6 +57,8 @@ void NoteObject::draw() {
     if (!drawCall)
         return;
 
+    bool sparrow = Game::noteskin->sparrowImg;
+
     MUTATE_START
     float position = rTime;
 
@@ -124,42 +126,45 @@ void NoteObject::draw() {
 
     // get quant
 
-    if (!Game::noteskin->disableQuant)
+    if (!sparrow)
     {
-
-        float beatRow = (beat - stopOffset) * 48;
-
-        if (fmod(beatRow, (192 / 4)) == 0)
-            texture = Game::noteskin->fourth;
-        else if (fmod(beatRow, (192 / 8)) == 0)
-            texture = Game::noteskin->eighth;
-        else if (fmod(beatRow, (192 / 12)) == 0)
-            texture = Game::noteskin->twelfth;
-        else if (fmod(beatRow, (192 / 16)) == 0)
-            texture = Game::noteskin->sixteenth;
-        else if (fmod(beatRow, (192 / 24)) == 0)
-            texture = Game::noteskin->twelfth;
-        else if (fmod(beatRow, (192 / 32)) == 0)
-            texture = Game::noteskin->thirty2nd;
-        else
-            texture = Game::noteskin->none;
-    }
-    else
-    {
-        switch (lane)
+        if (!Game::noteskin->disableQuant)
         {
-        case 0:
-            texture = Game::noteskin->left;
-            break;
-        case 1:
-            texture = Game::noteskin->down;
-            break;
-        case 2:
-            texture = Game::noteskin->up;
-            break;
-        case 3:
-            texture = Game::noteskin->right;
-            break;
+
+            float beatRow = (beat - stopOffset) * 48;
+
+            if (fmod(beatRow, (192 / 4)) == 0)
+                texture = Game::noteskin->fourth;
+            else if (fmod(beatRow, (192 / 8)) == 0)
+                texture = Game::noteskin->eighth;
+            else if (fmod(beatRow, (192 / 12)) == 0)
+                texture = Game::noteskin->twelfth;
+            else if (fmod(beatRow, (192 / 16)) == 0)
+                texture = Game::noteskin->sixteenth;
+            else if (fmod(beatRow, (192 / 24)) == 0)
+                texture = Game::noteskin->twelfth;
+            else if (fmod(beatRow, (192 / 32)) == 0)
+                texture = Game::noteskin->thirty2nd;
+            else
+                texture = Game::noteskin->none;
+        }
+        else
+        {
+            switch (lane)
+            {
+            case 0:
+                texture = Game::noteskin->left;
+                break;
+            case 1:
+                texture = Game::noteskin->down;
+                break;
+            case 2:
+                texture = Game::noteskin->up;
+                break;
+            case 3:
+                texture = Game::noteskin->right;
+                break;
+            }
         }
     }
     //Rendering::SetClipRect(&clipThingy);
@@ -290,8 +295,9 @@ void NoteObject::draw() {
                         {
                             body.skewBL = -(square.x - lastBody.x);
                             body.skewBR = -((square.x + square.w) - (lastBody.x + lastBody.w));
-                            lastBody.skewYTL = (-(lastBody.y - (square.y + square.h)));
-                            lastBody.skewYTR = (-(lastBody.y - (square.y + square.h)));
+                            lastBody.skewYTL = (-(lastBody.y - (square.y + square.h / 2)));
+                            lastBody.skewYTR = (-(lastBody.y - (square.y + square.h / 2)));
+
                         }
                     }
                 }
@@ -303,92 +309,210 @@ void NoteObject::draw() {
                 bodies.push_back(body);
             }
             int i = 0;
-            for (holdBody body : bodies)
+            for (holdBody& body : bodies)
             {
                 std::vector<GL_Vertex> verts;
 
-                verts.push_back({ body.x + body.skewTL, body.y + body.skewYTL,
-                    0, 0,
+                if (!sparrow)
+                {
+                    verts.push_back({ body.x + body.skewTL, body.y + body.skewYTL,
+                        0, 0,
+                        (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //tl
+                    if (!downscroll)
+                    {
+                        verts.push_back({ body.x + body.skewBL, body.y + body.h + body.skewYBL,
+                            0, -1,
+                            (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //bl
+                    }
+                    else
+                    {
+                        verts.push_back({ body.x + body.skewBL, body.y + body.h + body.skewYBL,
+                            0, 1,
+                            (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //bl
+                    }
+                    verts.push_back({ body.x + body.skewTR + body.w, body.y + body.skewYTR,
+                        1, 0,
+                       (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //tr
+                    verts.push_back({ body.x + body.skewTR + body.w, body.y + body.skewYTR,
+                        1, 0,
+                        (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //tr
+                    if (!downscroll)
+                    {
+                        verts.push_back({ body.x + body.skewBL, body.y + body.h + body.skewYBL,
+                            0, -1,
+                            (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //bl
+                        verts.push_back({ body.x + body.skewBR + body.w, body.y + body.h + body.skewYBR,
+                            1, -1,
+                           (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //br
+                    }
+                    else
+                    {
+                        verts.push_back({ body.x + body.skewBL, body.y + body.h + body.skewYBL,
+                            0, 1,
+                            (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //bl
+                        verts.push_back({ body.x + body.skewBR + body.w, body.y + body.h + body.skewYBR,
+                            1, 1,
+                            (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //br
+                    }
+
+                    Rect test;
+                    test.x = 0;
+                    test.y = obj->modY + (32 * size);
+                    test.w = 1280;
+                    test.h = 720;
+                    if (downscroll)
+                    {
+                        test.y = 0;
+                        test.h = obj->modY + (32 * size);
+                    }
+
+                    if (holding || body.beat < holdstoppedbeat)
+                        Rendering::SetClipRect(&test);
+                    if (i != bodies.size() - 1)
+                    {
+                        Rendering::PushQuad(verts, Game::noteskin->hold, GL::genShader);
+                        if (white != 0)
+                        {
+                            Rendering::drawBatch();
+                            for (GL_Vertex& vert : verts)
+                                vert.a = 1;
+                            Rendering::PushQuad(verts, Game::noteskin->hold, Game::instance->whiteShader);
+                            for (GL_Vertex& vert : verts)
+                                vert.a = ogAlpha;
+                            Rendering::drawBatch();
+                        }
+                    }
+                    else
+                    {
+                        Rendering::PushQuad(verts, Game::noteskin->holdend, GL::genShader);
+                        if (white != 0)
+                        {
+                            Rendering::drawBatch();
+                            for (GL_Vertex& vert : verts)
+                                vert.a = 1;
+                            Rendering::PushQuad(verts, Game::noteskin->holdend, Game::instance->whiteShader);
+                            for (GL_Vertex& vert : verts)
+                                vert.a = ogAlpha;
+                            Rendering::drawBatch();
+                        }
+                    }
+                }
+                else
+                {
+                    AvgSparrow* sparrow = Game::noteskin->sparrow;
+
+                    animTime += Game::deltaTime;
+                    frame = (animTime * fps / 1000);
+
+                    std::string anim = "";
+
+                    bool noEnd = i != bodies.size() - 1;
+
+                    switch (lane)
+                    {
+                    case 0:
+                        if (noEnd)
+                            anim = Game::noteskin->holdLeft;
+                        else
+                            anim = Game::noteskin->holdEndLeft;
+                        break;
+                    case 1:
+                        if (noEnd)
+                            anim = Game::noteskin->holdDown;
+                        else
+                            anim = Game::noteskin->holdEndDown;
+                        break;
+                    case 2:
+                        if (noEnd)
+                            anim = Game::noteskin->holdUp;
+                        else
+                            anim = Game::noteskin->holdEndUp;
+                        break;
+                    case 3:
+                        if (noEnd)
+                            anim = Game::noteskin->holdRight;
+                        else
+                            anim = Game::noteskin->holdEndRight;
+                        break;
+                    }
+
+                    int sizee = sparrow->animations[anim].frames.size();
+                    if (frame > sizee - 1)
+                    {
+                        animTime = 0;
+                    }
+                    if (frame > sizee - 1)
+                        frame = 0;
+
+                    AvgFrame fr = sparrow->getRectFromFrame(anim, frame);
+
+                    float realWidth = (fr.srcRect.w * Game::noteskin->sparrowImg->width);
+                    float ogH = (fr.srcRect.h * Game::noteskin->sparrowImg->height);
+                    float realHeight = (fr.srcRect.h * Game::noteskin->sparrowImg->height);
+
+                    realWidth = (64 * size) / 3;
+
+                    float newX = body.x + ((32 * size) - (realWidth / 2));
+
+                    realHeight = 64 * size;
+                    if (i == bodies.size() - 1 && ogH > 32)
+                    {
+                        realHeight = (ogH * size) / 2;
+                        if (downscroll)
+                            body.y += (32 * size);
+                    }
+
+                    srcRect = fr.srcRect;
+                    verts.push_back({ newX + body.skewTL, body.y + body.skewYTL,
+                        srcRect.x, srcRect.y,
                     (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //tl
-                if (!downscroll)
-                {
-                    verts.push_back({ body.x + body.skewBL, body.y + body.h + body.skewYBL,
-                        0, -1,
-                        (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a)}); //bl
-                }
-                else
-                {
-                    verts.push_back({ body.x + body.skewBL, body.y + body.h + body.skewYBL,
-                        0, 1,
+                    verts.push_back({ newX + body.skewBL, body.y + realHeight + body.skewYBL,
+                        srcRect.x, srcRect.y + srcRect.h,
                         (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //bl
-                }
-                verts.push_back({ body.x + body.skewTR + body.w, body.y + body.skewYTR,
-                    1, 0,
-                   (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //tr
-                verts.push_back({ body.x + body.skewTR + body.w, body.y + body.skewYTR,
-                    1, 0,
-                    (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //tr
-                if (!downscroll)
-                {
-                    verts.push_back({ body.x + body.skewBL, body.y + body.h + body.skewYBL,
-                        0, -1,
+                    verts.push_back({ newX + body.skewTR + realWidth, body.y + body.skewYTR,
+                        srcRect.x + srcRect.w, srcRect.y,
+                       (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //tr
+                    verts.push_back({ newX + body.skewTR + realWidth, body.y + body.skewYTR,
+                        srcRect.x + srcRect.w, srcRect.y,
+                       (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //tr
+                    verts.push_back({ newX + body.skewBL, body.y + realHeight + body.skewYBL,
+                        srcRect.x, srcRect.y + srcRect.h,
                         (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //bl
-                    verts.push_back({ body.x + body.skewBR + body.w, body.y + body.h + body.skewYBR,
-                        1, -1,
-                       (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //br
-                }
-                else
-                {
-                    verts.push_back({ body.x + body.skewBL, body.y + body.h + body.skewYBL,
-                        0, 1,
-                        (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //bl
-                    verts.push_back({ body.x + body.skewBR + body.w, body.y + body.h + body.skewYBR,
-                        1, 1,
+                    verts.push_back({ newX + body.skewBR + realWidth, body.y + realHeight + body.skewYBR,
+                        srcRect.x + srcRect.w, srcRect.y + srcRect.h,
                         (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //br
-                }
+                    Rect test;
+                    test.x = 0;
+                    test.y = obj->modY + (32 * size);
+                    test.w = 1280;
+                    test.h = 720;
+                    if (downscroll)
+                    {
+                        test.y = 0;
+                        test.h = obj->modY + (32 * size);
+                    }
 
-                Rect test;
-                test.x = 0;
-                test.y = obj->modY + (32 * size);
-                test.w = 1280;
-                test.h = 720;
-                if (downscroll)
-                {
-                    test.y = 0;
-                    test.h = obj->modY + (32 * size);
-                }
-
-                if (holding || body.beat < holdstoppedbeat)
-                    Rendering::SetClipRect(&test);
-
-                if (i != bodies.size() - 1)
-                {
-                    Rendering::PushQuad(verts, Game::noteskin->hold, GL::genShader);
+                    if (holding || body.beat < holdstoppedbeat)
+                        Rendering::SetClipRect(&test);
+                    if (!downscroll)
+                        Rendering::PushQuad(verts, Game::noteskin->sparrowImg, GL::genShader);
+                    else
+                        Rendering::PushQuad(verts, Game::noteskin->sparrowImg, GL::genShader, newX, body.y, realWidth, realHeight, 180);
                     if (white != 0)
                     {
                         Rendering::drawBatch();
                         for (GL_Vertex& vert : verts)
                             vert.a = 1;
-                        Rendering::PushQuad(verts, Game::noteskin->hold, Game::instance->whiteShader);
+                        if (!downscroll)
+                            Rendering::PushQuad(verts, Game::noteskin->sparrowImg, Game::instance->whiteShader);
+                        else
+                            Rendering::PushQuad(verts, Game::noteskin->sparrowImg, Game::instance->whiteShader, newX, body.y, realWidth, realHeight, 180);
                         for (GL_Vertex& vert : verts)
                             vert.a = ogAlpha;
                         Rendering::drawBatch();
                     }
                 }
-                else
-                {
-                    Rendering::PushQuad(verts, Game::noteskin->holdend, GL::genShader);
-                    if (white != 0)
-                    {
-                        Rendering::drawBatch();
-                        for (GL_Vertex& vert : verts)
-                            vert.a = 1;
-                        Rendering::PushQuad(verts, Game::noteskin->holdend, Game::instance->whiteShader);
-                        for (GL_Vertex& vert : verts)
-                            vert.a = ogAlpha;
-                        Rendering::drawBatch();
-                    }
-                }
+
                 Rendering::SetClipRect(NULL);
                 i++;
             }
@@ -396,77 +520,125 @@ void NoteObject::draw() {
     }
 
     //Rendering::SetClipRect(NULL);
-
-
     if (active) {
-        if (Game::noteskin->rotate) {
-            switch (lane) {
-            case 0: // left
-                Rendering::PushQuad(&dstRect, &srcRect, texture, sh, 90 + drawAngle);
-                if (white != 0)
-                {
-                    Rendering::drawBatch();
-                    dstRect.a = 1;
-                    Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, 90 + drawAngle);
-                    dstRect.a = ogAlpha;
-                    Rendering::drawBatch();
-                }
+        if (sparrow)
+        {
+            AvgSparrow* sparrow = Game::noteskin->sparrow;
+
+            animTime += Game::deltaTime;
+            frame = (animTime * fps / 1000);
+
+            std::string anim = "";
+
+            switch (lane)
+            {
+            case 0:
+                anim = Game::noteskin->leftA;
                 break;
-            case 1: // down
-                Rendering::PushQuad(&dstRect, &srcRect, texture, sh, drawAngle);
-                if (white != 0)
-                {
-                    Rendering::drawBatch();
-                    dstRect.a = 1;
-                    Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, drawAngle);
-                    dstRect.a = ogAlpha;
-                    Rendering::drawBatch();
-                }
+            case 1:
+                anim = Game::noteskin->downA;
                 break;
-            case 2: // up
-                srcRect.h = -1;
-                Rendering::PushQuad(&dstRect, &srcRect, texture, sh, drawAngle);
-                if (white != 0)
-                {
-                    Rendering::drawBatch();
-                    dstRect.a = 1;
-                    Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, drawAngle);
-                    dstRect.a = ogAlpha;
-                    Rendering::drawBatch();
-                }
-                srcRect.h = 1;
+            case 2:
+                anim = Game::noteskin->upA;
                 break;
-            case 3: // right
-                Rendering::PushQuad(&dstRect, &srcRect, texture, sh, -90 + drawAngle);
-                if (white != 0)
-                {
-                    Rendering::drawBatch();
-                    dstRect.a = 1;
-                    Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, -90 + drawAngle);
-                    dstRect.a = ogAlpha;
-                    Rendering::drawBatch();
-                }
+            case 3:
+                anim = Game::noteskin->rightA;
                 break;
             }
-        }
-        else {
-            Rendering::PushQuad(&dstRect, &srcRect, texture, sh, drawAngle);
+
+            int size = sparrow->animations[anim].frames.size();
+            if (frame > size - 1)
+            {
+                animTime = 0;
+            }
+            if (frame > size - 1)
+                frame = 0;
+
+            AvgFrame fr = sparrow->getRectFromFrame(anim, frame);
+            srcRect = fr.srcRect;
+
+            Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->sparrowImg, sh, drawAngle);
             if (white != 0)
             {
                 Rendering::drawBatch();
                 dstRect.a = 1;
-                Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, drawAngle);
+                Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->sparrowImg, Game::instance->whiteShader, drawAngle);
                 dstRect.a = ogAlpha;
                 Rendering::drawBatch();
             }
         }
-
-        if (selected)
+        else
         {
-            dstRect.a = 0.6;
-            Rendering::PushQuad(&dstRect, &srcRect, NULL, sh);
-            dstRect.a = alpha;
+            if (Game::noteskin->rotate) {
+                switch (lane) {
+                case 0: // left
+                    Rendering::PushQuad(&dstRect, &srcRect, texture, sh, 90 + drawAngle);
+                    if (white != 0)
+                    {
+                        Rendering::drawBatch();
+                        dstRect.a = 1;
+                        Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, 90 + drawAngle);
+                        dstRect.a = ogAlpha;
+                        Rendering::drawBatch();
+                    }
+                    break;
+                case 1: // down
+                    Rendering::PushQuad(&dstRect, &srcRect, texture, sh, drawAngle);
+                    if (white != 0)
+                    {
+                        Rendering::drawBatch();
+                        dstRect.a = 1;
+                        Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, drawAngle);
+                        dstRect.a = ogAlpha;
+                        Rendering::drawBatch();
+                    }
+                    break;
+                case 2: // up
+                    srcRect.h = -1;
+                    Rendering::PushQuad(&dstRect, &srcRect, texture, sh, drawAngle);
+                    if (white != 0)
+                    {
+                        Rendering::drawBatch();
+                        dstRect.a = 1;
+                        Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, drawAngle);
+                        dstRect.a = ogAlpha;
+                        Rendering::drawBatch();
+                    }
+                    srcRect.h = 1;
+                    break;
+                case 3: // right
+                    Rendering::PushQuad(&dstRect, &srcRect, texture, sh, -90 + drawAngle);
+                    if (white != 0)
+                    {
+                        Rendering::drawBatch();
+                        dstRect.a = 1;
+                        Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, -90 + drawAngle);
+                        dstRect.a = ogAlpha;
+                        Rendering::drawBatch();
+                    }
+                    break;
+                }
+            }
+            else {
+                Rendering::PushQuad(&dstRect, &srcRect, texture, sh, drawAngle);
+                if (white != 0)
+                {
+                    Rendering::drawBatch();
+                    dstRect.a = 1;
+                    Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, drawAngle);
+                    dstRect.a = ogAlpha;
+                    Rendering::drawBatch();
+                }
+            }
+
         }
+    }
+
+    if (selected)
+    {
+        dstRect.a = 0.6;
+        Rendering::PushQuad(&dstRect, &srcRect, NULL, sh);
+        dstRect.a = alpha;
     }
 
     MUTATE_END

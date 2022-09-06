@@ -182,7 +182,8 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 	std::vector<leaderboardSpot> copy = leaderboard;
 
 	int rankin = 0;
-
+	std::vector<std::string> spots;
+	std::vector<leaderboardSpot> toRemove;
 	switch (pt)
 	{
 	case eSPacketUpdateLeaderboard:
@@ -193,7 +194,6 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 
 		obj.convert(pack);
 
-		std::vector<std::string> spots;
 
 		for (PlayerScore score : pack.orderedScores)
 		{
@@ -341,8 +341,6 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 		{
 			it->second->x = -1000;
 		}
-
-		std::vector<leaderboardSpot> toRemove;
 
 		for (leaderboardSpot& spott : leaderboard)
 		{

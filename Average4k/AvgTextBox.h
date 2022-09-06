@@ -190,7 +190,13 @@ public:
 			}
 
 
+			std::string lastText = type;
+
 			type += event.text;
+
+			if (type.size() > 256)
+				type = lastText;
+
 			if (toModify.name != "none")
 			{
 				if (toModify.takesString)

@@ -1013,7 +1013,7 @@ void Gameplay::update(Events::updateEvent event)
 	if (notesToPlay.size() > 0)
 	{
 		note& n = notesToPlay[0];
-		if (n.beat < beat + 24 && (n.type != Note_Tail && n.type != Note_Mine)) // if its in 16 beats
+		if (n.beat < beat + ArrowEffects::drawBeats && (n.type != Note_Tail && n.type != Note_Mine)) // if its in 16 beats
 		{
 				NoteObject* object = new NoteObject();
 				object->currentChart = &MainerMenu::currentSelectedSong;
@@ -1165,6 +1165,13 @@ void Gameplay::update(Events::updateEvent event)
 			NoteObject* note = spawnedNotes[i];
 			note->rTime = positionInSong;
 
+			if (note->beat > beat + ArrowEffects::drawBeats || note->beat < beat - ArrowEffects::drawBeats)
+			{
+				note->drawCall = false;
+				continue;
+			}
+			else
+				note->drawCall = true;
 			if (!note->destroyed)
 			{
 				float wh = MainerMenu::currentSelectedSong.getTimeFromBeat(note->beat, MainerMenu::currentSelectedSong.getSegmentFromBeat(note->beat));

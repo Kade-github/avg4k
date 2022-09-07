@@ -16,6 +16,8 @@ public:
 		float cmod;
 	};
 
+	static float drawBeats;
+
 	static float drunk, tipsy, dizzy, amovex, amovey, aconfusion;
 
 	static std::map<int, float> stealthWhite;

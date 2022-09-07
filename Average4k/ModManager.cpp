@@ -171,6 +171,8 @@ void ModManager::setModStart(AppliedMod& m)
 		m.modStartAmount = ArrowEffects::stealthOpacity[m.col];
 	if (m.mod == "stealthReceptorOpacity")
 		m.modStartAmount = ArrowEffects::stealthReceptorOpacity[m.col];
+	if (m.mod == "stealthReceptorOpacity")
+		m.modStartAmount = ArrowEffects::drawBeats;
 }
 
 void ModManager::setModProperties(AppliedMod& m, float tween)
@@ -201,6 +203,8 @@ void ModManager::setModProperties(AppliedMod& m, float tween)
 		ArrowEffects::stealthReceptorOpacity[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "stealthOpacity")
 		ArrowEffects::stealthOpacity[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+	if (m.mod == "drawBeats")
+		ArrowEffects::drawBeats = m.amount;
 }
 
 void ModManager::runMods(AppliedMod m, float beat)

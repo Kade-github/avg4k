@@ -269,7 +269,7 @@ void ModEditor::update(Events::updateEvent event)
 
 	for (NoteObject* obj : notes)
 	{
-		if (obj->beat > beat + 6 || obj->beat < beat - 6)
+		if (obj->beat > beat + ArrowEffects::drawBeats || obj->beat < beat - ArrowEffects::drawBeats)
 		{
 			obj->drawCall = false;
 			continue;

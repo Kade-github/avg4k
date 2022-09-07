@@ -6,6 +6,7 @@ float ArrowEffects::dizzy = 0;
 float ArrowEffects::amovex = 0;
 float ArrowEffects::amovey = 0;
 float ArrowEffects::aconfusion = 0;
+float ArrowEffects::drawBeats = 16;
 
 std::map<int, float> ArrowEffects::stealthWhite = { {0,0}, {1,0}, {2,0}, {3,0} };
 std::map<int, float> ArrowEffects::stealthReceptorOpacity = { {0,1}, {1,1}, {2,1}, {3,1} };
@@ -68,6 +69,7 @@ ArrowEffects::Arrow ArrowEffects::ArrowEff(float ydiff, int col, float pos)
 
 void ArrowEffects::resetEffects()
 {
+	drawBeats = 16;
 	ArrowEffects::stealthWhite = { {0,0}, {1,0}, {2,0}, {3,0} };
 	ArrowEffects::stealthReceptorOpacity = { {0,1}, {1,1}, {2,1}, {3,1} };
 	ArrowEffects::stealthOpacity = { {0,1}, {1,1}, {2,1}, {3,1} };

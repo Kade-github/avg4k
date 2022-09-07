@@ -594,6 +594,8 @@ void Game::update(Events::updateEvent update)
 	if (currentMenu != nullptr && currentMenu->created)
 		currentMenu->postUpdate(update);
 
+	Rendering::drawBatch();
+
 	if (fpsText && !debugConsole)
 	{
 		if (alphaWatermark->x < Game::gameWidth + (alphaWatermark->surfW / 2))
@@ -603,7 +605,9 @@ void Game::update(Events::updateEvent update)
 		else
 			alphaWatermark->x = -(alphaWatermark->surfW + 12);
 		alphaWatermark->draw();
+		Rendering::drawBatch();
 		fpsText->draw();
+		Rendering::drawBatch();
 	}
 
 

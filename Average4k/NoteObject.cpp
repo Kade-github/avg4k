@@ -295,8 +295,8 @@ void NoteObject::draw() {
                         {
                             body.skewBL = -(square.x - lastBody.x);
                             body.skewBR = -((square.x + square.w) - (lastBody.x + lastBody.w));
-                            lastBody.skewYTL = (-(lastBody.y - (square.y + square.h / 2)));
-                            lastBody.skewYTR = (-(lastBody.y - (square.y + square.h / 2)));
+                            lastBody.skewYTL = (-((lastBody.y) - (square.y + square.h)));
+                            lastBody.skewYTR = (-((lastBody.y) - (square.y + square.h)));
 
                         }
                     }

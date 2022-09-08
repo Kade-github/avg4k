@@ -133,17 +133,21 @@ void ArrowEffects::drawLine(float defX, float targetY, int col, float beat, Char
 
 		bool downscroll = false;
 
-		if (cmod < 0)
-			downscroll = true;
 
 		float defY = targetY - cmod;
 
 		Arrow aEff = ArrowEff(defY, col, time);
 		
+		if (aEff.cmod < 0)
+			downscroll = true;
+
 		float yPos = targetY + calcCMod(aEff.cmod, diff);
 
-		float x = defX + (32 * Game::save->GetDouble("Note Size")) + aEff.x;
+		float x = (defX + (32 * Game::save->GetDouble("Note Size")) - 2) + aEff.x;
 		float y = yPos + aEff.y;
+
+		if (y < -350 || y > 1070 || x < 0 || x > 1280)
+			continue;
 
 		if (realI % 2 == 1)
 		{
@@ -161,6 +165,8 @@ void ArrowEffects::drawLine(float defX, float targetY, int col, float beat, Char
 				float botxDiff = (x - lastBottomX);
 				float botxRDiff = ((x + 4) - (lastBottomX + 4));
 
+				float botdiff = (y - lastBottomY) / 2;
+
 				lastBL.x = lastBottomX + botxDiff;
 				lastBR.x = lastBottomX + 4 + botxRDiff;
 
@@ -177,14 +183,12 @@ void ArrowEffects::drawLine(float defX, float targetY, int col, float beat, Char
 
 			float diff = (y - lastBottomY) / 2;
 
-			if (downscroll)
-				diff = (lastBottomY - y) / 2;
-
 			float xDiff = (x - lastBottomX);
 			float xRDiff = ((x + 4) - (lastBottomX + 4));
 
 			if (lastBL.a == -1)
 			{
+				diff = 0;
 				xDiff = 0;
 				xRDiff = 0;
 			}

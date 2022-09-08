@@ -16,6 +16,8 @@ public:
 		float cmod;
 	};
 
+	static float SplineDensity;
+
 	static bool ShowSplines;
 
 	static float drawBeats, SplineAlpha;

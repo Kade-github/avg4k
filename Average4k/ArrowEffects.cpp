@@ -8,6 +8,7 @@ float ArrowEffects::amovey = 0;
 float ArrowEffects::aconfusion = 0;
 float ArrowEffects::drawBeats = 8;
 float ArrowEffects::SplineAlpha = 0.75;
+float ArrowEffects::SplineDensity = 0.05;
 
 bool ArrowEffects::ShowSplines = false;
 
@@ -121,7 +122,7 @@ void ArrowEffects::drawLine(float defX, float targetY, int col, float beat, Char
 	lastBR.a = -1;
 	GL_Vertex lastTR;
 	lastTR.a = -1;
-	for (double i = -drawBeats; i < drawBeats; i += 0.05)
+	for (double i = -drawBeats; i < drawBeats; i += SplineDensity)
 	{
 		float rbeat = beat + i;
 		bpmSegment seg = currentChart.getSegmentFromBeat(rbeat);

@@ -369,11 +369,14 @@ void ModEditor::imguiUpdate(float elapsed)
 					{
 						ArrowEffects::SplineAlpha = 0.75;
 					}
-
-					if (ImGui::Button("ShowSplines"))
+					ImGui::Text("Spline Density");
+					ImGui::SliderFloat("##SplineDensity", &ArrowEffects::SplineDensity, 0.008, 1);
+					if (ImGui::Button("Reset ##den"))
 					{
-						ArrowEffects::ShowSplines = !ArrowEffects::ShowSplines;
+						ArrowEffects::SplineDensity = 0.05;
 					}
+
+					ImGui::Checkbox("Show Splines", &ArrowEffects::ShowSplines);
 					ImGui::EndMenu();
 				}
 				if (ImGui::BeginMenu("Drunk"))

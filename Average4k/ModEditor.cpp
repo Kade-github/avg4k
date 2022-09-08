@@ -287,6 +287,9 @@ void ModEditor::update(Events::updateEvent event)
 		rec->modY = rec->y;
 		rec->endX = rec->modX;
 		rec->endY = rec->modY;
+
+		if (ArrowEffects::ShowSplines)
+			ArrowEffects::drawLine(rec->x, rec->y, i, beat, *FuckinEditor::selectedChart);
 	}
 
 	for (NoteObject* obj : notes)
@@ -316,6 +319,7 @@ void ModEditor::update(Events::updateEvent event)
 		manager.runMods();
 		callModEvent("update", beat);
 	}
+
 }
 
 void ModEditor::imguiUpdate(float elapsed)
@@ -357,6 +361,21 @@ void ModEditor::imguiUpdate(float elapsed)
 			ImGui::PushItemWidth(400);
 			ImGui::BeginMainMenuBar();
 			{
+				if (ImGui::BeginMenu("Splines"))
+				{
+					ImGui::Text("Spline Alpha");
+					ImGui::SliderFloat("##SplineAlpha", &ArrowEffects::SplineAlpha, 0.1, 1);
+					if (ImGui::Button("Reset"))
+					{
+						ArrowEffects::SplineAlpha = 0.75;
+					}
+
+					if (ImGui::Button("ShowSplines"))
+					{
+						ArrowEffects::ShowSplines = !ArrowEffects::ShowSplines;
+					}
+					ImGui::EndMenu();
+				}
 				if (ImGui::BeginMenu("Drunk"))
 				{
 					ImGui::Text("Drunk");

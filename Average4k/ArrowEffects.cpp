@@ -6,7 +6,10 @@ float ArrowEffects::dizzy = 0;
 float ArrowEffects::amovex = 0;
 float ArrowEffects::amovey = 0;
 float ArrowEffects::aconfusion = 0;
-float ArrowEffects::drawBeats = 16;
+float ArrowEffects::drawBeats = 8;
+float ArrowEffects::SplineAlpha = 0.75;
+
+bool ArrowEffects::ShowSplines = false;
 
 std::map<int, float> ArrowEffects::stealthWhite = { {0,0}, {1,0}, {2,0}, {3,0} };
 std::map<int, float> ArrowEffects::stealthReceptorOpacity = { {0,1}, {1,1}, {2,1}, {3,1} };
@@ -15,6 +18,17 @@ std::map<int, float> ArrowEffects::reverse = { {0,0}, {1,0}, {2,0}, {3,0} };
 std::map<int, float> ArrowEffects::confusion = { {0,0}, {1,0}, {2,0}, {3,0} };
 std::map<int, float> ArrowEffects::movex = { {0,0}, {1,0}, {2,0}, {3,0} };
 std::map<int, float> ArrowEffects::movey = { {0,0}, {1,0}, {2,0}, {3,0} };
+
+float calcCMod(float cmod, float diff)
+{
+
+	float bps = (cmod / 60);
+
+	float noteOffset = (bps * (diff / 1000)) * (64 * Game::instance->save->GetDouble("Note Size"));
+
+	return noteOffset;
+}
+
 
 ArrowEffects::Arrow ArrowEffects::ArrowEff(float ydiff, int col, float pos)
 {
@@ -69,7 +83,7 @@ ArrowEffects::Arrow ArrowEffects::ArrowEff(float ydiff, int col, float pos)
 
 void ArrowEffects::resetEffects()
 {
-	drawBeats = 16;
+	drawBeats = 8;
 	ArrowEffects::stealthWhite = { {0,0}, {1,0}, {2,0}, {3,0} };
 	ArrowEffects::stealthReceptorOpacity = { {0,1}, {1,1}, {2,1}, {3,1} };
 	ArrowEffects::stealthOpacity = { {0,1}, {1,1}, {2,1}, {3,1} };
@@ -83,6 +97,114 @@ void ArrowEffects::resetEffects()
 	ArrowEffects::amovex = 0;
 	ArrowEffects::amovey = 0;
 	ArrowEffects::aconfusion = 0;
+}
+
+
+void ArrowEffects::drawLine(float defX, float targetY, int col, float beat, Chart currentChart)
+{
+	bpmSegment segCur = currentChart.getSegmentFromBeat(beat);
+	float timeCur = currentChart.getTimeFromBeat(beat, segCur);
+
+	std::vector<GL_Vertex> points;
+
+	int realI = 0;
+
+	float lastBottomX = -1;
+	float lastBottomY = -1;
+
+	float nextY = 0;
+	float nextX = 0;
+
+	GL_Vertex lastBL;
+	lastBL.a = -1;
+	GL_Vertex lastBR;
+	lastBR.a = -1;
+	GL_Vertex lastTR;
+	lastTR.a = -1;
+	for (double i = -drawBeats; i < drawBeats; i += 0.05)
+	{
+		float rbeat = beat + i;
+		bpmSegment seg = currentChart.getSegmentFromBeat(rbeat);
+		float time = currentChart.getTimeFromBeat(rbeat, seg);
+
+		float diff = (time - timeCur);
+
+		float cmod = calcCMod(Game::save->GetDouble("Scrollspeed"), diff);
+
+		bool downscroll = false;
+
+		if (cmod < 0)
+			downscroll = true;
+
+		float defY = targetY - cmod;
+
+		Arrow aEff = ArrowEff(defY, col, time);
+		
+		float yPos = targetY + calcCMod(aEff.cmod, diff);
+
+		float x = defX + (32 * Game::save->GetDouble("Note Size")) + aEff.x;
+		float y = yPos + aEff.y;
+
+		if (realI % 2 == 1)
+		{
+
+			float skewTL = 0, skewTR = 0;
+
+			float blX = x;
+			float brX = x + 4;
+
+			skewTL = (x - lastBottomX);
+			skewTR = ((x + 4) - (lastBottomX + 4));
+
+			if (lastBL.a != -1)
+			{
+				float botxDiff = (x - lastBottomX);
+				float botxRDiff = ((x + 4) - (lastBottomX + 4));
+
+				lastBL.x = lastBottomX + botxDiff;
+				lastBR.x = lastBottomX + 4 + botxRDiff;
+
+				points.push_back(lastBL);
+				points.push_back(lastTR);
+				points.push_back(lastTR);
+				points.push_back(lastBL);
+				points.push_back(lastBR);
+
+				Rendering::drawBatch();
+				Rendering::PushQuad(points, NULL, GL::genShader);
+				points.clear();
+			}
+
+			float diff = (y - lastBottomY) / 2;
+
+			if (downscroll)
+				diff = (lastBottomY - y) / 2;
+
+			float xDiff = (x - lastBottomX);
+			float xRDiff = ((x + 4) - (lastBottomX + 4));
+
+			if (lastBL.a == -1)
+			{
+				xDiff = 0;
+				xRDiff = 0;
+			}
+
+			points.push_back({ nextX + xDiff,nextY - diff ,0,0, 255, 255, 255, SplineAlpha}); // tl
+			lastTR = { nextX + 4 + xRDiff,nextY - diff,1,0, 255, 255, 255, SplineAlpha }; // tr
+			lastBL = { blX,y,0,1, 255, 255, 255, SplineAlpha }; // bl
+			lastBR = { brX,y,1,1, 255, 255, 255, SplineAlpha }; // br
+			lastBottomX = x;
+			lastBottomY = y;
+		}
+		else
+		{
+			nextY = y;
+			nextX = x;
+		}
+		realI++;
+	}
+
+
 }
 
 ArrowEffects::Arrow ArrowEffects::finishEffects(float defX, float defY, int col, float curTime)
@@ -99,16 +221,6 @@ ArrowEffects::Arrow ArrowEffects::finishEffects(float defX, float defY, int col,
 	a.rot = aEff.rot;
 
 	return a;
-}
-
-float calcCMod(float cmod, float diff)
-{
-
-	float bps = (cmod / 60);
-
-	float noteOffset = (bps * (diff / 1000)) * (64 * Game::instance->save->GetDouble("Note Size"));
-
-	return noteOffset;
 }
 
 ArrowEffects::Arrow ArrowEffects::finishEffects(float defX, float defY, float cmod, int col, float holdTime, float curTime, float diff)

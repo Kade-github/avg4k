@@ -213,6 +213,18 @@ void NoteObject::draw() {
     line.g = 255;
     line.b = 255;
 
+
+    Rect test;
+    test.x = 0;
+    test.y = obj->modY + (32 * size);
+    test.w = 1280;
+    test.h = 720;
+    if (downscroll)
+    {
+        test.y = 0;
+        test.h = obj->modY + (32 * size);
+    }
+
     if (endBeat != -1 && !missHold)
     {
 
@@ -238,11 +250,20 @@ void NoteObject::draw() {
 
         std::vector<holdBody> bodies;
 
+
+
         if (amountToDraw > 1)
         {
 
             for (int i = 0; i < amountToDraw; i++)
             {
+                float perc = (float)(i + 1.f) / (float)amountToDraw;
+
+                float holdBeat = beat + ((endBeat - beat) * perc);
+
+                if (holdBeat > beat + ArrowEffects::drawBeats)
+                    continue;
+
                 Rect square;
                 square.w = 64 * size;
                 square.h = 64 * size;
@@ -250,10 +271,6 @@ void NoteObject::draw() {
                 square.y = line.y + ((64 * size) * i);
                 if (downscroll)
                     square.y = (line.y) - ((64 * size) * i);
-
-                float perc = (float)(i + 1.f) / (float)amountToDraw;
-
-                float holdBeat = beat + ((endBeat - beat) * perc);
 
                 holdBody body;
                 body.beat = holdBeat;
@@ -353,17 +370,6 @@ void NoteObject::draw() {
                         verts.push_back({ body.x + body.skewBR + body.w, body.y + body.h + body.skewYBR,
                             1, 1,
                             (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //br
-                    }
-
-                    Rect test;
-                    test.x = 0;
-                    test.y = obj->modY + (32 * size);
-                    test.w = 1280;
-                    test.h = 720;
-                    if (downscroll)
-                    {
-                        test.y = 0;
-                        test.h = obj->modY + (32 * size);
                     }
 
                     if (holding || body.beat < holdstoppedbeat)
@@ -481,16 +487,6 @@ void NoteObject::draw() {
                     verts.push_back({ newX + body.skewBR + realWidth, body.y + realHeight + body.skewYBR,
                         srcRect.x + srcRect.w, srcRect.y + srcRect.h,
                         (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //br
-                    Rect test;
-                    test.x = 0;
-                    test.y = obj->modY + (32 * size);
-                    test.w = 1280;
-                    test.h = 720;
-                    if (downscroll)
-                    {
-                        test.y = 0;
-                        test.h = obj->modY + (32 * size);
-                    }
 
                     if (holding || body.beat < holdstoppedbeat)
                         Rendering::SetClipRect(&test);

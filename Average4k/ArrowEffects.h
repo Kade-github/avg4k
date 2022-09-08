@@ -16,7 +16,9 @@ public:
 		float cmod;
 	};
 
-	static float drawBeats;
+	static bool ShowSplines;
+
+	static float drawBeats, SplineAlpha;
 
 	static float drunk, tipsy, dizzy, amovex, amovey, aconfusion;
 
@@ -27,6 +29,8 @@ public:
 	static std::map<int, float> confusion;
 	static std::map<int, float> movex;
 	static std::map<int, float> movey;
+
+	static void drawLine(float defX, float targetY, int col, float beat, Chart currentChart);
 
 	static void resetEffects();
 

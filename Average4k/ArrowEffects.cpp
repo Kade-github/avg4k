@@ -1,14 +1,15 @@
 #include "ArrowEffects.h"
 
 float ArrowEffects::drunk = 0;
+float ArrowEffects::wave = 0;
 float ArrowEffects::tipsy = 0;
 float ArrowEffects::dizzy = 0;
 float ArrowEffects::amovex = 0;
 float ArrowEffects::amovey = 0;
 float ArrowEffects::aconfusion = 0;
 float ArrowEffects::drawBeats = 8;
-float ArrowEffects::SplineAlpha = 0.75;
-float ArrowEffects::SplineDensity = 0.05;
+float ArrowEffects::SplineAlpha = 0;
+float ArrowEffects::SplineDensity = 0.04;
 
 bool ArrowEffects::ShowSplines = false;
 
@@ -19,6 +20,9 @@ std::map<int, float> ArrowEffects::reverse = { {0,0}, {1,0}, {2,0}, {3,0} };
 std::map<int, float> ArrowEffects::confusion = { {0,0}, {1,0}, {2,0}, {3,0} };
 std::map<int, float> ArrowEffects::movex = { {0,0}, {1,0}, {2,0}, {3,0} };
 std::map<int, float> ArrowEffects::movey = { {0,0}, {1,0}, {2,0}, {3,0} };
+std::map<int, float> ArrowEffects::drunkCol = { {0,0}, {1,0}, {2,0}, {3,0} };
+std::map<int, float> ArrowEffects::tipsyCol = { {0,0}, {1,0}, {2,0}, {3,0} };
+std::map<int, float> ArrowEffects::waveCol = { {0,0}, {1,0}, {2,0}, {3,0} };
 
 float calcCMod(float cmod, float diff)
 {
@@ -52,14 +56,25 @@ ArrowEffects::Arrow ArrowEffects::ArrowEff(float ydiff, int col, float pos)
 		a.opac = stealthOpacity[col];
 
 	if (stealthWhite[col] != 0)
-	{
 		a.whiteV = stealthWhite[col];
-	}
 
 	if (drunk != 0)
 		a.x += drunk * (std::cos(pos * 0.001 + col * (0.2) + ydiff * (10) / 720) * (ARROW_SIZE / 2));
+
+	if (drunkCol[col] != 0)
+		a.x += drunkCol[col] * (std::cos(pos * 0.001 + col * (0.2) + ydiff * (10) / 720) * (ARROW_SIZE / 2));
+
 	if (tipsy != 0)
-		a.y += tipsy * (std::cos(pos * 0.001 * (1.2) + col * (2.0) + 1 * (0.2)) * (ARROW_SIZE * .4));;
+		a.y += tipsy * (std::cos(pos * 0.001 * (1.2) + col * (2.0) + 1 * (0.2)) * (ARROW_SIZE * .4));
+
+	if (tipsyCol[col] != 0)
+		a.y += tipsyCol[col] * (std::cos(pos * 0.001 * (1.2) + col * (2.0) + 1 * (0.2)) * (ARROW_SIZE * .4));
+
+	if (wave != 0)
+		a.y += wave * (20.0f * sin(ydiff / 38.0f));
+
+	if (waveCol[col] != 0)
+		a.y += waveCol[col] * (20.0f * sin(ydiff / 38.0f));
 
 	if (movex[col] != 0)
 		a.x += movex[col];
@@ -92,12 +107,19 @@ void ArrowEffects::resetEffects()
 	ArrowEffects::confusion = { {0,0}, {1,0}, {2,0}, {3,0} };
 	ArrowEffects::movex = { {0,0}, {1,0}, {2,0}, {3,0} };
 	ArrowEffects::movey = { {0,0}, {1,0}, {2,0}, {3,0} };
+	ArrowEffects::drunkCol = { {0,0}, {1,0}, {2,0}, {3,0} };
+	ArrowEffects::waveCol = { {0,0}, {1,0}, {2,0}, {3,0} };
+	ArrowEffects::tipsyCol = { {0,0}, {1,0}, {2,0}, {3,0} };
 	ArrowEffects::drunk = 0;
+	ArrowEffects::wave = 0;
 	ArrowEffects::tipsy = 0;
 	ArrowEffects::dizzy = 0;
 	ArrowEffects::amovex = 0;
 	ArrowEffects::amovey = 0;
 	ArrowEffects::aconfusion = 0;
+	ArrowEffects::ShowSplines = false;
+	ArrowEffects::SplineAlpha = 0;
+	ArrowEffects::SplineDensity = 0.04;
 }
 
 

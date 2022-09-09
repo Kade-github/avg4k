@@ -10,8 +10,11 @@ class ModEditor : public Menu
 public:
 	void create() override;
 	void update(Events::updateEvent event) override;
+	void postUpdate(Events::updateEvent event) override;
 	void imguiUpdate(float elapsed) override;
 	void keyDown(SDL_KeyboardEvent event) override;
+
+	int col = -1;
 
 	bool playing = false;
 
@@ -33,6 +36,10 @@ public:
 	void move(float amount);
 
 	void mouseWheel(float wheel) override;
+
+	void leftMouseDown() override;
+	void leftMouseUp() override;
+	bool mouseDown = false;
 
 	ModManager manager;
 

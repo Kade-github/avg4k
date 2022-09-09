@@ -199,6 +199,9 @@ void NoteObject::draw() {
         ogAlpha = dstRect.a;
         drawAngle = a.rot;
 
+        modY = dstRect.y;
+        modX = dstRect.x;
+
         Game::instance->whiteShader->GL_Use();
 
         if (white > dstRect.a)
@@ -296,6 +299,47 @@ void NoteObject::draw() {
                         {
                             body.skewBL = -(square.x - dstRect.x);
                             body.skewBR = -((square.x + square.w) - (dstRect.x + (64 * size)));
+                            body.skewYTL = (-((dstRect.y) - (square.y + square.h)));
+                            body.skewYTR = (-((dstRect.y) - (square.y + square.h)));
+                        }
+                    }
+                    else
+                    {
+                        holdBody& lastBody = bodies.back();
+                        if (!downscroll)
+                        {
+                            body.skewTL = -(square.x - lastBody.x);
+                            body.skewTR = -((square.x + square.w) - (lastBody.x + lastBody.w));
+                            lastBody.skewYBL = -((lastBody.y + lastBody.h) - square.y);
+                            lastBody.skewYBR = -((lastBody.y + lastBody.h) - square.y);
+                        }
+                        else
+                        {
+                            body.skewBL = -(square.x - lastBody.x);
+                            body.skewBR = -((square.x + square.w) - (lastBody.x + lastBody.w));
+                            lastBody.skewYTL = (-((lastBody.y) - (square.y + square.h)));
+                            lastBody.skewYTR = (-((lastBody.y) - (square.y + square.h)));
+
+                        }
+                    }
+                }
+                else
+                {
+                    if (bodies.size() == 0)
+                    {
+                        if (!downscroll)
+                        {
+                            body.skewTL = -(square.x - dstRect.x);
+                            body.skewTR = -((square.x + square.w) - (dstRect.x + (64 * size)));
+                            body.skewYTL = -(square.y - (dstRect.y + (32 * size)));
+                            body.skewYTR = -(square.y - (dstRect.y + (32 * size)));
+                        }
+                        else
+                        {
+                            body.skewBL = -(square.x - dstRect.x);
+                            body.skewBR = -((square.x + square.w) - (dstRect.x + (64 * size)));
+                            body.skewYTL = (-((dstRect.y) - (square.y + square.h)));
+                            body.skewYTR = (-((dstRect.y) - (square.y + square.h)));
                         }
                     }
                     else

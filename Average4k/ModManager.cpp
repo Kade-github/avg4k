@@ -128,16 +128,23 @@ void ModManager::runMods()
 				setModStart(m);
 			}
 
-			float dur = (beat - m.tweenStart);
+			if (m.mod != "showPath")
+			{
+				float dur = (beat - m.tweenStart);
 
-			float perc = dur / m.tweenLen;
+				float perc = dur / m.tweenLen;
 
-			if (perc > 1)
-				perc = 1;
+				if (perc > 1)
+					perc = 1;
 
-			float tween = m.tweenCurve(perc);
+				float tween = m.tweenCurve(perc);
 
-			setModProperties(m, tween);
+				setModProperties(m, tween);
+			}
+			else
+			{
+				setModProperties(m, 0);
+			}
 		}
 
 	}
@@ -151,6 +158,8 @@ void ModManager::setModStart(AppliedMod& m)
 		m.modStartAmount = ArrowEffects::tipsy;
 	if (m.mod == "dizzy")
 		m.modStartAmount = ArrowEffects::dizzy;
+	if (m.mod == "wave")
+		m.modStartAmount = ArrowEffects::wave;
 	if (m.mod == "amovex")
 		m.modStartAmount = ArrowEffects::amovex;
 	if (m.mod == "amovey")
@@ -173,6 +182,16 @@ void ModManager::setModStart(AppliedMod& m)
 		m.modStartAmount = ArrowEffects::stealthReceptorOpacity[m.col];
 	if (m.mod == "stealthReceptorOpacity")
 		m.modStartAmount = ArrowEffects::drawBeats;
+	if (m.mod == "drunkCol")
+		m.modStartAmount = ArrowEffects::drunkCol[m.col];
+	if (m.mod == "tipsyCol")
+		m.modStartAmount = ArrowEffects::tipsyCol[m.col];
+	if (m.mod == "waveCol")
+		m.modStartAmount = ArrowEffects::waveCol[m.col];
+	if (m.mod == "pathAlpha")
+		m.modStartAmount = ArrowEffects::SplineAlpha;
+	if (m.mod == "pathDensity")
+		m.modStartAmount = ArrowEffects::SplineDensity;
 }
 
 void ModManager::setModProperties(AppliedMod& m, float tween)
@@ -183,6 +202,8 @@ void ModManager::setModProperties(AppliedMod& m, float tween)
 		ArrowEffects::tipsy = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "dizzy")
 		ArrowEffects::dizzy = std::lerp(m.modStartAmount, m.amount, tween);
+	if (m.mod == "wave")
+		ArrowEffects::wave = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "confusion")
 		ArrowEffects::confusion[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "reverse")
@@ -205,22 +226,41 @@ void ModManager::setModProperties(AppliedMod& m, float tween)
 		ArrowEffects::stealthOpacity[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "drawBeats")
 		ArrowEffects::drawBeats = m.amount;
+	if (m.mod == "drunkCol")
+		ArrowEffects::drunkCol[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+	if (m.mod == "tipsyCol")
+		ArrowEffects::tipsyCol[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+	if (m.mod == "waveCol")
+		ArrowEffects::waveCol[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+	if (m.mod == "showPath")
+		ArrowEffects::ShowSplines = m.amount == 1 ? true : false;
+	if (m.mod == "pathAlpha")
+		ArrowEffects::SplineAlpha = std::lerp(m.modStartAmount, m.amount, tween);
+	if (m.mod == "pathDensity")
+		ArrowEffects::SplineDensity = std::lerp(m.modStartAmount, m.amount, tween);
 }
 
 void ModManager::runMods(AppliedMod m, float beat)
 {
 	setModStart(m);
 
-	float dur = (beat - m.tweenStart);
+	if (m.mod != "showPath")
+	{
+		float dur = (beat - m.tweenStart);
 
-	float perc = dur / m.tweenLen;
+		float perc = dur / m.tweenLen;
 
-	if (perc > 1)
-		perc = 1;
+		if (perc > 1)
+			perc = 1;
 
-	float tween = m.tweenCurve(perc);
+		float tween = m.tweenCurve(perc);
 
-	setModProperties(m, tween);
+		setModProperties(m, tween);
+	}
+	else
+	{
+		setModProperties(m, 0);
+	}
 }
 
 

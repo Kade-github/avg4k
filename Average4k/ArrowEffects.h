@@ -22,7 +22,7 @@ public:
 
 	static float drawBeats, SplineAlpha;
 
-	static float drunk, tipsy, dizzy, amovex, amovey, aconfusion;
+	static float drunk, tipsy, dizzy, amovex, amovey, aconfusion, wave;
 
 	static std::map<int, float> stealthWhite;
 	static std::map<int, float> stealthOpacity;
@@ -31,6 +31,9 @@ public:
 	static std::map<int, float> confusion;
 	static std::map<int, float> movex;
 	static std::map<int, float> movey;
+	static std::map<int, float> drunkCol;
+	static std::map<int, float> tipsyCol;
+	static std::map<int, float> waveCol;
 
 	static void drawLine(float defX, float targetY, int col, float beat, Chart currentChart);
 

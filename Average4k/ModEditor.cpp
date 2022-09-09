@@ -322,6 +322,46 @@ void ModEditor::update(Events::updateEvent event)
 
 }
 
+void ModEditor::postUpdate(Events::updateEvent event)
+{
+
+	if (mouseDown)
+	{
+		int mx, my;
+		Game::GetMousePos(&mx, &my);
+
+		float nSize = Game::instance->save->GetDouble("Note Size");
+
+		if (col == -1)
+		{
+			for (int i = 0; i < receptors.size(); i++)
+			{
+				ReceptorObject* rec = receptors[i];
+
+				if (mx > rec->modX - (16 * nSize)
+					&& my > rec->modY - (16 * nSize)
+					&& mx < rec->modX + rec->w + (16 * nSize)
+					&& my < rec->modY + rec->h + (16 * nSize))
+				{
+					col = i;
+				}
+			}
+		}
+		else
+		{
+			ReceptorObject* rec = receptors[col];
+
+			float newX = (mx - (32 * nSize));
+			float newY = (my - (32 * nSize));
+
+			ArrowEffects::movex[col] = (newX - rec->modX);
+			ArrowEffects::movey[col] = (newY - rec->modY);
+		}
+		
+
+	}
+}
+
 void ModEditor::imguiUpdate(float elapsed)
 {
 	if (!showDebug)
@@ -361,22 +401,22 @@ void ModEditor::imguiUpdate(float elapsed)
 			ImGui::PushItemWidth(400);
 			ImGui::BeginMainMenuBar();
 			{
-				if (ImGui::BeginMenu("Splines"))
+				if (ImGui::BeginMenu("Arrow Path"))
 				{
-					ImGui::Text("Spline Alpha");
+					ImGui::Text("Path Alpha");
 					ImGui::SliderFloat("##SplineAlpha", &ArrowEffects::SplineAlpha, 0.1, 1);
 					if (ImGui::Button("Reset"))
 					{
 						ArrowEffects::SplineAlpha = 0.75;
 					}
-					ImGui::Text("Spline Density");
+					ImGui::Text("Path Density");
 					ImGui::SliderFloat("##SplineDensity", &ArrowEffects::SplineDensity, 0.008, 1);
 					if (ImGui::Button("Reset ##den"))
 					{
 						ArrowEffects::SplineDensity = 0.05;
 					}
 
-					ImGui::Checkbox("Show Splines", &ArrowEffects::ShowSplines);
+					ImGui::Checkbox("Show Paths", &ArrowEffects::ShowSplines);
 					ImGui::EndMenu();
 				}
 				if (ImGui::BeginMenu("Drunk"))
@@ -416,6 +456,7 @@ void ModEditor::imguiUpdate(float elapsed)
 						ImGui::InputFloat (("##Movex" + std::to_string(i)).c_str(), &ArrowEffects::movex[i], 1, 10);
 						ImGui::Text("Col %d's movey", i);
 						ImGui::InputFloat(("##Movey" + std::to_string(i)).c_str(), &ArrowEffects::movey[i], 1, 10);
+						ImGui::Separator();
 					}
 					ImGui::EndMenu();
 				}
@@ -430,6 +471,7 @@ void ModEditor::imguiUpdate(float elapsed)
 						{
 							ArrowEffects::reverse[i] = 0;
 						}
+						ImGui::Separator();
 					}
 					ImGui::EndMenu();
 				}
@@ -444,6 +486,7 @@ void ModEditor::imguiUpdate(float elapsed)
 						{
 							ArrowEffects::stealthWhite[i] = 0;
 						}
+						ImGui::Separator();
 					}
 					ImGui::EndMenu();
 				}
@@ -464,6 +507,7 @@ void ModEditor::imguiUpdate(float elapsed)
 						{
 							ArrowEffects::stealthReceptorOpacity[i] = 1;
 						}
+						ImGui::Separator();
 					}
 					ImGui::EndMenu();
 				}
@@ -536,8 +580,6 @@ void ModEditor::keyDown(SDL_KeyboardEvent ev)
 
 		doModsUntilThisPos();
 	}
-
-
 }
 
 void ModEditor::mouseWheel(float wheel)
@@ -545,4 +587,19 @@ void ModEditor::mouseWheel(float wheel)
 	float amount = wheel > 0 ? 1 : -1;
 
 	move(-(amount * 25));
+}
+
+void ModEditor::leftMouseDown()
+{
+	if (!showDebug)
+		return;
+
+	mouseDown = true;
+
+}
+
+void ModEditor::leftMouseUp()
+{
+	col = -1;
+	mouseDown = false;
 }

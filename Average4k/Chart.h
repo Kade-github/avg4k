@@ -36,8 +36,17 @@ struct note {
 	bool killed;
 };
 
+struct info {
+	float stream = 0;
+	float jumpstream = 0;
+	float chordjack = 0;
+	float handstream = 0;
+};
+
+
 struct difficulty
 {
+	info info;
 	std::string name;
 	std::string charter;
 	std::vector<note> notes;
@@ -60,12 +69,15 @@ public:
 		int chartType = 0;
 };
 
+
 class Chart
 {
 	private:
 		bpmSegment previouslyFound;
 		bpmSegment nextSeg;
 	public:
+
+
 
 		float BASS_OFFSET;
 
@@ -78,12 +90,116 @@ class Chart
 				isModFile = true;
 				pathToLua = m.folder + "/mod/mod.lua";
 			}
-      // mp3/other bass offsets
+			// mp3/other bass offsets
 
-		  if (m.ext == "mp3")
-			BASS_OFFSET = 0.034f * 2.5f;
-		  else
-			BASS_OFFSET = 0.034f;
+			if (m.ext == "mp3")
+				BASS_OFFSET = 0.034f * 2.5f;
+			else
+				BASS_OFFSET = 0.034f;
+
+			// get info
+
+				for (difficulty& d : meta.difficulties) {
+					float measures = 0;
+
+					float streamMeasures = 0;
+					float jumpstreamMeasures = 0;
+					float chordjackMeasures = 0;
+					float handstreamMeasures = 0;
+
+					int curMeasure = 0;
+					float lastBeat = -1;
+
+					float jumps = 0;
+					float hands = 0;
+					float singles = 0;
+					float quads = 0;
+
+					float allNotes = 0;
+
+					std::map < int, note > stuff;
+
+					for (note n : d.notes) {
+						bool huh = false;
+
+						if (n.type == Note_Tail)
+							continue;
+
+						if (stuff.size() > 0) {
+							for (const auto& [k, v] : stuff) {
+								if (v.beat >= n.beat - 0.01 && v.beat < n.beat + 0.01)
+									huh = true;
+								else {
+									switch (stuff.size()) {
+									case 1:
+										singles++;
+										break;
+									case 2:
+										jumps++;
+										break;
+									case 3:
+										hands++;
+										break;
+									case 4:
+										quads++;
+										break;
+									}
+									stuff.clear();
+									break;
+								}
+
+							}
+						}
+
+						stuff[n.lane] = n;
+
+						if (lastBeat == -1)
+							lastBeat = n.beat;
+
+						if (lastBeat + 2 < n.beat) {
+							curMeasure++;
+							measures++;
+
+							lastBeat = n.beat;
+
+							float avgSingles = singles / allNotes;
+							float avgJumps = jumps / allNotes;
+							float avgHands = hands / allNotes;
+							float avgQuads = quads / allNotes;
+
+
+							if (avgJumps > 0 && avgSingles > 0)
+								jumpstreamMeasures++;
+							else if (avgSingles == 0 && (avgHands > 0.5 || avgJumps > 0.85 || avgQuads > 0.75))
+								chordjackMeasures++;
+							else if (avgSingles > 0.2 && (avgHands > 0.75 || avgQuads > 0.75))
+								handstreamMeasures++;
+							else if (avgSingles > 0)
+								streamMeasures++;
+
+							jumps = 0;
+							hands = 0;
+							singles = 0;
+							quads = 0;
+							allNotes = 0;
+						}
+
+						allNotes++;
+					}
+
+					info in;
+					if (chordjackMeasures != 0)
+						in.chordjack = chordjackMeasures / measures;
+					if (handstreamMeasures != 0)
+						in.handstream = handstreamMeasures / measures;
+					if (streamMeasures != 0)
+						in.stream = streamMeasures / measures;
+					if (jumpstreamMeasures != 0)
+						in.jumpstream = jumpstreamMeasures / measures;
+
+					d.info = in;
+
+				}
 		};
 		chartMeta meta;
 

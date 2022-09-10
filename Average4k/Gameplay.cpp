@@ -101,6 +101,7 @@ void Gameplay::updateAccuracy(double hitWorth)
 	God->setText("Great: " + std::to_string(Great));
 	Ehh->setText("Good: " + std::to_string(Eh));
 	Yke->setText("Bad: " + std::to_string(Yikes));
+	Mis->setText("Misses: " + std::to_string(Misses));
 
 	MUTATE_END
 }
@@ -575,6 +576,9 @@ void Gameplay::create() {
 
 	Yke = new Text(12, (Game::gameHeight / 2) + 82, "Bad: 0", 24, "Futura Bold");
 	Yke->create();
+
+	Mis = new Text(12, (Game::gameHeight / 2) + 104, "Misses: 0", 24, "Futura Bold");
+	Mis->create();
 
 	Combo->borderSize = 1;
 	Combo->border = true;

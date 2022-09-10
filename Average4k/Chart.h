@@ -82,6 +82,137 @@ class Chart
 		float BASS_OFFSET;
 
 		Chart() {};
+
+		void getInfo()
+		{
+			for (difficulty& d : meta.difficulties) {
+				float measures = 0;
+
+				float streamMeasures = 0;
+				float jumpstreamMeasures = 0;
+				float chordjackMeasures = 0;
+				float handstreamMeasures = 0;
+
+				int curMeasure = 0;
+				float lastBeat = -1;
+
+				float jumps = 0;
+				float hands = 0;
+				float singles = 0;
+				float quads = 0;
+
+				float allNotes = 0;
+
+				std::map < int, note > stuff;
+
+				for (note n : d.notes) {
+					bool huh = false;
+
+					if (n.type == Note_Tail)
+						continue;
+
+					if (stuff.size() > 0) {
+						for (const auto& [k, v] : stuff) {
+							if (v.beat >= n.beat - 0.01 && v.beat < n.beat + 0.01)
+								huh = true;
+							else {
+								switch (stuff.size()) {
+								case 1:
+									singles++;
+									break;
+								case 2:
+									jumps+= 2;
+									break;
+								case 3:
+									hands+= 3;
+									break;
+								case 4:
+									quads += 4;
+									break;
+								}
+								stuff.clear();
+								break;
+							}
+
+						}
+					}
+
+					stuff[n.lane] = n;
+
+					if (lastBeat == -1)
+						lastBeat = n.beat;
+
+					if (lastBeat + 2 < n.beat && n.beat < lastBeat + 4) {
+						curMeasure++;
+						measures++;
+
+						lastBeat = n.beat;
+
+						float avgSingles = singles / allNotes;
+						float avgJumps = jumps / allNotes;
+						float avgHands = hands / allNotes;
+						float avgQuads = quads / allNotes;
+
+						if (avgSingles > 0.2 && (avgHands > 0.75 || avgQuads > 0.75))
+							handstreamMeasures++;
+						else if (avgSingles < 0.5 && (avgHands > 0.2 || avgJumps > 0.9 || avgQuads > 0.4))
+							chordjackMeasures++;
+						else if (avgJumps > 0 && avgSingles > 0)
+							jumpstreamMeasures++;
+						else if (avgSingles > 0)
+							streamMeasures++;
+
+						jumps = 0;
+						hands = 0;
+						singles = 0;
+						quads = 0;
+						allNotes = 0;
+					}
+					else if (n.beat > lastBeat + 4)
+					{
+						curMeasure++;
+						measures++;
+
+						lastBeat = n.beat;
+						jumps = 0;
+						hands = 0;
+						singles = 0;
+						quads = 0;
+						allNotes = 0;
+					}
+
+					allNotes++;
+				}
+
+				info in;
+				if (chordjackMeasures != 0)
+					in.chordjack = chordjackMeasures / measures;
+				if (handstreamMeasures != 0)
+					in.handstream = handstreamMeasures / measures;
+				if (streamMeasures != 0)
+					in.stream = streamMeasures / measures;
+				if (jumpstreamMeasures != 0)
+					in.jumpstream = jumpstreamMeasures / measures;
+
+				float sum = in.stream + in.jumpstream + in.chordjack + in.handstream;
+
+				if (sum < 1)
+				{
+					if (in.stream > (in.jumpstream + in.chordjack + in.handstream))
+						in.stream += (1 - sum);
+					if (in.chordjack > (in.jumpstream + in.stream + in.handstream))
+						in.chordjack += (1 - sum);
+					if (in.handstream > (in.jumpstream + in.stream + in.chordjack))
+						in.handstream += (1 - sum);
+					if (in.jumpstream > (in.handstream + in.stream + in.chordjack))
+						in.jumpstream += (1 - sum);
+				}
+
+
+				d.info = in;
+
+			}
+		}
 		Chart(chartMeta m, bool checkformod = true) { 
 			meta = m;
 			
@@ -99,107 +230,7 @@ class Chart
 
 			// get info
 
-				for (difficulty& d : meta.difficulties) {
-					float measures = 0;
-
-					float streamMeasures = 0;
-					float jumpstreamMeasures = 0;
-					float chordjackMeasures = 0;
-					float handstreamMeasures = 0;
-
-					int curMeasure = 0;
-					float lastBeat = -1;
-
-					float jumps = 0;
-					float hands = 0;
-					float singles = 0;
-					float quads = 0;
-
-					float allNotes = 0;
-
-					std::map < int, note > stuff;
-
-					for (note n : d.notes) {
-						bool huh = false;
-
-						if (n.type == Note_Tail)
-							continue;
-
-						if (stuff.size() > 0) {
-							for (const auto& [k, v] : stuff) {
-								if (v.beat >= n.beat - 0.01 && v.beat < n.beat + 0.01)
-									huh = true;
-								else {
-									switch (stuff.size()) {
-									case 1:
-										singles++;
-										break;
-									case 2:
-										jumps++;
-										break;
-									case 3:
-										hands++;
-										break;
-									case 4:
-										quads++;
-										break;
-									}
-									stuff.clear();
-									break;
-								}
-
-							}
-						}
-
-						stuff[n.lane] = n;
-
-						if (lastBeat == -1)
-							lastBeat = n.beat;
-
-						if (lastBeat + 2 < n.beat) {
-							curMeasure++;
-							measures++;
-
-							lastBeat = n.beat;
-
-							float avgSingles = singles / allNotes;
-							float avgJumps = jumps / allNotes;
-							float avgHands = hands / allNotes;
-							float avgQuads = quads / allNotes;
-
-
-							if (avgJumps > 0 && avgSingles > 0)
-								jumpstreamMeasures++;
-							else if (avgSingles == 0 && (avgHands > 0.5 || avgJumps > 0.85 || avgQuads > 0.75))
-								chordjackMeasures++;
-							else if (avgSingles > 0.2 && (avgHands > 0.75 || avgQuads > 0.75))
-								handstreamMeasures++;
-							else if (avgSingles > 0)
-								streamMeasures++;
-
-							jumps = 0;
-							hands = 0;
-							singles = 0;
-							quads = 0;
-							allNotes = 0;
-						}
-
-						allNotes++;
-					}
-
-					info in;
-					if (chordjackMeasures != 0)
-						in.chordjack = chordjackMeasures / measures;
-					if (handstreamMeasures != 0)
-						in.handstream = handstreamMeasures / measures;
-					if (streamMeasures != 0)
-						in.stream = streamMeasures / measures;
-					if (jumpstreamMeasures != 0)
-						in.jumpstream = jumpstreamMeasures / measures;
-
-					d.info = in;
-
-				}
+			getInfo();
 		};
 		chartMeta meta;
 

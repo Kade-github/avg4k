@@ -26,6 +26,7 @@ enum noteType {
 
 struct note {
 	float beat;
+	float row = -99;
 	noteType type;
 	int lane;
 
@@ -38,6 +39,7 @@ struct note {
 
 struct info {
 	float stream = 0;
+	float jacks = 0;
 	float jumpstream = 0;
 	float chordjack = 0;
 	float handstream = 0;
@@ -92,6 +94,7 @@ class Chart
 				float jumpstreamMeasures = 0;
 				float chordjackMeasures = 0;
 				float handstreamMeasures = 0;
+				float jackMeasures = 0;
 
 				int curMeasure = 0;
 				float lastBeat = -1;
@@ -100,6 +103,7 @@ class Chart
 				float hands = 0;
 				float singles = 0;
 				float quads = 0;
+				float jacks = 0;
 
 				float allNotes = 0;
 
@@ -108,7 +112,7 @@ class Chart
 				for (note n : d.notes) {
 					bool huh = false;
 
-					if (n.type == Note_Tail)
+					if (n.type == Note_Tail || n.type == Note_Mine)
 						continue;
 
 					if (stuff.size() > 0) {
@@ -118,7 +122,12 @@ class Chart
 							else {
 								switch (stuff.size()) {
 								case 1:
-									singles++;
+									if ((n.beat - v.beat) <= .5 && v.type == n.type)
+									{
+										jacks++;
+									}
+									else
+										singles++;
 									break;
 								case 2:
 									jumps+= 2;
@@ -152,10 +161,13 @@ class Chart
 						float avgJumps = jumps / allNotes;
 						float avgHands = hands / allNotes;
 						float avgQuads = quads / allNotes;
+						float avgJacks = jacks / allNotes;
 
-						if (avgSingles > 0.2 && (avgHands > 0.75 || avgQuads > 0.75))
+						if (avgSingles > 0.2 && (avgHands > 0.75 || avgQuads > 0.75) && jacks < 0.1)
 							handstreamMeasures++;
-						else if (avgSingles < 0.5 && (avgHands > 0.2 || avgJumps > 0.9 || avgQuads > 0.4))
+						else if (avgJacks > 0 && (avgHands < 0.2 || avgJumps < 0.2))
+							jackMeasures++;
+						else if (avgSingles < 0.1 && (avgHands > 0.2 || avgJumps > 0.9 || avgQuads > 0.4))
 							chordjackMeasures++;
 						else if (avgJumps > 0 && avgSingles > 0)
 							jumpstreamMeasures++;
@@ -166,6 +178,7 @@ class Chart
 						hands = 0;
 						singles = 0;
 						quads = 0;
+						jacks = 0;
 						allNotes = 0;
 					}
 					else if (n.beat > lastBeat + 4)
@@ -178,6 +191,7 @@ class Chart
 						hands = 0;
 						singles = 0;
 						quads = 0;
+						jacks = 0;
 						allNotes = 0;
 					}
 
@@ -191,20 +205,24 @@ class Chart
 					in.handstream = handstreamMeasures / measures;
 				if (streamMeasures != 0)
 					in.stream = streamMeasures / measures;
+				if (jackMeasures != 0)
+					in.jacks = jackMeasures / measures;
 				if (jumpstreamMeasures != 0)
 					in.jumpstream = jumpstreamMeasures / measures;
 
-				float sum = in.stream + in.jumpstream + in.chordjack + in.handstream;
+				float sum = in.stream + in.jumpstream + in.chordjack + in.handstream + in.jacks;
 
 				if (sum < 1)
 				{
-					if (in.stream > (in.jumpstream + in.chordjack + in.handstream))
+					if (in.stream > (in.jumpstream + in.chordjack + in.handstream + in.jacks))
 						in.stream += (1 - sum);
-					if (in.chordjack > (in.jumpstream + in.stream + in.handstream))
+					if (in.chordjack > (in.jumpstream + in.stream + in.handstream + in.jacks))
 						in.chordjack += (1 - sum);
-					if (in.handstream > (in.jumpstream + in.stream + in.chordjack))
+					if (in.handstream > (in.jumpstream + in.stream + in.chordjack + in.jacks))
 						in.handstream += (1 - sum);
-					if (in.jumpstream > (in.handstream + in.stream + in.chordjack))
+					if (in.jacks > (in.jumpstream + in.stream + in.chordjack + in.handstream))
+						in.handstream += (1 - sum);
+					if (in.jumpstream > (in.handstream + in.stream + in.chordjack + in.jacks))
 						in.jumpstream += (1 - sum);
 				}
 

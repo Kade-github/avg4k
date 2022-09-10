@@ -1229,7 +1229,7 @@ void Gameplay::update(Events::updateEvent event)
 					if (startTime < positionInSong + Judge::hitWindows[2] && positionInSong < endTime + Judge::hitWindows[2])
 					{
 						note->holdPerc = beat / note->endBeat;
-						if (holding[note->lane] || (botplay && startTime < positionInSong + Judge::hitWindows[1] && positionInSong < endTime + Judge::hitWindows[2])) // holding that lane!
+						if (holding[note->lane] || (botplay && startTime < positionInSong && positionInSong < endTime)) // holding that lane!
 						{
 							if (botplay)
 							{

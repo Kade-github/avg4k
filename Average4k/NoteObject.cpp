@@ -370,12 +370,31 @@ void NoteObject::draw() {
                 bodies.push_back(body);
             }
             int i = 0;
+            std::vector<GL_Vertex> verts;
             for (holdBody& body : bodies)
             {
-                std::vector<GL_Vertex> verts;
+                if (body.beat < holdstoppedbeat)
+                    continue;
 
                 if (!sparrow)
                 {
+                    if (holding)
+                        Rendering::SetClipRect(&test);
+                    if (i == bodies.size() - 1)
+                    {
+                        Rendering::PushQuad(verts, Game::noteskin->hold, GL::genShader);
+                        if (white != 0)
+                        {
+                            Rendering::drawBatch();
+                            for (GL_Vertex& vert : verts)
+                                vert.a = 1;
+                            Rendering::PushQuad(verts, Game::noteskin->hold, Game::instance->whiteShader);
+                            for (GL_Vertex& vert : verts)
+                                vert.a = ogAlpha;
+                            Rendering::drawBatch();
+                        }
+                        verts.clear();
+                    }
                     verts.push_back({ body.x + body.skewTL, body.y + body.skewYTL,
                         0, 0,
                         (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //tl
@@ -416,23 +435,7 @@ void NoteObject::draw() {
                             (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //br
                     }
 
-                    if (holding || body.beat < holdstoppedbeat)
-                        Rendering::SetClipRect(&test);
-                    if (i != bodies.size() - 1)
-                    {
-                        Rendering::PushQuad(verts, Game::noteskin->hold, GL::genShader);
-                        if (white != 0)
-                        {
-                            Rendering::drawBatch();
-                            for (GL_Vertex& vert : verts)
-                                vert.a = 1;
-                            Rendering::PushQuad(verts, Game::noteskin->hold, Game::instance->whiteShader);
-                            for (GL_Vertex& vert : verts)
-                                vert.a = ogAlpha;
-                            Rendering::drawBatch();
-                        }
-                    }
-                    else
+                    if (i == bodies.size() - 1)
                     {
                         Rendering::PushQuad(verts, Game::noteskin->holdend, GL::genShader);
                         if (white != 0)
@@ -449,6 +452,8 @@ void NoteObject::draw() {
                 }
                 else
                 {
+                    if (holding)
+                        Rendering::SetClipRect(&test);
                     AvgSparrow* sparrow = Game::noteskin->sparrow;
 
                     animTime += Game::deltaTime;
@@ -532,24 +537,26 @@ void NoteObject::draw() {
                         srcRect.x + srcRect.w, srcRect.y + srcRect.h,
                         (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //br
 
-                    if (holding || body.beat < holdstoppedbeat)
-                        Rendering::SetClipRect(&test);
-                    if (!downscroll)
-                        Rendering::PushQuad(verts, Game::noteskin->sparrowImg, GL::genShader);
-                    else
-                        Rendering::PushQuad(verts, Game::noteskin->sparrowImg, GL::genShader, newX, body.y, realWidth, realHeight, 180);
-                    if (white != 0)
+
+                    if (i == bodies.size() - 1)
                     {
-                        Rendering::drawBatch();
-                        for (GL_Vertex& vert : verts)
-                            vert.a = 1;
                         if (!downscroll)
-                            Rendering::PushQuad(verts, Game::noteskin->sparrowImg, Game::instance->whiteShader);
+                            Rendering::PushQuad(verts, Game::noteskin->sparrowImg, GL::genShader);
                         else
-                            Rendering::PushQuad(verts, Game::noteskin->sparrowImg, Game::instance->whiteShader, newX, body.y, realWidth, realHeight, 180);
-                        for (GL_Vertex& vert : verts)
-                            vert.a = ogAlpha;
-                        Rendering::drawBatch();
+                            Rendering::PushQuad(verts, Game::noteskin->sparrowImg, GL::genShader, newX, body.y, realWidth, realHeight, 180);
+                        if (white != 0)
+                        {
+                            Rendering::drawBatch();
+                            for (GL_Vertex& vert : verts)
+                                vert.a = 1;
+                            if (!downscroll)
+                                Rendering::PushQuad(verts, Game::noteskin->sparrowImg, Game::instance->whiteShader);
+                            else
+                                Rendering::PushQuad(verts, Game::noteskin->sparrowImg, Game::instance->whiteShader, newX, body.y, realWidth, realHeight, 180);
+                            for (GL_Vertex& vert : verts)
+                                vert.a = ogAlpha;
+                            Rendering::drawBatch();
+                        }
                     }
                 }
 

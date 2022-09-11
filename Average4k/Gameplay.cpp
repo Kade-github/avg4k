@@ -1253,6 +1253,12 @@ void Gameplay::update(Events::updateEvent event)
 								miss(note);
 								removeNote(note);
 							}
+
+							if (note->holdstoppedtime + 250 > endTime)
+							{
+								note->active = false;
+								removeNote(note);
+							}
 						}
 					}
 

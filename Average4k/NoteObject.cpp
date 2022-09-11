@@ -373,7 +373,7 @@ void NoteObject::draw() {
             std::vector<GL_Vertex> verts;
             for (holdBody& body : bodies)
             {
-                if (body.beat < holdstoppedbeat)
+                if (body.beat < holdstoppedbeat && holdstoppedbeat != -1)
                     continue;
 
                 if (!sparrow)

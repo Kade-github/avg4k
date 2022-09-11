@@ -334,7 +334,10 @@ void NoteObject::draw() {
             for (holdBody& body : bodies)
             {
                 if (body.y > 720 + (64 * size) || body.y < -(64 * size))
+                {
+                    i++;
                     continue;
+                }
 
                 std::vector<GL_Vertex> verts;
 

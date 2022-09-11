@@ -299,47 +299,8 @@ void NoteObject::draw() {
                         {
                             body.skewBL = -(square.x - dstRect.x);
                             body.skewBR = -((square.x + square.w) - (dstRect.x + (64 * size)));
-                            body.skewYTL = (-((dstRect.y) - (square.y + square.h)));
-                            body.skewYTR = (-((dstRect.y) - (square.y + square.h)));
-                        }
-                    }
-                    else
-                    {
-                        holdBody& lastBody = bodies.back();
-                        if (!downscroll)
-                        {
-                            body.skewTL = -(square.x - lastBody.x);
-                            body.skewTR = -((square.x + square.w) - (lastBody.x + lastBody.w));
-                            lastBody.skewYBL = -((lastBody.y + lastBody.h) - square.y);
-                            lastBody.skewYBR = -((lastBody.y + lastBody.h) - square.y);
-                        }
-                        else
-                        {
-                            body.skewBL = -(square.x - lastBody.x);
-                            body.skewBR = -((square.x + square.w) - (lastBody.x + lastBody.w));
-                            lastBody.skewYTL = (-((lastBody.y) - (square.y + square.h)));
-                            lastBody.skewYTR = (-((lastBody.y) - (square.y + square.h)));
-
-                        }
-                    }
-                }
-                else
-                {
-                    if (bodies.size() == 0)
-                    {
-                        if (!downscroll)
-                        {
-                            body.skewTL = -(square.x - dstRect.x);
-                            body.skewTR = -((square.x + square.w) - (dstRect.x + (64 * size)));
-                            body.skewYTL = -(square.y - (dstRect.y + (32 * size)));
-                            body.skewYTR = -(square.y - (dstRect.y + (32 * size)));
-                        }
-                        else
-                        {
-                            body.skewBL = -(square.x - dstRect.x);
-                            body.skewBR = -((square.x + square.w) - (dstRect.x + (64 * size)));
-                            body.skewYTL = (-((dstRect.y) - (square.y + square.h)));
-                            body.skewYTR = (-((dstRect.y) - (square.y + square.h)));
+                            body.skewYBL = -(square.y - (dstRect.y + (32 * size)));
+                            body.skewYBR = -(square.y - (dstRect.y + (32 * size)));
                         }
                     }
                     else
@@ -370,31 +331,15 @@ void NoteObject::draw() {
                 bodies.push_back(body);
             }
             int i = 0;
-            std::vector<GL_Vertex> verts;
             for (holdBody& body : bodies)
             {
-                if (body.beat < holdstoppedbeat && holdstoppedbeat != -1)
+                if (body.y > 720 + (64 * size) || body.y < -(64 * size))
                     continue;
+
+                std::vector<GL_Vertex> verts;
 
                 if (!sparrow)
                 {
-                    if (holding)
-                        Rendering::SetClipRect(&test);
-                    if (i == bodies.size() - 1)
-                    {
-                        Rendering::PushQuad(verts, Game::noteskin->hold, GL::genShader);
-                        if (white != 0)
-                        {
-                            Rendering::drawBatch();
-                            for (GL_Vertex& vert : verts)
-                                vert.a = 1;
-                            Rendering::PushQuad(verts, Game::noteskin->hold, Game::instance->whiteShader);
-                            for (GL_Vertex& vert : verts)
-                                vert.a = ogAlpha;
-                            Rendering::drawBatch();
-                        }
-                        verts.clear();
-                    }
                     verts.push_back({ body.x + body.skewTL, body.y + body.skewYTL,
                         0, 0,
                         (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //tl
@@ -435,7 +380,23 @@ void NoteObject::draw() {
                             (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //br
                     }
 
-                    if (i == bodies.size() - 1)
+                    if (holding || body.beat < holdstoppedbeat)
+                        Rendering::SetClipRect(&test);
+                    if (i != bodies.size() - 1)
+                    {
+                        Rendering::PushQuad(verts, Game::noteskin->hold, GL::genShader);
+                        if (white != 0)
+                        {
+                            Rendering::drawBatch();
+                            for (GL_Vertex& vert : verts)
+                                vert.a = 1;
+                            Rendering::PushQuad(verts, Game::noteskin->hold, Game::instance->whiteShader);
+                            for (GL_Vertex& vert : verts)
+                                vert.a = ogAlpha;
+                            Rendering::drawBatch();
+                        }
+                    }
+                    else
                     {
                         Rendering::PushQuad(verts, Game::noteskin->holdend, GL::genShader);
                         if (white != 0)
@@ -452,8 +413,6 @@ void NoteObject::draw() {
                 }
                 else
                 {
-                    if (holding)
-                        Rendering::SetClipRect(&test);
                     AvgSparrow* sparrow = Game::noteskin->sparrow;
 
                     animTime += Game::deltaTime;
@@ -537,26 +496,24 @@ void NoteObject::draw() {
                         srcRect.x + srcRect.w, srcRect.y + srcRect.h,
                         (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //br
 
-
-                    if (i == bodies.size() - 1)
+                    if (holding || body.beat < holdstoppedbeat)
+                        Rendering::SetClipRect(&test);
+                    if (!downscroll)
+                        Rendering::PushQuad(verts, Game::noteskin->sparrowImg, GL::genShader);
+                    else
+                        Rendering::PushQuad(verts, Game::noteskin->sparrowImg, GL::genShader, newX, body.y, realWidth, realHeight, 180);
+                    if (white != 0)
                     {
+                        Rendering::drawBatch();
+                        for (GL_Vertex& vert : verts)
+                            vert.a = 1;
                         if (!downscroll)
-                            Rendering::PushQuad(verts, Game::noteskin->sparrowImg, GL::genShader);
+                            Rendering::PushQuad(verts, Game::noteskin->sparrowImg, Game::instance->whiteShader);
                         else
-                            Rendering::PushQuad(verts, Game::noteskin->sparrowImg, GL::genShader, newX, body.y, realWidth, realHeight, 180);
-                        if (white != 0)
-                        {
-                            Rendering::drawBatch();
-                            for (GL_Vertex& vert : verts)
-                                vert.a = 1;
-                            if (!downscroll)
-                                Rendering::PushQuad(verts, Game::noteskin->sparrowImg, Game::instance->whiteShader);
-                            else
-                                Rendering::PushQuad(verts, Game::noteskin->sparrowImg, Game::instance->whiteShader, newX, body.y, realWidth, realHeight, 180);
-                            for (GL_Vertex& vert : verts)
-                                vert.a = ogAlpha;
-                            Rendering::drawBatch();
-                        }
+                            Rendering::PushQuad(verts, Game::noteskin->sparrowImg, Game::instance->whiteShader, newX, body.y, realWidth, realHeight, 180);
+                        for (GL_Vertex& vert : verts)
+                            vert.a = ogAlpha;
+                        Rendering::drawBatch();
                     }
                 }
 

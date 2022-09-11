@@ -1,5 +1,7 @@
 #include "Text.h"
 
+bool alreadySet = false;
+
 void Text::setText(std::string temp)
 {
 	if (temp.size() == 0 || temp == " " || Arial == NULL)
@@ -7,11 +9,23 @@ void Text::setText(std::string temp)
 
 	text = temp;
 
-	if (!font.starts_with("arial")) // I only have unicode fonts for arial LOL
+	if (!alreadySet)
 		for (int i = 0; i < text.size(); i++)
 		{
 			if ((char)text[i] > 128 || (char)text[i] < 0)
-				text[i] = '?';
+			{
+				if (curFont != "arial")
+				{
+					alreadySet = true;
+					setFont("arial");
+				}
+				return;
+			}
+			else if (ogFont != "arial" && curFont != ogFont)
+			{
+				setFont(ogFont);
+				return;
+			}
 		}
 
 	const char* c = text.c_str();
@@ -22,11 +36,11 @@ void Text::setText(std::string temp)
 		TTF_SetFontOutline(Arial, borderSize);
 
 		borderMe =
-			TTF_RenderText_Blended(Arial, c, { 255, 255, 255 });
+			TTF_RenderUTF8_Blended(Arial, c, { 255, 255, 255 });
 	}
 	TTF_SetFontOutline(Arial, 0);
 	SDL_Surface* surfaceMessage =
-		TTF_RenderText_Blended(Arial, c, { 255, 255,255 });
+		TTF_RenderUTF8_Blended(Arial, c, { 255, 255,255 });
 	
 	if (surfaceMessage != nullptr)
 	{
@@ -49,6 +63,7 @@ void Text::setText(std::string temp)
 		surfW = message->width;
 		surfH = message->height;
 	}
+	alreadySet = false;
 }
 
 void Text::setCharacterSpacing(float spacing)
@@ -107,6 +122,7 @@ void Text::draw()
 
 void Text::setFont(std::string name)
 {
+	curFont = name;
 	Arial = Font::getFontByName(name, size);
 	setText(text);
 }

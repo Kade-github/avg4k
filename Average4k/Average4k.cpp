@@ -188,7 +188,7 @@ void atexit_handler()
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	PSTR lpCmdLine, INT nCmdShow)
 {
-
+	std::locale::global(std::locale(""));
 
 	std::string cmdLine(lpCmdLine);
 

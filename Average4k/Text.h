@@ -29,6 +29,8 @@ void main()
 class Text : public Object
 {
 public:
+	std::string curFont;
+	std::string ogFont;
 	TTF_Font* Arial;
 	TTF_Font* outlineArial;
 	Texture* message;
@@ -53,6 +55,8 @@ public:
 	std::string font;
 
 	Text(int x, int y, std::string temp, int _size, std::string fontName) : Object(x, y) {
+		ogFont = fontName;
+		curFont = fontName;
 		Arial = Font::getFontByName(fontName,_size);
 		TTF_SetFontHinting(Arial, TTF_HINTING_LIGHT);
 		this->text = temp;

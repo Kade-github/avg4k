@@ -5,9 +5,6 @@ void AvgCamera::draw()
 {
 	Rendering::drawBatch();
 	//glBindFramebuffer(GL_FRAMEBUFFER, fb);
-	glViewport(0, 0, 1280, 720);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	glClearColor(0, 0, 0, 0);
 
 	Rendering::setBlend();
 

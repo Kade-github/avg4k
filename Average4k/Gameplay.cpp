@@ -101,6 +101,7 @@ void Gameplay::updateAccuracy(double hitWorth)
 	God->setText("Great: " + std::to_string(Great));
 	Ehh->setText("Good: " + std::to_string(Eh));
 	Yke->setText("Bad: " + std::to_string(Yikes));
+	Mis->setText("Misses: " + std::to_string(Misses));
 
 	MUTATE_END
 }
@@ -576,6 +577,9 @@ void Gameplay::create() {
 	Yke = new Text(12, (Game::gameHeight / 2) + 82, "Bad: 0", 24, "Futura Bold");
 	Yke->create();
 
+	Mis = new Text(12, (Game::gameHeight / 2) + 104, "Misses: 0", 24, "Futura Bold");
+	Mis->create();
+
 	Combo->borderSize = 1;
 	Combo->border = true;
 
@@ -1013,7 +1017,7 @@ void Gameplay::update(Events::updateEvent event)
 	if (notesToPlay.size() > 0)
 	{
 		note& n = notesToPlay[0];
-		if (n.beat < beat + 24 && (n.type != Note_Tail && n.type != Note_Mine)) // if its in 16 beats
+		if (n.beat < beat + ArrowEffects::drawBeats && (n.type != Note_Tail && n.type != Note_Mine)) // if its in 16 beats
 		{
 				NoteObject* object = new NoteObject();
 				object->currentChart = &MainerMenu::currentSelectedSong;
@@ -1139,6 +1143,7 @@ void Gameplay::update(Events::updateEvent event)
 		if (keys[i] || holding[i])
 		{
 			receptors[i]->light();
+			receptors[i]->loop = false;
 			if (Game::noteskin->shrink)
 				receptors[i]->scale = 0.85;
 		}
@@ -1153,6 +1158,9 @@ void Gameplay::update(Events::updateEvent event)
 					receptors[i]->scale = 1;
 			}
 		}
+
+		if (receptors[i]->lightUpTimer < 1)
+			receptors[i]->hit = false;
 	}
 
 	{
@@ -1161,6 +1169,13 @@ void Gameplay::update(Events::updateEvent event)
 			NoteObject* note = spawnedNotes[i];
 			note->rTime = positionInSong;
 
+			if (note->beat > beat + ArrowEffects::drawBeats || note->beat < beat - ArrowEffects::drawBeats)
+			{
+				note->drawCall = false;
+				continue;
+			}
+			else
+				note->drawCall = true;
 			if (!note->destroyed)
 			{
 				float wh = MainerMenu::currentSelectedSong.getTimeFromBeat(note->beat, MainerMenu::currentSelectedSong.getSegmentFromBeat(note->beat));
@@ -1182,6 +1197,9 @@ void Gameplay::update(Events::updateEvent event)
 						//score += Judge::scoreNote(diff);
 						updateAccuracy(1);
 						note->active = false;
+
+						receptors[note->lane]->loop = false;
+						receptors[note->lane]->hit = true;
 
 						combo++;
 						if (Game::noteskin->bounce)
@@ -1211,18 +1229,23 @@ void Gameplay::update(Events::updateEvent event)
 					if (startTime < positionInSong + Judge::hitWindows[2] && positionInSong < endTime + Judge::hitWindows[2])
 					{
 						note->holdPerc = beat / note->endBeat;
-						if (holding[note->lane] || (botplay && startTime < positionInSong + Judge::hitWindows[1] && positionInSong < endTime + Judge::hitWindows[2])) // holding that lane!
+						if (holding[note->lane] || (botplay && startTime < positionInSong && positionInSong < endTime)) // holding that lane!
 						{
 							if (botplay)
 							{
 								receptors[note->lane]->lightUpTimer = 195;
 							}
+							receptors[note->lane]->loop = true;
+							receptors[note->lane]->hit = true;
 							note->holding = true;
-							note->holdstoppedbeat = beat;
-							note->holdstoppedtime = positionInSong;
 						}
 						else if (positionInSong >= startTime + Judge::hitWindows[4] && !holding[note->lane])
 						{
+							if (note->holding)
+							{
+								note->holdstoppedbeat = beat;
+								note->holdstoppedtime = positionInSong;
+							}
 							note->holding = false;
 							note->fuckTimer = positionInSong / (note->holdstoppedtime + 250);
 
@@ -1231,6 +1254,12 @@ void Gameplay::update(Events::updateEvent event)
 								note->active = false;
 								note->missHold = true;
 								miss(note);
+								removeNote(note);
+							}
+
+							if (note->holdstoppedtime + 250 > endTime)
+							{
+								note->active = false;
 								removeNote(note);
 							}
 						}
@@ -1440,6 +1469,9 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 			if (closestObject->active && diff <= hw && diff > -hw)
 			{
+
+				receptors[closestObject->lane]->loop = false;
+				receptors[closestObject->lane]->hit = true;
 
 				closestObject->active = false;
 				closestObject->wasHit = true;

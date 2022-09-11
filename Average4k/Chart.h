@@ -26,6 +26,7 @@ enum noteType {
 
 struct note {
 	float beat;
+	float row = -99;
 	noteType type;
 	int lane;
 
@@ -36,8 +37,18 @@ struct note {
 	bool killed;
 };
 
+struct info {
+	float stream = 0;
+	float jacks = 0;
+	float jumpstream = 0;
+	float chordjack = 0;
+	float handstream = 0;
+};
+
+
 struct difficulty
 {
+	info info;
 	std::string name;
 	std::string charter;
 	std::vector<note> notes;
@@ -60,6 +71,7 @@ public:
 		int chartType = 0;
 };
 
+
 class Chart
 {
 	private:
@@ -67,9 +79,14 @@ class Chart
 		bpmSegment nextSeg;
 	public:
 
+
+
 		float BASS_OFFSET;
 
 		Chart() {};
+
+		void getInfo();
+
 		Chart(chartMeta m, bool checkformod = true) { 
 			meta = m;
 			
@@ -78,12 +95,16 @@ class Chart
 				isModFile = true;
 				pathToLua = m.folder + "/mod/mod.lua";
 			}
-      // mp3/other bass offsets
+			// mp3/other bass offsets
 
-		  if (m.ext == "mp3")
-			BASS_OFFSET = 0.034f * 2.5f;
-		  else
-			BASS_OFFSET = 0.034f;
+			if (m.ext == "mp3")
+				BASS_OFFSET = 0.034f * 2.5f;
+			else
+				BASS_OFFSET = 0.034f;
+
+			// get info
+
+			getInfo();
 		};
 		chartMeta meta;
 

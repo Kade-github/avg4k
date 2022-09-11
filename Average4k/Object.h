@@ -41,7 +41,7 @@ public:
 				}),
 			children.end());
 		if (obj->id >= 0 && !obj->isDead)
-			delete obj;
+ 			delete obj;
 	}
 
 	bool handleDraw = false;

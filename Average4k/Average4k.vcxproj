@@ -435,6 +435,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="OsuFile.cpp" />
     <ClCompile Include="Pack.cpp" />
     <ClCompile Include="pch.cpp" />
+    <ClCompile Include="pugixml.cpp" />
     <ClCompile Include="QuaverFile.cpp" />
     <ClCompile Include="ReceptorObject.cpp" />
     <ClCompile Include="Rendering.cpp" />
@@ -459,6 +460,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="AvgCheckBox.h" />
     <ClInclude Include="AvgContainer.h" />
     <ClInclude Include="AvgDropDown.h" />
+    <ClInclude Include="AvgFrame.h" />
     <ClInclude Include="AvgGroup.h" />
     <ClInclude Include="AvgRect.h" />
     <ClInclude Include="AvgTextBox.h" />
@@ -544,6 +546,8 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="Pack.h" />
     <ClInclude Include="Packet.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="pugiconfig.hpp" />
+    <ClInclude Include="pugixml.hpp" />
     <ClInclude Include="QuaverFile.h" />
     <ClInclude Include="ReceptorObject.h" />
     <ClInclude Include="Rendering.h" />

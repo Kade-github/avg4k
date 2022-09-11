@@ -1,6 +1,7 @@
 #pragma once
 #include "includes.h"
 #include "Texture.h"
+#include "AvgFrame.h"
 
 class noteskin_asset {
 public:
@@ -20,10 +21,49 @@ public:
 	Texture* up;
 	Texture* right;
 
+	Texture* sparrowImg;
+
+	AvgSparrow* sparrow;
+
+	std::string leftA;
+	std::string rightA;
+	std::string upA;
+	std::string downA;
+
+	std::string holdLeft;
+	std::string holdEndLeft;
+
+	std::string holdRight;
+	std::string holdEndRight;
+
+	std::string holdDown;
+	std::string holdEndDown;
+
+	std::string holdUp;
+	std::string holdEndUp;
+
+	std::string receptorLeft;
+	std::string receptorLitLeft;
+	std::string receptorHitLeft;
+	std::string receptorUp;
+	std::string receptorLitUp;
+	std::string receptorHitUp;
+	std::string receptorRight;
+	std::string receptorLitRight;
+	std::string receptorHitRight;
+	std::string receptorDown;
+	std::string receptorLitDown;
+	std::string receptorHitDown;
+
+	float hitReceptorScale = 1;
+
+	int offsetXReceptorHit = 0;
+	int offsetYReceptorHit = 0;
+
 	bool disableQuant = false;
-	bool rotate;
-	bool bounce;
-	bool shrink;
+	bool rotate = true;
+	bool bounce = true;
+	bool shrink = true;
 	std::string name = "arrow";
 	std::string skinpath = "default";
 };

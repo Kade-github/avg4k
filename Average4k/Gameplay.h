@@ -162,6 +162,7 @@ class Gameplay :
 		Text* God;
 		Text* Ehh;
 		Text* Yke;
+		Text* Mis;
 
 		bool downscroll;
 

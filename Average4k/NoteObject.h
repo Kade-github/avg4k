@@ -29,7 +29,17 @@ struct holdTile {
 
 class NoteObject : public Object
 {
+	private:
+		float animStartTime = 0;
+		float animTime = 0;
 	public:
+
+		int frame;
+		int fps = 24;
+
+		bool loop;
+		bool animationFinished;
+
 		NoteObject();
 		~NoteObject() {
 		

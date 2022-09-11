@@ -266,6 +266,7 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                                 note note;
                                 note.beat = beat;
                                 note.lane = n;
+                                note.row = noteRow;
                                 if (thing != 'M')
                                 {
                                     switch (thing)

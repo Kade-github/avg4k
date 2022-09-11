@@ -214,16 +214,14 @@ void selectedSongCallback(int sId)
 	}
 	cont->addObject(artist, "artist");
 
+	Text* diff = new Text(0, 0, "", 20, "arialblk");
 	if (s.c.meta.difficulties.size() == 0)
 	{
 		std::string diffDisplay = "No Diffs :(";
-
-		Text* diff = new Text(0, 0, diffDisplay, 20, "arialblk");
 		diff->setCharacterSpacing(4.17);
-
+		diff->setText(diffDisplay);
 		diff->x = (cont->w / 2) - (diff->w / 2);
 		diff->y = 145;
-		cont->addObject(diff, "diff");
 	}
 	else
 	{
@@ -231,14 +229,11 @@ void selectedSongCallback(int sId)
 		std::string diffDisplay = s.c.meta.difficulties[0].name;
 		if (diffDisplay.size() > 14)
 			diffDisplay = diffDisplay.substr(0, 14) + "...";
-
-		Text* diff = new Text(0, 0, diffDisplay, 20, "arialblk");
+		diff->setText(diffDisplay);
 		diff->setCharacterSpacing(4.17);
 
 		diff->x = (cont->w / 2) - (diff->w / 2);
 		diff->y = 145;
-
-		cont->addObject(diff, "diff");
 
 		if (s.c.meta.difficulties.size() >= 2)
 		{
@@ -257,6 +252,7 @@ void selectedSongCallback(int sId)
 			cont->addObject(diffSelectRight, "rightSelect");
 		}
 	}
+	cont->addObject(diff, "diff");
 
 	std::string type = "StepMania";
 
@@ -269,6 +265,37 @@ void selectedSongCallback(int sId)
 		type = "Osu!";
 		break;
 	}
+
+
+	int stream = (std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.stream * 100));
+	int jumpstream = (std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.jumpstream * 100));
+	int chordjacks = (std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.chordjack * 100));
+	int handstream = (std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.handstream * 100));
+	int jack = (std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.jacks * 100));
+
+	Text* streamT = new Text(0, 0, "Stream: " + std::to_string(stream) + "%", 14, "arial");
+	Text* jumpstreamT = new Text(0, 0, "Jumpstream: " + std::to_string(jumpstream) + "%", 14, "arial");
+	Text* chordjackT = new Text(0, 0, "Chordjack: " + std::to_string(chordjacks) + "%", 14, "arial");
+	Text* handstreamT = new Text(0, 0, "Handstream: " + std::to_string(handstream) + "%", 14, "arial");
+	Text* jacksT = new Text(0, 0, "Jacks: " + std::to_string(jack) + "%", 14, "arial");
+
+	streamT->x = 4;
+	streamT->y = diff->y + 38;
+	jumpstreamT->x = 4;
+	jumpstreamT->y = streamT->y + 24;
+
+	chordjackT->x = 4;
+	chordjackT->y = jumpstreamT->y + 24;
+	handstreamT->x = 4;
+	handstreamT->y = chordjackT->y + 24;
+	jacksT->x = 4;
+	jacksT->y = handstreamT->y + 24;
+
+	cont->addObject(streamT, "streamText");
+	cont->addObject(jumpstreamT, "jumpstreamText");
+	cont->addObject(chordjackT, "chordjackText");
+	cont->addObject(handstreamT, "handstreamText");
+	cont->addObject(jacksT, "jacksText");
 
 	Text* chartType = new Text(0, 0, type, 14, "arial");
 	chartType->setCharacterSpacing(4.17);
@@ -385,8 +412,8 @@ void MainerMenu::create()
 	Rect clip;
 	clip.x = 18;
 	clip.y = 14;
-	clip.w = 43;
-	clip.h = 43;
+	clip.w = 42;
+	clip.h = 42;
 	icon->clipRect = clip;
 	icon->customShader = shad;
 	hello = new Text(16 + ((icon->w / 2) * 2.6), 16, "Refreshing avatar data...", 16, "arialbd");
@@ -885,6 +912,24 @@ void updateDiff()
 
 	left->x = diff->x - 24;
 	right->x = (diff->x + diff->w) + 24;
+
+	Text* streamT = (Text*)cont->findItemByName("streamText");
+	Text* jumpstreamT = (Text*)cont->findItemByName("jumpstreamText");
+	Text* chordjackT = (Text*)cont->findItemByName("chordjackText");
+	Text* handstreamT = (Text*)cont->findItemByName("handstreamText");
+	Text* jacksT = (Text*)cont->findItemByName("jacksText");
+
+	int stream = (std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.stream * 100));
+	int jumpstream = (std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.jumpstream * 100));
+	int chordjacks = (std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.chordjack * 100));
+	int handstream = (std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.handstream * 100));
+	int jack = (std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.jacks * 100));
+
+	streamT->setText("Stream: " + std::to_string(stream) + "%");
+	jumpstreamT->setText("Jumpstream: " + std::to_string(jumpstream) + "%");
+	chordjackT->setText("Chordjack: " + std::to_string(chordjacks) + "%");
+	handstreamT->setText("Handstream: " + std::to_string(handstream) + "%");
+	jacksT->setText("Jacks: " + std::to_string(jack) + "%");
 
 	MUTATE_END
 }
@@ -1894,6 +1939,36 @@ void MainerMenu::createLobby()
 	diff->y = 145;
 
 	cont->addObject(diff, "diff");
+
+	int stream = (std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.stream * 100));
+	int jumpstream = (std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.jumpstream * 100));
+	int chordjacks = (std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.chordjack * 100));
+	int handstream = (std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.handstream * 100));
+	int jack = (std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.jacks * 100));
+
+	Text* streamT = new Text(0, 0, "Stream: " + std::to_string(stream) + "%", 14, "arial");
+	Text* jumpstreamT = new Text(0, 0, "Jumpstream: " + std::to_string(jumpstream) + "%", 14, "arial");
+	Text* chordjackT = new Text(0, 0, "Chordjack: " + std::to_string(chordjacks) + "%", 14, "arial");
+	Text* handstreamT = new Text(0, 0, "Handstream: " + std::to_string(handstream) + "%", 14, "arial");
+	Text* jacksT = new Text(0, 0, "Jacks: " + std::to_string(jack) + "%", 14, "arial");
+
+	streamT->x = 4;
+	streamT->y = diff->y + 38;
+	jumpstreamT->x = 4;
+	jumpstreamT->y = streamT->y + 24;
+
+	chordjackT->x = 4;
+	chordjackT->y = jumpstreamT->y + 24;
+	handstreamT->x = 4;
+	handstreamT->y = chordjackT->y + 24;
+	jacksT->x = 4;
+	jacksT->y = handstreamT->y + 24;
+
+	cont->addObject(streamT, "streamText");
+	cont->addObject(jumpstreamT, "jumpstreamText");
+	cont->addObject(chordjackT, "chordjackText");
+	cont->addObject(handstreamT, "handstreamText");
+	cont->addObject(jacksT, "jacksText");
 
 	Text* chartType = new Text(0, 0, "", 14, "arial");
 	chartType->setCharacterSpacing(4.17);

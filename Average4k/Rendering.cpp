@@ -303,3 +303,44 @@ void Rendering::PushQuad(Rect* dstRect, Rect* srcRect, Texture* tex, Shader* sha
 	batch_buffer.push_back(br);
 	
 }
+
+void Rendering::PushQuad(std::vector<GL_Vertex> vertices, Texture* tex, Shader* shad, float x, float y, float w, float h, float deg)
+{
+	if (tex == nullptr)
+		tex = white;
+	if (shad == nullptr)
+		shad = GL::genShader;
+
+	if (batch_texture != tex || batch_shader != shad)
+	{
+		drawBatch();
+
+		batch_texture = tex;
+		batch_shader = shad;
+	}
+
+	// rotate stuff
+
+	if (deg != 0)
+	{
+		float s = sin(deg * (3.14159265 / 180));
+		float c = cos(deg * (3.14159265 / 180));
+		float cx = x + w * 0.5f;
+		float cy = y + h * 0.5f;
+
+		for (GL_Vertex& vert : vertices)
+		{
+			float tx = vert.x - cx;
+			float ty = vert.y - cy;
+			float rx = tx * c - ty * s;
+			float ry = tx * s + ty * c;
+			vert.x = rx + cx;
+			vert.y = ry + cy;
+		}
+	}
+
+	for (GL_Vertex vert : vertices)
+		batch_buffer.push_back(vert);
+
+
+}

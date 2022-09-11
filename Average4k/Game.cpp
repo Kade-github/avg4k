@@ -165,49 +165,52 @@ void Game::asyncShowErrorWindow(std::string title, std::string description, bool
 
 void Game::showErrorWindow(std::string title, std::string description, bool major, Color topColor)
 {
-	std::string titlt = title;
-
-	if (titlt.size() > 12)
-		titlt = titlt.substr(0, 24);
-
-	topHeaderColor = topColor;
-
-	if (!errorTitleText)
-		errorTitleText = new Text(0, 0, title, 18, "arial");
-	else
-		errorTitleText->setText(title);
-	errorTitleText->setCharacterSpacing(3);
-
-	errorType = major;
-
-	if (!errorDescriptionText)
-		errorDescriptionText = new Text(0, 0, description, 14, "arial");
-	else
-		errorDescriptionText->setText(description);
-	errorDescriptionText->setCharacterSpacing(2.33);
-	errorDescriptionText->color = { 0,0,0 };
-
-	if (!errorButtonText)
-		errorButtonText = new Text(0, 0, "ok", 14, "arialbd");
-	errorButtonText->setCharacterSpacing(2.33);
-	errorButtonText->color = { 0,0,0 };
-
-	if (!error_button)
+	if (!Gameplay::instance)
 	{
-		error_button = Noteskin::getMenuElement(noteskin, "roundedbutton_ok.png");
-		error_major = Noteskin::getMenuElement(noteskin, "majorerroricon.png");
-		error_minor = Noteskin::getMenuElement(noteskin, "minorerroricon.png");
+		std::string titlt = title;
+
+		if (titlt.size() > 12)
+			titlt = titlt.substr(0, 24);
+
+		topHeaderColor = topColor;
+
+		if (!errorTitleText)
+			errorTitleText = new Text(0, 0, title, 18, "arial");
+		else
+			errorTitleText->setText(title);
+		errorTitleText->setCharacterSpacing(3);
+
+		errorType = major;
+
+		if (!errorDescriptionText)
+			errorDescriptionText = new Text(0, 0, description, 14, "arial");
+		else
+			errorDescriptionText->setText(description);
+		errorDescriptionText->setCharacterSpacing(2.33);
+		errorDescriptionText->color = { 0,0,0 };
+
+		if (!errorButtonText)
+			errorButtonText = new Text(0, 0, "ok", 14, "arialbd");
+		errorButtonText->setCharacterSpacing(2.33);
+		errorButtonText->color = { 0,0,0 };
+
+		if (!error_button)
+		{
+			error_button = Noteskin::getMenuElement(noteskin, "roundedbutton_ok.png");
+			error_major = Noteskin::getMenuElement(noteskin, "majorerroricon.png");
+			error_minor = Noteskin::getMenuElement(noteskin, "minorerroricon.png");
+		}
+
+		int startingX = (1280 / 2) - (433 / 2);
+		int startingY = (720 / 2) - (185 / 2);
+
+		errorButtonRect.x = startingX + (433 - 92);
+		errorButtonRect.y = startingY + (185 - 46);
+		errorButtonRect.w = 80;
+		errorButtonRect.h = 39;
+		errorWindowOpen = true;
+		Average4k::dumpOutstream();
 	}
-
-	int startingX = (1280 / 2) - (433 / 2);
-	int startingY = (720 / 2) - (185 / 2);
-
-	errorButtonRect.x = startingX + (433 - 92);
-	errorButtonRect.y = startingY + (185 - 46);
-	errorButtonRect.w = 80;
-	errorButtonRect.h = 39;
-	errorWindowOpen = true;
-	Average4k::dumpOutstream();
 }
 
 void Game::GetMousePos(int* mx, int* my)
@@ -426,6 +429,10 @@ void Game::update(Events::updateEvent update)
 			}, Easing::EaseInSine);
 	}
 
+	glViewport(0, 0, 1280, 720);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glClearColor(0, 0, 0, 0);
+
 	if (currentMenu != nullptr && currentMenu->created)
 	{
 		currentMenu->update(update);
@@ -591,6 +598,8 @@ void Game::update(Events::updateEvent update)
 	if (currentMenu != nullptr && currentMenu->created)
 		currentMenu->postUpdate(update);
 
+	Rendering::drawBatch();
+
 	if (fpsText && !debugConsole)
 	{
 		if (alphaWatermark->x < Game::gameWidth + (alphaWatermark->surfW / 2))
@@ -600,7 +609,9 @@ void Game::update(Events::updateEvent update)
 		else
 			alphaWatermark->x = -(alphaWatermark->surfW + 12);
 		alphaWatermark->draw();
+		Rendering::drawBatch();
 		fpsText->draw();
+		Rendering::drawBatch();
 	}
 
 
@@ -800,6 +811,10 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 		else if (debug_string == "packets")
 		{
 			printPackets_DB = !printPackets_DB;
+		}
+		else if (debug_string.starts_with("dontcare"))
+		{
+			transitionToMenu(new MainerMenu());
 		}
 		else if (debug_string.starts_with("changename"))
 		{

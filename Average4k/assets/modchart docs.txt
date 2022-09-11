@@ -1,3 +1,5 @@
+(Made for Avg4K b11.2.3)
+
 To create a modchart, go into a chart and add a folder called "mod". 
 
 Create a file called "mod.lua" and paste in this template:
@@ -5,6 +7,10 @@ Create a file called "mod.lua" and paste in this template:
 "
 
 function create()
+
+end
+
+function update()
 
 end
 
@@ -16,22 +22,38 @@ Not going to teach you how to use lua but if you already know the stuff you can 
 
 activateMod(modName,beat,beatLength,easingType,amount)
 
-is what activates most mods, the list of mods (currently) are:
-
-drunk, tipsy, dizzy, amovex, amovey, aconfusion
-
-https://craftedcart.gitlab.io/notitg_docs/modifiers.html to figure out what they do.
-
 For column specific mods use
 
 (function)
 
 activateModMap(modName,beat,beatLength,easingType,amount, col)
 
-same thing but different mods,
+Current list of mods:
 
-those are: reverse, confusion, movex, movey
+Non-Column Specific
 
-That is basically it (for now), you can look at https://pastebin.com/sGB5T97k for an example.
+drunk - https://craftedcart.gitlab.io/notitg_docs/modifiers.html#mod-drunk
+wave - https://craftedcart.gitlab.io/notitg_docs/modifiers.html#mod-wave
+tipsy - https://craftedcart.gitlab.io/notitg_docs/modifiers.html#mod-tipsy
+dizzy - https://craftedcart.gitlab.io/notitg_docs/modifiers.html#mod-tipsy
+amovex - https://craftedcart.gitlab.io/notitg_docs/modifiers.html#mod-movex
+amovey - https://craftedcart.gitlab.io/notitg_docs/modifiers.html#mod-movey
 
-planning on support for sprites and more mods later, but right now it's still pretty alright.
+Column Specific
+
+stealthWhite - https://craftedcart.gitlab.io/notitg_docs/modifiers.html#mod-stealth
+stealthReceptorOpacity ^
+stealthOpacity ^
+reverse - https://craftedcart.gitlab.io/notitg_docs/modifiers.html#mod-reverse
+confusion - https://craftedcart.gitlab.io/notitg_docs/modifiers.html#mod-confusion
+movex - column specific for amovex
+movey - column specific for amovey
+drunkCol - column specific for drunk
+waveCol - column specific for wave
+tipsyCol - column specific for tipsy
+
+Misc Mods
+
+showPath - Shows the arrow path (1 for active, 0 for not)
+pathAlpha - The alpha for the arrow path (0 by default)
+pathDensity - Since i'm bad at coding, you can change the density. :)

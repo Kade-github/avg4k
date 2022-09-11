@@ -52,6 +52,7 @@ public:
 		return textShader;
 	}
 
+	bool alreadySet = false;
 	std::string font;
 
 	Text(int x, int y, std::string temp, int _size, std::string fontName) : Object(x, y) {

@@ -299,8 +299,8 @@ void NoteObject::draw() {
                         {
                             body.skewBL = -(square.x - dstRect.x);
                             body.skewBR = -((square.x + square.w) - (dstRect.x + (64 * size)));
-                            body.skewYBL = -(square.y - (dstRect.y + (32 * size)));
-                            body.skewYBR = -(square.y - (dstRect.y + (32 * size)));
+                            body.skewYBL = -(square.y - (dstRect.y - (32 * size)));
+                            body.skewYBR = -(square.y - (dstRect.y - (32 * size)));
                         }
                     }
                     else

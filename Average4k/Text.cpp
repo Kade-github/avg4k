@@ -1,6 +1,5 @@
 #include "Text.h"
 
-bool alreadySet = false;
 
 void Text::setText(std::string temp)
 {

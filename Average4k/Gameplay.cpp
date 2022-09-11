@@ -898,6 +898,9 @@ void Gameplay::update(Events::updateEvent event)
 			rec->modY = rec->y;
 			rec->endX = rec->modX;
 			rec->endY = rec->modY;
+
+			if (ArrowEffects::ShowSplines)
+				ArrowEffects::drawLine(rec->x, rec->y, i, beat, MainerMenu::currentSelectedSong);
 		}
 
 		for (NoteObject* obj : spawnedNotes)

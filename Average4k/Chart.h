@@ -122,7 +122,7 @@ class Chart
 							else {
 								switch (stuff.size()) {
 								case 1:
-									if ((n.beat - v.beat) <= .25 && v.type == n.type)
+									if ((n.beat - v.beat) <= .25 && v.lane == n.lane)
 									{
 										jacks++;
 									}

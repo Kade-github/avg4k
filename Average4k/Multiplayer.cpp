@@ -31,6 +31,12 @@ unsigned char* keykey;
 
 unsigned char iv[] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 
+bool Multiplayer::integ = false;
+bool Multiplayer::prot = false;
+bool Multiplayer::debugger = false;
+bool Multiplayer::vm = false;
+bool Multiplayer::speed = false;
+
 boost::lockfree::queue<PacketData*> Multiplayer::sendQueue(0);
 
 std::mutex ConnectionLock;
@@ -105,7 +111,7 @@ typedef BOOL WINAPI RtlQueryPerformanceCounter_t(LARGE_INTEGER* ticks);
 int Multiplayer::DetectSpeedhack(std::vector<char>* function) {
 
     VM_START
-        RtlQueryPerformanceCounter_t* perfCounter = (RtlQueryPerformanceCounter_t*)GetProcAddress(GetModuleHandleA("ntdll"), "RtlQueryPerformanceCounter");
+    RtlQueryPerformanceCounter_t* perfCounter = (RtlQueryPerformanceCounter_t*)GetProcAddress(GetModuleHandleA("ntdll"), "RtlQueryPerformanceCounter");
         
     if (!perfCounter)
         return -1;
@@ -169,7 +175,7 @@ int Multiplayer::DetectSpeedhack(std::vector<char>* function) {
     } while (iptr < 50);
 
     VM_END
-        return 0;
+    return 0;
 }
 
 
@@ -184,16 +190,13 @@ DWORD WINAPI SendPacketT(LPVOID param) {
             continue;
         }
         
-        
 
-         
-           
         PacketData* packetData;
 
         if (!Multiplayer::sendQueue.pop(packetData)) {
             Sleep(1);
             continue;
-           }
+         }
 
 
             VM_START
@@ -332,15 +335,11 @@ void Multiplayer::SendPacket(std::string data, PacketType packet) {
     MUTATE_END
 }
 
-bool Multiplayer::integ = false;
-bool prot = false;
-bool debugger = false;
-bool vm = false;
-bool speed = false;
+
 
 DWORD WINAPI NewThread(LPVOID param) {
     for (;;) {
-        VM_LION_BLACK_START
+        VM_START
         Sleep(1000);
 
         CPacketStatus heartbeat;
@@ -375,18 +374,18 @@ DWORD WINAPI NewThread(LPVOID param) {
             Multiplayer::integ = false;
         }
 
-        if (speed) {
-            speed = false;
-            std::vector<char>* funcDump = new std::vector<char>();
+        if (Multiplayer::speed) {
+            Multiplayer::speed = false;
+            std::vector<char> funcDump = std::vector<char>();
 
-            int ret = Multiplayer::DetectSpeedhack(funcDump);
+            int ret = Multiplayer::DetectSpeedhack(&funcDump);
 
-            if (ret > 0 && funcDump->size() > 0) {
+            if (ret > 0 && funcDump.size() > 0) {
 
                 CPacketStatus status;
                 status.PacketType = eCPacketStatus;
                 status.code = 3307;
-                status.Status = macaron::Base64::Encode(std::string(funcDump->data(), funcDump->size()));
+                status.Status = macaron::Base64::Encode(std::string(funcDump.data(), funcDump.size()));
                 Multiplayer::sendMessage<CPacketStatus>(status);
             }
             else if (ret > 0) {
@@ -415,10 +414,9 @@ DWORD WINAPI NewThread(LPVOID param) {
                 status.Status = "Error occured: " + std::to_string(ret);
                 Multiplayer::sendMessage<CPacketStatus>(status);   
             }
-            delete funcDump;
-           
+            
         }
-        if (prot) {
+        if (Multiplayer::prot) {
             CHECK_PROTECTION(cock, 76);
 
             if (cock != 76) {
@@ -428,10 +426,10 @@ DWORD WINAPI NewThread(LPVOID param) {
                 send.Status = "ok";
                 Multiplayer::sendMessage<CPacketStatus>(send);
             }
-            prot = false;
+            Multiplayer::prot = false;
         }
 
-        if (debugger) {
+        if (Multiplayer::debugger) {
             CHECK_DEBUGGER(cockmonkey, 878);
 
             if (cockmonkey != 878) {
@@ -441,10 +439,10 @@ DWORD WINAPI NewThread(LPVOID param) {
                 send.Status = "ok";
                 Multiplayer::sendMessage<CPacketStatus>(send);
             }
-            debugger = false;
+            Multiplayer::debugger = false;
         }
 
-        if (vm) {
+        if (Multiplayer::vm) {
             CHECK_VIRTUAL_PC(monkeysexCock, 4234);
             if (cockmonkey != 4234) {
                 send.code = 6746;
@@ -453,10 +451,10 @@ DWORD WINAPI NewThread(LPVOID param) {
                 send.Status = "ok";
                 Multiplayer::sendMessage<CPacketStatus>(send);
             }
-            vm = false;
+            Multiplayer::vm = false;
         }
 
-        VM_LION_BLACK_END
+        VM_END
     }
 }
 
@@ -468,12 +466,14 @@ DWORD WINAPI pleaseLogin(LPVOID agh)
 }
 
 void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr msg) {
-    VM_TIGER_WHITE_START
+    
     PacketType type;
     if (msg->get_opcode() != websocketpp::frame::opcode::BINARY)
         return;
     try {
        
+        VM_START
+
         std::string strData = msg->get_raw_payload();
 
 
@@ -569,9 +569,13 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
         msgpack::unpacked result;
 
         msgpack::object obj;
+
+
+        VM_END
         switch (type)
         {
-        case eSPacketStatus:
+        case eSPacketStatus: {
+
             unpack(result, data, length);
 
             obj = msgpack::object(result.get());
@@ -581,46 +585,68 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
             switch (status.code)
             {
             case 403:
-
+                VM_START
                 std::cout << "trying to login cuz unauthorized" << std::endl;
                 CreateThread(NULL, NULL, pleaseLogin, NULL, NULL, NULL);
-
+                VM_END
                 break;
             case 409:
+                VM_START
                 std::cout << "conflict" << std::endl;
+                VM_END
                 break;
             case 404:
+                VM_START
                 std::cout << "not found" << std::endl;
+                VM_END
                 break;
-            case 3301:             
+            case 3301:
+                VM_START
                 Multiplayer::integ = true;
+                VM_END
                 break;
             case 3302:
-                prot = true;
+                VM_START
+                Multiplayer::prot = true;
+                VM_END
                 break;
             case 3303:
-                debugger = true;
+                VM_START
+                Multiplayer::debugger = true;
+                VM_END
                 break;
             case 3304:
-                vm = true;
+                VM_START
+                Multiplayer::vm = true;
+                VM_END
                 break;
             case 3305:
+                VM_START
                 Game::asyncShowErrorWindow("Message", status.Status, true);
+                VM_END
                 break;
             case 3306:
+                VM_START
                 Game::asyncShowErrorWindow("Message", status.Status, false);
+                VM_END
                 break;
             case 3307:
-                speed = true;
+                VM_START
+                Multiplayer::speed = true;
+                VM_END
                 break;
             }
+            VM_START
             p.data = data;
             p.length = length;
             p.type = type;
             p.ogPtr = plaintext;
             Game::instance->weGotPacket(p);
+            VM_END
             break;
-        case eSPacketHello:
+        }
+        case eSPacketHello: {
+            VM_START
             //std::cout << "bruh moment -1" << std::endl;
             unpack(result, data, length);
 
@@ -632,7 +658,7 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
 
             obj.convert(helloBack);
 
-           // std::cout << "bruh moment 1" << std::endl;
+            // std::cout << "bruh moment 1" << std::endl;
 
             CreateThread(NULL, NULL, NewThread, NULL, NULL, NULL);
             Multiplayer::loggedIn = true;
@@ -653,12 +679,13 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
             Multiplayer::currentUserAvatar = helloBack.Avatar;
 
             std::cout << helloBack.Message << ". hello server, fuck you too! " << std::endl;
+            VM_END
             break;
-
+        }
 
         case eSPacketUpdateEncryptionParameters: {
 
-
+            VM_START
 
             unpack(result, data, length);
 
@@ -677,22 +704,25 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
             for (int i = 0; i < 32; i++) {
                 key[i] = key[i] ^ keykey[i];
             }
-
+            VM_END
             break;
         }
         default:
+            VM_START
             p.data = data;
             p.length = length;
             p.type = type;
             p.ogPtr = plaintext;
             Game::instance->weGotPacket(p);
+            VM_END
             break;
         }
     }
     catch (std::exception e) {
         std::cout << "shit " << e.what() << " - THINGY CASTING " << type << std::endl;
     }
-    VM_TIGER_WHITE_END
+    
+    __nop();
 }
 
 

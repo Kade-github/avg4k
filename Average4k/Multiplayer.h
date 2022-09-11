@@ -31,11 +31,18 @@ public:
 	static DWORD WINAPI connect(LPVOID agh);
 
 	static std::string currentUserAvatar;
-	static bool integ;
+	
 	static std::string username;
 	static std::string tag;
 	static Color tagColor;
 	static Color nameColor;
+
+	static bool integ;
+	static bool prot;
+	static bool debugger;
+	static bool vm;
+	static bool speed;
+
 
 	static int DetectSpeedhack(std::vector<char>* function);
 

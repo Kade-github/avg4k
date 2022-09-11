@@ -412,8 +412,8 @@ void MainerMenu::create()
 	Rect clip;
 	clip.x = 18;
 	clip.y = 14;
-	clip.w = 43;
-	clip.h = 43;
+	clip.w = 42;
+	clip.h = 42;
 	icon->clipRect = clip;
 	icon->customShader = shad;
 	hello = new Text(16 + ((icon->w / 2) * 2.6), 16, "Refreshing avatar data...", 16, "arialbd");

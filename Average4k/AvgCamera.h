@@ -33,6 +33,8 @@ public:
 
 	float shakeTime = 0;
 	float shakeInten;
+	void leDraw(Object* obj);
+
 	void shake(float time, float inten)
 	{
 		shakeTime = time;

@@ -478,7 +478,11 @@ void NoteObject::draw() {
                         if (downscroll)
                             body.y += (32 * size);
                     }
-
+                    if (i == bodies.size() - 1 && downscroll)
+                    {
+                        body.skewBL = body.skewBL / 2;
+                        body.skewBR = body.skewBR / 2;
+                    }
                     srcRect = fr.srcRect;
                     verts.push_back({ newX + body.skewTL, body.y + body.skewYTL,
                         srcRect.x, srcRect.y,
@@ -501,19 +505,19 @@ void NoteObject::draw() {
 
                     if (holding || body.beat < holdstoppedbeat)
                         Rendering::SetClipRect(&test);
-                    if (!downscroll)
-                        Rendering::PushQuad(verts, Game::noteskin->sparrowImg, GL::genShader);
-                    else
+                    if (i == bodies.size() - 1 && downscroll)
                         Rendering::PushQuad(verts, Game::noteskin->sparrowImg, GL::genShader, newX, body.y, realWidth, realHeight, 180);
+                    else
+                        Rendering::PushQuad(verts, Game::noteskin->sparrowImg, GL::genShader);
                     if (white != 0)
                     {
                         Rendering::drawBatch();
                         for (GL_Vertex& vert : verts)
                             vert.a = 1;
-                        if (!downscroll)
-                            Rendering::PushQuad(verts, Game::noteskin->sparrowImg, Game::instance->whiteShader);
-                        else
+                        if (i == bodies.size() - 1 && downscroll)
                             Rendering::PushQuad(verts, Game::noteskin->sparrowImg, Game::instance->whiteShader, newX, body.y, realWidth, realHeight, 180);
+                        else
+                            Rendering::PushQuad(verts, Game::noteskin->sparrowImg, Game::instance->whiteShader);
                         for (GL_Vertex& vert : verts)
                             vert.a = ogAlpha;
                         Rendering::drawBatch();

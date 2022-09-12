@@ -210,6 +210,8 @@ void ReceptorObject::draw() {
 		else if (frame > size - 1)
 		{
 			frame = size - 1;
+			if (bot)
+				lightUpTimer = 0;
 		}
 
 

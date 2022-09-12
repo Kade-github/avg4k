@@ -55,6 +55,8 @@ class Gameplay :
 
 		std::vector<ReceptorObject*> receptors;
 
+		bool botplayHittingNote;
+
 		std::vector<note> notesToPlay;
 
 		std::vector<leaderboardhighlight> highlights;

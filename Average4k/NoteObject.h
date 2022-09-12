@@ -89,7 +89,7 @@ class NoteObject : public Object
 		float size;
 
 		int holdsActive = 0;
-		bool wasHit;
+		bool wasHit = false;
 		bool clapped;
 
 		float tailBeat = 0;

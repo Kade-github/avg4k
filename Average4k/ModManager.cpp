@@ -18,6 +18,48 @@ struct gameMod {
 
 };
 
+struct spriteMetric {
+	float width;
+	float height;
+};
+
+void consolePrint(std::string print)
+{
+	Game::instance->db_addLine("[LUA] " + print);
+}
+
+inline void my_panic(sol::optional<std::string> maybe_msg) {
+	if (maybe_msg) {
+		const std::string& msg = maybe_msg.value();
+		consolePrint("Lua Erorr");
+		consolePrint(msg);
+		std::cout << "Lua Error " << msg << std::endl;
+		Average4k::dumpOutstream();
+	}
+	Game::instance->asyncShowErrorWindow("Lua Error!", "Check console (F11)", true);
+}
+
+
+int my_exception_handler(lua_State* L, sol::optional<const std::exception&> maybe_exception, sol::string_view description) {
+	if (maybe_exception) {
+		const std::exception& ex = *maybe_exception;
+		std::cout << ex.what() << std::endl;
+
+		consolePrint("Lua Erorr");
+		consolePrint(ex.what());
+	}
+	else {
+		std::cout.write(description.data(), static_cast<std::streamsize>(description.size()));
+		std::cout << std::endl;
+
+		consolePrint("Lua Erorr");
+		consolePrint(description.data());
+	}
+	Average4k::dumpOutstream();
+	Game::instance->asyncShowErrorWindow("Lua Error!", "Check console (F11)", true);
+	return 0;
+}
+
 
 std::map<std::string, std::function<float()>>* luaFunctions;
 
@@ -25,32 +67,40 @@ float ModManager::beat = 0;
 float ModManager::time = 0;
 float ModManager::bpm = 0;
 
+
+
 ModManager::ModManager(std::string luaPath)
 {
+	killed = false;
 	lua = std::make_unique<sol::state>();
 
 	lua->open_libraries(sol::lib::base);
 
 	lua->open_libraries(sol::lib::math);
 
-	createFunctions();
+	lua->set_panic(sol::c_call<decltype(&my_panic), &my_panic>);
+	lua->set_exception_handler(&my_exception_handler);
 
-	auto bad_code_result = lua->safe_script_file(luaPath);
+	auto result = lua->safe_script_file(luaPath, &sol::script_pass_on_error);
 
-	if (bad_code_result.valid())
+	if (result.valid())
 		std::cout << "Ran " << luaPath << " successfully!" << std::endl;
 	else
 	{
-		sol::error error = bad_code_result;
+		sol::error error = result;
 		std::cout << "Failed to run " << luaPath << ". " << error.what() << std::endl;
 		Game::instance->db_addLine("Lua Error");
 		Game::instance->db_addLine(error.what());
-		Game::instance->transitionToMenu(new MainerMenu());
-		Game::instance->asyncShowErrorWindow("Lua Error Start", "F11 to check the console", true);
+		Game::instance->asyncShowErrorWindow("Lua Error!", "Check console (F11)", true);
+		Average4k::dumpOutstream();
+		killed = true;
 		return;
 	}
 
+	spriteCamera = new AvgGroup(0, 0, 1280, 720);
 
+	assetPath = luaPath.substr(0, luaPath.find_last_of('/'));
+	createFunctions();
 
 	luaMap = new std::map<std::string, sol::function>();
 
@@ -62,24 +112,80 @@ void ModManager::populateLuaMap()
 	(*luaMap)["create"] = (*lua)["create"];
 	(*luaMap)["update"] = (*lua)["update"];
 	(*luaMap)["destroy"] = (*lua)["destroy"];
+	(*luaMap)["hit"] = (*lua)["hit"];
 }
 
 void ModManager::callEvent(std::string event, std::string args)
 {
-	sol::protected_function f((*luaMap)[event](args));
+	if (killed)
+		return;
+	sol::protected_function f((*luaMap)[event]);
+
+	if (!f.valid())
+		return;
+
+
+	sol::function_result x = f(args);
+
+	if (!x.valid()) {
+		std::string errorstring = x;
+		std::cout << "Lua Erorr: \"" << errorstring << "\"";
+
+		consolePrint("Lua Erorr");
+		consolePrint(errorstring);
+		Game::instance->asyncShowErrorWindow("Lua Error!", "Check console (F11)", true);
+		killed = true;
+		return;
+	}
 
 	std::sort(appliedMods.begin(), appliedMods.end(), AppliedMod());
 }
 
 void ModManager::callEvent(std::string event, int args)
 {
-	sol::protected_function f((*luaMap)[event](args));
+	if (killed)
+		return;
+	sol::protected_function f((*luaMap)[event]);
+
+	if (!f.valid())
+		return;
+
+	sol::function_result x = f(args);
+
+	if (!x.valid()) {
+		std::string errorstring = x;
+		std::cout << "Lua Erorr: \"" << errorstring << "\"";
+
+		consolePrint("Lua Erorr");
+		consolePrint(errorstring);
+		Game::instance->asyncShowErrorWindow("Lua Error!", "Check console (F11)", true);
+		killed = true;
+		return;
+	}
 	std::sort(appliedMods.begin(), appliedMods.end(), AppliedMod());
 }
 
 void ModManager::callEvent(std::string event, float args)
 {
-	sol::protected_function f((*luaMap)[event](args));
+	if (killed)
+		return;
+	sol::protected_function f((*luaMap)[event]);
+
+	if (!f.valid())
+		return;
+
+	sol::function_result x = f(args);
+
+	if (!x.valid()) {
+		std::string errorstring = x;
+		std::cout << "Lua Erorr: \"" << errorstring << "\"";
+
+		consolePrint("Lua Erorr");
+		consolePrint(errorstring);
+		Game::instance->asyncShowErrorWindow("Lua Error!", "Check console (F11)", true);
+		killed = true;
+		return;
+	}
 	std::sort(appliedMods.begin(), appliedMods.end(), AppliedMod());
 }
 
@@ -107,17 +213,20 @@ void ModManager::initLuaFunctions()
 
 void ModManager::kill()
 {
-	lua_close(lua->lua_state());
+	killed = true;
+	for (const auto& [key, value] : sprites) {
+		spriteCamera->removeObj(value.spr);
+	}
+	sprites.clear();
 }
 
-void consolePrint(std::string print)
-{
-	Game::instance->db_addLine("[LUA] " + print);
-}
+
 
 
 void ModManager::runMods()
 {
+	if (killed)
+		return;
 	for (AppliedMod& m : appliedMods)
 	{
 		if (beat >= m.tweenStart && ((beat < m.tweenStart + m.tweenLen + 0.2)))
@@ -148,10 +257,45 @@ void ModManager::runMods()
 		}
 
 	}
+
+	for (const auto& [key, value] : sprites) {
+		float anchorX = value.spr->defX;
+		float anchorY = value.spr->defY;
+
+		if (value.anchor != "")
+		{
+			SpriteMod anchor = ModManager::instance->sprites[value.anchor];
+			anchorX = anchor.spr->defX + anchor.movex;
+			anchorY = anchor.spr->defY + anchor.movey;
+		}
+
+		float x = anchorX + value.movex;
+		float y = anchorY + value.movey;
+		float rot = value.spr->defRot + value.confusion;
+
+		value.spr->x = x + value.offsetX;
+		value.spr->y = y + value.offsetY;
+		value.spr->angle = rot;
+
+		if (value.spr->animationFinished && value.finish != "" && value.spr->sparrow)
+		{
+			(*instance->lua)[value.finish](value.spr->sparrow->currentAnim);
+		}
+	}
 }
 
 void ModManager::setModStart(AppliedMod& m)
 {
+	if (m.spriteName != "-1")
+	{
+		if (m.mod == "movex")
+			m.modStartAmount = sprites[m.spriteName].movex;
+		if (m.mod == "movey")
+			m.modStartAmount = sprites[m.spriteName].movey;
+		if (m.mod == "confusion")
+			m.modStartAmount = sprites[m.spriteName].confusion;
+		return;
+	}
 	if (m.mod == "drunk")
 		m.modStartAmount = ArrowEffects::drunk;
 	if (m.mod == "tipsy")
@@ -196,6 +340,16 @@ void ModManager::setModStart(AppliedMod& m)
 
 void ModManager::setModProperties(AppliedMod& m, float tween)
 {
+	if (m.spriteName != "-1")
+	{
+		if (m.mod == "movex")
+			sprites[m.spriteName].movex = std::lerp(m.modStartAmount, m.amount, tween);
+		if (m.mod == "movey")
+			sprites[m.spriteName].movey = std::lerp(m.modStartAmount, m.amount, tween);
+		if (m.mod == "confusion")
+			sprites[m.spriteName].confusion = std::lerp(m.modStartAmount, m.amount, tween);
+		return;
+	}
 	if (m.mod == "drunk")
 		ArrowEffects::drunk = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "tipsy")
@@ -242,6 +396,8 @@ void ModManager::setModProperties(AppliedMod& m, float tween)
 
 void ModManager::runMods(AppliedMod m, float beat)
 {
+	if (killed)
+		return;
 	setModStart(m);
 
 	if (m.mod != "showPath")
@@ -261,6 +417,62 @@ void ModManager::runMods(AppliedMod m, float beat)
 	{
 		setModProperties(m, 0);
 	}
+	if (m.spriteName != "-1")
+	{
+		if (!ModManager::instance->sprites[m.spriteName].spr)
+		{
+			consolePrint("Couldn't find sprite " + m.spriteName);
+			return;
+		}
+
+		for (const auto& [key, value] : sprites) {
+			float anchorX = value.spr->defX;
+			float anchorY = value.spr->defY;
+
+			if (value.anchor != "")
+			{
+				SpriteMod anchor = ModManager::instance->sprites[value.anchor];
+				anchorX = anchor.spr->defX + anchor.movex;
+				anchorY = anchor.spr->defY + anchor.movey;
+			}
+
+			float x = anchorX + value.movex;
+			float y = anchorY + value.movey;
+			float rot = value.spr->defRot + value.confusion;
+
+			value.spr->x = x + value.offsetX;
+			value.spr->y = y + value.offsetY;
+
+			value.spr->angle = rot;
+
+			if (value.spr->animationFinished && value.finish != "" && value.spr->sparrow)
+			{
+				(*instance->lua)[value.finish](value.spr->sparrow->currentAnim);
+			}
+		}
+	}
+}
+
+float getWidth(std::string name)
+{
+	if (!ModManager::instance->sprites[name].spr)
+	{
+		consolePrint("Couldn't find sprite " + name);
+		return 0;
+	}
+
+	return ModManager::instance->sprites[name].spr->w;
+}
+
+float getHeight(std::string name)
+{
+	if (!ModManager::instance->sprites[name].spr)
+	{
+		consolePrint("Couldn't find sprite " + name);
+		return 0;
+	}
+
+	return ModManager::instance->sprites[name].spr->h;
 }
 
 
@@ -275,6 +487,7 @@ void ModManager::createFunctions()
 	// user types
 
 	lua->new_usertype<configMod>("config", "downscroll", &configMod::downscroll, "noteSize", &configMod::noteSize);
+
 
 	configMod cm;
 	cm.downscroll = Game::save->GetBool("downscroll");
@@ -298,6 +511,24 @@ void ModManager::createFunctions()
 		instance->appliedMods.push_back(aMod);
 	});
 
+	lua->set_function("activateSpriteMod", [](std::string sprite, std::string name, float tweenStart, float tweenLen, std::string easingFunc, float amount) {
+		if (!instance->sprites[sprite].spr)
+		{
+			consolePrint("Couldn't find sprite " + sprite);
+			return;
+		}
+		AppliedMod aMod;
+		aMod.mod = name;
+		aMod.spriteName = sprite;
+		aMod.tweenStart = tweenStart;
+		aMod.tweenLen = tweenLen;
+		aMod.tweenCurve = Easing::getEasingFunction(easingFunc);
+		aMod.amount = amount;
+		aMod.modStartAmount = -999;
+
+		instance->appliedMods.push_back(aMod);
+	});
+
 	lua->set_function("activateModMap", [](std::string name, float tweenStart, float tweenLen, std::string easingFunc, float amount, int col) {
 		AppliedMod aMod;
 		aMod.mod = name;
@@ -310,6 +541,100 @@ void ModManager::createFunctions()
 
 
 		instance->appliedMods.push_back(aMod);
+	});
+
+	lua->set_function("getSpriteWidth", &getWidth);
+
+	lua->set_function("getSpriteHeight", &getHeight);
+
+	lua->set_function("setSpriteDefaultPos", [](std::string sprite, float x, float y)
+		{
+			if (!instance->sprites[sprite].spr)
+			{
+				consolePrint("Couldn't find sprite " + sprite);
+				return;
+			}
+			SpriteMod& m = instance->sprites[sprite];
+			m.spr->defX = x;
+			m.spr->defY = y;
+		});
+
+	lua->set_function("setSpriteOffset", [](std::string sprite, float x, float y)
+		{
+			if (!instance->sprites[sprite].spr)
+			{
+				consolePrint("Couldn't find sprite " + sprite);
+				return;
+			}
+			SpriteMod& m = instance->sprites[sprite];
+			m.offsetX = x;
+			m.offsetY = y;
+		});
+
+	lua->set_function("setSpriteProperty", [](std::string sprite, std::string prop, std::string val) {
+		if (!instance->sprites[sprite].spr)
+		{
+			consolePrint("Couldn't find sprite " + sprite);
+			return;
+		}
+		SpriteMod& m = instance->sprites[sprite];
+
+		if (prop == "sparrow")
+		{
+			m.spr->setSparrow(instance->assetPath + "/" + val + ".xml");
+		}
+
+		if (prop == "loop")
+		{
+			m.spr->loop = val == "true" ? true : false;
+		}
+
+		if (prop == "fps")
+		{
+			m.spr->fps = std::stoi(val);
+		}
+
+		if (prop == "anim")
+		{
+			m.spr->playAnim(val, m.spr->fps, m.spr->loop);
+			m.offsetX = 0;
+			m.offsetY = 0;
+		}
+
+		if (prop == "animFinish")
+		{
+			m.finish = val;
+		}
+
+
+		if (prop == "anchor")
+		{
+			if (!instance->sprites[val].spr)
+			{
+				consolePrint("Couldn't find sprite " + val + " to anchor");
+				return;
+			}
+			m.anchor = val;
+		}
+	});
+
+	lua->set_function("createSprite", [](std::string p, std::string name, int x, int y) {
+		std::string path = instance->assetPath + "/" + p + ".png";
+		AvgSprite* spr = new AvgSprite(x, y, Texture::createWithImage(path));
+
+		SpriteMod mod;
+		mod.confusion = 0;
+		mod.movex = 0;
+		mod.movey = 0;
+		mod.spr = spr;
+
+		instance->sprites[name] = mod;
+		instance->spriteCamera->add(spr);
+	});
+
+	lua->set_function("setNoteskin", [](std::string noteskinName) {
+		std::string path = instance->assetPath + "/" + noteskinName;
+		Game::noteskin = Noteskin::getNoteskin(path);
 	});
 
 }

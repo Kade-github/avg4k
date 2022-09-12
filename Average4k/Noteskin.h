@@ -76,6 +76,7 @@ class Noteskin
 		static noteskin_asset* asset;
 		static void resetNoteskin(noteskin_asset* as);
 		static noteskin_asset* getNoteskin();
+		static noteskin_asset* getNoteskin(std::string ty);
 
 		static Texture* getGameplayElement(noteskin_asset* as, std::string element)
 		{

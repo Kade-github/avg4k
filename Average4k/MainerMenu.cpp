@@ -328,6 +328,12 @@ void selectedSongCallback(int sId)
 
 void MainerMenu::create()
 {
+	if (Noteskin::type != Game::save->GetString("Noteskin"))
+	{
+		Noteskin::resetNoteskin(Game::noteskin);
+		Game::noteskin = Noteskin::getNoteskin();
+	}
+
 	isTransDone = true;
 	fetchingScores = false;
 	VM_START
@@ -2235,8 +2241,6 @@ void dropdown_callback(std::string set, std::string value)
 
 	if (set == "Noteskin")
 	{
-		Game::noteskin = Noteskin::getNoteskin();
-		resetStuff();
 		Game::instance->transitionToMenu(new MainMenu());
 		delete ((MainerMenu*)Game::instance->currentMenu)->lobbyShader;
 	}

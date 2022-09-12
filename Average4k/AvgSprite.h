@@ -20,6 +20,14 @@ public:
 	bool loop;
 	bool animationFinished;
 
+	std::string loopFinished;
+
+	float defX, defY;
+
+	float ofX, ofY;
+
+	float defRot;
+
 	int borderSize = 4;
 	//Color borderColor;
 	bool border = false;
@@ -51,6 +59,9 @@ public:
 			std::cout << "failed to get texture!" << std::endl;
 		w = tex->width;
 		h = tex->height;
+		defX = x;
+		defY = y;
+		defRot = 0;
 		alpha = 1;
 		MUTATE_END
 	};
@@ -64,6 +75,9 @@ public:
 			std::cout << "failed to get texture!" << std::endl;
 		w = tex->width;
 		h = tex->height;
+		defX = x;
+		defY = y;
+		defRot = 0;
 		alpha = 1;
 		MUTATE_END
 	};
@@ -142,6 +156,10 @@ public:
 					{
 						animationFinished = true;
 						frame = size - 1;
+						if (loopFinished != "")
+						{
+							playAnim(loopFinished, fps, true);
+						}
 					}
 					else
 					{
@@ -153,24 +171,26 @@ public:
 			}
 			AvgFrame fr = sparrow->getRectFromFrame(frame);
 			srcRect = fr.srcRect;
-			dstRect.x = uX + ((fr.frameRect.x * scale) + mpx);
-			dstRect.y = uY + ((fr.frameRect.y * scale) + mpy);
+			dstRect.x = uX + ((fr.frameRect.x * scale) + mpx) + ofX;
+			dstRect.y = uY + ((fr.frameRect.y * scale) + mpy) + ofY;
 
 			dstRect.w = (int)(fr.frameRect.w * scale);
 			dstRect.h = (int)(fr.frameRect.h * scale);
 			//Game::mainCamera->clipRect = dstRect;
 		}
-
-		srcRect.x = 0;
-		srcRect.y = 0;
-		if (flipX)
-			srcRect.w = -1;
 		else
-			srcRect.w = 1;
-		if (flip)
-			srcRect.h = -1;
-		else
-			srcRect.h = 1;
+		{
+			srcRect.x = 0;
+			srcRect.y = 0;
+			if (flipX)
+				srcRect.w = -1;
+			else
+				srcRect.w = 1;
+			if (flip)
+				srcRect.h = -1;
+			else
+				srcRect.h = 1;
+		}
 
 		if (clipRect.w > 0 || clipRect.h > 0)
 			Rendering::SetClipRect(&clipRect);

@@ -11,6 +11,7 @@ public:
 	int fps = 24;
 
 	bool loop = true;
+	bool bot = false;
 	bool animationFinished;
 
 	bool hit = false;

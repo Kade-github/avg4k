@@ -169,7 +169,7 @@ void ArrowEffects::drawLine(float defX, float targetY, int col, float beat, Char
 		float x = (defX + (32 * Game::save->GetDouble("Note Size")) - 2) + aEff.x;
 		float y = yPos + aEff.y;
 
-		if (y < -350 || y > 1070 || x < 0 || x > 1280)
+		if ((y < -60 || y > 760 || x < 0 || x > 1280) && realI % 2 == 0)
 			continue;
 
 		if (realI % 2 == 1)

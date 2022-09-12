@@ -9256,7 +9256,7 @@ namespace sol {
 		}
 
 		void deref(lua_State* L) const noexcept {
-			luaL_unref(L, LUA_REGISTRYINDEX, ref);
+				luaL_unref(L, LUA_REGISTRYINDEX, ref);
 		}
 	};
 

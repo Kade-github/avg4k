@@ -1,6 +1,73 @@
 #include "AvgCamera.h"
 #include "Game.h"
 
+void AvgCamera::leDraw(Object* obj)
+{
+	if (obj->children.size() < 900000)
+	{
+		//glBindFramebuffer(GL_FRAMEBUFFER, fb);
+
+		obj->draw();
+		if (obj->handleDraw) // because we binded to another
+		{
+			Rendering::drawBatch();
+			Rendering::setBlend();
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+			AvgGroup* gr = (AvgGroup*)obj;
+
+			Rect gdstRect;
+			Rect gsrcRect;
+
+			if (gr->center)
+			{
+				float mpx = (gr->w * (1 - gr->scale)) / 2;
+				float mpy = (gr->h * (1 - gr->scale)) / 2;
+
+				gdstRect.x = gr->x + mpx;
+				gdstRect.y = gr->y + mpy;
+
+				gdstRect.w = gr->w * gr->scale;
+				gdstRect.h = gr->h * gr->scale;
+			}
+			else
+			{
+
+				gdstRect.x = gr->x;
+				gdstRect.y = gr->y;
+
+				gdstRect.w = gr->w;
+				gdstRect.h = gr->h;
+			}
+			gdstRect.r = 255;
+			gdstRect.g = 255;
+			gdstRect.b = 255;
+			gdstRect.a = 1;
+
+			gsrcRect.x = 0;
+			gsrcRect.y = 1;
+			gsrcRect.w = 1;
+			gsrcRect.h = -1;
+
+			if (gr->clipRect.w > 0 || gr->clipRect.h > 0)
+				Rendering::SetClipRect(&gr->clipRect);
+			else
+				Rendering::SetClipRect(NULL);
+
+			if (gr->customShader)
+				Rendering::PushQuad(&gdstRect, &gsrcRect, gr->ctb, gr->customShader);
+			else
+				Rendering::PushQuad(&gdstRect, &gsrcRect, gr->ctb, GL::genShader);
+
+			if (gr->clipRect.w > 0 || gr->clipRect.h > 0)
+				Rendering::SetClipRect(NULL);
+		}
+		Rendering::setBlend();
+		if (obj->children.size() != 0 && !obj->handleDraw)
+			obj->drawChildren();
+	}
+}
+
 void AvgCamera::draw()
 {
 	Rendering::drawBatch();
@@ -10,6 +77,8 @@ void AvgCamera::draw()
 
 	for (Object* obj : children)
 	{
+		if (obj->drawLast)
+			continue;
 		if (obj == nullptr)
 			continue;
 		if (obj->w < 0 || obj->h < 0)
@@ -19,69 +88,23 @@ void AvgCamera::draw()
 			obj->draw();
 			continue;
 		}
-		if (obj->children.size() < 900000)
+		leDraw(obj);
+	}
+
+	for (Object* obj : children)
+	{
+		if (!obj->drawLast)
+			continue;
+		if (obj == nullptr)
+			continue;
+		if (obj->w < 0 || obj->h < 0)
+			continue;
+		if (obj->customDraw)
 		{
-			//glBindFramebuffer(GL_FRAMEBUFFER, fb);
-
 			obj->draw();
-			if (obj->handleDraw) // because we binded to another
-			{
-				Rendering::drawBatch();
-				Rendering::setBlend();
-				glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-				AvgGroup* gr = (AvgGroup*)obj;
-
-				Rect gdstRect;
-				Rect gsrcRect;
-
-				if (gr->center)
-				{
-					float mpx = (gr->w * (1 - gr->scale)) / 2;
-					float mpy = (gr->h * (1 - gr->scale)) / 2;
-
-					gdstRect.x = gr->x + mpx;
-					gdstRect.y = gr->y + mpy;
-
-					gdstRect.w = gr->w * gr->scale;
-					gdstRect.h = gr->h * gr->scale;
-				}
-				else
-				{
-
-					gdstRect.x = gr->x;
-					gdstRect.y = gr->y;
-
-					gdstRect.w = gr->w;
-					gdstRect.h = gr->h;
-				}
-				gdstRect.r = 255;
-				gdstRect.g = 255;
-				gdstRect.b = 255;
-				gdstRect.a = 1;
-
-				gsrcRect.x = 0;
-				gsrcRect.y = 1;
-				gsrcRect.w = 1;
-				gsrcRect.h = -1;
-
-				if (gr->clipRect.w > 0 || gr->clipRect.h > 0)
-					Rendering::SetClipRect(&gr->clipRect);
-				else
-					Rendering::SetClipRect(NULL);
-
-				if (gr->customShader)
-					Rendering::PushQuad(&gdstRect, &gsrcRect, gr->ctb, gr->customShader);
-				else
-					Rendering::PushQuad(&gdstRect, &gsrcRect, gr->ctb, GL::genShader);
-
-				if (gr->clipRect.w > 0 || gr->clipRect.h > 0)
-					Rendering::SetClipRect(NULL);
-			}
-			Rendering::setBlend();
-			if (obj->children.size() != 0 && !obj->handleDraw)
-				obj->drawChildren();
+			continue;
 		}
+		leDraw(obj);
 	}
 
 

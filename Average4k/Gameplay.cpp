@@ -404,7 +404,8 @@ void Gameplay::create() {
 
 	MUTATE_START
 
-		ArrowEffects::resetEffects();
+	ArrowEffects::resetEffects();
+
 
 	lastTime = 0;
 
@@ -450,6 +451,21 @@ void Gameplay::create() {
 
 	add(background);
 
+	if (MainerMenu::currentSelectedSong.isModFile)
+	{
+		ModManager::doMods = true;
+		runModStuff = true;
+		ModManager::initLuaFunctions();
+		manager = ModManager(MainerMenu::currentSelectedSong.pathToLua);
+		manager.instance = &manager;
+		add(manager.spriteCamera);
+	}
+	else
+	{
+		ModManager::doMods = false;
+	}
+	callModEvent("create", 0);
+
 	if (background->tex->pixels)
 	{
 		lightestColor = stbi_h::getLightestPixel(background->tex->pixels, background->tex->width, background->tex->height);
@@ -486,7 +502,8 @@ void Gameplay::create() {
 
 	AvgRect* rOverlay = new AvgRect(0, 0, background->w, background->h);
 	rOverlay->alpha = 0.46;
-	add(rOverlay);
+	if (!ModManager::doMods)
+		add(rOverlay);
 
 
 	float bassRate = (rate * 100) - 100;
@@ -592,7 +609,8 @@ void Gameplay::create() {
 	rightGrad->alpha = Game::save->GetDouble("Lane Underway Transparency");
 	if (MainerMenu::currentSelectedSong.isModFile)
 		rightGrad->alpha = 0;
-	add(rightGrad);
+	if (!ModManager::doMods)
+		add(rightGrad);
 
 	if (MainerMenu::isInLobby)
 	{
@@ -602,14 +620,16 @@ void Gameplay::create() {
 		leftGrad->colorG = darkestColor.g;
 		leftGrad->colorB = darkestColor.b;
 		leftGrad->alpha = Game::save->GetDouble("Lane Underway Transparency");
-		add(leftGrad);
+		if (!ModManager::doMods)
+			add(leftGrad);
 
 		AvgSprite* leftGradBorder = new AvgSprite(0, 0, Noteskin::getGameplayElement(Game::noteskin, "leftBorder.png"));
 		leftGradBorder->colorR = lightestAccent.r;
 		leftGradBorder->colorG = lightestAccent.g;
 		leftGradBorder->colorB = lightestAccent.b;
 		leftGradBorder->alpha = (0.8 / Game::save->GetDouble("Lane Underway Transparency"));
-		add(leftGradBorder);
+		if (!ModManager::doMods)
+			add(leftGradBorder);
 
 		Mrv->x = leftGradBorder->x + leftGradBorder->w + 12;
 		Prf->x = Mrv->x;
@@ -742,20 +762,6 @@ void Gameplay::create() {
 		positionInSong = -(Game::save->GetDouble("Start Delay") * 1000);
 	updateAccuracy(0);
 
-	if (MainerMenu::currentSelectedSong.isModFile)
-	{
-		ModManager::doMods = true;
-		runModStuff = true;
-		ModManager::initLuaFunctions();
-		manager = ModManager(MainerMenu::currentSelectedSong.pathToLua);
-		manager.instance = &manager;
-	}
-	else
-	{
-		ModManager::doMods = false;
-	}
-	callModEvent("create", 0);
-
 	MUTATE_END
 }
 
@@ -793,6 +799,8 @@ float lastBPM = 0;
 void Gameplay::update(Events::updateEvent event)
 {
 	MUTATE_START
+
+	botplayHittingNote = false;
 
 	if (!song || Game::instance->transitioning)
 		return;
@@ -1163,7 +1171,16 @@ void Gameplay::update(Events::updateEvent event)
 		}
 
 		if (receptors[i]->lightUpTimer < 1)
+		{
 			receptors[i]->hit = false;
+		}
+		else
+		{
+			if (receptors[i]->hit)
+			{
+				manager.callEvent("hit", i);
+			}
+		}
 	}
 
 	{
@@ -1189,9 +1206,12 @@ void Gameplay::update(Events::updateEvent event)
 					{
 						float diff = (wh - positionInSong);
 
+						botplayHittingNote = true;
+
 						std::string format = std::to_string(diff - fmod(diff, 0.01));
 						format.erase(format.find_last_not_of('0') + 1, std::string::npos);
 						receptors[note->lane]->lightUpTimer = 195;
+						receptors[note->lane]->bot = botplay;
 						Judgement->setText("botplay");
 						(*Judgement).color.r = 0;
 						(*Judgement).color.g = 255;
@@ -1238,6 +1258,8 @@ void Gameplay::update(Events::updateEvent event)
 							{
 								receptors[note->lane]->lightUpTimer = 195;
 							}
+							manager.callEvent("hit", note->lane);
+							botplayHittingNote = false;
 							receptors[note->lane]->loop = true;
 							receptors[note->lane]->hit = true;
 							note->holding = true;
@@ -1249,6 +1271,8 @@ void Gameplay::update(Events::updateEvent event)
 								note->holdstoppedbeat = beat;
 								note->holdstoppedtime = positionInSong;
 							}
+							if (!botplay)
+								receptors[note->lane]->hit = false;
 							note->holding = false;
 							note->fuckTimer = positionInSong / (note->holdstoppedtime + 250);
 
@@ -1312,6 +1336,13 @@ void Gameplay::cleanUp()
 {
 
 	MUTATE_START
+
+		if (ModManager::doMods)
+		{
+			manager.kill();
+			removeObj(manager.spriteCamera);
+		}
+
 	spawnedNotes.clear();
 	notesToPlay.clear();
 
@@ -1475,7 +1506,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 				receptors[closestObject->lane]->loop = false;
 				receptors[closestObject->lane]->hit = true;
-
+				manager.callEvent("hit", closestObject->lane);
 				closestObject->active = false;
 				closestObject->wasHit = true;
 

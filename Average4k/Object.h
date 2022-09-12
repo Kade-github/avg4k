@@ -3,6 +3,8 @@
 class Object
 {
 public:
+
+	bool drawLast = false;
 	Object(float x, float y);
 	Object() = default;
 	virtual ~Object() {

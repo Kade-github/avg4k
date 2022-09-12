@@ -18,30 +18,9 @@ void ModEditor::create()
 	ssnap = 16;
 	ssnapConvert = { {4,1}, {8,2},{12,3},{16,4}, {24,6}, {32,8}, {64,16} };
 
-	ArrowEffects::resetEffects();
-
-	for (int i = 0; i < 4; i++)
-	{
-		ReceptorObject* r;
-
-		int index = i + 1;
-		r = new ReceptorObject(
-			((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * i), (Game::gameHeight / 2) - 300, i);
-		r->lightUpTimer = 0;
-		r->create();
-		receptors.push_back(r);
-		add(r);
-	}
-
 	Chart* currentChart = FuckinEditor::selectedChart;
 
 	difficulty diff = currentChart->meta.difficulties[FuckinEditor::currentDiff];
-
-
-	for (note n : diff.notes)
-	{
-		generateNoteObject(n, diff, currentChart);
-	}
 
 	std::string pathj = currentChart->meta.folder + "/" + currentChart->meta.audio;
 
@@ -53,12 +32,37 @@ void ModEditor::create()
 	currentTime = 0;
 	song->setPos(0);
 
+	ArrowEffects::resetEffects();
+
 	ModManager::doMods = true;
 	ModManager::initLuaFunctions();
 	manager = ModManager(currentChart->pathToLua);
 	manager.instance = &manager;
 	callModEvent("create", 0);
 	created = true;
+
+	add(manager.spriteCamera);
+
+	for (int i = 0; i < 4; i++)
+	{
+		ReceptorObject* r;
+
+		int index = i + 1;
+		r = new ReceptorObject(
+			((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * i), (Game::gameHeight / 2) - 300, i);
+		r->lightUpTimer = 0;
+		r->create();
+		r->drawLast = true;
+		receptors.push_back(r);
+		add(r);
+	}
+
+
+	for (note n : diff.notes)
+	{
+		generateNoteObject(n, diff, currentChart);
+	}
+
 }
 
 void ModEditor::doModsUntilThisPos()
@@ -76,6 +80,17 @@ void ModEditor::doModsUntilThisPos()
 		else if (mod.tweenStart < beat && endMod > beat)
 		{
 			manager.runMods(mod, beat);
+		}
+	}
+
+	for (auto& [key, value] : manager.sprites) {
+		value.offsetX = 0;
+		value.offsetY = 0;
+
+
+		if (value.finish != "" && value.spr->sparrow)
+		{
+			(*manager.lua)[value.finish](value.spr->sparrow->currentAnim);
 		}
 	}
 }
@@ -252,6 +267,7 @@ void ModEditor::generateNoteObject(note n, difficulty diff, Chart* selectedChart
 		l.rect->c = { 105,105,105 };
 
 	object->create();
+	object->drawLast = true;
 	notes.push_back(object);
 	add(object);
 }
@@ -277,6 +293,15 @@ void ModEditor::update(Events::updateEvent event)
 		else
 			obj->drawCall = true;
 		obj->rTime = currentTime;
+
+		if (currentTime >= obj->time)
+		{
+			if (!obj->wasHit || (obj->endTime > currentTime))
+			{
+				obj->wasHit = true;
+				manager.callEvent("hit", obj->lane);
+			}
+		}
 	}
 
 	for (int i = 0; i < receptors.size(); i++)
@@ -381,13 +406,15 @@ void ModEditor::imguiUpdate(float elapsed)
 				playing = false;
 				ArrowEffects::resetEffects();
 				song->stop();
+				manager.kill();
+				removeObj(manager.spriteCamera);
 				ModManager::doMods = true;
 				ModManager::initLuaFunctions();
 				manager = ModManager(FuckinEditor::selectedChart->pathToLua);
 				manager.instance = &manager;
 				callModEvent("create", 0);
 				Game::instance->db_addLine("[Mod Editor] Refreshed modfile!");
-
+				add(manager.spriteCamera);
 				doModsUntilThisPos();
 			}
 
@@ -561,6 +588,29 @@ void ModEditor::keyDown(SDL_KeyboardEvent ev)
 	if (ev.keysym.sym == SDLK_F2)
 		showDebug = !showDebug;
 
+	if (ev.keysym.sym == SDLK_F3)
+	{
+		lastPos = 0;
+		song->setPos(0);
+		currentTime = 0;
+		playing = false;
+		ArrowEffects::resetEffects();
+		song->stop();
+		manager.kill();
+		for (NoteObject* obj : notes)
+		{
+			obj->wasHit = false;
+		}
+		removeObj(manager.spriteCamera);
+		ModManager::doMods = true;
+		ModManager::initLuaFunctions();
+		manager = ModManager(FuckinEditor::selectedChart->pathToLua);
+		manager.instance = &manager;
+		callModEvent("create", 0);
+		Game::instance->db_addLine("[Mod Editor] Refreshed modfile!");
+		add(manager.spriteCamera);
+	}
+
 	auto it = ssnapConvert.begin();
 	std::advance(it, ssnapSelect);
 	ssnap = it->first;
@@ -571,13 +621,19 @@ void ModEditor::keyDown(SDL_KeyboardEvent ev)
 		playing = false;
 		ArrowEffects::resetEffects();
 		song->stop();
+		manager.kill();
+		for (NoteObject* obj : notes)
+		{
+			obj->wasHit = false;
+		}
+		removeObj(manager.spriteCamera);
 		ModManager::doMods = true;
 		ModManager::initLuaFunctions();
 		manager = ModManager(FuckinEditor::selectedChart->pathToLua);
 		manager.instance = &manager;
 		callModEvent("create", 0);
 		Game::instance->db_addLine("[Mod Editor] Refreshed modfile!");
-
+		add(manager.spriteCamera);
 		doModsUntilThisPos();
 	}
 }
@@ -587,6 +643,12 @@ void ModEditor::mouseWheel(float wheel)
 	float amount = wheel > 0 ? 1 : -1;
 
 	move(-(amount * 25));
+
+	for (NoteObject* obj : notes)
+	{
+		obj->wasHit = false;
+	}
+
 }
 
 void ModEditor::leftMouseDown()

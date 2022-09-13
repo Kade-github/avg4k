@@ -294,6 +294,10 @@ void ModManager::setModStart(AppliedMod& m)
 			m.modStartAmount = sprites[m.spriteName].movey;
 		if (m.mod == "confusion")
 			m.modStartAmount = sprites[m.spriteName].confusion;
+		if (m.mod == "defPosX")
+			m.modStartAmount = sprites[m.spriteName].spr->defX;
+		if (m.mod == "defPosY")
+			m.modStartAmount = sprites[m.spriteName].spr->defY;
 		return;
 	}
 	if (m.mod == "drunk")
@@ -348,6 +352,10 @@ void ModManager::setModProperties(AppliedMod& m, float tween)
 			sprites[m.spriteName].movey = std::lerp(m.modStartAmount, m.amount, tween);
 		if (m.mod == "confusion")
 			sprites[m.spriteName].confusion = std::lerp(m.modStartAmount, m.amount, tween);
+		if (m.mod == "defPosX")
+			sprites[m.spriteName].spr->defX = std::lerp(m.modStartAmount, m.amount, tween);
+		if (m.mod == "defPosY")
+			sprites[m.spriteName].spr->defY = std::lerp(m.modStartAmount, m.amount, tween);
 		return;
 	}
 	if (m.mod == "drunk")
@@ -545,19 +553,11 @@ void ModManager::createFunctions()
 
 	lua->set_function("getSpriteWidth", &getWidth);
 
-	lua->set_function("getSpriteHeight", &getHeight);
+	lua->set_function("createShader", [](std::string shader) {
 
-	lua->set_function("setSpriteDefaultPos", [](std::string sprite, float x, float y)
-		{
-			if (!instance->sprites[sprite].spr)
-			{
-				consolePrint("Couldn't find sprite " + sprite);
-				return;
-			}
-			SpriteMod& m = instance->sprites[sprite];
-			m.spr->defX = x;
-			m.spr->defY = y;
-		});
+	});
+
+	lua->set_function("getSpriteHeight", &getHeight);
 
 	lua->set_function("setSpriteOffset", [](std::string sprite, float x, float y)
 		{

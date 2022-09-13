@@ -43,6 +43,7 @@ struct info {
 	float jumpstream = 0;
 	float chordjack = 0;
 	float handstream = 0;
+	float technical = 0;
 };
 
 

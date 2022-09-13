@@ -569,6 +569,19 @@ void window_chartProperties() {
 				editor->song->setVolume(0.4);
 			}
 
+			if (ImGui::Button("Grab Info"))
+			{
+				FuckinEditor::selectedChart->getInfo();
+			}
+
+			info in = FuckinEditor::selectedChart->meta.difficulties[FuckinEditor::currentDiff].info;
+
+			ImGui::Text("Stream: %.3f", in.stream * 100);
+			ImGui::Text("Jumpstream: %.3f", in.jumpstream * 100);
+			ImGui::Text("Handstream: %.3f", in.handstream * 100);
+			ImGui::Text("Chordjacks: %.3f", in.chordjack * 100);
+			ImGui::Text("Jacks: %.3f", in.jacks * 100);
+			ImGui::Text("Technical: %.3f", in.technical * 100);
 		}
 		else
 		{

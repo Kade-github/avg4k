@@ -395,6 +395,11 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 		else
 		{
 			if (SongUtils::IsDirectory(entry.path()))
+			{
+				std::vector<std::string> smFiles;
+				std::vector<std::string> quaverFiles;
+				std::vector<std::string> osuFiles;
+
 				for (auto& e : std::filesystem::directory_iterator(entry.path()))
 				{
 					std::string bruh = e.path().string();
@@ -403,33 +408,54 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 						[](unsigned char c) { return std::tolower(c); });
 					if (SongUtils::ends_with(bruh, ".sm"))
 					{
-						Song s;
-						SMFile file = SMFile(bruh, entry.path().string(), false);
-						s.c = Chart(file.meta);
-						s.path = bruh;
-						songs.push_back(s);
+						smFiles.push_back(bruh);
 						break;
 					}
 					if (SongUtils::ends_with(bruh, ".qua"))
 					{
-						Song s;
-						QuaverFile file = QuaverFile();
-						chartMeta m = file.returnChart(entry.path().string());
-						s.c = Chart(m);
-						s.path = bruh;
-						songs.push_back(s);
+						quaverFiles.push_back(bruh);
+
 						break;
 					}
 					if (SongUtils::ends_with(bruh, ".osu"))
 					{
-						Song s;
-						OsuFile file = OsuFile(entry.path().string());
-						s.c = Chart(file.meta);
-						s.path = bruh;
-						songs.push_back(s);
+						osuFiles.push_back(bruh);
 						break;
 					}
 				}
+
+				if (smFiles.size() > 0)
+				{
+					Song s;
+					SMFile file = SMFile(smFiles[0], entry.path().string(), false);
+					s.c = Chart(file.meta);
+					s.path = smFiles[0];
+					songs.push_back(s);
+					continue;
+				}
+
+
+				if (quaverFiles.size() > 0)
+				{
+					Song s;
+					QuaverFile file = QuaverFile();
+					chartMeta m = file.returnChart(entry.path().string());
+					s.c = Chart(m);
+					s.path = quaverFiles[0];
+					songs.push_back(s);
+					continue;
+				}
+
+				if (osuFiles.size() > 0)
+				{
+					Song s;
+					OsuFile file = OsuFile(entry.path().string());
+					s.c = Chart(file.meta);
+					s.path = osuFiles[0];
+					songs.push_back(s);
+					continue;
+				}
+			}
 		}
 	}
 	return songs;

@@ -1178,7 +1178,8 @@ void Gameplay::update(Events::updateEvent event)
 		{
 			if (receptors[i]->hit)
 			{
-				manager.callEvent("hit", i);
+				if (ModManager::doMods)
+					manager.callEvent("hit", i);
 			}
 		}
 	}
@@ -1258,7 +1259,8 @@ void Gameplay::update(Events::updateEvent event)
 							{
 								receptors[note->lane]->lightUpTimer = 195;
 							}
-							manager.callEvent("hit", note->lane);
+							if (ModManager::doMods)
+								manager.callEvent("hit", note->lane);
 							botplayHittingNote = false;
 							receptors[note->lane]->loop = true;
 							receptors[note->lane]->hit = true;
@@ -1506,7 +1508,8 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 				receptors[closestObject->lane]->loop = false;
 				receptors[closestObject->lane]->hit = true;
-				manager.callEvent("hit", closestObject->lane);
+				if (ModManager::doMods)
+					manager.callEvent("hit", closestObject->lane);
 				closestObject->active = false;
 				closestObject->wasHit = true;
 

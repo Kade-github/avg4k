@@ -178,6 +178,7 @@ public:
 				}
 			}
 
+
 			if (selectedIndex != i)
 				xBasedOnRank *= 0.6;
 
@@ -219,6 +220,8 @@ public:
 
 			if ((boxRect.y + boxRect.h < y) || (boxRect.y > y + h))
 				continue;
+
+			Rendering::SetClipRect(&clipRect);
 
 			if (obj.drawBanner)
 			{

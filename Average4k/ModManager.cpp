@@ -276,6 +276,7 @@ void ModManager::runMods()
 		value.spr->x = x + value.offsetX;
 		value.spr->y = y + value.offsetY;
 		value.spr->angle = rot;
+		value.spr->alpha = value.stealth;
 
 		if (value.spr->animationFinished && value.finish != "" && value.spr->sparrow)
 		{
@@ -292,6 +293,8 @@ void ModManager::setModStart(AppliedMod& m)
 			m.modStartAmount = sprites[m.spriteName].movex;
 		if (m.mod == "movey")
 			m.modStartAmount = sprites[m.spriteName].movey;
+		if (m.mod == "stealth")
+			m.modStartAmount = sprites[m.spriteName].stealth;
 		if (m.mod == "confusion")
 			m.modStartAmount = sprites[m.spriteName].confusion;
 		if (m.mod == "defPosX")
@@ -350,6 +353,8 @@ void ModManager::setModProperties(AppliedMod& m, float tween)
 			sprites[m.spriteName].movex = std::lerp(m.modStartAmount, m.amount, tween);
 		if (m.mod == "movey")
 			sprites[m.spriteName].movey = std::lerp(m.modStartAmount, m.amount, tween);
+		if (m.mod == "stealth")
+			sprites[m.spriteName].stealth = std::lerp(m.modStartAmount, m.amount, tween);
 		if (m.mod == "confusion")
 			sprites[m.spriteName].confusion = std::lerp(m.modStartAmount, m.amount, tween);
 		if (m.mod == "defPosX")
@@ -452,6 +457,7 @@ void ModManager::runMods(AppliedMod m, float beat)
 			value.spr->y = y + value.offsetY;
 
 			value.spr->angle = rot;
+			value.spr->alpha = value.stealth;
 
 			if (value.spr->animationFinished && value.finish != "" && value.spr->sparrow)
 			{
@@ -605,7 +611,6 @@ void ModManager::createFunctions()
 		{
 			m.finish = val;
 		}
-
 
 		if (prop == "anchor")
 		{

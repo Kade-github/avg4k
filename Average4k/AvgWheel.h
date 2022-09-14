@@ -32,6 +32,8 @@ public:
 	int selectedIndex = 0;
 	float fakeIndex = 0;
 
+	bool isDone = true;
+
 	AvgWheel(int _x, int _y, int _w, int _h)
 	{
 		MUTATE_START
@@ -92,10 +94,13 @@ public:
 		for (wheelObject& obj : wheelObjects)
 		{
 			if (obj.drawBanner)
+			{
 				delete obj.banner;
+			}
 			delete obj.artist;
 			delete obj.title;
 		}
+
 		wheelObjects.clear();
 
 		selectedIndex = 0;
@@ -105,12 +110,6 @@ public:
 			wheelObject obj;
 			obj.s = s;
 
-			if (s.c.meta.banner.size() != 0 && s.hasBanner)
-			{
-				obj.drawBanner = true;
-				obj.banner = Texture::loadTextureFromData(s.banner.data, s.banner.w, s.banner.h);
-			}
-
 			obj.artist = new Text(0, 0, s.c.meta.artist, 14, "arial");
 			obj.artist->setCharacterSpacing(1.33);
 			obj.title = new Text(0, 0, s.c.meta.songName, 16, "arialbd");
@@ -119,6 +118,20 @@ public:
 			wheelObjects.push_back(obj);
 		}
 
+
+		std::thread t([&]() {
+			isDone = false;
+			for (wheelObject& w : wheelObjects)
+			{
+				if (w.s.c.meta.banner.size() > 0)
+				{
+					w.s.banner = Texture::getTextureData(w.s.c.meta.folder + "/" + w.s.c.meta.banner);
+					w.s.hasBanner = true;
+				}
+			}
+			isDone = true;
+		});
+		t.detach();
 		MUTATE_END
 	}
 
@@ -152,6 +165,18 @@ public:
 			float rank = away / realIndex;
 
 			float xBasedOnRank = std::lerp(box->width / 2, 0.0f, std::abs(rank));
+
+			wheelObject& obj = wheelObjects[i];
+
+			if (obj.s.hasBanner && !obj.drawBanner)
+			{
+				obj.drawBanner = true;
+				if (obj.drawBanner)
+				{
+					obj.banner = Texture::loadTextureFromData(obj.s.banner.data, obj.s.banner.w, obj.s.banner.h);
+					obj.banner->fromSTBI = true;
+				}
+			}
 
 			if (selectedIndex != i)
 				xBasedOnRank *= 0.6;
@@ -194,10 +219,6 @@ public:
 
 			if ((boxRect.y + boxRect.h < y) || (boxRect.y > y + h))
 				continue;
-
-			wheelObject& obj = wheelObjects[i];
-
-			Rendering::SetClipRect(&clipRect);
 
 			if (obj.drawBanner)
 			{

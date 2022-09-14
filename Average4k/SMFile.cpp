@@ -6,8 +6,8 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
 
     MUTATE_START
 
-    if(path.find("\\") != std::string::npos)
-        path.replace(path.find("\\"), sizeof("\\") - 1, "/");
+        if (path.find("\\") != std::string::npos)
+            path.replace(path.find("\\"), sizeof("\\") - 1, "/");
 
     std::ifstream infile(path);
 
@@ -175,7 +175,7 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                                 if (stuff.size() != 1)
                                 {
                                     std::vector < std::string > bpmSeg = Chart::split(stuff[1], ',');
-                                    if (bpmSeg.size() != 0)
+                                    if (bpmSeg.size() > 1)
                                     {
                                         for (int ii = 0; ii < bpmSeg.size(); ii += 2)
                                         {
@@ -196,7 +196,7 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                                 diff.charter = "n/a";
                                 diff.name = "n/a";
                                 meta.difficulties.push_back(diff);
-                                
+
                             }
                             if (stuff.size() != 1)
                             {
@@ -211,7 +211,7 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                                 if (stuff[0] == "#MUSIC")
                                     meta.audio = stuff[1];
                                 if (stuff[0] == "#SAMPLESTART")
-                                    meta.start = std::stof(stuff[1]) *1000;
+                                    meta.start = std::stof(stuff[1]) * 1000;
                                 if (stuff[0] == "#OFFSET")
                                     meta.chartOffset = std::stof(stuff[1]);
                             }
@@ -308,16 +308,25 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                     readingNotes = false;
                     measureIndex = 0;
                     beat = 0;
-                    
+
                 }
             }
         }
     }
     infile.close();
 
-    meta.ext = Chart::split(meta.audio, '.')[1];
-    std::transform(meta.ext.begin(), meta.ext.end(), meta.ext.begin(), Helpers::asciitolower);
+    if (meta.bpms.size() == 0)
+    {
+        dontUse = true;
+    }
 
+    if (meta.audio != "")
+    {
+        meta.ext = Chart::split(meta.audio, '.')[1];
+        std::transform(meta.ext.begin(), meta.ext.end(), meta.ext.begin(), Helpers::asciitolower);
+    }
+    else
+        dontUse = true;
     MUTATE_END
 }
 

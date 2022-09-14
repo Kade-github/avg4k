@@ -16,6 +16,8 @@ struct SpriteMod {
 
 	std::string finish;
 
+	float stealth;
+
 	float movex;
 	float movey;
 	float confusion;

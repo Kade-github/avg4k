@@ -44,6 +44,33 @@ public:
 
 	}
 
+	Shader(std::string vertFile, std::string fragFile)
+	{
+		std::ifstream vertF(vertFile);
+		std::ifstream fragF(vertFile);
+
+		if (!vertF.is_open() || !fragF.is_open())
+		{
+			std::cout << "Failed to open " << vertFile << " and " << fragFile << std::endl;
+			return;
+		}
+
+		std::string line;
+
+		std::string vert;
+		std::string frag;
+
+		while (getline(vertF, line))
+			vert += line;
+		while (getline(fragF, line))
+			frag += line;
+
+		vertF.close();
+		fragF.close();
+
+		GL_CompileShader(vert.c_str(), frag.c_str());
+	}
+
 	~Shader() {
 		glDeleteProgram(this->program);
 		glDeleteShader(this->vertex);

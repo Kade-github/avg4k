@@ -7,6 +7,7 @@
 class SMFile
 {
 	public:
+		bool dontUse = false;
 		chartMeta meta;
 		SMFile(std::string path, std::string folder, bool doReplace);
 

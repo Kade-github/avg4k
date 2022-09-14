@@ -60,6 +60,8 @@ public:
 
 class SongGather {
 public:
+	static std::string currentPack;
+	static int max;
 	static int loaded;
 	static void gatherPacksAsync();
 	static Pack gatherPack(std::string filePath, bool checkForMod = true);

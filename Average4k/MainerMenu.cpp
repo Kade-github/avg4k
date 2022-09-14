@@ -746,8 +746,8 @@ void MainerMenu::update(Events::updateEvent ev)
 	else
 	{
 		Text* t = (Text*)soloContainer->findItemByName("packsBottom");
-		if (t->text != "Loading stuff (" + std::to_string(SongGather::loaded) + ")...")
-			t->setText("Loading stuff (" + std::to_string(SongGather::loaded) + ")...");
+		if (t->text != "Loading " + SongGather::currentPack + " (" + std::to_string(SongGather::loaded) + ")...")
+			t->setText("Loading " + SongGather::currentPack + " (" + std::to_string(SongGather::loaded) + ")...");
 	}
 
 	if (uploading)
@@ -2221,7 +2221,7 @@ void MainerMenu::leftMouseDown()
 				selectContainer(2);
 	}
 
-	if (selectedContainerIndex == 0 && !uploading)
+	if (selectedContainerIndex == 0 && !uploading && wheel->isDone)
 	{
 		AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");
 		int relX = (x - soloContainer->x) - packContainer->x;

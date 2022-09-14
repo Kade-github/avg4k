@@ -14,6 +14,10 @@ bool SongGather::steamRegAsyncAlready;
 
 int SongGather::loaded = 0;
 
+int SongGather::max = 0;
+
+std::string SongGather::currentPack;
+
 std::mutex lock;
 
 void SongGather::gatherPacksAsync()
@@ -49,6 +53,8 @@ void SongGather::gatherPacksAsync()
 					if (songs.size() == 0)
 						continue;
 
+					currentPack = "";
+
 					while (std::getline(fs, str))
 					{
 						if (str.starts_with("#"))
@@ -62,18 +68,19 @@ void SongGather::gatherPacksAsync()
 							p.hasBanner = true;
 						}
 						if (split[0] == "packName")
+						{
 							p.packName = end;
+							currentPack = p.packName;
+						}
 						if (split[0] == "showName")
 							p.showName = (end == "false" ? false : true);
 					}
 
+					loaded = 0;
+
+
 					for (Song s : songs)
 					{
-						if (s.c.meta.banner.size() > 0)
-						{
-							s.banner = Texture::getTextureData(s.c.meta.folder + "/" + s.c.meta.banner);
-							s.hasBanner = true;
-						}
 						p.songs.push_back(s);
 					}
 					std::lock_guard cock(lock);
@@ -113,6 +120,8 @@ void SongGather::gatherPacksAsync()
 				if (songs.size() == 0)
 					continue;
 
+				currentPack = "";
+
 				while (std::getline(fs, str))
 				{
 					if (str.starts_with("#"))
@@ -126,21 +135,21 @@ void SongGather::gatherPacksAsync()
 						p.hasBanner = true;
 					}
 					if (split[0] == "packName")
+					{
 						p.packName = end;
+						currentPack = p.packName;
+					}
 					if (split[0] == "showName")
 						p.showName = (end == "false" ? false : true);
 				}
 
 
+				loaded = 0;
+
 				for (Song s : songs)
 				{
 					s.steamIdPack = p.steamId;
 					s.isSteam = true;
-					if (s.c.meta.banner.size() > 0)
-					{
-						s.banner = Texture::getTextureData(s.c.meta.folder + "/" + s.c.meta.banner);
-						s.hasBanner = true;
-					}
 					p.songs.push_back(s);
 				}
 				{
@@ -149,6 +158,9 @@ void SongGather::gatherPacksAsync()
 				}
 				loaded++;
 			}
+
+			currentPack = "Workshop Songs";
+			loaded = 0;
 
 			for (int i = 0; i < Game::steam->subscribedList.size(); i++)
 			{
@@ -167,6 +179,7 @@ void SongGather::gatherPacksAsync()
 
 				if (path == "")
 					continue;
+
 				std::string fullPath = path + "\\" + st.chartFile;
 
 				std::string replaced = Steam::ReplaceString(fullPath, "\\", "/");
@@ -390,6 +403,7 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 				s.c = c;
 				s.path = entry.path().string();
 				songs.push_back(s);
+				loaded++;
 			}
 		}
 		else
@@ -430,7 +444,11 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 					SMFile file = SMFile(smFiles[0], entry.path().string(), false);
 					s.c = Chart(file.meta);
 					s.path = smFiles[0];
-					songs.push_back(s);
+					if (!file.dontUse)
+					{
+						songs.push_back(s);
+						loaded++;
+					}
 					continue;
 				}
 
@@ -443,6 +461,7 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 					s.c = Chart(m);
 					s.path = quaverFiles[0];
 					songs.push_back(s);
+					loaded++;
 					continue;
 				}
 
@@ -453,6 +472,7 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 					s.c = Chart(file.meta);
 					s.path = osuFiles[0];
 					songs.push_back(s);
+					loaded++;
 					continue;
 				}
 			}

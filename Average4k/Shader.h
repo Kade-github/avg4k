@@ -47,28 +47,40 @@ public:
 	Shader(std::string vertFile, std::string fragFile)
 	{
 		std::ifstream vertF(vertFile);
-		std::ifstream fragF(vertFile);
-
-		if (!vertF.is_open() || !fragF.is_open())
-		{
-			std::cout << "Failed to open " << vertFile << " and " << fragFile << std::endl;
-			return;
-		}
-
-		std::string line;
+		std::ifstream fragF(fragFile);
 
 		std::string vert;
 		std::string frag;
 
-		while (getline(vertF, line))
-			vert += line;
-		while (getline(fragF, line))
-			frag += line;
+		bool useDefualtVert = vertFile == "n";
+		bool useDefualtFrag = fragFile == "n";
 
-		vertF.close();
-		fragF.close();
+		if (!vertF.is_open() || !fragF.is_open())
+		{
+			if (!useDefualtVert && !useDefualtFrag)
+			{
+				std::cout << "Failed to open " << vertFile << " and " << fragFile << std::endl;
+				return;
+			}
+		}
 
-		GL_CompileShader(vert.c_str(), frag.c_str());
+		std::string line;
+
+		if (!useDefualtVert)
+		{
+			while (getline(vertF, line))
+				vert += line;
+			vertF.close();
+		}
+		if (!useDefualtFrag)
+		{
+			while (getline(fragF, line))
+				frag += line;
+			fragF.close();
+		}
+
+
+		GL_CompileShader(useDefualtVert ? generic_shader_vert : vert.c_str(), useDefualtFrag ? generic_shader_frag : frag.c_str());
 	}
 
 	~Shader() {

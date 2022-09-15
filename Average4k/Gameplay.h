@@ -55,6 +55,11 @@ class Gameplay :
 
 		std::vector<ReceptorObject*> receptors;
 
+		AvgSprite* playField;
+
+		float lastCall = 0;
+		float lastCallUpdates = 0;
+
 		bool botplayHittingNote;
 
 		std::vector<note> notesToPlay;

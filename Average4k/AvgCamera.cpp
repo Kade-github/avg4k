@@ -49,6 +49,12 @@ void AvgCamera::leDraw(Object* obj)
 			gsrcRect.w = 1;
 			gsrcRect.h = -1;
 
+			if (gr->fuckingNo)
+			{
+				gdstRect.x = -9000;
+				gdstRect.y = -9000;
+			}
+
 			if (gr->clipRect.w > 0 || gr->clipRect.h > 0)
 				Rendering::SetClipRect(&gr->clipRect);
 			else
@@ -81,7 +87,11 @@ void AvgCamera::draw()
 			continue;
 		if (obj == nullptr)
 			continue;
-		if (obj->w < 0 || obj->h < 0)
+		if (obj->w < 0 || obj->h < 0 || obj->id < 0)
+			continue;
+		if ((obj->x + obj->w < 0 || obj->y + obj->h < 0) || (obj->x > 1280 || obj->y > 720))
+			continue;
+		if (obj->alpha < 0.05)
 			continue;
 		if (obj->customDraw)
 		{
@@ -97,7 +107,11 @@ void AvgCamera::draw()
 			continue;
 		if (obj == nullptr)
 			continue;
-		if (obj->w < 0 || obj->h < 0)
+		if (obj->w < 0 || obj->h < 0 || obj->id < 0)
+			continue;
+		if ((obj->x + obj->w < 0 || obj->y + obj->h < 0) || (obj->x > 1280 || obj->y > 720))
+			continue;
+		if (obj->alpha < 0.05)
 			continue;
 		if (obj->customDraw)
 		{

@@ -394,88 +394,94 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 	for (const auto& entry : std::filesystem::directory_iterator(folder))
 	{
 		// qp (and osu zip files)
-		if (SongUtils::ends_with(entry.path().string(), ".qp") || SongUtils::ends_with(entry.path().string(), ".osz"))
+		try
 		{
-			Chart c = extractAndGetChart(entry.path().string());
-			if (c.meta.songName.size() != 0)
+			if (SongUtils::ends_with(entry.path().string(), ".qp") || SongUtils::ends_with(entry.path().string(), ".osz"))
 			{
-				Song s;
-				s.c = c;
-				s.path = entry.path().string();
-				songs.push_back(s);
-				loaded++;
-			}
-		}
-		else
-		{
-			if (SongUtils::IsDirectory(entry.path()))
-			{
-				std::vector<std::string> smFiles;
-				std::vector<std::string> quaverFiles;
-				std::vector<std::string> osuFiles;
-
-				for (auto& e : std::filesystem::directory_iterator(entry.path()))
-				{
-					std::string bruh = e.path().string();
-
-					std::transform(bruh.begin(), bruh.end(), bruh.begin(),
-						[](unsigned char c) { return std::tolower(c); });
-					if (SongUtils::ends_with(bruh, ".sm"))
-					{
-						smFiles.push_back(bruh);
-						break;
-					}
-					if (SongUtils::ends_with(bruh, ".qua"))
-					{
-						quaverFiles.push_back(bruh);
-
-						break;
-					}
-					if (SongUtils::ends_with(bruh, ".osu"))
-					{
-						osuFiles.push_back(bruh);
-						break;
-					}
-				}
-
-				if (smFiles.size() > 0)
+				Chart c = extractAndGetChart(entry.path().string());
+				if (c.meta.songName.size() != 0)
 				{
 					Song s;
-					SMFile file = SMFile(smFiles[0], entry.path().string(), false);
-					s.c = Chart(file.meta);
-					s.path = smFiles[0];
-					if (!file.dontUse)
+					s.c = c;
+					s.path = entry.path().string();
+					songs.push_back(s);
+					loaded++;
+				}
+			}
+			else
+			{
+				if (SongUtils::IsDirectory(entry.path()))
+				{
+					std::vector<std::string> smFiles;
+					std::vector<std::string> quaverFiles;
+					std::vector<std::string> osuFiles;
+
+					for (auto& e : std::filesystem::directory_iterator(entry.path()))
 					{
+						std::string bruh = e.path().string();
+
+						std::transform(bruh.begin(), bruh.end(), bruh.begin(),
+							[](unsigned char c) { return std::tolower(c); });
+						if (SongUtils::ends_with(bruh, ".sm"))
+						{
+							smFiles.push_back(bruh);
+							break;
+						}
+						if (SongUtils::ends_with(bruh, ".qua"))
+						{
+							quaverFiles.push_back(bruh);
+
+							break;
+						}
+						if (SongUtils::ends_with(bruh, ".osu"))
+						{
+							osuFiles.push_back(bruh);
+							break;
+						}
+					}
+
+					if (smFiles.size() > 0)
+					{
+						Song s;
+						SMFile file = SMFile(smFiles[0], entry.path().string(), false);
+						s.c = Chart(file.meta);
+						s.path = smFiles[0];
+						if (!file.dontUse)
+						{
+							songs.push_back(s);
+							loaded++;
+						}
+						continue;
+					}
+
+
+					if (quaverFiles.size() > 0)
+					{
+						Song s;
+						QuaverFile file = QuaverFile();
+						chartMeta m = file.returnChart(entry.path().string());
+						s.c = Chart(m);
+						s.path = quaverFiles[0];
 						songs.push_back(s);
 						loaded++;
+						continue;
 					}
-					continue;
-				}
 
-
-				if (quaverFiles.size() > 0)
-				{
-					Song s;
-					QuaverFile file = QuaverFile();
-					chartMeta m = file.returnChart(entry.path().string());
-					s.c = Chart(m);
-					s.path = quaverFiles[0];
-					songs.push_back(s);
-					loaded++;
-					continue;
-				}
-
-				if (osuFiles.size() > 0)
-				{
-					Song s;
-					OsuFile file = OsuFile(entry.path().string());
-					s.c = Chart(file.meta);
-					s.path = osuFiles[0];
-					songs.push_back(s);
-					loaded++;
-					continue;
+					if (osuFiles.size() > 0)
+					{
+						Song s;
+						OsuFile file = OsuFile(entry.path().string());
+						s.c = Chart(file.meta);
+						s.path = osuFiles[0];
+						songs.push_back(s);
+						loaded++;
+						continue;
+					}
 				}
 			}
+		}
+		catch (...) {
+			std::cout << "failed to load a song" << std::endl;
 		}
 	}
 	return songs;

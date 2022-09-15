@@ -21,13 +21,24 @@ public:
 	Channel* song;
 
 	float currentTime = 0;
+
+	void resetSprites();
+
 	float beat = 0;
 
 	bool showDebug = false;
 
+	AvgSprite* playField;
+
 	float startTime = 0;
 
 	void doModsUntilThisPos();
+
+	void refresh();
+
+	AvgGroup* gameplay;
+
+	AvgGroup* modGameplay;
 
 	void callModEvent(std::string name, std::string args);
 	void callModEvent(std::string name, int args);
@@ -41,7 +52,7 @@ public:
 	void leftMouseUp() override;
 	bool mouseDown = false;
 
-	ModManager manager;
+	ModManager* manager;
 
 	void generateNoteObject(note n, difficulty diff, Chart* selectedChart,  bool findTail = true);
 

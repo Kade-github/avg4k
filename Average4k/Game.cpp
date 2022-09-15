@@ -590,7 +590,8 @@ void Game::update(Events::updateEvent update)
 			for (int i = 0; i < currentMenu->children.size(); i++)
 			{
 				Object* obj = currentMenu->children[i];
-				obj->draw();
+				if (obj->alpha > 0.01)
+					obj->draw();
 
 			}
 	}

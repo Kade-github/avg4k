@@ -15,6 +15,8 @@ public:
 	bool renderOnce = false;
 	bool flip = false;
 
+	bool fuckingNo = false;
+
 	Shader* customShader;
 
 	float newW, newH;

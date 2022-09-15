@@ -34,6 +34,10 @@ float calcCMod(float cmod, float diff)
 	return noteOffset;
 }
 
+float bumpyPhase(float y, float period, float offset)
+{
+	return (y + (100.0f * offset)) / (period + 1.0f);
+}
 
 ArrowEffects::Arrow ArrowEffects::ArrowEff(float ydiff, int col, float pos)
 {
@@ -71,7 +75,9 @@ ArrowEffects::Arrow ArrowEffects::ArrowEff(float ydiff, int col, float pos)
 		a.y += tipsyCol[col] * (std::cos(pos * 0.001 * (1.2) + col * (2.0) + 1 * (0.2)) * (ARROW_SIZE * .4));
 
 	if (wave != 0)
+	{
 		a.y += wave * (20.0f * sin(ydiff / 38.0f));
+	}
 
 	if (waveCol[col] != 0)
 		a.y += waveCol[col] * (20.0f * sin(ydiff / 38.0f));

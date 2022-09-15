@@ -11,12 +11,26 @@ int ssnapSelect;
 
 std::map<float, float> ssnapConvert;
 
+void ModEditor::resetSprites()
+{
+	for (auto& [key, value] : manager->sprites) {
+		value.confusion = 0;
+		value.stealth = 0;
+		value.movex = 0;
+		value.movey = 0;
+		value.confusion = 0;
+	}
+}
+
 
 void ModEditor::create()
 {
 	ssnapSelect = 3;
 	ssnap = 16;
 	ssnapConvert = { {4,1}, {8,2},{12,3},{16,4}, {24,6}, {32,8}, {64,16} };
+
+	gameplay = new AvgGroup(0, 0, 1280, 720);
+	//modGameplay = new AvgGroup(0, 0, 1280, 720);
 
 	Chart* currentChart = FuckinEditor::selectedChart;
 
@@ -36,12 +50,10 @@ void ModEditor::create()
 
 	ModManager::doMods = true;
 	ModManager::initLuaFunctions();
-	manager = ModManager(currentChart->pathToLua);
-	manager.instance = &manager;
-	callModEvent("create", 0);
+	manager = new ModManager(currentChart->pathToLua);
+	manager->instance = manager;
 	created = true;
 
-	add(manager.spriteCamera);
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -52,9 +64,8 @@ void ModEditor::create()
 			((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * i), (Game::gameHeight / 2) - 300, i);
 		r->lightUpTimer = 0;
 		r->create();
-		r->drawLast = true;
 		receptors.push_back(r);
-		add(r);
+		gameplay->add(r);
 	}
 
 
@@ -63,36 +74,115 @@ void ModEditor::create()
 		generateNoteObject(n, diff, currentChart);
 	}
 
+	playField = new AvgSprite(0, 0, gameplay->ctb);
+	gameplay->fuckingNo = true;
+	playField->flip = true;
+	playField->dontDelete = true;
+
+	add(manager->spriteCamera);
+
+	gameplay->drawLast = true;
+	playField->drawLast = true;
+	add(gameplay);
+
+	add(playField);
+
+	manager->cam = cam;
+
+	SpriteMod mod;
+	mod.anchor = "";
+	mod.confusion = 0;
+	mod.finish = "";
+	mod.movex = 0;
+	mod.movey = 0;
+	mod.offsetX = 0;
+	mod.offsetY = 0;
+	mod.stealth = 0;
+	mod.spr = playField;
+	mod.notModCreated = true;
+
+	manager->sprites["playField"] = mod;
+
+	callModEvent("create", 0);
+
 }
 
 void ModEditor::doModsUntilThisPos()
 {
 	ArrowEffects::resetEffects();
-	for (AppliedMod& mod : manager.appliedMods)
+	resetSprites();
+	for (AppliedMod& mod : manager->appliedMods)
 	{
 		mod.started = false;
 		float endMod = mod.tweenStart + mod.tweenLen;
 
 		if (mod.tweenStart + mod.tweenLen < beat)
 		{
-			manager.runMods(mod, endMod);
+			manager->runMods(mod, endMod);
 		}
 		else if (mod.tweenStart < beat && endMod > beat)
 		{
-			manager.runMods(mod, beat);
+			manager->runMods(mod, beat);
 		}
 	}
 
-	for (auto& [key, value] : manager.sprites) {
+	for (auto& [key, value] : manager->sprites) {
 		value.offsetX = 0;
 		value.offsetY = 0;
 
 
 		if (value.finish != "" && value.spr->sparrow)
 		{
-			(*manager.lua)[value.finish](value.spr->sparrow->currentAnim);
+			(*manager->lua)[value.finish](value.spr->sparrow->currentAnim);
 		}
 	}
+}
+
+void ModEditor::refresh()
+{
+	for (NoteObject* obj : notes)
+	{
+		obj->wasHit = false;
+	}
+	removeObj(manager->spriteCamera);
+	for (const auto& [key, value] : manager->sprites) {
+		if (value.isPlayField)
+		{
+			removeObj(value.spr);
+			delete value.spr;
+		}
+	}
+
+	manager->kill();
+	delete manager->spriteCamera;
+	delete manager;
+	manager->sprites.clear();
+	ModManager::doMods = true;
+	ModManager::initLuaFunctions();
+	manager = new ModManager(FuckinEditor::selectedChart->pathToLua);
+	manager->instance = manager;
+	Game::instance->db_addLine("[Mod Editor] Refreshed modfile!");
+	add(manager->spriteCamera);
+
+	SpriteMod mod;
+	mod.anchor = "";
+	mod.confusion = 0;
+	mod.finish = "";
+	mod.movex = 0;
+	mod.movey = 0;
+	mod.offsetX = 0;
+	mod.offsetY = 0;
+	mod.stealth = 0;
+	mod.spr = playField;
+	mod.notModCreated = true;
+
+	manager->sprites["playField"] = mod;
+
+	manager->cam = cam;
+
+	callModEvent("create", 0);
+	doModsUntilThisPos();
+
 }
 
 float beaterMath(float amount, float increase, float startBeat)
@@ -114,17 +204,17 @@ float beaterMath(float amount, float increase, float startBeat)
 
 void ModEditor::callModEvent(std::string name, std::string args)
 {
-	manager.callEvent(name, args);
+	manager->callEvent(name, args);
 }
 
 void ModEditor::callModEvent(std::string name, int args)
 {
-	manager.callEvent(name, args);
+	manager->callEvent(name, args);
 }
 
 void ModEditor::callModEvent(std::string name, float args)
 {
-	manager.callEvent(name, args);
+	manager->callEvent(name, args);
 }
 
 void ModEditor::move(float amount)
@@ -267,9 +357,8 @@ void ModEditor::generateNoteObject(note n, difficulty diff, Chart* selectedChart
 		l.rect->c = { 105,105,105 };
 
 	object->create();
-	object->drawLast = true;
 	notes.push_back(object);
-	add(object);
+	gameplay->add(object);
 }
 
 void ModEditor::update(Events::updateEvent event)
@@ -299,7 +388,7 @@ void ModEditor::update(Events::updateEvent event)
 			if (!obj->wasHit || (obj->endTime > currentTime))
 			{
 				obj->wasHit = true;
-				manager.callEvent("hit", obj->lane);
+				manager->callEvent("hit", obj->lane);
 			}
 		}
 	}
@@ -336,12 +425,12 @@ void ModEditor::update(Events::updateEvent event)
 	}
 
 
-	manager.beat = beat;
-	manager.time = currentTime;
+	manager->beat = beat;
+	manager->time = currentTime;
 
 	if (playing)
 	{
-		manager.runMods();
+		manager->runMods();
 		callModEvent("update", beat);
 	}
 
@@ -406,16 +495,7 @@ void ModEditor::imguiUpdate(float elapsed)
 				playing = false;
 				ArrowEffects::resetEffects();
 				song->stop();
-				manager.kill();
-				removeObj(manager.spriteCamera);
-				ModManager::doMods = true;
-				ModManager::initLuaFunctions();
-				manager = ModManager(FuckinEditor::selectedChart->pathToLua);
-				manager.instance = &manager;
-				callModEvent("create", 0);
-				Game::instance->db_addLine("[Mod Editor] Refreshed modfile!");
-				add(manager.spriteCamera);
-				doModsUntilThisPos();
+				refresh();
 			}
 
 			ImGui::TextColored({ 0.5,0.5,1,1 }, ("Controls: Space to pause/play, scrollwheel to move up or down | Current Beat: " + std::to_string(beat)).c_str());
@@ -550,6 +630,7 @@ void ModEditor::keyDown(SDL_KeyboardEvent ev)
 	if (ev.keysym.sym == SDLK_ESCAPE)
 	{
 		ArrowEffects::resetEffects();
+		resetSprites();
 		FuckinEditor::dontDeleteChart = true;
 		Game::instance->transitionToMenu(new FuckinEditor());
 		return;
@@ -596,19 +677,7 @@ void ModEditor::keyDown(SDL_KeyboardEvent ev)
 		playing = false;
 		ArrowEffects::resetEffects();
 		song->stop();
-		manager.kill();
-		for (NoteObject* obj : notes)
-		{
-			obj->wasHit = false;
-		}
-		removeObj(manager.spriteCamera);
-		ModManager::doMods = true;
-		ModManager::initLuaFunctions();
-		manager = ModManager(FuckinEditor::selectedChart->pathToLua);
-		manager.instance = &manager;
-		callModEvent("create", 0);
-		Game::instance->db_addLine("[Mod Editor] Refreshed modfile!");
-		add(manager.spriteCamera);
+		refresh();
 	}
 
 	auto it = ssnapConvert.begin();
@@ -621,20 +690,7 @@ void ModEditor::keyDown(SDL_KeyboardEvent ev)
 		playing = false;
 		ArrowEffects::resetEffects();
 		song->stop();
-		manager.kill();
-		for (NoteObject* obj : notes)
-		{
-			obj->wasHit = false;
-		}
-		removeObj(manager.spriteCamera);
-		ModManager::doMods = true;
-		ModManager::initLuaFunctions();
-		manager = ModManager(FuckinEditor::selectedChart->pathToLua);
-		manager.instance = &manager;
-		callModEvent("create", 0);
-		Game::instance->db_addLine("[Mod Editor] Refreshed modfile!");
-		add(manager.spriteCamera);
-		doModsUntilThisPos();
+		refresh();
 	}
 }
 
@@ -642,7 +698,7 @@ void ModEditor::mouseWheel(float wheel)
 {
 	float amount = wheel > 0 ? 1 : -1;
 
-	move(-(amount * 25));
+	move(-(amount * 100));
 
 	for (NoteObject* obj : notes)
 	{

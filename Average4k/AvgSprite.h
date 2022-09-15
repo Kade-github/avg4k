@@ -28,6 +28,8 @@ public:
 
 	float defRot;
 
+	bool dontDelete = false;
+
 	int borderSize = 4;
 	//Color borderColor;
 	bool border = false;
@@ -206,12 +208,11 @@ public:
 		if (clipRect.w > 0 || clipRect.h > 0)
 			Rendering::SetClipRect(NULL);
 
-		if (customShader)
-			Rendering::drawBatch();
+		Rendering::drawBatch();
 	}
 
 	virtual void beforeDeath() {
-		if (!tex->dontDelete)
+		if (!tex->dontDelete && !dontDelete)
 			delete tex;
 	}
 };

@@ -16,7 +16,11 @@ struct SpriteMod {
 
 	std::string finish;
 
-	float stealth;
+	bool isPlayField = false;
+
+	float stealth = 0;
+
+	bool notModCreated = false;
 
 	float movex;
 	float movey;
@@ -34,6 +38,8 @@ struct AppliedMod {
 	float repeatEndBeat = -1;
 	int tweenOffset = 0;
 	std::string spriteName = "-1";
+	std::string shader;
+	std::string param;
 	bool done = false;
 	Easing::easingFunction tweenCurve;
 
@@ -49,6 +55,9 @@ class ModManager
 public:
 	bool killed = false;
 	static ModManager* instance;
+
+	AvgGroup* modGame;
+
 	static bool doMods;
 	std::unique_ptr<sol::state> lua;
 
@@ -56,11 +65,15 @@ public:
 
 	std::map<std::string, SpriteMod> sprites;
 
+	std::map<std::string, Shader*> shaders;
+
 	std::vector<AppliedMod> appliedMods;
 
 	std::string assetPath;
 
 	AvgGroup* spriteCamera;
+
+	AvgCamera* cam;
 
 	static float beat;
 	static float time;

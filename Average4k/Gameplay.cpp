@@ -457,6 +457,7 @@ void Gameplay::create() {
 		runModStuff = true;
 		ModManager::initLuaFunctions();
 		manager = ModManager(MainerMenu::currentSelectedSong.pathToLua);
+		manager.cam = cam;
 		manager.instance = &manager;
 		add(manager.spriteCamera);
 	}
@@ -464,7 +465,6 @@ void Gameplay::create() {
 	{
 		ModManager::doMods = false;
 	}
-	callModEvent("create", 0);
 
 	if (background->tex->pixels)
 	{
@@ -687,7 +687,34 @@ void Gameplay::create() {
 	else
 		Game::DiscordUpdatePresence((MainerMenu::currentSelectedSong.meta.artist.size() == 0 ? "No Artist" : MainerMenu::currentSelectedSong.meta.artist) + " - " + MainerMenu::currentSelectedSong.meta.songName, "Playing Solo Play", "Average4K", -1, -1, "");
 
+	playField = new AvgSprite(0, 0, gameplay->ctb);
+	playField->flip = true;
 	add(gameplay);
+	gameplay->fuckingNo = true;
+	add(gameplay);
+
+	add(playField);
+
+	if (ModManager::doMods)
+	{
+		SpriteMod mod;
+		mod.anchor = "";
+		mod.confusion = 0;
+		mod.finish = "";
+		mod.movex = 0;
+		mod.movey = 0;
+		mod.offsetX = 0;
+		mod.offsetY = 0;
+		mod.stealth = 0;
+		mod.spr = playField;
+		mod.notModCreated = true;
+
+		manager.sprites["playField"] = mod;
+	}
+
+	callModEvent("create", 0);
+
+	playField->dontDelete = true;
 
 	Accuracy = new Text(Game::gameWidth - 200, 2, "", 36, "Futura Bold");
 	add(Accuracy);
@@ -800,7 +827,7 @@ void Gameplay::update(Events::updateEvent event)
 {
 	MUTATE_START
 
-	botplayHittingNote = false;
+		botplayHittingNote = false;
 
 	if (!song || Game::instance->transitioning)
 		return;
@@ -818,11 +845,11 @@ void Gameplay::update(Events::updateEvent event)
 		}
 	}
 
-	
+
 	if (play)
 	{
 		/*float songPos = song->getPos();
-		
+
 		float bruh = positionInSong;
 
 		if ((bruh - songPos) <= -0.05
@@ -841,12 +868,7 @@ void Gameplay::update(Events::updateEvent event)
 	}
 	else
 		positionInSong += Game::deltaTime;
-	 
-	SDL_FRect bruh;
-	bruh.x = 0;
-	bruh.y = 0;
-	bruh.h = 720;
-	bruh.w = 1280;
+
 
 	if (Judgement->scale > 1.0)
 	{
@@ -864,8 +886,6 @@ void Gameplay::update(Events::updateEvent event)
 	laneUnderway.y = -200;
 	laneUnderway.w = (receptors[3]->x - laneUnderway.x) + (68 * Game::save->GetDouble("Note Size"));
 	laneUnderway.h = 1280;
-
-	
 
 	//SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 150);
 	//SDL_RenderFillRectF(Game::renderer, &laneUnderway);
@@ -949,7 +969,7 @@ void Gameplay::update(Events::updateEvent event)
 		}
 	}
 
-	songPosBar->w = ((receptors[3]->x + (64 * Game::save->GetDouble("Note Size"))) - receptors[0]->x) * (positionInSong / (songLength));
+	//songPosBar->w = ((receptors[3]->x + (64 * Game::save->GetDouble("Note Size"))) - receptors[0]->x) * (positionInSong / (songLength));
 
 	// underlay for accuracy
 
@@ -1001,7 +1021,7 @@ void Gameplay::update(Events::updateEvent event)
 				light.rect->alpha = lerp(0.8, 0, light.time / 500);
 			if (light.time > 500)
 				light.time = -1;
-			
+
 		}
 		int index = 0;
 		for (leaderboardhighlight light : highlights)
@@ -1030,124 +1050,124 @@ void Gameplay::update(Events::updateEvent event)
 		note& n = notesToPlay[0];
 		if (n.beat < beat + ArrowEffects::drawBeats && (n.type != Note_Tail && n.type != Note_Mine)) // if its in 16 beats
 		{
-				NoteObject* object = new NoteObject();
-				object->currentChart = &MainerMenu::currentSelectedSong;
-				object->size = Game::save->GetDouble("Note Size");
-				object->connected = &n;
-				SDL_FRect rect;
-				object->wasHit = false;
-				object->clapped = false;
-				object->active = true;
+			NoteObject* object = new NoteObject();
+			object->currentChart = &MainerMenu::currentSelectedSong;
+			object->size = Game::save->GetDouble("Note Size");
+			object->connected = &n;
+			SDL_FRect rect;
+			object->wasHit = false;
+			object->clapped = false;
+			object->active = true;
 
-				bpmSegment preStopSeg = MainerMenu::currentSelectedSong.getSegmentFromBeat(n.beat);
+			bpmSegment preStopSeg = MainerMenu::currentSelectedSong.getSegmentFromBeat(n.beat);
 
-				float stopOffset = MainerMenu::currentSelectedSong.getStopOffsetFromBeat(n.beat);
+			float stopOffset = MainerMenu::currentSelectedSong.getStopOffsetFromBeat(n.beat);
 
-				double stopBeatOffset = (stopOffset / 1000) * (preStopSeg.bpm / 60);
+			double stopBeatOffset = (stopOffset / 1000) * (preStopSeg.bpm / 60);
 
-				object->stopOffset = stopBeatOffset;
+			object->stopOffset = stopBeatOffset;
 
-				object->beat = (double) n.beat + stopBeatOffset;
-				object->lane = n.lane;
-				object->connectedReceptor = receptors[n.lane];
-				object->type = n.type;
-				object->endTime = -1;
-				object->endBeat = -1;
+			object->beat = (double)n.beat + stopBeatOffset;
+			object->lane = n.lane;
+			object->connectedReceptor = receptors[n.lane];
+			object->type = n.type;
+			object->endTime = -1;
+			object->endBeat = -1;
 
-				bpmSegment noteSeg = MainerMenu::currentSelectedSong.getSegmentFromBeat(object->beat);
+			bpmSegment noteSeg = MainerMenu::currentSelectedSong.getSegmentFromBeat(object->beat);
 
-				object->time = MainerMenu::currentSelectedSong.getTimeFromBeatOffset(object->beat, noteSeg);
-				rect.y = Game::gameHeight + 400;
-				rect.x = 0;
-				rect.w = 64 * Game::save->GetDouble("Note Size");
-				rect.h = 64 * Game::save->GetDouble("Note Size");
-				object->rect = rect;
+			object->time = MainerMenu::currentSelectedSong.getTimeFromBeatOffset(object->beat, noteSeg);
+			rect.y = Game::gameHeight + 400;
+			rect.x = 0;
+			rect.w = 64 * Game::save->GetDouble("Note Size");
+			rect.h = 64 * Game::save->GetDouble("Note Size");
+			object->rect = rect;
 
-				note tail;
+			note tail;
 
-				bpmSegment bruh = MainerMenu::currentSelectedSong.getSegmentFromBeat(object->beat);
+			bpmSegment bruh = MainerMenu::currentSelectedSong.getSegmentFromBeat(object->beat);
 
-				float wh = MainerMenu::currentSelectedSong.getTimeFromBeat(beat, bruh);
+			float wh = MainerMenu::currentSelectedSong.getTimeFromBeat(beat, bruh);
 
-				float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
+			float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
 
 
-				if (object->type == Note_Head)
+			if (object->type == Note_Head)
+			{
+				for (int i = 0; i < notesToPlay.size(); i++)
 				{
-					for (int i = 0; i < notesToPlay.size(); i++)
-					{
-						note& nn = notesToPlay[i];
-						if (nn.type != Note_Tail)
-							continue;
-						if (nn.lane != object->lane)
-							continue;
+					note& nn = notesToPlay[i];
+					if (nn.type != Note_Tail)
+						continue;
+					if (nn.lane != object->lane)
+						continue;
 
-						bpmSegment npreStopSeg = MainerMenu::currentSelectedSong.getSegmentFromBeat(nn.beat);
+					bpmSegment npreStopSeg = MainerMenu::currentSelectedSong.getSegmentFromBeat(nn.beat);
 
-						float nstopOffset = MainerMenu::currentSelectedSong.getStopOffsetFromBeat(nn.beat);
+					float nstopOffset = MainerMenu::currentSelectedSong.getStopOffsetFromBeat(nn.beat);
 
-						double nstopBeatOffset = (nstopOffset / 1000) * (npreStopSeg.bpm / 60);
+					double nstopBeatOffset = (nstopOffset / 1000) * (npreStopSeg.bpm / 60);
 
-						object->endBeat = nn.beat + nstopBeatOffset;
-						
-						object->endTime = MainerMenu::currentSelectedSong.getTimeFromBeatOffset(nn.beat + nstopBeatOffset, noteSeg);
-						tail = nn;
-						break;
-					}
+					object->endBeat = nn.beat + nstopBeatOffset;
+
+					object->endTime = MainerMenu::currentSelectedSong.getTimeFromBeatOffset(nn.beat + nstopBeatOffset, noteSeg);
+					tail = nn;
+					break;
 				}
-
-				float time = SDL_GetTicks();
-
-
-				spawnedNotes.push_back(object);
-				object->create();
-				notesToPlay.erase(notesToPlay.begin());
-				currentModId += object->heldTilings.size();
-				gameplay->add(object);
 			}
-			else if (n.type == Note_Tail || n.type == Note_Mine)
-			{
-				notesToPlay.erase(notesToPlay.begin());
-			}
+
+			float time = SDL_GetTicks();
+
+
+			spawnedNotes.push_back(object);
+			object->create();
+			notesToPlay.erase(notesToPlay.begin());
+			currentModId += object->heldTilings.size();
+			gameplay->add(object);
 		}
-
-		if (!ended && ((notesToPlay.size() == 0 && spawnedNotes.size() == 0) || ((lastTime - positionInSong) > 4000 || !song->isPlaying)) && positionInSong > 0)
+		else if (n.type == Note_Tail || n.type == Note_Mine)
 		{
-			ended = true;
-			if (!MainerMenu::isInLobby)
-			{
-				MainerMenu::currentSelectedSong.destroy();
-				cleanUp();
-				Game::instance->transitionToMenu(new MainerMenu());
-
-			}
-			else
-			{
-				CPacketSongFinished song;
-				song.Order = 0;
-				song.PacketType = eCPacketSongFinished;
-
-				Multiplayer::sendMessage<CPacketSongFinished>(song);
-
-				Combo->setText("Waiting for others to finish (" + std::to_string(combo) + ")");
-				Combo->setX((Game::gameWidth / 2) - (Combo->surfW / 2));
-				Combo->setY((Game::gameHeight / 2) + 40);
-			}
-
-			if ((MainerMenu::selected.isSteam || MainerMenu::selectedSong.isSteam) && Game::save->GetBool("Submit Scores") && !hasSubmited && !botplayOnce)
-			{
-				hasSubmited = true;
-				CPacketSubmitScore submit;
-
-				submit.ChartId = (MainerMenu::selected.isSteam ? MainerMenu::selected.steamId : MainerMenu::selectedSong.steamId);
-				submit.chartIndex = (MainerMenu::selected.isSteam ? MainerMenu::packSongIndex : -1);
-				submit.noteTiming = noteTimings;
-				submit.Order = 0;
-				submit.PacketType = eCPacketSubmitScore;
-
-				Multiplayer::sendMessage<CPacketSubmitScore>(submit);
-			}
+			notesToPlay.erase(notesToPlay.begin());
 		}
+	}
+
+	if (!ended && ((notesToPlay.size() == 0 && spawnedNotes.size() == 0) || ((lastTime - positionInSong) > 4000 || !song->isPlaying)) && positionInSong > 0)
+	{
+		ended = true;
+		if (!MainerMenu::isInLobby)
+		{
+			MainerMenu::currentSelectedSong.destroy();
+			cleanUp();
+			Game::instance->transitionToMenu(new MainerMenu());
+
+		}
+		else
+		{
+			CPacketSongFinished song;
+			song.Order = 0;
+			song.PacketType = eCPacketSongFinished;
+
+			Multiplayer::sendMessage<CPacketSongFinished>(song);
+
+			Combo->setText("Waiting for others to finish (" + std::to_string(combo) + ")");
+			Combo->setX((Game::gameWidth / 2) - (Combo->surfW / 2));
+			Combo->setY((Game::gameHeight / 2) + 40);
+		}
+
+		if ((MainerMenu::selected.isSteam || MainerMenu::selectedSong.isSteam) && Game::save->GetBool("Submit Scores") && !hasSubmited && !botplayOnce)
+		{
+			hasSubmited = true;
+			CPacketSubmitScore submit;
+
+			submit.ChartId = (MainerMenu::selected.isSteam ? MainerMenu::selected.steamId : MainerMenu::selectedSong.steamId);
+			submit.chartIndex = (MainerMenu::selected.isSteam ? MainerMenu::packSongIndex : -1);
+			submit.noteTiming = noteTimings;
+			submit.Order = 0;
+			submit.PacketType = eCPacketSubmitScore;
+
+			Multiplayer::sendMessage<CPacketSubmitScore>(submit);
+		}
+	}
 
 	for (int i = 0; i < receptors.size(); i++)
 	{
@@ -1173,14 +1193,6 @@ void Gameplay::update(Events::updateEvent event)
 		if (receptors[i]->lightUpTimer < 1)
 		{
 			receptors[i]->hit = false;
-		}
-		else
-		{
-			if (receptors[i]->hit)
-			{
-				if (ModManager::doMods)
-					manager.callEvent("hit", i);
-			}
 		}
 	}
 
@@ -1208,6 +1220,9 @@ void Gameplay::update(Events::updateEvent event)
 						float diff = (wh - positionInSong);
 
 						botplayHittingNote = true;
+
+						if (ModManager::doMods)
+							manager.callEvent("hit", note->lane);
 
 						std::string format = std::to_string(diff - fmod(diff, 0.01));
 						format.erase(format.find_last_not_of('0') + 1, std::string::npos);
@@ -1259,8 +1274,11 @@ void Gameplay::update(Events::updateEvent event)
 							{
 								receptors[note->lane]->lightUpTimer = 195;
 							}
-							if (ModManager::doMods)
+							if (ModManager::doMods && lastCall + 150 < positionInSong)
+							{
+								lastCall = positionInSong + 150;
 								manager.callEvent("hit", note->lane);
+							}
 							botplayHittingNote = false;
 							receptors[note->lane]->loop = true;
 							receptors[note->lane]->hit = true;
@@ -1329,8 +1347,15 @@ void Gameplay::update(Events::updateEvent event)
 			}
 		}
 	}
+
 	if (!ended)
-		callModEvent("update", (float)beat);
+	{
+		if (ModManager::doMods && lastCallUpdates + 40 < positionInSong)
+		{
+			lastCallUpdates = positionInSong + 40;
+			manager.callEvent("update", (float)beat);
+		}
+	}
 
 	MUTATE_END
 }

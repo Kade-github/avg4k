@@ -228,6 +228,39 @@ void NoteObject::draw() {
         test.h = obj->modY + (32 * size);
     }
 
+    AvgSparrow* sparrows = NULL;
+
+    if (sparrow)
+    {
+        sparrows = Game::noteskin->sparrow;
+        if (end.name == "")
+        {
+            std::string anim;
+            std::string endAnim;
+            switch (lane)
+            {
+            case 0:
+                anim = Game::noteskin->holdLeft;
+                endAnim = Game::noteskin->holdEndLeft;
+                break;
+            case 1:
+                anim = Game::noteskin->holdDown;
+                endAnim = Game::noteskin->holdEndDown;
+                break;
+            case 2:
+                anim = Game::noteskin->holdUp;
+                endAnim = Game::noteskin->holdEndUp;
+                break;
+            case 3:
+                anim = Game::noteskin->holdRight;
+                endAnim = Game::noteskin->holdEndRight;
+                break;
+            }
+            end = sparrows->getRectFromFrame(anim, 0);
+            hold = sparrows->getRectFromFrame(endAnim, 0);
+        }
+    }
+
     if (endBeat != -1 && !missHold)
     {
 
@@ -416,52 +449,14 @@ void NoteObject::draw() {
                 }
                 else
                 {
-                    AvgSparrow* sparrow = Game::noteskin->sparrow;
-
-                    animTime += Game::deltaTime;
-                    frame = (animTime * fps / 1000);
-
-                    std::string anim = "";
-
                     bool noEnd = i != bodies.size() - 1;
 
-                    switch (lane)
-                    {
-                    case 0:
-                        if (noEnd)
-                            anim = Game::noteskin->holdLeft;
-                        else
-                            anim = Game::noteskin->holdEndLeft;
-                        break;
-                    case 1:
-                        if (noEnd)
-                            anim = Game::noteskin->holdDown;
-                        else
-                            anim = Game::noteskin->holdEndDown;
-                        break;
-                    case 2:
-                        if (noEnd)
-                            anim = Game::noteskin->holdUp;
-                        else
-                            anim = Game::noteskin->holdEndUp;
-                        break;
-                    case 3:
-                        if (noEnd)
-                            anim = Game::noteskin->holdRight;
-                        else
-                            anim = Game::noteskin->holdEndRight;
-                        break;
-                    }
+                    AvgFrame fr;
 
-                    int sizee = sparrow->animations[anim].frames.size();
-                    if (frame > sizee - 1)
-                    {
-                        animTime = 0;
-                    }
-                    if (frame > sizee - 1)
-                        frame = 0;
-
-                    AvgFrame fr = sparrow->getRectFromFrame(anim, frame);
+                    if (!noEnd)
+                        fr = hold;
+                    else
+                        fr = end;
 
                     float realWidth = (fr.srcRect.w * Game::noteskin->sparrowImg->width);
                     float ogH = (fr.srcRect.h * Game::noteskin->sparrowImg->height);
@@ -536,9 +531,6 @@ void NoteObject::draw() {
         {
             AvgSparrow* sparrow = Game::noteskin->sparrow;
 
-            animTime += Game::deltaTime;
-            frame = (animTime * fps / 1000);
-
             std::string anim = "";
 
             switch (lane)
@@ -564,8 +556,7 @@ void NoteObject::draw() {
             }
             if (frame > size - 1)
                 frame = 0;
-
-            AvgFrame fr = sparrow->getRectFromFrame(anim, frame);
+            AvgFrame fr = sparrows->getRectFromFrame(anim, frame);
             srcRect = fr.srcRect;
 
             Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->sparrowImg, sh, drawAngle);

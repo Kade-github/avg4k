@@ -86,6 +86,9 @@ class NoteObject : public Object
 
 		int holdHeight;
 
+		AvgFrame end;
+		AvgFrame hold;
+
 		float size;
 
 		int holdsActive = 0;

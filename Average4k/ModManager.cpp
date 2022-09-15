@@ -12,6 +12,11 @@ ModManager* ModManager::instance = NULL;
 struct configMod {
 	bool downscroll;
 	double noteSize;
+	std::string playField;
+	std::string col1;
+	std::string col2;
+	std::string col3;
+	std::string col4;
 };
 
 struct gameMod {
@@ -215,7 +220,8 @@ void ModManager::kill()
 {
 	killed = true;
 	for (const auto& [key, value] : sprites) {
-		spriteCamera->removeObj(value.spr);
+		if (!value.isPlayField && !value.notModCreated)
+			spriteCamera->removeObj(value.spr);
 	}
 	sprites.clear();
 }
@@ -276,7 +282,7 @@ void ModManager::runMods()
 		value.spr->x = x + value.offsetX;
 		value.spr->y = y + value.offsetY;
 		value.spr->angle = rot;
-		value.spr->alpha = value.stealth;
+		value.spr->alpha = 1 - value.stealth;
 
 		if (value.spr->animationFinished && value.finish != "" && value.spr->sparrow)
 		{
@@ -301,6 +307,8 @@ void ModManager::setModStart(AppliedMod& m)
 			m.modStartAmount = sprites[m.spriteName].spr->defX;
 		if (m.mod == "defPosY")
 			m.modStartAmount = sprites[m.spriteName].spr->defY;
+		if (m.mod == "shaderUniform")
+			m.modStartAmount = 0;
 		return;
 	}
 	if (m.mod == "drunk")
@@ -331,8 +339,6 @@ void ModManager::setModStart(AppliedMod& m)
 		m.modStartAmount = ArrowEffects::stealthOpacity[m.col];
 	if (m.mod == "stealthReceptorOpacity")
 		m.modStartAmount = ArrowEffects::stealthReceptorOpacity[m.col];
-	if (m.mod == "stealthReceptorOpacity")
-		m.modStartAmount = ArrowEffects::drawBeats;
 	if (m.mod == "drunkCol")
 		m.modStartAmount = ArrowEffects::drunkCol[m.col];
 	if (m.mod == "tipsyCol")
@@ -361,6 +367,8 @@ void ModManager::setModProperties(AppliedMod& m, float tween)
 			sprites[m.spriteName].spr->defX = std::lerp(m.modStartAmount, m.amount, tween);
 		if (m.mod == "defPosY")
 			sprites[m.spriteName].spr->defY = std::lerp(m.modStartAmount, m.amount, tween);
+		if (m.mod == "shaderUniform")
+			shaders[m.shader]->SetUniform(m.param, std::lerp(m.modStartAmount, m.amount, tween));
 		return;
 	}
 	if (m.mod == "drunk")
@@ -457,7 +465,7 @@ void ModManager::runMods(AppliedMod m, float beat)
 			value.spr->y = y + value.offsetY;
 
 			value.spr->angle = rot;
-			value.spr->alpha = value.stealth;
+			value.spr->alpha = 1 - value.stealth;
 
 			if (value.spr->animationFinished && value.finish != "" && value.spr->sparrow)
 			{
@@ -500,12 +508,18 @@ void ModManager::createFunctions()
 
 	// user types
 
-	lua->new_usertype<configMod>("config", "downscroll", &configMod::downscroll, "noteSize", &configMod::noteSize);
+	lua->new_usertype<configMod>("config", "downscroll", &configMod::downscroll, "noteSize", &configMod::noteSize, "col1", &configMod::col1, "col2", &configMod::col2, "col3", &configMod::col3, "col4", &configMod::col4, "playField", &configMod::playField);
 
 
 	configMod cm;
 	cm.downscroll = Game::save->GetBool("downscroll");
 	cm.noteSize = 64 * Game::save->GetDouble("Note Size");
+	cm.playField = "playField";
+	cm.col1 = "col1";
+	cm.col2 = "col2";
+	cm.col3 = "col3";
+	cm.col4 = "col4";
+
 
 	(*lua)["config"] = cm;
 
@@ -559,8 +573,40 @@ void ModManager::createFunctions()
 
 	lua->set_function("getSpriteWidth", &getWidth);
 
-	lua->set_function("createShader", [](std::string shader) {
+	lua->set_function("applyShader", [](std::string shader, std::string sprite) {
+		if (!instance->shaders[shader])
+		{
+			consolePrint(shader + " doesn't exist!");
+			return;
+		}
+		if (!instance->sprites[sprite].spr)
+		{
+			consolePrint("Couldn't find sprite " + sprite);
+			return;
+		}
 
+		instance->sprites[sprite].spr->customShader = instance->shaders[shader];
+
+	});
+
+	lua->set_function("activateModUniform", [](std::string shader, std::string param, float tweenStart, float tweenLen, std::string easingFunc, float value)
+	{
+		if (!instance->shaders[shader])
+		{
+			consolePrint(shader + " doesn't exist!");
+			return;
+		}
+		AppliedMod aMod;
+		aMod.mod = "shaderUniform";
+		aMod.spriteName = shader;
+		aMod.tweenStart = tweenStart;
+		aMod.param = param;
+		aMod.tweenLen = tweenLen;
+		aMod.tweenCurve = Easing::getEasingFunction(easingFunc);
+		aMod.amount = value;
+		aMod.modStartAmount = -999;
+
+		instance->appliedMods.push_back(aMod);
 	});
 
 	lua->set_function("getSpriteHeight", &getHeight);
@@ -576,6 +622,22 @@ void ModManager::createFunctions()
 			m.offsetX = x;
 			m.offsetY = y;
 		});
+
+	lua->set_function("createShader", [](std::string name, std::string vert, std::string frag) {
+		if (instance->shaders[name])
+		{
+			consolePrint(name + " already exists!");
+			return;
+		}
+		std::string vertPath = instance->assetPath + "/" + vert + ".shad";
+		if (vert == "NULL")
+			vertPath = "n";
+		std::string fragPath = instance->assetPath + "/" + frag + ".shad";
+		if (frag == "NULL")
+			fragPath = "n";
+		instance->shaders[name] = new Shader(vertPath, fragPath);
+		instance->shaders[name]->setProject(GL::projection);
+	});
 
 	lua->set_function("setSpriteProperty", [](std::string sprite, std::string prop, std::string val) {
 		if (!instance->sprites[sprite].spr)
@@ -624,6 +686,11 @@ void ModManager::createFunctions()
 	});
 
 	lua->set_function("createSprite", [](std::string p, std::string name, int x, int y) {
+		if (instance->sprites[name].spr)
+		{
+			consolePrint("Sprite " + name + " already exists!");
+			return;
+		}
 		std::string path = instance->assetPath + "/" + p + ".png";
 		AvgSprite* spr = new AvgSprite(x, y, Texture::createWithImage(path));
 
@@ -635,6 +702,26 @@ void ModManager::createFunctions()
 
 		instance->sprites[name] = mod;
 		instance->spriteCamera->add(spr);
+	});
+
+	lua->set_function("copyPlayField", [](std::string name) {
+		if (instance->sprites[name].spr)
+		{
+			consolePrint("Sprite " + name + " already exists!");
+			return;
+		}
+		AvgSprite* spr = new AvgSprite(0, 0, instance->sprites["playField"].spr->tex);
+		spr->dontDelete = true;
+		spr->flip = true;
+		SpriteMod mod;
+		mod.confusion = 0;
+		mod.movex = 0;
+		mod.movey = 0;
+		mod.isPlayField = true;
+		mod.spr = spr;
+
+		instance->sprites[name] = mod;
+		instance->cam->children.push_back(spr);
 	});
 
 	lua->set_function("setNoteskin", [](std::string noteskinName) {

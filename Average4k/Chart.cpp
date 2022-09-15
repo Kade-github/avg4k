@@ -49,7 +49,7 @@ void Chart::getInfo()
 
 			for (int i = is; i < is + 4; i++)
 			{
-				if (i > d.notes.size())
+				if (i > d.notes.size() - 1)
 					break;
 
 				note nd = d.notes[i];

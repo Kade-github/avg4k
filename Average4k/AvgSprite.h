@@ -30,6 +30,8 @@ public:
 
 	bool dontDelete = false;
 
+	int maxFrame = 0, minFrame = 0;
+
 	int borderSize = 4;
 	//Color borderColor;
 	bool border = false;
@@ -150,14 +152,15 @@ public:
 			if (!animationFinished || loop)
 			{
 				animTime += Game::deltaTime;
-				frame = (animTime * fps / 1000);
+				frame = minFrame + (animTime * fps / 1000);
+
 				int size = sparrow->animations[sparrow->currentAnim].frames.size();
-				if (frame > size - 1)
+				if (frame > size - maxFrame - 1)
 				{
 					if (!loop)
 					{
 						animationFinished = true;
-						frame = size - 1;
+						frame = size - maxFrame - 1;
 						if (loopFinished != "")
 						{
 							playAnim(loopFinished, fps, true);
@@ -168,8 +171,8 @@ public:
 						animTime = 0;
 					}
 				}
-				if (frame > size - 1)
-					frame = 0;
+				if (frame > size - maxFrame - 1)
+					frame = minFrame;
 			}
 			AvgFrame fr = sparrow->getRectFromFrame(frame);
 			srcRect = fr.srcRect;

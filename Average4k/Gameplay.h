@@ -142,6 +142,10 @@ class Gameplay :
 		AvgRect* songPosBar;
 
 		AvgGroup* gameplay;
+		AvgGroup* colOne;
+		AvgGroup* colTwo;
+		AvgGroup* colThree;
+		AvgGroup* colFour;
 
 		AvgSprite* leaderboardCrown;
 

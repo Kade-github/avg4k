@@ -52,7 +52,7 @@ public:
 	void leftMouseUp() override;
 	bool mouseDown = false;
 
-	ModManager* manager;
+	ModManager manager;
 
 	void generateNoteObject(note n, difficulty diff, Chart* selectedChart,  bool findTail = true);
 

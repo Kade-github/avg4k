@@ -11,6 +11,8 @@ float ArrowEffects::drawBeats = 8;
 float ArrowEffects::SplineAlpha = 0;
 float ArrowEffects::SplineDensity = 0.04;
 
+std::map<int, std::vector<Spline>> ArrowEffects::splines = {};
+
 bool ArrowEffects::ShowSplines = false;
 
 std::map<int, float> ArrowEffects::stealthWhite = { {0,0}, {1,0}, {2,0}, {3,0} };
@@ -126,8 +128,58 @@ void ArrowEffects::resetEffects()
 	ArrowEffects::ShowSplines = false;
 	ArrowEffects::SplineAlpha = 0;
 	ArrowEffects::SplineDensity = 0.04;
+	ArrowEffects::splines.clear();
+	for (int i = 0; i < 4; i++)
+	{
+		// x,y, goToReceptor, beatAway
+		ArrowEffects::splines[i].push_back({ 0,0,true, false, -1 });
+	}
 }
 
+ArrowEffects::Arrow ArrowEffects::addSplines(float defX, float defY, Arrow aEff, float diff, int col, float curBeat, float targetBeat)
+{
+	float realX = defX;
+	float realY = defY + calcCMod(aEff.cmod, diff);
+	float beatsAway = targetBeat - curBeat;
+	if (splines[col].size() > 0 && (beatsAway < ArrowEffects::drawBeats && beatsAway > -ArrowEffects::drawBeats))
+	{
+		Spline lastSpline;
+		lastSpline.isFake = true;
+		for (Spline s : splines[col])
+		{
+			float b = (s.beatAway / beatsAway);
+			if (lastSpline.beatAway <= beatsAway && !lastSpline.isFake)
+				break;
+			if (!lastSpline.isFake)
+				b = 1 - (beatsAway / lastSpline.beatAway);
+
+			if (b > 1)
+				b = 1;
+
+			float xx = s.x;
+			float yy = s.y;
+
+			if (s.goToReceptor)
+			{
+				xx = defX;
+				yy = defY + calcCMod(aEff.cmod, diff);
+			}
+
+			realX = std::lerp(realX, xx, b);
+			realY = std::lerp(realY, yy, b);
+
+			lastSpline = s;
+		}
+	}
+
+	Arrow a;
+	a.whiteV = aEff.whiteV;
+	a.opac = aEff.opac;
+	a.x = realX + aEff.x;
+	a.y = realY + aEff.y;
+	a.rot = aEff.rot;
+	return a;
+}
 
 void ArrowEffects::drawLine(float defX, float targetY, int col, float beat, Chart currentChart)
 {
@@ -150,7 +202,7 @@ void ArrowEffects::drawLine(float defX, float targetY, int col, float beat, Char
 	lastBR.a = -1;
 	GL_Vertex lastTR;
 	lastTR.a = -1;
-	for (double i = -drawBeats; i < drawBeats; i += SplineDensity)
+	for (double i = -drawBeats; i < drawBeats; i += 0.05)
 	{
 		float rbeat = beat + i;
 		bpmSegment seg = currentChart.getSegmentFromBeat(rbeat);
@@ -159,6 +211,7 @@ void ArrowEffects::drawLine(float defX, float targetY, int col, float beat, Char
 		float diff = (time - timeCur);
 
 		float cmod = calcCMod(Game::save->GetDouble("Scrollspeed"), diff);
+	
 
 		bool downscroll = false;
 
@@ -170,10 +223,12 @@ void ArrowEffects::drawLine(float defX, float targetY, int col, float beat, Char
 		if (aEff.cmod < 0)
 			downscroll = true;
 
+		aEff = addSplines(defX, targetY, aEff, diff, col, beat, rbeat);
+
 		float yPos = targetY + calcCMod(aEff.cmod, diff);
 
-		float x = (defX + (32 * Game::save->GetDouble("Note Size")) - 2) + aEff.x;
-		float y = yPos + aEff.y;
+		float x = aEff.x + (32 * Game::instance->save->GetDouble("Note Size"));
+		float y = aEff.y;
 
 		if ((y < -60 || y > 760 || x < 0 || x > 1280) && realI % 2 == 0)
 			continue;
@@ -256,19 +311,13 @@ ArrowEffects::Arrow ArrowEffects::finishEffects(float defX, float defY, int col,
 	return a;
 }
 
-ArrowEffects::Arrow ArrowEffects::finishEffects(float defX, float defY, float cmod, int col, float holdTime, float curTime, float diff)
+ArrowEffects::Arrow ArrowEffects::finishEffects(float defX, float defY, float cmod, int col, float holdTime, float curTime, float diff, float noteBeat, float curBeat)
 {
 	float yPos = defY + cmod;
 
 	Arrow aEff = ArrowEff(yPos - defY, col, curTime);
 
-	yPos = defY + calcCMod(aEff.cmod, diff);
+	Arrow a = addSplines(defX, defY, aEff, diff, col, curBeat, noteBeat);
 
-	Arrow a;
-	a.whiteV = aEff.whiteV;
-	a.opac = aEff.opac;
-	a.x = defX + aEff.x;
-	a.y = yPos + aEff.y;
-	a.rot = aEff.rot;
 	return a;
 }

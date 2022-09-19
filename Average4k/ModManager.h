@@ -6,8 +6,15 @@
 #include "Easing.h"
 #include "AvgSprite.h"
 
+struct FunctionMod {
+	sol::function toCall;
+	float beat;
+	bool hit = false;
+};
+
 struct SpriteMod {
 	AvgSprite* spr;
+	Object* def;
 	
 	std::string anchor;
 
@@ -67,7 +74,10 @@ public:
 
 	std::map<std::string, Shader*> shaders;
 
+	std::vector<FunctionMod> funcMod;
+
 	std::vector<AppliedMod> appliedMods;
+
 
 	std::string assetPath;
 

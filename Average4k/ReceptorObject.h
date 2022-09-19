@@ -14,6 +14,9 @@ public:
 	bool bot = false;
 	bool animationFinished;
 
+	float beat = 0;
+	Chart currentChart;
+
 	bool hit = false;
 
 	std::string lastFrame = "";

@@ -10,6 +10,11 @@ void AvgGroup::forceDraw()
 	glBindFramebuffer(GL_FRAMEBUFFER, fb);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glClearColor(0, 0, 0, 0);
+
+	glViewport(0, 0, w, h);
+	GL::genShader->setProject(glm::ortho(0.0f, (float)w, (float)h, 0.0f, -1.0f, 1.0f));
+	Rendering::rendW = w;
+	Rendering::rendH = h;
 	Rendering::setBlendSep();
 
 	for (Object* obj : children)
@@ -36,6 +41,13 @@ void AvgGroup::draw()
 		glBindFramebuffer(GL_FRAMEBUFFER, fb);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glClearColor(0, 0, 0, 0);
+
+		glViewport(0, 0, w, h);
+		GL::genShader->setProject(glm::ortho(0.0f, (float)w, (float)h, 0.0f, -1.0f, 1.0f));
+
+		Rendering::rendW = w;
+		Rendering::rendH = h;
+
 		Rendering::setBlendSep();
 
 		for (Object* obj : children)
@@ -51,6 +63,10 @@ void AvgGroup::draw()
 					Rendering::drawBatch();
 					Rendering::setBlend();
 					glBindFramebuffer(GL_FRAMEBUFFER, fb);
+					glViewport(0, 0, w, h);
+					GL::genShader->setProject(glm::ortho(0.0f, (float)w, (float)h, 0.0f, -1.0f, 1.0f));
+					Rendering::rendW = w;
+					Rendering::rendH = h;
 
 					AvgGroup* gr = (AvgGroup*)obj;
 
@@ -81,9 +97,9 @@ void AvgGroup::draw()
 						Rendering::SetClipRect(NULL);
 
 					if (gr->customShader)
-						Rendering::PushQuad(&gdstRect, &gsrcRect, gr->ctb, gr->customShader);
+						Rendering::PushQuad(&gdstRect, &gsrcRect, gr->ctb, gr->customShader, gr->angle);
 					else
-						Rendering::PushQuad(&gdstRect, &gsrcRect, gr->ctb, GL::genShader);
+						Rendering::PushQuad(&gdstRect, &gsrcRect, gr->ctb, GL::genShader, gr->angle);
 
 					if (gr->clipRect.w > 0 || gr->clipRect.h > 0)
 						Rendering::SetClipRect(NULL);

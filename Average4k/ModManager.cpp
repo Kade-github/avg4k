@@ -264,29 +264,52 @@ void ModManager::runMods()
 
 	}
 
-	for (const auto& [key, value] : sprites) {
-		float anchorX = value.spr->defX;
-		float anchorY = value.spr->defY;
-
-		if (value.anchor != "")
+	for (FunctionMod& m : funcMod)
+	{
+		if (beat >= m.beat && !m.hit)
 		{
-			SpriteMod anchor = ModManager::instance->sprites[value.anchor];
-			anchorX = anchor.spr->defX + anchor.movex;
-			anchorY = anchor.spr->defY + anchor.movey;
+			m.hit = true;
+			m.toCall();
 		}
+	}
 
-		float x = anchorX + value.movex;
-		float y = anchorY + value.movey;
-		float rot = value.spr->defRot + value.confusion;
-
-		value.spr->x = x + value.offsetX;
-		value.spr->y = y + value.offsetY;
-		value.spr->angle = rot;
-		value.spr->alpha = 1 - value.stealth;
-
-		if (value.spr->animationFinished && value.finish != "" && value.spr->sparrow)
+	for (const auto& [key, value] : sprites) {
+		if (!value.notModCreated)
 		{
-			(*instance->lua)[value.finish](value.spr->sparrow->currentAnim);
+			float anchorX = value.spr->defX;
+			float anchorY = value.spr->defY;
+
+			if (value.anchor != "")
+			{
+				SpriteMod anchor = ModManager::instance->sprites[value.anchor];
+				anchorX = anchor.spr->defX + anchor.movex;
+				anchorY = anchor.spr->defY + anchor.movey;
+			}
+
+			float x = anchorX + value.movex;
+			float y = anchorY + value.movey;
+			float rot = value.spr->defRot + value.confusion;
+
+			value.spr->x = x + value.offsetX;
+			value.spr->y = y + value.offsetY;
+			value.spr->angle = rot;
+			value.spr->alpha = 1 - value.stealth;
+
+			if (value.spr->animationFinished && value.finish != "" && value.spr->sparrow)
+			{
+				(*instance->lua)[value.finish](value.spr->sparrow->currentAnim);
+			}
+		}
+		else
+		{
+			float x = value.offsetX + value.movex;
+			float y = value.offsetY + value.movey;
+			float rot = value.confusion;
+
+			value.def->x = x + value.offsetX;
+			value.def->y = y + value.offsetY;
+			value.def->angle = rot;
+			value.def->alpha = 1 - value.stealth;
 		}
 	}
 }
@@ -639,6 +662,40 @@ void ModManager::createFunctions()
 		instance->shaders[name]->setProject(GL::projection);
 	});
 
+	lua->set_function("createSpline", [](int col, float x, float y, float beatsAway) {
+		Spline s;
+		s.x = x;
+		s.y = y;
+		s.beatAway = beatsAway;
+		ArrowEffects::splines[col].push_back(s);
+		std::sort(ArrowEffects::splines[col].begin(), ArrowEffects::splines[col].end(), Spline());
+	});
+
+	lua->set_function("clearSplines", [](int col) {
+		if (col == -1)
+		{
+			ArrowEffects::splines.clear();
+			for (int i = 0; i < 4; i++)
+			{
+				// x,y, goToReceptor, beatAway
+				ArrowEffects::splines[i].push_back({ 0,0,true, false, -1 });
+			}
+		}
+		else
+		{
+			ArrowEffects::splines[col].clear();
+			ArrowEffects::splines[col].push_back({ 0,0,true, false, -1 });
+		}
+	});
+
+	lua->set_function("dom", [](sol::function f, float beat) {
+		FunctionMod m;
+		m.toCall = f;
+		m.beat = beat;
+
+		instance->funcMod.push_back(m);
+	});
+
 	lua->set_function("setSpriteProperty", [](std::string sprite, std::string prop, std::string val) {
 		if (!instance->sprites[sprite].spr)
 		{
@@ -660,6 +717,16 @@ void ModManager::createFunctions()
 		if (prop == "fps")
 		{
 			m.spr->fps = std::stoi(val);
+		}
+
+		if (prop == "rangeMin")
+		{
+			m.spr->minFrame = std::stoi(val);
+		}
+
+		if (prop == "rangeMax")
+		{
+			m.spr->maxFrame = std::stoi(val);
 		}
 
 		if (prop == "anim")

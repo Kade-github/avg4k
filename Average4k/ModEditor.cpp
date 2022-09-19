@@ -13,7 +13,7 @@ std::map<float, float> ssnapConvert;
 
 void ModEditor::resetSprites()
 {
-	for (auto& [key, value] : manager->sprites) {
+	for (auto& [key, value] : manager.sprites) {
 		value.confusion = 0;
 		value.stealth = 0;
 		value.movex = 0;
@@ -50,8 +50,8 @@ void ModEditor::create()
 
 	ModManager::doMods = true;
 	ModManager::initLuaFunctions();
-	manager = new ModManager(currentChart->pathToLua);
-	manager->instance = manager;
+	manager = ModManager(currentChart->pathToLua);
+	manager.instance = &manager;
 	created = true;
 
 
@@ -64,6 +64,7 @@ void ModEditor::create()
 			((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * i), (Game::gameHeight / 2) - 300, i);
 		r->lightUpTimer = 0;
 		r->create();
+		r->currentChart = *currentChart;
 		receptors.push_back(r);
 		gameplay->add(r);
 	}
@@ -79,15 +80,14 @@ void ModEditor::create()
 	playField->flip = true;
 	playField->dontDelete = true;
 
-	add(manager->spriteCamera);
+	add(manager.spriteCamera);
 
-	gameplay->drawLast = true;
 	playField->drawLast = true;
 	add(gameplay);
 
 	add(playField);
 
-	manager->cam = cam;
+	manager.cam = cam;
 
 	SpriteMod mod;
 	mod.anchor = "";
@@ -99,9 +99,10 @@ void ModEditor::create()
 	mod.offsetY = 0;
 	mod.stealth = 0;
 	mod.spr = playField;
+	mod.def = playField;
 	mod.notModCreated = true;
 
-	manager->sprites["playField"] = mod;
+	manager.sprites["playField"] = mod;
 
 	callModEvent("create", 0);
 
@@ -111,29 +112,40 @@ void ModEditor::doModsUntilThisPos()
 {
 	ArrowEffects::resetEffects();
 	resetSprites();
-	for (AppliedMod& mod : manager->appliedMods)
+	for (AppliedMod& mod : manager.appliedMods)
 	{
 		mod.started = false;
 		float endMod = mod.tweenStart + mod.tweenLen;
 
 		if (mod.tweenStart + mod.tweenLen < beat)
 		{
-			manager->runMods(mod, endMod);
+			manager.runMods(mod, endMod);
 		}
 		else if (mod.tweenStart < beat && endMod > beat)
 		{
-			manager->runMods(mod, beat);
+			manager.runMods(mod, beat);
 		}
 	}
 
-	for (auto& [key, value] : manager->sprites) {
+	for (FunctionMod& m : manager.funcMod)
+	{
+		m.hit = false;
+		if (beat >= m.beat)
+		{
+			m.hit = true;
+			m.toCall();
+		}
+	}
+
+
+	for (auto& [key, value] : manager.sprites) {
 		value.offsetX = 0;
 		value.offsetY = 0;
 
 
 		if (value.finish != "" && value.spr->sparrow)
 		{
-			(*manager->lua)[value.finish](value.spr->sparrow->currentAnim);
+			(*manager.lua)[value.finish](value.spr->sparrow->currentAnim);
 		}
 	}
 }
@@ -144,8 +156,8 @@ void ModEditor::refresh()
 	{
 		obj->wasHit = false;
 	}
-	removeObj(manager->spriteCamera);
-	for (const auto& [key, value] : manager->sprites) {
+	removeObj(manager.spriteCamera);
+	for (const auto& [key, value] : manager.sprites) {
 		if (value.isPlayField)
 		{
 			removeObj(value.spr);
@@ -153,16 +165,15 @@ void ModEditor::refresh()
 		}
 	}
 
-	manager->kill();
-	delete manager->spriteCamera;
-	delete manager;
-	manager->sprites.clear();
+	manager.kill();
+	delete manager.spriteCamera;
+	manager.sprites.clear();
 	ModManager::doMods = true;
 	ModManager::initLuaFunctions();
-	manager = new ModManager(FuckinEditor::selectedChart->pathToLua);
-	manager->instance = manager;
+	manager = ModManager(FuckinEditor::selectedChart->pathToLua);
+	manager.instance = &manager;
 	Game::instance->db_addLine("[Mod Editor] Refreshed modfile!");
-	add(manager->spriteCamera);
+	add(manager.spriteCamera);
 
 	SpriteMod mod;
 	mod.anchor = "";
@@ -175,10 +186,10 @@ void ModEditor::refresh()
 	mod.stealth = 0;
 	mod.spr = playField;
 	mod.notModCreated = true;
+	mod.def = playField;
+	manager.sprites["playField"] = mod;
 
-	manager->sprites["playField"] = mod;
-
-	manager->cam = cam;
+	manager.cam = cam;
 
 	callModEvent("create", 0);
 	doModsUntilThisPos();
@@ -204,17 +215,17 @@ float beaterMath(float amount, float increase, float startBeat)
 
 void ModEditor::callModEvent(std::string name, std::string args)
 {
-	manager->callEvent(name, args);
+	manager.callEvent(name, args);
 }
 
 void ModEditor::callModEvent(std::string name, int args)
 {
-	manager->callEvent(name, args);
+	manager.callEvent(name, args);
 }
 
 void ModEditor::callModEvent(std::string name, float args)
 {
-	manager->callEvent(name, args);
+	manager.callEvent(name, args);
 }
 
 void ModEditor::move(float amount)
@@ -388,7 +399,7 @@ void ModEditor::update(Events::updateEvent event)
 			if (!obj->wasHit || (obj->endTime > currentTime))
 			{
 				obj->wasHit = true;
-				manager->callEvent("hit", obj->lane);
+				manager.callEvent("hit", obj->lane);
 			}
 		}
 	}
@@ -396,14 +407,12 @@ void ModEditor::update(Events::updateEvent event)
 	for (int i = 0; i < receptors.size(); i++)
 	{
 		ReceptorObject* rec = receptors[i];
+		rec->beat = beat;
 		rec->positionInSong = currentTime;
 		rec->modX = rec->x;
 		rec->modY = rec->y;
 		rec->endX = rec->modX;
 		rec->endY = rec->modY;
-
-		if (ArrowEffects::ShowSplines)
-			ArrowEffects::drawLine(rec->x, rec->y, i, beat, *FuckinEditor::selectedChart);
 	}
 
 	for (NoteObject* obj : notes)
@@ -425,12 +434,12 @@ void ModEditor::update(Events::updateEvent event)
 	}
 
 
-	manager->beat = beat;
-	manager->time = currentTime;
+	manager.beat = beat;
+	manager.time = currentTime;
 
 	if (playing)
 	{
-		manager->runMods();
+		manager.runMods();
 		callModEvent("update", beat);
 	}
 

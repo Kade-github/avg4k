@@ -21,6 +21,9 @@ struct Rect
 class Rendering
 {
 public:
+
+	static float rendW, rendH;
+
 	static std::vector<GL_Vertex> batch_buffer;
 	static GLuint batch_vao;
 	static GLuint batch_vbo;

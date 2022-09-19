@@ -8,6 +8,10 @@ Shader* Rendering::batch_shader = NULL;
 Texture* Rendering::batch_texture = NULL;
 Texture* Rendering::white = NULL;
 
+float Rendering::rendW = 1280;
+float Rendering::rendH = 720;
+
+
 float Rendering::iBpm = 0;
 float Rendering::iBeat = 0;
 
@@ -78,7 +82,7 @@ void Rendering::SetClipRect(Rect* clipRect)
 	if (clipRect)
 	{
 		glEnable(GL_SCISSOR_TEST);
-		glScissor(clipRect->x, Game::gameHeight - clipRect->h - clipRect->y, clipRect->w, clipRect->h);
+		glScissor(clipRect->x, rendH - clipRect->h - clipRect->y, clipRect->w, clipRect->h);
 	}
 	else
 	{

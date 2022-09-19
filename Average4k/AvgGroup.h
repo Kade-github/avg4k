@@ -76,6 +76,24 @@ public:
 		MUTATE_END
 	}
 
+
+	void resize(float __w, float __h)
+	{
+		MUTATE_START
+		w = __w;
+		h = __h;
+
+		delete ctb;
+
+		ctb = new Texture(NULL, w, h);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ctb->id, 0);
+
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete! " << w << " " << h << std::endl;
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		MUTATE_END
+	}
+
 	void forceDraw();
 
 	virtual void draw();

@@ -106,6 +106,7 @@ void Gameplay::updateAccuracy(double hitWorth)
 	MUTATE_END
 }
 
+
 void Gameplay::removeNote(NoteObject* object)
 {
 	spawnedNotes.erase(
@@ -421,6 +422,11 @@ void Gameplay::create() {
 	avatars.clear();
 
 	gameplay = new AvgGroup(0, 0, 1280, 720);
+	float colHeight = ((64 * Game::save->GetDouble("Note Size")) *  ArrowEffects::drawBeats) * 2;
+	colOne = new AvgGroup(0, 0, 64 * Game::save->GetDouble("Note Size"), colHeight);
+	colTwo = new AvgGroup(0, 0, 64 * Game::save->GetDouble("Note Size"), colHeight);
+	colThree = new AvgGroup(0, 0, 64 * Game::save->GetDouble("Note Size"), colHeight);
+	colFour = new AvgGroup(0, 0, 64 * Game::save->GetDouble("Note Size"), colHeight);
 
 	if (SoundManager::getChannelByName("prevSong") != NULL)
 	{
@@ -689,7 +695,6 @@ void Gameplay::create() {
 
 	playField = new AvgSprite(0, 0, gameplay->ctb);
 	playField->flip = true;
-	add(gameplay);
 	gameplay->fuckingNo = true;
 	add(gameplay);
 
@@ -707,9 +712,11 @@ void Gameplay::create() {
 		mod.offsetY = 0;
 		mod.stealth = 0;
 		mod.spr = playField;
+		mod.def = playField;
 		mod.notModCreated = true;
 
 		manager.sprites["playField"] = mod;
+
 	}
 
 	callModEvent("create", 0);
@@ -900,7 +907,7 @@ void Gameplay::update(Events::updateEvent event)
 
 	if (debug)
 	{
-		Combo->setText("Reverse: " + std::to_string(ArrowEffects::reverse[0]) + "-" + std::to_string(ArrowEffects::reverse[1]) + "-" + std::to_string(ArrowEffects::reverse[2]) + "-" + std::to_string(ArrowEffects::reverse[3]));
+		Combo->setText("Debug Mode!");
 		Combo->centerX();
 	}
 
@@ -1123,6 +1130,7 @@ void Gameplay::update(Events::updateEvent event)
 			object->create();
 			notesToPlay.erase(notesToPlay.begin());
 			currentModId += object->heldTilings.size();
+
 			gameplay->add(object);
 		}
 		else if (n.type == Note_Tail || n.type == Note_Mine)
@@ -1397,7 +1405,7 @@ void Gameplay::cleanUp()
 void Gameplay::keyDown(SDL_KeyboardEvent event)
 {
 	MUTATE_START
-
+	float colHeight = 0;
 	switch (event.keysym.sym)
 	{
 		case SDLK_ESCAPE:

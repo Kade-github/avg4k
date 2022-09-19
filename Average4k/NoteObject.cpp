@@ -191,7 +191,7 @@ void NoteObject::draw() {
 
     if (ModManager::doMods)
     {
-        ArrowEffects::Arrow a = ArrowEffects::finishEffects(obj->x, obj->y, noteOffset, obj->type, -1, position, diff);
+        ArrowEffects::Arrow a = ArrowEffects::finishEffects(obj->x, obj->y, noteOffset, obj->type, -1, position, diff, beat, currentBeat);
         dstRect.x = a.x;
         dstRect.y = a.y;
         white = a.whiteV;
@@ -297,9 +297,6 @@ void NoteObject::draw() {
 
                 float holdBeat = beat + ((endBeat - beat) * perc);
 
-                if (holdBeat > beat + ArrowEffects::drawBeats)
-                    continue;
-
                 Rect square;
                 square.w = 64 * size;
                 square.h = 64 * size;
@@ -315,7 +312,7 @@ void NoteObject::draw() {
                     float ttime = currentChart->getTimeFromBeat(holdBeat, currentChart->getSegmentFromBeat(holdBeat));
                     float holdDiff = ttime - position;
                     float cmodHold = calcCMod(holdDiff);
-                    ArrowEffects::Arrow a = ArrowEffects::finishEffects(obj->x, obj->y, cmodHold, obj->type, time, position, holdDiff);
+                    ArrowEffects::Arrow a = ArrowEffects::finishEffects(obj->x, obj->y, cmodHold, obj->type, time, position, holdDiff, holdBeat, currentBeat);
                     square.x = a.x;
                     square.y = a.y;
 
@@ -366,11 +363,12 @@ void NoteObject::draw() {
             int i = 0;
             for (holdBody& body : bodies)
             {
-                if (body.y > 720 + (64 * size) || body.y < -(64 * size))
+                if (body.y + 64 > 720 + (64 * size) || body.y - 64 < -(64 * size))
                 {
                     i++;
                     continue;
                 }
+
 
                 std::vector<GL_Vertex> verts;
 
@@ -435,6 +433,7 @@ void NoteObject::draw() {
                     else
                     {
                         Rendering::PushQuad(verts, Game::noteskin->holdend, GL::genShader);
+                        Rendering::drawBatch();
                         if (white != 0)
                         {
                             Rendering::drawBatch();
@@ -504,6 +503,7 @@ void NoteObject::draw() {
                         Rendering::PushQuad(verts, Game::noteskin->sparrowImg, GL::genShader, newX, body.y, realWidth, realHeight, 180);
                     else
                         Rendering::PushQuad(verts, Game::noteskin->sparrowImg, GL::genShader);
+                    Rendering::drawBatch();
                     if (white != 0)
                     {
                         Rendering::drawBatch();
@@ -579,7 +579,7 @@ void NoteObject::draw() {
                     {
                         Rendering::drawBatch();
                         dstRect.a = 1;
-                        Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, 90 + drawAngle);
+                        Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, -90 + drawAngle);
                         dstRect.a = ogAlpha;
                         Rendering::drawBatch();
                     }
@@ -614,7 +614,7 @@ void NoteObject::draw() {
                     {
                         Rendering::drawBatch();
                         dstRect.a = 1;
-                        Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, -90 + drawAngle);
+                        Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, 90 + drawAngle);
                         dstRect.a = ogAlpha;
                         Rendering::drawBatch();
                     }

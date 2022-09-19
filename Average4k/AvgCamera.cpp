@@ -3,6 +3,10 @@
 
 void AvgCamera::leDraw(Object* obj)
 {
+	glViewport(0, 0, 1280, 720);
+	GL::genShader->setProject(glm::ortho(0.0f, 1280.0f, 720.0f, 0.0f, -1.0f, 1.0f));
+	Rendering::rendW = 1280;
+	Rendering::rendH = 720;
 	if (obj->children.size() < 900000)
 	{
 		//glBindFramebuffer(GL_FRAMEBUFFER, fb);
@@ -13,6 +17,10 @@ void AvgCamera::leDraw(Object* obj)
 			Rendering::drawBatch();
 			Rendering::setBlend();
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glViewport(0, 0, 1280, 720);
+			GL::genShader->setProject(glm::ortho(0.0f, 1280.0f, 720.0f, 0.0f, -1.0f, 1.0f));
+			Rendering::rendW = 1280;
+			Rendering::rendH = 720;
 
 			AvgGroup* gr = (AvgGroup*)obj;
 
@@ -61,9 +69,9 @@ void AvgCamera::leDraw(Object* obj)
 				Rendering::SetClipRect(NULL);
 
 			if (gr->customShader)
-				Rendering::PushQuad(&gdstRect, &gsrcRect, gr->ctb, gr->customShader);
+				Rendering::PushQuad(&gdstRect, &gsrcRect, gr->ctb, gr->customShader, gr->angle);
 			else
-				Rendering::PushQuad(&gdstRect, &gsrcRect, gr->ctb, GL::genShader);
+				Rendering::PushQuad(&gdstRect, &gsrcRect, gr->ctb, GL::genShader, gr->angle);
 
 			if (gr->clipRect.w > 0 || gr->clipRect.h > 0)
 				Rendering::SetClipRect(NULL);
@@ -130,7 +138,10 @@ void AvgCamera::draw()
 
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);*/
-
+	glViewport(0, 0, 1280, 720);
+	GL::genShader->setProject(glm::ortho(0.0f, 1280.0f, 720.0f, 0.0f, -1.0f, 1.0f));
+	Rendering::rendW = 1280;
+	Rendering::rendH = 720;
 	Rendering::setBlend();
 
 

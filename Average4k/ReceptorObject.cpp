@@ -72,6 +72,8 @@ void ReceptorObject::draw() {
 		dstRect.y = a.y + mpy;
 		defAlpha = a.opac;
 		drawAngle = a.rot;
+		if (ArrowEffects::ShowSplines)
+			ArrowEffects::drawLine(x, y, type, beat, currentChart);
 	}
 
 	modX = dstRect.x;

@@ -18,7 +18,7 @@ void ModEditor::resetSprites()
 		value.stealth = 0;
 		value.movex = 0;
 		value.movey = 0;
-		value.mini = 0;
+		value.mini = 0.5;
 		value.confusion = 0;
 	}
 }
@@ -199,6 +199,7 @@ void ModEditor::refresh()
 	mod.offsetX = 0;
 	mod.offsetY = 0;
 	mod.stealth = 0;
+	mod.mini = 0.5;
 	mod.spr = playField;
 	mod.notModCreated = true;
 	mod.def = playField;
@@ -213,6 +214,7 @@ void ModEditor::refresh()
 	mod2.offsetX = 0;
 	mod2.offsetY = 0;
 	mod2.stealth = 0;
+	mod2.mini = 0.5;
 	mod2.spr = NULL;
 	mod2.notModCreated = true;
 	mod2.def = manager.spriteCamera;

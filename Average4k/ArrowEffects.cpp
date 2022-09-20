@@ -213,7 +213,7 @@ void ArrowEffects::drawLine(float defX, float targetY, int col, float beat, Char
 	lastBR.a = -1;
 	GL_Vertex lastTR;
 	lastTR.a = -1;
-	for (double i = -drawBeats; i < drawBeats; i += 0.05)
+	for (double i = -drawBeats; i < drawBeats; i += 0.02)
 	{
 		float rbeat = beat + i;
 		bpmSegment seg = currentChart.getSegmentFromBeat(rbeat);
@@ -271,7 +271,7 @@ void ArrowEffects::drawLine(float defX, float targetY, int col, float beat, Char
 				points.push_back(lastBL);
 				points.push_back(lastBR);
 
-				Rendering::drawBatch();
+				//Rendering::drawBatch();
 				Rendering::PushQuad(points, NULL, GL::genShader);
 				points.clear();
 			}

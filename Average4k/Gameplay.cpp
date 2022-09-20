@@ -717,6 +717,21 @@ void Gameplay::create() {
 
 		manager.sprites["playField"] = mod;
 
+		SpriteMod mod2;
+		mod2.anchor = "";
+		mod2.confusion = 0;
+		mod2.finish = "";
+		mod2.movex = 0;
+		mod2.movey = 0;
+		mod2.offsetX = 0;
+		mod2.offsetY = 0;
+		mod2.stealth = 0;
+		mod2.spr = NULL;
+		mod2.notModCreated = true;
+		mod2.def = manager.spriteCamera;
+		manager.sprites["sprites"] = mod;
+
+
 	}
 
 	callModEvent("create", 0);
@@ -771,6 +786,7 @@ void Gameplay::create() {
 		add(God);
 		add(Ehh);
 		add(Yke);
+		add(Mis);
 	}
 
 	songPosBar = new AvgRect(receptors[0]->x, 24, ((receptors[3]->x + (64 * Game::save->GetDouble("Note Size"))) - receptors[0]->x) * (positionInSong / (songLength)), 24);

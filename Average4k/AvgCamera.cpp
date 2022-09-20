@@ -44,8 +44,8 @@ void AvgCamera::leDraw(Object* obj)
 				gdstRect.x = gr->x;
 				gdstRect.y = gr->y;
 
-				gdstRect.w = gr->w;
-				gdstRect.h = gr->h;
+				gdstRect.w = gr->w * gr->scale;
+				gdstRect.h = gr->h * gr->scale;
 			}
 			gdstRect.r = 255;
 			gdstRect.g = 255;

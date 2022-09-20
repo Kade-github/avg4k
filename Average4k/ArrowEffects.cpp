@@ -10,6 +10,7 @@ float ArrowEffects::aconfusion = 0;
 float ArrowEffects::drawBeats = 8;
 float ArrowEffects::SplineAlpha = 0;
 float ArrowEffects::SplineDensity = 0.04;
+float ArrowEffects::mini = 0.5;
 
 std::map<int, std::vector<Spline>> ArrowEffects::splines = {};
 
@@ -25,6 +26,7 @@ std::map<int, float> ArrowEffects::movey = { {0,0}, {1,0}, {2,0}, {3,0} };
 std::map<int, float> ArrowEffects::drunkCol = { {0,0}, {1,0}, {2,0}, {3,0} };
 std::map<int, float> ArrowEffects::tipsyCol = { {0,0}, {1,0}, {2,0}, {3,0} };
 std::map<int, float> ArrowEffects::waveCol = { {0,0}, {1,0}, {2,0}, {3,0} };
+std::map<int, float> ArrowEffects::miniCol = { {0,0.5}, {1,0.5}, {2,0.5}, {3,0.5} };
 
 float calcCMod(float cmod, float diff)
 {
@@ -57,6 +59,12 @@ ArrowEffects::Arrow ArrowEffects::ArrowEff(float ydiff, int col, float pos)
 
 	if (aconfusion != 0)
 		a.rot += aconfusion;
+
+	a.mini = mini;
+
+	if (miniCol[col] > 0.51 || miniCol[col] < 0.49)
+		a.mini = miniCol[col];
+
 
 	if (stealthOpacity[col] != 1)
 		a.opac = stealthOpacity[col];
@@ -118,6 +126,7 @@ void ArrowEffects::resetEffects()
 	ArrowEffects::drunkCol = { {0,0}, {1,0}, {2,0}, {3,0} };
 	ArrowEffects::waveCol = { {0,0}, {1,0}, {2,0}, {3,0} };
 	ArrowEffects::tipsyCol = { {0,0}, {1,0}, {2,0}, {3,0} };
+	ArrowEffects::miniCol = { {0,0.5}, {1,0.5}, {2,0.5}, {3,0.5} };
 	ArrowEffects::drunk = 0;
 	ArrowEffects::wave = 0;
 	ArrowEffects::tipsy = 0;
@@ -128,6 +137,7 @@ void ArrowEffects::resetEffects()
 	ArrowEffects::ShowSplines = false;
 	ArrowEffects::SplineAlpha = 0;
 	ArrowEffects::SplineDensity = 0.04;
+	ArrowEffects::mini = 0.5;
 	ArrowEffects::splines.clear();
 	for (int i = 0; i < 4; i++)
 	{
@@ -178,6 +188,7 @@ ArrowEffects::Arrow ArrowEffects::addSplines(float defX, float defY, Arrow aEff,
 	a.x = realX + aEff.x;
 	a.y = realY + aEff.y;
 	a.rot = aEff.rot;
+	a.mini = aEff.mini;
 	return a;
 }
 
@@ -307,6 +318,7 @@ ArrowEffects::Arrow ArrowEffects::finishEffects(float defX, float defY, int col,
 	a.x = defX + aEff.x;
 	a.y = defY + aEff.y;
 	a.rot = aEff.rot;
+	a.mini = aEff.mini;
 
 	return a;
 }

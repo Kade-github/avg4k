@@ -30,27 +30,58 @@ void ReceptorObject::draw() {
 
 	bool sparrow = Game::noteskin->sparrowImg;
 
-	SDL_FRect rect;
+	SDL_FRect rect = {};
+
+
+
+
+	Rect dstRect;
+	Rect srcRect;
 
 	float mpx = (w * (1 - scale)) / 2;
 	float mpy = (h * (1 - scale)) / 2;
+
+	rect.x = x + mpx;
+	rect.y = y + mpy;
+
+	float drawAngle = 0;
+
+	if (ModManager::doMods)
+	{
+		ArrowEffects::Arrow a = ArrowEffects::finishEffects(x, y, type, positionInSong);
+		defAlpha = a.opac;
+		drawAngle = a.rot;
+
+		float size = Game::instance->save->GetDouble("Note Size") * (0.5 / a.mini);
+
+		x = ((Game::gameWidth / 2) - ((64 * size + 12) * 2)) + ((64 * size + 12) * type);
+
+		w = 64 * size;
+		h = 64 * size;
+		mpx = (w * (1 - scale)) / 2;
+		mpy = (h * (1 - scale)) / 2;
+
+		dstRect.x = a.x + mpx;
+		dstRect.y = a.y + mpy;
+
+		if (ArrowEffects::ShowSplines)
+			ArrowEffects::drawLine(x, y, type, beat, currentChart);
+	}
+	else
+	{
+		dstRect.x = rect.x;
+		dstRect.y = rect.y;
+	}
+
 
 	float scaledWidth = w * scale;
 	float scaledHeight = h * scale;
 
 	rect.w = scaledWidth;
 	rect.h = scaledHeight;
-	rect.x = x + mpx;
-	rect.y = y + mpy;
 
-	Rect dstRect;
-	Rect srcRect;
-
-
-	dstRect.x = rect.x;
-	dstRect.y = rect.y;
-	dstRect.w = rect.w;
-	dstRect.h = rect.h;
+	dstRect.w = w;
+	dstRect.h = h;
 	dstRect.r = 255;
 	dstRect.g = 255;
 	dstRect.b = 255;
@@ -63,18 +94,6 @@ void ReceptorObject::draw() {
 	srcRect.w = 1;
 	srcRect.h = 1;
 
-	float drawAngle = 0;
-
-	if (ModManager::doMods)
-	{
-		ArrowEffects::Arrow a = ArrowEffects::finishEffects(x, y, type, positionInSong);
-		dstRect.x = a.x + mpx;
-		dstRect.y = a.y + mpy;
-		defAlpha = a.opac;
-		drawAngle = a.rot;
-		if (ArrowEffects::ShowSplines)
-			ArrowEffects::drawLine(x, y, type, beat, currentChart);
-	}
 
 	modX = dstRect.x;
 	modY = dstRect.y;

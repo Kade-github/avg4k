@@ -59,8 +59,6 @@ int MainerMenu::selectedDiffIndex = 0;
 
 std::vector<steamItem> item;
 
-int selectedContainerIndex = 0;
-
 bool MainerMenu::lockInput = false;
 
 bool chartUploading = false;
@@ -104,9 +102,9 @@ void resetStuff()
 	despawn = 0;
 	lobbyUp = false;
 	lastTrans = 0;
-	selectedContainerIndex = 0;
 
 	MainerMenu* menu = ((MainerMenu*)Game::instance);
+	menu->selectedContainerIndex = 0;
 	menu->wheel->setSongs({});
 	menu->clearPacks();
 	lastHeight = 0;
@@ -1764,8 +1762,8 @@ void MainerMenu::selectPack(int index)
 
 void transContainerThing()
 {
-	selectedContainerIndex = transToContainer;
 	MainerMenu* instance = (MainerMenu*)Game::currentMenu;
+	instance->selectedContainerIndex = transToContainer;
 	instance->isTransDone = true;
 	switch (despawn)
 	{

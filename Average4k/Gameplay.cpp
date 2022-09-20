@@ -1290,6 +1290,8 @@ void Gameplay::update(Events::updateEvent event)
 							botplayHittingNote = false;
 							receptors[note->lane]->loop = true;
 							receptors[note->lane]->hit = true;
+							note->holdstoppedbeat = beat;
+							note->holdstoppedtime = positionInSong;
 							note->holding = true;
 						}
 						else if (positionInSong >= startTime + Judge::hitWindows[4] && !holding[note->lane])
@@ -1356,7 +1358,7 @@ void Gameplay::update(Events::updateEvent event)
 		}
 	}
 
-	if (!ended)
+	if (!ended) 
 	{
 		if (ModManager::doMods && lastCallUpdates + 40 < positionInSong)
 		{

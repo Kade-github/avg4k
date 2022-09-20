@@ -18,6 +18,7 @@ void ModEditor::resetSprites()
 		value.stealth = 0;
 		value.movex = 0;
 		value.movey = 0;
+		value.mini = 0;
 		value.confusion = 0;
 	}
 }
@@ -104,6 +105,20 @@ void ModEditor::create()
 
 	manager.sprites["playField"] = mod;
 
+	SpriteMod mod2;
+	mod2.anchor = "";
+	mod2.confusion = 0;
+	mod2.finish = "";
+	mod2.movex = 0;
+	mod2.movey = 0;
+	mod2.offsetX = 0;
+	mod2.offsetY = 0;
+	mod2.stealth = 0;
+	mod2.spr = NULL;
+	mod2.notModCreated = true;
+	mod2.def = manager.spriteCamera;
+	manager.sprites["sprites"] = mod;
+
 	callModEvent("create", 0);
 
 }
@@ -188,6 +203,20 @@ void ModEditor::refresh()
 	mod.notModCreated = true;
 	mod.def = playField;
 	manager.sprites["playField"] = mod;
+
+	SpriteMod mod2;
+	mod2.anchor = "";
+	mod2.confusion = 0;
+	mod2.finish = "";
+	mod2.movex = 0;
+	mod2.movey = 0;
+	mod2.offsetX = 0;
+	mod2.offsetY = 0;
+	mod2.stealth = 0;
+	mod2.spr = NULL;
+	mod2.notModCreated = true;
+	mod2.def = manager.spriteCamera;
+	manager.sprites["sprites"] = mod;
 
 	manager.cam = cam;
 

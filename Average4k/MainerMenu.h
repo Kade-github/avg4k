@@ -147,6 +147,8 @@ public:
 	bool justJoined = false;
 	static AvgWheel* wheel;
 
+	int selectedContainerIndex = 0;
+
 	static std::vector<Pack> packs;
 
 	bool fetchingScores;

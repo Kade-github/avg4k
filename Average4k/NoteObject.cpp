@@ -198,9 +198,13 @@ void NoteObject::draw() {
         dstRect.a = a.opac;
         ogAlpha = dstRect.a;
         drawAngle = a.rot;
+        size = Game::instance->save->GetDouble("Note Size") * (0.5 / a.mini);
 
         modY = dstRect.y;
         modX = dstRect.x;
+
+        dstRect.w = 64 * size;
+        dstRect.h = 64 * size;
 
         Game::instance->whiteShader->GL_Use();
 
@@ -218,7 +222,7 @@ void NoteObject::draw() {
 
 
     Rect test;
-    test.x = 0;
+    test.x = obj->x;
     test.y = obj->modY + (32 * size);
     test.w = 1280;
     test.h = 720;
@@ -363,7 +367,7 @@ void NoteObject::draw() {
             int i = 0;
             for (holdBody& body : bodies)
             {
-                if (body.y + 64 > 720 + (64 * size) || body.y - 64 < -(64 * size))
+                if (body.y + 64 > 720 + (64 * size) || body.y - 64 < -(64 * size) || (body.beat + 0.2 < holdstoppedbeat))
                 {
                     i++;
                     continue;
@@ -414,7 +418,7 @@ void NoteObject::draw() {
                             (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //br
                     }
 
-                    if (holding || body.beat < holdstoppedbeat)
+                    if (holding)
                         Rendering::SetClipRect(&test);
                     if (i != bodies.size() - 1)
                     {

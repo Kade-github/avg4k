@@ -294,6 +294,7 @@ void ModManager::runMods()
 			value.spr->y = y + value.offsetY;
 			value.spr->angle = rot;
 			value.spr->alpha = 1 - value.stealth;
+			value.spr->scale = 0.5 / value.mini;
 
 			if (value.spr->animationFinished && value.finish != "" && value.spr->sparrow)
 			{
@@ -310,6 +311,7 @@ void ModManager::runMods()
 			value.def->y = y + value.offsetY;
 			value.def->angle = rot;
 			value.def->alpha = 1 - value.stealth;
+			value.def->scale = 0.5 / value.mini;
 		}
 	}
 }
@@ -336,6 +338,8 @@ void ModManager::setModStart(AppliedMod& m)
 	}
 	if (m.mod == "drunk")
 		m.modStartAmount = ArrowEffects::drunk;
+	if (m.mod == "mini")
+		m.modStartAmount = ArrowEffects::mini;
 	if (m.mod == "tipsy")
 		m.modStartAmount = ArrowEffects::tipsy;
 	if (m.mod == "dizzy")
@@ -368,6 +372,8 @@ void ModManager::setModStart(AppliedMod& m)
 		m.modStartAmount = ArrowEffects::tipsyCol[m.col];
 	if (m.mod == "waveCol")
 		m.modStartAmount = ArrowEffects::waveCol[m.col];
+	if (m.mod == "miniCol")
+		m.modStartAmount = ArrowEffects::miniCol[m.col];
 	if (m.mod == "pathAlpha")
 		m.modStartAmount = ArrowEffects::SplineAlpha;
 	if (m.mod == "pathDensity")
@@ -396,6 +402,8 @@ void ModManager::setModProperties(AppliedMod& m, float tween)
 	}
 	if (m.mod == "drunk")
 		ArrowEffects::drunk = std::lerp(m.modStartAmount, m.amount, tween);
+	if (m.mod == "mini")
+		ArrowEffects::mini = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "tipsy")
 		ArrowEffects::tipsy = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "dizzy")
@@ -430,6 +438,8 @@ void ModManager::setModProperties(AppliedMod& m, float tween)
 		ArrowEffects::tipsyCol[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "waveCol")
 		ArrowEffects::waveCol[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+	if (m.mod == "miniCol")
+		ArrowEffects::miniCol[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "showPath")
 		ArrowEffects::ShowSplines = m.amount == 1 ? true : false;
 	if (m.mod == "pathAlpha")

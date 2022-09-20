@@ -565,8 +565,11 @@ void Game::update(Events::updateEvent update)
 				else
 				{
 					MainerMenu* m = (MainerMenu*)currentMenu;
-					m->isInLobby = true;
-					m->justJoined = true;
+					if (m->selectedContainerIndex == 1)
+					{
+						m->isInLobby = true;
+						m->justJoined = true;
+					}
 				}
 
 				std::cout << "you joined!" << std::endl;

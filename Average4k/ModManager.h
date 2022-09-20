@@ -31,6 +31,7 @@ struct SpriteMod {
 
 	float movex;
 	float movey;
+	float mini = 0.5;
 	float confusion;
 };
 

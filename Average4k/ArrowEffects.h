@@ -23,6 +23,7 @@ public:
 	struct Arrow {
 		float x, y;
 		float rot;
+		float mini = 0;
 		float opac = 1;
 		float holdSkewStart = 0;
 		float holdSkewEnd = 0;
@@ -39,7 +40,7 @@ public:
 
 	static float drawBeats, SplineAlpha;
 
-	static float drunk, tipsy, dizzy, amovex, amovey, aconfusion, wave;
+	static float drunk, tipsy, dizzy, amovex, amovey, aconfusion, wave, mini;
 
 	static std::map<int, float> stealthWhite;
 	static std::map<int, float> stealthOpacity;
@@ -51,6 +52,7 @@ public:
 	static std::map<int, float> drunkCol;
 	static std::map<int, float> tipsyCol;
 	static std::map<int, float> waveCol;
+	static std::map<int, float> miniCol;
 
 	static void drawLine(float defX, float targetY, int col, float beat, Chart currentChart);
 

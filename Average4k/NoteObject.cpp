@@ -367,7 +367,7 @@ void NoteObject::draw() {
             int i = 0;
             for (holdBody& body : bodies)
             {
-                if (body.y + 64 > 720 + (64 * size) || body.y - 64 < -(64 * size) || (body.beat + 0.2 < holdstoppedbeat))
+                if (body.y + 64 > 720 + (64 * size) || body.y - 64 < -(64 * size) || (body.beat - 0.15 < holdstoppedbeat))
                 {
                     i++;
                     continue;

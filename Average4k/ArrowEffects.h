@@ -63,5 +63,5 @@ public:
 	static Arrow addSplines(float defX, float defY, Arrow aEff, float diff, int col, float curBeat, float targetBeat);
 
 	static Arrow finishEffects(float defX, float defY, int col, float curTime);
-	static Arrow finishEffects(float defX, float defY, float cmod, int col, float holdTime, float curTime, float modY, float noteBeat, float curBeat);
+	static std::vector<Arrow> finishEffects(float defX, float defY, float cmod, int col, float holdTime, float curTime, float modY, float noteBeat, float curBeat);
 };

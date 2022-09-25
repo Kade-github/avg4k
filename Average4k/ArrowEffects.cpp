@@ -46,6 +46,12 @@ float bumpyPhase(float y, float period, float offset)
 ArrowEffects::Arrow ArrowEffects::ArrowEff(float ydiff, int col, float pos)
 {
 	Arrow a;
+
+	a.mini = mini;
+
+	if (miniCol[col] > 0.51 || miniCol[col] < 0.49)
+		a.mini = miniCol[col];
+
 	a.x = 0;
 	a.y = 0;
 	a.rot = 0;
@@ -60,10 +66,6 @@ ArrowEffects::Arrow ArrowEffects::ArrowEff(float ydiff, int col, float pos)
 	if (aconfusion != 0)
 		a.rot += aconfusion;
 
-	a.mini = mini;
-
-	if (miniCol[col] > 0.51 || miniCol[col] < 0.49)
-		a.mini = miniCol[col];
 
 
 	if (stealthOpacity[col] != 1)
@@ -187,8 +189,12 @@ ArrowEffects::Arrow ArrowEffects::addSplines(float defX, float defY, Arrow aEff,
 	a.opac = aEff.opac;
 	a.x = realX + aEff.x;
 	a.y = realY + aEff.y;
+
+
 	a.rot = aEff.rot;
 	a.mini = aEff.mini;
+
+
 	return a;
 }
 
@@ -320,10 +326,11 @@ ArrowEffects::Arrow ArrowEffects::finishEffects(float defX, float defY, int col,
 	a.rot = aEff.rot;
 	a.mini = aEff.mini;
 
+
 	return a;
 }
 
-ArrowEffects::Arrow ArrowEffects::finishEffects(float defX, float defY, float cmod, int col, float holdTime, float curTime, float diff, float noteBeat, float curBeat)
+std::vector<ArrowEffects::Arrow> ArrowEffects::finishEffects(float defX, float defY, float cmod, int col, float holdTime, float curTime, float diff, float noteBeat, float curBeat)
 {
 	float yPos = defY + cmod;
 
@@ -331,5 +338,5 @@ ArrowEffects::Arrow ArrowEffects::finishEffects(float defX, float defY, float cm
 
 	Arrow a = addSplines(defX, defY, aEff, diff, col, curBeat, noteBeat);
 
-	return a;
+	return {a,aEff};
 }

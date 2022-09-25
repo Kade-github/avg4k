@@ -6,6 +6,22 @@
 #include "Chart.h"
 #include "AvgSprite.h"
 
+struct holdBody {
+	float x, y;
+	float w, h;
+	float skewTL = 0, skewTR = 0;
+	float skewBL = 0, skewBR = 0;
+	float skewYTL = 0, skewYTR = 0;
+	float skewYBL = 0, skewYBR = 0;
+	float beat;
+	float deg = 0;
+
+	
+
+	std::vector<GL_Vertex> verts = {};
+};
+
+
 struct holdTile {
 	float time;
 	double beat;

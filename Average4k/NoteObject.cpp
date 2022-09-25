@@ -9,16 +9,6 @@
 #include "Helpers.h"
 #include "ArrowEffects.h"
 
-struct holdBody {
-    float x, y;
-    float w, h;
-    float skewTL = 0, skewTR = 0;
-    float skewBL = 0, skewBR = 0;
-    float skewYTL = 0, skewYTR = 0;
-    float skewYBL = 0, skewYBR = 0;
-    float beat;
-};
-
 NoteObject::NoteObject()
 {
     setX(-400);
@@ -188,10 +178,17 @@ void NoteObject::draw() {
     float white = 0;
 
     float ogAlpha = alpha;
+    float preModX = dstRect.x;
+    float preModY = dstRect.y;
+
+    ArrowEffects::Arrow offsetA;
 
     if (ModManager::doMods)
     {
-        ArrowEffects::Arrow a = ArrowEffects::finishEffects(obj->x, obj->y, noteOffset, obj->type, -1, position, diff, beat, currentBeat);
+        std::vector<ArrowEffects::Arrow> ar = ArrowEffects::finishEffects(obj->x, obj->y, noteOffset, obj->type, -1, position, diff, beat, currentBeat);
+        offsetA = ar[1];
+        ArrowEffects::Arrow a = ar[0];
+
         dstRect.x = a.x;
         dstRect.y = a.y;
         white = a.whiteV;
@@ -222,7 +219,7 @@ void NoteObject::draw() {
 
 
     Rect test;
-    test.x = obj->x;
+    test.x = obj->x - 640;
     test.y = obj->modY + (32 * size);
     test.w = 1280;
     test.h = 720;
@@ -283,7 +280,7 @@ void NoteObject::draw() {
 
         //Rendering::PushQuad(&line, &srcRect, NULL, NULL);
 
-        int amountToDraw = 1 + (endPos / (64 * size));
+        int amountToDraw = 1 + (endPos / std::round((64 * size)));
 
         int lastSkewStart;
         int lastSkewEnd;
@@ -294,10 +291,10 @@ void NoteObject::draw() {
 
         if (amountToDraw > 1)
         {
-
-            for (int i = 0; i < amountToDraw; i++)
+            float fBeat = 0.01;
+            for (int i = 0; i < amountToDraw + 1; i++)
             {
-                float perc = (float)(i + 1.f) / (float)amountToDraw;
+                float perc = (float)(i) / (float)amountToDraw;
 
                 float holdBeat = beat + ((endBeat - beat) * perc);
 
@@ -311,51 +308,113 @@ void NoteObject::draw() {
 
                 holdBody body;
                 body.beat = holdBeat;
+
+                float oldX = square.x;
+                float oldY = square.y;
+
+
                 if (ModManager::doMods)
                 {
+
                     float ttime = currentChart->getTimeFromBeat(holdBeat, currentChart->getSegmentFromBeat(holdBeat));
+                    float ttime2 = currentChart->getTimeFromBeat(holdBeat + fBeat, currentChart->getSegmentFromBeat(holdBeat + fBeat));
                     float holdDiff = ttime - position;
+                    float holdDiff2 = ttime2 - position;
                     float cmodHold = calcCMod(holdDiff);
-                    ArrowEffects::Arrow a = ArrowEffects::finishEffects(obj->x, obj->y, cmodHold, obj->type, time, position, holdDiff, holdBeat, currentBeat);
+                    float cmodHold2 = calcCMod(holdDiff2);
+                    ArrowEffects::Arrow offsetA2;
+                    std::vector<ArrowEffects::Arrow> real = ArrowEffects::finishEffects(obj->x, obj->y, cmodHold, obj->type, time, position, holdDiff, holdBeat, currentBeat);
+                    std::vector<ArrowEffects::Arrow> ahead = ArrowEffects::finishEffects(obj->x, obj->y, cmodHold2, obj->type, time, position, holdDiff2, holdBeat + fBeat, currentBeat);
+                    ArrowEffects::Arrow a = real[0];
                     square.x = a.x;
                     square.y = a.y;
+             
 
-                    if (bodies.size() == 0)
+                    float size = Game::instance->save->GetDouble("Note Size") * (0.5 / a.mini);
+
+                    // center the stuff on the arrow path
+
+                    real[0].x += (32 * size);
+                    ahead[0].x += (32 * size);
+                    real[0].y += (32 * size);
+                    ahead[0].y += (32 * size);
+
+                    float diffY = (ahead[0].y) - (real[0].y);
+                    float diffX = (ahead[0].x) - (real[0].x);
+
+                    // find radians
+
+                    float fAng = atan2f(diffY, diffX);
+
+                    body.deg = fAng;
+
+                    // get the x/y offsets by their angle
+
+                    float xxOffset = (32 * size) * sin(fAng);
+                    float yyOffset = (32 * size) * cos(fAng);
+
+                    // get the vert pos's
+
+                    float leftx = (real[0].x - xxOffset);
+                    float rightx = (real[0].x + xxOffset);
+                    float lefty = (real[0].y + yyOffset);
+                    float righty = (real[0].y - yyOffset);
+
+                    if (i != 0)
                     {
-                        if (!downscroll)
-                        {
-                            body.skewTL = -(square.x - dstRect.x);
-                            body.skewTR = -((square.x + square.w) - (dstRect.x + (64 * size)));
-                            body.skewYTL = -(square.y - (dstRect.y + (32 * size)));
-                            body.skewYTR = -(square.y - (dstRect.y + (32 * size)));
-                        }
+                        holdBody& lB = bodies.back();
+                        if (!downscroll || sparrow)
+                            lB.verts.push_back({ leftx, lefty,
+                                0, -1,
+                                (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // upscroll bl
                         else
-                        {
-                            body.skewBL = -(square.x - dstRect.x);
-                            body.skewBR = -((square.x + square.w) - (dstRect.x + (64 * size)));
-                            body.skewYBL = -(square.y - (dstRect.y - (32 * size)));
-                            body.skewYBR = -(square.y - (dstRect.y - (32 * size)));
-                        }
+                            lB.verts.push_back({ leftx, lefty,
+                                0, -1,
+                                (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // downscroll bl
+                        if (!downscroll || sparrow)
+                            lB.verts.push_back({ rightx, righty,
+                                1, -1,
+                               (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // upscroll br
+                        else
+                            lB.verts.push_back({ rightx, righty,
+                                1, -1,
+                                (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // downscroll br
+                        if (i == amountToDraw - 1)
+                            break;
                     }
+
+                    body.verts.push_back({ leftx, lefty,
+                        0, 0,
+                        (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // tl
+                    body.verts.push_back({ rightx , righty,
+                        1, 0,
+                       (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // tr
+
+                }
+                else
+                {
+                    body.verts.push_back({ square.x, square.y,
+                        0, 0,
+                        (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // tl
+                    body.verts.push_back({ square.x + square.w, square.y,
+                        1, 0,
+                       (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // tr
+                    if (!downscroll || sparrow)
+                        body.verts.push_back({ square.x, square.y + square.h,
+                            0, -1,
+                            (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //bl
                     else
-                    {
-                        holdBody& lastBody = bodies.back();
-                        if (!downscroll)
-                        {
-                            body.skewTL = -(square.x - lastBody.x);
-                            body.skewTR = -((square.x + square.w) - (lastBody.x + lastBody.w));
-                            lastBody.skewYBL = -((lastBody.y + lastBody.h) - square.y);
-                            lastBody.skewYBR = -((lastBody.y + lastBody.h) - square.y);
-                        }
-                        else
-                        {
-                            body.skewBL = -(square.x - lastBody.x);
-                            body.skewBR = -((square.x + square.w) - (lastBody.x + lastBody.w));
-                            lastBody.skewYTL = (-((lastBody.y) - (square.y + square.h)));
-                            lastBody.skewYTR = (-((lastBody.y) - (square.y + square.h)));
-
-                        }
-                    }
+                        body.verts.push_back({ square.x, square.y + square.h,
+                            0, 1,
+                            (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //bl
+                    if (!downscroll || sparrow)
+                        body.verts.push_back({ square.x + square.w, square.y + square.h,
+                            1, -1,
+                           (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //br
+                    else
+                        body.verts.push_back({ square.x + square.w, square.y + square.h,
+                            1, 1,
+                            (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //br
                 }
 
                 body.x = square.x;
@@ -367,62 +426,33 @@ void NoteObject::draw() {
             int i = 0;
             for (holdBody& body : bodies)
             {
-                if (body.y + 64 > 720 + (64 * size) || body.y - 64 < -(64 * size) || (body.beat - 0.15 < holdstoppedbeat))
+                if (body.y > 820 || body.y < -200 || (body.beat - 0.15 < holdstoppedbeat))
                 {
                     i++;
                     continue;
                 }
 
 
+                if (body.beat > beat + ArrowEffects::drawBeats)
+                    break;
+
                 std::vector<GL_Vertex> verts;
 
                 if (!sparrow)
                 {
-                    verts.push_back({ body.x + body.skewTL, body.y + body.skewYTL,
-                        0, 0,
-                        (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //tl
-                    if (!downscroll)
-                    {
-                        verts.push_back({ body.x + body.skewBL, body.y + body.h + body.skewYBL,
-                            0, -1,
-                            (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //bl
-                    }
-                    else
-                    {
-                        verts.push_back({ body.x + body.skewBL, body.y + body.h + body.skewYBL,
-                            0, 1,
-                            (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //bl
-                    }
-                    verts.push_back({ body.x + body.skewTR + body.w, body.y + body.skewYTR,
-                        1, 0,
-                       (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //tr
-                    verts.push_back({ body.x + body.skewTR + body.w, body.y + body.skewYTR,
-                        1, 0,
-                        (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //tr
-                    if (!downscroll)
-                    {
-                        verts.push_back({ body.x + body.skewBL, body.y + body.h + body.skewYBL,
-                            0, -1,
-                            (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //bl
-                        verts.push_back({ body.x + body.skewBR + body.w, body.y + body.h + body.skewYBR,
-                            1, -1,
-                           (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //br
-                    }
-                    else
-                    {
-                        verts.push_back({ body.x + body.skewBL, body.y + body.h + body.skewYBL,
-                            0, 1,
-                            (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //bl
-                        verts.push_back({ body.x + body.skewBR + body.w, body.y + body.h + body.skewYBR,
-                            1, 1,
-                            (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //br
-                    }
 
+                    verts.push_back(body.verts[0]); // tl
+                    verts.push_back(body.verts[2]); // bl
+                    verts.push_back(body.verts[1]); // tr
+                    verts.push_back(body.verts[1]); // tr
+                    verts.push_back(body.verts[2]); // bl
+                    verts.push_back(body.verts[3]); // br
                     if (holding)
                         Rendering::SetClipRect(&test);
                     if (i != bodies.size() - 1)
                     {
                         Rendering::PushQuad(verts, Game::noteskin->hold, GL::genShader);
+                        Rendering::drawBatch();
                         if (white != 0)
                         {
                             Rendering::drawBatch();
@@ -443,7 +473,7 @@ void NoteObject::draw() {
                             Rendering::drawBatch();
                             for (GL_Vertex& vert : verts)
                                 vert.a = 1;
-                            Rendering::PushQuad(verts, Game::noteskin->holdend, Game::instance->whiteShader);
+                            Rendering::PushQuad(body.verts, Game::noteskin->holdend, Game::instance->whiteShader);
                             for (GL_Vertex& vert : verts)
                                 vert.a = ogAlpha;
                             Rendering::drawBatch();
@@ -482,24 +512,22 @@ void NoteObject::draw() {
                         body.skewBR = body.skewBR / 2;
                     }
                     srcRect = fr.srcRect;
-                    verts.push_back({ newX + body.skewTL, body.y + body.skewYTL,
-                        srcRect.x, srcRect.y,
-                    (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //tl
-                    verts.push_back({ newX + body.skewBL, body.y + realHeight + body.skewYBL,
-                        srcRect.x, srcRect.y + srcRect.h,
-                        (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //bl
-                    verts.push_back({ newX + body.skewTR + realWidth, body.y + body.skewYTR,
-                        srcRect.x + srcRect.w, srcRect.y,
-                       (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //tr
-                    verts.push_back({ newX + body.skewTR + realWidth, body.y + body.skewYTR,
-                        srcRect.x + srcRect.w, srcRect.y,
-                       (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //tr
-                    verts.push_back({ newX + body.skewBL, body.y + realHeight + body.skewYBL,
-                        srcRect.x, srcRect.y + srcRect.h,
-                        (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //bl
-                    verts.push_back({ newX + body.skewBR + realWidth, body.y + realHeight + body.skewYBR,
-                        srcRect.x + srcRect.w, srcRect.y + srcRect.h,
-                        (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //br
+
+                    body.verts[0].u = fr.srcRect.x;
+                    body.verts[0].v = fr.srcRect.y;
+                    body.verts[1].u = fr.srcRect.x + fr.srcRect.w;
+                    body.verts[1].v = fr.srcRect.y;
+                    body.verts[2].u = fr.srcRect.x;
+                    body.verts[2].v = fr.srcRect.y + fr.srcRect.h;
+                    body.verts[3].u = fr.srcRect.x + fr.srcRect.w;
+                    body.verts[3].v = fr.srcRect.y + fr.srcRect.h;
+
+                    verts.push_back(body.verts[0]); // tl
+                    verts.push_back(body.verts[2]); // bl
+                    verts.push_back(body.verts[1]); // tr
+                    verts.push_back(body.verts[1]); // tr
+                    verts.push_back(body.verts[2]); // bl
+                    verts.push_back(body.verts[3]); // br
 
                     if (holding || body.beat < holdstoppedbeat)
                         Rendering::SetClipRect(&test);

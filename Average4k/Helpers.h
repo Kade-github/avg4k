@@ -1,5 +1,5 @@
 #pragma once
-
+#include "Rendering.h"
 #include <chrono>
 #include <cstdint>
 #include <wtypes.h>
@@ -9,6 +9,39 @@ public:
 
 	static char encoding_table[];
 	static char* decoding_table;
+
+	static void rotateVerts(std::vector<GL_Vertex>& verts, float deg, Rect dstRect)
+	{
+		if (deg != 0)
+		{
+			float s = sin(deg * (3.14159265 / 180));
+			float c = cos(deg * (3.14159265 / 180));
+			float cx = dstRect.x + dstRect.w * 0.5f;
+			float cy = dstRect.y + dstRect.h * 0.5f;
+
+			for (GL_Vertex& vert : verts)
+			{
+				float tx = vert.x - cx;
+				float ty = vert.y - cy;
+				float rx = tx * c - ty * s;
+				float ry = tx * s + ty * c;
+				vert.x = rx + cx;
+				vert.y = ry + cy;
+			}
+		}
+	}
+
+	static Rect AngOffset(float startX, float startY, float endX, float endY, float size)
+	{
+		float diffY = endY - startY;
+		float diffX = endX - startX;
+
+		float fAng = atan2f(diffY, diffX);
+
+		float xxOffset = size * sin(fAng);
+		float yyOffset = size * cos(fAng);
+		return { xxOffset, yyOffset };
+	}
 
 	static void build_decoding_table() {
 

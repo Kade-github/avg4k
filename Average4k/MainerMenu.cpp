@@ -18,6 +18,8 @@ AvgContainer* MainerMenu::multiContainer;
 AvgContainer* MainerMenu::settingsContainer;
 AvgContainer* MainerMenu::testWorkshop;
 
+
+
 std::mutex packMutex;
 
 Pack steamWorkshop;
@@ -1066,6 +1068,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 						resetStuff();
 						Game::instance->transitionToMenu(new Gameplay());
 						delete lobbyShader;
+						cantSwitch = true;
 					}
 					else if (selectedSong.isSteam || selected.isSteam)
 					{
@@ -1113,7 +1116,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 			Tweening::TweenManager::createNewTween("movingContainer1", multiContainer, Tweening::tt_Y, 900, 160, Game::gameHeight + 200, NULL, Easing::EaseOutCubic);
 			Tweening::TweenManager::createNewTween("movingContainer", soloContainer, Tweening::tt_Y, 900, 160, Game::gameHeight + 200, NULL, Easing::EaseOutCubic);
 		}
-		else if (isInLobby)
+		else if (isInLobby && !cantSwitch)
 		{
 			CPacketLeave leave;
 			leave.Order = 0;
@@ -1557,6 +1560,7 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 		break;
 	case eSPacketStartLobbyGame:
 		Game::instance->transitionToMenu(new Gameplay());
+		cantSwitch = true;
 	case eSPacketWtfAmInReply:
 		if (currentLobby.LobbyID == 0 && isInLobby)
 		{
@@ -2099,7 +2103,7 @@ void MainerMenu::selectContainer(int container)
 {
 	MUTATE_START
 
-	if (!isHost && isInLobby && container == 0 && isTransDone)
+	if ((!isHost && isInLobby && container == 0 && isTransDone) || cantSwitch)
 		return;
 
 	isTransDone = false;

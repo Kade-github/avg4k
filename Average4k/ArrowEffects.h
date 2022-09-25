@@ -40,6 +40,9 @@ public:
 
 	static float drawBeats, SplineAlpha;
 
+	static float scrollSpeed;
+	static float noteSize;
+
 	static float drunk, tipsy, dizzy, amovex, amovey, aconfusion, wave, mini;
 
 	static std::map<int, float> stealthWhite;

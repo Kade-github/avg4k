@@ -11,6 +11,8 @@ float ArrowEffects::drawBeats = 8;
 float ArrowEffects::SplineAlpha = 0;
 float ArrowEffects::SplineDensity = 0.04;
 float ArrowEffects::mini = 0.5;
+float ArrowEffects::scrollSpeed = 0;
+float ArrowEffects::noteSize = 0;
 
 std::map<int, std::vector<Spline>> ArrowEffects::splines = {};
 
@@ -33,7 +35,7 @@ float calcCMod(float cmod, float diff)
 
 	float bps = (cmod / 60);
 
-	float noteOffset = (bps * (diff / 1000)) * (64 * Game::instance->save->GetDouble("Note Size"));
+	float noteOffset = (bps * (diff / 1000)) * (64 * ArrowEffects::noteSize);
 
 	return noteOffset;
 }
@@ -55,7 +57,7 @@ ArrowEffects::Arrow ArrowEffects::ArrowEff(float ydiff, int col, float pos)
 	a.x = 0;
 	a.y = 0;
 	a.rot = 0;
-	a.cmod = Game::instance->save->GetDouble("Scrollspeed");
+	a.cmod = scrollSpeed;
 
 	if (confusion[col] != 0)
 		a.rot += confusion[col];
@@ -118,6 +120,8 @@ ArrowEffects::Arrow ArrowEffects::ArrowEff(float ydiff, int col, float pos)
 void ArrowEffects::resetEffects()
 {
 	drawBeats = 8;
+	ArrowEffects::scrollSpeed = Game::instance->save->GetDouble("scrollspeed");
+	ArrowEffects::noteSize = Game::instance->save->GetDouble("Note Size");
 	ArrowEffects::stealthWhite = { {0,0}, {1,0}, {2,0}, {3,0} };
 	ArrowEffects::stealthReceptorOpacity = { {0,1}, {1,1}, {2,1}, {3,1} };
 	ArrowEffects::stealthOpacity = { {0,1}, {1,1}, {2,1}, {3,1} };
@@ -227,7 +231,7 @@ void ArrowEffects::drawLine(float defX, float targetY, int col, float beat, Char
 
 		float diff = (time - timeCur);
 
-		float cmod = calcCMod(Game::save->GetDouble("Scrollspeed"), diff);
+		float cmod = calcCMod(scrollSpeed, diff);
 	
 
 		bool downscroll = false;
@@ -244,7 +248,7 @@ void ArrowEffects::drawLine(float defX, float targetY, int col, float beat, Char
 
 		float yPos = targetY + calcCMod(aEff.cmod, diff);
 
-		float x = aEff.x + (32 * Game::instance->save->GetDouble("Note Size"));
+		float x = aEff.x + (32 * ArrowEffects::noteSize);
 		float y = aEff.y;
 
 		if ((y < -60 || y > 760 || x < 0 || x > 1280) && realI % 2 == 0)

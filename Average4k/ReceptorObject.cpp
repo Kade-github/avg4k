@@ -11,8 +11,8 @@ ReceptorObject::ReceptorObject(int _x, int _y, int _type)
 	// this does the same thing but im lazy and too lazy to check
 	setX(_x);
 	setY(_y);
-	w = (64 * Game::save->GetDouble("Note Size"));
-	h = (64 * Game::save->GetDouble("Note Size"));
+	w = (64 * ArrowEffects::noteSize);
+	h = (64 * ArrowEffects::noteSize);
 
 	if (ModManager::doMods)
 	{
@@ -52,7 +52,7 @@ void ReceptorObject::draw() {
 		defAlpha = a.opac;
 		drawAngle = a.rot;
 
-		float size = Game::instance->save->GetDouble("Note Size") * (0.5 / a.mini);
+		float size = ArrowEffects::noteSize * (0.5 / a.mini);
 
 		x = ((Game::gameWidth / 2) - ((64 * size + 12) * 2)) + ((64 * size + 12) * type);
 

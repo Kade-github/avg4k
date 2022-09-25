@@ -17,7 +17,7 @@ NoteObject::NoteObject()
     h = 64;
     Object::currentId++;
     id = Object::currentId;
-    cmod = Game::save->GetDouble("scrollspeed");
+    cmod = ArrowEffects::scrollSpeed;
 
     if (Gameplay::instance != NULL)
         if (Gameplay::instance->runModStuff)
@@ -195,7 +195,7 @@ void NoteObject::draw() {
         dstRect.a = a.opac;
         ogAlpha = dstRect.a;
         drawAngle = a.rot;
-        size = Game::instance->save->GetDouble("Note Size") * (0.5 / a.mini);
+        size = ArrowEffects::noteSize * (0.5 / a.mini);
 
         modY = dstRect.y;
         modX = dstRect.x;

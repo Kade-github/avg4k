@@ -560,6 +560,15 @@ void ModManager::createFunctions()
 
 	lua->set_function("consolePrint", consolePrint);
 
+
+	lua->set_function("setScrollSpeed", [](float speed) {
+		ArrowEffects::scrollSpeed = speed;
+	});
+
+	lua->set_function("setNoteSize", [](float size) {
+		ArrowEffects::noteSize = size;
+	});
+
 	lua->set_function("activateMod", [](std::string name, float tweenStart, float tweenLen, std::string easingFunc, float amount) {
 		AppliedMod aMod;
 		aMod.mod = name;

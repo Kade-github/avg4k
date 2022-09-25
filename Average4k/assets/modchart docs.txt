@@ -23,9 +23,7 @@ Global stuff
 
 config.downscroll and config.noteSize exist. Pretty simple, and you can use these anywhere.
 
-theres also gameplay.playField, which is the sprite to the original playfield. All sprite functions affect this as well, go further down to see them.
-
-there are also, gameplay.col1->gameplay.col4, which are the sprites drawing each column. Again all of these are affected by sprite functions.
+You can also use setScrollSpeed(speed), and setNoteSize(size).
 
 (function)
 
@@ -37,7 +35,7 @@ For column specific mods use
 
 activateModMap(modName,beat,beatLength,easingType,amount, col)
 
-Current list of mods:
+Current list of mods (for preview's of most mods you can look at https://www.youtube.com/watch?v=5EfC9jMnxh0 and it's also a tutorial as well):
 
 Non-Column Specific
 

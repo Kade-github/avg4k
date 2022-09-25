@@ -573,6 +573,9 @@ void MainerMenu::create()
 
 	std::vector<setting> miscSettings;
 	miscSettings.push_back(Game::save->getSetting("Submit Scores"));
+	miscSettings.push_back(Game::save->getSetting("Ignore mod noteskin"));
+	miscSettings.push_back(Game::save->getSetting("Ignore mod scrollspeed"));
+	miscSettings.push_back(Game::save->getSetting("Ignore mod starting scroll"));
 
 	addSettings("Misc", miscSettings);
 

@@ -562,6 +562,8 @@ void ModManager::createFunctions()
 
 
 	lua->set_function("setScrollSpeed", [](float speed) {
+		if (Game::instance->save->GetBool("Ignore mod scrollspeed"))
+			return;
 		ArrowEffects::scrollSpeed = speed;
 	});
 
@@ -811,6 +813,8 @@ void ModManager::createFunctions()
 	});
 
 	lua->set_function("setNoteskin", [](std::string noteskinName) {
+		if (Game::instance->save->GetBool("Ignore mod noteskin"))
+			return;
 		std::string path = instance->assetPath + "/" + noteskinName;
 		Game::noteskin = Noteskin::getNoteskin(path);
 	});

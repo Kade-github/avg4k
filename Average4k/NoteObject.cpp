@@ -312,10 +312,6 @@ void NoteObject::draw() {
                 float oldX = square.x;
                 float oldY = square.y;
 
-
-                if (ModManager::doMods)
-                {
-
                     float ttime = currentChart->getTimeFromBeat(holdBeat, currentChart->getSegmentFromBeat(holdBeat));
                     float ttime2 = currentChart->getTimeFromBeat(holdBeat + fBeat, currentChart->getSegmentFromBeat(holdBeat + fBeat));
                     float holdDiff = ttime - position;
@@ -334,10 +330,13 @@ void NoteObject::draw() {
 
                     // center the stuff on the arrow path
 
-                    real[0].x += (32 * size);
-                    ahead[0].x += (32 * size);
-                    real[0].y += (32 * size);
-                    ahead[0].y += (32 * size);
+                    float t = (32 * size);
+
+     
+                    real[0].x += t;
+                    ahead[0].x += t;
+                    real[0].y += t;
+                    ahead[0].y += t;
 
                     float diffY = (ahead[0].y) - (real[0].y);
                     float diffX = (ahead[0].x) - (real[0].x);
@@ -350,10 +349,20 @@ void NoteObject::draw() {
 
                     // get the x/y offsets by their angle
 
-                    float xxOffset = (32 * size) * sin(fAng);
-                    float yyOffset = (32 * size) * cos(fAng);
+                    float xxOffset = t * sin(fAng);
+                    float yyOffset = t * cos(fAng);
 
                     // get the vert pos's
+
+                    if (sparrow)
+                    {
+                        AvgFrame fr = hold;
+                        if (xxOffset > 0)
+                            xxOffset -= fr.frameRect.w / 1.75;
+                        else
+                            xxOffset += fr.frameRect.w / 1.75;
+                    }
+
 
                     float leftx = (real[0].x - xxOffset);
                     float rightx = (real[0].x + xxOffset);
@@ -389,33 +398,6 @@ void NoteObject::draw() {
                     body.verts.push_back({ rightx , righty,
                         1, 0,
                        (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // tr
-
-                }
-                else
-                {
-                    body.verts.push_back({ square.x, square.y,
-                        0, 0,
-                        (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // tl
-                    body.verts.push_back({ square.x + square.w, square.y,
-                        1, 0,
-                       (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // tr
-                    if (!downscroll || sparrow)
-                        body.verts.push_back({ square.x, square.y + square.h,
-                            0, -1,
-                            (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //bl
-                    else
-                        body.verts.push_back({ square.x, square.y + square.h,
-                            0, 1,
-                            (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //bl
-                    if (!downscroll || sparrow)
-                        body.verts.push_back({ square.x + square.w, square.y + square.h,
-                            1, -1,
-                           (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //br
-                    else
-                        body.verts.push_back({ square.x + square.w, square.y + square.h,
-                            1, 1,
-                            (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); //br
-                }
 
                 body.x = square.x;
                 body.y = square.y;
@@ -491,26 +473,6 @@ void NoteObject::draw() {
                     else
                         fr = end;
 
-                    float realWidth = (fr.srcRect.w * Game::noteskin->sparrowImg->width);
-                    float ogH = (fr.srcRect.h * Game::noteskin->sparrowImg->height);
-                    float realHeight = (fr.srcRect.h * Game::noteskin->sparrowImg->height);
-
-                    realWidth = (64 * size) / 3;
-
-                    float newX = body.x + ((32 * size) - (realWidth / 2));
-
-                    realHeight = 64 * size;
-                    if (i == bodies.size() - 1 && ogH > 32)
-                    {
-                        realHeight = (ogH * size) / 2;
-                        if (downscroll)
-                            body.y += (32 * size);
-                    }
-                    if (i == bodies.size() - 1 && downscroll)
-                    {
-                        body.skewBL = body.skewBL / 2;
-                        body.skewBR = body.skewBR / 2;
-                    }
                     srcRect = fr.srcRect;
 
                     body.verts[0].u = fr.srcRect.x;
@@ -531,20 +493,14 @@ void NoteObject::draw() {
 
                     if (holding || body.beat < holdstoppedbeat)
                         Rendering::SetClipRect(&test);
-                    if (i == bodies.size() - 1 && downscroll)
-                        Rendering::PushQuad(verts, Game::noteskin->sparrowImg, GL::genShader, newX, body.y, realWidth, realHeight, 180);
-                    else
-                        Rendering::PushQuad(verts, Game::noteskin->sparrowImg, GL::genShader);
+                    Rendering::PushQuad(verts, Game::noteskin->sparrowImg, GL::genShader);
                     Rendering::drawBatch();
                     if (white != 0)
                     {
                         Rendering::drawBatch();
                         for (GL_Vertex& vert : verts)
                             vert.a = 1;
-                        if (i == bodies.size() - 1 && downscroll)
-                            Rendering::PushQuad(verts, Game::noteskin->sparrowImg, Game::instance->whiteShader, newX, body.y, realWidth, realHeight, 180);
-                        else
-                            Rendering::PushQuad(verts, Game::noteskin->sparrowImg, Game::instance->whiteShader);
+                        Rendering::PushQuad(verts, Game::noteskin->sparrowImg, Game::instance->whiteShader);
                         for (GL_Vertex& vert : verts)
                             vert.a = ogAlpha;
                         Rendering::drawBatch();
@@ -611,7 +567,7 @@ void NoteObject::draw() {
                     {
                         Rendering::drawBatch();
                         dstRect.a = 1;
-                        Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, -90 + drawAngle);
+                        Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader,90 + drawAngle);
                         dstRect.a = ogAlpha;
                         Rendering::drawBatch();
                     }
@@ -646,7 +602,7 @@ void NoteObject::draw() {
                     {
                         Rendering::drawBatch();
                         dstRect.a = 1;
-                        Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, 90 + drawAngle);
+                        Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, -90 + drawAngle);
                         dstRect.a = ogAlpha;
                         Rendering::drawBatch();
                     }

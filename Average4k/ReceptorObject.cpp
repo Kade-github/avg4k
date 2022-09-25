@@ -77,11 +77,8 @@ void ReceptorObject::draw() {
 	float scaledWidth = w * scale;
 	float scaledHeight = h * scale;
 
-	rect.w = scaledWidth;
-	rect.h = scaledHeight;
-
-	dstRect.w = w;
-	dstRect.h = h;
+	dstRect.w = scaledWidth;
+	dstRect.h = scaledHeight;
 	dstRect.r = 255;
 	dstRect.g = 255;
 	dstRect.b = 255;

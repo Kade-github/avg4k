@@ -918,6 +918,7 @@ void openChart(std::string path, std::string folder) {
 
 void FuckinEditor::create()
 {
+	ModManager::doMods = false;
 	ArrowEffects::resetEffects();	
 	if (SoundManager::getChannelByName("prevSong") != NULL)
 	{

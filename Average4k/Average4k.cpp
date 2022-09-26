@@ -538,6 +538,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	SDL_Quit();
 
+
 	if (Game::steam != nullptr)
 		Game::steam->ShutdownSteam();
 

@@ -311,20 +311,22 @@ void NoteObject::draw() {
 
                 float oldX = square.x;
                 float oldY = square.y;
-
+                if (ModManager::doMods)
+                {
                     float ttime = currentChart->getTimeFromBeat(holdBeat, currentChart->getSegmentFromBeat(holdBeat));
                     float ttime2 = currentChart->getTimeFromBeat(holdBeat + fBeat, currentChart->getSegmentFromBeat(holdBeat + fBeat));
                     float holdDiff = ttime - position;
                     float holdDiff2 = ttime2 - position;
                     float cmodHold = calcCMod(holdDiff);
                     float cmodHold2 = calcCMod(holdDiff2);
+
                     ArrowEffects::Arrow offsetA2;
                     std::vector<ArrowEffects::Arrow> real = ArrowEffects::finishEffects(obj->x, obj->y, cmodHold, obj->type, time, position, holdDiff, holdBeat, currentBeat);
                     std::vector<ArrowEffects::Arrow> ahead = ArrowEffects::finishEffects(obj->x, obj->y, cmodHold2, obj->type, time, position, holdDiff2, holdBeat + fBeat, currentBeat);
                     ArrowEffects::Arrow a = real[0];
                     square.x = a.x;
                     square.y = a.y;
-             
+
 
                     float size = Game::instance->save->GetDouble("Note Size") * (0.5 / a.mini);
 
@@ -332,7 +334,7 @@ void NoteObject::draw() {
 
                     float t = (32 * size);
 
-     
+
                     real[0].x += t;
                     ahead[0].x += t;
                     real[0].y += t;
@@ -398,6 +400,33 @@ void NoteObject::draw() {
                     body.verts.push_back({ rightx , righty,
                         1, 0,
                        (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // tr
+                }
+                else
+                {
+                    body.verts.push_back({ square.x, square.y,
+                        0, 0,
+                        (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // tl
+                    body.verts.push_back({ square.x + square.w, square.y,
+                        1, 0,
+                       (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // tr
+                    if (!downscroll)
+                        body.verts.push_back({ square.x, square.y + square.h,
+                            0, -1,
+                            (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // bl
+                    else
+                        body.verts.push_back({ square.x, square.y + square.h,
+                            0, 1,
+                            (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // bl
+                    if (!downscroll)
+                        body.verts.push_back({ square.x + square.w, square.y + square.h,
+                            1, -1,
+                            (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // br
+                    else
+                        body.verts.push_back({ square.x + square.w, square.y + square.h,
+                            1, 1,
+                            (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // br
+
+                }
 
                 body.x = square.x;
                 body.y = square.y;

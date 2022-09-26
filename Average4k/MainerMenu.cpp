@@ -1791,7 +1791,7 @@ void transContainerThing()
 void lobbySelectedCallback(int mx, int my)
 {
 	MainerMenu* menu = (MainerMenu*)Game::instance->currentMenu;
-	if (menu->isInLobby)
+	if (menu->isInLobby || SongGather::steamRegAsyncAlready)
 		return;
 	int selectedLobby = -1;
 	for (int i = 0; i < menu->LobbyContainers.size(); i++)

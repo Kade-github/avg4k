@@ -642,6 +642,7 @@ void Gameplay::create() {
 		God->x = Mrv->x;
 		Ehh->x = Mrv->x;
 		Yke->x = Mrv->x;
+		Mis->x = Mrv->x;
 
 		for (int i = 0; i < MainerMenu::currentLobby.PlayerList.size(); i++)
 		{

@@ -730,7 +730,7 @@ void Gameplay::create() {
 		mod2.spr = NULL;
 		mod2.notModCreated = true;
 		mod2.def = manager.spriteCamera;
-		manager.sprites["sprites"] = mod;
+		manager.sprites["sprites"] = mod2;
 
 
 	}

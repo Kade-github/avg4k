@@ -54,9 +54,9 @@ SaveFile::SaveFile()
     defaultSettings.push_back(CreateSetting("nonChange_beatTick", { false }));
     defaultSettings.push_back(CreateSetting("nonChange_colorShit", { false,true,false,false,"128,128,255"}));
     defaultSettings.push_back(CreateSetting("nonChange_minimap", { false }));
-    defaultSettings.push_back(CreateSetting("Ignore mod noteskin", { false, false, false, true }));
-    defaultSettings.push_back(CreateSetting("Ignore mod scrollspeed", { false, false, false, true }));
-    defaultSettings.push_back(CreateSetting("Ignore mod starting scroll", { false, false, false, true }));
+    defaultSettings.push_back(CreateSetting("Ignore mod noteskin", { true}));
+    defaultSettings.push_back(CreateSetting("Ignore mod scrollspeed", { true }));
+    defaultSettings.push_back(CreateSetting("Ignore mod starting scroll", { true }));
     defaultHeader.settings = defaultSettings;
 
     std::string bang = getPath();

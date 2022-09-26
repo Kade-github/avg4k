@@ -322,9 +322,6 @@ void Chart::getInfo()
 
 		float sum = in.stream + in.jumpstream + in.chordjack + in.handstream + in.jacks + in.technical;
 
-		if (meta.songName == "[Extra] ANiMA")
-			std::cout << "hi" << std::endl;
-
 		if (sum < 1)
 		{
 			if (in.stream > (in.jumpstream + in.chordjack + in.handstream + in.jacks + in.technical))

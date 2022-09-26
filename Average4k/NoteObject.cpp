@@ -292,7 +292,7 @@ void NoteObject::draw() {
         if (amountToDraw > 1)
         {
             float fBeat = 0.01;
-            for (int i = 0; i < amountToDraw + 1; i++)
+            for (int i = 0; i < amountToDraw; i++)
             {
                 float perc = (float)(i) / (float)amountToDraw;
 

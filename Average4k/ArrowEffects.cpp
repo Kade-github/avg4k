@@ -128,6 +128,11 @@ ArrowEffects::Arrow ArrowEffects::ArrowEff(float ydiff, int col, float pos)
 void ArrowEffects::resetEffects()
 {
 	drawBeats = 8;
+	if (Noteskin::type != Game::save->GetString("Noteskin"))
+	{
+		Noteskin::resetNoteskin(Game::noteskin);
+		Game::noteskin = Noteskin::getNoteskin();
+	}
 	ArrowEffects::scrollSpeed = Game::instance->save->GetDouble("scrollspeed");
 	ArrowEffects::noteSize = Game::instance->save->GetDouble("Note Size");
 	ArrowEffects::stealthWhite = { {0,0}, {1,0}, {2,0}, {3,0} };

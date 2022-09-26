@@ -89,6 +89,9 @@ void shittyShitShit(std::string s)
 
 void shittyCreateLobby(std::string s)
 {
+	MainerMenu* menu = (MainerMenu*)Game::instance->currentMenu;
+	if (menu->selectedContainerIndex != 1 || s.size() == 0)
+		return;
 	CPacketHostServer host;
 	host.LobbyName = s;
 	host.Order = 0;

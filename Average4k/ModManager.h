@@ -1,6 +1,7 @@
 #pragma once
 #include "includes.h"
 #define SOL_ALL_SAFETIES_ON 1
+#define SOL_NO_EXCEPTIONS 1
 #include <sol.hpp>
 #include "Menu.h"
 #include "Easing.h"

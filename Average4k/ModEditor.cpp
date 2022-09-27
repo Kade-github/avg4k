@@ -81,7 +81,8 @@ void ModEditor::create()
 	playField->flip = true;
 	playField->dontDelete = true;
 
-	add(manager.spriteCamera);
+	if (!manager.killed)
+		add(manager.spriteCamera);
 
 	playField->drawLast = true;
 	add(gameplay);
@@ -171,7 +172,11 @@ void ModEditor::refresh()
 	{
 		obj->wasHit = false;
 	}
-	removeObj(manager.spriteCamera);
+	if (!manager.killed)
+	{
+		removeObj(manager.spriteCamera);
+		delete manager.spriteCamera;
+	}
 	for (const auto& [key, value] : manager.sprites) {
 		if (value.isPlayField)
 		{
@@ -180,15 +185,18 @@ void ModEditor::refresh()
 		}
 	}
 
+
 	manager.kill();
-	delete manager.spriteCamera;
+
 	manager.sprites.clear();
 	ModManager::doMods = true;
 	ModManager::initLuaFunctions();
 	manager = ModManager(FuckinEditor::selectedChart->pathToLua);
 	manager.instance = &manager;
 	Game::instance->db_addLine("[Mod Editor] Refreshed modfile!");
-	add(manager.spriteCamera);
+
+	if (!manager.killed)
+		add(manager.spriteCamera);
 
 	SpriteMod mod;
 	mod.anchor = "";

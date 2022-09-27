@@ -138,6 +138,7 @@ void ModManager::callEvent(std::string event, std::string args)
 
 		consolePrint("Lua Erorr");
 		consolePrint(errorstring);
+		Average4k::dumpOutstream();
 		Game::instance->asyncShowErrorWindow("Lua Error!", "Check console (F11)", true);
 		killed = true;
 		return;
@@ -163,6 +164,7 @@ void ModManager::callEvent(std::string event, int args)
 
 		consolePrint("Lua Erorr");
 		consolePrint(errorstring);
+		Average4k::dumpOutstream();
 		Game::instance->asyncShowErrorWindow("Lua Error!", "Check console (F11)", true);
 		killed = true;
 		return;
@@ -187,6 +189,7 @@ void ModManager::callEvent(std::string event, float args)
 
 		consolePrint("Lua Erorr");
 		consolePrint(errorstring);
+		Average4k::dumpOutstream();
 		Game::instance->asyncShowErrorWindow("Lua Error!", "Check console (F11)", true);
 		killed = true;
 		return;
@@ -548,10 +551,6 @@ void ModManager::createFunctions()
 	cm.downscroll = Game::save->GetBool("downscroll");
 	cm.noteSize = 64 * Game::save->GetDouble("Note Size");
 	cm.playField = "playField";
-	cm.col1 = "col1";
-	cm.col2 = "col2";
-	cm.col3 = "col3";
-	cm.col4 = "col4";
 
 
 	(*lua)["config"] = cm;

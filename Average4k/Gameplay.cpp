@@ -465,7 +465,9 @@ void Gameplay::create() {
 		manager = ModManager(MainerMenu::currentSelectedSong.pathToLua);
 		manager.cam = cam;
 		manager.instance = &manager;
-		add(manager.spriteCamera);
+
+		if (!manager.killed)
+			add(manager.spriteCamera);
 	}
 	else
 	{

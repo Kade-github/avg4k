@@ -422,7 +422,7 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 
 						std::transform(bruh.begin(), bruh.end(), bruh.begin(),
 							[](unsigned char c) { return std::tolower(c); });
-						if (SongUtils::ends_with(bruh, ".sm"))
+						if (SongUtils::ends_with(bruh, ".sm") || SongUtils::ends_with(bruh, ".ssc"))
 						{
 							smFiles.push_back(bruh);
 							break;

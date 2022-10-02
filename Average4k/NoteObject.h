@@ -16,6 +16,8 @@ struct holdBody {
 	float beat;
 	float deg = 0;
 
+	bool wasHidden = false;
+
 	
 
 	std::vector<GL_Vertex> verts = {};

@@ -44,6 +44,9 @@ void ReceptorObject::draw() {
 	rect.x = x + mpx;
 	rect.y = y + mpy;
 
+	pX = rect.x;
+	pY = rect.y;
+
 	float drawAngle = 0;
 
 	if (ModManager::doMods)

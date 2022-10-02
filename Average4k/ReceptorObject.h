@@ -21,6 +21,9 @@ public:
 
 	std::string lastFrame = "";
 
+	float pX;
+	float pY;
+
 	int x;
 	int y;
 

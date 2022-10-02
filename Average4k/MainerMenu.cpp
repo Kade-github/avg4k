@@ -551,6 +551,7 @@ void MainerMenu::create()
 
 	std::vector<setting> appearnSettings;
 	appearnSettings.push_back(Game::save->getSetting("Show Judgement Count"));
+	appearnSettings.push_back(Game::save->getSetting("Show Song Position"));
 	appearnSettings.push_back(Game::save->getSetting("Note Size"));
 	appearnSettings.push_back(Game::save->getSetting("Noteskin"));
 	//appearnSettings.push_back(Game::save->getSetting("Resolution"));

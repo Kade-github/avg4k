@@ -255,6 +255,12 @@ void ModManager::runMods()
 				if (perc > 1)
 					perc = 1;
 
+				if (m.tweenCurve == nullptr)
+				{
+					consolePrint(m.mod + " has a shit tween func. For beat " + std::to_string(m.tweenStart));
+					continue;
+				}
+
 				float tween = m.tweenCurve(perc);
 
 				setModProperties(m, tween);
@@ -465,6 +471,12 @@ void ModManager::runMods(AppliedMod m, float beat)
 
 		if (perc > 1)
 			perc = 1;
+
+		if (m.tweenCurve == nullptr)
+		{
+			consolePrint(m.mod + " has a shit tween func. For beat " + std::to_string(m.tweenStart));
+			return;
+		}
 
 		float tween = m.tweenCurve(perc);
 
@@ -687,6 +699,17 @@ void ModManager::createFunctions()
 		s.x = x;
 		s.y = y;
 		s.beatAway = beatsAway;
+		int i = 0;
+		if (beatsAway <= 0)
+			for (Spline& ss : ArrowEffects::splines[col])
+			{
+				if (ss.goToReceptor)
+				{
+					ArrowEffects::splines[col].erase(ArrowEffects::splines[col].begin() + i);
+					break;
+				}
+				i++;
+			}
 		ArrowEffects::splines[col].push_back(s);
 		std::sort(ArrowEffects::splines[col].begin(), ArrowEffects::splines[col].end(), Spline());
 	});

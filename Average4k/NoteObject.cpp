@@ -135,6 +135,8 @@ void NoteObject::draw() {
                 texture = Game::noteskin->twelfth;
             else if (fmod(beatRow, (192 / 32)) == 0)
                 texture = Game::noteskin->thirty2nd;
+            else if (fmod(beatRow, (192 / 64)) == 0)
+                texture = Game::noteskin->sixtyfourth;
             else
                 texture = Game::noteskin->none;
         }
@@ -219,7 +221,7 @@ void NoteObject::draw() {
 
 
     Rect test;
-    test.x = obj->x - 640;
+    test.x = 0;
     test.y = obj->modY + (32 * size);
     test.w = 1280;
     test.h = 720;
@@ -309,19 +311,33 @@ void NoteObject::draw() {
                 holdBody body;
                 body.beat = holdBeat;
 
+                float offset = 1;
+
+                if (holding && holdBeat < currentBeat)
+                {
+                    offset = holdBeat / currentBeat;
+                }
+
                 float oldX = square.x;
                 float oldY = square.y;
                 if (ModManager::doMods)
                 {
                     float ttime = currentChart->getTimeFromBeat(holdBeat, currentChart->getSegmentFromBeat(holdBeat));
                     float ttime2 = currentChart->getTimeFromBeat(holdBeat + fBeat, currentChart->getSegmentFromBeat(holdBeat + fBeat));
+
+
                     float holdDiff = ttime - position;
                     float holdDiff2 = ttime2 - position;
                     float cmodHold = calcCMod(holdDiff);
                     float cmodHold2 = calcCMod(holdDiff2);
 
+  
+
                     ArrowEffects::Arrow offsetA2;
                     std::vector<ArrowEffects::Arrow> real = ArrowEffects::finishEffects(obj->x, obj->y, cmodHold, obj->type, time, position, holdDiff, holdBeat, currentBeat);
+
+
+
                     std::vector<ArrowEffects::Arrow> ahead = ArrowEffects::finishEffects(obj->x, obj->y, cmodHold2, obj->type, time, position, holdDiff2, holdBeat + fBeat, currentBeat);
                     ArrowEffects::Arrow a = real[0];
                     square.x = a.x;
@@ -370,6 +386,7 @@ void NoteObject::draw() {
                     float rightx = (real[0].x + xxOffset);
                     float lefty = (real[0].y + yyOffset);
                     float righty = (real[0].y - yyOffset);
+
 
                     if (i != 0)
                     {
@@ -449,8 +466,14 @@ void NoteObject::draw() {
 
                 std::vector<GL_Vertex> verts;
 
+
+                if (body.beat < currentBeat && holding)
+                    Rendering::SetClipRect(&test);
+
                 if (!sparrow)
                 {
+
+                    float offset = 1;
 
                     verts.push_back(body.verts[0]); // tl
                     verts.push_back(body.verts[2]); // bl
@@ -458,8 +481,6 @@ void NoteObject::draw() {
                     verts.push_back(body.verts[1]); // tr
                     verts.push_back(body.verts[2]); // bl
                     verts.push_back(body.verts[3]); // br
-                    if (holding)
-                        Rendering::SetClipRect(&test);
                     if (i != bodies.size() - 1)
                     {
                         Rendering::PushQuad(verts, Game::noteskin->hold, GL::genShader);
@@ -520,7 +541,7 @@ void NoteObject::draw() {
                     verts.push_back(body.verts[2]); // bl
                     verts.push_back(body.verts[3]); // br
 
-                    if (holding || body.beat < holdstoppedbeat)
+                    if (holding && body.beat < beat)
                         Rendering::SetClipRect(&test);
                     Rendering::PushQuad(verts, Game::noteskin->sparrowImg, GL::genShader);
                     Rendering::drawBatch();

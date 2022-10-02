@@ -34,6 +34,7 @@ void Noteskin::resetNoteskin(noteskin_asset* as)
 			delete as->twelfth;
 			delete as->sixteenth;
 			delete as->thirty2nd;
+			delete as->sixtyfourth;
 		}
 
 		delete as->receptor;
@@ -196,6 +197,7 @@ noteskin_asset* loadSkin(noteskin_asset* as, std::string typ, bool appendPath = 
 			as->twelfth = getAsset(pat + Noteskin::type + "/12th.png");
 			as->sixteenth = getAsset(pat + Noteskin::type + "/16th.png");
 			as->thirty2nd = getAsset(pat + Noteskin::type + "/32nd.png");
+			as->sixtyfourth = getAsset(pat + Noteskin::type + "/64th.png");
 			as->none = getAsset(pat + Noteskin::type + "/idfk.png");
 			as->receptor = getAsset(pat + Noteskin::type + "/Receptor.png");
 			as->hold = getAsset(pat + Noteskin::type + "/hold.png");

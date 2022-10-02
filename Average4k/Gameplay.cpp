@@ -792,21 +792,6 @@ void Gameplay::create() {
 		add(Mis);
 	}
 
-	songPosBar = new AvgRect(receptors[0]->x, 24, ((receptors[3]->x + (64 * Game::save->GetDouble("Note Size"))) - receptors[0]->x) * (positionInSong / (songLength)), 24);
-	//add(songPosBar);
-	songPosBar->c.r = 255;
-	songPosBar->c.g = 255;
-	songPosBar->c.b = 255;
-
-	if (downscroll)
-		songPosBar->y = (receptors[0]->y + (64 * Game::save->GetDouble("Note Size"))) + 12;
-
-	songPosOutline = new AvgRect(songPosBar->x,songPosBar->y, (receptors[3]->x + (64 * Game::save->GetDouble("Note Size"))) - receptors[0]->x, 24);
-	songPosOutline->border = true;
-	//add(songPosOutline);
-	songPosOutline->c.r = 255;
-	songPosOutline->c.g = 255;
-	songPosOutline->c.b = 255;
 	created = true;
 
 	if (MainerMenu::isInLobby)
@@ -996,6 +981,7 @@ void Gameplay::update(Events::updateEvent event)
 	}
 
 	//songPosBar->w = ((receptors[3]->x + (64 * Game::save->GetDouble("Note Size"))) - receptors[0]->x) * (positionInSong / (songLength));
+
 
 	// underlay for accuracy
 
@@ -1385,6 +1371,23 @@ void Gameplay::update(Events::updateEvent event)
 	}
 
 	MUTATE_END
+}
+void Gameplay::postUpdate(Events::updateEvent ev)
+{
+	if (Game::instance->save->GetBool("Show Song Position"))
+	{
+		songPosBar.x = 0;
+		songPosBar.y = (downscroll ? Game::gameHeight - 10 : 0);
+		songPosBar.h = 10;
+		songPosBar.w = (Game::gameWidth * (positionInSong / song->length));
+		songPosBar.a = 0.5;
+
+		Rect srcPos = { 0,0,1,1 };
+
+		Rendering::drawBatch();
+		Rendering::PushQuad(&songPosBar, &srcPos, NULL, NULL);
+		Rendering::drawBatch();
+	}
 }
 void Gameplay::cleanUp()
 {

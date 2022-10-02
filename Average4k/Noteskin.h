@@ -10,6 +10,7 @@ public:
 	Texture* twelfth;
 	Texture* sixteenth;
 	Texture* thirty2nd; // how do you actually write this??
+	Texture* sixtyfourth;
 	Texture* none;
 	Texture* hold;
 	Texture* receptor;

@@ -138,8 +138,7 @@ class Gameplay :
 		int Yikes = 0;
 		int Misses = 0;
 
-		AvgRect* songPosOutline;
-		AvgRect* songPosBar;
+		Rect songPosBar;
 
 		AvgGroup* gameplay;
 		AvgGroup* colOne;
@@ -195,6 +194,7 @@ class Gameplay :
 		void miss(NoteObject* object);
 		void onPacket(PacketType pt, char* data, int32_t length);
 		void update(Events::updateEvent event) override;
+		void postUpdate(Events::updateEvent ev) override;
 		void keyDown(SDL_KeyboardEvent event) override;
 		void keyUp(SDL_KeyboardEvent ev) override;
 };

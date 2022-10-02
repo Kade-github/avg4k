@@ -22,11 +22,10 @@ void AvgWheel::mouseWheel(float amount)
 			selectedIndex++;
 
 
-		if (selectedIndex > wheelObjects.size() - 1)
-			selectedIndex = 0;
-
 		if (selectedIndex < 0)
 			selectedIndex = wheelObjects.size() - 1;
+		else if (selectedIndex > wheelObjects.size() - 1)
+			selectedIndex = 0;
 
 		callSelect(selectedIndex);
 	}

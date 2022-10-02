@@ -90,6 +90,7 @@ void Rendering::SetClipRect(Rect* clipRect)
 	}
 }
 
+
 void Rendering::PushRectangle(Rect* rect, int stroke)
 {
 	Rect r1, r2, r3, r4;

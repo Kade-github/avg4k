@@ -22,7 +22,7 @@ SaveFile::SaveFile()
     // {takesActive, takesString, takesDouble, defaultActive, defaultString, defaultDouble, defaultMin, defaultMax, defaultIncrm, unique, suffix, isDropdown}
 
     settingHeader defaultHeader;
-    defaultHeader.settingsVersion = "v3.1"; // KADE PLEASE FUCKING CHANGE THIS GOD DAMN IT - kade from the past
+    defaultHeader.settingsVersion = "v3.2"; // KADE PLEASE FUCKING CHANGE THIS GOD DAMN IT - kade from the past
 
     defaultSettings.push_back(CreateSetting("Downscroll",{true}));
     defaultSettings.push_back(CreateSetting("Scrollspeed",{false,false,true,false,"",800,200,1900}));
@@ -57,6 +57,7 @@ SaveFile::SaveFile()
     defaultSettings.push_back(CreateSetting("Ignore mod noteskin", { true}));
     defaultSettings.push_back(CreateSetting("Ignore mod scrollspeed", { true }));
     defaultSettings.push_back(CreateSetting("Ignore mod starting scroll", { true }));
+    defaultSettings.push_back(CreateSetting("Show Song Position", { true, false, false, true }));
     defaultHeader.settings = defaultSettings;
 
     std::string bang = getPath();

@@ -169,13 +169,13 @@ ArrowEffects::Arrow ArrowEffects::addSplines(float defX, float defY, Arrow aEff,
 		lastSpline.isFake = true;
 		for (Spline s : splines[col])
 		{
-			float b = (s.beatAway / beatsAway);
+			float b = ((curBeat + s.beatAway) / targetBeat);
 			if (lastSpline.beatAway <= beatsAway && !lastSpline.isFake)
 				break;
 			if (!lastSpline.isFake)
 				b = 1 - (beatsAway / lastSpline.beatAway);
 
-			if (b > 1)
+			if (b > 1 && s.beatAway > 0)
 				b = 1;
 
 			float xx = s.x;

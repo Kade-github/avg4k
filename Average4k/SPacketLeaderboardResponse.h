@@ -4,6 +4,10 @@
 
 class LeaderboardEntry {
 public:
+	std::map<float, float> noteTiming;
+
+	int combo;
+
 	float accuracy;
 
 	std::string username;
@@ -16,12 +20,13 @@ public:
 class Leaderboard {
 public:
 	long chartIndex;
+	long diffIndex;
 
 	unsigned long ChartId;
 
 	std::vector<LeaderboardEntry> entries;
 
-	MSGPACK_DEFINE_MAP(chartIndex, ChartId, entries);
+	MSGPACK_DEFINE_MAP(chartIndex, diffIndex, ChartId, entries);
 };
 
 class SPacketLeaderboardResponse : public Packet

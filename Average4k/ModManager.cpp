@@ -387,6 +387,8 @@ void ModManager::setModStart(AppliedMod& m)
 		m.modStartAmount = ArrowEffects::SplineAlpha;
 	if (m.mod == "pathDensity")
 		m.modStartAmount = ArrowEffects::SplineDensity;
+	if (m.mod == "rotz")
+		m.modStartAmount = ArrowEffects::rotz;
 }
 
 void ModManager::setModProperties(AppliedMod& m, float tween)
@@ -411,6 +413,8 @@ void ModManager::setModProperties(AppliedMod& m, float tween)
 	}
 	if (m.mod == "drunk")
 		ArrowEffects::drunk = std::lerp(m.modStartAmount, m.amount, tween);
+	if (m.mod == "rotz")
+		ArrowEffects::rotz = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "mini")
 		ArrowEffects::mini = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "tipsy")

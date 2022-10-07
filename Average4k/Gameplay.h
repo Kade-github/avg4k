@@ -49,6 +49,9 @@ class Gameplay :
 	public Menu
 {
 	public:
+
+		int highestCombo;
+
 		std::vector<gameplayControl> controls;
 
 		bool paused = false;

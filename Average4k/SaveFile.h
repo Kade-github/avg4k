@@ -49,6 +49,22 @@ struct settingHeader {
 	MSGPACK_DEFINE(settingsVersion, settings);
 };
 
+struct scoreHeader {
+	long pId;
+	long cId;
+	long dId;
+
+	float a;
+	int c;
+
+	std::map<float, float> t;
+
+	std::string ar;
+	std::string sn;
+
+	MSGPACK_DEFINE(pId, cId, dId, a, c, t, ar, sn);
+};
+
 class SaveFile
 {
 	public:
@@ -60,11 +76,15 @@ class SaveFile
 
 		std::string getPath();
 
+		void saveScore(std::map<float, float> noteTimings, float acc, int combo, std::string name, std::string artist, long id, long chartIndex, long diffIndex);
+
 		void SetString(std::string setting, std::string value);
 		void SetDouble(std::string setting, double value);
 		void SetBool(std::string setting, bool value);
 
 		setting& getSetting(std::string setting);
+
+		std::vector<scoreHeader> getScores(std::string name, std::string artist, long id, long chartIndex, long diffIndex);
 
 		static std::vector<std::string> ObtainDropDownSettingList(std::string settting);
 		std::vector<int> ObtainResolution();

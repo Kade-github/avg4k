@@ -1,9 +1,11 @@
 #include "ArrowEffects.h"
+#include "Helpers.h"
 
 float ArrowEffects::drunk = 0;
 float ArrowEffects::wave = 0;
 float ArrowEffects::tipsy = 0;
 float ArrowEffects::dizzy = 0;
+float ArrowEffects::rotz = 0;
 float ArrowEffects::amovex = 0;
 float ArrowEffects::amovey = 0;
 float ArrowEffects::aconfusion = 0;
@@ -23,6 +25,7 @@ std::map<int, float> ArrowEffects::stealthReceptorOpacity = { {0,1}, {1,1}, {2,1
 std::map<int, float> ArrowEffects::stealthOpacity = { {0,1}, {1,1}, {2,1}, {3,1} };
 std::map<int, float> ArrowEffects::reverse = { {0,0}, {1,0}, {2,0}, {3,0} };
 std::map<int, float> ArrowEffects::confusion = { {0,0}, {1,0}, {2,0}, {3,0} };
+std::map<int, float> ArrowEffects::rotzCol = { {0,0}, {1,0}, {2,0}, {3,0} };
 std::map<int, float> ArrowEffects::movex = { {0,0}, {1,0}, {2,0}, {3,0} };
 std::map<int, float> ArrowEffects::movey = { {0,0}, {1,0}, {2,0}, {3,0} };
 std::map<int, float> ArrowEffects::drunkCol = { {0,0}, {1,0}, {2,0}, {3,0} };
@@ -107,6 +110,18 @@ ArrowEffects::Arrow ArrowEffects::ArrowEff(float ydiff, int col, float pos)
 
 	if (amovey != 0)
 		a.y += amovey;
+
+	if (rotz != 0)
+	{
+		Rect r;
+		r.x = a.x;
+		r.y = a.y;
+
+		Rect nR = Helpers::rotate_point(Game::gameWidth / 2, Game::gameHeight / 2, rotz, r);
+
+		a.x = nR.x;
+		a.y = nR.y;
+	}
 
 	if (reverse[col] != 0)
 	{

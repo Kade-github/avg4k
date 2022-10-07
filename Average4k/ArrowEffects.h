@@ -43,7 +43,7 @@ public:
 	static float scrollSpeed;
 	static float noteSize;
 
-	static float drunk, tipsy, dizzy, amovex, amovey, aconfusion, wave, mini;
+	static float drunk, tipsy, dizzy, amovex, amovey, aconfusion, wave, mini, rotz;
 
 	static std::map<int, float> stealthWhite;
 	static std::map<int, float> stealthOpacity;
@@ -56,6 +56,7 @@ public:
 	static std::map<int, float> tipsyCol;
 	static std::map<int, float> waveCol;
 	static std::map<int, float> miniCol;
+	static std::map<int, float> rotzCol;
 
 	static void drawLine(float defX, float targetY, int col, float beat, Chart currentChart);
 

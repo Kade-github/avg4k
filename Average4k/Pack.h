@@ -5,8 +5,8 @@
 struct Song {
 	std::string path;
 	bool isSteam = false;
-	uint64_t steamId;
-	uint64_t steamIdPack;
+	uint64_t steamId = -1;
+	uint64_t steamIdPack = -1;
 	texData banner;
 	texData background;
 	bool hasBanner = false;
@@ -22,7 +22,7 @@ struct Pack {
 	std::string packName;
 	bool hasBanner = false;
 	texData banner;
-	uint64_t steamId;
+	uint64_t steamId = -1;
 	bool isSteam = false;
 	bool showName;
 };

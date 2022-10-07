@@ -144,13 +144,44 @@ std::string SaveFile::getPath()
                 // too lazy
             }
             else
-                bangerPath = "";
+            {
+                bangerPath = "/data/";
+            }
         }
         else
-            bangerPath = "";
+        {
+            bangerPath = "/data/";
+        }
     }
 
     return bangerPath;
+}
+
+void SaveFile::saveScore(std::map<float, float> noteTimings, float acc, int combo, std::string name, std::string artist, long id, long chartIndex, long diffIndex)
+{
+    scoreHeader h;
+    h.t = noteTimings;
+    h.a = acc;
+    h.c = combo;
+    h.pId = id;
+    h.cId = chartIndex;
+    h.dId = diffIndex;
+    h.ar = artist;
+    h.sn = name;
+
+    std::string p = getPath();
+
+    CreateDirectory(Helpers::s2ws((p + "scores")).c_str(), NULL); // this will create a directory and if it already exists, it will do nothing.
+
+    std::ofstream of(p + "scores/" + name + "-" + artist + "-" + std::to_string(std::time(0)) + ".avgScore", std::ios::binary | std::ios::out);
+
+    std::stringstream bitch;
+
+    msgpack::pack(bitch, h);
+
+    of << bitch.str();
+
+    of.close();
 }
 
 void SaveFile::SetString(std::string sett, std::string value)
@@ -204,6 +235,38 @@ setting& SaveFile::getSetting(std::string sett)
         if (s == sett)
             return set;
     }
+}
+
+std::vector<scoreHeader> SaveFile::getScores(std::string name, std::string artist, long id, long chartIndex, long diffIndex)
+{
+    std::vector<scoreHeader> scores;
+
+    std::string p = getPath();
+
+    for (const auto& entry : std::filesystem::directory_iterator(p + "scores"))
+    {
+        std::string s = entry.path().string();
+
+        if (s.contains(name) && s.contains(artist))
+        {
+            scoreHeader h;
+            h.t = {};
+            std::ifstream sP(s, std::ios::binary | std::ios::in | std::ios::out);
+
+            std::stringstream buffer;
+            buffer << sP.rdbuf();
+
+            sP.close();
+            msgpack::unpacked upd = msgpack::unpack(buffer.str().data(), buffer.str().size());
+            upd.get().convert(h);
+
+            if (h.t.size() > 0)
+                if (h.ar == artist && h.sn == name && id == h.pId && chartIndex == h.cId && diffIndex == h.dId)
+                    scores.push_back(h);   
+        }
+    }
+
+    return scores;
 }
 
 std::vector<std::string> SaveFile::ObtainDropDownSettingList(std::string set)

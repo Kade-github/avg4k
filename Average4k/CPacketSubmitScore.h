@@ -3,11 +3,15 @@
 class CPacketSubmitScore : public Packet
 {
 public:
-	std::vector<float> noteTiming;
+	// time, msDiff
+	std::map<float, float> noteTiming;
+
+	int combo;
 
 	long chartIndex;
+	long diffIndex;
 
 	unsigned long ChartId;
 
-	MSGPACK_DEFINE_MAP(noteTiming, chartIndex, ChartId);
+	MSGPACK_DEFINE_MAP(chartIndex, ChartId);
 };

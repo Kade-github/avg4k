@@ -9,9 +9,11 @@
 
 std::mutex weirdPog;
 
+
+
 bool hasSubmited = false;
 
-std::vector<float> noteTimings;
+std::map<float, float> noteTimings;
 
 std::map<std::string, AvgSprite*> avatars;
 
@@ -135,7 +137,7 @@ void Gameplay::miss(NoteObject* object)
 		MUTATE_END
 	}
 
-	noteTimings.push_back(Judge::hitWindows[4]);
+	noteTimings[positionInSong] = Judge::hitWindows[4];
 
 	Misses++;
 	updateAccuracy(-0.4);
@@ -510,8 +512,9 @@ void Gameplay::create() {
 
 	AvgRect* rOverlay = new AvgRect(0, 0, background->w, background->h);
 	rOverlay->alpha = 0.46;
-	if (!ModManager::doMods)
-		add(rOverlay);
+	if (ModManager::doMods)
+		rOverlay->alpha = Game::save->GetDouble("Lane Underway Transparency");
+	add(rOverlay);
 
 
 	float bassRate = (rate * 100) - 100;
@@ -1167,9 +1170,10 @@ void Gameplay::update(Events::updateEvent event)
 			Combo->setY((Game::gameHeight / 2) + 40);
 		}
 
-		if ((MainerMenu::selected.isSteam || MainerMenu::selectedSong.isSteam) && Game::save->GetBool("Submit Scores") && !hasSubmited && !botplayOnce)
+		if (Game::save->GetBool("Submit Scores") && !hasSubmited && !botplayOnce)
 		{
 			hasSubmited = true;
+
 			CPacketSubmitScore submit;
 
 			submit.ChartId = (MainerMenu::selected.isSteam ? MainerMenu::selected.steamId : MainerMenu::selectedSong.steamId);
@@ -1177,8 +1181,14 @@ void Gameplay::update(Events::updateEvent event)
 			submit.noteTiming = noteTimings;
 			submit.Order = 0;
 			submit.PacketType = eCPacketSubmitScore;
+			submit.combo = highestCombo;
 
-			Multiplayer::sendMessage<CPacketSubmitScore>(submit);
+
+			if ((MainerMenu::selected.isSteam || MainerMenu::selectedSong.isSteam))
+				Multiplayer::sendMessage<CPacketSubmitScore>(submit);
+
+			Game::instance->save->saveScore(noteTimings, accuracy, highestCombo, submit.ChartId, submit.chartIndex, MainerMenu::selectedDiffIndex);
+
 		}
 	}
 
@@ -1254,6 +1264,8 @@ void Gameplay::update(Events::updateEvent event)
 						receptors[note->lane]->hit = true;
 
 						combo++;
+						if (combo > highestCombo)
+							highestCombo = combo;
 						if (Game::noteskin->bounce)
 						{
 							Judgement->scale = 1.15;
@@ -1568,7 +1580,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				closestObject->active = false;
 				closestObject->wasHit = true;
 
-				noteTimings.push_back(diff);
+				noteTimings[positionInSong] = diff;
 
 				judgement judge = Judge::judgeNote(diff);
 				//score += Judge::scoreNote(diff);

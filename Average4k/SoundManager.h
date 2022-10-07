@@ -41,6 +41,7 @@ public:
 		setLength();
 
 		BASS_ChannelSetSync(id, BASS_SYNC_END, 0, SyncProc, this);
+		
 	}
 
 	void setLength()
@@ -238,7 +239,7 @@ public:
 		channels[name] = ch;
 	}
 
-	static void createChannelThread(std::string path, bool autoFree = true)
+	static void createChannelThread(std::string path, bool autoFree = false)
 	{
 		if (isThreadDone)
 		{

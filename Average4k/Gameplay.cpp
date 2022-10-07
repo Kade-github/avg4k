@@ -1187,7 +1187,7 @@ void Gameplay::update(Events::updateEvent event)
 			if ((MainerMenu::selected.isSteam || MainerMenu::selectedSong.isSteam))
 				Multiplayer::sendMessage<CPacketSubmitScore>(submit);
 
-			Game::instance->save->saveScore(noteTimings, accuracy, highestCombo, submit.ChartId, submit.chartIndex, MainerMenu::selectedDiffIndex);
+			Game::instance->save->saveScore(noteTimings, accuracy, highestCombo, MainerMenu::currentSelectedSong.meta.songName, MainerMenu::currentSelectedSong.meta.artist, submit.ChartId, submit.chartIndex, MainerMenu::selectedDiffIndex);
 
 		}
 	}

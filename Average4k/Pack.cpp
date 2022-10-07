@@ -14,6 +14,8 @@ bool SongGather::steamRegAsyncAlready;
 
 int SongGather::loaded = 0;
 
+int SongGather::localId = 0;
+
 int SongGather::max = 0;
 
 std::string SongGather::currentPack;
@@ -24,6 +26,7 @@ void SongGather::gatherPacksAsync()
 {
 	if (!steamRegAsyncAlready)
 	{
+		localId = 0;
 		loaded = 0;
 		steamRegAsyncAlready = true;
 
@@ -42,6 +45,9 @@ void SongGather::gatherPacksAsync()
 
 					if (!fs.good())
 						continue;
+
+					p.steamId = localId;
+					p.isSteam = false;
 
 					p.folder = entry.path().string();
 					p.metaPath = entry.path().string() + "/pack.meta";
@@ -88,6 +94,7 @@ void SongGather::gatherPacksAsync()
 						MainerMenu::asyncPacks.push_back(p);
 					}
 					loaded++;
+					localId++;
 				}
 			}
 

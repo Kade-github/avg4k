@@ -60,6 +60,7 @@ public:
 
 class SongGather {
 public:
+	static int localId;
 	static std::string currentPack;
 	static int max;
 	static int loaded;

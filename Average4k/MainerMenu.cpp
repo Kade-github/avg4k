@@ -320,17 +320,14 @@ void selectedSongCallback(int sId)
 	localWorkshop->y = cont->h - 24;
 	cont->addObject(localWorkshop, "localWorkshop");
 
-	if (MainerMenu::selectedSong.isSteam)
-	{
-		Text* leaderboardPt1 = new Text(cont->w / 2, cont->h - 100, "Press tab to", 14, "arial");
-		Text* leaderboardPt2 = new Text(cont->w / 2, cont->h - 80, "view scores", 14, "arial");
+	Text* leaderboardPt1 = new Text(cont->w / 2, cont->h - 100, "Press Tab for more info", 12, "arial");
+	Text* leaderboardPt2 = new Text(cont->w / 2, cont->h - 80, "Press Enter to select the song", 12, "arial");
 
-		leaderboardPt1->x = (cont->w / 2) - (leaderboardPt1->w / 2);
-		leaderboardPt2->x = (cont->w / 2) - (leaderboardPt2->w / 2);
+	leaderboardPt1->x = (cont->w / 2) - (leaderboardPt1->w / 2);
+	leaderboardPt2->x = (cont->w / 2) - (leaderboardPt2->w / 2);
 
-		cont->addObject(leaderboardPt1, "leadpt1");
-		cont->addObject(leaderboardPt2, "leadpt2");
-	}
+	cont->addObject(leaderboardPt1, "leadpt1");
+	cont->addObject(leaderboardPt2, "leadpt2");
 
 	MUTATE_END
 }

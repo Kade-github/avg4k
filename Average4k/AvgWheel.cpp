@@ -3,7 +3,7 @@
 
 void AvgWheel::mouseWheel(float amount)
 {
-	if (wheelObjects.size() == 0 || MainerMenu::lockInput)
+	if (wheelObjects.size() == 0 || MainerMenu::moreinfo)
 		return;
 
 	int mx, my;

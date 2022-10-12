@@ -4,7 +4,7 @@
 
 void AvgContainer::mouseWheel(float amount)
 	{
-		if (!active || MainerMenu::lockInput)
+		if (!active || MainerMenu::moreinfo)
 			return;
 		int mx, my;
 		Game::GetMousePos(&mx, &my);
@@ -38,10 +38,13 @@ void AvgContainer::mouseWheel(float amount)
 void AvgContainer::draw() {
 	if (!active)
 		return;
-	clipRect.x = x + 1;
-	clipRect.y = y + 1;
-	clipRect.w = w - 2;
-	clipRect.h = h - 2;
+	if (autoClip)
+	{
+		clipRect.x = x + 1;
+		clipRect.y = y + 1;
+		clipRect.w = w - 2;
+		clipRect.h = h - 2;
+	}
 
 
 
@@ -115,8 +118,9 @@ void AvgContainer::draw() {
 		b->y -= y;
 	}
 
-	if (clipRect.w > 0 || clipRect.h > 0)
-		Rendering::SetClipRect(NULL);
+	if (autoClip)
+		if (clipRect.w > 0 || clipRect.h > 0)
+			Rendering::SetClipRect(NULL);
 	if (tex != nullptr)
 		Rendering::PushQuad(&dstRect, &srcRect, tex, GL::genShader, angle);
 	if (shouldUseCallback)
@@ -130,6 +134,11 @@ void AvgContainer::draw() {
 			dstRect.a = alpha;
 		}
 	}
+
+	if (!autoClip)
+		if (clipRect.w > 0 || clipRect.h > 0)
+			Rendering::SetClipRect(NULL);
+
 
 	if (scroll && !fail)
 	{
@@ -184,6 +193,7 @@ void AvgContainer::draw() {
 		scrollBar.w = 0;
 		maxScroll = 0;
 	}
+
 
 	if (clipRect.w > 0 || clipRect.h > 0)
 		Rendering::SetClipRect(&clipRect);

@@ -1,4 +1,5 @@
 #include "Chart.h"
+#include <numeric>
 
 void Chart::getInfo()
 {
@@ -27,10 +28,18 @@ void Chart::getInfo()
 
 		float differentRowNotes = 0;
 
+		float npsSection = 0;
+		float maxNPS = 0;
+
 		int lastRate = -1;
 
 		int lastSize = 0;
 		std::vector<note> lastRow;
+		float notesThisSecond = 0;
+
+		float lastTime = 0;
+
+		std::vector<int> npss;
 
 		for(int is = 0; is < d.notes.size(); is += 0)
 		{
@@ -65,7 +74,10 @@ void Chart::getInfo()
 
 
 			if (lastBeat == -1)
+			{
 				lastBeat = n.beat;
+				lastTime = getTimeFromBeat(lastBeat, getSegmentFromBeat(lastBeat));
+			}
 
 			int size = row.size();
 
@@ -87,15 +99,19 @@ void Chart::getInfo()
 				switch (size)
 				{
 				case 1:
+					notesThisSecond++;
 					singles++;
 					break;
 				case 2:
+					notesThisSecond += 2;
 					jumps++;
 					break;
 				case 3:
+					notesThisSecond += 3;
 					hands++;
 					break;
 				case 4:
+					notesThisSecond += 4;
 					quads++;
 					break;
 				}
@@ -227,13 +243,23 @@ void Chart::getInfo()
 			lastSize = size;
 			lastRow = row;
 
+			float nTime = getTimeFromBeat(n.beat, getSegmentFromBeat(n.beat));
+
+			if (nTime > lastTime + 1000)
+			{
+				npsSection = notesThisSecond;
+				npss.push_back(npsSection);
+				if (npsSection > maxNPS)
+					maxNPS = npsSection;
+				lastTime = getTimeFromBeat(n.beat, getSegmentFromBeat(n.beat));
+				notesThisSecond = 0;
+			}
 
 			if (differentRowNotes >= 4 && n.beat < lastBeat + 4) {
 				curMeasure++;
 				measures++;
 
 				lastBeat = n.beat;
-
 				float avgSingles = singles / allNotes;
 				float avgJumps = jumps / allNotes;
 				float avgHands = hands / allNotes;
@@ -255,6 +281,7 @@ void Chart::getInfo()
 				else
 					technicalMeasures++;
 
+				npsSection = 0;
 				jumps = 0;
 				hands = 0;
 				singles = 0;
@@ -271,7 +298,6 @@ void Chart::getInfo()
 				measures++;
 
 				lastBeat = n.beat;
-
 				float avgSingles = singles / allNotes;
 				float avgJumps = jumps / allNotes;
 				float avgHands = hands / allNotes;
@@ -294,6 +320,7 @@ void Chart::getInfo()
 					technicalMeasures++;
 
 				differentRowNotes = 0;
+				npsSection = 0;
 				jumps = 0;
 				hands = 0;
 				singles = 0;
@@ -319,6 +346,12 @@ void Chart::getInfo()
 			in.jumpstream = jumpstreamMeasures / measures;
 		if (technicalMeasures != 0)
 			in.technical = technicalMeasures / measures;
+
+		if (npss.size() > 0)
+		{
+			in.averageNPS = std::reduce(npss.begin(), npss.end()) / npss.size();
+			in.maxNPS = maxNPS;
+		}
 
 		float sum = in.stream + in.jumpstream + in.chordjack + in.handstream + in.jacks + in.technical;
 

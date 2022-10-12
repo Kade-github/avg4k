@@ -140,7 +140,7 @@ void Gameplay::miss(NoteObject* object)
 	noteTimings[positionInSong] = Judge::hitWindows[4];
 
 	Misses++;
-	updateAccuracy(-0.4);
+	updateAccuracy(0);
 	combo = 0;
 	Judgement->color.r = 255;
 	Judgement->color.g = 0;
@@ -841,7 +841,7 @@ void Gameplay::update(Events::updateEvent event)
 {
 	MUTATE_START
 
-		botplayHittingNote = false;
+	botplayHittingNote = false;
 
 	if (!song || Game::instance->transitioning)
 		return;

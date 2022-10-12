@@ -196,7 +196,7 @@ public:
 	Text* multiText;
 	AvgRect* selectMulti;
 	Text* settingsText;
-	static bool lockInput;
+	static bool moreinfo;
 	AvgRect* selectSettings;
 
 	int peopleWhoHaveChart = 0;

@@ -61,7 +61,7 @@ int MainerMenu::selectedDiffIndex = 0;
 
 std::vector<steamItem> item;
 
-bool MainerMenu::lockInput = false;
+bool MainerMenu::moreinfo = false;
 
 bool chartUploading = false;
 
@@ -122,7 +122,6 @@ void endTrans()
 	Tweening::TweenManager::activeTweens.clear();
 	Game::instance->switchMenu(new MainMenu());
 }
-
 void selectedSongCallback(int sId)
 {
 	MUTATE_START
@@ -136,6 +135,7 @@ void selectedSongCallback(int sId)
 	AvgContainer* cont = (AvgContainer*)MainerMenu::soloContainer->findItemByName("songContainer");
 	if (!cont) // lol
 		return;
+	AvgContainer* moreInf = (AvgContainer*)MainerMenu::soloContainer->findItemByName("moreInfo");
 
 
 
@@ -147,6 +147,21 @@ void selectedSongCallback(int sId)
 	MainerMenu::selectedSong = s;
 
 	Tweening::TweenManager::removeTween("fuckyoutween");
+
+
+	for (Object* obj : moreInf->above)
+	{
+		moreInf->removeObject(obj);
+	}
+	for (Object* obj : moreInf->below)
+	{
+		moreInf->removeObject(obj, true);
+		if (obj)
+			delete obj;
+	}
+	moreInf->items.clear();
+	moreInf->above.clear();
+	moreInf->below.clear();
 
 
 	for (Object* obj : cont->above)
@@ -164,7 +179,10 @@ void selectedSongCallback(int sId)
 	cont->below.clear();
 	
 	// bg
-	AvgSprite* background = new AvgSprite(0, 0, Texture::createWithImage(s.c.meta.folder + "/" + s.c.meta.background));
+
+	Texture* t = Texture::createWithImage(s.c.meta.folder + "/" + s.c.meta.background);
+
+	AvgSprite* background = new AvgSprite(0, 0, t);
 	if (background->w < cont->w)
 		background->w = cont->w;
 	if (background->h < cont->h)
@@ -173,9 +191,34 @@ void selectedSongCallback(int sId)
 	background->y = (cont->h / 2) - background->h / 2;
 	background->alpha = 0;
 
+	AvgSprite* ss = new AvgSprite(0, 0, t);
+	ss->dontDelete = true;
+	ss->w = moreInf->w;
+	ss->h = moreInf->h;
+
+	float cdTitleOff = moreInf->h - (moreInf->h / 2);
+
+	if (MainerMenu::selectedSong.c.meta.cdtitle.contains("."))
+	{
+		// create cdtitle
+
+		Texture* cd = Texture::createWithImage(s.c.meta.folder + "/" + s.c.meta.cdtitle);
+		AvgSprite* cdTitle = new AvgSprite(24, 24, cd);
+
+		if (cdTitle->w > 241)
+			cdTitle->w = 241;
+		if (cdTitle->h > 241)
+			cdTitle->h = 241;
+
+		moreInf->addObject(cdTitle, "cdTitle");
+	}
+
+
+
 	Tweening::TweenManager::createNewTween("fuckyoutween", background, Tweening::tt_Alpha, 500, 0, 1, NULL, Easing::EaseInSine, false);
 
 	cont->addObject(background, "background", true);
+	moreInf->addObject(ss, "background", true);
 
 	// play song
 
@@ -276,35 +319,46 @@ void selectedSongCallback(int sId)
 	int handstream = (std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.handstream * 100));
 	int jack = (std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.jacks * 100));
 	int tech = (std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.technical * 100));
-
+	float nps = MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.averageNPS;
+	int maxNps = std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.maxNPS);
 	Text* streamT = new Text(0, 0, "Stream: " + std::to_string(stream) + "%", 14, "arial");
 	Text* jumpstreamT = new Text(0, 0, "Jumpstream: " + std::to_string(jumpstream) + "%", 14, "arial");
 	Text* chordjackT = new Text(0, 0, "Chordjack: " + std::to_string(chordjacks) + "%", 14, "arial");
 	Text* handstreamT = new Text(0, 0, "Handstream: " + std::to_string(handstream) + "%", 14, "arial");
 	Text* jacksT = new Text(0, 0, "Jacks: " + std::to_string(jack) + "%", 14, "arial");
 	Text* techT = new Text(0, 0, "Technical: " + std::to_string(tech) + "%", 14, "arial");
+	Text* avgNPS = new Text(0, 0, "Average NPS: " + std::to_string(nps) + "", 14, "arial");
+	Text* maxNPS = new Text(0, 0, "Max NPS: " + std::to_string(nps) + "", 14, "arial");
 
-	streamT->x = 4;
-	streamT->y = diff->y + 38;
-	jumpstreamT->x = 4;
+	streamT->x = 24;
+	streamT->y = cdTitleOff + 48;
+	jumpstreamT->x = 24;
 	jumpstreamT->y = streamT->y + 24;
 
-	chordjackT->x = 4;
+	chordjackT->x = 24;
 	chordjackT->y = jumpstreamT->y + 24;
-	handstreamT->x = 4;
+	handstreamT->x = 24;
 	handstreamT->y = chordjackT->y + 24;
-	jacksT->x = 4;
+	jacksT->x = 24;
 	jacksT->y = handstreamT->y + 24;
 
-	techT->x = 4;
+	techT->x = 24;
 	techT->y = jacksT->y + 24;
 
-	cont->addObject(streamT, "streamText");
-	cont->addObject(jumpstreamT, "jumpstreamText");
-	cont->addObject(chordjackT, "chordjackText");
-	cont->addObject(handstreamT, "handstreamText");
-	cont->addObject(jacksT, "jacksText");
-	cont->addObject(techT, "techText");
+	avgNPS->x = 24;
+	avgNPS->y = techT->y + 24;
+
+	maxNPS->x = 24;
+	maxNPS->y = avgNPS->y + 24;
+
+	moreInf->addObject(streamT, "streamText");
+	moreInf->addObject(jumpstreamT, "jumpstreamText");
+	moreInf->addObject(chordjackT, "chordjackText");
+	moreInf->addObject(handstreamT, "handstreamText");
+	moreInf->addObject(jacksT, "jacksText");
+	moreInf->addObject(techT, "techText");
+	moreInf->addObject(avgNPS, "avgNPSText");
+	moreInf->addObject(maxNPS, "maxNPSText");
 
 	Text* chartType = new Text(0, 0, type, 14, "arial");
 	chartType->setCharacterSpacing(4.17);
@@ -322,6 +376,12 @@ void selectedSongCallback(int sId)
 
 	Text* leaderboardPt1 = new Text(cont->w / 2, cont->h - 100, "Press Tab for more info", 12, "arial");
 	Text* leaderboardPt2 = new Text(cont->w / 2, cont->h - 80, "Press Enter to select the song", 12, "arial");
+
+	if (MainerMenu::isInLobby && !MainerMenu::selectedSong.isSteam)
+		leaderboardPt2->setText(" ");
+
+	leaderboardPt1->setCharacterSpacing(2);
+	leaderboardPt2->setCharacterSpacing(2);
 
 	leaderboardPt1->x = (cont->w / 2) - (leaderboardPt1->w / 2);
 	leaderboardPt2->x = (cont->w / 2) - (leaderboardPt2->w / 2);
@@ -482,9 +542,21 @@ void MainerMenu::create()
 
 
 
+	AvgContainer* c = (AvgContainer*)soloContainer->addObject(new AvgContainer(0, 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/moreinfocontainer.png")), "moreInfo");
+	c->clipRect.x = soloContainer->x;
+	c->clipRect.y = 160;
+	c->clipRect.w = soloContainer->w;
+	c->clipRect.h = soloContainer->h;
+	c->autoClip = false;
+	c->x += c->w; 
+
+
 
 	soloContainer->addObject(new AvgContainer((soloContainer->x + soloContainer->w), 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/songcontainer.png")), "songContainer");
 	soloContainer->findItemByName("songContainer")->x -= soloContainer->findItemByName("songContainer")->w + 40;
+
+
+
 
 	multiContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Multi/maincontainer.png"));
 	multiContainer->x = (Game::gameWidth / 2) - (multiContainer->w / 2);
@@ -910,8 +982,11 @@ void updateDiff()
 	AvgContainer* cont = (AvgContainer*)MainerMenu::soloContainer->findItemByName("songContainer");
 	if (!cont) // lol
 		return;
+	AvgContainer* moreInf = (AvgContainer*)MainerMenu::soloContainer->findItemByName("moreInfo");
 
 	Text* diff = (Text*)cont->findItemByName("diff");
+
+
 
 	std::string diffDisplay = MainerMenu::currentSelectedSong.meta.difficulties[MainerMenu::selectedDiffIndex].name;
 	if (diffDisplay.size() > 14)
@@ -928,12 +1003,14 @@ void updateDiff()
 	left->x = diff->x - 24;
 	right->x = (diff->x + diff->w) + 24;
 
-	Text* streamT = (Text*)cont->findItemByName("streamText");
-	Text* jumpstreamT = (Text*)cont->findItemByName("jumpstreamText");
-	Text* chordjackT = (Text*)cont->findItemByName("chordjackText");
-	Text* handstreamT = (Text*)cont->findItemByName("handstreamText");
-	Text* jacksT = (Text*)cont->findItemByName("jacksText");
-	Text* techT = (Text*)cont->findItemByName("techText");
+	Text* streamT = (Text*)moreInf->findItemByName("streamText");
+	Text* jumpstreamT = (Text*)moreInf->findItemByName("jumpstreamText");
+	Text* chordjackT = (Text*)moreInf->findItemByName("chordjackText");
+	Text* handstreamT = (Text*)moreInf->findItemByName("handstreamText");
+	Text* jacksT = (Text*)moreInf->findItemByName("jacksText");
+	Text* techT = (Text*)moreInf->findItemByName("techText");
+	Text* avgNPS = (Text*)moreInf->findItemByName("avgNPSText");
+	Text* maxNPS = (Text*)moreInf->findItemByName("maxNPSText");
 
 	int stream = (std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.stream * 100));
 	int jumpstream = (std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.jumpstream * 100));
@@ -941,6 +1018,9 @@ void updateDiff()
 	int handstream = (std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.handstream * 100));
 	int jack = (std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.jacks * 100));
 	int tech = (std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.technical * 100));
+	float nps = MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.averageNPS;
+	int maxNps = std::round(MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].info.maxNPS);
+
 
 	streamT->setText("Stream: " + std::to_string(stream) + "%");
 	jumpstreamT->setText("Jumpstream: " + std::to_string(jumpstream) + "%");
@@ -948,6 +1028,8 @@ void updateDiff()
 	handstreamT->setText("Handstream: " + std::to_string(handstream) + "%");
 	jacksT->setText("Jacks: " + std::to_string(jack) + "%");
 	techT->setText("Techical: " + std::to_string(tech) + "%");
+	avgNPS->setText("Average NPS: " + std::to_string(nps) + "");
+	maxNPS->setText("Max NPS: " + std::to_string(maxNps) + "");
 	MUTATE_END
 }
 
@@ -958,32 +1040,22 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 	switch (event.keysym.sym)
 	{
 	case SDLK_TAB:
-		if (MainerMenu::selectedSong.isSteam && selectedContainerIndex == 0 && !fetchingScores)
+		if (selectedContainerIndex == 0 && !fetchingScores && currentSelectedSong.meta.audio.size() > 0)
 		{
-			lockInput = !lockInput;
+			moreinfo = !moreinfo;
 
 			scrollLeaderboard = 0;
 
-			for (LeaderboardResult r : leaderboardResults)
+			AvgContainer* moreInf = (AvgContainer*)MainerMenu::soloContainer->findItemByName("moreInfo");
+
+			if (moreinfo)
 			{
-				delete r.name;
-				delete r.accuracy;
+
+				Tweening::TweenManager::createNewTween("tab", moreInf, Tweening::TweenType::tt_X, 1000, moreInf->x, 0, NULL, Easing::EaseOutCubic);
 			}
-
-			leaderboardResults.clear();
-
-			if (lockInput)
+			else
 			{
-				CPacketLeaderboardRequest req;
-
-				fetchingScores = true;
-
-				req.chartId = (MainerMenu::selected.isSteam ? MainerMenu::selected.steamId : MainerMenu::selectedSong.steamId);
-				req.chartIndex = (MainerMenu::selected.isSteam ? MainerMenu::packSongIndex : -1);
-				req.Order = 0;
-				req.PacketType = eCPacketLeaderboardRequest;
-
-				Multiplayer::sendMessage<CPacketLeaderboardRequest>(req);
+				Tweening::TweenManager::createNewTween("tab", moreInf, Tweening::TweenType::tt_X, 1000, moreInf->x, moreInf->w, NULL, Easing::EaseOutCubic);
 			}
 		}
 		if (isInLobby && selectedContainerIndex == 1)
@@ -995,8 +1067,6 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 		}
 		break;
 	}
-	if (lockInput || lobbyUp)
-		return;
 	if (selectedContainerIndex == 0)
 	{
 		switch (event.keysym.sym)
@@ -1008,6 +1078,8 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 
 			break;
 		case SDLK_F5:
+			if (moreinfo || lobbyUp)
+				return;
 			if (!SongGather::steamRegAsyncAlready && selectedContainerIndex == 0)
 			{
 				Game::instance->steam->populateSubscribedItems();
@@ -1030,10 +1102,14 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 			}
 			break;
 		case SDLK_3:
+			if (moreinfo || lobbyUp)
+				return;
 			Game::instance->steam->populateWorkshopItems(1);
 			selectContainer(3);
 			break;
 		case SDLK_LSHIFT:
+			if (moreinfo || lobbyUp)
+				return;
 			if (selected.metaPath.size() != 0 && selected.metaPath != "unfl")
 			{
 
@@ -1096,6 +1172,8 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 			break;
 		}
 	}
+	if (moreinfo || lobbyUp)
+		return;
 	switch (event.keysym.sym)
 	{
 	case SDLK_RETURN:
@@ -1477,7 +1555,7 @@ void MainerMenu::loadPacks()
 
 void MainerMenu::mouseWheel(float wheel)
 {
-	if (lockInput)
+	if (moreinfo)
 	{
 		if (wheel < 0)
 			scrollLeaderboard += 10;
@@ -1655,25 +1733,6 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 
 		obj.convert(res);
 
-		for (LeaderboardEntry entry : res.leaderboard.entries)
-		{
-			LeaderboardResult resu;
-			resu.entry = entry;
-			resu.accuracy = new Text(0, 0, std::to_string(entry.accuracy * 100) + "%", 16, "arial");
-			resu.name = new Text(0, 0, entry.username, 16, "arialbd");
-
-			leaderboardResults.push_back(resu);
-		}
-
-		if (res.leaderboard.entries.size() == 0)
-		{
-			LeaderboardResult resu;
-			resu.entry = LeaderboardEntry();
-			resu.accuracy = new Text(0, 0, "", 16, "arial");
-			resu.name = new Text(0, 0, "No scores have been submited on this chart.", 16, "arialbd");
-			leaderboardResults.push_back(resu);
-		}
-		fetchingScores = false;
 		break;
 	}
 }
@@ -1681,54 +1740,6 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 void MainerMenu::postUpdate(Events::updateEvent ev)
 {
 
-	if (lockInput)
-	{
-		if (scrollLeaderboard < 0)
-			scrollLeaderboard = 0;
-
-		if (scrollLeaderboard > leaderboardResults.size() * 80)
-			scrollLeaderboard = leaderboardResults.size() * 80;
-		Rect big;
-		big.x = 0;
-		big.y = 0;
-		big.w = 1280;
-		big.h = 720;
-		big.r = 0;
-		big.g = 0;
-		big.b = 0;
-		big.a = 0.5;
-
-
-		Rect src;
-		src.x = 0;
-		src.y = 0;
-		src.w = 1;
-		src.h = 1;
-
-		Rendering::PushQuad(&big, &src, NULL, GL::genShader);
-
-		Rendering::drawBatch();
-
-		int ind = 0;
-		for (LeaderboardResult res : leaderboardResults)
-		{
-			Rect bg = { 0,(80 * ind) - scrollLeaderboard,1280,80,0,0,0,0.5 };
-
-			Rendering::PushQuad(&bg, &src, NULL, GL::genShader);
-			Rendering::drawBatch();
-			res.name->x = 14;
-			res.accuracy->x = 28 + res.name->w;
-
-			res.name->y = (80 * ind) + 36 - scrollLeaderboard;
-			res.accuracy->y = res.name->y;
-
-			res.name->draw();
-			res.accuracy->draw();
-			Rendering::drawBatch();
-
-			ind++;
-		}
-	}
 }
 
 void MainerMenu::clearPacks()
@@ -2128,7 +2139,7 @@ void MainerMenu::selectContainer(int container)
 
 	if (container != 0)
 	{
-		lockInput = false;
+		moreinfo = false;
 
 		scrollLeaderboard = 0;
 
@@ -2206,7 +2217,7 @@ void MainerMenu::selectContainer(int container)
 void MainerMenu::leftMouseDown()
 {
 	MUTATE_START
-	if (lockInput || lobbyUp)
+	if (moreinfo || lobbyUp)
 		return;
 	int x, y;
 	Game::GetMousePos(&x, &y);

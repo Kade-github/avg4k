@@ -44,6 +44,8 @@ struct info {
 	float chordjack = 0;
 	float handstream = 0;
 	float technical = 0;
+	float maxNPS = 0;
+	float averageNPS = 0;
 };
 
 
@@ -63,6 +65,7 @@ public:
 		std::string background;
 		std::string banner;
 		std::string artist;
+		std::string cdtitle;
 		std::string ext;
 		std::vector<bpmSegment> bpms;
 		std::vector<stopSegment> stops;

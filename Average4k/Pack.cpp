@@ -32,6 +32,8 @@ void SongGather::gatherPacksAsync()
 
 		MainerMenu::asyncPacks.clear();
 
+		currentPack = "";
+
 		std::thread t([]() {
 			for (const auto& entry : std::filesystem::directory_iterator("assets/charts/"))
 			{
@@ -54,12 +56,6 @@ void SongGather::gatherPacksAsync()
 
 					std::string str;
 
-					std::vector<Song> songs = gatherSongsInFolder(entry.path().string() + "/");
-
-					if (songs.size() == 0)
-						continue;
-
-					currentPack = "";
 
 					while (std::getline(fs, str))
 					{
@@ -81,6 +77,12 @@ void SongGather::gatherPacksAsync()
 						if (split[0] == "showName")
 							p.showName = (end == "false" ? false : true);
 					}
+					fs.close();
+
+					std::vector<Song> songs = gatherSongsInFolder(entry.path().string() + "/");
+
+					if (songs.size() == 0)
+						continue;
 
 					loaded = 0;
 
@@ -122,13 +124,6 @@ void SongGather::gatherPacksAsync()
 
 				std::string str;
 
-				std::vector<Song> songs = gatherSongsInFolder(folder + "/");
-
-				if (songs.size() == 0)
-					continue;
-
-				currentPack = "";
-
 				while (std::getline(fs, str))
 				{
 					if (str.starts_with("#"))
@@ -149,6 +144,12 @@ void SongGather::gatherPacksAsync()
 					if (split[0] == "showName")
 						p.showName = (end == "false" ? false : true);
 				}
+				fs.close();
+
+				std::vector<Song> songs = gatherSongsInFolder(folder + "/");
+
+				if (songs.size() == 0)
+					continue;
 
 
 				loaded = 0;

@@ -23,6 +23,8 @@ public:
 	float scrollAddition = 0;
 	float maxScroll = 0;
 
+	bool autoClip = true;
+
 	bool active = true;
 	bool topAlphas = true;
 

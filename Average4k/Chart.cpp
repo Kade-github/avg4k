@@ -124,7 +124,7 @@ void Chart::getInfo()
 				case 1:
 
 					// jacks/singles
-
+					notesThisSecond++;
 
 					if (j != 0)
 						jacks++;
@@ -134,7 +134,7 @@ void Chart::getInfo()
 					break;
 				case 2:
 
-
+					notesThisSecond+= 2;
 					// gluts/jacks/chordjacks and jumps
 
 					switch (lastRow.size())
@@ -165,7 +165,7 @@ void Chart::getInfo()
 
 					break;
 				case 3:
-
+					notesThisSecond += 3;
 					// hands/jacks/chordjacks
 
 					switch (lastRow.size())
@@ -214,7 +214,7 @@ void Chart::getInfo()
 					break;
 				case 4:
 					// quads/jacks/chordjacks
-
+					notesThisSecond += 4;
 					switch (lastRow.size())
 					{
 					case 1:

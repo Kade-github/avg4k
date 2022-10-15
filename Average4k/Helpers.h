@@ -3,12 +3,12 @@
 #include <chrono>
 #include <cstdint>
 #include <wtypes.h>
-
 class Helpers {
 public:
 
 	static char encoding_table[];
 	static char* decoding_table;
+
 
 	static Rect rotate_point(float cx, float cy, float angle, Rect p)
 	{

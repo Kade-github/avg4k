@@ -1194,8 +1194,10 @@ void FuckinEditor::update(Events::updateEvent event)
 		if ((l.beat > currentBeat + 8 || l.beat < currentBeat - 8) || !showBeatLines)
 		{
 			l.rect->drawCall = false;
+			l.text->drawCall = false;
 			continue;
 		}
+		l.text->drawCall = true;
 		l.rect->drawCall = true;
 		l.rect->alpha = showBeatLines;
 
@@ -1238,8 +1240,10 @@ void FuckinEditor::update(Events::updateEvent event)
 		if ((l.beat > currentBeat + 8 || l.beat < currentBeat - 8) || !showBeatLines)
 		{
 			l.rect->drawCall = false;
+			l.text->drawCall = false;
 			continue;
 		}
+		l.text->drawCall = true;
 		l.rect->drawCall = true;
 
 		l.text->alpha = showBeatLines;

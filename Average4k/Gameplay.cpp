@@ -891,9 +891,6 @@ void Gameplay::update(Events::updateEvent event)
 		scaleStart += Game::deltaTime;
 	}
 
-	if (BASS_ErrorGetCode() != 0)
-		Combo->setText(std::to_string(BASS_ErrorGetCode()) + "_bassError");
-
 	SDL_FRect laneUnderway;
 
 	laneUnderway.x = receptors[0]->x - 4;
@@ -911,6 +908,8 @@ void Gameplay::update(Events::updateEvent event)
 
 	curSeg = MainerMenu::currentSelectedSong.getSegmentFromTime(positionInSong);
 	beat = MainerMenu::currentSelectedSong.getBeatFromTime(positionInSong, curSeg);
+
+	Game::instance->db_addLine("Beat: " + std::to_string(beat));
 
 	if (debug)
 	{

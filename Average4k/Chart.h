@@ -93,7 +93,7 @@ class Chart
 
 		Chart(chartMeta m, bool checkformod = true) { 
 			meta = m;
-			
+			previouslyFound.length = -1;
 			if (std::filesystem::exists(m.folder + "/mod") && checkformod)
 			{
 				isModFile = true;

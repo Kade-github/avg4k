@@ -619,49 +619,6 @@ void Game::update(Events::updateEvent update)
 	}
 
 
-	if (debugConsole)
-	{
-		SDL_FRect topBar;
-		topBar.x = 0;
-		topBar.y = 0;
-		topBar.w = Game::gameWidth;
-		topBar.h = 25;
-		if (!debugText)
-		{
-			debugText = new Text(0, 0, "Debug Console", 16, "NotoSans-Regular");
-			consoleLog = new Text(0, 195, "", 16, "NotoSans-Regular");
-			cmdPrompt = new Text(0, 220, ">", 16, "NotoSans-Regular");
-		}
-
-		debugText->setText("Debug Console | FPS: " + std::to_string(gameFPS) + " (CTRL to start typing, F11 again to close it)");
-
-		if (debug_takingInput)
-			cmdPrompt->setText(">" + debug_string + "_");
-		else
-			cmdPrompt->setText(">");
-
-
-
-		consoleBG->draw();
-		consoleCMDBar->draw();
-
-		Rect clip;
-
-		clip.x = 0;
-		clip.y = 25;
-		clip.w = Game::gameWidth;
-		clip.h = 220;
-
-		Rendering::SetClipRect(&clip);
-
-		for (Text* t : lines)
-			t->draw();
-
-		Rendering::SetClipRect(NULL);
-
-		debugText->draw();
-		cmdPrompt->draw();
-	}
 
 	//SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
@@ -1056,6 +1013,53 @@ void Game::DiscordUpdatePresence(std::string state, std::string details, std::st
 
 	::core->ActivityManager().UpdateActivity(act, [](discord::Result result) {
 	});
+}
+
+void Game::postUpdate()
+{
+	if (debugConsole)
+	{
+		SDL_FRect topBar;
+		topBar.x = 0;
+		topBar.y = 0;
+		topBar.w = Game::gameWidth;
+		topBar.h = 25;
+		if (!debugText)
+		{
+			debugText = new Text(0, 0, "Debug Console", 16, "NotoSans-Regular");
+			consoleLog = new Text(0, 195, "", 16, "NotoSans-Regular");
+			cmdPrompt = new Text(0, 220, ">", 16, "NotoSans-Regular");
+		}
+
+		debugText->setText("Debug Console | FPS: " + std::to_string(gameFPS) + " | Draw Calls: " + std::to_string(Rendering::drawCalls) + " | (CTRL to start typing, F11 again to close it)");
+
+		if (debug_takingInput)
+			cmdPrompt->setText(">" + debug_string + "_");
+		else
+			cmdPrompt->setText(">");
+
+
+
+		consoleBG->draw();
+		consoleCMDBar->draw();
+
+		Rect clip;
+
+		clip.x = 0;
+		clip.y = 25;
+		clip.w = Game::gameWidth;
+		clip.h = 220;
+
+		Rendering::SetClipRect(&clip);
+
+		for (Text* t : lines)
+			t->draw();
+
+		Rendering::SetClipRect(NULL);
+
+		debugText->draw();
+		cmdPrompt->draw();
+	}
 }
 
 void Game::textInput(SDL_TextInputEvent event)

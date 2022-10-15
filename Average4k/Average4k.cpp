@@ -483,12 +483,18 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			ImGui_ImplSDL2_NewFrame();
 			ImGui::NewFrame();
 
+			Rendering::drawCalls = 0;
+
 			game->update(updateEvent);
 
 			Rendering::drawBatch();
 
 			ImGui::Render();
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+			game->postUpdate();
+
+			Rendering::drawBatch();
 
 			SDL_GL_SwapWindow(window);
 

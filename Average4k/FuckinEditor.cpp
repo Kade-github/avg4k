@@ -1094,7 +1094,7 @@ void FuckinEditor::update(Events::updateEvent event)
 		return;
 	if (notes.size() > 0)
 	{
-		float perc = (currentTime - (FuckinEditor::selectedChart->meta.chartOffset * 1000)) / song->length;
+		float perc = (currentTime - (FuckinEditor::selectedChart->meta.chartOffset * 1000)) / (song->length - (FuckinEditor::selectedChart->meta.chartOffset * 1000));
 		if (perc > 1)
 			perc = 1;
 		miniMapCursor->y = (miniMap->y + (miniMap->h * (perc))) + (miniMapCursor->h / 2);
@@ -1132,7 +1132,7 @@ void FuckinEditor::update(Events::updateEvent event)
 				
 				float tim = l.time;
 
-				float notePerc = tim / song->length;
+				float notePerc = tim / (song->length - (FuckinEditor::selectedChart->meta.chartOffset * 1000));
 
 				l.rect->y = (miniMap->y + (miniMap->h * (notePerc))) + (l.rect->h / 2);
 			}
@@ -1785,7 +1785,7 @@ void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 		return;
 	}
 
-	if (event.keysym.sym == SDLK_F1)
+	if (event.keysym.sym == SDLK_F2)
 	{
 		findWindow("Debug Window").shouldDraw = !findWindow("Debug Window").shouldDraw;
 

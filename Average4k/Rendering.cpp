@@ -8,6 +8,8 @@ Shader* Rendering::batch_shader = NULL;
 Texture* Rendering::batch_texture = NULL;
 Texture* Rendering::white = NULL;
 
+int Rendering::drawCalls = 0;
+
 float Rendering::rendW = 1280;
 float Rendering::rendH = 720;
 
@@ -71,6 +73,7 @@ void Rendering::drawBatch()
 
 		batch_buffer.clear(); // clear it out
 		glUseProgram(NULL);
+		drawCalls++;
 	}
 	batch_texture = NULL;
 	batch_shader = NULL;

@@ -97,6 +97,8 @@ public:
 
 	static bool getKey(int code);
 
+	void postUpdate();
+
 	static void DiscordUpdatePresence(std::string state, std::string details, std::string smallImageText, int partySize, int partyMax, std::string joinSecret);
 
 	static SDL_Renderer* renderer;

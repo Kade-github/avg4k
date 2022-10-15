@@ -509,12 +509,6 @@ void window_waveProperties() {
 void window_chartProperties() {
 	FuckinEditor* editor = (FuckinEditor*)Game::currentMenu;
 	ImGui::BeginTabBar("##Chart Metadata");
-	if (ImGui::BeginTabItem("Editor"))
-	{
-		ImGui::Text("Bass Offset (debug):");
-		ImGui::InputFloat("##BassOffset", &FuckinEditor::selectedChart->BASS_OFFSET, 0.001, 0.01);
-		ImGui::EndTabItem();
-	}
 	if (ImGui::BeginTabItem("Metadata"))
 	{
 		if (FuckinEditor::selectedChart)
@@ -576,12 +570,12 @@ void window_chartProperties() {
 
 			info in = FuckinEditor::selectedChart->meta.difficulties[FuckinEditor::currentDiff].info;
 
-			ImGui::Text("Stream: %.3f", in.stream * 100);
-			ImGui::Text("Jumpstream: %.3f", in.jumpstream * 100);
-			ImGui::Text("Handstream: %.3f", in.handstream * 100);
-			ImGui::Text("Chordjacks: %.3f", in.chordjack * 100);
-			ImGui::Text("Jacks: %.3f", in.jacks * 100);
-			ImGui::Text("Technical: %.3f", in.technical * 100);
+			ImGui::Text("Stream: %.3f%", in.stream * 100);
+			ImGui::Text("Jumpstream: %.3f%", in.jumpstream * 100);
+			ImGui::Text("Handstream: %.3f%", in.handstream * 100);
+			ImGui::Text("Chordjacks: %.3f%", in.chordjack * 100);
+			ImGui::Text("Jacks: %.3f%", in.jacks * 100);
+			ImGui::Text("Technical: %.3f%", in.technical * 100);
 		}
 		else
 		{
@@ -1197,6 +1191,12 @@ void FuckinEditor::update(Events::updateEvent event)
 
 	for (line& l : snapBeat)
 	{
+		if ((l.beat > currentBeat + 8 || l.beat < currentBeat - 8) || !showBeatLines)
+		{
+			l.rect->drawCall = false;
+			continue;
+		}
+		l.rect->drawCall = true;
 		l.rect->alpha = showBeatLines;
 
 		float noteOffset = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed") / 60, FuckinEditor::selectedChart->getTimeFromBeat(l.beat, FuckinEditor::selectedChart->getSegmentFromBeat(l.beat)), currentTime, 64 * noteZoom);
@@ -1207,15 +1207,7 @@ void FuckinEditor::update(Events::updateEvent event)
 
 		l.rect->x = lunder->x;
 		l.rect->w = lunder->w;
-		if (showBeatLines == 1)
-		{
-			if (l.rect->y > 720 || l.rect->y + l.rect->h < 0)
-				l.rect->drawCall = false;
-			else
-				l.rect->drawCall = true;
-		}
-		else
-			l.rect->drawCall = false;
+
 		if (Game::save->GetBool("nonChange_beatTick"))
 		{
 			bool clicked = false;
@@ -1243,7 +1235,12 @@ void FuckinEditor::update(Events::updateEvent event)
 
 	for (line& l : beatLines)
 	{
-		l.rect->alpha = showBeatLines;
+		if ((l.beat > currentBeat + 8 || l.beat < currentBeat - 8) || !showBeatLines)
+		{
+			l.rect->drawCall = false;
+			continue;
+		}
+		l.rect->drawCall = true;
 
 		l.text->alpha = showBeatLines;
 
@@ -1256,15 +1253,6 @@ void FuckinEditor::update(Events::updateEvent event)
 		l.rect->w = lunder->w;
 		l.text->y = l.rect->y - (l.text->surfH / 2);
 		l.text->x = l.rect->x - (l.text->surfW + 4);
-		if (showBeatLines == 1)
-		{
-			if (l.rect->y > 720 || l.rect->y + l.rect->h < 0)
-				l.rect->drawCall = false;
-			else
-				l.rect->drawCall = true;
-		}
-		else
-			l.rect->drawCall = false;
 
 		if (Game::save->GetBool("nonChange_beatTick"))
 		{
@@ -1310,13 +1298,32 @@ void FuckinEditor::update(Events::updateEvent event)
 	int waveInd = 0;
 	for (waveformSeg& seg : waveform)
 	{
+
+		if (waveformAlpha != 0)
+		{
+			if (seg.time > currentTime + 10000 || seg.time < currentTime - 10000)
+			{
+				seg.sprite->drawCall = false;
+				continue;
+			}
+		}
+		else
+		{
+			seg.sprite->drawCall = false;
+			continue;
+		}
+
+		if (!Game::save->GetBool("nonChange_chartWaveform"))
+		{
+			seg.sprite->drawCall = false;
+			continue;
+		}
+		seg.sprite->drawCall = true;
 		float bps = (Game::save->GetDouble("scrollspeed") / 60);
 
 		float noteOffset = Helpers::calculateCMODY(Game::save->GetDouble("scrollspeed") / 60, seg.time, currentTime - (selectedChart->BASS_OFFSET * 1000), 64 * noteZoom);
 
 		seg.sprite->alpha = waveformAlpha;
-		if (!Game::save->GetBool("nonChange_chartWaveform"))
-			seg.sprite->alpha = 0;
 		seg.sprite->colorR = wavec.r;
 		seg.sprite->colorG = wavec.g;
 		seg.sprite->colorB = wavec.b;
@@ -1328,16 +1335,6 @@ void FuckinEditor::update(Events::updateEvent event)
 		seg.sprite->x = lunder->x;
 		seg.sprite->w = lunder->w;
 		seg.sprite->h = seg.length * noteZoom;
-
-		if (waveformAlpha != 0)
-		{
-			if (seg.sprite->y > 720 || seg.sprite->y + seg.sprite->h < 0)
-				seg.sprite->drawCall = false;
-			else
-				seg.sprite->drawCall = true;
-		}
-		else
-			seg.sprite->drawCall = false;
 
 		waveInd++;
 	}

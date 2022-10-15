@@ -1149,7 +1149,7 @@ void FuckinEditor::update(Events::updateEvent event)
 
 	for (NoteObject* obj : notes)
 	{
-		if (obj->y > 720 && obj->y + 64 < 0)
+		if ((obj->beat > currentBeat + 8 || obj->beat < currentBeat - 8))
 		{
 			obj->drawCall = false;
 			continue;

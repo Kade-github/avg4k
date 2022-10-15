@@ -1113,12 +1113,24 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 				return;
 			if (selected.metaPath.size() != 0 && selected.metaPath != "unfl")
 			{
+				bool mp3 = false;
 
+				for (Song s : selected.songs)
+					if (s.c.meta.ext == "mp3")
+					{
+						mp3 = true;
+						break;
+					}
 
 				if ((!chartUploading && (event.keysym.mod & KMOD_ALT)) || chartUploading)
 				{
-					uploading = true;
-					Game::steam->createWorkshopItem();
+					if (!mp3)
+					{
+						uploading = true;
+						Game::steam->createWorkshopItem();
+					}
+					else
+						Game::showErrorWindow("This pack has MP3 Files!","Please convert them to WAV/OGG to upload.", false);
 				}
 			}
 			break;

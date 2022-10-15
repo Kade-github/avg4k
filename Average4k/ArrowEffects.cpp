@@ -181,10 +181,11 @@ ArrowEffects::Arrow ArrowEffects::addSplines(float defX, float defY, Arrow aEff,
 	if (splines[col].size() > 0 && (beatsAway < ArrowEffects::drawBeats && beatsAway > -ArrowEffects::drawBeats))
 	{
 		Spline lastSpline;
+		lastSpline.beatAway = 0;
 		lastSpline.isFake = true;
 		for (Spline s : splines[col])
 		{
-			float b = ((curBeat + s.beatAway) / targetBeat);
+			float b = (((curBeat + s.beatAway) + 1) / (targetBeat + 1));
 			if (lastSpline.beatAway <= beatsAway && !lastSpline.isFake)
 				break;
 			if (!lastSpline.isFake)

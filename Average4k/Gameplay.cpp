@@ -1062,7 +1062,7 @@ void Gameplay::update(Events::updateEvent event)
 	if (notesToPlay.size() > 0)
 	{
 		note& n = notesToPlay[0];
-		if (n.beat < beat + ArrowEffects::drawBeats && (n.type != Note_Tail && n.type != Note_Mine)) // if its in 16 beats
+		if (n.beat < beat + ArrowEffects::drawBeats && (n.type != Note_Tail && n.type != Note_Mine)) // if its in draw beats
 		{
 			NoteObject* object = new NoteObject();
 			object->currentChart = &MainerMenu::currentSelectedSong;

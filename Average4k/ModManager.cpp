@@ -499,6 +499,8 @@ void ModManager::runMods(AppliedMod m, float beat)
 		}
 
 		for (const auto& [key, value] : sprites) {
+			if (!value.spr)
+				continue;
 			float anchorX = value.spr->defX;
 			float anchorY = value.spr->defY;
 

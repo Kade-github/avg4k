@@ -2044,13 +2044,13 @@ void FuckinEditor::loadNotes(difficulty diff)
 
 	for (line obj : snapBeat)
 	{
-		gameplay->removeObj(obj.rect);
+		lines->removeObj(obj.rect);
 	}
 	snapBeat.clear();
 	for (line obj : beatLines)
 	{
-		gameplay->removeObj(obj.rect);
-		gameplay->removeObj(obj.text);
+		lines->removeObj(obj.rect);
+		lines->removeObj(obj.text);
 	}
 	beatLines.clear();
 	for (thingy obj : sideStuff)
@@ -2058,6 +2058,7 @@ void FuckinEditor::loadNotes(difficulty diff)
 		gameplay->removeObj(obj.background);
 		gameplay->removeObj(obj.text);
 	}
+	lines->children.clear();
 	gameplay->children.clear();
 	notes.clear();
 	sideStuff.clear();
@@ -2081,6 +2082,7 @@ void FuckinEditor::generateWaveForm(int start, int end)
 	}
 
 	waveform.clear();
+	wave->children.clear();
 
 	float rate = song->returnSampleRate();
 	float leng = 0;

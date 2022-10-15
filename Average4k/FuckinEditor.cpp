@@ -2046,13 +2046,13 @@ void FuckinEditor::loadNotes(difficulty diff)
 	{
 		gameplay->removeObj(obj.rect);
 	}
-
+	snapBeat.clear();
 	for (line obj : beatLines)
 	{
 		gameplay->removeObj(obj.rect);
 		gameplay->removeObj(obj.text);
 	}
-
+	beatLines.clear();
 	for (thingy obj : sideStuff)
 	{
 		gameplay->removeObj(obj.background);

@@ -2058,7 +2058,7 @@ void FuckinEditor::loadNotes(difficulty diff)
 		gameplay->removeObj(obj.background);
 		gameplay->removeObj(obj.text);
 	}
-
+	gameplay->children.clear();
 	notes.clear();
 	sideStuff.clear();
 	bool downscroll = false;

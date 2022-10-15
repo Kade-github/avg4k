@@ -327,7 +327,7 @@ void selectedSongCallback(int sId)
 	Text* handstreamT = new Text(0, 0, "Handstream: " + std::to_string(handstream) + "%", 14, "arial");
 	Text* jacksT = new Text(0, 0, "Jacks: " + std::to_string(jack) + "%", 14, "arial");
 	Text* techT = new Text(0, 0, "Technical: " + std::to_string(tech) + "%", 14, "arial");
-	Text* avgNPS = new Text(0, 0, "Average NPS: " + std::format("{:.2f}", nps) + "", 14, "arial");
+	Text* avgNPS = new Text(0, 0, "Average NPS: " + std::to_string((int)nps) + "", 14, "arial");
 
 	Text* maxNPS = new Text(0, 0, "Max NPS: " + std::to_string((int)maxNps) + "", 14, "arial");
 
@@ -1029,7 +1029,7 @@ void updateDiff()
 	handstreamT->setText("Handstream: " + std::to_string(handstream) + "%");
 	jacksT->setText("Jacks: " + std::to_string(jack) + "%");
 	techT->setText("Techical: " + std::to_string(tech) + "%");
-	avgNPS->setText("Average NPS: " + std::format("{:.2f}", nps));
+	avgNPS->setText("Average NPS: " + std::to_string((int)nps));
 	maxNPS->setText("Max NPS: " + std::to_string((int)maxNps));
 	MUTATE_END
 }

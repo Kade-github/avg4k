@@ -145,6 +145,8 @@ void ModEditor::doModsUntilThisPos()
 
 	for (FunctionMod& m : manager.funcMod)
 	{
+		if (m.beat == 0)
+			m.beat = beat;
 		m.hit = false;
 		if (beat >= m.beat)
 		{

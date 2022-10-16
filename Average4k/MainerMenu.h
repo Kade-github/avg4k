@@ -16,6 +16,7 @@ struct LeaderboardResult {
 	LeaderboardEntry entry;
 	Text* name;
 	Text* accuracy;
+	AvgSprite* icon;
 };
 
 class PackObject : public Object

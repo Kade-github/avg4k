@@ -107,24 +107,22 @@ ModManager::ModManager(std::string luaPath)
 	assetPath = luaPath.substr(0, luaPath.find_last_of('/'));
 	createFunctions();
 
-	luaMap = new std::map<std::string, sol::function>();
-
 	populateLuaMap();
 }
 
 void ModManager::populateLuaMap()
 {
-	(*luaMap)["create"] = (*lua)["create"];
-	(*luaMap)["update"] = (*lua)["update"];
-	(*luaMap)["destroy"] = (*lua)["destroy"];
-	(*luaMap)["hit"] = (*lua)["hit"];
+	luaMap["create"] = (*lua)["create"];
+	luaMap["update"] = (*lua)["update"];
+	luaMap["destroy"] = (*lua)["destroy"];
+	luaMap["hit"] = (*lua)["hit"];
 }
 
 void ModManager::callEvent(std::string event, std::string args)
 {
 	if (killed)
 		return;
-	sol::protected_function f((*luaMap)[event]);
+	sol::protected_function f(luaMap[event]);
 
 	if (!f.valid())
 		return;
@@ -151,7 +149,7 @@ void ModManager::callEvent(std::string event, int args)
 {
 	if (killed)
 		return;
-	sol::protected_function f((*luaMap)[event]);
+	sol::protected_function f(luaMap[event]);
 
 	if (!f.valid())
 		return;
@@ -176,7 +174,7 @@ void ModManager::callEvent(std::string event, float args)
 {
 	if (killed)
 		return;
-	sol::protected_function f((*luaMap)[event]);
+	sol::protected_function f(luaMap[event]);
 
 	if (!f.valid())
 		return;
@@ -238,7 +236,15 @@ void ModManager::runMods()
 		return;
 	for (AppliedMod& m : appliedMods)
 	{
-		if (beat >= m.tweenStart && ((beat < m.tweenStart + m.tweenLen + 0.2)))
+		if (m.tweenLen == 0)
+		{
+			m.tweenLen = 0.1;
+			m.instant = true;
+		}
+		if (m.tweenStart == 0)
+			m.tweenStart = beat;
+
+		if ((beat >= m.tweenStart) && ((beat < m.tweenStart + m.tweenLen + 0.2)))
 		{
 			if (!m.started)
 			{
@@ -263,6 +269,13 @@ void ModManager::runMods()
 
 				float tween = m.tweenCurve(perc);
 
+				if (m.instant)
+				{
+					tween = 1;
+					m.done = true;
+					m.tweenLen = 0;
+				}
+
 				setModProperties(m, tween);
 			}
 			else
@@ -275,6 +288,8 @@ void ModManager::runMods()
 
 	for (FunctionMod& m : funcMod)
 	{
+		if (m.beat == 0)
+			m.beat = beat;
 		if (beat >= m.beat && !m.hit)
 		{
 			m.hit = true;
@@ -466,6 +481,14 @@ void ModManager::runMods(AppliedMod m, float beat)
 	if (killed)
 		return;
 	setModStart(m);
+
+	if (m.tweenLen == 0)
+	{
+		m.tweenLen = 0.1;
+		m.instant = true;
+	}
+	if (m.tweenStart == 0)
+		m.tweenStart = beat;
 
 	if (m.mod != "showPath")
 	{

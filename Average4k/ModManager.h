@@ -49,6 +49,7 @@ struct AppliedMod {
 	std::string spriteName = "-1";
 	std::string shader;
 	std::string param;
+	bool instant = false;
 	bool done = false;
 	Easing::easingFunction tweenCurve;
 
@@ -70,7 +71,7 @@ public:
 	static bool doMods;
 	std::unique_ptr<sol::state> lua;
 
-	std::map<std::string, sol::function>* luaMap;
+	std::map<std::string, sol::function> luaMap;
 
 	std::map<std::string, SpriteMod> sprites;
 
@@ -116,6 +117,5 @@ public:
 
 	void destroy()
 	{
-		delete luaMap;
 	};
 };

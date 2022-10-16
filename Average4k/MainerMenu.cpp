@@ -100,7 +100,28 @@ void shittyCreateLobby(std::string s)
 	Multiplayer::sendMessage<CPacketHostServer>(host);
 }
 
-void updateLeaderboard()
+std::vector<LeaderboardEntry> convertLocalToOnline(std::vector<scoreHeader> scores)
+{
+	std::vector<LeaderboardEntry> entries;
+
+	std::string name = SteamFriends()->GetPersonaName();
+	std::string id = std::to_string(SteamUser()->GetSteamID().ConvertToUint64());
+
+	for (scoreHeader score : scores)
+	{
+		LeaderboardEntry e;
+		e.accuracy = score.a;
+		e.combo = score.c;
+		e.username = name;
+		e.steamid = id;
+		e.noteTiming = score.t;
+		entries.push_back(e);
+	}
+
+	return entries;
+}
+
+void updateLeaderboard(std::vector<LeaderboardEntry> entries)
 {
 	AvgContainer* moreInf = (AvgContainer*)MainerMenu::soloContainer->findItemByName("moreInfo");
 
@@ -403,16 +424,28 @@ void selectedSongCallback(int sId)
 	cont->addObject(leaderboardPt1, "leadpt1");
 	cont->addObject(leaderboardPt2, "leadpt2");
 
-	AvgContainer* leaderboard = new AvgContainer(745, 24, NULL);
+	AvgContainer* leaderboard = new AvgContainer(725, 24, NULL);
 
-	Text* leaderboardText = new Text(0,0, "Leaderboard", 18, "arialbd");
+	Text* leaderboardText = new Text(0,0, "Online Leaderboard", 18, "arialbd");
+	if (!MainerMenu::selectedSong.isSteam)
+		leaderboardText->text = "Local Leaderboard";
+
+	Text* leaderboardStatus = new Text(0, 24, "Obtaining scores...", 14, "ariali");
+
 	leaderboardText->setCharacterSpacing(3);
 
 	leaderboardText->x = (leaderboard->w / 2) - (leaderboardText->w / 2);
+	leaderboardStatus->x = (leaderboard->w / 2) - (leaderboardStatus->w / 2);
 
 	leaderboard->addObject(leaderboardText, "leadText");
+	leaderboard->addObject(leaderboardStatus, "leadStatusText");
 
 	moreInf->addObject(leaderboard, "leadContainer");
+	if (!MainerMenu::selectedSong.isSteam)
+	{
+		std::vector<scoreHeader> scores = Game::instance->save->getScores(MainerMenu::selectedSong.c.meta.songName, MainerMenu::selectedSong.c.meta.artist, MainerMenu::selectedSong.steamId, MainerMenu::wheel->selectedIndex, MainerMenu::selectedDiffIndex);
+		updateLeaderboard(convertLocalToOnline(scores));
+	}
 
 	MUTATE_END
 }
@@ -1075,7 +1108,10 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 
 			if (moreinfo)
 			{
-
+				if (selectedSong.isSteam)
+				{
+					// request leaderboard info
+				}
 				Tweening::TweenManager::createNewTween("tab", moreInf, Tweening::TweenType::tt_X, 1000, moreInf->x, 0, NULL, Easing::EaseOutCubic);
 			}
 			else

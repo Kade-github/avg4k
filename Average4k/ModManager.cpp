@@ -255,6 +255,8 @@ void ModManager::runMods()
 			if (m.mod != "showPath")
 			{
 				float dur = (beat - m.tweenStart);
+				if (dur == 0)
+					dur = m.tweenLen;
 
 				float perc = dur / m.tweenLen;
 

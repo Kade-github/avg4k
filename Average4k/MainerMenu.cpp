@@ -100,6 +100,12 @@ void shittyCreateLobby(std::string s)
 	Multiplayer::sendMessage<CPacketHostServer>(host);
 }
 
+void updateLeaderboard()
+{
+	AvgContainer* moreInf = (AvgContainer*)MainerMenu::soloContainer->findItemByName("moreInfo");
+
+
+}
 
 void resetStuff()
 {
@@ -193,7 +199,7 @@ void selectedSongCallback(int sId)
 
 	AvgSprite* ss = new AvgSprite(0, 0, t);
 	ss->dontDelete = true;
-	ss->w = moreInf->w;
+	ss->w = moreInf->w - 450;
 	ss->h = moreInf->h;
 
 	float cdTitleOff = moreInf->h - (moreInf->h / 2);
@@ -203,7 +209,7 @@ void selectedSongCallback(int sId)
 		// create cdtitle
 
 		Texture* cd = Texture::createWithImage(s.c.meta.folder + "/" + s.c.meta.cdtitle);
-		AvgSprite* cdTitle = new AvgSprite(24, 24, cd);
+		AvgSprite* cdTitle = new AvgSprite(24, 50, cd);
 
 		if (cdTitle->w > 241)
 			cdTitle->w = 241;
@@ -396,6 +402,17 @@ void selectedSongCallback(int sId)
 
 	cont->addObject(leaderboardPt1, "leadpt1");
 	cont->addObject(leaderboardPt2, "leadpt2");
+
+	AvgContainer* leaderboard = new AvgContainer(745, 24, NULL);
+
+	Text* leaderboardText = new Text(0,0, "Leaderboard", 18, "arialbd");
+	leaderboardText->setCharacterSpacing(3);
+
+	leaderboardText->x = (leaderboard->w / 2) - (leaderboardText->w / 2);
+
+	leaderboard->addObject(leaderboardText, "leadText");
+
+	moreInf->addObject(leaderboard, "leadContainer");
 
 	MUTATE_END
 }

@@ -524,10 +524,10 @@ void MainerMenu::create()
 	Game::DiscordUpdatePresence("In the Main Menu", "Browsing Charts", "Average4K", -1, -1, "");
 	SteamFriends()->SetRichPresence("gamestatus", "Browsing Charts");
 
-	bg = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "darkmodebg.png"));
+	bg = new AvgSprite(-16, -16, Noteskin::getMenuElement(Game::noteskin, "darkmodebg.png"));
 	bg->create();
-	bg->w = 1286;
-	bg->h = 726;
+	bg->w = Game::gameWidth + 32;
+	bg->h = Game::gameHeight + 32;
 	add(bg);
 
 	bool whiteScreen = false;

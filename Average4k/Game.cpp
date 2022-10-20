@@ -216,8 +216,6 @@ void Game::showErrorWindow(std::string title, std::string description, bool majo
 void Game::GetMousePos(int* mx, int* my)
 {
 	SDL_GetMouseState(mx, my);
-	*mx *= multiplierx;
-	*my *= multipliery;
 }
 
 std::vector<Text*> lines;
@@ -418,6 +416,9 @@ void Game::update(Events::updateEvent update)
 	//SDL_SetRenderTarget(renderer, mainCamera->cameraTexture);
 
 	//SDL_RenderClear(update.renderer);
+
+	__transRect->w = Game::gameWidth;
+	__transRect->h = Game::gameHeight;
 
 	if (transitioning && transCompleted)
 	{
@@ -647,8 +648,8 @@ void Game::update(Events::updateEvent update)
 		srcRect.w = 1;
 		srcRect.h = 1;
 
-		int startingX = (1280 / 2) - (433 / 2);
-		int startingY = (720 / 2) - (185 / 2);
+		int startingX = (Game::gameWidth / 2) - (433 / 2);
+		int startingY = (Game::gameHeight / 2) - (185 / 2);
 
 		Rect mainBackground;
 		mainBackground.x = startingX;
@@ -659,8 +660,8 @@ void Game::update(Events::updateEvent update)
 		Rect overlay;
 		overlay.x = 0;
 		overlay.y = 0;
-		overlay.w = 1280;
-		overlay.h = 1280;
+		overlay.w = Game::gameWidth;
+		overlay.h = Game::gameHeight;
 
 		overlay.r = 0;
 		overlay.g = 0;

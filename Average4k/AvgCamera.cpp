@@ -17,8 +17,8 @@ void AvgCamera::leDraw(Object* obj)
 			Rendering::drawBatch();
 			Rendering::setBlend();
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			glViewport(0, 0, 1280, 720);
-			GL::genShader->setProject(glm::ortho(0.0f, 1280.0f, 720.0f, 0.0f, -1.0f, 1.0f));
+			glViewport(0, 0, Game::gameWidth, Game::gameHeight);
+			GL::genShader->setProject(glm::ortho(0.0f, (float)Game::gameWidth, (float)Game::gameHeight, 0.0f, -1.0f, 1.0f));
 			Rendering::rendW = 1280;
 			Rendering::rendH = 720;
 

@@ -5,8 +5,8 @@ void AvgCamera::leDraw(Object* obj)
 {
 	glViewport(0, 0, Game::gameWidth, Game::gameHeight);
 	GL::genShader->setProject(glm::ortho(0.0f, (float)Game::gameWidth, (float)Game::gameHeight, 0.0f, -1.0f, 1.0f));
-	Rendering::rendW = 1280;
-	Rendering::rendH = 720;
+	Rendering::rendW = Game::gameWidth;
+	Rendering::rendH = Game::gameHeight;
 	if (obj->children.size() < 900000)
 	{
 		//glBindFramebuffer(GL_FRAMEBUFFER, fb);

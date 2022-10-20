@@ -134,6 +134,7 @@ public:
 class MainerMenu : public Menu
 {
 public:
+	AvgContainer* moreInfo;
 	static bool isInMainerMenu;
 	static Chart currentSelectedSong;
 	static Song selectedSong;

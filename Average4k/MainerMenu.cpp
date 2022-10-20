@@ -600,13 +600,13 @@ void MainerMenu::create()
 
 
 
-	AvgContainer* c = (AvgContainer*)soloContainer->addObject(new AvgContainer(0, 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/moreinfocontainer.png")), "moreInfo");
-	c->clipRect.x = soloContainer->x;
-	c->clipRect.y = 160;
-	c->clipRect.w = soloContainer->w;
-	c->clipRect.h = soloContainer->h;
-	c->autoClip = false;
-	c->x += c->w; 
+	moreInfo = (AvgContainer*)soloContainer->addObject(new AvgContainer(0, 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/moreinfocontainer.png")), "moreInfo");
+	moreInfo->clipRect.x = soloContainer->x;
+	moreInfo->clipRect.y = 160;
+	moreInfo->clipRect.w = soloContainer->w;
+	moreInfo->clipRect.h = soloContainer->h;
+	moreInfo->autoClip = false;
+	moreInfo->x += moreInfo->w;
 
 
 
@@ -681,7 +681,7 @@ void MainerMenu::create()
 	appearnSettings.push_back(Game::save->getSetting("Show Song Position"));
 	appearnSettings.push_back(Game::save->getSetting("Note Size"));
 	appearnSettings.push_back(Game::save->getSetting("Noteskin"));
-	//appearnSettings.push_back(Game::save->getSetting("Resolution"));
+	appearnSettings.push_back(Game::save->getSetting("Resolution"));
 	appearnSettings.push_back(Game::save->getSetting("Fullscreen"));
 	appearnSettings.push_back(Game::save->getSetting("Auto Accent Colors"));
 
@@ -813,6 +813,11 @@ void MainerMenu::update(Events::updateEvent ev)
 			ch->setVolume(Game::save->GetDouble("Music Volume"));
 		}
 	}
+
+	moreInfo->clipRect.x = soloContainer->x;
+	moreInfo->clipRect.y = 160;
+	moreInfo->clipRect.w = soloContainer->w;
+	moreInfo->clipRect.h = soloContainer->h;
 
 
 	std::vector<Pack> gatheredPacks;

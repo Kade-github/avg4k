@@ -33,11 +33,11 @@ void MainMenu::create() {
 	
 	MUTATE_START
 
-	bg = new AvgSprite(0, 0, Noteskin::getMenuElement(Game::noteskin, "darkmodebg.png"));
+	bg = new AvgSprite(-16, -16, Noteskin::getMenuElement(Game::noteskin, "darkmodebg.png"));
 	bg->create();
 	bg->y = Game::gameHeight;
-	bg->w = 1286;
-	bg->h = 726;
+	bg->w = Game::gameWidth + 32;
+	bg->h = Game::gameHeight + 32;
 
 	add(bg);
 

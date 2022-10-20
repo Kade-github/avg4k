@@ -429,7 +429,8 @@ void Game::update(Events::updateEvent update)
 			}, Easing::EaseInSine);
 	}
 
-	glViewport(0, 0, 1280, 720);
+	glViewport(0, 0, Game::gameWidth, Game::gameHeight);
+	GL::genShader->setProject(glm::ortho(0.0f, (float)Game::gameWidth, (float)Game::gameHeight, 0.0f, -1.0f, 1.0f));
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glClearColor(0, 0, 0, 0);
 
@@ -487,7 +488,6 @@ void Game::update(Events::updateEvent update)
 		}
 	}
 
-	mainCamera->update(update);
 
 	SDL_Rect DestR;
 
@@ -599,8 +599,15 @@ void Game::update(Events::updateEvent update)
 			}
 	}
 
+	glViewport(0, 0, Game::gameWidth, Game::gameHeight);
+	GL::genShader->setProject(glm::ortho(0.0f, (float)Game::gameWidth, (float)Game::gameHeight, 0.0f, -1.0f, 1.0f));
+
+
 	if (currentMenu != nullptr && currentMenu->created)
 		currentMenu->postUpdate(update);
+
+	glViewport(0, 0, Game::gameWidth, Game::gameHeight);
+	GL::genShader->setProject(glm::ortho(0.0f, (float)Game::gameWidth, (float)Game::gameHeight, 0.0f, -1.0f, 1.0f));
 
 	Rendering::drawBatch();
 
@@ -909,12 +916,11 @@ void Game::mouseButtonUp()
 void Game::resizeGame(int w, int h, int fullscreen)
 {
 
-	wW = 1280;
-	wH = 720;
 	SDL_SetWindowSize(window, wW, wH);
 	multiplierx = (float)1280 / (float)wW;
 	multipliery = (float)720 / (float)wH;
-
+	gameWidth = w;
+	gameHeight = h;
 
 
 	switch (fullscreen)
@@ -927,13 +933,16 @@ void Game::resizeGame(int w, int h, int fullscreen)
 		break;
 	case 2:
 		// get resolution
-		/*int www, hhh;
+		int www, hhh;
 		Helpers::GetDesktopResolution(www, hhh);
 		wW = www;
 		wH = hhh;
+
+		gameWidth = www;
+		gameHeight = hhh;
 		SDL_SetWindowSize(window, wW, wH);
 		multiplierx = (float)1280 / (float)wW;
-		multipliery = (float)720 / (float)wH;*/
+		multipliery = (float)720 / (float)wH;
 		SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_FULLSCREEN);
 		break;
 	}

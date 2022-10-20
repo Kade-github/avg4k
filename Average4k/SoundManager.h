@@ -22,6 +22,8 @@ public:
 
 	bool loop = false;
 
+	bool dieAfterPlay = false;
+
 	bool isFreed = false;
 
 	std::string path;
@@ -30,6 +32,11 @@ public:
 	{
 		Channel* ch = ((Channel*)user);
 		ch->isPlaying = false;
+		if (ch->dieAfterPlay)
+		{
+			ch->free();
+			return;
+		}
 		if (ch->loop)
 			ch->play();
 	}

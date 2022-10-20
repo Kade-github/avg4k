@@ -244,7 +244,7 @@ void ModManager::runMods()
 		if (m.tweenStart == 0)
 			m.tweenStart = beat;
 
-		if ((beat >= m.tweenStart) && ((beat < m.tweenStart + m.tweenLen + 0.2)))
+		if ((beat >= m.tweenStart) && ((beat < m.tweenStart + m.tweenLen)))
 		{
 			if (!m.started)
 			{

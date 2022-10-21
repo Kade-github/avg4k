@@ -298,7 +298,6 @@ std::vector<std::string> SaveFile::ObtainDropDownSettingList(std::string set)
 
         // lowest to highest
         std::vector<std::vector<int>> resolutions;
-        resolutions.push_back({ 640,480 });
         resolutions.push_back({ 1280,720 });
         resolutions.push_back({ 1920,1080 });
         resolutions.push_back({ 2048,1080 });
@@ -333,6 +332,8 @@ std::vector<int> SaveFile::ObtainResolution()
     STR_ENCRYPT_START
     std::string resText = GetString("Resolution");
     STR_ENCRYPT_END
+    if (resText == "640x480")
+        resText = "1280x720";
     return { std::stoi(resText.substr(0,resText.find("x"))), std::stoi(resText.substr(resText.find("x") + 1,resText.length()))};
 }
 

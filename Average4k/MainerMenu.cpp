@@ -572,8 +572,14 @@ void MainerMenu::create()
 
 
 	soloContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/maincontainer_solo.png"));
+	if (Game::multiplierx != 1)
+	{
+		soloContainer->w *= (1 + Game::multiplierx);
+		soloContainer->h *= (1 + Game::multipliery);
+	}
 	soloContainer->alpha = 1;
 	soloContainer->x = (Game::gameWidth / 2) - (soloContainer->w / 2);
+	soloContainer->y = (Game::gameHeight / 2) - (soloContainer->h / 2);
 	soloContainer->create();
 	add(soloContainer);
 
@@ -583,9 +589,13 @@ void MainerMenu::create()
 
 	Texture* packSprite = Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/packscontainer.png");
 
-	wheel = (AvgWheel*)soloContainer->addObject(new AvgWheel(packSprite->width, 88, 600, packSprite->height), "wheelObject");
+	packSprite->height = soloContainer->h - 88;
+
+	wheel = (AvgWheel*)soloContainer->addObject(new AvgWheel(packSprite->width, 88 * Game::multipliery, 600, packSprite->height), "wheelObject");
 
 	wheel->callSelect = selectedSongCallback;
+
+
 
 	soloContainer->addObject(new Text(22, 18, "Packs", 18, "arialbd"), "packsText");
 	((Text*)soloContainer->findItemByName("packsText"))->setCharacterSpacing(3);
@@ -605,19 +615,34 @@ void MainerMenu::create()
 	moreInfo->clipRect.y = 160;
 	moreInfo->clipRect.w = soloContainer->w;
 	moreInfo->clipRect.h = soloContainer->h;
+	if (Game::multiplierx != 1)
+	{
+		moreInfo->w *= (1 + Game::multiplierx);
+		moreInfo->h *= (1 + Game::multipliery);
+	}
 	moreInfo->autoClip = false;
-	moreInfo->x += moreInfo->w;
+	moreInfo->x += soloContainer->w;
 
 
 
-	soloContainer->addObject(new AvgContainer((soloContainer->x + soloContainer->w), 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/songcontainer.png")), "songContainer");
-	soloContainer->findItemByName("songContainer")->x -= soloContainer->findItemByName("songContainer")->w + 40;
+	soloContainer->addObject(new AvgContainer((soloContainer->w), 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/songcontainer.png")), "songContainer");
+	if (Game::multiplierx != 1)
+	{
+		soloContainer->findItemByName("songContainer")->h *= (1 + Game::multipliery);
+	}
+	soloContainer->findItemByName("songContainer")->x -= soloContainer->findItemByName("songContainer")->w;
 
 
 
 
 	multiContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Multi/maincontainer.png"));
+	if (Game::multiplierx != 1)
+	{
+		multiContainer->w *= (1 + Game::multiplierx);
+		multiContainer->h *= (1 + Game::multipliery);
+	}
 	multiContainer->x = (Game::gameWidth / 2) - (multiContainer->w / 2);
+	multiContainer->y = (Game::gameHeight / 2) - (multiContainer->h / 2);
 	multiContainer->active = false;
 	multiContainer->create();
 	add(multiContainer);
@@ -654,7 +679,13 @@ void MainerMenu::create()
 
 
 	settingsContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Settings/maincontainer.png"));
+	if (Game::multiplierx != 1)
+	{
+		settingsContainer->w *= (1 + Game::multiplierx);
+		settingsContainer->h *= (1 + Game::multipliery);
+	}
 	settingsContainer->x = (Game::gameWidth / 2) - (settingsContainer->w / 2);
+	settingsContainer->y = (Game::gameHeight / 2) - (settingsContainer->h / 2);
 	settingsContainer->active = false;
 	settingsContainer->create();
 	add(settingsContainer);
@@ -712,7 +743,9 @@ void MainerMenu::create()
 
 	// create text stuff
 
-	selectSolo = new AvgRect(soloContainer->x, soloContainer->y - 26, 232, 5);
+	float mid = ((Game::gameHeight / 2) - (soloContainer->h / 2)) + 40;
+
+	selectSolo = new AvgRect(soloContainer->x, mid - 26, 232, 5);
 	selectSolo->c = { 83, 234, 209 };
 
 	soloText = new Text(0, selectSolo->y - 20, "solo", 24, "ANDALEMO");
@@ -724,7 +757,7 @@ void MainerMenu::create()
 	add(selectSolo);
 	add(soloText);
 
-	selectMulti = new AvgRect(soloContainer->x + (soloContainer->w / 2), soloContainer->y - 26, 232, 5);
+	selectMulti = new AvgRect(soloContainer->x + (soloContainer->w / 2), mid - 26, 232, 5);
 	selectMulti->c = { 83, 234, 209 };
 	selectMulti->x -= selectMulti->w / 2;
 	selectMulti->alpha = 0;
@@ -738,7 +771,14 @@ void MainerMenu::create()
 	add(selectMulti);
 	add(multiText);
 
-	selectSettings = new AvgRect((soloContainer->x + soloContainer->w) - 232, soloContainer->y - 26, 232, 5);
+	int t = 232;
+
+	if (Game::multiplierx != 1)
+	{
+		t *= (1 + Game::multiplierx);
+	}
+
+	selectSettings = new AvgRect((soloContainer->x + soloContainer->w) - t, mid - 26, 232, 5);
 	selectSettings->c = { 83, 234, 209 };
 	selectSettings->alpha = 0;
 
@@ -766,10 +806,10 @@ void MainerMenu::create()
 	else
 		loadPacks();
 
-	Tweening::TweenManager::createNewTween("movingContainer3", testWorkshop, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
-	Tweening::TweenManager::createNewTween("movingContainer2", settingsContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
-	Tweening::TweenManager::createNewTween("movingContainer1", multiContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
-	Tweening::TweenManager::createNewTween("movingContainer", soloContainer, Tweening::tt_Y, 1000, Game::gameHeight, 160, NULL, Easing::EaseOutCubic);
+	Tweening::TweenManager::createNewTween("movingContainer3", testWorkshop, Tweening::tt_Y, 1000, Game::gameHeight, mid, NULL, Easing::EaseOutCubic);
+	Tweening::TweenManager::createNewTween("movingContainer2", settingsContainer, Tweening::tt_Y, 1000, Game::gameHeight, mid, NULL, Easing::EaseOutCubic);
+	Tweening::TweenManager::createNewTween("movingContainer1", multiContainer, Tweening::tt_Y, 1000, Game::gameHeight, mid, NULL, Easing::EaseOutCubic);
+	Tweening::TweenManager::createNewTween("movingContainer", soloContainer, Tweening::tt_Y, 1000, Game::gameHeight, mid, NULL, Easing::EaseOutCubic);
 	
 	refreshLobbies();
 
@@ -2352,6 +2392,8 @@ void dropdown_callback(std::string set, std::string value)
 			fs = 1;
 
 		Game::instance->resizeGame(res[0], res[1], fs);
+		Game::instance->transitionToMenu(new MainerMenu());
+		delete ((MainerMenu*)Game::instance->currentMenu)->lobbyShader;
 	}
 
 	if (set == "Noteskin")

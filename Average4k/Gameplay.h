@@ -59,6 +59,7 @@ class Gameplay :
 		std::vector<ReceptorObject*> receptors;
 
 		AvgSprite* playField;
+		AvgSprite* spriteField;
 
 		float lastCall = 0;
 		float lastCallUpdates = 0;

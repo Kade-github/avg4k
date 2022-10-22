@@ -469,7 +469,12 @@ void Gameplay::create() {
 		manager.instance = &manager;
 
 		if (!manager.killed)
-			add(manager.spriteCamera);
+		{
+			spriteField = new AvgSprite(0, 0, manager.spriteCamera->ctb);
+			spriteField->w = Game::gameWidth;
+			spriteField->h = Game::gameHeight;
+			add(spriteField);
+		}
 	}
 	else
 	{
@@ -700,6 +705,8 @@ void Gameplay::create() {
 		Game::DiscordUpdatePresence((MainerMenu::currentSelectedSong.meta.artist.size() == 0 ? "No Artist" : MainerMenu::currentSelectedSong.meta.artist) + " - " + MainerMenu::currentSelectedSong.meta.songName, "Playing Solo Play", "Average4K", -1, -1, "");
 
 	playField = new AvgSprite(0, 0, gameplay->ctb);
+	playField->w = Game::gameWidth;
+	playField->h = Game::gameHeight;
 	playField->flip = true;
 	gameplay->fuckingNo = true;
 	add(gameplay);
@@ -773,10 +780,10 @@ void Gameplay::create() {
 		int index = i + 1;
 		if (downscroll)
 			r = new ReceptorObject(
-				((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * i), (Game::gameHeight / 2) + 250, i);
+				((1280 / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * i), (720 / 2) + 250, i);
 		else
 			r = new ReceptorObject(
-				((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * i), (Game::gameHeight / 2) - 300, i);
+				((1280 / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * i), (720 / 2) - 300, i);
 		r->lightUpTimer = 0;
 		r->create();
 		receptors.push_back(r);

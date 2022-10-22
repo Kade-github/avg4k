@@ -57,7 +57,7 @@ void ReceptorObject::draw() {
 
 		float size = ArrowEffects::noteSize * (0.5 / a.mini);
 
-		x = ((Game::gameWidth / 2) - ((64 * size + 12) * 2)) + ((64 * size + 12) * type);
+		x = ((1280 / 2) - ((64 * size + 12) * 2)) + ((64 * size + 12) * type);
 
 		w = 64 * size;
 		h = 64 * size;

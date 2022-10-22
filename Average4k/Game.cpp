@@ -923,13 +923,15 @@ void Game::resizeGame(int w, int h, int fullscreen)
 	gameWidth = w;
 	gameHeight = h;
 
+	SDL_SetWindowPosition(Game::window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+
 	switch (fullscreen)
 	{
 	case 0:
 		SDL_SetWindowFullscreen(Game::window, 0);
 		break;
 	case 1:
-		SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_FULLSCREEN);
+		SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_BORDERLESS);
 		break;
 	case 2:
 		// get resolution

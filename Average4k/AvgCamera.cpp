@@ -19,8 +19,8 @@ void AvgCamera::leDraw(Object* obj)
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glViewport(0, 0, Game::gameWidth, Game::gameHeight);
 			GL::genShader->setProject(glm::ortho(0.0f, (float)Game::gameWidth, (float)Game::gameHeight, 0.0f, -1.0f, 1.0f));
-			Rendering::rendW = 1280;
-			Rendering::rendH = 720;
+			Rendering::rendW = Game::gameWidth;
+			Rendering::rendH = Game::gameHeight;
 
 			AvgGroup* gr = (AvgGroup*)obj;
 
@@ -97,7 +97,7 @@ void AvgCamera::draw()
 			continue;
 		if (obj->w < 0 || obj->h < 0 || obj->id < 0)
 			continue;
-		if ((obj->x + obj->w < 0 || obj->y + obj->h < 0) || (obj->x > 1280 || obj->y > 720))
+		if ((obj->x + obj->w < 0 || obj->y + obj->h < 0) || (obj->x > Game::gameWidth || obj->y > Game::gameHeight))
 			continue;
 		if (obj->alpha < 0.05)
 			continue;
@@ -117,7 +117,7 @@ void AvgCamera::draw()
 			continue;
 		if (obj->w < 0 || obj->h < 0 || obj->id < 0)
 			continue;
-		if ((obj->x + obj->w < 0 || obj->y + obj->h < 0) || (obj->x > 1280 || obj->y > 720))
+		if ((obj->x + obj->w < 0 || obj->y + obj->h < 0) || (obj->x > Game::gameWidth || obj->y > Game::gameHeight))
 			continue;
 		if (obj->alpha < 0.05)
 			continue;

@@ -918,8 +918,8 @@ void Game::resizeGame(int w, int h, int fullscreen)
 {
 
 	SDL_SetWindowSize(window, w, h);
-	multiplierx = (float)1280 / (float)wW;
-	multipliery = (float)720 / (float)wH;
+	multiplierx = (float)1280 / (float)w;
+	multipliery = (float)720 / (float)h;
 	gameWidth = w;
 	gameHeight = h;
 

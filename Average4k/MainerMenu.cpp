@@ -572,11 +572,6 @@ void MainerMenu::create()
 
 
 	soloContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/maincontainer_solo.png"));
-	if (Game::multiplierx != 1)
-	{
-		soloContainer->w *= (1 + Game::multiplierx);
-		soloContainer->h *= (1 + Game::multipliery);
-	}
 	soloContainer->alpha = 1;
 	soloContainer->x = (Game::gameWidth / 2) - (soloContainer->w / 2);
 	soloContainer->y = (Game::gameHeight / 2) - (soloContainer->h / 2);
@@ -615,32 +610,18 @@ void MainerMenu::create()
 	moreInfo->clipRect.y = 160;
 	moreInfo->clipRect.w = soloContainer->w;
 	moreInfo->clipRect.h = soloContainer->h;
-	if (Game::multiplierx != 1)
-	{
-		moreInfo->w *= (1 + Game::multiplierx);
-		moreInfo->h *= (1 + Game::multipliery);
-	}
 	moreInfo->autoClip = false;
 	moreInfo->x += soloContainer->w;
 
 
 
 	soloContainer->addObject(new AvgContainer((soloContainer->w), 0, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Solo/songcontainer.png")), "songContainer");
-	if (Game::multiplierx != 1)
-	{
-		soloContainer->findItemByName("songContainer")->h *= (1 + Game::multipliery);
-	}
 	soloContainer->findItemByName("songContainer")->x -= soloContainer->findItemByName("songContainer")->w;
 
 
 
 
 	multiContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Multi/maincontainer.png"));
-	if (Game::multiplierx != 1)
-	{
-		multiContainer->w *= (1 + Game::multiplierx);
-		multiContainer->h *= (1 + Game::multipliery);
-	}
 	multiContainer->x = (Game::gameWidth / 2) - (multiContainer->w / 2);
 	multiContainer->y = (Game::gameHeight / 2) - (multiContainer->h / 2);
 	multiContainer->active = false;
@@ -679,11 +660,6 @@ void MainerMenu::create()
 
 
 	settingsContainer = new AvgContainer(0, Game::gameHeight, Noteskin::getMenuElement(Game::noteskin, "MainMenu/Settings/maincontainer.png"));
-	if (Game::multiplierx != 1)
-	{
-		settingsContainer->w *= (1 + Game::multiplierx);
-		settingsContainer->h *= (1 + Game::multipliery);
-	}
 	settingsContainer->x = (Game::gameWidth / 2) - (settingsContainer->w / 2);
 	settingsContainer->y = (Game::gameHeight / 2) - (settingsContainer->h / 2);
 	settingsContainer->active = false;
@@ -771,12 +747,7 @@ void MainerMenu::create()
 	add(selectMulti);
 	add(multiText);
 
-	int t = 232;
-
-	if (Game::multiplierx != 1)
-	{
-		t *= (1 + Game::multiplierx);
-	}
+	int t = 234;
 
 	selectSettings = new AvgRect((soloContainer->x + soloContainer->w) - t, mid - 26, 232, 5);
 	selectSettings->c = { 83, 234, 209 };
@@ -858,7 +829,6 @@ void MainerMenu::update(Events::updateEvent ev)
 	moreInfo->clipRect.y = 160;
 	moreInfo->clipRect.w = soloContainer->w;
 	moreInfo->clipRect.h = soloContainer->h;
-
 
 	std::vector<Pack> gatheredPacks;
 	std::vector<Song> gatheredSongs;

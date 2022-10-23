@@ -539,8 +539,6 @@ void Gameplay::create() {
 
 	song->loop = false;
 
-	clap = SoundManager::createChannel("assets/sounds/hitSound.wav", "clapFx");
-
 	hasSubmited = false;
 
 	song->createFXStream();
@@ -862,7 +860,6 @@ void Gameplay::update(Events::updateEvent event)
 		{
 			song->setPos(0);
 			song->setVolume(Game::save->GetDouble("Music Volume"));
-			clap->setVolume(Game::save->GetDouble("Hitsounds Volume"));
 			song->play();
 			play = true;
 			lastBPM = 0;
@@ -1272,6 +1269,15 @@ void Gameplay::update(Events::updateEvent event)
 						receptors[note->lane]->loop = false;
 						receptors[note->lane]->hit = true;
 
+						if (Game::save->GetBool("hitsounds") && !note->clapped)
+						{
+							note->clapped = true;
+							Channel* c = SoundManager::createChannel("assets/sounds/hitSound.wav", "clap" + std::to_string(note->beat));
+							c->dieAfterPlay = true;
+							c->setVolume(Game::save->GetDouble("Hitsounds Volume"));
+							c->play();
+						}
+
 						combo++;
 						if (combo > highestCombo)
 							highestCombo = combo;
@@ -1430,9 +1436,6 @@ void Gameplay::cleanUp()
 	//	SDL_DestroyTexture(avatars[k]);
 	//}
 
-	clap->free();
-
-	SoundManager::removeChannel("clapFx");
 
 	if (MainerMenu::currentSelectedSong.isModFile && !MainerMenu::isInLobby)
 	{
@@ -1600,11 +1603,10 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				if (Game::save->GetBool("hitsounds") && !closestObject->clapped)
 				{
 					closestObject->clapped = true;
-					if (SoundManager::getChannelByName("clapFx") != NULL)
-					{
-						clap->stop();
-						clap->play();
-					}
+					Channel* c = SoundManager::createChannel("assets/sounds/hitSound.wav", "clap" + std::to_string(closestObject->beat));
+					c->dieAfterPlay = true;
+					c->setVolume(Game::save->GetDouble("Hitsounds Volume"));
+					c->play();
 				}
 
 				if (MainerMenu::isInLobby)

@@ -56,6 +56,28 @@ public:
 	std::string receptorLitDown;
 	std::string receptorHitDown;
 
+	// judgements
+
+	Texture* judge_0;
+	Texture* judge_1;
+	Texture* judge_2;
+	Texture* judge_3;
+	Texture* judge_4;
+	Texture* judge_5;
+	Texture* num_0;
+	Texture* num_1;
+	Texture* num_2;
+	Texture* num_3;
+	Texture* num_4;
+	Texture* num_5;
+	Texture* num_6;
+	Texture* num_7;
+	Texture* num_8;
+	Texture* num_9;
+	Texture* num_perc;
+
+	// misc
+
 	float hitReceptorScale = 1;
 
 	int offsetXReceptorHit = 0;

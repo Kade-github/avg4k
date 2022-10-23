@@ -182,6 +182,7 @@ noteskin_asset* loadSkin(noteskin_asset* as, std::string typ, bool appendPath = 
 
 			if (first == "path")
 				as->skinpath = secondSpaces;
+
 			if (first == "soundPath")
 				as->soundpath = secondSpaces;
 		}
@@ -223,6 +224,25 @@ noteskin_asset* loadSkin(noteskin_asset* as, std::string typ, bool appendPath = 
 		as->sparrowImg = getAsset(pat + Noteskin::type + "/" + sparrow + ".png");
 		as->sparrow = new AvgSparrow(pat + Noteskin::type + "/" + sparrow + ".xml", as->sparrowImg->width, as->sparrowImg->height);
 	}
+
+	as->judge_0 = getAsset(pat + Noteskin::type + "/judgements/judge_0.png");
+	as->judge_1 = getAsset(pat + Noteskin::type + "/judgements/judge_1.png");
+	as->judge_2 = getAsset(pat + Noteskin::type + "/judgements/judge_2.png");
+	as->judge_3 = getAsset(pat + Noteskin::type + "/judgements/judge_3.png");
+	as->judge_4 = getAsset(pat + Noteskin::type + "/judgements/judge_4.png");
+	as->judge_5 = getAsset(pat + Noteskin::type + "/judgements/judge_5.png");
+	as->num_0 = getAsset(pat + Noteskin::type + "/judgements/num_0.png");
+	as->num_1 = getAsset(pat + Noteskin::type + "/judgements/num_1.png");
+	as->num_2 = getAsset(pat + Noteskin::type + "/judgements/num_2.png");
+	as->num_3 = getAsset(pat + Noteskin::type + "/judgements/num_3.png");
+	as->num_4 = getAsset(pat + Noteskin::type + "/judgements/num_4.png");
+	as->num_5 = getAsset(pat + Noteskin::type + "/judgements/num_5.png");
+	as->num_6 = getAsset(pat + Noteskin::type + "/judgements/num_6.png");
+	as->num_7 = getAsset(pat + Noteskin::type + "/judgements/num_7.png");
+	as->num_8 = getAsset(pat + Noteskin::type + "/judgements/num_8.png");
+	as->num_9 = getAsset(pat + Noteskin::type + "/judgements/num_9.png");
+	as->num_perc = getAsset(pat + Noteskin::type + "/judgements/percentage.png");
+
 	std::cout << "[NOTESKIN] skinpath=" << as->skinpath << std::endl;
 	VM_END
 	return as;

@@ -944,7 +944,7 @@ void FuckinEditor::create()
 	laneUnderway.x = ((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) - 4;
 	laneUnderway.y = -200;
 	laneUnderway.w = (((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) + ((64 * noteZoom + 12) * 3) - laneUnderway.x) + (68 * noteZoom + 12);
-	laneUnderway.h = 1280;
+	laneUnderway.h = Game::gameHeight * (1 + (Game::multipliery != 1 ? Game::multipliery : 0));
 
 	lunder = new AvgSprite(laneUnderway.x, laneUnderway.y, Noteskin::getGameplayElement(Game::noteskin, "underway.png"));
 	add(lunder);
@@ -956,7 +956,7 @@ void FuckinEditor::create()
 	float w = 42;
 	float x = Game::gameWidth - (w + 6);
 	float y = 24;
-	float h = 690;
+	float h = Game::gameHeight - 30;
 
 	miniMapBorder = new AvgRect(x, y, w, h);
 	miniMapBorder->c = { 255,255,255 };
@@ -982,10 +982,10 @@ void FuckinEditor::create()
 	lunder->h = laneUnderway.h;
 	lunderBorder->w = laneUnderway.w;
 	lunderBorder->h = laneUnderway.h;
-	lines = new AvgGroup(0, 0, 1280, 720);
-	wave = new AvgGroup(0, 0, 1280, 720);
-	top = new AvgGroup(0, 0, 1280, 720);
-	gameplay = new AvgGroup(0, 0, 1280, 720);
+	lines = new AvgGroup(0, 0, Game::gameWidth, Game::gameHeight);
+	wave = new AvgGroup(0, 0, Game::gameWidth, Game::gameHeight);
+	top = new AvgGroup(0, 0, Game::gameWidth, Game::gameHeight);
+	gameplay = new AvgGroup(0, 0, Game::gameWidth, Game::gameHeight);
 	miniMap = new AvgGroup(rectShitBitch->x, rectShitBitch->y, rectShitBitch->w, rectShitBitch->h);
 
 
@@ -1149,7 +1149,7 @@ void FuckinEditor::update(Events::updateEvent event)
 
 	for (NoteObject* obj : notes)
 	{
-		if ((obj->beat > currentBeat + 8 || obj->beat < currentBeat - 8))
+		if ((obj->beat > currentBeat + 16 || obj->beat < currentBeat - 16))
 		{
 			obj->drawCall = false;
 			continue;
@@ -1191,7 +1191,7 @@ void FuckinEditor::update(Events::updateEvent event)
 
 	for (line& l : snapBeat)
 	{
-		if ((l.beat > currentBeat + 8 || l.beat < currentBeat - 8) || !showBeatLines)
+		if ((l.beat > currentBeat + 16 || l.beat < currentBeat - 16) || !showBeatLines)
 		{
 			l.rect->drawCall = false;
 			l.text->drawCall = false;
@@ -1237,7 +1237,7 @@ void FuckinEditor::update(Events::updateEvent event)
 
 	for (line& l : beatLines)
 	{
-		if ((l.beat > currentBeat + 8 || l.beat < currentBeat - 8) || !showBeatLines)
+		if ((l.beat > currentBeat + 16 || l.beat < currentBeat - 16) || !showBeatLines)
 		{
 			l.rect->drawCall = false;
 			l.text->drawCall = false;
@@ -1966,7 +1966,7 @@ void FuckinEditor::mouseWheel(float wheel)
 		laneUnderway.x = ((Game::gameWidth / 2) - (((64 * noteZoom) + 12) * 2)) - 4;
 		laneUnderway.y = -200;
 		laneUnderway.w = (((Game::gameWidth / 2) - (((64 * noteZoom) + 12) * 2)) + (((64 * noteZoom) + 12) * 3) - laneUnderway.x) + ((68 * noteZoom) + 12);
-		laneUnderway.h = 1280;
+		laneUnderway.h = Game::gameHeight * (1 + (Game::multipliery != 1 ? Game::multipliery : 0));
 
 		lunder->x = laneUnderway.x;
 		lunder->y = laneUnderway.y;

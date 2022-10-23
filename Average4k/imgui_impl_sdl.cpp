@@ -67,6 +67,7 @@
 #if defined(__APPLE__)
 #include <TargetConditionals.h>
 #endif
+#include "Game.h"
 
 #if SDL_VERSION_ATLEAST(2,0,4) && !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && !(defined(__APPLE__) && TARGET_OS_IOS)
 #define SDL_HAS_CAPTURE_AND_GLOBAL_MOUSE    1
@@ -517,18 +518,7 @@ void ImGui_ImplSDL2_NewFrame()
     IM_ASSERT(bd != NULL && "Did you call ImGui_ImplSDL2_Init()?");
     ImGuiIO& io = ImGui::GetIO();
 
-    // Setup display size (every frame to accommodate for window resizing)
-    int w = 1280, h = 720;
-    int display_w = 1280, display_h = 720;
-    if (SDL_GetWindowFlags(bd->Window) & SDL_WINDOW_MINIMIZED)
-        w = h = 0;
-    if (bd->Renderer != NULL)
-        SDL_GetRendererOutputSize(bd->Renderer, &display_w, &display_h);
-    else
-        SDL_GL_GetDrawableSize(bd->Window, &display_w, &display_h);
-    io.DisplaySize = ImVec2((float)w, (float)h);
-    if (w > 0 && h > 0)
-        io.DisplayFramebufferScale = ImVec2((float)display_w / w, (float)display_h / h);
+    io.DisplaySize = ImVec2((float)Game::gameWidth, (float)Game::gameHeight);
 
     // Setup time step (we don't use SDL_GetTicks() because it is using millisecond resolution)
     static Uint64 frequency = SDL_GetPerformanceFrequency();

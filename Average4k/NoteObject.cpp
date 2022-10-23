@@ -454,7 +454,7 @@ void NoteObject::draw() {
             int i = 0;
             for (holdBody& body : bodies)
             {
-                if (body.y > 820 || body.y < -200 || (body.beat - 0.15 < holdstoppedbeat))
+                if (body.y > Game::gameHeight + 100 || body.y < -200 || (body.beat - 0.15 < holdstoppedbeat))
                 {
                     i++;
                     continue;

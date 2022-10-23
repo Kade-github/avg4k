@@ -11,6 +11,7 @@
 #include <timeapi.h>
 #include "Average4k.h"
 #include "ModManager.h"
+#include "imgui_internal.h"
 using namespace std;
 
 //#define NOBUF
@@ -479,6 +480,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 			glClear(GL_COLOR_BUFFER_BIT);
 
+
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplSDL2_NewFrame();
 			ImGui::NewFrame();
@@ -489,8 +491,15 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 			Rendering::drawBatch();
 
+
 			ImGui::Render();
-			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+
+
+			ImDrawData* da = ImGui::GetDrawData();
+
+
+			ImGui_ImplOpenGL3_RenderDrawData(da);
 
 			game->postUpdate();
 

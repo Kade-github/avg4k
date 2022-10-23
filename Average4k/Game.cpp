@@ -931,7 +931,7 @@ void Game::resizeGame(int w, int h, int fullscreen)
 		SDL_SetWindowFullscreen(Game::window, 0);
 		break;
 	case 1:
-		SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_BORDERLESS);
+		SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_FULLSCREEN);
 		break;
 	case 2:
 		// get resolution
@@ -945,7 +945,7 @@ void Game::resizeGame(int w, int h, int fullscreen)
 		SDL_SetWindowSize(window, wW, wH);
 		multiplierx = (float)1280 / (float)wW;
 		multipliery = (float)720 / (float)wH;
-		SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_FULLSCREEN);
+		SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_BORDERLESS);
 		break;
 	}
 	Rendering::rendW = gameWidth;

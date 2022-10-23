@@ -946,9 +946,9 @@ void MainerMenu::update(Events::updateEvent ev)
 		{
 			delete icon->tex;
 			icon->tex = tex;
-			icon->h = 47;
-			icon->w = 47;
 		}
+		icon->h = 47;
+		icon->w = 47;
 		Tweening::TweenManager::createNewTween("icons", icon, Tweening::tt_Alpha, 600, 0, 1, NULL, Easing::EaseInSine);
 	}
 

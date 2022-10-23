@@ -852,6 +852,8 @@ void ModManager::createFunctions()
 			return;
 		}
 		AvgSprite* spr = new AvgSprite(0, 0, instance->sprites["playField"].spr->tex);
+		spr->w = Game::gameWidth;
+		spr->h = Game::gameHeight;
 		spr->dontDelete = true;
 		spr->flip = true;
 		SpriteMod mod;

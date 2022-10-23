@@ -473,6 +473,9 @@ void Gameplay::create() {
 			spriteField = new AvgSprite(0, 0, manager.spriteCamera->ctb);
 			spriteField->w = Game::gameWidth;
 			spriteField->h = Game::gameHeight;
+			spriteField->flip = true;
+			add(manager.spriteCamera);
+			manager.spriteCamera->fuckingNo = true;
 			add(spriteField);
 		}
 	}
@@ -555,14 +558,14 @@ void Gameplay::create() {
 
 	Rect laneUnderway;
 
-	laneUnderway.x = ((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) - 4;
+	laneUnderway.x = ((1280 / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) - 4;
 	laneUnderway.y = -200;
-	laneUnderway.w = (((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * 3) - laneUnderway.x) + (68 * Game::save->GetDouble("Note Size"));
+	laneUnderway.w = (((1280 / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * 3) - laneUnderway.x) + (68 * Game::save->GetDouble("Note Size"));
 	laneUnderway.h = 1280;
 
 	AvgSprite* lunder = new AvgSprite(laneUnderway.x, laneUnderway.y, Noteskin::getGameplayElement(Game::noteskin, "underway.png"));
 	if (!MainerMenu::currentSelectedSong.isModFile)
-		add(lunder);
+		gameplay->add(lunder);
 	lunder->alpha = Game::save->GetDouble("Lane Underway Transparency");
 
 	lunder->colorR = darkestColor.r;
@@ -571,7 +574,7 @@ void Gameplay::create() {
 
 	AvgSprite* lunderBorder = new AvgSprite(laneUnderway.x, laneUnderway.y, Noteskin::getGameplayElement(Game::noteskin, "underwayBorder.png"));
 	if (!MainerMenu::currentSelectedSong.isModFile)
-		add(lunderBorder);
+		gameplay->add(lunderBorder);
 	lunderBorder->alpha = 1 * (0.8 / Game::save->GetDouble("Lane Underway Transparency"));
 
 	lunderBorder->colorR = lightestAccent.r;
@@ -583,7 +586,7 @@ void Gameplay::create() {
 	lunderBorder->w = laneUnderway.w;
 	lunderBorder->h = laneUnderway.h;
 
-	Judgement = new Text(Game::gameWidth / 2, Game::gameHeight / 2, " ", 23, "Futura Bold");
+	Judgement = new Text(Game::gameWidth / 2, Game::gameHeight / 2, " ", 23 * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)), "Futura Bold");
 	Judgement->setCharacterSpacing(4.25);
 	Judgement->create();
 
@@ -591,26 +594,26 @@ void Gameplay::create() {
 	Judgement->border = true;
 	Judgement->borderSize = 1;
 
-	Combo = new Text(Game::gameWidth / 2, Game::gameHeight / 2 + 40, " ", 24, "Futura Bold");
+	Combo = new Text(Game::gameWidth / 2, (Game::gameHeight / 2) + (46 * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0))), " ", 24 * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)), "Futura Bold");
 	Combo->create();
 
 
-	Mrv = new Text(12, (Game::gameHeight / 2) - 12, "Marvelous: 0", 24, "Futura Bold");
+	Mrv = new Text(12, (Game::gameHeight / 2) - 12 * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)), "Marvelous: 0", 24 * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)), "Futura Bold");
 	Mrv->create();
 
-	Prf = new Text(12, (Game::gameHeight / 2) + 12, "Perfect: 0", 24, "Futura Bold");
+	Prf = new Text(12, (Game::gameHeight / 2) + 12 * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)), "Perfect: 0", 24 * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)), "Futura Bold");
 	Prf->create();
 
-	God = new Text(12, (Game::gameHeight / 2) + 36, "Great: 0", 24, "Futura Bold");
+	God = new Text(12, (Game::gameHeight / 2) + 36 * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)), "Great: 0", 24 * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)), "Futura Bold");
 	God->create();
 
-	Ehh = new Text(12, (Game::gameHeight / 2) + 60, "Good: 0", 24, "Futura Bold");
+	Ehh = new Text(12, (Game::gameHeight / 2) + 60 * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)), "Good: 0", 24 * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)), "Futura Bold");
 	Ehh->create();
 
-	Yke = new Text(12, (Game::gameHeight / 2) + 82, "Bad: 0", 24, "Futura Bold");
+	Yke = new Text(12, (Game::gameHeight / 2) + 82 * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)), "Bad: 0", 24 * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)), "Futura Bold");
 	Yke->create();
 
-	Mis = new Text(12, (Game::gameHeight / 2) + 104, "Misses: 0", 24, "Futura Bold");
+	Mis = new Text(12, (Game::gameHeight / 2) + 104 * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)), "Misses: 0", 24 * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)), "Futura Bold");
 	Mis->create();
 
 	Combo->borderSize = 1;
@@ -741,7 +744,7 @@ void Gameplay::create() {
 		mod2.stealth = 0;
 		mod2.spr = NULL;
 		mod2.notModCreated = true;
-		mod2.def = manager.spriteCamera;
+		mod2.def = spriteField;
 		manager.sprites["sprites"] = mod2;
 
 
@@ -751,7 +754,7 @@ void Gameplay::create() {
 
 	playField->dontDelete = true;
 
-	Accuracy = new Text(Game::gameWidth - 200, 2, "", 36, "Futura Bold");
+	Accuracy = new Text(Game::gameWidth - 200, 2, "", 36 * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)), "Futura Bold");
 	add(Accuracy);
 	Accuracy->setCharacterSpacing(6);
 
@@ -759,7 +762,7 @@ void Gameplay::create() {
 	Accuracy->borderAlpha = 0.5;
 	Accuracy->borderSize = 2;
 
-	ranking = new Text(0, 46, "", 36, "Futura Bold");
+	ranking = new Text(0, 46 * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)), "", 36 * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)), "Futura Bold");
 	ranking->border = true;
 	ranking->borderAlpha = 0.5;
 	ranking->borderSize = 2;

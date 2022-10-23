@@ -9,16 +9,20 @@ void AvgContainer::mouseWheel(float amount)
 		int mx, my;
 		Game::GetMousePos(&mx, &my);
 
-		my -= y;
-		mx -= x;
-
 		int pH = h;
 
-		if (parent != NULL)
-			pH = parent->h;
+		float realX = x;
+		float realY = y;
 
-		bool one = (mx < w);
-		bool two = (my < pH * 1.3);
+		if (parent != NULL)
+		{
+			pH = parent->h;
+			realX += parent->x;
+			realY += parent->y;
+		}
+
+		bool one = (mx < realX + w && mx > realX);
+		bool two = (my < realY + pH && my > realY);
 		if (one && two && maxScroll > 0)
 		{
 			float max = (h - 15) - scrollAddition;

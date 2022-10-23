@@ -24,6 +24,8 @@ class Game
 public:
 	void createGame();
 
+	HANDLE multiThreadHandle;
+
 	static float multiplierx;
 	static float multipliery;
 

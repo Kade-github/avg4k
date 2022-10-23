@@ -149,8 +149,6 @@ bool Game::startConnect = false;
 
 bool transCompleted = false;
 
-HANDLE multiThreadHandle;
-
 Color topHeaderColor;
 
 needWindowPop asyncPop;

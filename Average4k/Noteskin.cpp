@@ -182,6 +182,8 @@ noteskin_asset* loadSkin(noteskin_asset* as, std::string typ, bool appendPath = 
 
 			if (first == "path")
 				as->skinpath = secondSpaces;
+			if (first == "soundPath")
+				as->soundpath = secondSpaces;
 		}
 		config.close();
 	}

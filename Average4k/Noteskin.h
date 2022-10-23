@@ -67,6 +67,7 @@ public:
 	bool shrink = true;
 	std::string name = "arrow";
 	std::string skinpath = "default";
+	std::string soundpath = "default";
 };
 
 class Noteskin
@@ -112,6 +113,15 @@ class Noteskin
 				return "assets/skinDefaults/Music/" + element;
 			VM_END
 			return "assets/noteskin/" + as->name + "/" + as->skinpath + "/Music/" + element;
+		}
+
+		static std::string getSoundElement(noteskin_asset* as, std::string element)
+		{
+			VM_START
+				if (as->soundpath == "default")
+					return "assets/sounds/" + element;
+			VM_END
+				return "assets/noteskin/" + as->name + "/" + as->soundpath + "/" + element;
 		}
 };
 

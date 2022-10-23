@@ -1272,7 +1272,7 @@ void Gameplay::update(Events::updateEvent event)
 						if (Game::save->GetBool("hitsounds") && !note->clapped)
 						{
 							note->clapped = true;
-							Channel* c = SoundManager::createChannel("assets/sounds/hitSound.wav", "clap" + std::to_string(note->beat));
+							Channel* c = SoundManager::createChannel(Noteskin::getSoundElement(Game::instance->noteskin,"hitSound.wav"), "clap" + std::to_string(note->beat));
 							c->dieAfterPlay = true;
 							c->setVolume(Game::save->GetDouble("Hitsounds Volume"));
 							c->play();

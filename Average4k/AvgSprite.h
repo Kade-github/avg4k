@@ -77,8 +77,16 @@ public:
 		tex = data;
 		if (!tex) 
 			std::cout << "failed to get texture!" << std::endl;
-		w = tex->width;
-		h = tex->height;
+		if (data == NULL)
+		{
+			w = 0;
+			h = 0;
+		}
+		else
+		{
+			w = tex->width;
+			h = tex->height;
+		}
 		defX = x;
 		defY = y;
 		defRot = 0;
@@ -100,8 +108,22 @@ public:
 
 	void changeOutTexture(std::string path)
 	{
-		delete tex;
+		if (!dontDelete)
+		{
+			delete tex;
+		}
 		tex = Texture::createWithImage(path);
+		w = tex->width;
+		h = tex->height;
+	}
+
+	void changeOutTexture(Texture* te)
+	{
+		if (!dontDelete)
+		{
+			delete tex;
+		}
+		tex = te;
 		w = tex->width;
 		h = tex->height;
 	}

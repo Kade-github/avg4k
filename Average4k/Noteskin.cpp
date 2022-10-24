@@ -45,6 +45,25 @@ void Noteskin::resetNoteskin(noteskin_asset* as)
 	else
 		delete as->sparrowImg;
 
+	delete as->judge_0;
+	delete as->judge_1;
+	delete as->judge_2;
+	delete as->judge_3;
+	delete as->judge_4;
+	delete as->judge_5;
+	delete as->num_0;
+	delete as->num_1;
+	delete as->num_2;
+	delete as->num_3;
+	delete as->num_4;
+	delete as->num_5;
+	delete as->num_6;
+	delete as->num_7;
+	delete as->num_8;
+	delete as->num_9;
+	delete as->num_period;
+	delete as->num_perc;
+
 	delete as;
 
 	asset = NULL;
@@ -225,23 +244,46 @@ noteskin_asset* loadSkin(noteskin_asset* as, std::string typ, bool appendPath = 
 		as->sparrow = new AvgSparrow(pat + Noteskin::type + "/" + sparrow + ".xml", as->sparrowImg->width, as->sparrowImg->height);
 	}
 
-	as->judge_0 = getAsset(pat + Noteskin::type + "/judgements/judge_0.png");
-	as->judge_1 = getAsset(pat + Noteskin::type + "/judgements/judge_1.png");
-	as->judge_2 = getAsset(pat + Noteskin::type + "/judgements/judge_2.png");
-	as->judge_3 = getAsset(pat + Noteskin::type + "/judgements/judge_3.png");
-	as->judge_4 = getAsset(pat + Noteskin::type + "/judgements/judge_4.png");
-	as->judge_5 = getAsset(pat + Noteskin::type + "/judgements/judge_5.png");
-	as->num_0 = getAsset(pat + Noteskin::type + "/judgements/num_0.png");
-	as->num_1 = getAsset(pat + Noteskin::type + "/judgements/num_1.png");
-	as->num_2 = getAsset(pat + Noteskin::type + "/judgements/num_2.png");
-	as->num_3 = getAsset(pat + Noteskin::type + "/judgements/num_3.png");
-	as->num_4 = getAsset(pat + Noteskin::type + "/judgements/num_4.png");
-	as->num_5 = getAsset(pat + Noteskin::type + "/judgements/num_5.png");
-	as->num_6 = getAsset(pat + Noteskin::type + "/judgements/num_6.png");
-	as->num_7 = getAsset(pat + Noteskin::type + "/judgements/num_7.png");
-	as->num_8 = getAsset(pat + Noteskin::type + "/judgements/num_8.png");
-	as->num_9 = getAsset(pat + Noteskin::type + "/judgements/num_9.png");
-	as->num_perc = getAsset(pat + Noteskin::type + "/judgements/percentage.png");
+	std::string path = pat + Noteskin::type;
+
+	as->judge_0 = getAsset(path + "/judgements/judge_0.png");
+	if (as->judge_0->width == 0)
+	{
+		path = pat + "/arrow";
+		as->judge_0 = getAsset(path + "/judgements/judge_0.png");
+	}
+	as->judge_1 = getAsset(path + "/judgements/judge_1.png");
+	as->judge_2 = getAsset(path + "/judgements/judge_2.png");
+	as->judge_3 = getAsset(path + "/judgements/judge_3.png");
+	as->judge_4 = getAsset(path + "/judgements/judge_4.png");
+	as->judge_5 = getAsset(path + "/judgements/judge_5.png");
+	as->judge_bot = getAsset(path + "/judgements/judge_bot.png");
+	as->num_0 = getAsset(path + "/judgements/num_0.png");
+	as->num_1 = getAsset(path + "/judgements/num_1.png");
+	as->num_2 = getAsset(path + "/judgements/num_2.png");
+	as->num_3 = getAsset(path + "/judgements/num_3.png");
+	as->num_4 = getAsset(path + "/judgements/num_4.png");
+	as->num_5 = getAsset(path + "/judgements/num_5.png");
+	as->num_6 = getAsset(path + "/judgements/num_6.png");
+	as->num_7 = getAsset(path + "/judgements/num_7.png");
+	as->num_8 = getAsset(path + "/judgements/num_8.png");
+	as->num_9 = getAsset(path + "/judgements/num_9.png");
+	as->num_period = getAsset(path + "/judgements/period.png");
+	as->num_perc = getAsset(path + "/judgements/percentage.png");
+
+	as->fontMap['0'] = as->num_0;
+	as->fontMap['1'] = as->num_1;
+	as->fontMap['2'] = as->num_2;
+	as->fontMap['3'] = as->num_3;
+	as->fontMap['4'] = as->num_4;
+	as->fontMap['5'] = as->num_5;
+	as->fontMap['6'] = as->num_6;
+	as->fontMap['7'] = as->num_7;
+	as->fontMap['8'] = as->num_8;
+	as->fontMap['9'] = as->num_9;
+	as->fontMap['.'] = as->num_period;
+	as->fontMap[','] = as->num_period;
+	as->fontMap['%'] = as->num_perc;
 
 	std::cout << "[NOTESKIN] skinpath=" << as->skinpath << std::endl;
 	VM_END

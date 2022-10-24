@@ -142,13 +142,13 @@ void Gameplay::miss(NoteObject* object)
 	Misses++;
 	updateAccuracy(0);
 	combo = 0;
-	Judgement->color.r = 255;
-	Judgement->color.g = 0;
-	Judgement->color.b = 0;
-	Judgement->setText("miss");
+	judge->changeOutTexture(Game::noteskin->judge_5);
+	judge->w *= (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0));
+	judge->h *= (1 + (Game::multipliery != 1 ? Game::multipliery : 0));
+	judge->drawCall = true;
 
-	Judgement->setX((Game::gameWidth / 2) - (Judgement->surfW / 2));
-	Judgement->setY((Game::gameHeight / 2));
+	judge->setX((Game::gameWidth / 2) - (judge->w / 2));
+	judge->setY((Game::gameHeight / 2) - (judge->h / 2));
 
 
 	Combo->setText("  ");
@@ -586,7 +586,9 @@ void Gameplay::create() {
 
 	Judgement = new Text(Game::gameWidth / 2, Game::gameHeight / 2, " ", 23 * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)), "Futura Bold");
 	Judgement->setCharacterSpacing(4.25);
-	Judgement->create();
+	judge = new AvgSprite(Judgement->x, Judgement->y, NULL);
+	judge->dontDelete = true;
+	judge->drawCall = false;
 
 	Judgement->borderColor = { 255,255,255 };
 	Judgement->border = true;
@@ -594,7 +596,8 @@ void Gameplay::create() {
 
 	Combo = new Text(Game::gameWidth / 2, (Game::gameHeight / 2) + (46 * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0))), " ", 24 * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)), "Futura Bold");
 	Combo->create();
-
+	Combo->SetFontMap(Game::instance->noteskin->fontMap);
+	Combo->fontMapSize = (0.9 + (Game::multiplierx != 1 ? Game::multiplierx : 0));
 
 	Mrv = new Text(12, (Game::gameHeight / 2) - 12 * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)), "Marvelous: 0", 24 * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)), "Futura Bold");
 	Mrv->create();
@@ -791,7 +794,7 @@ void Gameplay::create() {
 		gameplay->add(r);
 	}
 
-	add(Judgement);
+	add(judge);
 	add(Combo);
 	if (Game::save->GetBool("Show Judgement Count"))
 	{
@@ -891,10 +894,10 @@ void Gameplay::update(Events::updateEvent event)
 		positionInSong += Game::deltaTime;
 
 
-	if (Judgement->scale > 1.0)
+	if (judge->scale > 1)
 	{
-		Combo->scale = lerp(1.25, 1, scaleStart / scaleTime);
-		Judgement->scale = lerp(1.25, 1, scaleStart / scaleTime);
+		Combo->scale = lerp(1.15, 1, scaleStart / scaleTime);
+		judge->scale = lerp(1.15, 0.8, scaleStart / scaleTime);
 		scaleStart += Game::deltaTime;
 	}
 
@@ -1257,11 +1260,11 @@ void Gameplay::update(Events::updateEvent event)
 						format.erase(format.find_last_not_of('0') + 1, std::string::npos);
 						receptors[note->lane]->lightUpTimer = 195;
 						receptors[note->lane]->bot = botplay;
-						Judgement->setText("botplay");
-						(*Judgement).color.r = 0;
-						(*Judgement).color.g = 255;
-						(*Judgement).color.b = 255;
+						judge->changeOutTexture(Game::noteskin->judge_bot);
+						judge->w *= (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0));
+						judge->h *= (1 + (Game::multipliery != 1 ? Game::multipliery : 0));
 						Marvelous++;
+						judge->drawCall = true;
 						//score += Judge::scoreNote(diff);
 						updateAccuracy(1);
 						note->active = false;
@@ -1283,14 +1286,14 @@ void Gameplay::update(Events::updateEvent event)
 							highestCombo = combo;
 						if (Game::noteskin->bounce)
 						{
-							Judgement->scale = 1.15;
+							judge->scale = 1.15;
 							Combo->scale = 1.15;
 							scaleTime = 350;
 							scaleStart = 0;
 						}
 
-						Judgement->setX((Game::gameWidth / 2) - (Judgement->surfW / 2));
-						Judgement->setY((Game::gameHeight / 2));
+						judge->setX((Game::gameWidth / 2) - (judge->w / 2));
+						judge->setY((Game::gameHeight / 2) - (judge->h / 2));
 
 
 						Combo->setText(std::to_string(combo));
@@ -1594,7 +1597,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 				noteTimings[positionInSong] = diff;
 
-				judgement judge = Judge::judgeNote(diff);
+				judgement judgem = Judge::judgeNote(diff);
 				//score += Judge::scoreNote(diff);
 
 				std::string format = std::to_string(diff - fmod(diff, 0.01));
@@ -1624,62 +1627,51 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				(*Judgement).color.g = 255;
 				(*Judgement).color.b = 255;
 
-				switch (judge)
+				switch (judgem)
 				{
 					case judgement::Judge_marvelous:
-						(*Judgement).color.r = 100;
-						(*Judgement).color.g = 220;
-						(*Judgement).color.b = 225;
-						Judgement->setText("marvelous");
+						judge->changeOutTexture(Game::noteskin->judge_0);
 						Marvelous++;
 						updateAccuracy(1);
-
 						break;
 					case judgement::Judge_perfect:
-						(*Judgement).color.r = 255;
-						(*Judgement).color.g = 255;
-						(*Judgement).color.b = 0;
-						Judgement->setText("perfect");
+						judge->changeOutTexture(Game::noteskin->judge_1);
 						Perfect++;
 						updateAccuracy(0.925);
 						break;
 					case judgement::Judge_great:
-						(*Judgement).color.r = 0;
-						(*Judgement).color.g = 255;
-						(*Judgement).color.b = 0;
-						Judgement->setText("great");
+						judge->changeOutTexture(Game::noteskin->judge_2);
 						Great++;
 						updateAccuracy(0.7);
 						break;
 					case judgement::Judge_good:
-						(*Judgement).color.r = 255;
-						(*Judgement).color.g = 0;
-						(*Judgement).color.b = 0;
-						Judgement->setText("good");
+						judge->changeOutTexture(Game::noteskin->judge_3);
 						Eh++;
 						updateAccuracy(0.35);
 						break;
 					case judgement::Judge_bad:
 						combo = 0;
-						(*Judgement).color.r = 128;
-						(*Judgement).color.g = 0;
-						(*Judgement).color.b = 0;
-						Judgement->setText("bad");
+						judge->changeOutTexture(Game::noteskin->judge_4);
 						Yikes++;
 						updateAccuracy(0.1);
 						break;
 					}
 
+					judge->drawCall = true;
+					judge->w *= (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0));
+					judge->h *= (1 + (Game::multipliery != 1 ? Game::multipliery : 0));
+
 					combo++;
 					if (Game::noteskin->bounce)
 					{
-						Judgement->scale = 1.15;
+						judge->scale = 1.15;
 						Combo->scale = 1.15;
 						scaleTime = 350;
 						scaleStart = 0;
 					}
-					Judgement->setX((Game::gameWidth / 2) - (Judgement->surfW / 2));
-					Judgement->setY((Game::gameHeight / 2));
+
+					judge->setX((Game::gameWidth / 2) - (judge->w / 2));
+					judge->setY((Game::gameHeight / 2) - (judge->h / 2));
 
 					if (combo == 0)
 						Combo->setText(" ");

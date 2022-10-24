@@ -41,6 +41,12 @@ public:
 	Color borderColor;
 	float borderAlpha = 1;
 
+	int fontMapSpacing = 1;
+
+	float fontMapSize = 1;
+
+	std::map<char, Texture*> fontMap;
+
 	Shader* getShader()
 	{
 		static Shader* textShader = nullptr;
@@ -50,6 +56,16 @@ public:
 			textShader->GL_CompileShader(NULL, textFrag);
 		}
 		return textShader;
+	}
+
+	void ClearFontMap()
+	{
+		fontMap.clear();
+	}
+
+	void SetFontMap(std::map<char, Texture*> map)
+	{
+		fontMap = map;
 	}
 
 	bool alreadySet = false;

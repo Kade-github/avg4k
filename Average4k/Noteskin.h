@@ -58,12 +58,16 @@ public:
 
 	// judgements
 
+	std::map<char, Texture*> fontMap;
+
 	Texture* judge_0;
 	Texture* judge_1;
 	Texture* judge_2;
 	Texture* judge_3;
 	Texture* judge_4;
 	Texture* judge_5;
+	Texture* judge_bot;
+	Texture* num_period;
 	Texture* num_0;
 	Texture* num_1;
 	Texture* num_2;

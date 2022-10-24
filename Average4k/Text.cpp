@@ -8,6 +8,9 @@ void Text::setText(std::string temp)
 
 	text = temp;
 
+	if (fontMap.size() > 0)
+		return;
+
 	if (!alreadySet)
 		for (int i = 0; i < text.size(); i++)
 		{
@@ -73,6 +76,70 @@ void Text::setCharacterSpacing(float spacing)
 
 void Text::draw()
 {
+	if (fontMap.size() > 0)
+	{
+		// draw font map
+		Rect dstRect;
+		Rect srcRect;
+
+		int totalW = 0;
+		w = 0;
+		h = 0;
+
+		for (char c : text)
+		{
+			Texture* t = fontMap[c];
+
+			if (t == NULL)
+				continue;
+			totalW += (t->width * fontMapSize) + fontMapSpacing;
+			if (t->height * fontMapSize > h)
+				h = t->height * fontMapSize;
+		}
+		h *= scale;
+		w = totalW * scale;
+
+		srcRect.x = 0;
+		srcRect.y = 0;
+		srcRect.w = 1;
+		srcRect.h = 1;
+
+		dstRect.a = alpha;
+
+		int i = 0;
+
+		float startX = x - (totalW / 2);
+
+		for (char c : text)
+		{
+
+			dstRect.y = y;
+			Texture* t = fontMap[c];
+
+			if (t == NULL)
+			{
+				i++;
+				continue;
+			}
+
+			dstRect.x = startX;
+			float mpx = ((t->width * fontMapSize) * (1 - scale)) / 2;
+			float mpy = ((t->height * fontMapSize) * (1 - scale)) / 2;
+
+
+			dstRect.x += mpx;
+			dstRect.y += mpy;
+
+			dstRect.w = (t->width * fontMapSize) * scale;
+			dstRect.h = (t->height * fontMapSize) * scale;
+
+			startX += (t->width * fontMapSize) + fontMapSpacing;
+
+			Rendering::PushQuad(&dstRect, &srcRect, t, GL::genShader, 0);
+			i++;
+		}
+		return;
+	}
 	if (text.size() == 0 || text == " " || !message || !drawCall)
 		return;
 

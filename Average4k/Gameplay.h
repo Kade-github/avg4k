@@ -61,6 +61,8 @@ class Gameplay :
 		AvgSprite* playField;
 		AvgSprite* spriteField;
 
+		AvgSprite* judge;
+
 		float lastCall = 0;
 		float lastCallUpdates = 0;
 

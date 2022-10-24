@@ -897,7 +897,7 @@ void Gameplay::update(Events::updateEvent event)
 	if (judge->scale > 1)
 	{
 		Combo->scale = lerp(1.15, 1, scaleStart / scaleTime);
-		judge->scale = lerp(1.15, 0.8, scaleStart / scaleTime);
+		judge->scale = lerp(1.15, 1, scaleStart / scaleTime);
 		scaleStart += Game::deltaTime;
 	}
 

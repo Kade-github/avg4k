@@ -586,7 +586,7 @@ void ModManager::createFunctions()
 
 	// user types
 
-	lua->new_usertype<configMod>("config", "downscroll", &configMod::downscroll, "noteSize", &configMod::noteSize, "scrollSpeed", &configMod::scrollSpeed, "displayWidth", &configMod::displayWidth, "displayHeight", &configMod::displayHeight, &configMod::playField);
+	lua->new_usertype<configMod>("config", "downscroll", &configMod::downscroll, "noteSize", &configMod::noteSize, "scrollSpeed", &configMod::scrollSpeed, "displayWidth", &configMod::displayWidth, "displayHeight", &configMod::displayHeight, "playField", &configMod::playField);
 
 
 	configMod cm;

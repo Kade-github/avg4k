@@ -12,11 +12,10 @@ ModManager* ModManager::instance = NULL;
 struct configMod {
 	bool downscroll;
 	double noteSize;
+	double scrollSpeed;
+	int displayWidth;
+	int displayHeight;
 	std::string playField;
-	std::string col1;
-	std::string col2;
-	std::string col3;
-	std::string col4;
 };
 
 struct gameMod {
@@ -587,14 +586,16 @@ void ModManager::createFunctions()
 
 	// user types
 
-	lua->new_usertype<configMod>("config", "downscroll", &configMod::downscroll, "noteSize", &configMod::noteSize, "col1", &configMod::col1, "col2", &configMod::col2, "col3", &configMod::col3, "col4", &configMod::col4, "playField", &configMod::playField);
+	lua->new_usertype<configMod>("config", "downscroll", &configMod::downscroll, "noteSize", &configMod::noteSize, "scrollSpeed", &configMod::scrollSpeed, "displayWidth", &configMod::displayWidth, "displayHeight", &configMod::displayHeight, &configMod::playField);
 
 
 	configMod cm;
 	cm.downscroll = Game::save->GetBool("downscroll");
 	cm.noteSize = 64 * Game::save->GetDouble("Note Size");
 	cm.playField = "playField";
-
+	cm.displayHeight = Game::gameHeight;
+	cm.displayWidth = Game::gameWidth;
+	cm.scrollSpeed = Game::instance->save->GetDouble("scrollspeed");
 
 	(*lua)["config"] = cm;
 

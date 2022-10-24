@@ -307,6 +307,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 
 	SDL_GLContext gl_context = SDL_GL_CreateContext(window);
+
 	
 	int status = gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
 

@@ -34,7 +34,7 @@ void SongGather::gatherPacksAsync()
 
 		currentPack = "";
 
-		std::thread t([]() {
+		std::jthread t([]() {
 			for (const auto& entry : std::filesystem::directory_iterator("assets/charts/"))
 			{
 				if (SongUtils::IsDirectory(entry.path()))

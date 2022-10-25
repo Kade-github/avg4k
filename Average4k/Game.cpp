@@ -950,6 +950,7 @@ void Game::resizeGame(int w, int h, int fullscreen)
 	Rendering::rendH = gameHeight;
 	GL::projection = glm::ortho(0.0f, wW, wH, 0.0f, -1.0f, 1.0f);
 	GL::genShader->setProject(GL::projection);
+	whiteShader->setProject(GL::projection);
 }
 
 //asd

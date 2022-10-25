@@ -317,14 +317,13 @@ void ModManager::runMods()
 
 			if (value.isPlayField)
 			{
-				value.spr->x = x + (value.offsetX * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)));
-				value.spr->y = y + (value.offsetY * (1 + (Game::multipliery != 1 ? Game::multipliery : 0)));
+				x = anchorX + (value.movex * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)));
+				y = anchorY + (value.movey * (1 + (Game::multipliery != 1 ? Game::multipliery : 0)));
 			}
-			else
-			{
-				value.spr->x = x + value.offsetX;
-				value.spr->y = y + value.offsetY;
-			}
+
+			value.spr->x = x + value.offsetX;
+			value.spr->y = y + value.offsetY;
+			
 			value.spr->angle = rot;
 			value.spr->alpha = 1 - value.stealth;
 			value.spr->scale = 0.5 / value.mini;

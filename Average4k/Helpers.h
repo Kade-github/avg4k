@@ -2,6 +2,7 @@
 #include "Rendering.h"
 #include <chrono>
 #include <cstdint>
+#include "picosha2.h"
 #include <wtypes.h>
 class Helpers {
 public:
@@ -150,6 +151,16 @@ public:
 		// (horizontal, vertical)
 		horizontal = desktop.right;
 		vertical = desktop.bottom;
+	}
+
+	static std::string setHash(std::string file)
+	{
+		VM_START
+			std::vector<unsigned char> hash(picosha2::k_digest_size);
+		picosha2::hash256(file.begin(), file.end(), hash.begin(), hash.end());
+
+		return picosha2::bytes_to_hex_string(hash.begin(), hash.end());
+		VM_END
 	}
 
 	static bool is_number(const char* str)

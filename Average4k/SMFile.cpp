@@ -39,12 +39,15 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
 
     int lineNumber = 0;
 
+    std::string lines;
 
     while (std::getline(infile, line)) {
         std::istringstream iss(line);
         std::string s = iss.str();
         lineNumber++;
         bool cont = true;
+
+        lines += s;
 
         if (iss.str().find("//") != std::string::npos)
         {
@@ -329,6 +332,9 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
     }
     else
         dontUse = true;
+
+    meta.hash = Helpers::setHash(lines);
+
     MUTATE_END
 }
 

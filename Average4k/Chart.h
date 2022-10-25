@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <fstream>
+#include "picosha2.h"
 
 struct bpmSegment {
 	float startBeat;
@@ -59,6 +60,7 @@ struct difficulty
 
 class chartMeta {
 public:
+		std::string hash;
 		std::string songName;
 		std::string audio;
 		std::string folder;
@@ -83,13 +85,12 @@ class Chart
 		bpmSegment nextSeg;
 	public:
 
-
-
 		float BASS_OFFSET;
 
 		Chart() {};
 
 		void getInfo();
+
 
 		Chart(chartMeta m, bool checkformod = true) { 
 			meta = m;
@@ -105,6 +106,8 @@ class Chart
 				BASS_OFFSET = 0.034f * 2.5f;
 			else
 				BASS_OFFSET = 0.034f;
+
+
 
 			// get info
 

@@ -31,11 +31,13 @@ OsuFile::OsuFile(std::string path)
 
 	std::vector<difficulty> diffs;
 
+	std::string lines;
+
 	for (auto& e : std::filesystem::directory_iterator(path))
 	{
 		if (ends_with(e.path().string(), ".osu"))
 		{
-			difficulty diff = generateDiff(e.path().string(), (meta.bpms.size() == 0 ? &meta : NULL));
+			difficulty diff = generateDiff(e.path().string(), (meta.bpms.size() == 0 ? &meta : NULL), lines);
 			if (diff.name == "Not mania" && diff.notes.size() == 0)
 			{
 				std::cout << e.path() << " is not a mania chart!" << std::endl;
@@ -54,11 +56,13 @@ OsuFile::OsuFile(std::string path)
 	meta.folder = path;
 	meta.difficulties = diffs;
 
+	meta.hash = Helpers::setHash(lines);
+
 	meta.ext = Chart::split(meta.audio, '.')[1];
 	std::transform(meta.ext.begin(), meta.ext.end(), meta.ext.begin(), Helpers::asciitolower);
 }
 
-difficulty OsuFile::generateDiff(std::string file, chartMeta* toAdd)
+difficulty OsuFile::generateDiff(std::string file, chartMeta* toAdd, std::string& lines)
 {
 	std::ifstream infile(file);
 	std::string line;
@@ -73,6 +77,7 @@ difficulty OsuFile::generateDiff(std::string file, chartMeta* toAdd)
 
 	difficulty diff;
 	while (std::getline(infile, line)) {
+		lines += line;
 		if (line.size() == 0)
 			continue;
 		if (line.starts_with("/"))

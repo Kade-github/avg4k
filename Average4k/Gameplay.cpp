@@ -5,6 +5,7 @@
 #include "TweenManager.h"
 #include "MainerMenu.h"
 #include "ArrowEffects.h"
+#include "picosha2.h"
 #include "CPacketSubmitScore.h"
 
 std::mutex weirdPog;
@@ -59,8 +60,6 @@ void Gameplay::updateAccuracy(double hitWorth)
 		notesHit += hitWorth;
 		accuracy = ((notesHit / notesPlayed) * 100);
 	}
-	else
-		accuracy = 100;
 	if (accuracy < 0)
 		accuracy = 0;
 
@@ -1190,8 +1189,7 @@ void Gameplay::update(Events::updateEvent event)
 			submit.noteTiming = noteTimings;
 			submit.Order = 0;
 			submit.PacketType = eCPacketSubmitScore;
-			submit.combo = highestCombo;
-
+			submit.hash = MainerMenu::selectedSong.c.meta.hash;
 
 			if ((MainerMenu::selected.isSteam || MainerMenu::selectedSong.isSteam))
 				Multiplayer::sendMessage<CPacketSubmitScore>(submit);

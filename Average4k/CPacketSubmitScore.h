@@ -6,12 +6,12 @@ public:
 	// time, msDiff
 	std::map<float, float> noteTiming;
 
-	int combo;
-
 	long chartIndex;
 	long diffIndex;
 
 	unsigned long ChartId;
 
-	MSGPACK_DEFINE_MAP(chartIndex, ChartId);
+	std::string hash;
+
+	MSGPACK_DEFINE_MAP(chartIndex, diffIndex, ChartId, hash);
 };

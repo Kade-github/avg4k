@@ -24,7 +24,7 @@ public:
 		return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
 	}
 	OsuHeaderType getHeaderFromString(std::string s);
-	difficulty generateDiff(std::string file, chartMeta* toAdd);
+	difficulty generateDiff(std::string file, chartMeta* toAdd, std::string& lines);
 	float getBeatFromTime(float timestamp, bpmSegment seg) {
 		float result = seg.startBeat + (((((timestamp - (0.034 * 1000)) / 1000) - ((seg.startTime / 1000) - (meta.chartOffset))) * (seg.bpm / 60)));
 		return result;

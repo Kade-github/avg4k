@@ -21,6 +21,8 @@ chartMeta QuaverFile::returnChart(std::string path)
 
     bool noteStarted = false;
 
+    std::string lines;
+
     for (const auto& e : std::filesystem::directory_iterator(path))
     {
         if (!ends_with(e.path().string(), ".qua"))
@@ -55,6 +57,7 @@ chartMeta QuaverFile::returnChart(std::string path)
         bool conti = false;
 
         while (std::getline(infile, line)) {
+            lines += line;
             if (conti)
                 break;
             std::istringstream iss(line);
@@ -220,6 +223,8 @@ chartMeta QuaverFile::returnChart(std::string path)
     meta.ext = Chart::split(meta.audio, '.')[1];
     std::transform(meta.ext.begin(), meta.ext.end(), meta.ext.begin(), Helpers::asciitolower);
     
+    meta.hash = Helpers::setHash(lines);
+
     MUTATE_END
     return meta;
 }

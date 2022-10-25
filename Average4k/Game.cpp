@@ -323,6 +323,10 @@ void Game::createGame()
 	currentMenu->addCamera(mainCamera);
 	currentMenu->create();
 
+	whiteShader = new Shader();
+	whiteShader->GL_CompileShader(white_vert, white_frag);
+	whiteShader->setProject(GL::projection);
+
 	resizeGame(res[0], res[1], fs);
 
 	currentMenu->created = true;
@@ -351,9 +355,6 @@ void Game::createGame()
 	multi = new Multiplayer();
 	multiThreadHandle = CreateThread(NULL, NULL, Multiplayer::connect, NULL, NULL, NULL);
 
-	whiteShader = new Shader();
-	whiteShader->GL_CompileShader(white_vert, white_frag);
-	whiteShader->setProject(GL::projection);
 
 	VM_END
 }

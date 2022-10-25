@@ -826,7 +826,7 @@ void MainerMenu::update(Events::updateEvent ev)
 	}
 
 	moreInfo->clipRect.x = soloContainer->x;
-	moreInfo->clipRect.y = 160;
+	moreInfo->clipRect.y = soloContainer->y;
 	moreInfo->clipRect.w = soloContainer->w;
 	moreInfo->clipRect.h = soloContainer->h;
 

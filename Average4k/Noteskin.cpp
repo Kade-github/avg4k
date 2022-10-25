@@ -246,12 +246,10 @@ noteskin_asset* loadSkin(noteskin_asset* as, std::string typ, bool appendPath = 
 
 	std::string path = pat + Noteskin::type;
 
+	if (!Helpers::file_exists(path + "/judgements")) // default to arrow
+		path =  "assets/noteskin/arrow";
+
 	as->judge_0 = getAsset(path + "/judgements/judge_0.png");
-	if (as->judge_0->width == 0)
-	{
-		path = pat + "/arrow";
-		as->judge_0 = getAsset(path + "/judgements/judge_0.png");
-	}
 	as->judge_1 = getAsset(path + "/judgements/judge_1.png");
 	as->judge_2 = getAsset(path + "/judgements/judge_2.png");
 	as->judge_3 = getAsset(path + "/judgements/judge_3.png");

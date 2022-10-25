@@ -315,8 +315,16 @@ void ModManager::runMods()
 			float y = anchorY + value.movey;
 			float rot = value.spr->defRot + value.confusion;
 
-			value.spr->x = x + value.offsetX;
-			value.spr->y = y + value.offsetY;
+			if (value.isPlayField)
+			{
+				value.spr->x = x + (value.offsetX * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)));
+				value.spr->y = y + (value.offsetY * (1 + (Game::multipliery != 1 ? Game::multipliery : 0)));
+			}
+			else
+			{
+				value.spr->x = x + value.offsetX;
+				value.spr->y = y + value.offsetY;
+			}
 			value.spr->angle = rot;
 			value.spr->alpha = 1 - value.stealth;
 			value.spr->scale = 0.5 / value.mini;
@@ -873,6 +881,7 @@ void ModManager::createFunctions()
 			return;
 		std::string path = instance->assetPath + "/" + noteskinName;
 		Game::noteskin = Noteskin::getNoteskin(path);
+		Gameplay::instance->Combo->SetFontMap(Game::noteskin->fontMap);
 	});
 
 }

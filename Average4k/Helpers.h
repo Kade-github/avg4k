@@ -3,6 +3,7 @@
 #include <chrono>
 #include <cstdint>
 #include "picosha2.h"
+#include <sys/stat.h>
 #include <wtypes.h>
 class Helpers {
 public:
@@ -151,6 +152,11 @@ public:
 		// (horizontal, vertical)
 		horizontal = desktop.right;
 		vertical = desktop.bottom;
+	}
+
+	static bool file_exists(const std::string& name) {
+		struct stat buffer;
+		return (stat(name.c_str(), &buffer) == 0);
 	}
 
 	static std::string setHash(std::string file)

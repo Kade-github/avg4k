@@ -425,12 +425,13 @@ void selectedSongCallback(int sId)
 	cont->addObject(leaderboardPt2, "leadpt2");
 
 	AvgContainer* leaderboard = new AvgContainer(725, 24, NULL);
+	leaderboard->drawBG = false;
 
 	Text* leaderboardText = new Text(0,0, "Online Leaderboard", 18, "arialbd");
 	if (!MainerMenu::selectedSong.isSteam)
 		leaderboardText->text = "Local Leaderboard";
 
-	Text* leaderboardStatus = new Text(0, 24, "Obtaining scores...", 14, "ariali");
+	Text* leaderboardStatus = new Text(0, 24, "Obtaining scores...", 14, "arial");
 
 	leaderboardText->setCharacterSpacing(3);
 

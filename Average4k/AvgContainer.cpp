@@ -125,7 +125,7 @@ void AvgContainer::draw() {
 	if (autoClip)
 		if (clipRect.w > 0 || clipRect.h > 0)
 			Rendering::SetClipRect(NULL);
-	if (tex != nullptr)
+	if (drawBG)
 		Rendering::PushQuad(&dstRect, &srcRect, tex, GL::genShader, angle);
 	if (shouldUseCallback)
 	{

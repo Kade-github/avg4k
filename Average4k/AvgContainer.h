@@ -25,6 +25,8 @@ public:
 
 	bool autoClip = true;
 
+	bool drawBG = true;
+
 	bool active = true;
 	bool topAlphas = true;
 

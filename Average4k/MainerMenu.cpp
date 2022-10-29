@@ -86,6 +86,15 @@ void shittyShitShit(std::string s)
 	menu->createNewLobbies(s);
 }
 
+
+// Hit graph
+
+void selectThing(int mx, int my)
+{
+
+}
+
+
 void shittyCreateLobby(std::string s)
 {
 	MainerMenu* menu = (MainerMenu*)Game::instance->currentMenu;
@@ -166,7 +175,7 @@ void updateLeaderboard(std::vector<LeaderboardEntry> entries, bool online)
 
 		foundAnything = true;
 
-		float tY = st->y + 14 + (42 * realInd);
+		float tY = st->y + 14 + (34 * realInd);
 
 		AvgContainer* cont = new AvgContainer(0, tY, NULL);
 		
@@ -174,15 +183,26 @@ void updateLeaderboard(std::vector<LeaderboardEntry> entries, bool online)
 		cont->w = leaderboard->w;
 		cont->h = 52;
 
+		cont->shouldUseCallback = true;
+		cont->callback = selectThing;
+
 		// crop the name
 
 		std::string name = e.username;
 
-		if (name.size() > 18)
+		if (name.size() > 20)
 			name = name.substr(0, 18) + "...";
 
 
 		Text* guy = new Text(8, 0, name, 16, "arialbd");
+
+		if (e.steamid == "76561198037519280" || e.steamid == "76561198128002669")
+		{
+			guy->color = { 150, 255, 255 };
+			guy->borderSize = 2;
+			guy->border = true;
+			guy->borderColor = { 0,0,0 };
+		}
 
 		cont->addObject(guy, "lead_name_" + e.steamid);
 

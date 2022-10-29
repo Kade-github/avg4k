@@ -462,6 +462,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="AvgDropDown.h" />
     <ClInclude Include="AvgFrame.h" />
     <ClInclude Include="AvgGroup.h" />
+    <ClInclude Include="AvgHitGraph.h" />
     <ClInclude Include="AvgRect.h" />
     <ClInclude Include="AvgTextBox.h" />
     <ClInclude Include="AvgSprite.h" />

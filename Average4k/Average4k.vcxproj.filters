@@ -740,6 +740,9 @@
     <ClInclude Include="picosha2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AvgHitGraph.h">
+      <Filter>Source Files\Average4k\Objects\UIObjects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Average4k.rc">

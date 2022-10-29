@@ -140,6 +140,7 @@ public:
 		str.erase(str.find_last_not_of(charToRemove) + 1, std::string::npos);
 	}
 
+
 	static void GetDesktopResolution(int& horizontal, int& vertical)
 	{
 		RECT desktop;

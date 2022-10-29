@@ -302,20 +302,18 @@ std::vector<std::string> SaveFile::ObtainDropDownSettingList(std::string set)
         resolutions.push_back({ 1920,1080 });
         resolutions.push_back({ 2048,1080 });
         resolutions.push_back({ 2560,1440 });
-        resolutions.push_back({ 3840,2160 });
-        resolutions.push_back({ 7680,4320 });
+        resolutions.push_back({ mw,mh });
+
 
         for (int i = 0; i < resolutions.size(); i++)
         {
             int w, h;
             w = resolutions[i][0];
             h = resolutions[i][1];
-            if (w < mw && h < mh)
-            {
-                resStrings.push_back(std::to_string(w) + "x" + std::to_string(h));
-            }
+            std::string s = std::to_string(w) + "x" + std::to_string(h);
+            if (std::find(resStrings.begin(), resStrings.end(), s) == resStrings.end())
+                resStrings.push_back(s);
         }
-        resStrings.push_back(std::to_string(mw) + "x" + std::to_string(mh));
 
         return resStrings;
     }

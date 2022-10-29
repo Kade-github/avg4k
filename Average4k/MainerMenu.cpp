@@ -2148,6 +2148,7 @@ void MainerMenu::createNewLobbies(std::string searchTerm)
 			if (name.find(search) == std::string::npos)
 				continue;
 		AvgContainer* cont = new AvgContainer(0, 92 * ind, NULL);
+		cont->drawBG = false;
 		cont->callback = lobbySelectedCallback;
 		cont->w = lobbyContainer->w;
 		cont->h = 92;

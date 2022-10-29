@@ -277,6 +277,9 @@ public:
 
 					std::cout << "Bass error! " << error << std::endl;
 					std::free(buff);
+					threadLoaded = NULL;
+					isThreadDone = true;
+					threadPath = path;
 					return new Channel(-1);
 				}
 

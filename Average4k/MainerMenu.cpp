@@ -13,6 +13,7 @@
 #include "CPacketJoinServer.h"
 #include "SPacketFuckYou.h"
 #include "CPacketHostServer.h"
+#include "AvgHitGraph.h"
 AvgContainer* MainerMenu::soloContainer;
 AvgContainer* MainerMenu::multiContainer;
 AvgContainer* MainerMenu::settingsContainer;
@@ -24,6 +25,7 @@ Pack steamWorkshop;
 
 int scrollLeaderboard = 0;
 
+std::map<std::string, LeaderboardEntry> leaderboardScores;
 
 bool MainerMenu::isInMainerMenu = false;
 
@@ -63,7 +65,6 @@ bool MainerMenu::moreinfo = false;
 
 bool chartUploading = false;
 
-
 int lastTrans = 0;
 int transToContainer = 0;
 int despawn = 0;
@@ -89,9 +90,26 @@ void shittyShitShit(std::string s)
 
 // Hit graph
 
-void selectThing(int mx, int my)
+void selectThing(int mx, int my, Object* o)
 {
+	AvgContainer* moreInf = (AvgContainer*)MainerMenu::soloContainer->findItemByName("moreInfo");
+	AvgHitGraph* graph = (AvgHitGraph*)moreInf->findItemByName("hitGraph");
+	AvgContainer* c = (AvgContainer*)o;
+	std::string id = "";
+	for (itemId i : c->items)
+	{
+		if (i.name.starts_with("lead_name_"))
+			id = i.name.substr(i.name.find_last_of("_") + 1, i.name.size());
+	}
 
+	for (auto c : leaderboardScores)
+	{
+		if (c.second.steamid == id)
+		{
+			graph->dataPoints = c.second.noteTiming;
+			return;
+		}
+	}
 }
 
 
@@ -118,8 +136,7 @@ std::vector<LeaderboardEntry> convertLocalToOnline(std::vector<scoreHeader> scor
 	for (scoreHeader score : scores)
 	{
 		LeaderboardEntry e;
-		e.accuracy = score.a;
-		e.combo = score.c;
+		e.accuracy = score.a / 100;
 		e.username = name;
 		e.steamid = id;
 		e.online = false;
@@ -132,6 +149,8 @@ std::vector<LeaderboardEntry> convertLocalToOnline(std::vector<scoreHeader> scor
 
 void updateLeaderboard(std::vector<LeaderboardEntry> entries, bool online)
 {
+	leaderboardScores.clear();
+
 	// Find the "MoreInfo" container
 	AvgContainer* moreInf = (AvgContainer*)MainerMenu::soloContainer->findItemByName("moreInfo");
 
@@ -157,6 +176,8 @@ void updateLeaderboard(std::vector<LeaderboardEntry> entries, bool online)
 
 		if ((online && !e.online) || (!online && e.online))
 			continue;
+
+		leaderboardScores[e.steamid] = e;
 
 		int combo = 0;
 
@@ -214,7 +235,7 @@ void updateLeaderboard(std::vector<LeaderboardEntry> entries, bool online)
 
 		cont->addObject(guyCombo, "lead_combo_" + e.steamid);
 
-		leaderboard->addObject(cont, "lead_" + std::to_string(realInd));
+		leaderboard->addObject(cont, e.steamid);
 	}
 
 	if (foundAnything)
@@ -337,10 +358,10 @@ void selectedSongCallback(int sId)
 		Texture* cd = Texture::createWithImage(s.c.meta.folder + "/" + s.c.meta.cdtitle);
 		AvgSprite* cdTitle = new AvgSprite(24, 50, cd);
 
-		if (cdTitle->w > 241)
-			cdTitle->w = 241;
-		if (cdTitle->h > 241)
-			cdTitle->h = 241;
+		if (cdTitle->w > 168)
+			cdTitle->w = 168;
+		if (cdTitle->h > 168)
+			cdTitle->h = 168;
 
 		moreInf->addObject(cdTitle, "cdTitle");
 	}
@@ -558,6 +579,7 @@ void selectedSongCallback(int sId)
 
 		req.chartId = (MainerMenu::selected.isSteam ? MainerMenu::selected.steamId : MainerMenu::selectedSong.steamId);
 		req.chartIndex = (MainerMenu::selected.isSteam ? MainerMenu::packSongIndex : -1);
+		req.diffIndex = MainerMenu::selectedDiffIndex;
 		req.Order = 0;
 		req.PacketType = eCPacketLeaderboardRequest;
 
@@ -565,6 +587,12 @@ void selectedSongCallback(int sId)
 	}
 	else
 		updateLeaderboard(convertLocalToOnline(scores), false);
+
+
+	AvgHitGraph* graph = new AvgHitGraph(192, 24, leaderboard->x - 192, 150);
+
+	moreInf->addObject(graph, "hitGraph");
+
 	MUTATE_END
 }
 
@@ -1224,6 +1252,49 @@ void updateDiff()
 	techT->setText("Techical: " + std::to_string(tech) + "%");
 	avgNPS->setText("Average NPS: " + std::to_string((int)nps));
 	maxNPS->setText("Max NPS: " + std::to_string((int)maxNps));
+
+	Object* o = moreInf->findItemByName("leadContainer");
+
+	if (o != NULL)
+		moreInf->removeObject(o);
+
+	AvgContainer* leaderboard = new AvgContainer(moreInf->w - (cont->w * 2), 24, NULL);
+	leaderboard->w = moreInf->w - leaderboard->x - cont->w;
+	leaderboard->h = moreInf->h;
+	leaderboard->drawBG = false;
+
+	Text* leaderboardText = new Text(0, 0, "Online Leaderboard", 18, "arialbd");
+	if (!MainerMenu::selectedSong.isSteam)
+		leaderboardText->text = "Local Leaderboard";
+
+	Text* leaderboardStatus = new Text(0, 24, "Obtaining scores...", 14, "ariali");
+
+	leaderboardText->setCharacterSpacing(3);
+
+	leaderboardText->x = (leaderboard->w / 2) - (leaderboardText->w / 2);
+	leaderboardStatus->x = (leaderboard->w / 2) - (leaderboardStatus->w / 2);
+
+	leaderboard->addObject(leaderboardText, "leadText");
+	leaderboard->addObject(leaderboardStatus, "leadStatusText");
+
+	moreInf->addObject(leaderboard, "leadContainer");
+
+	std::vector<scoreHeader> scores = Game::instance->save->getScores(MainerMenu::selectedSong.c.meta.songName, MainerMenu::selectedSong.c.meta.artist, MainerMenu::selectedSong.steamId, MainerMenu::wheel->selectedIndex, MainerMenu::selectedDiffIndex);
+	if (MainerMenu::selectedSong.isSteam)
+	{
+		// request leaderboard info
+		CPacketLeaderboardRequest req;
+
+		req.chartId = (MainerMenu::selected.isSteam ? MainerMenu::selected.steamId : MainerMenu::selectedSong.steamId);
+		req.chartIndex = (MainerMenu::selected.isSteam ? MainerMenu::packSongIndex : -1);
+		req.diffIndex = MainerMenu::selectedDiffIndex;
+		req.Order = 0;
+		req.PacketType = eCPacketLeaderboardRequest;
+
+		Multiplayer::sendMessage<CPacketLeaderboardRequest>(req);
+	}
+	else
+		updateLeaderboard(convertLocalToOnline(scores), false);
 	MUTATE_END
 }
 
@@ -2010,7 +2081,7 @@ void transContainerThing()
 	}
 }
 
-void lobbySelectedCallback(int mx, int my)
+void lobbySelectedCallback(int mx, int my, Object* o)
 {
 	MainerMenu* menu = (MainerMenu*)Game::instance->currentMenu;
 	if (menu->isInLobby || SongGather::steamRegAsyncAlready)

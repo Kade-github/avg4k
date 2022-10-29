@@ -1185,7 +1185,7 @@ void Gameplay::update(Events::updateEvent event)
 			CPacketSubmitScore submit;
 
 			submit.ChartId = (MainerMenu::selected.isSteam ? MainerMenu::selected.steamId : MainerMenu::selectedSong.steamId);
-			submit.chartIndex = (MainerMenu::selected.isSteam ? MainerMenu::packSongIndex : -1);
+			submit.chartIndex = MainerMenu::packSongIndex;
 			submit.noteTiming = noteTimings;
 			submit.Order = 0;
 			submit.PacketType = eCPacketSubmitScore;

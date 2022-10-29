@@ -10,7 +10,7 @@ struct itemId {
 	bool below;
 };
 
-typedef void(__cdecl* clickHoverCallback)(int, int);
+typedef void(__cdecl* clickHoverCallback)(int, int, Object*);
 
 class AvgContainer : public Object
 {
@@ -22,6 +22,9 @@ public:
 	float scrollProg = 0;
 	float scrollAddition = 0;
 	float maxScroll = 0;
+
+	float drawX = 0;
+	float drawY = 0;
 
 	bool autoClip = true;
 
@@ -165,19 +168,12 @@ public:
 			Game::GetMousePos(&mx, &my);
 			float scrll = ((AvgContainer*)parent)->scrollAddition;
 
-			int relX = mx - parent->x;
-			int relY = my - parent->y + scrll;
+			int relX = mx;
+			int relY = my;
 
-			if (((AvgContainer*)parent)->parent != NULL)
+			if ((relX > drawX && relY > drawY) && (relX < drawX + w && relY < drawY + h))
 			{
-				AvgContainer* parentParent = (AvgContainer*)((AvgContainer*)parent)->parent;
-				relX -= parentParent->x;
-				relY -= parentParent->y;
-			}
-
-			if ((relX > x && relY > y) && (relX < x + w && relY < y + h))
-			{
-				callback(mx,my);
+				callback(mx,my, this);
 			}
 		}
 		for (Object* obj : above)

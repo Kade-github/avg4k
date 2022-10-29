@@ -54,6 +54,8 @@ void AvgContainer::mouseWheel(float amount)
 void AvgContainer::draw() {
 	if (!active)
 		return;
+	drawX = x;
+	drawY = y;
 	if (autoClip)
 	{
 		clipRect.x = x + 1;
@@ -158,6 +160,9 @@ void AvgContainer::draw() {
 			Rendering::SetClipRect(NULL);
 	if (drawBG)
 		Rendering::PushQuad(&dstRect, &srcRect, tex, GL::genShader, angle);
+
+	if (clipRect.w > 0 || clipRect.h > 0)
+		Rendering::SetClipRect(&clipRect);
 	if (shouldUseCallback)
 	{
 		int mx, my;
@@ -169,9 +174,6 @@ void AvgContainer::draw() {
 			dstRect.a = alpha;
 		}
 	}
-
-	if (clipRect.w > 0 || clipRect.h > 0)
-		Rendering::SetClipRect(&clipRect);
 
 	if (scroll && !fail)
 	{

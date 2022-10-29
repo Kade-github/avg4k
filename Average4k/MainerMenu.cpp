@@ -18,8 +18,6 @@ AvgContainer* MainerMenu::multiContainer;
 AvgContainer* MainerMenu::settingsContainer;
 AvgContainer* MainerMenu::testWorkshop;
 
-
-
 std::mutex packMutex;
 
 Pack steamWorkshop;
@@ -70,6 +68,7 @@ int lastTrans = 0;
 int transToContainer = 0;
 int despawn = 0;
 
+
 void refreshLobbies() {
 	VM_START
 	std::cout << "refreshing lobbies" << std::endl;
@@ -114,6 +113,7 @@ std::vector<LeaderboardEntry> convertLocalToOnline(std::vector<scoreHeader> scor
 		e.combo = score.c;
 		e.username = name;
 		e.steamid = id;
+		e.online = false;
 		e.noteTiming = score.t;
 		entries.push_back(e);
 	}
@@ -121,11 +121,96 @@ std::vector<LeaderboardEntry> convertLocalToOnline(std::vector<scoreHeader> scor
 	return entries;
 }
 
-void updateLeaderboard(std::vector<LeaderboardEntry> entries)
+void updateLeaderboard(std::vector<LeaderboardEntry> entries, bool online)
 {
+	// Find the "MoreInfo" container
 	AvgContainer* moreInf = (AvgContainer*)MainerMenu::soloContainer->findItemByName("moreInfo");
 
+	// Find the text object "leadStatusText" in the "leadContainer" container
 
+	AvgContainer* leaderboard = (AvgContainer*)moreInf->findItemByName("leadContainer");
+
+	Text* st = (Text*)leaderboard->findItemByName("leadStatusText");
+	Text* leadText = (Text*)leaderboard->findItemByName("leadText");
+
+	// Variable for later
+
+	bool foundAnything = false;
+
+	// Start looping through all of the entires on the leaderboard we are **adding** (we don't clear this list in the function, it auto does that when it gets destroyed)
+
+	for (int i = 0; i < entries.size(); i++)
+	{
+		// The real index is moreInfo item size - 2 because we are accounting for the two texts at the top. (then we add I because we want to advance the index everytime we loop)
+		int realInd = (leaderboard->items.size() - 2) + i;
+
+		LeaderboardEntry e = entries[i];
+
+		if ((online && !e.online) || (!online && e.online))
+			continue;
+
+		int combo = 0;
+
+		int highestCombo = 0;
+
+		for (auto v : e.noteTiming)
+		{
+			if (v.second >= Judge::hitWindows[3] || v.second <= -Judge::hitWindows[3])
+			{
+				highestCombo = combo;
+				combo = 0;
+			}
+			else
+				combo++;
+		}
+
+		foundAnything = true;
+
+		float tY = st->y + 14 + (42 * realInd);
+
+		AvgContainer* cont = new AvgContainer(0, tY, NULL);
+		
+		cont->drawBG = false;
+		cont->w = leaderboard->w;
+		cont->h = 52;
+
+		// crop the name
+
+		std::string name = e.username;
+
+		if (name.size() > 18)
+			name = name.substr(0, 18) + "...";
+
+
+		Text* guy = new Text(8, 0, name, 16, "arialbd");
+
+		cont->addObject(guy, "lead_name_" + e.steamid);
+
+		Text* guyAcc = new Text(8, 16, std::to_string(e.accuracy * 100) + "%", 16, "arial");
+
+		cont->addObject(guyAcc, "lead_acc_" + e.steamid);
+
+		Text* guyCombo = new Text(8, 32, std::to_string(highestCombo) + "x", 16, "arial");
+
+		cont->addObject(guyCombo, "lead_combo_" + e.steamid);
+
+		leaderboard->addObject(cont, "lead_" + std::to_string(realInd));
+	}
+
+	if (foundAnything)
+	{
+		// Set the "obtaining scores..." text to not draw... cuz we got the scores
+
+		st->drawCall = false;
+	}
+	else
+	{
+		if (leaderboard->items.size() <= 2)
+		{
+			st->setText("Couldn't find any scores!");
+			st->x = (leaderboard->w / 2) - (st->w / 2);
+		}
+	}
 }
 
 void resetStuff()
@@ -424,14 +509,16 @@ void selectedSongCallback(int sId)
 	cont->addObject(leaderboardPt1, "leadpt1");
 	cont->addObject(leaderboardPt2, "leadpt2");
 
-	AvgContainer* leaderboard = new AvgContainer(725, 24, NULL);
+	AvgContainer* leaderboard = new AvgContainer(moreInf->w - (cont->w * 2), 24, NULL);
+	leaderboard->w = moreInf->w - leaderboard->x - cont->w;
+	leaderboard->h = moreInf->h;
 	leaderboard->drawBG = false;
 
 	Text* leaderboardText = new Text(0,0, "Online Leaderboard", 18, "arialbd");
 	if (!MainerMenu::selectedSong.isSteam)
 		leaderboardText->text = "Local Leaderboard";
 
-	Text* leaderboardStatus = new Text(0, 24, "Obtaining scores...", 14, "arial");
+	Text* leaderboardStatus = new Text(0, 24, "Obtaining scores...", 14, "ariali");
 
 	leaderboardText->setCharacterSpacing(3);
 
@@ -442,17 +529,28 @@ void selectedSongCallback(int sId)
 	leaderboard->addObject(leaderboardStatus, "leadStatusText");
 
 	moreInf->addObject(leaderboard, "leadContainer");
-	if (!MainerMenu::selectedSong.isSteam)
-	{
-		std::vector<scoreHeader> scores = Game::instance->save->getScores(MainerMenu::selectedSong.c.meta.songName, MainerMenu::selectedSong.c.meta.artist, MainerMenu::selectedSong.steamId, MainerMenu::wheel->selectedIndex, MainerMenu::selectedDiffIndex);
-		updateLeaderboard(convertLocalToOnline(scores));
-	}
 
+	std::vector<scoreHeader> scores = Game::instance->save->getScores(MainerMenu::selectedSong.c.meta.songName, MainerMenu::selectedSong.c.meta.artist, MainerMenu::selectedSong.steamId, MainerMenu::wheel->selectedIndex, MainerMenu::selectedDiffIndex);
+	if (MainerMenu::selectedSong.isSteam)
+	{
+		// request leaderboard info
+		CPacketLeaderboardRequest req;
+
+		req.chartId = (MainerMenu::selected.isSteam ? MainerMenu::selected.steamId : MainerMenu::selectedSong.steamId);
+		req.chartIndex = (MainerMenu::selected.isSteam ? MainerMenu::packSongIndex : -1);
+		req.Order = 0;
+		req.PacketType = eCPacketLeaderboardRequest;
+
+		Multiplayer::sendMessage<CPacketLeaderboardRequest>(req);
+	}
+	else
+		updateLeaderboard(convertLocalToOnline(scores), false);
 	MUTATE_END
 }
 
 void MainerMenu::create()
 {
+	Judge::initJudge();
 	if (Noteskin::type != Game::save->GetString("Noteskin"))
 	{
 		Noteskin::resetNoteskin(Game::noteskin);
@@ -950,6 +1048,8 @@ void MainerMenu::update(Events::updateEvent ev)
 		}
 		icon->h = 47;
 		icon->w = 47;
+		icon->x = border->x;
+		icon->y = border->y;
 		Tweening::TweenManager::createNewTween("icons", icon, Tweening::tt_Alpha, 600, 0, 1, NULL, Easing::EaseInSine);
 	}
 
@@ -1124,10 +1224,6 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 
 			if (moreinfo)
 			{
-				if (selectedSong.isSteam)
-				{
-					// request leaderboard info
-				}
 				Tweening::TweenManager::createNewTween("tab", moreInf, Tweening::TweenType::tt_X, 1000, moreInf->x, 0, NULL, Easing::EaseOutCubic);
 			}
 			else
@@ -1822,6 +1918,11 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 
 		obj.convert(res);
 
+		for (LeaderboardEntry& e : res.leaderboard.entries)
+			e.online = true;
+
+		updateLeaderboard(res.leaderboard.entries, true);
+
 		break;
 	}
 }
@@ -2231,14 +2332,6 @@ void MainerMenu::selectContainer(int container)
 		moreinfo = false;
 
 		scrollLeaderboard = 0;
-
-		for (LeaderboardResult r : leaderboardResults)
-		{
-			delete r.name;
-			delete r.accuracy;
-		}
-
-		leaderboardResults.clear();
 	}
 
 	if (container == 2)

@@ -7,6 +7,10 @@
 #define PI 3.1415926545
 #endif
 
+double easeLinear(double t) {
+    return t;
+}
+
 double easeInSine(double t) {
     return sin(1.5707963 * t);
 }
@@ -184,6 +188,7 @@ Easing::easingFunction Easing::getEasingFunction(easing_functions function)
     static std::map< easing_functions, easingFunction > easingFunctions;
     if (easingFunctions.empty())
     {
+        easingFunctions.insert(std::make_pair(EaseLinear, easeInSine));
         easingFunctions.insert(std::make_pair(EaseInSine, easeInSine));
         easingFunctions.insert(std::make_pair(EaseOutSine, easeOutSine));
         easingFunctions.insert(std::make_pair(EaseInOutSine, easeInOutSine));
@@ -226,6 +231,7 @@ Easing::easingFunction Easing::getEasingFunction(std::string function)
     static std::map<std::string,easingFunction> easingFunctions;
     if (easingFunctions.empty())
     {
+        easingFunctions.insert(std::make_pair("linear", easeLinear));
         easingFunctions.insert(std::make_pair("insine", easeInSine));
         easingFunctions.insert(std::make_pair("outsine", easeOutSine));
         easingFunctions.insert(std::make_pair("inoutsine", easeInOutSine));

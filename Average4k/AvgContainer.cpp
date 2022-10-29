@@ -4,35 +4,47 @@
 
 void AvgContainer::mouseWheel(float amount)
 	{
-		if (!active || MainerMenu::moreinfo)
-			return;
-		int mx, my;
-		Game::GetMousePos(&mx, &my);
-
-		int pH = h;
-
-		float realX = x;
-		float realY = y;
-
-		if (parent != NULL)
+		if (active)
 		{
-			pH = parent->h;
-			realX += parent->x;
-			realY += parent->y;
-		}
+			int mx, my;
+			Game::GetMousePos(&mx, &my);
 
-		bool one = (mx < realX + w && mx > realX);
-		bool two = (my < realY + pH && my > realY);
-		if (one && two && maxScroll > 0)
-		{
-			float max = (h - 15) - scrollAddition;
-			scrollAddition += -(amount * 40);
-			if (scrollAddition > maxScroll)
-				scrollAddition = maxScroll;
-			if (scrollAddition < 0)
-				scrollAddition = 0;
-		}
+			int pH = h;
 
+			float realX = x;
+			float realY = y;
+
+			if (parent != NULL)
+			{
+				int totalX = 0;
+				int totalY = 0;
+
+				Object* o = parent;
+
+				while (o != NULL)
+				{
+					totalX += o->x;
+					totalY += o->y;
+					o = o->parent;
+				}
+
+				pH = parent->h;
+				realX += totalX;
+				realY += totalY;
+			}
+
+			bool one = (mx < realX + w && mx > realX);
+			bool two = (my < realY + pH && my > realY);
+			if (one && two && maxScroll > 0)
+			{
+				float max = (h - 15) - scrollAddition;
+				scrollAddition += -(amount * 40);
+				if (scrollAddition > maxScroll)
+					scrollAddition = maxScroll;
+				if (scrollAddition < 0)
+					scrollAddition = 0;
+			}
+		}
 		for (Object* obj : above)
 		{
 			obj->mouseWheel(amount);
@@ -48,6 +60,25 @@ void AvgContainer::draw() {
 		clipRect.y = y + 1;
 		clipRect.w = w - 2;
 		clipRect.h = h - 2;
+
+		if (parent != NULL)
+		{
+			AvgContainer* c = (AvgContainer*)parent;
+			if (clipRect.x < (c->clipRect.x))
+				clipRect.x = c->clipRect.x;
+			if (clipRect.y < (c->clipRect.y))
+				clipRect.y = c->clipRect.y;
+
+			if (clipRect.x > (c->clipRect.x + c->w))
+				clipRect.x = c->clipRect.x;
+			if (clipRect.y > (c->clipRect.y + c->h))
+				clipRect.y = c->clipRect.y;
+
+			if (clipRect.x + clipRect.w > c->x + c->w)
+				clipRect.w = (c->x + c->w) - (clipRect.x + clipRect.w);
+			if (clipRect.y + clipRect.h > c->y + c->h)
+				clipRect.h = (c->y + c->y) - (clipRect.y + clipRect.h);
+		}
 	}
 
 
@@ -139,10 +170,8 @@ void AvgContainer::draw() {
 		}
 	}
 
-	if (!autoClip)
-		if (clipRect.w > 0 || clipRect.h > 0)
-			Rendering::SetClipRect(NULL);
-
+	if (clipRect.w > 0 || clipRect.h > 0)
+		Rendering::SetClipRect(&clipRect);
 
 	if (scroll && !fail)
 	{
@@ -199,8 +228,6 @@ void AvgContainer::draw() {
 	}
 
 
-	if (clipRect.w > 0 || clipRect.h > 0)
-		Rendering::SetClipRect(&clipRect);
 	AvgDropDown* activeDrop = NULL;
 	dropDownActive = false;
 	for (Object* a : above)

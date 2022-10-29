@@ -14,6 +14,8 @@ public:
 
 	std::string steamid;
 
+	bool online;
+
 	MSGPACK_DEFINE_MAP(accuracy, username, steamid);
 };
 

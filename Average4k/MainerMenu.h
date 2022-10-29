@@ -12,12 +12,6 @@
 #include "SPacketLeaderboardResponse.h"
 // Objects
 #include "AvgWheel.h"
-struct LeaderboardResult {
-	LeaderboardEntry entry;
-	Text* name;
-	Text* accuracy;
-	AvgSprite* icon;
-};
 
 class PackObject : public Object
 {
@@ -204,7 +198,6 @@ public:
 	int peopleWhoHaveChart = 0;
 	int peopleWhoNeedChart = 0;
 
-	std::vector<LeaderboardResult> leaderboardResults;
 
 	AvgContainer* currentContainer;
 

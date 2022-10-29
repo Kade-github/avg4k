@@ -4,6 +4,7 @@ class Easing {
 	public:
 	enum easing_functions
 	{
+			EaseLinear,
 			EaseInSine,
 			EaseOutSine,
 			EaseInOutSine,

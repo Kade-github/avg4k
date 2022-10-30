@@ -63,6 +63,7 @@ struct AppliedMod {
 class ModManager
 {
 public:
+	bool isInEditor = false;
 	bool killed = false;
 	static ModManager* instance;
 

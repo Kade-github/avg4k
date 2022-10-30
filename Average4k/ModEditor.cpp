@@ -47,12 +47,20 @@ void ModEditor::create()
 	currentTime = 0;
 	song->setPos(0);
 
+	if (Noteskin::type != Game::save->GetString("Noteskin"))
+	{
+		Noteskin::resetNoteskin(Game::noteskin);
+		Game::noteskin = Noteskin::getNoteskin();
+	}
+
 	ArrowEffects::resetEffects();
 
 	ModManager::doMods = true;
 	ModManager::initLuaFunctions();
 	manager = ModManager(currentChart->pathToLua);
+	manager.cam = cam;
 	manager.instance = &manager;
+	manager.isInEditor = true;
 	created = true;
 
 
@@ -62,7 +70,7 @@ void ModEditor::create()
 
 		int index = i + 1;
 		r = new ReceptorObject(
-			((Game::gameWidth / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * i), (Game::gameHeight / 2) - 300, i);
+			(640 - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * i), 60, i);
 		r->lightUpTimer = 0;
 		r->create();
 		r->currentChart = *currentChart;
@@ -77,19 +85,28 @@ void ModEditor::create()
 	}
 
 	playField = new AvgSprite(0, 0, gameplay->ctb);
-	gameplay->fuckingNo = true;
+	playField->w = Game::gameWidth;
+	playField->h = Game::gameHeight;
 	playField->flip = true;
 	playField->dontDelete = true;
+	gameplay->fuckingNo = true;
+;
 
 	if (!manager.killed)
+	{
+		spriteField = new AvgSprite(0, 0, manager.spriteCamera->ctb);
+		spriteField->w = Game::gameWidth;
+		spriteField->h = Game::gameHeight;
+		spriteField->flip = true;
+		spriteField->dontDelete = true;
 		add(manager.spriteCamera);
+		manager.spriteCamera->fuckingNo = true;
+		add(spriteField);
+	}
 
-	playField->drawLast = true;
 	add(gameplay);
 
 	add(playField);
-
-	manager.cam = cam;
 
 	SpriteMod mod;
 	mod.anchor = "";
@@ -133,11 +150,17 @@ void ModEditor::doModsUntilThisPos()
 		mod.started = false;
 		float endMod = mod.tweenStart + mod.tweenLen;
 
+		if (mod.tweenLen == 0 && mod.tweenStart < beat)
+		{
+			manager.runMods(mod, endMod);
+			continue;
+		}
+
 		if (mod.tweenStart + mod.tweenLen < beat)
 		{
 			manager.runMods(mod, endMod);
 		}
-		else if (mod.tweenStart < beat && endMod > beat)
+		else if (endMod > beat && mod.tweenStart < beat)
 		{
 			manager.runMods(mod, beat);
 		}
@@ -176,6 +199,8 @@ void ModEditor::refresh()
 	}
 	if (!manager.killed)
 	{
+		removeObj(spriteField);
+		delete spriteField;
 		removeObj(manager.spriteCamera);
 		delete manager.spriteCamera;
 	}
@@ -195,10 +220,20 @@ void ModEditor::refresh()
 	ModManager::initLuaFunctions();
 	manager = ModManager(FuckinEditor::selectedChart->pathToLua);
 	manager.instance = &manager;
+	manager.isInEditor = true;
 	Game::instance->db_addLine("[Mod Editor] Refreshed modfile!");
 
 	if (!manager.killed)
+	{
+		spriteField = new AvgSprite(0, 0, manager.spriteCamera->ctb);
+		spriteField->dontDelete = true;
+		spriteField->w = Game::gameWidth;
+		spriteField->h = Game::gameHeight;
+		spriteField->flip = true;
 		add(manager.spriteCamera);
+		manager.spriteCamera->fuckingNo = true;
+		add(spriteField);
+	}
 
 	SpriteMod mod;
 	mod.anchor = "";

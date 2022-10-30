@@ -501,6 +501,8 @@ void ModManager::runMods(AppliedMod m, float beat)
 	if (m.mod != "showPath")
 	{
 		float dur = (beat - m.tweenStart);
+		if (dur == 0)
+			dur = m.tweenLen;
 
 		float perc = dur / m.tweenLen;
 
@@ -512,9 +514,14 @@ void ModManager::runMods(AppliedMod m, float beat)
 			consolePrint(m.mod + " has a shit tween func. For beat " + std::to_string(m.tweenStart));
 			return;
 		}
-
 		float tween = m.tweenCurve(perc);
 
+		if (m.instant)
+		{
+			tween = 1;
+			m.done = true;
+			m.tweenLen = 0;
+		}
 		setModProperties(m, tween);
 	}
 	else
@@ -880,7 +887,8 @@ void ModManager::createFunctions()
 			return;
 		std::string path = instance->assetPath + "/" + noteskinName;
 		Game::noteskin = Noteskin::getNoteskin(path);
-		Gameplay::instance->Combo->SetFontMap(Game::noteskin->fontMap);
+		if (!instance->isInEditor)
+			Gameplay::instance->Combo->SetFontMap(Game::noteskin->fontMap);
 	});
 
 }

@@ -406,6 +406,11 @@ void Gameplay::create() {
 
 	MUTATE_START
 
+		if (Noteskin::type != Game::save->GetString("Noteskin"))
+		{
+			Noteskin::resetNoteskin(Game::noteskin);
+			Game::noteskin = Noteskin::getNoteskin();
+		}
 	ArrowEffects::resetEffects();
 
 

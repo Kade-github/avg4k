@@ -733,7 +733,7 @@ void MainerMenu::create()
 
 	packSprite->height = soloContainer->h - 88;
 
-	wheel = (AvgWheel*)soloContainer->addObject(new AvgWheel(packSprite->width, 88 * Game::multipliery, 600, packSprite->height), "wheelObject");
+	wheel = (AvgWheel*)soloContainer->addObject(new AvgWheel(packSprite->width, 88, 600, packSprite->height), "wheelObject");
 
 	wheel->callSelect = selectedSongCallback;
 

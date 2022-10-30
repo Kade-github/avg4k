@@ -20,6 +20,7 @@ public:
 
 	Channel* song;
 
+
 	float currentTime = 0;
 
 	void resetSprites();
@@ -29,6 +30,7 @@ public:
 	bool showDebug = false;
 
 	AvgSprite* playField;
+	AvgSprite* spriteField;
 
 	float startTime = 0;
 

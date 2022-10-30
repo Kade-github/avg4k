@@ -117,10 +117,10 @@ ArrowEffects::Arrow ArrowEffects::ArrowEff(float ydiff, int col, float pos)
 		r.x = a.x;
 		r.y = a.y;
 
-		Rect nR = Helpers::rotate_point(Game::gameWidth / 2, Game::gameHeight / 2, rotz, r);
+		Rect nR = Helpers::rotate_point(640, 360, rotz, r);
 
-		a.x = nR.x;
-		a.y = nR.y;
+		a.x += r.x - nR.x;
+		a.y += r.y - nR.y;
 	}
 
 	if (reverse[col] != 0)
@@ -136,11 +136,6 @@ ArrowEffects::Arrow ArrowEffects::ArrowEff(float ydiff, int col, float pos)
 void ArrowEffects::resetEffects()
 {
 	drawBeats = 8;
-	if (Noteskin::type != Game::save->GetString("Noteskin"))
-	{
-		Noteskin::resetNoteskin(Game::noteskin);
-		Game::noteskin = Noteskin::getNoteskin();
-	}
 	ArrowEffects::scrollSpeed = Game::instance->save->GetDouble("scrollspeed");
 	ArrowEffects::noteSize = Game::instance->save->GetDouble("Note Size");
 	ArrowEffects::stealthWhite = { {0,0}, {1,0}, {2,0}, {3,0} };

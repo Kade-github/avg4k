@@ -43,6 +43,17 @@ float calcCMod(float cmod, float diff)
 	return noteOffset;
 }
 
+glm::vec2 rotateOffset(float angle)
+{
+	Rect r;
+	r.x = (640 - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * 1.5);
+	r.y = 60 + ((64 * Game::save->GetDouble("Note Size")) * 2);
+
+	Rect nR = Helpers::rotate_point(640, 360, angle, r);
+
+	return { r.x - nR.x, r.y - nR.y };
+}
+
 float bumpyPhase(float y, float period, float offset)
 {
 	return (y + (100.0f * offset)) / (period + 1.0f);
@@ -111,23 +122,18 @@ ArrowEffects::Arrow ArrowEffects::ArrowEff(float ydiff, int col, float pos)
 	if (amovey != 0)
 		a.y += amovey;
 
-	if (rotz != 0)
-	{
-		Rect r;
-		r.x = a.x;
-		r.y = a.y;
-
-		Rect nR = Helpers::rotate_point(640, 360, rotz, r);
-
-		a.x += r.x - nR.x;
-		a.y += r.y - nR.y;
-	}
-
 	if (reverse[col] != 0)
 	{
 
 			a.cmod = a.cmod * ((reverse[col] * -2) + 1);
 			a.y += (500 - noteSize) * reverse[col];
+	}
+
+	if (rotz != 0)
+	{
+		glm::vec2 of = rotateOffset(rotz);
+		a.x += of.x;
+		a.y += of.y;
 	}
 
 	return a;
@@ -155,6 +161,7 @@ void ArrowEffects::resetEffects()
 	ArrowEffects::dizzy = 0;
 	ArrowEffects::amovex = 0;
 	ArrowEffects::amovey = 0;
+	ArrowEffects::rotz = 0;
 	ArrowEffects::aconfusion = 0;
 	ArrowEffects::ShowSplines = false;
 	ArrowEffects::SplineAlpha = 0;

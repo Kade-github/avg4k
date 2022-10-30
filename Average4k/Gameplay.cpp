@@ -1653,7 +1653,6 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 						updateAccuracy(0.35);
 						break;
 					case judgement::Judge_bad:
-						combo = 0;
 						judge->changeOutTexture(Game::noteskin->judge_4);
 						Yikes++;
 						updateAccuracy(0.1);

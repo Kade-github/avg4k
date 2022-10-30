@@ -185,13 +185,13 @@ void updateLeaderboard(std::vector<LeaderboardEntry> entries, bool online)
 
 		for (auto v : e.noteTiming)
 		{
-			if (v.second >= Judge::hitWindows[3] || v.second <= -Judge::hitWindows[3])
-			{
-				highestCombo = combo;
+			judgement j = Judge::judgeNote(v.second);
+			if (j == judgement::Judge_miss)
 				combo = 0;
-			}
 			else
 				combo++;
+			if (combo > highestCombo)
+				highestCombo = combo;
 		}
 
 		foundAnything = true;

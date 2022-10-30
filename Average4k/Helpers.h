@@ -14,8 +14,8 @@ public:
 
 	static Rect rotate_point(float cx, float cy, float angle, Rect p)
 	{
-		float s = sin(angle);
-		float c = cos(angle);
+		float s = sin(angle * (3.14159265 / 180));
+		float c = cos(angle * (3.14159265 / 180));
 
 		// translate point back to origin:
 		p.x -= cx;

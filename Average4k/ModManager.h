@@ -6,6 +6,7 @@
 #include "Menu.h"
 #include "Easing.h"
 #include "AvgSprite.h"
+#include "Playfield.h"
 
 struct FunctionMod {
 	sol::function toCall;
@@ -51,6 +52,7 @@ struct AppliedMod {
 	std::string param;
 	bool instant = false;
 	bool done = false;
+	int pid = 0;
 	Easing::easingFunction tweenCurve;
 
 
@@ -69,6 +71,8 @@ public:
 
 	AvgGroup* modGame;
 
+	int currentPId = 0;
+
 	static bool doMods;
 	std::unique_ptr<sol::state> lua;
 
@@ -81,6 +85,12 @@ public:
 	std::vector<FunctionMod> funcMod;
 
 	std::vector<AppliedMod> appliedMods;
+
+	std::vector<Playfield*>* gamePlayfields;
+
+	std::map<int, Playfield*> modPlayfields;
+
+	int curPid = 0;
 
 
 	std::string assetPath;

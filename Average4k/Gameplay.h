@@ -14,7 +14,6 @@
 #include "ModManager.h"
 #include "SoundManager.h"
 #include <SDL_image.h>
-#include "ReceptorObject.h"
 #include "stbi.h"
 struct gameplayControl {
 	int lane;
@@ -55,9 +54,10 @@ class Gameplay :
 
 		bool paused = false;
 
-		std::vector<ReceptorObject*> receptors;
+		std::vector<Playfield*> playFields;
 
 		AvgSprite* playField;
+
 		AvgSprite* spriteField;
 
 		AvgSprite* judge;
@@ -192,7 +192,7 @@ class Gameplay :
 
 		void initControls();
 
-		void removeNote(NoteObject* object);
+		void removeNote(NoteObject* object, Playfield* p);
 
 		void updateAccuracy(double hitWorth);
 		

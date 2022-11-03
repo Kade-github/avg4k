@@ -1,44 +1,12 @@
 #include "ArrowEffects.h"
 #include "Helpers.h"
 
-float ArrowEffects::drunk = 0;
-float ArrowEffects::wave = 0;
-float ArrowEffects::tipsy = 0;
-float ArrowEffects::dizzy = 0;
-float ArrowEffects::rotz = 0;
-float ArrowEffects::amovex = 0;
-float ArrowEffects::amovey = 0;
-float ArrowEffects::aconfusion = 0;
-float ArrowEffects::drawBeats = 8;
-float ArrowEffects::SplineAlpha = 0;
-float ArrowEffects::SplineDensity = 0.04;
-float ArrowEffects::mini = 0.5;
-float ArrowEffects::scrollSpeed = 0;
-float ArrowEffects::noteSize = 0;
-
-std::map<int, std::vector<Spline>> ArrowEffects::splines = {};
-
-bool ArrowEffects::ShowSplines = false;
-
-std::map<int, float> ArrowEffects::stealthWhite = { {0,0}, {1,0}, {2,0}, {3,0} };
-std::map<int, float> ArrowEffects::stealthReceptorOpacity = { {0,1}, {1,1}, {2,1}, {3,1} };
-std::map<int, float> ArrowEffects::stealthOpacity = { {0,1}, {1,1}, {2,1}, {3,1} };
-std::map<int, float> ArrowEffects::reverse = { {0,0}, {1,0}, {2,0}, {3,0} };
-std::map<int, float> ArrowEffects::confusion = { {0,0}, {1,0}, {2,0}, {3,0} };
-std::map<int, float> ArrowEffects::rotzCol = { {0,0}, {1,0}, {2,0}, {3,0} };
-std::map<int, float> ArrowEffects::movex = { {0,0}, {1,0}, {2,0}, {3,0} };
-std::map<int, float> ArrowEffects::movey = { {0,0}, {1,0}, {2,0}, {3,0} };
-std::map<int, float> ArrowEffects::drunkCol = { {0,0}, {1,0}, {2,0}, {3,0} };
-std::map<int, float> ArrowEffects::tipsyCol = { {0,0}, {1,0}, {2,0}, {3,0} };
-std::map<int, float> ArrowEffects::waveCol = { {0,0}, {1,0}, {2,0}, {3,0} };
-std::map<int, float> ArrowEffects::miniCol = { {0,0.5}, {1,0.5}, {2,0.5}, {3,0.5} };
-
-float calcCMod(float cmod, float diff)
+float calcCMod(float cmod, float diff, float ns)
 {
 
 	float bps = (cmod / 60);
 
-	float noteOffset = (bps * (diff / 1000)) * (64 * ArrowEffects::noteSize);
+	float noteOffset = (bps * (diff / 1000)) * (64 * ns);
 
 	return noteOffset;
 }
@@ -178,9 +146,9 @@ void ArrowEffects::resetEffects()
 ArrowEffects::Arrow ArrowEffects::addSplines(float defX, float defY, Arrow aEff, float diff, int col, float curBeat, float targetBeat)
 {
 	float realX = defX;
-	float realY = defY + calcCMod(aEff.cmod, diff);
+	float realY = defY + calcCMod(aEff.cmod, diff, noteSize);
 	float beatsAway = targetBeat - curBeat;
-	if (splines[col].size() > 0 && (beatsAway < ArrowEffects::drawBeats && beatsAway > -ArrowEffects::drawBeats))
+	if (splines[col].size() > 0 && (beatsAway < drawBeats && beatsAway > -drawBeats))
 	{
 		Spline lastSpline;
 		lastSpline.beatAway = 0;
@@ -202,7 +170,7 @@ ArrowEffects::Arrow ArrowEffects::addSplines(float defX, float defY, Arrow aEff,
 			if (s.goToReceptor)
 			{
 				xx = defX;
-				yy = defY + calcCMod(aEff.cmod, diff);
+				yy = defY + calcCMod(aEff.cmod, diff, noteSize);
 			}
 
 			realX = std::lerp(realX, xx, b);
@@ -255,7 +223,7 @@ void ArrowEffects::drawLine(float defX, float targetY, int col, float beat, Char
 
 		float diff = (time - timeCur);
 
-		float cmod = calcCMod(scrollSpeed, diff);
+		float cmod = calcCMod(scrollSpeed, diff, noteSize);
 	
 
 		bool downscroll = false;
@@ -270,7 +238,7 @@ void ArrowEffects::drawLine(float defX, float targetY, int col, float beat, Char
 
 		aEff = addSplines(defX, targetY, aEff, diff, col, beat, rbeat);
 
-		float yPos = targetY + calcCMod(aEff.cmod, diff);
+		float yPos = targetY + calcCMod(aEff.cmod, diff, noteSize);
 
 		float x = aEff.x + (32 * ArrowEffects::noteSize);
 		float y = aEff.y;

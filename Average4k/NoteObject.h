@@ -5,6 +5,7 @@
 #include "ReceptorObject.h"
 #include "Chart.h"
 #include "AvgSprite.h"
+#include "ArrowEffects.h"
 
 struct holdBody {
 	float x, y;
@@ -51,6 +52,8 @@ class NoteObject : public Object
 		float animStartTime = 0;
 		float animTime = 0;
 	public:
+
+		ArrowEffects* arrowEffects;
 
 		int frame;
 		int fps = 24;

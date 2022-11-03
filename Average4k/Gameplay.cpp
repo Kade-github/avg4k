@@ -108,16 +108,27 @@ void Gameplay::updateAccuracy(double hitWorth)
 }
 
 
-void Gameplay::removeNote(NoteObject* object)
+void Gameplay::removeNote(NoteObject* object, Playfield* p)
 {
 	spawnedNotes.erase(
 		std::remove_if(spawnedNotes.begin(), spawnedNotes.end(), [&](NoteObject* const nn) {
 			return nn->beat == object->beat && nn->lane == object->lane;
 			}),
 		spawnedNotes.end());
-	object->connected->killed = true;
-	gameplay->removeObj(object);
-
+	NoteObject* o = NULL;
+	for (NoteObject* no : p->screenNotes)
+		if (no->beat == object->beat && object->lane == no->lane)
+			o = no;
+	if (o != NULL)
+	{
+		o->connected->killed = true;
+		gameplay->removeObj(o);
+		p->screenNotes.erase(
+			std::remove_if(p->screenNotes.begin(), p->screenNotes.end(), [&](NoteObject* const nn) {
+				return nn->beat == object->beat && nn->lane == object->lane;
+				}),
+			p->screenNotes.end());
+	}
 }
 
 void Gameplay::miss(NoteObject* object)
@@ -411,7 +422,6 @@ void Gameplay::create() {
 			Noteskin::resetNoteskin(Game::noteskin);
 			Game::noteskin = Noteskin::getNoteskin();
 		}
-	ArrowEffects::resetEffects();
 
 
 	lastTime = 0;
@@ -428,11 +438,6 @@ void Gameplay::create() {
 	avatars.clear();
 
 	gameplay = new AvgGroup(0, 0, 1280, 720);
-	float colHeight = ((64 * Game::save->GetDouble("Note Size")) *  ArrowEffects::drawBeats) * 2;
-	colOne = new AvgGroup(0, 0, 64 * Game::save->GetDouble("Note Size"), colHeight);
-	colTwo = new AvgGroup(0, 0, 64 * Game::save->GetDouble("Note Size"), colHeight);
-	colThree = new AvgGroup(0, 0, 64 * Game::save->GetDouble("Note Size"), colHeight);
-	colFour = new AvgGroup(0, 0, 64 * Game::save->GetDouble("Note Size"), colHeight);
 
 	if (SoundManager::getChannelByName("prevSong") != NULL)
 	{
@@ -463,12 +468,28 @@ void Gameplay::create() {
 
 	add(background);
 
+	Playfield* p = NULL;
+	if (downscroll)
+		p = new Playfield(
+			((1280 / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)), (720 / 2) + 250, gameplay);
+	else
+		p = new Playfield(
+			((1280 / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)), (720 / 2) - 300, gameplay);
+
+
+	playFields.push_back(p);
+
 	if (MainerMenu::currentSelectedSong.isModFile)
 	{
 		ModManager::doMods = true;
 		runModStuff = true;
 		ModManager::initLuaFunctions();
+		p->mod = true;
 		manager = ModManager(MainerMenu::currentSelectedSong.pathToLua);
+		manager.modGame = gameplay;
+		manager.gamePlayfields = &playFields;
+		manager.modPlayfields[manager.currentPId] = playFields[0];
+		manager.currentPId++;
 		manager.cam = cam;
 		manager.instance = &manager;
 
@@ -487,6 +508,8 @@ void Gameplay::create() {
 	{
 		ModManager::doMods = false;
 	}
+
+
 
 	if (background->tex->pixels)
 	{
@@ -712,6 +735,8 @@ void Gameplay::create() {
 	else
 		Game::DiscordUpdatePresence((MainerMenu::currentSelectedSong.meta.artist.size() == 0 ? "No Artist" : MainerMenu::currentSelectedSong.meta.artist) + " - " + MainerMenu::currentSelectedSong.meta.songName, "Playing Solo Play", "Average4K", -1, -1, "");
 
+	p->addReceptors();
+
 	playField = new AvgSprite(0, 0, gameplay->ctb);
 	playField->w = Game::gameWidth;
 	playField->h = Game::gameHeight;
@@ -755,6 +780,7 @@ void Gameplay::create() {
 
 	}
 
+
 	callModEvent("create", 0);
 
 	playField->dontDelete = true;
@@ -778,24 +804,6 @@ void Gameplay::create() {
 	{
 		Accuracy->y += 36;
 		ranking->y += 36;
-	}
-
-
-	for (int i = 0; i < 4; i++)
-	{
-		ReceptorObject* r;
-
-		int index = i + 1;
-		if (downscroll)
-			r = new ReceptorObject(
-				((1280 / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * i), (720 / 2) + 250, i);
-		else
-			r = new ReceptorObject(
-				((1280 / 2) - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * i), (720 / 2) - 300, i);
-		r->lightUpTimer = 0;
-		r->create();
-		receptors.push_back(r);
-		gameplay->add(r);
 	}
 
 	add(judge);
@@ -905,18 +913,6 @@ void Gameplay::update(Events::updateEvent event)
 		scaleStart += Game::deltaTime;
 	}
 
-	SDL_FRect laneUnderway;
-
-	laneUnderway.x = receptors[0]->x - 4;
-	laneUnderway.y = -200;
-	laneUnderway.w = (receptors[3]->x - laneUnderway.x) + (68 * Game::save->GetDouble("Note Size"));
-	laneUnderway.h = 1280;
-
-	//SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 150);
-	//SDL_RenderFillRectF(Game::renderer, &laneUnderway);
-	//SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
-
-
 	if (MainerMenu::currentSelectedSong.meta.songName.size() == 0)
 		return;
 
@@ -942,42 +938,6 @@ void Gameplay::update(Events::updateEvent event)
 
 	ModManager::time = positionInSong;
 	ModManager::beat = beat;
-
-	if (runModStuff && !ended)
-	{
-		for (int i = 0; i < receptors.size(); i++)
-		{
-			ReceptorObject* rec = receptors[i];
-			rec->positionInSong = positionInSong;
-			rec->modX = rec->x;
-			rec->modY = rec->y;
-			rec->endX = rec->modX;
-			rec->endY = rec->modY;
-
-			if (ArrowEffects::ShowSplines)
-				ArrowEffects::drawLine(rec->x, rec->y, i, beat, MainerMenu::currentSelectedSong);
-		}
-
-		for (NoteObject* obj : spawnedNotes)
-		{
-			obj->modX = obj->x;
-			obj->modY = obj->y;
-			obj->endX = obj->modX;
-			obj->endY = obj->modY;
-			obj->modCMOD = obj->cmod;
-			obj->endCMOD = obj->modCMOD;
-
-			for (holdTile& tile : obj->heldTilings)
-			{
-				tile.modX = tile.ogX;
-				tile.modY = tile.ogY;
-				tile.endX = tile.modX;
-				tile.endY = tile.modY;
-			}
-		}
-
-		manager.runMods();
-	}
 
 	if (Game::save->GetBool("Annoying bopping"))
 	{
@@ -1071,94 +1031,6 @@ void Gameplay::update(Events::updateEvent event)
 
 	//SDL_RenderDrawRectF(Game::renderer, &outline);
 
-	// spawning shit
-
-	if (notesToPlay.size() > 0)
-	{
-		note& n = notesToPlay[0];
-		if (n.beat < beat + ArrowEffects::drawBeats && (n.type != Note_Tail && n.type != Note_Mine)) // if its in draw beats
-		{
-			NoteObject* object = new NoteObject();
-			object->currentChart = &MainerMenu::currentSelectedSong;
-			object->size = Game::save->GetDouble("Note Size");
-			object->connected = &n;
-			SDL_FRect rect;
-			object->wasHit = false;
-			object->clapped = false;
-			object->active = true;
-
-			bpmSegment preStopSeg = MainerMenu::currentSelectedSong.getSegmentFromBeat(n.beat);
-
-			float stopOffset = MainerMenu::currentSelectedSong.getStopOffsetFromBeat(n.beat);
-
-			double stopBeatOffset = (stopOffset / 1000) * (preStopSeg.bpm / 60);
-
-			object->stopOffset = stopBeatOffset;
-
-			object->beat = (double)n.beat + stopBeatOffset;
-			object->lane = n.lane;
-			object->connectedReceptor = receptors[n.lane];
-			object->type = n.type;
-			object->endTime = -1;
-			object->endBeat = -1;
-
-			bpmSegment noteSeg = MainerMenu::currentSelectedSong.getSegmentFromBeat(object->beat);
-
-			object->time = MainerMenu::currentSelectedSong.getTimeFromBeatOffset(object->beat, noteSeg);
-			rect.y = Game::gameHeight + 400;
-			rect.x = 0;
-			rect.w = 64 * Game::save->GetDouble("Note Size");
-			rect.h = 64 * Game::save->GetDouble("Note Size");
-			object->rect = rect;
-
-			note tail;
-
-			bpmSegment bruh = MainerMenu::currentSelectedSong.getSegmentFromBeat(object->beat);
-
-			float wh = MainerMenu::currentSelectedSong.getTimeFromBeat(beat, bruh);
-
-			float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
-
-
-			if (object->type == Note_Head)
-			{
-				for (int i = 0; i < notesToPlay.size(); i++)
-				{
-					note& nn = notesToPlay[i];
-					if (nn.type != Note_Tail)
-						continue;
-					if (nn.lane != object->lane)
-						continue;
-
-					bpmSegment npreStopSeg = MainerMenu::currentSelectedSong.getSegmentFromBeat(nn.beat);
-
-					float nstopOffset = MainerMenu::currentSelectedSong.getStopOffsetFromBeat(nn.beat);
-
-					double nstopBeatOffset = (nstopOffset / 1000) * (npreStopSeg.bpm / 60);
-
-					object->endBeat = nn.beat + nstopBeatOffset;
-
-					object->endTime = MainerMenu::currentSelectedSong.getTimeFromBeatOffset(nn.beat + nstopBeatOffset, noteSeg);
-					tail = nn;
-					break;
-				}
-			}
-
-			float time = SDL_GetTicks();
-
-
-			spawnedNotes.push_back(object);
-			object->create();
-			notesToPlay.erase(notesToPlay.begin());
-			currentModId += object->heldTilings.size();
-
-			gameplay->add(object);
-		}
-		else if (n.type == Note_Tail || n.type == Note_Mine)
-		{
-			notesToPlay.erase(notesToPlay.begin());
-		}
-	}
 
 	if (!ended && ((notesToPlay.size() == 0 && spawnedNotes.size() == 0) || ((lastTime - positionInSong) > 4000 || !song->isPlaying)) && positionInSong > 0)
 	{
@@ -1178,9 +1050,6 @@ void Gameplay::update(Events::updateEvent event)
 
 			Multiplayer::sendMessage<CPacketSongFinished>(song);
 
-			Combo->setText("Waiting for others to finish (" + std::to_string(combo) + ")");
-			Combo->setX((Game::gameWidth / 2) - (Combo->surfW / 2));
-			Combo->setY((Game::gameHeight / 2) + 40);
 		}
 
 		if (Game::save->GetBool("Submit Scores") && !hasSubmited && !botplayOnce)
@@ -1204,195 +1073,285 @@ void Gameplay::update(Events::updateEvent event)
 		}
 	}
 
-	for (int i = 0; i < receptors.size(); i++)
+	int pIndex = 0;
+	bool spawned = false;
+	for (Playfield* p : playFields)
 	{
-		if (keys[i] || holding[i])
-		{
-			receptors[i]->light();
-			receptors[i]->loop = false;
-			if (Game::noteskin->shrink)
-				receptors[i]->scale = 0.85;
-		}
-		else
-		{
-			if (!botplay)
-				receptors[i]->lightUpTimer = 0;
-			if (receptors[i]->scale < 1.0 && Game::noteskin->shrink)
+		note& n = notesToPlay[0];
+			if (n.beat < beat + p->arrowEff.drawBeats && (n.type != Note_Tail && n.type != Note_Mine)) // if its in draw beats
 			{
-				receptors[i]->scale += Game::deltaTime * 0.04;
-				if (receptors[i]->scale > 1.0)
-					receptors[i]->scale = 1;
+				NoteObject* object = new NoteObject();
+				object->currentChart = &MainerMenu::currentSelectedSong;
+				object->size = Game::save->GetDouble("Note Size");
+				object->connected = &n;
+				SDL_FRect rect;
+				object->wasHit = false;
+				object->clapped = false;
+				object->active = true;
+
+				bpmSegment preStopSeg = MainerMenu::currentSelectedSong.getSegmentFromBeat(n.beat);
+
+				float stopOffset = MainerMenu::currentSelectedSong.getStopOffsetFromBeat(n.beat);
+
+				double stopBeatOffset = (stopOffset / 1000) * (preStopSeg.bpm / 60);
+
+				object->stopOffset = stopBeatOffset;
+
+				object->beat = (double)n.beat + stopBeatOffset;
+				object->lane = n.lane;
+				object->connectedReceptor = p->screenReceptors[n.lane];
+				object->type = n.type;
+				object->endTime = -1;
+				object->endBeat = -1;
+
+				bpmSegment noteSeg = MainerMenu::currentSelectedSong.getSegmentFromBeat(object->beat);
+
+				object->time = MainerMenu::currentSelectedSong.getTimeFromBeatOffset(object->beat, noteSeg);
+				rect.y = Game::gameHeight + 400;
+				rect.x = 0;
+				rect.w = 64 * Game::save->GetDouble("Note Size");
+				rect.h = 64 * Game::save->GetDouble("Note Size");
+				object->rect = rect;
+
+				note tail;
+
+				bpmSegment bruh = MainerMenu::currentSelectedSong.getSegmentFromBeat(object->beat);
+
+				float wh = MainerMenu::currentSelectedSong.getTimeFromBeat(beat, bruh);
+
+				float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
+
+
+				if (object->type == Note_Head)
+				{
+					for (int i = 0; i < notesToPlay.size(); i++)
+					{
+						note& nn = notesToPlay[i];
+						if (nn.type != Note_Tail)
+							continue;
+						if (nn.lane != object->lane)
+							continue;
+
+						bpmSegment npreStopSeg = MainerMenu::currentSelectedSong.getSegmentFromBeat(nn.beat);
+
+						float nstopOffset = MainerMenu::currentSelectedSong.getStopOffsetFromBeat(nn.beat);
+
+						double nstopBeatOffset = (nstopOffset / 1000) * (npreStopSeg.bpm / 60);
+
+						object->endBeat = nn.beat + nstopBeatOffset;
+
+						object->endTime = MainerMenu::currentSelectedSong.getTimeFromBeatOffset(nn.beat + nstopBeatOffset, noteSeg);
+						tail = nn;
+						break;
+					}
+				}
+
+				if (!spawned)
+					spawnedNotes.push_back(object);
+				spawned = true;
+				object->create();
+				p->addNote(object);
 			}
-		}
-
-		if (receptors[i]->lightUpTimer < 1)
-		{
-			receptors[i]->hit = false;
-		}
-	}
-
-	{
-		for (int i = 0; i < spawnedNotes.size(); i++)
-		{
-			NoteObject* note = spawnedNotes[i];
-			note->rTime = positionInSong;
-
-			if (note->beat > beat + ArrowEffects::drawBeats || note->beat < beat - ArrowEffects::drawBeats)
+			else if (n.type == Note_Tail || n.type == Note_Mine)
 			{
-				note->drawCall = false;
-				continue;
+				notesToPlay.erase(notesToPlay.begin());
+			}
+
+		for (int i = 0; i < p->screenReceptors.size(); i++)
+		{
+			if (keys[i] || holding[i])
+			{
+				p->screenReceptors[i]->light();
+				p->screenReceptors[i]->loop = false;
+				if (Game::noteskin->shrink)
+					p->screenReceptors[i]->scale = 0.85;
 			}
 			else
-				note->drawCall = true;
-			if (!note->destroyed)
 			{
-				float wh = MainerMenu::currentSelectedSong.getTimeFromBeat(note->beat, MainerMenu::currentSelectedSong.getSegmentFromBeat(note->beat));
-
-				if (wh - positionInSong < 2)
+				if (!botplay)
+					p->screenReceptors[i]->lightUpTimer = 0;
+				if (p->screenReceptors[i]->scale < 1.0 && Game::noteskin->shrink)
 				{
-					if (botplay && note->active)
+					p->screenReceptors[i]->scale += Game::deltaTime * 0.04;
+					if (p->screenReceptors[i]->scale > 1.0)
+						p->screenReceptors[i]->scale = 1;
+				}
+			}
+
+			if (p->screenReceptors[i]->lightUpTimer < 1)
+			{
+				p->screenReceptors[i]->hit = false;
+			}
+		}
+
+		{
+			for (int i = 0; i < spawnedNotes.size(); i++)
+			{
+				NoteObject* note = spawnedNotes[i];
+				note->rTime = positionInSong;
+
+				if (!note->destroyed)
+				{
+					float wh = MainerMenu::currentSelectedSong.getTimeFromBeat(note->beat, MainerMenu::currentSelectedSong.getSegmentFromBeat(note->beat));
+	
+						if (wh - positionInSong < 2)
+						{
+							if (botplay && note->active)
+							{
+								float diff = (wh - positionInSong);
+
+								botplayHittingNote = true;
+
+
+								std::string format = std::to_string(diff - fmod(diff, 0.01));
+								format.erase(format.find_last_not_of('0') + 1, std::string::npos);
+								for (Playfield* pp : playFields)
+								{
+									pp->screenReceptors[note->lane]->lightUpTimer = 195;
+									pp->screenReceptors[note->lane]->bot = botplay;
+
+									pp->screenReceptors[note->lane]->loop = false;
+									pp->screenReceptors[note->lane]->hit = true;
+								}
+
+								for (Playfield* pp : playFields)
+								{
+									for (NoteObject* o : pp->screenNotes)
+										if (o->beat == note->beat && o->lane == note->lane)
+											o->active = false;
+								}
+								note->active = false;
+
+								if (pIndex == 0)
+								{
+									if (ModManager::doMods)
+										manager.callEvent("hit", note->lane);
+									judge->changeOutTexture(Game::noteskin->judge_bot);
+									judge->w *= (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0));
+									judge->h *= (1 + (Game::multipliery != 1 ? Game::multipliery : 0));
+									Marvelous++;
+									judge->drawCall = true;
+									//score += Judge::scoreNote(diff);
+									updateAccuracy(1);
+									if (Game::save->GetBool("hitsounds") && !note->clapped)
+									{
+										note->clapped = true;
+										Channel* c = SoundManager::createChannel(Noteskin::getSoundElement(Game::instance->noteskin, "hitSound.wav"), "clap" + std::to_string(note->beat));
+										c->dieAfterPlay = true;
+										c->setVolume(Game::save->GetDouble("Hitsounds Volume"));
+										c->play();
+									}
+
+									combo++;
+									if (combo > highestCombo)
+										highestCombo = combo;
+									if (Game::noteskin->bounce)
+									{
+										judge->scale = 1.15;
+										Combo->scale = 1.15;
+										scaleTime = 350;
+										scaleStart = 0;
+									}
+
+									judge->setX((Game::gameWidth / 2) - (judge->w / 2));
+									judge->setY((Game::gameHeight / 2) - (judge->h / 2));
+
+
+									Combo->setText(std::to_string(combo));
+									Combo->setX((Game::gameWidth / 2) - (Combo->surfW / 2));
+									Combo->setY((Game::gameHeight / 2) + 40);
+								}
+							}
+
+						}
+	
+
+					if (note->type == Note_Head)
 					{
-						float diff = (wh - positionInSong);
+						float startTime = MainerMenu::currentSelectedSong.getTimeFromBeat(note->beat, MainerMenu::currentSelectedSong.getSegmentFromBeat(note->beat));
+						float endTime = MainerMenu::currentSelectedSong.getTimeFromBeat(note->endBeat, MainerMenu::currentSelectedSong.getSegmentFromBeat(note->endBeat));
 
-						botplayHittingNote = true;
+						if (startTime < positionInSong + Judge::hitWindows[2] && positionInSong < endTime + Judge::hitWindows[2])
+						{
+							note->holdPerc = beat / note->endBeat;
+							if (holding[note->lane] || (botplay && startTime < positionInSong && positionInSong < endTime)) // holding that lane!
+							{
+								if (botplay)
+								{
+									p->screenReceptors[note->lane]->lightUpTimer = 195;
+								}
+								if (ModManager::doMods && lastCall + 150 < positionInSong)
+								{
+									lastCall = positionInSong + 150;
+									if (pIndex == 0)
+									{
+										manager.callEvent("hit", note->lane);
+									}
+								}
+								botplayHittingNote = false;
+								p->screenReceptors[note->lane]->loop = true;
+								p->screenReceptors[note->lane]->hit = true;
+								note->holding = true;
+							}
+							else if (positionInSong >= startTime + Judge::hitWindows[4] && !holding[note->lane])
+							{
+								if (note->holding)
+								{
+									note->holdstoppedbeat = beat;
+									note->holdstoppedtime = positionInSong;
+								}
+								if (!botplay)
+									p->screenReceptors[note->lane]->hit = false;
+								note->holding = false;
+								note->fuckTimer = positionInSong / (note->holdstoppedtime + 250);
+								if (pIndex == 0)
+								{
+									if (note->fuckTimer >= 1 && note->holdstoppedtime + 250 < endTime)
+									{
+										note->active = false;
+										note->missHold = true;
+										miss(note);
+										removeNote(note, p);
+									}
 
-						if (ModManager::doMods)
-							manager.callEvent("hit", note->lane);
+									if (note->holdstoppedtime + 250 > endTime)
+									{
+										note->active = false;
+										removeNote(note, p);
+									}
+								}
+							}
+						}
 
-						std::string format = std::to_string(diff - fmod(diff, 0.01));
-						format.erase(format.find_last_not_of('0') + 1, std::string::npos);
-						receptors[note->lane]->lightUpTimer = 195;
-						receptors[note->lane]->bot = botplay;
-						judge->changeOutTexture(Game::noteskin->judge_bot);
-						judge->w *= (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0));
-						judge->h *= (1 + (Game::multipliery != 1 ? Game::multipliery : 0));
-						Marvelous++;
-						judge->drawCall = true;
-						//score += Judge::scoreNote(diff);
-						updateAccuracy(1);
+						if (note->holdPerc >= 1 && positionInSong > endTime * 1.05)
+						{
+							removeNote(note, p);
+						}
+					}
+
+					if (wh - positionInSong <= -Judge::hitWindows[4] && note->active && playing)
+					{
 						note->active = false;
-
-						receptors[note->lane]->loop = false;
-						receptors[note->lane]->hit = true;
-
-						if (Game::save->GetBool("hitsounds") && !note->clapped)
-						{
-							note->clapped = true;
-							Channel* c = SoundManager::createChannel(Noteskin::getSoundElement(Game::instance->noteskin,"hitSound.wav"), "clap" + std::to_string(note->beat));
-							c->dieAfterPlay = true;
-							c->setVolume(Game::save->GetDouble("Hitsounds Volume"));
-							c->play();
-						}
-
-						combo++;
-						if (combo > highestCombo)
-							highestCombo = combo;
-						if (Game::noteskin->bounce)
-						{
-							judge->scale = 1.15;
-							Combo->scale = 1.15;
-							scaleTime = 350;
-							scaleStart = 0;
-						}
-
-						judge->setX((Game::gameWidth / 2) - (judge->w / 2));
-						judge->setY((Game::gameHeight / 2) - (judge->h / 2));
-
-
-						Combo->setText(std::to_string(combo));
-						Combo->setX((Game::gameWidth / 2) - (Combo->surfW / 2));
-						Combo->setY((Game::gameHeight / 2) + 40);
+						miss(note);
 					}
 
-				}
-
-				if (note->type == Note_Head)
-				{
-					float startTime = MainerMenu::currentSelectedSong.getTimeFromBeat(note->beat, MainerMenu::currentSelectedSong.getSegmentFromBeat(note->beat));
-					float endTime = MainerMenu::currentSelectedSong.getTimeFromBeat(note->endBeat, MainerMenu::currentSelectedSong.getSegmentFromBeat(note->endBeat));
-
-					if (startTime < positionInSong + Judge::hitWindows[2] && positionInSong < endTime + Judge::hitWindows[2])
+					if ((wh - positionInSong <= -1000 && !note->active) && note->endBeat == -1 && playing)
 					{
-						note->holdPerc = beat / note->endBeat;
-						if (holding[note->lane] || (botplay && startTime < positionInSong && positionInSong < endTime)) // holding that lane!
-						{
-							if (botplay)
-							{
-								receptors[note->lane]->lightUpTimer = 195;
-							}
-							if (ModManager::doMods && lastCall + 150 < positionInSong)
-							{
-								lastCall = positionInSong + 150;
-								manager.callEvent("hit", note->lane);
-							}
-							botplayHittingNote = false;
-							receptors[note->lane]->loop = true;
-							receptors[note->lane]->hit = true;
-							note->holding = true;
-						}
-						else if (positionInSong >= startTime + Judge::hitWindows[4] && !holding[note->lane])
-						{
-							if (note->holding)
-							{
-								note->holdstoppedbeat = beat;
-								note->holdstoppedtime = positionInSong;
-							}
-							if (!botplay)
-								receptors[note->lane]->hit = false;
-							note->holding = false;
-							note->fuckTimer = positionInSong / (note->holdstoppedtime + 250);
-
-							if (note->fuckTimer >= 1 && note->holdstoppedtime + 250 < endTime)
-							{
-								note->active = false;
-								note->missHold = true;
-								miss(note);
-								removeNote(note);
-							}
-
-							if (note->holdstoppedtime + 250 > endTime)
-							{
-								note->active = false;
-								removeNote(note);
-							}
-						}
+						removeNote(note, p);
+						//std::cout << "remove note " << wh << " " << positionInSong << std::endl;
 					}
-
-					if (note->holdPerc >= 1 && positionInSong > endTime * 1.05)
-					{
-						removeNote(note);
-					}
-				}
-
-				if (note->lane < 4 && note->lane >= 0)
-				{
-					Rect receptorRect;
-					receptorRect.w = receptors[note->lane]->w;
-					receptorRect.h = receptors[note->lane]->h;
-					receptorRect.x = receptors[note->lane]->x;
-					receptorRect.y = receptors[note->lane]->y;
-					note->debug = debug;
-					//SDL_SetRenderTarget(Game::renderer, Game::mainCamera->cameraTexture);
-
-				}
-
-				if (wh - positionInSong <= -Judge::hitWindows[4] && note->active && playing)
-				{
-					note->active = false;
-					miss(note);
-				}
-
-				bool condition = true;
-
-
-				if ((wh - positionInSong <= -1000 && !note->active) && note->endBeat == -1 && playing)
-				{
-					removeNote(note);
-					//std::cout << "remove note " << wh << " " << positionInSong << std::endl;
 				}
 			}
 		}
+
+		p->update(positionInSong, beat);
+		if (runModStuff)
+			manager.runMods();
+		pIndex++;
 	}
+
+	if (spawned)
+		notesToPlay.erase(notesToPlay.begin());
 
 	if (!ended) 
 	{
@@ -1433,6 +1392,10 @@ void Gameplay::cleanUp()
 			removeObj(manager.spriteCamera);
 		}
 
+	for (Playfield* p : playFields)
+		delete p;
+
+	playFields.clear();
 	spawnedNotes.clear();
 	notesToPlay.clear();
 
@@ -1590,9 +1553,12 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 			if (closestObject->active && diff <= hw && diff > -hw)
 			{
+				for (Playfield* p : playFields)
+				{
+					p->screenReceptors[closestObject->lane]->loop = false;
+					p->screenReceptors[closestObject->lane]->hit = true;
+				}
 
-				receptors[closestObject->lane]->loop = false;
-				receptors[closestObject->lane]->hit = true;
 				if (ModManager::doMods)
 					manager.callEvent("hit", closestObject->lane);
 				closestObject->active = false;

@@ -1,11 +1,14 @@
 #pragma once
 #include "includes.h"
 #include "Game.h"
+#include "ArrowEffects.h"
 class ReceptorObject : public Object {
 private:
 	float animStartTime = 0;
 	float animTime = 0;
 public:
+
+	ArrowEffects* arrowEffects;
 
 	int frame;
 	int fps = 24;

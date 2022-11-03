@@ -237,8 +237,9 @@ public:
 	}
 
 	virtual void beforeDeath() {
-		if (!tex->dontDelete && !dontDelete)
-			delete tex;
+		if (!dontDelete)
+			if (!tex->dontDelete)
+				delete tex;
 	}
 };
 

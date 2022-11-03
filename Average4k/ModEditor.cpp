@@ -2,7 +2,6 @@
 #include "imgui.h"
 #include "Game.h"
 #include "FuckinEditor.h"
-#include "ArrowEffects.h"
 
 float lastPos = 0;
 
@@ -52,8 +51,6 @@ void ModEditor::create()
 		Noteskin::resetNoteskin(Game::noteskin);
 		Game::noteskin = Noteskin::getNoteskin();
 	}
-
-	ArrowEffects::resetEffects();
 
 	ModManager::doMods = true;
 	ModManager::initLuaFunctions();
@@ -143,7 +140,6 @@ void ModEditor::create()
 
 void ModEditor::doModsUntilThisPos()
 {
-	ArrowEffects::resetEffects();
 	resetSprites();
 	for (AppliedMod& mod : manager.appliedMods)
 	{
@@ -461,13 +457,6 @@ void ModEditor::update(Events::updateEvent event)
 
 	for (NoteObject* obj : notes)
 	{
-		if (obj->beat > beat + ArrowEffects::drawBeats || obj->beat < beat - ArrowEffects::drawBeats)
-		{
-			obj->drawCall = false;
-			continue;
-		}
-		else
-			obj->drawCall = true;
 		obj->rTime = currentTime;
 
 		if (currentTime >= obj->time)
@@ -524,41 +513,6 @@ void ModEditor::update(Events::updateEvent event)
 void ModEditor::postUpdate(Events::updateEvent event)
 {
 
-	if (mouseDown)
-	{
-		int mx, my;
-		Game::GetMousePos(&mx, &my);
-
-		float nSize = Game::instance->save->GetDouble("Note Size");
-
-		if (col == -1)
-		{
-			for (int i = 0; i < receptors.size(); i++)
-			{
-				ReceptorObject* rec = receptors[i];
-
-				if (mx > rec->modX - (16 * nSize)
-					&& my > rec->modY - (16 * nSize)
-					&& mx < rec->modX + rec->w + (16 * nSize)
-					&& my < rec->modY + rec->h + (16 * nSize))
-				{
-					col = i;
-				}
-			}
-		}
-		else
-		{
-			ReceptorObject* rec = receptors[col];
-
-			float newX = (mx - (32 * nSize));
-			float newY = (my - (32 * nSize));
-
-			ArrowEffects::movex[col] = (newX - rec->modX);
-			ArrowEffects::movey[col] = (newY - rec->modY);
-		}
-		
-
-	}
 }
 
 void ModEditor::imguiUpdate(float elapsed)
@@ -569,7 +523,6 @@ void ModEditor::imguiUpdate(float elapsed)
 		{
 			if (ImGui::MenuItem("Go Back"))
 			{
-				ArrowEffects::resetEffects();
 				FuckinEditor::dontDeleteChart = true;
 				Game::instance->transitionToMenu(new FuckinEditor());
 				return;
@@ -578,7 +531,6 @@ void ModEditor::imguiUpdate(float elapsed)
 			{
 				lastPos = currentTime;
 				playing = false;
-				ArrowEffects::resetEffects();
 				song->stop();
 				refresh();
 			}
@@ -587,126 +539,6 @@ void ModEditor::imguiUpdate(float elapsed)
 			ImGui::EndMainMenuBar();
 		}
 	}
-	if (showDebug)
-	{
-
-			ImGui::PushItemWidth(400);
-			ImGui::BeginMainMenuBar();
-			{
-				if (ImGui::BeginMenu("Arrow Path"))
-				{
-					ImGui::Text("Path Alpha");
-					ImGui::SliderFloat("##SplineAlpha", &ArrowEffects::SplineAlpha, 0.1, 1);
-					if (ImGui::Button("Reset"))
-					{
-						ArrowEffects::SplineAlpha = 0.75;
-					}
-					ImGui::Text("Path Density");
-					ImGui::SliderFloat("##SplineDensity", &ArrowEffects::SplineDensity, 0.008, 1);
-					if (ImGui::Button("Reset ##den"))
-					{
-						ArrowEffects::SplineDensity = 0.05;
-					}
-
-					ImGui::Checkbox("Show Paths", &ArrowEffects::ShowSplines);
-					ImGui::EndMenu();
-				}
-				if (ImGui::BeginMenu("Drunk"))
-				{
-					ImGui::Text("Drunk");
-					ImGui::SliderFloat("##Drunk", &ArrowEffects::drunk, -20, 20);
-					if (ImGui::Button("Reset"))
-					{
-						ArrowEffects::drunk = 0;
-					}
-					ImGui::EndMenu();
-				}
-				if (ImGui::BeginMenu("Tipsy"))
-				{
-					ImGui::Text("Tipsy");
-					ImGui::SliderFloat("##Tipsy", &ArrowEffects::tipsy, -20, 20);
-					if (ImGui::Button("Reset"))
-					{
-						ArrowEffects::tipsy = 0;
-					}
-					ImGui::EndMenu();
-				}
-				if (ImGui::BeginMenu("AMove"))
-				{
-					ImGui::Text("Amovex");
-					ImGui::InputFloat("##Amovex", &ArrowEffects::amovex, 1, 10);
-					ImGui::Text("Amovey");
-					ImGui::InputFloat("##Amovey", &ArrowEffects::amovey, 1, 10);
-					ImGui::EndMenu();
-				}
-
-				if (ImGui::BeginMenu("Move"))
-				{
-					for (int i = 0; i < 4; i++)
-					{
-						ImGui::Text("Col %d's movex", i);
-						ImGui::InputFloat (("##Movex" + std::to_string(i)).c_str(), &ArrowEffects::movex[i], 1, 10);
-						ImGui::Text("Col %d's movey", i);
-						ImGui::InputFloat(("##Movey" + std::to_string(i)).c_str(), &ArrowEffects::movey[i], 1, 10);
-						ImGui::Separator();
-					}
-					ImGui::EndMenu();
-				}
-
-				if (ImGui::BeginMenu("Reverse"))
-				{
-					for (int i = 0; i < 4; i++)
-					{
-						ImGui::Text("Col %d reverse", i);
-						ImGui::SliderFloat(("##Reverse" + std::to_string(i)).c_str(), &ArrowEffects::reverse[i], -1, 1);
-						if (ImGui::Button(("Reset ##" + std::to_string(i)).c_str()))
-						{
-							ArrowEffects::reverse[i] = 0;
-						}
-						ImGui::Separator();
-					}
-					ImGui::EndMenu();
-				}
-
-				if (ImGui::BeginMenu("Stealth White"))
-				{
-					for (int i = 0; i < 4; i++)
-					{
-						ImGui::Text("Col %d stealthWhite", i);
-						ImGui::SliderFloat(("##stealthWhite" + std::to_string(i)).c_str(), &ArrowEffects::stealthWhite[i], 0, 1);
-						if (ImGui::Button(("Reset ##" + std::to_string(i)).c_str()))
-						{
-							ArrowEffects::stealthWhite[i] = 0;
-						}
-						ImGui::Separator();
-					}
-					ImGui::EndMenu();
-				}
-
-				if (ImGui::BeginMenu("Stealth Opacity"))
-				{
-					for (int i = 0; i < 4; i++)
-					{
-						ImGui::Text("Col %d stealthOpacity", i);
-						ImGui::SliderFloat(("##stealthOpacity" + std::to_string(i)).c_str(), &ArrowEffects::stealthOpacity[i], 0, 1);
-						if (ImGui::Button(("Reset ##" + std::to_string(i)).c_str()))
-						{
-							ArrowEffects::stealthOpacity[i] = 1;
-						}
-						ImGui::Text("Receptor %d stealthReceptorOpacity", i);
-						ImGui::SliderFloat(("##stealthReceptorOpacity" + std::to_string(i)).c_str(), &ArrowEffects::stealthReceptorOpacity[i], 0, 1);
-						if (ImGui::Button(("Reset ##" + std::to_string(i)).c_str()))
-						{
-							ArrowEffects::stealthReceptorOpacity[i] = 1;
-						}
-						ImGui::Separator();
-					}
-					ImGui::EndMenu();
-				}
-
-			}
-			ImGui::EndMainMenuBar();
-	}
 
 }
 
@@ -714,7 +546,6 @@ void ModEditor::keyDown(SDL_KeyboardEvent ev)
 {
 	if (ev.keysym.sym == SDLK_ESCAPE)
 	{
-		ArrowEffects::resetEffects();
 		resetSprites();
 		FuckinEditor::dontDeleteChart = true;
 		Game::instance->transitionToMenu(new FuckinEditor());
@@ -760,7 +591,6 @@ void ModEditor::keyDown(SDL_KeyboardEvent ev)
 		song->setPos(0);
 		currentTime = 0;
 		playing = false;
-		ArrowEffects::resetEffects();
 		song->stop();
 		refresh();
 	}
@@ -773,7 +603,6 @@ void ModEditor::keyDown(SDL_KeyboardEvent ev)
 	{
 		lastPos = currentTime;
 		playing = false;
-		ArrowEffects::resetEffects();
 		song->stop();
 		refresh();
 	}

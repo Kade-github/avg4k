@@ -224,6 +224,7 @@ void ModManager::kill()
 			spriteCamera->removeObj(value.spr);
 	}
 	sprites.clear();
+	modPlayfields.clear();
 }
 
 
@@ -369,49 +370,49 @@ void ModManager::setModStart(AppliedMod& m)
 		return;
 	}
 	if (m.mod == "drunk")
-		m.modStartAmount = ArrowEffects::drunk;
+		m.modStartAmount = modPlayfields[m.pid]->arrowEff.drunk;
 	if (m.mod == "mini")
-		m.modStartAmount = ArrowEffects::mini;
+		m.modStartAmount = modPlayfields[m.pid]->arrowEff.mini;
 	if (m.mod == "tipsy")
-		m.modStartAmount = ArrowEffects::tipsy;
+		m.modStartAmount = modPlayfields[m.pid]->arrowEff.tipsy;
 	if (m.mod == "dizzy")
-		m.modStartAmount = ArrowEffects::dizzy;
+		m.modStartAmount = modPlayfields[m.pid]->arrowEff.dizzy;
 	if (m.mod == "wave")
-		m.modStartAmount = ArrowEffects::wave;
+		m.modStartAmount = modPlayfields[m.pid]->arrowEff.wave;
 	if (m.mod == "amovex")
-		m.modStartAmount = ArrowEffects::amovex;
+		m.modStartAmount = modPlayfields[m.pid]->arrowEff.amovex;
 	if (m.mod == "amovey")
-		m.modStartAmount = ArrowEffects::amovey;
+		m.modStartAmount = modPlayfields[m.pid]->arrowEff.amovey;
 	if (m.mod == "reverse")
-		m.modStartAmount = ArrowEffects::reverse[m.col];
+		m.modStartAmount = modPlayfields[m.pid]->arrowEff.reverse[m.col];
 	if (m.mod == "movex")
-		m.modStartAmount = ArrowEffects::movex[m.col];
+		m.modStartAmount = modPlayfields[m.pid]->arrowEff.movex[m.col];
 	if (m.mod == "movey")
-		m.modStartAmount = ArrowEffects::movey[m.col];
+		m.modStartAmount = modPlayfields[m.pid]->arrowEff.movey[m.col];
 	if (m.mod == "confusion")
-		m.modStartAmount = ArrowEffects::confusion[m.col];
+		m.modStartAmount = modPlayfields[m.pid]->arrowEff.confusion[m.col];
 	if (m.mod == "aconfusion")
-		m.modStartAmount = ArrowEffects::aconfusion;
+		m.modStartAmount = modPlayfields[m.pid]->arrowEff.aconfusion;
 	if (m.mod == "stealthWhite")
-		m.modStartAmount = ArrowEffects::stealthWhite[m.col];
+		m.modStartAmount = modPlayfields[m.pid]->arrowEff.stealthWhite[m.col];
 	if (m.mod == "stealthOpacity")
-		m.modStartAmount = ArrowEffects::stealthOpacity[m.col];
+		m.modStartAmount = modPlayfields[m.pid]->arrowEff.stealthOpacity[m.col];
 	if (m.mod == "stealthReceptorOpacity")
-		m.modStartAmount = ArrowEffects::stealthReceptorOpacity[m.col];
+		m.modStartAmount = modPlayfields[m.pid]->arrowEff.stealthReceptorOpacity[m.col];
 	if (m.mod == "drunkCol")
-		m.modStartAmount = ArrowEffects::drunkCol[m.col];
+		m.modStartAmount = modPlayfields[m.pid]->arrowEff.drunkCol[m.col];
 	if (m.mod == "tipsyCol")
-		m.modStartAmount = ArrowEffects::tipsyCol[m.col];
+		m.modStartAmount = modPlayfields[m.pid]->arrowEff.tipsyCol[m.col];
 	if (m.mod == "waveCol")
-		m.modStartAmount = ArrowEffects::waveCol[m.col];
+		m.modStartAmount = modPlayfields[m.pid]->arrowEff.waveCol[m.col];
 	if (m.mod == "miniCol")
-		m.modStartAmount = ArrowEffects::miniCol[m.col];
+		m.modStartAmount = modPlayfields[m.pid]->arrowEff.miniCol[m.col];
 	if (m.mod == "pathAlpha")
-		m.modStartAmount = ArrowEffects::SplineAlpha;
+		m.modStartAmount = modPlayfields[m.pid]->arrowEff.SplineAlpha;
 	if (m.mod == "pathDensity")
-		m.modStartAmount = ArrowEffects::SplineDensity;
+		m.modStartAmount = modPlayfields[m.pid]->arrowEff.SplineDensity;
 	if (m.mod == "rotz")
-		m.modStartAmount = ArrowEffects::rotz;
+		m.modStartAmount = modPlayfields[m.pid]->arrowEff.rotz;
 }
 
 void ModManager::setModProperties(AppliedMod& m, float tween)
@@ -435,53 +436,53 @@ void ModManager::setModProperties(AppliedMod& m, float tween)
 		return;
 	}
 	if (m.mod == "drunk")
-		ArrowEffects::drunk = std::lerp(m.modStartAmount, m.amount, tween);
+		modPlayfields[m.pid]->arrowEff.drunk = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "rotz")
-		ArrowEffects::rotz = std::lerp(m.modStartAmount, m.amount, tween);
+		modPlayfields[m.pid]->arrowEff.rotz = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "mini")
-		ArrowEffects::mini = std::lerp(m.modStartAmount, m.amount, tween);
+		modPlayfields[m.pid]->arrowEff.mini = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "tipsy")
-		ArrowEffects::tipsy = std::lerp(m.modStartAmount, m.amount, tween);
+		modPlayfields[m.pid]->arrowEff.tipsy = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "dizzy")
-		ArrowEffects::dizzy = std::lerp(m.modStartAmount, m.amount, tween);
+		modPlayfields[m.pid]->arrowEff.dizzy = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "wave")
-		ArrowEffects::wave = std::lerp(m.modStartAmount, m.amount, tween);
+		modPlayfields[m.pid]->arrowEff.wave = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "confusion")
-		ArrowEffects::confusion[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+		modPlayfields[m.pid]->arrowEff.confusion[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "reverse")
-		ArrowEffects::reverse[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+		modPlayfields[m.pid]->arrowEff.reverse[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "movex")
-		ArrowEffects::movex[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+		modPlayfields[m.pid]->arrowEff.movex[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "movey")
-		ArrowEffects::movey[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+		modPlayfields[m.pid]->arrowEff.movey[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "amovex")
-		ArrowEffects::amovex = std::lerp(m.modStartAmount, m.amount, tween);
+		modPlayfields[m.pid]->arrowEff.amovex = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "amovey")
-		ArrowEffects::amovey = std::lerp(m.modStartAmount, m.amount, tween);
+		modPlayfields[m.pid]->arrowEff.amovey = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "aconfusion")
-		ArrowEffects::aconfusion = std::lerp(m.modStartAmount, m.amount, tween);
+		modPlayfields[m.pid]->arrowEff.aconfusion = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "stealthWhite")
-		ArrowEffects::stealthWhite[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+		modPlayfields[m.pid]->arrowEff.stealthWhite[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "stealthReceptorOpacity")
-		ArrowEffects::stealthReceptorOpacity[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+		modPlayfields[m.pid]->arrowEff.stealthReceptorOpacity[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "stealthOpacity")
-		ArrowEffects::stealthOpacity[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+		modPlayfields[m.pid]->arrowEff.stealthOpacity[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "drawBeats")
-		ArrowEffects::drawBeats = m.amount;
+		modPlayfields[m.pid]->arrowEff.drawBeats = m.amount;
 	if (m.mod == "drunkCol")
-		ArrowEffects::drunkCol[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+		modPlayfields[m.pid]->arrowEff.drunkCol[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "tipsyCol")
-		ArrowEffects::tipsyCol[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+		modPlayfields[m.pid]->arrowEff.tipsyCol[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "waveCol")
-		ArrowEffects::waveCol[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+		modPlayfields[m.pid]->arrowEff.waveCol[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "miniCol")
-		ArrowEffects::miniCol[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
+		modPlayfields[m.pid]->arrowEff.miniCol[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "showPath")
-		ArrowEffects::ShowSplines = m.amount == 1 ? true : false;
+		modPlayfields[m.pid]->arrowEff.ShowSplines = m.amount == 1 ? true : false;
 	if (m.mod == "pathAlpha")
-		ArrowEffects::SplineAlpha = std::lerp(m.modStartAmount, m.amount, tween);
+		modPlayfields[m.pid]->arrowEff.SplineAlpha = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "pathDensity")
-		ArrowEffects::SplineDensity = std::lerp(m.modStartAmount, m.amount, tween);
+		modPlayfields[m.pid]->arrowEff.SplineDensity = std::lerp(m.modStartAmount, m.amount, tween);
 }
 
 void ModManager::runMods(AppliedMod m, float beat)
@@ -621,12 +622,31 @@ void ModManager::createFunctions()
 	lua->set_function("setScrollSpeed", [](float speed) {
 		if (Game::instance->save->GetBool("Ignore mod scrollspeed"))
 			return;
-		ArrowEffects::scrollSpeed = speed;
+		instance->modPlayfields[instance->curPid]->arrowEff.scrollSpeed = speed;
 	});
 
 	lua->set_function("setNoteSize", [](float size) {
-		ArrowEffects::noteSize = size;
+		instance->modPlayfields[instance->curPid]->arrowEff.noteSize = size;
 	});
+
+	lua->set_function("createPlayfield", [] {
+		Playfield* p = new Playfield(
+				(640 - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)), 60, instance->modGame);
+		p->mod = true;
+		int id = instance->currentPId;
+		instance->modPlayfields[instance->currentPId] = p;
+		instance->currentPId++;
+		instance->gamePlayfields->push_back(p);
+		p->addReceptors();
+		return id;
+	});
+
+	lua->set_function("setPlayfield", [](int pid) {
+		if (instance->modPlayfields[pid] == NULL)
+			consolePrint("Playfield with the ID " + std::to_string(pid) + " doesn't exist at this time!");
+		instance->curPid = pid;
+	});
+
 
 	lua->set_function("activateMod", [](std::string name, float tweenStart, float tweenLen, std::string easingFunc, float amount) {
 		AppliedMod aMod;
@@ -636,6 +656,7 @@ void ModManager::createFunctions()
 		aMod.tweenCurve = Easing::getEasingFunction(easingFunc);
 		aMod.amount = amount;
 		aMod.modStartAmount = -999;
+		aMod.pid = instance->curPid;
 
 		instance->appliedMods.push_back(aMod);
 	});
@@ -747,33 +768,33 @@ void ModManager::createFunctions()
 		s.beatAway = beatsAway;
 		int i = 0;
 		if (beatsAway <= 0)
-			for (Spline& ss : ArrowEffects::splines[col])
+			for (Spline& ss : instance->modPlayfields[instance->curPid]->arrowEff.splines[col])
 			{
 				if (ss.goToReceptor)
 				{
-					ArrowEffects::splines[col].erase(ArrowEffects::splines[col].begin() + i);
+					instance->modPlayfields[instance->curPid]->arrowEff.splines[col].erase(instance->modPlayfields[instance->curPid]->arrowEff.splines[col].begin() + i);
 					break;
 				}
 				i++;
 			}
-		ArrowEffects::splines[col].push_back(s);
-		std::sort(ArrowEffects::splines[col].begin(), ArrowEffects::splines[col].end(), Spline());
+		instance->modPlayfields[instance->curPid]->arrowEff.splines[col].push_back(s);
+		std::sort(instance->modPlayfields[instance->curPid]->arrowEff.splines[col].begin(), instance->modPlayfields[instance->curPid]->arrowEff.splines[col].end(), Spline());
 	});
 
 	lua->set_function("clearSplines", [](int col) {
 		if (col == -1)
 		{
-			ArrowEffects::splines.clear();
+			instance->modPlayfields[instance->curPid]->arrowEff.splines.clear();
 			for (int i = 0; i < 4; i++)
 			{
 				// x,y, goToReceptor, beatAway
-				ArrowEffects::splines[i].push_back({ 0,0,true, false, -1 });
+				instance->modPlayfields[instance->curPid]->arrowEff.splines[i].push_back({ 0,0,true, false, -1 });
 			}
 		}
 		else
 		{
-			ArrowEffects::splines[col].clear();
-			ArrowEffects::splines[col].push_back({ 0,0,true, false, -1 });
+			instance->modPlayfields[instance->curPid]->arrowEff.splines[col].clear();
+			instance->modPlayfields[instance->curPid]->arrowEff.splines[col].push_back({ 0,0,true, false, -1 });
 		}
 	});
 
@@ -860,27 +881,6 @@ void ModManager::createFunctions()
 		instance->spriteCamera->add(spr);
 	});
 
-	lua->set_function("copyPlayField", [](std::string name) {
-		if (instance->sprites[name].spr)
-		{
-			consolePrint("Sprite " + name + " already exists!");
-			return;
-		}
-		AvgSprite* spr = new AvgSprite(0, 0, instance->sprites["playField"].spr->tex);
-		spr->w = Game::gameWidth;
-		spr->h = Game::gameHeight;
-		spr->dontDelete = true;
-		spr->flip = true;
-		SpriteMod mod;
-		mod.confusion = 0;
-		mod.movex = 0;
-		mod.movey = 0;
-		mod.isPlayField = true;
-		mod.spr = spr;
-
-		instance->sprites[name] = mod;
-		instance->cam->children.push_back(spr);
-	});
 
 	lua->set_function("setNoteskin", [](std::string noteskinName) {
 		if (Game::instance->save->GetBool("Ignore mod noteskin"))

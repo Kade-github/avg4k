@@ -31,41 +31,41 @@ public:
 		float cmod;
 	};
 
-	static std::map<int, std::vector<Spline>> splines;
+	std::map<int, std::vector<Spline>> splines;
 
 
-	static float SplineDensity;
+	float SplineDensity;
 
-	static bool ShowSplines;
+	bool ShowSplines = false;
 
-	static float drawBeats, SplineAlpha;
+	float drawBeats, SplineAlpha;
 
-	static float scrollSpeed;
-	static float noteSize;
+	float scrollSpeed;
+	float noteSize;
 
-	static float drunk, tipsy, dizzy, amovex, amovey, aconfusion, wave, mini, rotz;
+	float drunk, tipsy, dizzy, amovex, amovey, aconfusion, wave, mini, rotz;
 
-	static std::map<int, float> stealthWhite;
-	static std::map<int, float> stealthOpacity;
-	static std::map<int, float> stealthReceptorOpacity;
-	static std::map<int, float> reverse;
-	static std::map<int, float> confusion;
-	static std::map<int, float> movex;
-	static std::map<int, float> movey;
-	static std::map<int, float> drunkCol;
-	static std::map<int, float> tipsyCol;
-	static std::map<int, float> waveCol;
-	static std::map<int, float> miniCol;
-	static std::map<int, float> rotzCol;
+	std::map<int, float> stealthWhite;
+	std::map<int, float> stealthOpacity;
+	std::map<int, float> stealthReceptorOpacity;
+	std::map<int, float> reverse;
+	std::map<int, float> confusion;
+	std::map<int, float> movex;
+	std::map<int, float> movey;
+	std::map<int, float> drunkCol;
+	std::map<int, float> tipsyCol;
+	std::map<int, float> waveCol;
+	std::map<int, float> miniCol;
+	std::map<int, float> rotzCol;
 
-	static void drawLine(float defX, float targetY, int col, float beat, Chart currentChart);
+	void drawLine(float defX, float targetY, int col, float beat, Chart currentChart);
 
-	static void resetEffects();
+	void resetEffects();
 
-	static Arrow ArrowEff(float cmod, int col, float pos);
+	Arrow ArrowEff(float cmod, int col, float pos);
 
-	static Arrow addSplines(float defX, float defY, Arrow aEff, float diff, int col, float curBeat, float targetBeat);
+	Arrow addSplines(float defX, float defY, Arrow aEff, float diff, int col, float curBeat, float targetBeat);
 
-	static Arrow finishEffects(float defX, float defY, int col, float curTime);
-	static std::vector<Arrow> finishEffects(float defX, float defY, float cmod, int col, float holdTime, float curTime, float modY, float noteBeat, float curBeat);
+	Arrow finishEffects(float defX, float defY, int col, float curTime);
+	std::vector<Arrow> finishEffects(float defX, float defY, float cmod, int col, float holdTime, float curTime, float modY, float noteBeat, float curBeat);
 };

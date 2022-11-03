@@ -7,7 +7,6 @@
 
 #include "SongSelect.h"
 #include "Helpers.h"
-#include "ArrowEffects.h"
 
 NoteObject::NoteObject()
 {
@@ -17,7 +16,7 @@ NoteObject::NoteObject()
     h = 64;
     Object::currentId++;
     id = Object::currentId;
-    cmod = ArrowEffects::scrollSpeed;
+    cmod = Game::instance->save->GetDouble("scrollspeed");
 
     if (Gameplay::instance != NULL)
         if (Gameplay::instance->runModStuff)
@@ -77,7 +76,7 @@ void NoteObject::draw() {
 
     if (ModManager::doMods)
     {
-        if (ArrowEffects::reverse[lane] >= 0.5)
+        if (arrowEffects->reverse[lane] >= 0.5)
             downscroll = true;
         else
             downscroll = false;
@@ -180,14 +179,12 @@ void NoteObject::draw() {
     float white = 0;
 
     float ogAlpha = alpha;
-    float preModX = dstRect.x;
-    float preModY = dstRect.y;
 
     ArrowEffects::Arrow offsetA;
 
     if (ModManager::doMods)
     {
-        std::vector<ArrowEffects::Arrow> ar = ArrowEffects::finishEffects(obj->x, obj->y, noteOffset, obj->type, -1, position, diff, beat, currentBeat);
+        std::vector<ArrowEffects::Arrow> ar = arrowEffects->finishEffects(obj->x, obj->y, noteOffset, obj->type, -1, position, diff, beat, currentBeat);
         offsetA = ar[1];
         ArrowEffects::Arrow a = ar[0];
 
@@ -197,10 +194,7 @@ void NoteObject::draw() {
         dstRect.a = a.opac;
         ogAlpha = dstRect.a;
         drawAngle = a.rot;
-        size = ArrowEffects::noteSize * (0.5 / a.mini);
-
-        modY = dstRect.y;
-        modX = dstRect.x;
+        size = arrowEffects->noteSize * (0.5 / a.mini);
 
         dstRect.w = 64 * size;
         dstRect.h = 64 * size;
@@ -334,11 +328,11 @@ void NoteObject::draw() {
   
 
                     ArrowEffects::Arrow offsetA2;
-                    std::vector<ArrowEffects::Arrow> real = ArrowEffects::finishEffects(obj->x, obj->y, cmodHold, obj->type, time, position, holdDiff, holdBeat, currentBeat);
+                    std::vector<ArrowEffects::Arrow> real = arrowEffects->finishEffects(obj->x, obj->y, cmodHold, obj->type, time, position, holdDiff, holdBeat, currentBeat);
 
 
 
-                    std::vector<ArrowEffects::Arrow> ahead = ArrowEffects::finishEffects(obj->x, obj->y, cmodHold2, obj->type, time, position, holdDiff2, holdBeat + fBeat, currentBeat);
+                    std::vector<ArrowEffects::Arrow> ahead = arrowEffects->finishEffects(obj->x, obj->y, cmodHold2, obj->type, time, position, holdDiff2, holdBeat + fBeat, currentBeat);
                     ArrowEffects::Arrow a = real[0];
                     square.x = a.x;
                     square.y = a.y;
@@ -461,7 +455,7 @@ void NoteObject::draw() {
                 }
 
 
-                if (body.beat > beat + ArrowEffects::drawBeats)
+                if (body.beat > beat + arrowEffects->drawBeats)
                     break;
 
                 std::vector<GL_Vertex> verts;

@@ -1,6 +1,5 @@
 #include "ReceptorObject.h"
 #include "Gameplay.h"
-#include "ArrowEffects.h"
 
 
 ReceptorObject::ReceptorObject(int _x, int _y, int _type)
@@ -11,8 +10,8 @@ ReceptorObject::ReceptorObject(int _x, int _y, int _type)
 	// this does the same thing but im lazy and too lazy to check
 	setX(_x);
 	setY(_y);
-	w = (64 * ArrowEffects::noteSize);
-	h = (64 * ArrowEffects::noteSize);
+	w = (64 * Game::instance->save->GetDouble("Note Size"));
+	h = (64 * Game::instance->save->GetDouble("Note Size"));
 
 	if (ModManager::doMods)
 	{
@@ -51,13 +50,13 @@ void ReceptorObject::draw() {
 
 	if (ModManager::doMods)
 	{
-		ArrowEffects::Arrow a = ArrowEffects::finishEffects(x, y, type, positionInSong);
+		x += (((64 * arrowEffects->noteSize) + 12) * type);
+
+		ArrowEffects::Arrow a = arrowEffects->finishEffects(x, y, type, positionInSong);
 		defAlpha = a.opac;
 		drawAngle = a.rot;
 
-		float size = ArrowEffects::noteSize * (0.5 / a.mini);
-
-		x = ((1280 / 2) - ((64 * size + 12) * 2)) + ((64 * size + 12) * type);
+		float size = arrowEffects->noteSize * (0.5 / arrowEffects->mini);
 
 		w = 64 * size;
 		h = 64 * size;
@@ -67,8 +66,8 @@ void ReceptorObject::draw() {
 		dstRect.x = a.x + mpx;
 		dstRect.y = a.y + mpy;
 
-		if (ArrowEffects::ShowSplines)
-			ArrowEffects::drawLine(x, y, type, beat, currentChart);
+		if (arrowEffects->ShowSplines)
+			arrowEffects->drawLine(x, y, type, beat, currentChart);
 	}
 	else
 	{

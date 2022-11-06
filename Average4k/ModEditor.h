@@ -2,8 +2,8 @@
 #include "Menu.h"
 #include "ReceptorObject.h"
 #include "ModManager.h"
-#include "Chart.h"
 #include "NoteObject.h"
+#include "Playfield.h"
 #include "SoundManager.h"
 class ModEditor : public Menu
 {
@@ -13,6 +13,8 @@ public:
 	void postUpdate(Events::updateEvent event) override;
 	void imguiUpdate(float elapsed) override;
 	void keyDown(SDL_KeyboardEvent event) override;
+
+	std::vector<Playfield*> playfields;
 
 	int col = -1;
 

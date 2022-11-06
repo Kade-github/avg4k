@@ -1,16 +1,17 @@
 #pragma once
 #include "includes.h"
 #define SOL_ALL_SAFETIES_ON 1
-#define SOL_NO_EXCEPTIONS 1
 #include <sol.hpp>
 #include "Menu.h"
 #include "Easing.h"
 #include "AvgSprite.h"
 #include "Playfield.h"
-
+#include "Chart.h"
+#include "FuckinEditor.h"
 struct FunctionMod {
 	sol::function toCall;
 	float beat;
+	int pid;
 	bool hit = false;
 };
 
@@ -72,6 +73,9 @@ public:
 	AvgGroup* modGame;
 
 	int currentPId = 0;
+
+	bool isInDom = false;
+	bool isInUpdate = false;
 
 	static bool doMods;
 	std::unique_ptr<sol::state> lua;

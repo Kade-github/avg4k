@@ -919,14 +919,6 @@ void Gameplay::update(Events::updateEvent event)
 	curSeg = MainerMenu::currentSelectedSong.getSegmentFromTime(positionInSong);
 	beat = MainerMenu::currentSelectedSong.getBeatFromTime(positionInSong, curSeg);
 
-	Game::instance->db_addLine("Beat: " + std::to_string(beat));
-
-	if (debug)
-	{
-		Combo->setText("Debug Mode!");
-		Combo->centerX();
-	}
-
 	if (lastBPM != curSeg.bpm)
 	{
 		song->bpm = curSeg.bpm;
@@ -1350,7 +1342,7 @@ void Gameplay::update(Events::updateEvent event)
 		pIndex++;
 	}
 
-	if (spawned)
+	if (spawned && notesToPlay.size() > 0)
 		notesToPlay.erase(notesToPlay.begin());
 
 	if (!ended) 

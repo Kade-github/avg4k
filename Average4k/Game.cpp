@@ -1062,7 +1062,7 @@ void Game::postUpdate()
 		clip.w = Game::gameWidth;
 		clip.h = 220;
 
-		Rendering::SetClipRect(&clip);
+		//Rendering::SetClipRect(&clip);
 
 		for (Text* t : lines)
 			t->draw();

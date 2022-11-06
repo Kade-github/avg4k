@@ -27,6 +27,98 @@ struct spriteMetric {
 	float height;
 };
 
+void genNObject(note n, difficulty diff, Chart* selectedChart, bool findTail, Playfield* p)
+{
+	if (n.type == noteType::Note_Tail || n.type == noteType::Note_Mine)
+		return;
+	bool spawned = false;
+		float noteZoom = Game::instance->save->GetDouble("Note Size");
+		bool downscroll = false;
+		NoteObject* object = new NoteObject();
+		object->size = noteZoom;
+		object->currentChart = selectedChart;
+		object->connected = &n;
+		SDL_FRect rect;
+		object->wasHit = false;
+		object->clapped = false;
+		object->active = true;
+
+		bpmSegment preStopSeg = selectedChart->getSegmentFromBeat(n.beat);
+
+		float stopOffset = selectedChart->getStopOffsetFromBeat(n.beat);
+
+		double stopBeatOffset = (stopOffset / 1000) * (preStopSeg.bpm / 60);
+
+		object->stopOffset = stopBeatOffset;
+
+		object->beat = (double)n.beat + stopBeatOffset;
+		object->lane = n.lane;
+		object->connectedReceptor = p->screenReceptors[n.lane];
+		object->type = n.type;
+		object->endTime = -1;
+		object->endBeat = -1;
+
+		bpmSegment noteSeg = selectedChart->getSegmentFromBeat(object->beat);
+
+		object->time = selectedChart->getTimeFromBeatOffset(object->beat, noteSeg);
+		rect.y = Game::gameHeight + 400;
+		rect.x = 0;
+		rect.w = 64 * noteZoom;
+		rect.h = 64 * noteZoom;
+		object->rect = rect;
+
+		note tail;
+
+		bpmSegment bruh = selectedChart->getSegmentFromBeat(object->beat);
+
+		float wh = selectedChart->getTimeFromBeatOffset(n.beat, bruh);
+
+		float bps = (Game::save->GetDouble("scrollspeed") / 60);
+
+		if (findTail)
+		{
+			if (object->type == Note_Head)
+			{
+				for (int i = 0; i < diff.notes.size(); i++)
+				{
+					note& nn = diff.notes[i];
+					if (nn.type != Note_Tail)
+						continue;
+					if (nn.lane != object->lane || nn.connectedBeat != n.beat)
+						continue;
+
+					bpmSegment npreStopSeg = selectedChart->getSegmentFromBeat(nn.beat);
+
+					float nstopOffset = selectedChart->getStopOffsetFromBeat(nn.beat);
+
+					double nstopBeatOffset = (nstopOffset / 1000) * (npreStopSeg.bpm / 60);
+
+					object->endBeat = nn.beat + nstopBeatOffset;
+					object->tailBeat = nn.beat;
+
+					object->endTime = selectedChart->getTimeFromBeatOffset(nn.beat + nstopBeatOffset, noteSeg);
+					tail = nn;
+					break;
+				}
+			}
+		}
+		else
+		{
+			note nn;
+			nn.beat = n.connectedBeat;
+			nn.connectedBeat = -1;
+			nn.type = noteType::Note_Tail;
+			nn.lane = n.lane;
+			object->tailBeat = nn.beat;
+			tail = nn;
+			object->endTime = selectedChart->getTimeFromBeatOffset(n.connectedBeat, noteSeg);
+		}
+
+		object->create();
+		spawned = true;
+		p->addNote(object);
+}
+
 void consolePrint(std::string print)
 {
 	Game::instance->db_addLine("[LUA] " + print);
@@ -126,9 +218,11 @@ void ModManager::callEvent(std::string event, std::string args)
 	if (!f.valid())
 		return;
 
+	if (event == "update")
+		isInUpdate = true;
 
 	sol::function_result x = f(args);
-
+	isInUpdate = false;
 	if (!x.valid()) {
 		std::string errorstring = x;
 		std::cout << "Lua Erorr: \"" << errorstring << "\"";
@@ -153,8 +247,11 @@ void ModManager::callEvent(std::string event, int args)
 	if (!f.valid())
 		return;
 
-	sol::function_result x = f(args);
+	if (event == "update")
+		isInUpdate = true;
 
+	sol::function_result x = f(args);
+	isInUpdate = false;
 	if (!x.valid()) {
 		std::string errorstring = x;
 		std::cout << "Lua Erorr: \"" << errorstring << "\"";
@@ -166,6 +263,7 @@ void ModManager::callEvent(std::string event, int args)
 		killed = true;
 		return;
 	}
+
 	std::sort(appliedMods.begin(), appliedMods.end(), AppliedMod());
 }
 
@@ -178,8 +276,11 @@ void ModManager::callEvent(std::string event, float args)
 	if (!f.valid())
 		return;
 
-	sol::function_result x = f(args);
+	if (event == "update")
+		isInUpdate = true;
 
+	sol::function_result x = f(args);
+	isInUpdate = false;
 	if (!x.valid()) {
 		std::string errorstring = x;
 		std::cout << "Lua Erorr: \"" << errorstring << "\"";
@@ -288,6 +389,7 @@ void ModManager::runMods()
 
 	}
 
+
 	for (FunctionMod& m : funcMod)
 	{
 		if (m.beat == 0)
@@ -295,7 +397,9 @@ void ModManager::runMods()
 		if (beat >= m.beat && !m.hit)
 		{
 			m.hit = true;
+			isInDom = true;
 			m.toCall();
+			isInDom = false;
 		}
 	}
 
@@ -630,6 +734,11 @@ void ModManager::createFunctions()
 	});
 
 	lua->set_function("createPlayfield", [] {
+		if (instance->isInDom || instance->isInUpdate)
+		{
+			consolePrint("createPlayfield returning -1 due to you creating a playfield in a dom function or the update event. don't do this.");
+			return -1;
+		}
 		Playfield* p = new Playfield(
 				(640 - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)), 60, instance->modGame);
 		p->mod = true;
@@ -637,13 +746,27 @@ void ModManager::createFunctions()
 		instance->modPlayfields[instance->currentPId] = p;
 		instance->currentPId++;
 		instance->gamePlayfields->push_back(p);
+		if (instance->isInEditor) // if in the editor, add all of the notes cuz like yea
+		{
+			Chart* currentChart = FuckinEditor::selectedChart;
+
+			difficulty diff = currentChart->meta.difficulties[FuckinEditor::currentDiff];
+
+			for (note n : diff.notes)
+				genNObject(n, diff, currentChart, true, p);
+		}
 		p->addReceptors();
 		return id;
 	});
 
 	lua->set_function("setPlayfield", [](int pid) {
+		if (pid < 0)
+			return;
 		if (instance->modPlayfields[pid] == NULL)
+		{
 			consolePrint("Playfield with the ID " + std::to_string(pid) + " doesn't exist at this time!");
+			return;
+		}
 		instance->curPid = pid;
 	});
 
@@ -675,6 +798,7 @@ void ModManager::createFunctions()
 		aMod.tweenCurve = Easing::getEasingFunction(easingFunc);
 		aMod.amount = amount;
 		aMod.modStartAmount = -999;
+		aMod.pid = instance->curPid;
 
 		instance->appliedMods.push_back(aMod);
 	});
@@ -688,6 +812,7 @@ void ModManager::createFunctions()
 		aMod.col = col;
 		aMod.amount = amount;
 		aMod.modStartAmount = -999;
+		aMod.pid = instance->curPid;
 
 
 		instance->appliedMods.push_back(aMod);
@@ -727,6 +852,7 @@ void ModManager::createFunctions()
 		aMod.tweenCurve = Easing::getEasingFunction(easingFunc);
 		aMod.amount = value;
 		aMod.modStartAmount = -999;
+		aMod.pid = instance->curPid;
 
 		instance->appliedMods.push_back(aMod);
 	});
@@ -802,6 +928,7 @@ void ModManager::createFunctions()
 		FunctionMod m;
 		m.toCall = f;
 		m.beat = beat;
+		m.pid = instance->curPid;
 
 		instance->funcMod.push_back(m);
 	});

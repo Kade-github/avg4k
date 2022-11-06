@@ -1,7 +1,6 @@
 #pragma once
 #include "includes.h"
 #include "NoteObject.h"
-#include "Chart.h"
 #include "Menu.h"
 #include "MainMenu.h"
 #include "Game.h"

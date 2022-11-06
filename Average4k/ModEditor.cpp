@@ -52,29 +52,25 @@ void ModEditor::create()
 		Game::noteskin = Noteskin::getNoteskin();
 	}
 
+	Playfield* p = new Playfield(
+			(640 - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)), 60, gameplay);
+	p->mod = true;
+	playfields.push_back(p);
+
 	ModManager::doMods = true;
 	ModManager::initLuaFunctions();
 	manager = ModManager(currentChart->pathToLua);
+	manager.modGame = gameplay;
+	manager.gamePlayfields = &playfields;
+	manager.modPlayfields[manager.currentPId] = playfields[0];
+	manager.currentPId++;
 	manager.cam = cam;
 	manager.instance = &manager;
 	manager.isInEditor = true;
 	created = true;
 
 
-	for (int i = 0; i < 4; i++)
-	{
-		ReceptorObject* r;
-
-		int index = i + 1;
-		r = new ReceptorObject(
-			(640 - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)) + ((64 * Game::save->GetDouble("Note Size") + 12) * i), 60, i);
-		r->lightUpTimer = 0;
-		r->create();
-		r->currentChart = *currentChart;
-		receptors.push_back(r);
-		gameplay->add(r);
-	}
-
+	p->addReceptors();
 
 	for (note n : diff.notes)
 	{
@@ -200,21 +196,40 @@ void ModEditor::refresh()
 		removeObj(manager.spriteCamera);
 		delete manager.spriteCamera;
 	}
-	for (const auto& [key, value] : manager.sprites) {
-		if (value.isPlayField)
-		{
-			removeObj(value.spr);
-			delete value.spr;
-		}
-	}
+	for (Playfield* p : playfields)
+		delete p;
+	playfields.clear();
 
+	Playfield* p = new Playfield(
+		(640 - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)), 60, gameplay);
+	p->mod = true;
+	playfields.push_back(p);
+
+
+	Chart* currentChart = FuckinEditor::selectedChart;
+
+	difficulty diff = currentChart->meta.difficulties[FuckinEditor::currentDiff];
+
+	p->addReceptors();
+
+	for (note n : diff.notes)
+	{
+		generateNoteObject(n, diff, currentChart);
+	}
 
 	manager.kill();
 
 	manager.sprites.clear();
 	ModManager::doMods = true;
 	ModManager::initLuaFunctions();
-	manager = ModManager(FuckinEditor::selectedChart->pathToLua);
+	manager = ModManager(currentChart->pathToLua);
+	manager.modGame = gameplay;
+	manager.gamePlayfields = &playfields;
+	manager.currentPId = 0;
+	manager.modPlayfields.clear();
+	manager.modPlayfields[manager.currentPId] = playfields[0];
+	manager.currentPId = 1;
+	manager.cam = cam;
 	manager.instance = &manager;
 	manager.isInEditor = true;
 	Game::instance->db_addLine("[Mod Editor] Refreshed modfile!");
@@ -260,8 +275,6 @@ void ModEditor::refresh()
 	mod2.notModCreated = true;
 	mod2.def = manager.spriteCamera;
 	manager.sprites["sprites"] = mod;
-
-	manager.cam = cam;
 
 	callModEvent("create", 0);
 	doModsUntilThisPos();
@@ -328,120 +341,126 @@ void ModEditor::generateNoteObject(note n, difficulty diff, Chart* selectedChart
 {
 	if (n.type == noteType::Note_Tail || n.type == noteType::Note_Mine)
 		return;
-
-	float noteZoom = Game::instance->save->GetDouble("Note Size");
-	bool downscroll = false;
-	NoteObject* object = new NoteObject();
-	object->size = noteZoom;
-	object->currentChart = selectedChart;
-	object->connected = &n;
-	SDL_FRect rect;
-	object->wasHit = false;
-	object->clapped = false;
-	object->active = true;
-
-	bpmSegment preStopSeg = selectedChart->getSegmentFromBeat(n.beat);
-
-	float stopOffset = selectedChart->getStopOffsetFromBeat(n.beat);
-
-	double stopBeatOffset = (stopOffset / 1000) * (preStopSeg.bpm / 60);
-
-	object->stopOffset = stopBeatOffset;
-
-	object->beat = (double)n.beat + stopBeatOffset;
-	object->lane = n.lane;
-	object->connectedReceptor = receptors[n.lane];
-	object->type = n.type;
-	object->endTime = -1;
-	object->endBeat = -1;
-
-	bpmSegment noteSeg = selectedChart->getSegmentFromBeat(object->beat);
-
-	object->time = selectedChart->getTimeFromBeatOffset(object->beat, noteSeg);
-	rect.y = Game::gameHeight + 400;
-	rect.x = 0;
-	rect.w = 64 * noteZoom;
-	rect.h = 64 * noteZoom;
-	object->rect = rect;
-
-	note tail;
-
-	bpmSegment bruh = selectedChart->getSegmentFromBeat(object->beat);
-
-	float wh = selectedChart->getTimeFromBeatOffset(n.beat, bruh);
-
-	float bps = (Game::save->GetDouble("scrollspeed") / 60);
-
-	if (findTail)
+	bool spawned = false;
+	for (Playfield* p : playfields)
 	{
-		if (object->type == Note_Head)
+
+		float noteZoom = Game::instance->save->GetDouble("Note Size");
+		bool downscroll = false;
+		NoteObject* object = new NoteObject();
+		object->size = noteZoom;
+		object->currentChart = selectedChart;
+		object->connected = &n;
+		SDL_FRect rect;
+		object->wasHit = false;
+		object->clapped = false;
+		object->active = true;
+
+		bpmSegment preStopSeg = selectedChart->getSegmentFromBeat(n.beat);
+
+		float stopOffset = selectedChart->getStopOffsetFromBeat(n.beat);
+
+		double stopBeatOffset = (stopOffset / 1000) * (preStopSeg.bpm / 60);
+
+		object->stopOffset = stopBeatOffset;
+
+		object->beat = (double)n.beat + stopBeatOffset;
+		object->lane = n.lane;
+		object->connectedReceptor = p->screenReceptors[n.lane];
+		object->type = n.type;
+		object->endTime = -1;
+		object->endBeat = -1;
+
+		bpmSegment noteSeg = selectedChart->getSegmentFromBeat(object->beat);
+
+		object->time = selectedChart->getTimeFromBeatOffset(object->beat, noteSeg);
+		rect.y = Game::gameHeight + 400;
+		rect.x = 0;
+		rect.w = 64 * noteZoom;
+		rect.h = 64 * noteZoom;
+		object->rect = rect;
+
+		note tail;
+
+		bpmSegment bruh = selectedChart->getSegmentFromBeat(object->beat);
+
+		float wh = selectedChart->getTimeFromBeatOffset(n.beat, bruh);
+
+		float bps = (Game::save->GetDouble("scrollspeed") / 60);
+
+		if (findTail)
 		{
-			for (int i = 0; i < diff.notes.size(); i++)
+			if (object->type == Note_Head)
 			{
-				note& nn = diff.notes[i];
-				if (nn.type != Note_Tail)
-					continue;
-				if (nn.lane != object->lane || nn.connectedBeat != n.beat)
-					continue;
+				for (int i = 0; i < diff.notes.size(); i++)
+				{
+					note& nn = diff.notes[i];
+					if (nn.type != Note_Tail)
+						continue;
+					if (nn.lane != object->lane || nn.connectedBeat != n.beat)
+						continue;
 
-				bpmSegment npreStopSeg = selectedChart->getSegmentFromBeat(nn.beat);
+					bpmSegment npreStopSeg = selectedChart->getSegmentFromBeat(nn.beat);
 
-				float nstopOffset = selectedChart->getStopOffsetFromBeat(nn.beat);
+					float nstopOffset = selectedChart->getStopOffsetFromBeat(nn.beat);
 
-				double nstopBeatOffset = (nstopOffset / 1000) * (npreStopSeg.bpm / 60);
+					double nstopBeatOffset = (nstopOffset / 1000) * (npreStopSeg.bpm / 60);
 
-				object->endBeat = nn.beat + nstopBeatOffset;
-				object->tailBeat = nn.beat;
+					object->endBeat = nn.beat + nstopBeatOffset;
+					object->tailBeat = nn.beat;
 
-				object->endTime = selectedChart->getTimeFromBeatOffset(nn.beat + nstopBeatOffset, noteSeg);
-				tail = nn;
-				break;
+					object->endTime = selectedChart->getTimeFromBeatOffset(nn.beat + nstopBeatOffset, noteSeg);
+					tail = nn;
+					break;
+				}
 			}
 		}
+		else
+		{
+			note nn;
+			nn.beat = n.connectedBeat;
+			nn.connectedBeat = -1;
+			nn.type = noteType::Note_Tail;
+			nn.lane = n.lane;
+			object->tailBeat = nn.beat;
+			tail = nn;
+			object->endTime = selectedChart->getTimeFromBeatOffset(n.connectedBeat, noteSeg);
+		}
+
+		float time = SDL_GetTicks();
+
+		// generate minimap line
+
+		line l;
+		l.beat = object->beat;
+		l.time = object->time;
+
+		l.rect = new AvgRect((6 * object->lane) + 9, 0, 2, 2);
+		l.lane = object->lane;
+
+		float beatRow = (object->beat - stopBeatOffset) * 48;
+
+		if (fmod(beatRow, (192 / 4)) == 0)
+			l.rect->c = { 255,0,0 };
+		else if (fmod(beatRow, (192 / 8)) == 0)
+			l.rect->c = { 0,0,255 };
+		else if (fmod(beatRow, (192 / 12)) == 0)
+			l.rect->c = { 0,255,0 };
+		else if (fmod(beatRow, (192 / 16)) == 0)
+			l.rect->c = { 255,255,0 };
+		else if (fmod(beatRow, (192 / 24)) == 0)
+			l.rect->c = { 0,255,0 };
+		else if (fmod(beatRow, (192 / 32)) == 0)
+			l.rect->c = { 255,215,0 };
+		else
+			l.rect->c = { 105,105,105 };
+
+		object->create();
+		if (!spawned)
+			notes.push_back(object);
+		spawned = true;
+		p->addNote(object);
 	}
-	else
-	{
-		note nn;
-		nn.beat = n.connectedBeat;
-		nn.connectedBeat = -1;
-		nn.type = noteType::Note_Tail;
-		nn.lane = n.lane;
-		object->tailBeat = nn.beat;
-		tail = nn;
-		object->endTime = selectedChart->getTimeFromBeatOffset(n.connectedBeat, noteSeg);
-	}
-
-	float time = SDL_GetTicks();
-
-	// generate minimap line
-
-	line l;
-	l.beat = object->beat;
-	l.time = object->time;
-
-	l.rect = new AvgRect((6 * object->lane) + 9, 0, 2, 2);
-	l.lane = object->lane;
-
-	float beatRow = (object->beat - stopBeatOffset) * 48;
-
-	if (fmod(beatRow, (192 / 4)) == 0)
-		l.rect->c = { 255,0,0 };
-	else if (fmod(beatRow, (192 / 8)) == 0)
-		l.rect->c = { 0,0,255 };
-	else if (fmod(beatRow, (192 / 12)) == 0)
-		l.rect->c = { 0,255,0 };
-	else if (fmod(beatRow, (192 / 16)) == 0)
-		l.rect->c = { 255,255,0 };
-	else if (fmod(beatRow, (192 / 24)) == 0)
-		l.rect->c = { 0,255,0 };
-	else if (fmod(beatRow, (192 / 32)) == 0)
-		l.rect->c = { 255,215,0 };
-	else
-		l.rect->c = { 105,105,105 };
-
-	object->create();
-	notes.push_back(object);
-	gameplay->add(object);
 }
 
 void ModEditor::update(Events::updateEvent event)
@@ -455,49 +474,21 @@ void ModEditor::update(Events::updateEvent event)
  		beat = FuckinEditor::selectedChart->getBeatFromTime(currentTime, curSeg);
 	}
 
-	for (NoteObject* obj : notes)
+	for (Playfield* p : playfields)
 	{
-		obj->rTime = currentTime;
-
-		if (currentTime >= obj->time)
+		for (NoteObject* obj : p->screenNotes)
 		{
-			if (!obj->wasHit || (obj->endTime > currentTime))
+			if (currentTime >= obj->time)
 			{
-				obj->wasHit = true;
-				manager.callEvent("hit", obj->lane);
+				if (!obj->wasHit || (obj->endTime > currentTime))
+				{
+					obj->wasHit = true;
+					manager.callEvent("hit", obj->lane);
+				}
 			}
 		}
+		p->update(currentTime, beat);
 	}
-
-	for (int i = 0; i < receptors.size(); i++)
-	{
-		ReceptorObject* rec = receptors[i];
-		rec->beat = beat;
-		rec->positionInSong = currentTime;
-		rec->modX = rec->x;
-		rec->modY = rec->y;
-		rec->endX = rec->modX;
-		rec->endY = rec->modY;
-	}
-
-	for (NoteObject* obj : notes)
-	{
-		obj->modX = obj->x;
-		obj->modY = obj->y;
-		obj->endX = obj->modX;
-		obj->endY = obj->modY;
-		obj->modCMOD = obj->cmod;
-		obj->endCMOD = obj->modCMOD;
-
-		for (holdTile& tile : obj->heldTilings)
-		{
-			tile.modX = tile.ogX;
-			tile.modY = tile.ogY;
-			tile.endX = tile.modX;
-			tile.endY = tile.modY;
-		}
-	}
-
 
 	manager.beat = beat;
 	manager.time = currentTime;
@@ -614,10 +605,9 @@ void ModEditor::mouseWheel(float wheel)
 
 	move(-(amount * 100));
 
-	for (NoteObject* obj : notes)
-	{
-		obj->wasHit = false;
-	}
+	for (Playfield* p : playfields)
+		for (NoteObject* obj : p->screenNotes)
+			obj->wasHit = false;
 
 }
 

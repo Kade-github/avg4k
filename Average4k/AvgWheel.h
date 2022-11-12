@@ -3,7 +3,6 @@
 #include "Object.h"
 #include "Pack.h"
 #include "Text.h"
-#include "Rendering.h"
 #include "Noteskin.h"
 #include "Game.h"
 #include "AvgGroup.h"

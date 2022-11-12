@@ -160,7 +160,6 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		{
 		case 803:
 			// we host pog
-			std::cout << "host me" << std::endl;
 			isHost = true;
 			refreshLobby(CurrentLobby);
 			break;
@@ -192,11 +191,9 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 
 		if (f.code >= 9000)
 		{
-			std::cout << "got status for " << f.code << std::endl;
 			int p = f.code - 9000;
 			if (p < people.size())
 			{
-				std::cout << "player " << p << " is now green!" << std::endl;
 
 				Color c;
 				c.r = 128;
@@ -218,8 +215,6 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 
 		obj.convert(update);
 
-		std::cout << "refresh lobby" << std::endl;
-
 		refreshLobby(update.Lobby);
 		break;
 	case eSPacketWtfAmInReply:
@@ -229,7 +224,6 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 
 		obj.convert(reply);
 
-		std::cout << "refresh lobby" << std::endl;
 
 		isHost = reply.isHost;
 
@@ -276,7 +270,6 @@ void MultiplayerLobby::onPacket(PacketType pt, char* data, int32_t length)
 		// tell the server we aint got it lol (if we dont :))
 		break;
 	case eSPacketStartLobbyGame:
-		std::cout << "start!" << std::endl;
 		Game::instance->transitionToMenu(new Gameplay());
 
 
@@ -368,7 +361,6 @@ void MultiplayerLobby::create() {
 		chart.packID = MainerMenu::selected.steamId;
 		chart.isPack = chart.packID != 0;
 		chart.chartIndex = MainerMenu::packSongIndex;
-		std::cout << "telling the server to start " << MainerMenu::selectedSong.steamId << std::endl;
 		chart.diff = MainerMenu::selectedDiffIndex;
 		chart.Order = 0;
 		chart.PacketType = eCPacketHostChangeChart;

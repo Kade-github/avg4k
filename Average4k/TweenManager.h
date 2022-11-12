@@ -104,7 +104,6 @@ namespace Tweening
 				Tween& t = activeTweens[i];
 				if (t.name == identity && !t.call)
 				{
-					std::cout << "remove tween cuz its already goin on" << std::endl;
 					switch (t.type)
 					{
 					case tt_Alpha:

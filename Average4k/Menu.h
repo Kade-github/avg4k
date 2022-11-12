@@ -55,7 +55,7 @@ public:
 				if (!obj->isDead)
 					delete obj;
 		}
-		std::cout << "removed all " << children.size() << std::endl;
+
 		cam->children.clear();
 		MUTATE_END
 	}

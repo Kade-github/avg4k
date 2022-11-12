@@ -177,11 +177,6 @@ public:
 
 			float noteOffset = (bps * (diff / 1000)) * (64 * noteZoom);
 
-			if (beat >= 299)
-			{
-				std::cout << "hello" << std::endl;
-			}
-
 			if (((int)beat % 4 == 0 || lastBeat == -1) && lastBeat != (int)beat)
 			{
 				lastBeat = (int)beat;

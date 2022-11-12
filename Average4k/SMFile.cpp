@@ -59,7 +59,6 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                 {
                     doubleChart = true;
                     //Game::asyncShowErrorWindow("Chart Parse Error (" + meta.songName + ")", "Line " + std::to_string(lineNumber) + " | Incorrect chart format", false);
-                    std::cout << path << " Has a non supported chart format on Line " << lineNumber << std::endl;
                 }
                 else
                     doubleChart = false;
@@ -250,7 +249,6 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                         if (measure.size() == 0)
                         {
                             cont = true;
-                            std::cout << path << " has no notes." << std::endl;
                             continue;
                         }
                         float lengthInRows = 192 / (measure.size());

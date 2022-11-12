@@ -72,7 +72,6 @@ int despawn = 0;
 
 void refreshLobbies() {
 	VM_START
-	std::cout << "refreshing lobbies" << std::endl;
 	CPacketServerList list;
 	list.Order = 0;
 	list.PacketType = eCPacketServerList;
@@ -283,7 +282,6 @@ void selectedSongCallback(int sId)
 		return;
 	Song s = MainerMenu::selected.songs[sId];
 
-	std::cout << "selected " << s.c.meta.songName << std::endl;
 
 	AvgContainer* cont = (AvgContainer*)MainerMenu::soloContainer->findItemByName("songContainer");
 	if (!cont) // lol
@@ -1522,7 +1520,7 @@ void MainerMenu::dropFile(SDL_DropEvent ev)
 		}
 		else
 		{
-			std::cout << "Failed to import " << ev.file << std::endl;
+			Logging::writeLog("Failed to import " + std::string(ev.file));
 			Game::showErrorWindow("Failed to import chart", "Check log.txt", true);
 		}
 	}
@@ -1547,7 +1545,7 @@ void MainerMenu::dropFile(SDL_DropEvent ev)
 		std::string toPath = (Average4k::path + "/assets/charts/" + newDir);
 		if (!CreateDirectoryA(toPath.c_str(), NULL))
 		{
-			std::cout << "Failed to import " << ev.file << ". Couldn't create the directory." << std::endl;
+			Logging::writeLog("Failed to import " + std::string(ev.file) + ". Couldn't create the directory.");
 			Game::showErrorWindow("Failed to import pack", "Check log.txt", true);
 			return;
 		}
@@ -1569,7 +1567,7 @@ void MainerMenu::dropFile(SDL_DropEvent ev)
 
 				if (!CreateDirectoryA(tooPath.c_str(), NULL))
 				{
-					std::cout << "Failed to import " << ev.file << ". Couldn't create the directory inside the root directory." << std::endl;
+					Logging::writeLog("Failed to import " + std::string(ev.file) + ". Couldn't create the directory inside the root directory.");
 					Game::showErrorWindow("Failed to import pack", "Check log.txt", true);
 					return;
 				}
@@ -1864,7 +1862,6 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 		{
 		case 803:
 			// we host pog
-			std::cout << "host me" << std::endl;
 			isHost = true;
 			currentLobby.Host.SteamID64 = std::to_string(SteamUser()->GetSteamID().ConvertToUint64());
 			if (lobbyStuffCreated)
@@ -1890,7 +1887,6 @@ void MainerMenu::onPacket(PacketType pt, char* data, int32_t length)
 
 		if (f.code >= 9000)
 		{
-			std::cout << "got status for " << f.code << std::endl;
 			if (isHost && f.code - 9000 < currentLobby.PlayerList.size())
 			{
 				SPacketOnChat onChat;
@@ -2117,7 +2113,7 @@ void lobbySelectedCallback(int mx, int my, Object* o)
 	list.PacketType = eCPacketJoinServer;
 	list.LobbyID = menu->Lobbies[selectedLobby].LobbyID;
 
-	std::cout << "trying to join " << list.LobbyID << std::endl;
+
 	menu->isInLobby = true;
 	menu->chat->showNotifs = true;
 	Multiplayer::sendMessage<CPacketJoinServer>(list);

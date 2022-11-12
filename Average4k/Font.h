@@ -26,7 +26,6 @@ public:
 				return font.font;
 			}
 		}
-		std::cout << "creating new font " << name << " with size of " << size << std::endl;
 		avgFont f;
 		f.font = TTF_OpenFont(("assets/graphical/fonts/" + name + ".ttf").c_str(), size);
 		f.name = name;

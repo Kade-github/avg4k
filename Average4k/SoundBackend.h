@@ -29,7 +29,6 @@ public:
 		{
 			type = MP3;
 			if (!drmp3_init_file(&mp3, path.c_str(), NULL)) {
-				std::cout << "failed to DRMP3 " << path << std::endl;
 			}
 
 			channels = mp3.channels;

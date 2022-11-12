@@ -425,7 +425,6 @@ void Game::update(Events::updateEvent update)
 		transCompleted = false;
 		Tweening::TweenManager::createNewTween("_trans", __transRect, Tweening::tt_Alpha, 235, 255, 0, []()->void {
 			Game::instance->transitioning = false;
-			std::cout << "no more" << std::endl;
 			}, Easing::EaseInSine);
 	}
 
@@ -572,7 +571,6 @@ void Game::update(Events::updateEvent update)
 					}
 				}
 
-				std::cout << "you joined!" << std::endl;
 				break;
 			}
 

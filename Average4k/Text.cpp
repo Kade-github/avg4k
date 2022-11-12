@@ -210,7 +210,9 @@ void Text::die()
 void Text::centerX()
 {
 	if (surfW == 0)
-		std::cout << "bruh??? surfW is zero (divide by zero)" << std::endl;
+	{
+		// lol
+	}
 	else
 		setX((Game::gameWidth / 2) - (surfW / 2));
 }
@@ -218,7 +220,9 @@ void Text::centerX()
 void Text::centerY()
 {
 	if (surfH == 0)
-		std::cout << "bruh??? surfH is zero (divide by zero)" << std::endl;
+	{
+		// lol
+	}
 	else
 		setX((Game::gameWidth / 2) - (surfH / 2));
 }

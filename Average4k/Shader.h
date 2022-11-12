@@ -1,6 +1,7 @@
 #pragma once
 #include "includes.h"
 
+
 static const char* generic_shader_vert = R"(
 in vec2 v_position;
 in vec2 v_uv;
@@ -59,7 +60,6 @@ public:
 		{
 			if (!useDefualtVert && !useDefualtFrag)
 			{
-				std::cout << "Failed to open " << vertFile << " and " << fragFile << std::endl;
 				return;
 			}
 		}
@@ -215,7 +215,6 @@ public:
 		{
 			char buffer[0x200];
 			glGetShaderInfoLog(this->vertex, sizeof(buffer), NULL, buffer);
-			std::cout << buffer << std::endl;
 		}
 
 		//Compile fragment shader
@@ -228,7 +227,6 @@ public:
 		{
 			char buffer[0x200];
 			glGetShaderInfoLog(this->fragment, sizeof(buffer), NULL, buffer);
-			std::cout << buffer << std::endl;
 		}
 
 		//Attach and link
@@ -246,9 +244,7 @@ public:
 		{
 			char buffer[0x200];
 			glGetProgramInfoLog(this->program, sizeof(buffer), NULL, buffer);
-			std::cout << buffer << std::endl;
 		}
-		std::cout << "Created shader " << program << std::endl;
 	}
 
 	void setProject(glm::mat4 proj)

@@ -74,7 +74,6 @@ SaveFile::SaveFile()
     buffer << ifs.rdbuf();
 
     ifs.close();
-    std::cout << "Size: " << buffer.str().size() << std::endl;
     msgpack::unpacked upd = msgpack::unpack(buffer.str().data(), buffer.str().size());
     upd.get().convert(currentHeader);
 
@@ -89,13 +88,11 @@ SaveFile::SaveFile()
                 if (defaultHeader.settings[i].name != currentHeader.settings[i].name)
                 {
                     currentHeader.settings[i] = defaultHeader.settings[i];
-                    std::cout << "user didn't have " << defaultSettings[i].name << std::endl;
                 }
             }
             else
             {
                 currentHeader.settings.push_back(defaultHeader.settings[i]);
-                std::cout << "user didn't have " << defaultSettings[i].name << std::endl;
             }
         }
         Save();

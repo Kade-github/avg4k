@@ -7,6 +7,7 @@
 #define CURL_STATICLIB
 #endif
 
+
 #include <iostream>
 #include <algorithm>
 #include <glad/glad.h>
@@ -52,12 +53,11 @@
 #else
 #include <boost/algorithm/clamp.hpp>
 #endif
-
+#include "Logging.h"
 #include <sstream>
 #include <string>
 #include <fstream>
 #include <filesystem>
-
 #include "Packet.h"
 #include "SPacketUpdateLeaderboard.h"
 #include "SPacketFinalizeChart.h"

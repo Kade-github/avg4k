@@ -18,7 +18,6 @@ void SongSelect::updateList() {
 			if (ends_with(entry.path().string(), ".qp"))
 			{
 				std::string newDir = Chart::split(entry.path().string(), '.')[0];
-				std::cout << "creating " << newDir << std::endl;
 				if (CreateDirectory(s2ws(newDir).c_str(), NULL))
 				{
 					std::string path = entry.path().string();
@@ -34,7 +33,6 @@ void SongSelect::updateList() {
 					if (z == NULL)
 					{
 						zip_error_to_str(buf, sizeof(buf), err, errno);
-						std::cout << "error opening zip archive " << path << " | " << buf << std::endl;
 						continue;
 					}
 
@@ -43,7 +41,6 @@ void SongSelect::updateList() {
 							zf = zip_fopen_index(z, i, 0);
 							if (!zf)
 							{
-								std::cout << "failed to open a file in a zip file " << path << std::endl;
 								continue;
 							}
 
@@ -413,7 +410,6 @@ void SongSelect::onSteam(std::string s)
 
 		std::vector<std::string> split = Chart::split(replaced2, '/');
 
-		std::cout << "uploading to " << Game::steam->createdId << std::endl;
 
 		Game::steam->uploadToItem(currentChart, Game::steam->createdId, split[split.size() - 1]);
 		uploading = true;
@@ -551,9 +547,7 @@ void SongSelect::switchChart(song s)
 	if (s.steam)
 		selectedSong->steamHandle = listOfCharts[selectedIndex].steamHandle;
 	selectedSong->type = listOfCharts[selectedIndex].type;
-	std::cout << "took " << (SDL_GetTicks() - time) << "ms for " << s.type << std::endl;
 	std::string path = currentChart->meta.folder + "/" + currentChart->meta.audio;
-	std::cout << "playing " << path << std::endl;
 	if (songPrev != NULL)
 	{
 		if (songPrev->path == path)

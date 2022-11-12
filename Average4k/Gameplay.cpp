@@ -206,7 +206,6 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 		switch (f.code)
 		{
 		case 803:
-			std::cout << "host me" << std::endl;
 			MainerMenu::isHost = true;
 			break;
 		}
@@ -395,7 +394,6 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 
 		MainerMenu::currentSelectedSong.destroy();
 		cleanUp();
-		std::cout << "go back" << std::endl;
 
 		Game::instance->transitionToMenu(new MainerMenu());
 		MainerMenu::isInLobby = true;
@@ -553,7 +551,7 @@ void Gameplay::create() {
 
 	std::string path = MainerMenu::currentSelectedSong.meta.folder + "/" + MainerMenu::currentSelectedSong.meta.audio;
 
-	std::cout << "playing " << path << std::endl;
+
 	if (SoundManager::getChannelByName("prevSong") == NULL)
 	{
 		song = SoundManager::createChannel(path.c_str(), "prevSong");

@@ -242,7 +242,7 @@ void MainMenu::update(Events::updateEvent event)
 				std::string sub = st[1];
 				list.LobbyID = std::stoul(sub);
 
-				std::cout << "trying to join " << list.LobbyID << " from command line" << std::endl;
+				Logging::writeLog("trying to join " + std::to_string(list.LobbyID) + " from command line");
 
 				Multiplayer::sendMessage<CPacketJoinServer>(list);
 			}

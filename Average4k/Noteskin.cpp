@@ -288,8 +288,6 @@ noteskin_asset* loadSkin(noteskin_asset* as, std::string typ, bool appendPath = 
 	as->fontMap['.'] = as->num_period;
 	as->fontMap[','] = as->num_period;
 	as->fontMap['%'] = as->num_perc;
-
-	std::cout << "[NOTESKIN] skinpath=" << as->skinpath << std::endl;
 	VM_END
 	return as;
 }
@@ -308,15 +306,11 @@ noteskin_asset* Noteskin::getNoteskin()
 			type = "arrow";
 		}
 
-		std::cout << "creating noteskin " << type << std::endl;
 		asset = loadSkin(asset, type);
-		std::cout << "done noteskin" << std::endl;
 	}
 	else if (!asset)
 	{
-		std::cout << "creating noteskin " << type << std::endl;
 		asset = loadSkin(asset, type);
-		std::cout << "done noteskin" << std::endl;
 	}
 	VM_END
 	return asset;
@@ -325,10 +319,8 @@ noteskin_asset* Noteskin::getNoteskin()
 noteskin_asset* Noteskin::getNoteskin(std::string ty)
 {
 	VM_START
-		std::cout << "creating noteskin " << ty << std::endl;
 		resetNoteskin(Game::noteskin);
 		asset = loadSkin(asset, ty, false);
-		std::cout << "done noteskin" << std::endl;
 	VM_END
 		return asset;
 }

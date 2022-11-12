@@ -40,12 +40,12 @@ OsuFile::OsuFile(std::string path)
 			difficulty diff = generateDiff(e.path().string(), (meta.bpms.size() == 0 ? &meta : NULL), lines);
 			if (diff.name == "Not mania" && diff.notes.size() == 0)
 			{
-				std::cout << e.path() << " is not a mania chart!" << std::endl;
+				Logging::writeLog(e.path().string() + " is not a mania chart!");
 				continue;
 			}
 			if (diff.name == "Not a 4k chart" && diff.notes.size() == 0)
 			{
-				std::cout << e.path() << " is not a 4k chart!" << std::endl;
+				Logging::writeLog(e.path().string() + " is not a 4k chart!");
 				continue;
 			}
 

@@ -7,14 +7,7 @@
 void Steam::InitSteam()
 {
     MUTATE_START
-	if (!SteamAPI_Init())
-	{
-		std::cout << "uh oh, you aren't on steam (or you don't own the game)" << std::endl;
-	}
-    else
-    {
-        
-    }
+        SteamAPI_Init();
 
     MUTATE_END
 }
@@ -131,11 +124,9 @@ long GetFileSize(std::string filename)
 void Steam::uploadToItem(Chart* c, PublishedFileId_t id, std::string fileName)
 {
     MUTATE_START
-    std::cout << "wassup homie " << id << std::endl;
+
     std::vector<std::string> b = Chart::split(c->meta.folder, '/');
 
-    std::cout << "meta: " << b[b.size() - 1] << std::endl;
-    std::cout << "file with folder: " << c->meta.folder + "/" + fileName << std::endl;
 
     auto handle = SteamUGC()->StartItemUpdate(1828580, id);
     updatehandle = handle;
@@ -169,21 +160,14 @@ void Steam::uploadToItem(Chart* c, PublishedFileId_t id, std::string fileName)
     SteamUGC()->SetItemContent(handle, (std::filesystem::current_path().string() + "/" + c->meta.folder).c_str());
     SteamUGC()->SetItemPreview(handle, (std::filesystem::current_path().string() + "/" + c->meta.folder + "/" + c->meta.background).c_str());
 
-    std::cout << "item metadata: " << b[b.size() - 2].c_str() << std::endl;
 
-    std::cout << "folder to upload: " << std::filesystem::current_path().string() + "/" + c->meta.folder << std::endl;
-
-    std::cout << "item preview: " << std::filesystem::current_path().string() + "/" + c->meta.folder + "/" + c->meta.background << std::endl;
 
     long size = GetFileSize(std::filesystem::current_path().string() + "/" + c->meta.folder + "/" + c->meta.background);
 
     if (size == -1 || size > 1000000)
     {
         SteamUGC()->SetItemPreview(handle, (std::filesystem::current_path().string() + std::string("/assets/skinDefaults/Menu/bg.png")).c_str());
-        std::cout << "item preview (cuz the other one was too big " + std::to_string(size) + "): assets / graphical / menu / bg.png" << std::endl;
     }
-
-    std::cout << "first tag: " << p->m_ppStrings[0] << std::endl;
 
     SteamAPICall_t call = SteamUGC()->SubmitItemUpdate(handle, "Upload");
 
@@ -196,7 +180,7 @@ void Steam::uploadToItem(Chart* c, PublishedFileId_t id, std::string fileName)
 void Steam::uploadPack(Pack* pac, PublishedFileId_t id)
 {
     MUTATE_START
-        std::cout << "wassup homie " << id << std::endl;
+
     std::vector<std::string> b = Chart::split(pac->metaPath, '/');
 
     auto handle = SteamUGC()->StartItemUpdate(1828580, id);
@@ -233,21 +217,14 @@ void Steam::uploadPack(Pack* pac, PublishedFileId_t id)
     SteamUGC()->SetItemContent(handle, (std::filesystem::current_path().string() + "/" + pac->folder).c_str());
     SteamUGC()->SetItemPreview(handle, (std::filesystem::current_path().string() + "/" + pac->background).c_str());
 
-    std::cout << "item metadata: " << b[b.size() - 2].c_str() << std::endl;
 
-    std::cout << "folder to upload: " << std::filesystem::current_path().string() + "/" + pac->folder << std::endl;
-
-    std::cout << "item preview: " << std::filesystem::current_path().string() + "/" + pac->background << std::endl;
 
     long size = GetFileSize(std::filesystem::current_path().string() + "/" + pac->background);
 
     if (size == -1 || size > 1000000)
     {
         SteamUGC()->SetItemPreview(handle, (std::filesystem::current_path().string() + std::string("/assets/skinDefaults/Menu/bg.png")).c_str());
-        std::cout << "item preview (cuz the other one was too big " + std::to_string(size) + "): assets / graphical / menu / bg.png" << std::endl;
     }
-
-    std::cout << "first tag: " << p->m_ppStrings[0] << std::endl;
 
     SteamAPICall_t call = SteamUGC()->SubmitItemUpdate(handle, "Upload");
 
@@ -263,7 +240,6 @@ void Steam::OnCreateItemCallback(CreateItemResult_t* result, bool bIOFailure)
     MUTATE_START
     createdId = result->m_nPublishedFileId;
 
-    std::cout << "created item " << createdId << std::endl;
 
     if (Game::currentMenu != nullptr)
         Game::currentMenu->onSteam("createdItem");
@@ -279,7 +255,6 @@ void Steam::OnInvite(GameRichPresenceJoinRequested_t* result)
     std::string sub = st[1];
     list.LobbyID = std::stoul(sub);
 
-    std::cout << "trying to join " << list.LobbyID << " from steam invite" << std::endl;
 
     Multiplayer::sendMessage<CPacketJoinServer>(list);
 }
@@ -287,7 +262,6 @@ void Steam::OnInvite(GameRichPresenceJoinRequested_t* result)
 void Steam::OnUploadedItemCallback(SubmitItemUpdateResult_t* result, bool bIOFailure)
 {
     MUTATE_START
-    std::cout << "Result: " << result->m_eResult << " on " << result->m_nPublishedFileId << std::endl;
 
     if (Game::currentMenu != nullptr)
     {
@@ -430,10 +404,6 @@ void Steam::OnUGCSubscribedQueryCallback(SteamUGCQueryCompleted_t* result, bool 
             SteamUGC()->GetItemInstallInfo(id.m_nPublishedFileId, &sizeOnDisk, i.folder, sizeof(i.folder), &timestamp);
             subscribedList.push_back(i);
         }
-        else
-        {
-            std::cout << "failed to fuck wit item #" << i << std::endl;
-        }
     }
     MUTATE_END
 }
@@ -448,11 +418,8 @@ void Steam::LoadWorkshopChart(uint64_t publishedFileID) {
     downloadId = publishedFileID;
     PublishedFileId_t file = publishedFileID;
 
-    std::cout << "downloading " << file << std::endl;
 
     bool success = SteamUGC()->DownloadItem(file, true);
-
-    std::cout << "Started steam download: " << success << std::endl;
     STR_ENCRYPT_END
 }
 
@@ -463,7 +430,6 @@ void Steam::CallbackDownload(DownloadItemResult_t* res) {
         return;
 
     if (res->m_eResult != k_EResultOK) {
-        std::cout << "Steam download callback error: " << res->m_eResult << std::endl;
         return;
     }
  
@@ -474,11 +440,8 @@ void Steam::CallbackDownload(DownloadItemResult_t* res) {
     bool infoSuccess = SteamUGC()->GetItemInstallInfo(res->m_nPublishedFileId, &sizeOnDisk, this->chartWorkshop, sizeof(this->chartWorkshop), &timestamp);
 
     if (!infoSuccess) {
-        std::cout << "Error while getting item install information." << std::endl;
         return;
     }
-
-    std::cout << "Chart is " << sizeOnDisk << " bytes" << std::endl;
 
     UGCQueryHandle_t req = SteamUGC()->CreateQueryUGCDetailsRequest(&res->m_nPublishedFileId, 1);
 
@@ -508,7 +471,6 @@ void Steam::OnUGCQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFailure
     MUTATE_START
 
     if (result->m_unNumResultsReturned != 1) {
-        std::cout << "We got something other than 1 result, this shouldn't happen" << std::endl;
         return;
     }
 

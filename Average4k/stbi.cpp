@@ -38,7 +38,6 @@ bool stbi_h::get_error()
 		std::string reason = std::string(stbi_failure_reason());
 		if (reason != "can't fopen" && reason != "bad png sig")
 		{
-			std::cout << "STBI ERROR: " << stbi_failure_reason() << std::endl;
 			return true;
 		}
 	}

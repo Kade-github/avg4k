@@ -71,7 +71,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='KadeDebug|x64'" Label="Configuration">
@@ -85,7 +85,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <SpectreMitigation>false</SpectreMitigation>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
@@ -420,6 +420,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="imgui_tables.cpp" />
     <ClCompile Include="imgui_widgets.cpp" />
     <ClCompile Include="Judge.cpp" />
+    <ClCompile Include="Logging.cpp" />
     <ClCompile Include="MainerMenu.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="MenuCreator.cpp" />
@@ -528,6 +529,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="includes.h" />
     <ClInclude Include="Judge.h" />
     <ClInclude Include="Lobby.h" />
+    <ClInclude Include="Logging.h" />
     <ClInclude Include="log_stream.h" />
     <ClInclude Include="luaaa.h" />
     <ClInclude Include="MainerMenu.h" />

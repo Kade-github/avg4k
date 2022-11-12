@@ -1492,7 +1492,6 @@ void copy()
 
 		copiedNotes.push_back(n);
 	}
-	std::cout << "copied " << copiedNotes.size() << std::endl;
 }
 
 void paste()
@@ -1529,7 +1528,6 @@ void paste()
 		editor->generateNoteObject(copiedN, FuckinEditor::selectedChart->meta.difficulties[FuckinEditor::currentDiff], FuckinEditor::selectedChart, notes);
 	}
 	std::sort(notes.begin(), notes.end(), compareNoteByBeat);
-	std::cout << "pasted " << pastedNotes.size() << " deleted " << deletedNotes.size() << std::endl;
 }
 
 void undo()
@@ -1553,7 +1551,6 @@ void undo()
 		editor->generateNoteObject(copiedN, FuckinEditor::selectedChart->meta.difficulties[FuckinEditor::currentDiff], FuckinEditor::selectedChart, notes);
 	}
 	std::sort(notes.begin(), notes.end(), compareNoteByBeat);
-	std::cout << "deleted " << pastedNotes.size() << " pasted " << deletedNotes.size() << std::endl;
 
 	pastedNotes.clear();
 	deletedNotes.clear();
@@ -2014,7 +2011,6 @@ void FuckinEditor::mouseWheel(float wheel)
 	if (stopOffset != 0)
 		beats = offsetBeats;
 
-	std::cout << "setting beat to " << beats << " with increase/decrease of " << increase << " from beat " << currentBeat << std::endl;
 	currentBeat = beats;
 	float time = FuckinEditor::selectedChart->getTimeFromBeat(beats, seg);
 	song->setPos(time);

@@ -11,7 +11,6 @@ void MultiplayerLobbies::refreshLobbies() {
 	if (refreshTimer < 2999)
 		return;
 	refreshTimer = 0;
-	std::cout << "refreshing lobbies" << std::endl;
 	CPacketServerList list;
 	list.Order = 0;
 	list.PacketType = eCPacketServerList;
@@ -61,7 +60,6 @@ void MultiplayerLobbies::updateList(std::vector<lobby> lobs)
 	Lobbies.clear();
 	Lobbies = lobs;
 
-	std::cout << "current lobs: " << lobs.size() << std::endl;
 
 	for (Text* t : lobbyTexts)
 		removeObj(t);
@@ -117,7 +115,6 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 
 			obj.convert(fuck);
 
-			std::cout << "updating lobbies" << std::endl;
 
 			updateList(fuck.Lobbies);
 			break;
@@ -133,7 +130,6 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 
 			avatars.clear();
 
-			std::cout << "you hosted and joined!" << std::endl;
 			break;
 		}
 		case eSPacketStatus: {
@@ -146,12 +142,10 @@ void MultiplayerLobbies::onPacket(PacketType pt, char* data, int32_t length)
 			switch (f.code)
 			{
 				case 403: {
-					std::cout << "not allowed to join that!" << std::endl;
 					joiningServer = false;
 					break;
 				}
 				case 404: {
-					std::cout << "dawg that lobby aint found" << std::endl;
 					joiningServer = false;
 					break;
 				}
@@ -230,8 +224,6 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 			host.Order = 0;
 			host.PacketType = eCPacketHostServer;
 
-			std::cout << "bruh" << std::endl;
-
 			Multiplayer::sendMessage<CPacketHostServer>(host);
 			break;
 		case SDLK_RETURN:
@@ -243,8 +235,6 @@ void MultiplayerLobbies::keyDown(SDL_KeyboardEvent event)
 			list.Order = 0;
 			list.PacketType = eCPacketJoinServer;
 			list.LobbyID = Lobbies[selectedIndex].LobbyID;
-
-			std::cout << "trying to join " << list.LobbyID << std::endl;
 
 			Multiplayer::sendMessage<CPacketJoinServer>(list);
 			break;

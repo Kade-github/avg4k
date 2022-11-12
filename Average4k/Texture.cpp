@@ -6,10 +6,6 @@
 Texture* Texture::createWithImage(std::string filePath)
 {
 	Texture* t = stbi_h::stbi_load_file(filePath);
-	if (t->pixels == NULL)
-	{
-		std::cout << "pixels are fucking null? WTF STBI " << filePath << std::endl;
-	}
 	t->fromSTBI = true;
 
 	if (stbi_h::get_error())
@@ -46,7 +42,6 @@ void Texture::resizeTexture(int w, int h)
 Texture* Texture::createFromSurface(SDL_Surface* surf, bool free) {
 	if (surf == NULL)
 	{
-		std::cout << "Texture*: NULL PTR FROM SURFACE. FUCKING APE" << std::endl;
 		return Rendering::white;
 	}
 	int w = surf->w;

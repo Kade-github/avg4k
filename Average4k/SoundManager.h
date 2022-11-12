@@ -129,7 +129,7 @@ public:
 
 		if (BASS_ErrorGetCode() != 0) {
 			STR_ENCRYPT_START
-			std::cout << "bass error " << BASS_ErrorGetCode() << std::endl;
+			Logging::writeLog("Bass Error " + std::to_string(BASS_ErrorGetCode()));
 			STR_ENCRYPT_END
 		}
 		BASS_ChannelSetPosition(decodeChan, BASS_ChannelSeconds2Bytes(decodeChan, 0), NULL);
@@ -150,7 +150,11 @@ public:
 		if (FFT)
 			BASS_ChannelGetData(decodeChan, samples, BASS_DATA_FFT_COMPLEX);
 
-		std::cout << BASS_ErrorGetCode() << std::endl;
+		if (BASS_ErrorGetCode() != 0) {
+			STR_ENCRYPT_START
+				Logging::writeLog("Bass Error " + std::to_string(BASS_ErrorGetCode()));
+			STR_ENCRYPT_END
+		}
 
 		return samples;
 	}
@@ -251,12 +255,13 @@ public:
 
 				auto val = BASS_StreamCreateFile(true, buff, 0, buf.str().size(), flags);
 
-				std::cout << "[BASS] Loading " << path.c_str() << " size: " << buf.str().size() << " by threading." << std::endl;
 
 				if (val == 0) {
-					auto error = BASS_ErrorGetCode();
-
-					std::cout << "Bass error! " << error << std::endl;
+					if (BASS_ErrorGetCode() != 0) {
+						STR_ENCRYPT_START
+							Logging::writeLog("Bass Error " + std::to_string(BASS_ErrorGetCode()));
+						STR_ENCRYPT_END
+					}
 					std::free(buff);
 					threadLoaded = NULL;
 					isThreadDone = true;
@@ -297,8 +302,6 @@ public:
 		buf << inputFile.rdbuf();
 		inputFile.close();
 
-		std::cout << "[BASS] Loading " << path.c_str() << " size: " << buf.str().size() << std::endl;
-
 		char* buff = (char*)std::malloc(buf.str().size());
 		
 		memcpy(buff, buf.str().data(), buf.str().size());
@@ -306,9 +309,11 @@ public:
 		auto val = BASS_StreamCreateFile(true, buff, 0, buf.str().size(), flags);
 
 		if (val == 0) {
-			auto error = BASS_ErrorGetCode();
-
-			std::cout << "Bass error! " << error << std::endl;
+			if (BASS_ErrorGetCode() != 0) {
+				STR_ENCRYPT_START
+					Logging::writeLog("Bass Error " + std::to_string(BASS_ErrorGetCode()));
+				STR_ENCRYPT_END
+			}
 			std::free(buff);
 			return new Channel(-1);
 		}

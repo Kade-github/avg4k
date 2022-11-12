@@ -337,7 +337,6 @@ Chart SongGather::extractAndGetChart(std::string file)
 	newDir = newDir.substr(0, newDir.find_last_of("."));
 
 	std::string s = Average4k::path + "/assets/charts/" + newDir;
-	std::cout << "creating " << s << std::endl;
 	if (CreateDirectoryA(s.c_str(), NULL))
 	{
 		std::string path = file;
@@ -353,7 +352,6 @@ Chart SongGather::extractAndGetChart(std::string file)
 		if (z == NULL)
 		{
 			zip_error_to_str(buf, sizeof(buf), err, errno);
-			std::cout << "error opening zip archive " << path << " | " << buf << std::endl;
 			return Chart();
 		}
 
@@ -361,10 +359,7 @@ Chart SongGather::extractAndGetChart(std::string file)
 			if (zip_stat_index(z, i, 0, &sb) == 0) {
 				zf = zip_fopen_index(z, i, 0);
 				if (!zf)
-				{
-					std::cout << "failed to open a file in a zip file " << path << std::endl;
 					continue;
-				}
 
 				std::ofstream fout;
 				fout.open(s + "/" + sb.name, std::ios::binary);
@@ -489,7 +484,7 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 			}
 		}
 		catch (...) {
-			std::cout << "failed to load a song" << std::endl;
+
 		}
 	}
 	return songs;

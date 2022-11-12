@@ -208,7 +208,7 @@ DWORD WINAPI SendPacketT(LPVOID param) {
             char* sendData = (char*)malloc(dataStr.length() + 8);
 
             if (!sendData) {
-                std::cout << "Alloc error 1 (Packet Dropped)" << std::endl;
+                Logging::writeLog("Alloc error 1 (Packet Dropped)");
                 return 0;
             }
 
@@ -223,7 +223,7 @@ DWORD WINAPI SendPacketT(LPVOID param) {
             unsigned char* cipherplusIV = (unsigned char*)malloc(dataStr.length() + 256);
 
             if (!cipherplusIV) {
-                std::cout << "Alloc error 2 (Packet Dropped)" << std::endl;
+                Logging::writeLog("Alloc error 2 (Packet Dropped)");
                 return 0;
             }
 
@@ -238,20 +238,20 @@ DWORD WINAPI SendPacketT(LPVOID param) {
             aesCtx = EVP_CIPHER_CTX_new();
 
             if (!aesCtx) {
-                std::cout << "Crypto error 1 (Packet Dropped)" << std::endl;
+                Logging::writeLog("Crypto error 1 (Packet Dropped)");
                 unfuckPlease.unlock();
                 return 0;
             }
 
             if (EVP_EncryptInit_ex(aesCtx, EVP_aes_256_cbc(), NULL, NULL, NULL) != 1) {
-                std::cout << "Crypto error 2 (Packet Dropped)" << std::endl;
+                Logging::writeLog("Crypto error 2 (Packet Dropped)");
                 unfuckPlease.unlock();
                 return 0;
             }
 
 
             if (EVP_CIPHER_CTX_set_padding(aesCtx, EVP_PADDING_PKCS7) != 1) {
-                std::cout << "Crypto error 4 (Packet Dropped)" << std::endl;
+                Logging::writeLog("Crypto error 4 (Packet Dropped)");
                 unfuckPlease.unlock();
                 return 0;
             }
@@ -259,7 +259,7 @@ DWORD WINAPI SendPacketT(LPVOID param) {
 
 
             if (RAND_bytes(cipherplusIV, 16) != 1) {
-                std::cout << "Crypto error 5 (Packet Dropped)" << std::endl;
+                Logging::writeLog("Crypto error 5 (Packet Dropped)");
                 unfuckPlease.unlock();
                 return 0;
             }
@@ -271,13 +271,13 @@ DWORD WINAPI SendPacketT(LPVOID param) {
             }
 
             if (EVP_EncryptInit_ex(aesCtx, NULL, NULL, buf, cipherplusIV) != 1) {
-                std::cout << "Crypto error 6 (Packet Dropped)" << std::endl;
+                Logging::writeLog("Crypto error 6 (Packet Dropped)");
                 unfuckPlease.unlock();
                 return 0;
             }
 
             if (EVP_EncryptUpdate(aesCtx, ciphertext, &len, (unsigned char*)sendData, dataStr.length() + 8) != 1) {
-                std::cout << "Crypto error 7 (Packet Dropped)" << std::endl;
+                Logging::writeLog("Crypto error 7 (Packet Dropped)");
                 unfuckPlease.unlock();
                 return 0;
             }
@@ -285,7 +285,7 @@ DWORD WINAPI SendPacketT(LPVOID param) {
             ciphertext_len = len;
 
             if (EVP_EncryptFinal_ex(aesCtx, ciphertext + len, &len) != 1) {
-                std::cout << "Crypto error 8 (Packet Dropped)" << std::endl;
+                Logging::writeLog("Crypto error 8 (Packet Dropped)");
                 unfuckPlease.unlock();
                 return 0;
             }
@@ -305,7 +305,7 @@ DWORD WINAPI SendPacketT(LPVOID param) {
                 }
             }
             catch (std::exception ex) {
-                std::cout << "something something problem send: " << ex.what() << std::endl;
+                Logging::writeLog("something something problem send: " + std::string(ex.what()));
             }
 
             if (!success && packetData->attempts < 5) {
@@ -494,7 +494,7 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
         int len;
         int plaintext_len;
 
-        //std::cout << "buffers allocated" << std::endl;
+        //Logging::writeLog("buffers allocated");
 
         EVP_CIPHER_CTX* ctx = NULL;
 
@@ -504,12 +504,12 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
 
         EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, NULL, NULL);
 
-        //std::cout << "cxt created " << std::endl;
+        //Logging::writeLog("cxt created ");
 
         EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, 16, NULL);
         EVP_CIPHER_CTX_set_padding(ctx, EVP_PADDING_PKCS7);
 
-       // std::cout << "padding shit set" << std::endl;
+       // Logging::writeLog("padding shit set");
 
         unsigned char keyDec[32];
 
@@ -521,30 +521,30 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
         EVP_DecryptInit_ex(ctx, NULL, NULL, keyDec, (unsigned char*)iv);
 
         memset(keyDec, 0, 32);
-       // std::cout << "decrypt inited" << std::endl;
+       // Logging::writeLog("decrypt inited");
 
         EVP_DecryptUpdate(ctx, (unsigned char*)plaintext, &len, (unsigned char*)ciphertext, payloadLength);
-       // std::cout << "first update done" << std::endl;
+       // Logging::writeLog("first update done");
 
         plaintext_len = len;
 
         EVP_DecryptFinal_ex(ctx, (unsigned char*)plaintext + len, &len);
-       // std::cout << "done decrypt" << std::endl;
+       // Logging::writeLog("done decrypt");
         plaintext_len += len;
 
         EVP_CIPHER_CTX_free(ctx);
 
 
-       // std::cout << "freed cxt" << std::endl;
+       // Logging::writeLog("freed cxt");
         memset(ciphertext, 0, payloadLength);
         free(ciphertext);
-        //std::cout << "freed ciphertext" << std::endl;
+        //Logging::writeLog("freed ciphertext");
 
         std::string plaintex = std::string(plaintext, plaintext_len);
 
        // std::string encoded = macaron::Base64::Encode(plaintex);
 
-        //std::cout << "Decrypted message: " << encoded << std::endl;
+        //Logging::writeLog("Decrypted message: " << encoded);
 
 
         int32_t* ints = (int32_t*)plaintext;
@@ -552,8 +552,8 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
         int32_t packetType = ints[0];
         int32_t length = ints[1];
 
-        //std::cout << "Packet length: " << length << std::endl;
-        //std::cout << "packet type: " << packetType << std::endl;
+        //Logging::writeLog("Packet length: " << length);
+        //Logging::writeLog("packet type: " << packetType);
 
         size_t size = (size_t)length;
 
@@ -586,18 +586,18 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
             {
             case 403:
                 VM_START
-                std::cout << "trying to login cuz unauthorized" << std::endl;
+                Logging::writeLog("trying to login cuz unauthorized");
                 CreateThread(NULL, NULL, pleaseLogin, NULL, NULL, NULL);
                 VM_END
                 break;
             case 409:
                 VM_START
-                std::cout << "conflict" << std::endl;
+                Logging::writeLog("conflict");
                 VM_END
                 break;
             case 404:
                 VM_START
-                std::cout << "not found" << std::endl;
+                Logging::writeLog("not found");
                 VM_END
                 break;
             case 3301:
@@ -647,23 +647,23 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
         }
         case eSPacketHello: {
             VM_START
-            //std::cout << "bruh moment -1" << std::endl;
+            //Logging::writeLog("bruh moment -1");
             unpack(result, data, length);
 
-            //std::cout << "bruh moment 0" << std::endl;
+            //Logging::writeLog("bruh moment 0");
 
             obj = msgpack::object(result.get());
 
-            //std::cout << "bruh moment 0.5" << std::endl;
+            //Logging::writeLog("bruh moment 0.5");
 
             obj.convert(helloBack);
 
-            // std::cout << "bruh moment 1" << std::endl;
+            // Logging::writeLog("bruh moment 1");
 
             CreateThread(NULL, NULL, NewThread, NULL, NULL, NULL);
             Multiplayer::loggedIn = true;
 
-            //std::cout << "bruh moment 2" << std::endl;
+            //Logging::writeLog("bruh moment 2");
 
             if (reauth)
                 delete reauth;
@@ -678,7 +678,7 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
 
             Multiplayer::currentUserAvatar = helloBack.Avatar;
 
-            std::cout << helloBack.Message << ". hello server, fuck you too! " << std::endl;
+            Logging::writeLog(helloBack.Message + ". hello server, fuck you too! ");
             VM_END
             break;
         }
@@ -719,7 +719,7 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
         }
     }
     catch (std::exception e) {
-        std::cout << "shit " << e.what() << " - THINGY CASTING " << type << std::endl;
+        Logging::writeLog("shit " + std::string(e.what()) + " - THINGY CASTING " + std::to_string(type));
     }
     
     __nop();
@@ -818,7 +818,7 @@ context_ptr on_tls_init(const char* hostname, websocketpp::connection_hdl) {
 
     }
     catch (std::exception& e) {
-        std::cout << e.what() << std::endl;
+        Logging::writeLog(e.what());
     }
     return ctx;
 }
@@ -842,7 +842,7 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
    
     std::string url = "wss://titnoas.xyz/ballsandsex/";
    
-    std::cout << "Creating things" << std::endl;
+    Logging::writeLog("Creating things");
     CreateThread(NULL, NULL, SendPacketT, NULL, NULL, NULL);
 
     try {
@@ -862,10 +862,10 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
                 connectionData->c.init_asio();
 
                 // Register our message handler
-                std::cout << "Setting handlers" << std::endl;
+                Logging::writeLog("Setting handlers");
 
                 // Register our message handler
-                std::cout << "Setting handlers" << std::endl;
+                Logging::writeLog("Setting handlers");
 
 
                 firstConnection = true;
@@ -877,7 +877,7 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
             }
 
 
-            std::cout << "handlers set" << std::endl;
+            Logging::writeLog("handlers set");
 
             connectionData->c.set_message_handler(bind(&on_message, &connectionData->c, ::_1, ::_2));
 
@@ -890,10 +890,10 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
             client::connection_ptr con = connectionData->c.get_connection(url, ec);
             if (ec) {
                 Game::asyncShowErrorWindow("Connection failure!", "Couldn't connect to Average4K Servers.", true);
-                std::cout << "could not create connection because: " << ec.message() << std::endl;
+                Logging::writeLog("could not create connection because: " + ec.message());
                 return 0;
             }
-            std::cout << "got connection" << std::endl;
+            Logging::writeLog("got connection");
 
             if (reauth) {
                 con->append_header("Reauth", *reauth);
@@ -930,7 +930,7 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
             std::string encryptedData = std::string((char*)out, outLen);
 
             std::string base64Encoded = macaron::Base64::Encode(encryptedData);
-            //std::cout << "Base64: " << base64Encoded << std::endl;
+            //Logging::writeLog("Base64: " << base64Encoded);
             con->append_header("Key", base64Encoded);
            
 
@@ -939,16 +939,16 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
             // exchanged until the event loop starts running in the next line.
             connectionData->connectionHdl = connectionData->c.connect(con);
             
-            std::cout << "connected" << std::endl;
+            Logging::writeLog("connected");
             // Start the ASIO io_service run loop
             // this will cause a single connection to be made to the server. c.run()
             // will exit when this connection is closed.
             
 
-            std::cout << "Calling run" << std::endl;
+            Logging::writeLog("Calling run");
             connectedToServer = true;
             connectionData->c.run();
-            std::cout << "done run" << std::endl;
+            Logging::writeLog("done run");
             Multiplayer::loggedIn = false;
             connectedToServer = false;
             
@@ -963,7 +963,7 @@ DWORD WINAPI Multiplayer::connect(LPVOID agh)
         }
     }
     catch (websocketpp::exception const& e) {
-        std::cout << "exc: " << e.what() << std::endl;
+        Logging::writeLog("exc: " + std::string(e.what()));
         Game::startConnect = true;
         loggedIn = false;
         connectedToServer = false;
@@ -976,7 +976,7 @@ void Multiplayer::login()
     VM_START
     if (!connectedToServer)
     {
-        std::cout << "not connected!" << std::endl;
+        Logging::writeLog("not connected!");
         return;
     }
 
@@ -985,14 +985,14 @@ void Multiplayer::login()
 
     if (SteamUser() == nullptr) {
         Game::asyncShowErrorWindow("Steam not open!", "Steam is required to run this build.", true);
-        std::cout << "User not logged into steam" << std::endl;
+        Logging::writeLog("User not logged into steam");
         Game::instance->isSteam = false;
         return;
     }
 
     SteamAPICall_t call = SteamUser()->RequestEncryptedAppTicket(&c, 5);
     steamEncryptedAppTicketCall.Set(call, this, &Multiplayer::OnSteamAuthTicket);
-    std::cout << "awaiting auth ticket from steam" << std::endl;
+    Logging::writeLog("awaiting auth ticket from steam");
     VM_END
 }
 
@@ -1003,7 +1003,7 @@ void Multiplayer::OnSteamAuthTicket(EncryptedAppTicketResponse_t* pEncryptedAppT
 
     hello.PacketType = eCPacketHello;
 
-    std::cout << "got auth ticket" << std::endl;
+    Logging::writeLog("got auth ticket");
 
     char* buf = new char[4096];
 
@@ -1014,7 +1014,7 @@ void Multiplayer::OnSteamAuthTicket(EncryptedAppTicketResponse_t* pEncryptedAppT
     if (!result)
     {
         Game::asyncShowErrorWindow("Authorization Failure!", "Failed to authorize your reuqest.", true);
-        std::cout << "bruh bruh" << std::endl;
+        Logging::writeLog("bruh bruh");
         return;
     }
 

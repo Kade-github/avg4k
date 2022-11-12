@@ -129,7 +129,7 @@ inline void my_panic(sol::optional<std::string> maybe_msg) {
 		const std::string& msg = maybe_msg.value();
 		consolePrint("Lua Erorr");
 		consolePrint(msg);
-		std::cout << "Lua Error " << msg << std::endl;
+		Logging::writeLog("Lua Error: " + msg);
 		Average4k::dumpOutstream();
 	}
 	Game::instance->asyncShowErrorWindow("Lua Error!", "Check console (F11)", true);
@@ -139,14 +139,13 @@ inline void my_panic(sol::optional<std::string> maybe_msg) {
 int my_exception_handler(lua_State* L, sol::optional<const std::exception&> maybe_exception, sol::string_view description) {
 	if (maybe_exception) {
 		const std::exception& ex = *maybe_exception;
-		std::cout << ex.what() << std::endl;
+		Logging::writeLog("Lua Error: " + std::string(ex.what()));
 
 		consolePrint("Lua Erorr");
 		consolePrint(ex.what());
 	}
 	else {
-		std::cout.write(description.data(), static_cast<std::streamsize>(description.size()));
-		std::cout << std::endl;
+		Logging::writeLog("Lua Error: " + std::string(description.data()));
 
 		consolePrint("Lua Erorr");
 		consolePrint(description.data());
@@ -180,11 +179,11 @@ ModManager::ModManager(std::string luaPath)
 	auto result = lua->safe_script_file(luaPath, &sol::script_pass_on_error);
 
 	if (result.valid())
-		std::cout << "Ran " << luaPath << " successfully!" << std::endl;
+		Logging::writeLog("Ran the lua file successfully!");
 	else
 	{
 		sol::error error = result;
-		std::cout << "Failed to run " << luaPath << ". " << error.what() << std::endl;
+		Logging::writeLog("Lua Error: " + std::string(error.what()));
 		Game::instance->db_addLine("Lua Error");
 		Game::instance->db_addLine(error.what());
 		Game::instance->asyncShowErrorWindow("Lua Error!", "Check console (F11)", true);
@@ -225,7 +224,7 @@ void ModManager::callEvent(std::string event, std::string args)
 	isInUpdate = false;
 	if (!x.valid()) {
 		sol::error errorstring = x;
-		std::cout << "Lua Erorr: \"" << errorstring.what() << "\"";
+		Logging::writeLog("Lua Error: " + std::string(errorstring.what()));
 
 		consolePrint("Lua Erorr");
 		consolePrint(errorstring.what());
@@ -254,7 +253,7 @@ void ModManager::callEvent(std::string event, int args)
 	isInUpdate = false;
 	if (!x.valid()) {
 		sol::error errorstring = x;
-		std::cout << "Lua Erorr: \"" << errorstring.what() << "\"";
+		Logging::writeLog("Lua Error: " + std::string(errorstring.what()));
 
 		consolePrint("Lua Erorr");
 		consolePrint(errorstring.what());
@@ -283,8 +282,7 @@ void ModManager::callEvent(std::string event, float args)
 	isInUpdate = false;
 	if (!x.valid()) {
 		sol::error errorstring = x;
-		std::cout << "Lua Erorr: \"" << errorstring.what() << "\"";
-
+		Logging::writeLog("Lua Error: " + std::string(errorstring.what()));
 		consolePrint("Lua Erorr");
 		consolePrint(errorstring.what());
 		Average4k::dumpOutstream();

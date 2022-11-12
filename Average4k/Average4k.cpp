@@ -136,7 +136,7 @@ void CrashDmp(_EXCEPTION_POINTERS* ExceptionInfo) {
 
 	if (!ExceptionInfo )
 	{
-		std::cout << "no crash :)" << std::endl;
+		Logging::writeLog("no crash :)");
 		if (outstream)
 			outstream->dump();
 		return;
@@ -152,7 +152,7 @@ void CrashDmp(_EXCEPTION_POINTERS* ExceptionInfo) {
 
 	MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), file, MiniDumpWithFullMemory, &info, NULL, NULL);
 	CloseHandle(file);
-	std::cout << "Dumped crashlog" << std::endl;
+	Logging::writeLog("Dumped crashlog");
 
 
 	if (outstream)
@@ -205,20 +205,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	AllocConsole();
 	freopen("conout$", "w", stdout);
 #else
-	freopen("log.txt", "w", stdout);
-	std::cout << "log init" << std::endl;
-#ifndef NOBUF
-
-	if (cmdLine.find("-nologbuf") != std::string::npos) {
-		std::cout << "Not using log buffers - could introduce stuttering." << std::endl;
-	}
-	else {
-		std::streambuf* origBuf = std::cout.rdbuf();
-		log_stream* logstream = new log_stream(origBuf);
-		std::cout.set_rdbuf(logstream);
-		outstream = logstream;
-	}
-#endif
+	Logging::openLog();
 #endif
 	
 	VM_START
@@ -226,9 +213,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	startTime = Clock::now();
 
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-		std::cout << "SDL2 video subsystem couldn't be initialized. Error: "
-			<< SDL_GetError()
-			<< std::endl;
+		Logging::writeLog("SDL2 video subsystem couldn't be initialized. Error: " + std::string(SDL_GetError()));
 		exit(1);
 	}
 	Game::version = "b13";
@@ -256,7 +241,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	bool disableFrameSleeping = cmdLine.find("-disableframesleep") != std::string::npos;
 
 	if (disableFrameSleeping) {
-		std::cout << "Frame sleep disabled, increased cpu usage expected." << std::endl;
+		Logging::writeLog("Frame sleep disabled, increased cpu usage expected.");
 	}
 
 	bool disableFrameWaiting = cmdLine.find("-disableframewait") != std::string::npos;
@@ -264,20 +249,20 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	if (disableFrameWaiting) {
 		disableFrameSleeping = true;
-		std::cout << "Not waiting for frames - frame counter is ignored.";
+		Logging::writeLog("Not waiting for frames - frame counter is ignored.");
 	}
 
 	const char* (CDECL * pwine_get_version)(void);
 	HMODULE hntdll = GetModuleHandle(L"ntdll.dll");
 	if (!hntdll)
 	{
-		std::cout << "Error retrieving NTDLL handle" << std::endl;
+		Logging::writeLog("Error retrieving NTDLL handle");
 	}
 	
 	pwine_get_version = (const char* (*)())GetProcAddress(hntdll, "wine_get_version");
 
 	if (pwine_get_version) {
-		std::cout << "Running on wine version " << pwine_get_version() << std::endl;
+		Logging::writeLog("Running on wine version " + std::string(pwine_get_version()));
 	}
 
 	bool fullscreen = false;
@@ -312,14 +297,14 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	int status = gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
 
 	if (status != 0) {
-		std::cout << "Failed to initialize the OpenGL context (" << status << ")" << std::endl;
+		Logging::writeLog("Failed to initialize the OpenGL context (" + std::to_string(status) + ")");
 		exit(1);
 	}
 
 	status = SDL_GL_MakeCurrent(window, gl_context);
 	
 	if (status != 0) {
-		std::cout << "Error making current: " << SDL_GetError() << std::endl;
+		Logging::writeLog("Error making current: " + std::string(SDL_GetError()));
 	}
 	
 
@@ -327,8 +312,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	//NO MORE SDL RENDERER!!!! IT IS MUTUALLY EXCLUSIVE TO OPENGL!!! READ THE FUCKING DOCS KADE!!!!!!!
 	//SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	
-	std::cout << "OpenGL version loaded: " << GLVersion.major << "."
-		<< GLVersion.minor << std::endl;
+	Logging::writeLog("OpenGL version loaded: " + std::to_string(GLVersion.major) + "." + std::to_string(GLVersion.minor));
 
 	glEnable(GL_MULTISAMPLE);
 
@@ -544,6 +528,9 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	VM_START
 
 	SDL_StopTextInput();
+#ifndef _DEBUG
+	Logging::closeLog();
+#endif
 
 	CloseHandle(game->multiThreadHandle);
 

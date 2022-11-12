@@ -59,8 +59,7 @@ public:
 		y = _y;
 		tex = Texture::createWithImage(path);
 		path = filePath;
-		if (!tex)
-			std::cout << "failed to get texture!" << std::endl;
+
 		w = tex->width;
 		h = tex->height;
 		defX = x;
@@ -75,8 +74,7 @@ public:
 		x = _x;
 		y = _y;
 		tex = data;
-		if (!tex) 
-			std::cout << "failed to get texture!" << std::endl;
+
 		if (data == NULL)
 		{
 			w = 0;

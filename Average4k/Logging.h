@@ -21,9 +21,9 @@ public:
 
 		std::string date = std::string(tmBuff);
 
-		// substr -2 because it appends a \n. it just hates me man
+		// substr -1 because it appends a \n. it just hates me man
 
-		log << "[" + date.substr(0,date.length() - 2) + "] " + l + "\n";
+		log << "[" + date.substr(0,date.length() - 1) + "] " + l + "\n";
 	}
 
 	static void closeLog()

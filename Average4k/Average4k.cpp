@@ -528,6 +528,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	VM_START
 
 	SDL_StopTextInput();
+
 #ifndef _DEBUG
 	Logging::closeLog();
 #endif
@@ -555,6 +556,5 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 void Average4k::dumpOutstream()
 {
-	if (outstream)
-		outstream->dump();
+	// old code was here
 }

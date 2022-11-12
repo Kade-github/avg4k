@@ -158,6 +158,10 @@ void NoteObject::draw() {
             }
         }
     }
+
+    if (type == Note_Fake)
+        texture = Game::noteskin->fake;
+
     //Rendering::SetClipRect(&clipThingy);
 
     Shader* sh = customShader;
@@ -173,8 +177,10 @@ void NoteObject::draw() {
 
     dstRect.x = x;
     dstRect.y = y;
+    float addAngle = 0;
 
-    float drawAngle = 0;
+    if (!blownUp && type == Note_Mine)
+        drawAngle += 1;
 
     float white = 0;
 
@@ -193,7 +199,7 @@ void NoteObject::draw() {
         white = a.whiteV;
         dstRect.a = a.opac;
         ogAlpha = dstRect.a;
-        drawAngle = a.rot;
+        addAngle = a.rot;
         size = arrowEffects->noteSize * (0.5 / a.mini);
 
         dstRect.w = 64 * size;
@@ -454,8 +460,11 @@ void NoteObject::draw() {
                     continue;
                 }
 
+                float dBeats = 8;
+                if (arrowEffects)
+                    dBeats = arrowEffects->drawBeats;
 
-                if (body.beat > beat + arrowEffects->drawBeats)
+                if (body.beat > beat + dBeats)
                     break;
 
                 std::vector<GL_Vertex> verts;
@@ -591,77 +600,107 @@ void NoteObject::draw() {
             AvgFrame fr = sparrows->getRectFromFrame(anim, frame);
             srcRect = fr.srcRect;
 
-            Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->sparrowImg, sh, drawAngle);
+            Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->sparrowImg, sh, drawAngle + addAngle);
             if (white != 0)
             {
                 Rendering::drawBatch();
                 dstRect.a = 1;
-                Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->sparrowImg, Game::instance->whiteShader, drawAngle);
+                Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->sparrowImg, Game::instance->whiteShader, drawAngle + addAngle);
                 dstRect.a = ogAlpha;
                 Rendering::drawBatch();
             }
         }
         else
         {
-            if (Game::noteskin->rotate) {
-                switch (lane) {
-                case 0: // left
-                    Rendering::PushQuad(&dstRect, &srcRect, texture, sh, 90 + drawAngle);
+            if (type != Note_Mine)
+            {
+                if (Game::noteskin->rotate) {
+                    switch (lane) {
+                    case 0: // left
+                        Rendering::PushQuad(&dstRect, &srcRect, texture, sh, 90 + drawAngle + addAngle);
+                        if (white != 0)
+                        {
+                            Rendering::drawBatch();
+                            dstRect.a = 1;
+                            Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, 90 + drawAngle + addAngle);
+                            dstRect.a = ogAlpha;
+                            Rendering::drawBatch();
+                        }
+                        break;
+                    case 1: // down
+                        Rendering::PushQuad(&dstRect, &srcRect, texture, sh, drawAngle + addAngle);
+                        if (white != 0)
+                        {
+                            Rendering::drawBatch();
+                            dstRect.a = 1;
+                            Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, drawAngle + addAngle);
+                            dstRect.a = ogAlpha;
+                            Rendering::drawBatch();
+                        }
+                        break;
+                    case 2: // up
+                        srcRect.h = -1;
+                        Rendering::PushQuad(&dstRect, &srcRect, texture, sh, drawAngle + addAngle);
+                        if (white != 0)
+                        {
+                            Rendering::drawBatch();
+                            dstRect.a = 1;
+                            Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, drawAngle + addAngle);
+                            dstRect.a = ogAlpha;
+                            Rendering::drawBatch();
+                        }
+                        srcRect.h = 1;
+                        break;
+                    case 3: // right
+                        Rendering::PushQuad(&dstRect, &srcRect, texture, sh, -90 + drawAngle + addAngle);
+                        if (white != 0)
+                        {
+                            Rendering::drawBatch();
+                            dstRect.a = 1;
+                            Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, -90 + drawAngle + addAngle);
+                            dstRect.a = ogAlpha;
+                            Rendering::drawBatch();
+                        }
+                        break;
+                    }
+                }
+                else {
+                    Rendering::PushQuad(&dstRect, &srcRect, texture, sh, drawAngle + addAngle);
                     if (white != 0)
                     {
                         Rendering::drawBatch();
                         dstRect.a = 1;
-                        Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader,90 + drawAngle);
+                        Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, drawAngle + addAngle);
                         dstRect.a = ogAlpha;
                         Rendering::drawBatch();
                     }
-                    break;
-                case 1: // down
-                    Rendering::PushQuad(&dstRect, &srcRect, texture, sh, drawAngle);
-                    if (white != 0)
-                    {
-                        Rendering::drawBatch();
-                        dstRect.a = 1;
-                        Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, drawAngle);
-                        dstRect.a = ogAlpha;
-                        Rendering::drawBatch();
-                    }
-                    break;
-                case 2: // up
-                    srcRect.h = -1;
-                    Rendering::PushQuad(&dstRect, &srcRect, texture, sh, drawAngle);
-                    if (white != 0)
-                    {
-                        Rendering::drawBatch();
-                        dstRect.a = 1;
-                        Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, drawAngle);
-                        dstRect.a = ogAlpha;
-                        Rendering::drawBatch();
-                    }
-                    srcRect.h = 1;
-                    break;
-                case 3: // right
-                    Rendering::PushQuad(&dstRect, &srcRect, texture, sh, -90 + drawAngle);
-                    if (white != 0)
-                    {
-                        Rendering::drawBatch();
-                        dstRect.a = 1;
-                        Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, -90 + drawAngle);
-                        dstRect.a = ogAlpha;
-                        Rendering::drawBatch();
-                    }
-                    break;
                 }
             }
-            else {
-                Rendering::PushQuad(&dstRect, &srcRect, texture, sh, drawAngle);
-                if (white != 0)
+            else
+            {
+                if (!blownUp)
+                    Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->mine, sh, drawAngle + addAngle);
+                else
                 {
-                    Rendering::drawBatch();
-                    dstRect.a = 1;
-                    Rendering::PushQuad(&dstRect, &srcRect, texture, Game::instance->whiteShader, drawAngle);
-                    dstRect.a = ogAlpha;
-                    Rendering::drawBatch();
+                    dstRect.x = receptor.x;
+                    dstRect.y = receptor.y;
+                    AvgSparrow* sparrow = Game::noteskin->explosionSheet;
+                    int size = sparrow->animations["anim"].frames.size();
+
+                    animTime += Game::deltaTime;
+                    frame = (animTime * fps / 1000);
+
+                    if (frame > size - 1)
+                    {
+                        active = false;
+                        frame = 0;
+                    }
+                    
+
+                    AvgFrame fr = sparrow->getRectFromFrame("anim", frame, true);
+                    srcRect = fr.srcRect;
+
+                    Rendering::PushQuad(&dstRect, &srcRect, Game::noteskin->explosion, sh, addAngle);
                 }
             }
 

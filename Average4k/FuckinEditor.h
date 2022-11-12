@@ -277,7 +277,7 @@ public:
 
 	void generateNoteObject(note n, difficulty diff, Chart* selectedChart, std::vector<NoteObject*>& notes, bool findTail = true)
 	{
-		if (n.type == noteType::Note_Tail || n.type == noteType::Note_Mine)
+		if (n.type == noteType::Note_Tail)
 			return;
 		bool downscroll = false;
 		NoteObject* object = new NoteObject();

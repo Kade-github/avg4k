@@ -47,8 +47,9 @@ public:
 		*B = temp;
 	}
 
-	AvgFrame getRectFromFrame(std::string name, int frame)
+	AvgFrame getRectFromFrame(std::string name, int frame, bool dontZero = false)
 	{
+
 		char buffer[4];
 		left_fill_zeros(buffer, std::to_string(frame).c_str(), 4);
 		AvgFrame src;
@@ -72,12 +73,19 @@ public:
 		}
 		else
 		{
-			for (AvgFrame frame : animations[name].frames)
+			for (AvgFrame f : animations[name].frames)
 			{
-
-				if (frame.name == buffer)
+				if (dontZero)
 				{
-					src = frame;
+					if (f.numba == frame)
+					{
+						src = f;
+						break;
+					}
+				}
+				if (f.name == buffer)
+				{
+					src = f;
 					break;
 				}
 			}
@@ -135,6 +143,22 @@ public:
 			it->second.frames.clear();
 		animations.clear();
 		framesToPlay.clear();
+	}
+
+	AvgSparrow(float _w, float _h, float tileW)
+	{
+		float frames = _w / tileW;
+		AvgAnimation anim;
+		for (int i = 0; i < frames; i++)
+		{
+			AvgFrame f;
+			f.srcRect = { (i * tileW) / _w, 0, tileW / _w, 1};
+			f.name = "anim" + std::to_string(i);
+			f.numba = i;
+			f.frameRect = { 0,0,0,0 };
+			anim.frames.push_back(f);
+		}
+		animations["anim"] = anim;
 	}
 
 	AvgSparrow(std::string xmlPath, float imgW, float imgH)

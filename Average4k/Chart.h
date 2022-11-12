@@ -23,6 +23,7 @@ enum noteType {
 	Note_Head = 2,
 	Note_Tail = 3,
 	Note_Mine = 5,
+	Note_Fake = 6
 };
 
 struct note {

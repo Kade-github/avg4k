@@ -224,11 +224,11 @@ void ModManager::callEvent(std::string event, std::string args)
 	sol::function_result x = f(args);
 	isInUpdate = false;
 	if (!x.valid()) {
-		std::string errorstring = x;
-		std::cout << "Lua Erorr: \"" << errorstring << "\"";
+		sol::error errorstring = x;
+		std::cout << "Lua Erorr: \"" << errorstring.what() << "\"";
 
 		consolePrint("Lua Erorr");
-		consolePrint(errorstring);
+		consolePrint(errorstring.what());
 		Average4k::dumpOutstream();
 		Game::instance->asyncShowErrorWindow("Lua Error!", "Check console (F11)", true);
 		killed = true;
@@ -253,11 +253,11 @@ void ModManager::callEvent(std::string event, int args)
 	sol::function_result x = f(args);
 	isInUpdate = false;
 	if (!x.valid()) {
-		std::string errorstring = x;
-		std::cout << "Lua Erorr: \"" << errorstring << "\"";
+		sol::error errorstring = x;
+		std::cout << "Lua Erorr: \"" << errorstring.what() << "\"";
 
 		consolePrint("Lua Erorr");
-		consolePrint(errorstring);
+		consolePrint(errorstring.what());
 		Average4k::dumpOutstream();
 		Game::instance->asyncShowErrorWindow("Lua Error!", "Check console (F11)", true);
 		killed = true;
@@ -282,11 +282,11 @@ void ModManager::callEvent(std::string event, float args)
 	sol::function_result x = f(args);
 	isInUpdate = false;
 	if (!x.valid()) {
-		std::string errorstring = x;
-		std::cout << "Lua Erorr: \"" << errorstring << "\"";
+		sol::error errorstring = x;
+		std::cout << "Lua Erorr: \"" << errorstring.what() << "\"";
 
 		consolePrint("Lua Erorr");
-		consolePrint(errorstring);
+		consolePrint(errorstring.what());
 		Average4k::dumpOutstream();
 		Game::instance->asyncShowErrorWindow("Lua Error!", "Check console (F11)", true);
 		killed = true;
@@ -404,7 +404,7 @@ void ModManager::runMods()
 	}
 
 	for (const auto& [key, value] : sprites) {
-		if (!value.notModCreated)
+		if (!value.notModCreated && value.spr != NULL)
 		{
 			float anchorX = value.spr->defX;
 			float anchorY = value.spr->defY;

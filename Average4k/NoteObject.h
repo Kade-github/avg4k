@@ -55,6 +55,11 @@ class NoteObject : public Object
 
 		ArrowEffects* arrowEffects;
 
+		bool blownUp = false;
+
+		float drawAngle = 0;
+
+
 		int frame;
 		int fps = 24;
 

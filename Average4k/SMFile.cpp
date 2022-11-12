@@ -291,6 +291,9 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                                         note.type = Note_Head;
                                         notes[n] = note;
                                         break;
+                                    case 'F':
+                                        note.type = Note_Fake;
+                                        break;
 
                                     }
                                 }

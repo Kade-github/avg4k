@@ -54,12 +54,9 @@ const float min(const float a, const float b)
 void Gameplay::updateAccuracy(double hitWorth)
 {
 	MUTATE_START
-	if (hitWorth != 0)
-	{
-		notesPlayed++;
-		notesHit += hitWorth;
-		accuracy = ((notesHit / notesPlayed) * 100);
-	}
+	notesPlayed++;
+	notesHit += hitWorth;
+	accuracy = ((notesHit / notesPlayed) * 100);
 	if (accuracy < 0)
 		accuracy = 0;
 
@@ -748,21 +745,6 @@ void Gameplay::create() {
 
 	if (ModManager::doMods)
 	{
-		SpriteMod mod;
-		mod.anchor = "";
-		mod.confusion = 0;
-		mod.finish = "";
-		mod.movex = 0;
-		mod.movey = 0;
-		mod.offsetX = 0;
-		mod.offsetY = 0;
-		mod.stealth = 0;
-		mod.spr = playField;
-		mod.def = playField;
-		mod.notModCreated = true;
-
-		manager.sprites["playField"] = mod;
-
 		SpriteMod mod2;
 		mod2.anchor = "";
 		mod2.confusion = 0;
@@ -772,9 +754,10 @@ void Gameplay::create() {
 		mod2.offsetX = 0;
 		mod2.offsetY = 0;
 		mod2.stealth = 0;
+		mod2.mini = 0.5;
 		mod2.spr = NULL;
 		mod2.notModCreated = true;
-		mod2.def = spriteField;
+		mod2.def = manager.spriteCamera;
 		manager.sprites["sprites"] = mod2;
 
 
@@ -824,7 +807,6 @@ void Gameplay::create() {
 		positionInSong = -5000;
 	else
 		positionInSong = -(Game::save->GetDouble("Start Delay") * 1000);
-	updateAccuracy(0);
 
 	MUTATE_END
 }
@@ -1070,7 +1052,7 @@ void Gameplay::update(Events::updateEvent event)
 	for (Playfield* p : playFields)
 	{
 		note& n = notesToPlay[0];
-			if (n.beat < beat + p->arrowEff.drawBeats && (n.type != Note_Tail && n.type != Note_Mine)) // if its in draw beats
+			if (n.beat < beat + p->arrowEff.drawBeats && n.type != Note_Tail) // if its in draw beats
 			{
 				NoteObject* object = new NoteObject();
 				object->currentChart = &MainerMenu::currentSelectedSong;
@@ -1144,7 +1126,7 @@ void Gameplay::update(Events::updateEvent event)
 				object->create();
 				p->addNote(object);
 			}
-			else if (n.type == Note_Tail || n.type == Note_Mine)
+			else if (n.type == Note_Tail)
 			{
 				notesToPlay.erase(notesToPlay.begin());
 			}
@@ -1181,14 +1163,36 @@ void Gameplay::update(Events::updateEvent event)
 			{
 				NoteObject* note = spawnedNotes[i];
 				note->rTime = positionInSong;
+				if ((keys[note->lane] || holding[note->lane]) && note->type == Note_Mine)
+				{
+					if (!note->blownUp)
+					{
+						const auto wh = MainerMenu::currentSelectedSong.getTimeFromBeat(note->beat, MainerMenu::currentSelectedSong.getSegmentFromBeat(note->beat));
 
+						float diff = std::abs(wh - positionInSong);
+
+						judgement j = Judge::judgeNote(diff);
+						if (j == judgement::Judge_marvelous)
+						{
+							noteTimings[positionInSong] = Judge::hitWindows[4];
+
+							updateAccuracy(0);
+							note->blownUp = true;
+							Channel* c = SoundManager::createChannel(Noteskin::getSoundElement(Game::instance->noteskin, "explosion_sound.ogg"), "explosion" + std::to_string(note->id));
+							c->dieAfterPlay = true;
+							c->setVolume(Game::save->GetDouble("Hitsounds Volume"));
+							c->play();
+							
+						}
+					}
+				}
 				if (!note->destroyed)
 				{
 					float wh = MainerMenu::currentSelectedSong.getTimeFromBeat(note->beat, MainerMenu::currentSelectedSong.getSegmentFromBeat(note->beat));
 	
 						if (wh - positionInSong < 2)
 						{
-							if (botplay && note->active)
+							if (botplay && note->active && note->type != Note_Mine && note->type != Note_Fake)
 							{
 								float diff = (wh - positionInSong);
 
@@ -1321,7 +1325,7 @@ void Gameplay::update(Events::updateEvent event)
 						}
 					}
 
-					if (wh - positionInSong <= -Judge::hitWindows[4] && note->active && playing)
+					if (wh - positionInSong <= -Judge::hitWindows[4] && note->active && (note->type != Note_Fake && note->type != Note_Mine) && playing)
 					{
 						note->active = false;
 						miss(note);
@@ -1514,7 +1518,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 				float diff = std::abs(wh - positionInSong);
 
-				if (diff <= Judge::hitWindows[4] && diff < currentDiff && object->lane == control.lane)
+				if (diff <= Judge::hitWindows[4] && diff < currentDiff && object->lane == control.lane && object->type != Note_Mine && object->type != Note_Fake)
 				{
 					closestObject = object;
 					currentDiff = diff;

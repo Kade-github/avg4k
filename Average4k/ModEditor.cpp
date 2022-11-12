@@ -15,8 +15,13 @@ void ModEditor::resetSprites()
 	for (auto& [key, value] : manager.sprites) {
 		value.confusion = 0;
 		value.stealth = 0;
+		value.finish = "";
 		value.movex = 0;
 		value.movey = 0;
+		value.anchor = "";
+		value.offsetX = 0;
+		value.offsetY = 0;
+		value.isPlayField = false;
 		value.mini = 0.5;
 		value.confusion = 0;
 	}
@@ -101,21 +106,6 @@ void ModEditor::create()
 
 	add(playField);
 
-	SpriteMod mod;
-	mod.anchor = "";
-	mod.confusion = 0;
-	mod.finish = "";
-	mod.movex = 0;
-	mod.movey = 0;
-	mod.offsetX = 0;
-	mod.offsetY = 0;
-	mod.stealth = 0;
-	mod.spr = playField;
-	mod.def = playField;
-	mod.notModCreated = true;
-
-	manager.sprites["playField"] = mod;
-
 	SpriteMod mod2;
 	mod2.anchor = "";
 	mod2.confusion = 0;
@@ -125,6 +115,7 @@ void ModEditor::create()
 	mod2.offsetX = 0;
 	mod2.offsetY = 0;
 	mod2.stealth = 0;
+	mod2.mini = 0.5;
 	mod2.spr = NULL;
 	mod2.notModCreated = true;
 	mod2.def = manager.spriteCamera;
@@ -137,16 +128,12 @@ void ModEditor::create()
 void ModEditor::doModsUntilThisPos()
 {
 	resetSprites();
+	for (Playfield* p : playfields)
+		p->arrowEff.resetEffects();
 	for (AppliedMod& mod : manager.appliedMods)
 	{
 		mod.started = false;
 		float endMod = mod.tweenStart + mod.tweenLen;
-
-		if (mod.tweenLen == 0 && mod.tweenStart < beat)
-		{
-			manager.runMods(mod, endMod);
-			continue;
-		}
 
 		if (mod.tweenStart + mod.tweenLen < beat)
 		{
@@ -185,10 +172,7 @@ void ModEditor::doModsUntilThisPos()
 
 void ModEditor::refresh()
 {
-	for (NoteObject* obj : notes)
-	{
-		obj->wasHit = false;
-	}
+	notes.clear();
 	if (!manager.killed)
 	{
 		removeObj(spriteField);
@@ -246,21 +230,6 @@ void ModEditor::refresh()
 		add(spriteField);
 	}
 
-	SpriteMod mod;
-	mod.anchor = "";
-	mod.confusion = 0;
-	mod.finish = "";
-	mod.movex = 0;
-	mod.movey = 0;
-	mod.offsetX = 0;
-	mod.offsetY = 0;
-	mod.stealth = 0;
-	mod.mini = 0.5;
-	mod.spr = playField;
-	mod.notModCreated = true;
-	mod.def = playField;
-	manager.sprites["playField"] = mod;
-
 	SpriteMod mod2;
 	mod2.anchor = "";
 	mod2.confusion = 0;
@@ -274,7 +243,7 @@ void ModEditor::refresh()
 	mod2.spr = NULL;
 	mod2.notModCreated = true;
 	mod2.def = manager.spriteCamera;
-	manager.sprites["sprites"] = mod;
+	manager.sprites["sprites"] = mod2;
 
 	callModEvent("create", 0);
 	doModsUntilThisPos();
@@ -605,9 +574,8 @@ void ModEditor::mouseWheel(float wheel)
 
 	move(-(amount * 100));
 
-	for (Playfield* p : playfields)
-		for (NoteObject* obj : p->screenNotes)
-			obj->wasHit = false;
+	for (NoteObject* obj : notes)
+		obj->wasHit = false;
 
 }
 

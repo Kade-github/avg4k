@@ -5,6 +5,10 @@
 
 class noteskin_asset {
 public:
+	Texture* mine;
+	Texture* fake;
+	Texture* explosion;
+	AvgSparrow* explosionSheet;
 	Texture* fourth;
 	Texture* eighth;
 	Texture* twelfth;

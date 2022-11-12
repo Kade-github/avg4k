@@ -10,7 +10,9 @@ noteskin_asset* Noteskin::asset = NULL;
 
 Texture* getAsset(std::string path)
 {
-	// stbi cannot find these for some reason??
+	if (!Helpers::file_exists(path))
+		return Texture::createWithImage("assets/skinDefaults/Menu/doesNotExist.png");
+
 	Texture* texture = Texture::createWithImage(path);
 
 	return texture;
@@ -249,6 +251,10 @@ noteskin_asset* loadSkin(noteskin_asset* as, std::string typ, bool appendPath = 
 	if (!Helpers::file_exists(path + "/judgements")) // default to arrow
 		path =  "assets/noteskin/arrow";
 
+	as->mine = getAsset(path + "/Mine.png");
+	as->fake = getAsset(path + "/Fake.png");
+	as->explosion = getAsset(path + "/explosion.png");
+	as->explosionSheet = new AvgSparrow(as->explosion->width, as->explosion->height, 64);
 	as->judge_0 = getAsset(path + "/judgements/judge_0.png");
 	as->judge_1 = getAsset(path + "/judgements/judge_1.png");
 	as->judge_2 = getAsset(path + "/judgements/judge_2.png");

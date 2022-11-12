@@ -7,6 +7,7 @@
 class Channel {
 public:
 	float bpm = 0; // this is used to set the bpm, when ever we want to.
+	std::string name = "";
 	std::vector<double> bpmCan;
 	unsigned long id = -1;
 	unsigned long decodeChan = -1;
@@ -28,29 +29,7 @@ public:
 
 	std::string path;
 
-	static void CALLBACK SyncProc(HSYNC handle, DWORD channel, DWORD data, void* user)
-	{
-		Channel* ch = ((Channel*)user);
-		ch->isPlaying = false;
-		if (ch->dieAfterPlay)
-		{
-			ch->free();
-			return;
-		}
-		if (ch->loop)
-			ch->play();
-	}
-
-	Channel(unsigned long channelId)
-	{
-		id = channelId;
-
-		setLength();
-
-		BASS_ChannelSetSync(id, BASS_SYNC_END, 0, SyncProc, this);
-		
-	}
-
+	Channel(unsigned long channelId);
 	void setLength()
 	{
 		QWORD word = BASS_ChannelGetLength(id, BASS_POS_BYTE);
@@ -64,7 +43,6 @@ public:
 		if (id == -1)
 			return;
 		free();
-		std::cout << "[BASS] deleted " << path << std::endl;
 	}
 
 	void free()
@@ -203,6 +181,8 @@ public:
 	}
 };
 
+
+
 class SoundManager
 {
 public:
@@ -244,6 +224,7 @@ public:
 			delete channels[name];
 
 		channels[name] = ch;
+		channels[name]->name = name;
 	}
 
 	static void createChannelThread(std::string path, bool autoFree = false)
@@ -284,7 +265,6 @@ public:
 				}
 
 				Channel* ch = new Channel(val);
-
 				ch->musicFile = buff;
 
 				ch->path = path;
@@ -334,6 +314,7 @@ public:
 		}
 
 		channels[name] = new Channel(val);
+		channels[name]->name = name;
 		
 		channels[name]->musicFile = buff;
 

@@ -1160,7 +1160,7 @@ void FuckinEditor::update(Events::updateEvent event)
 		if (songPlaying)
 		{
 			bool removeLayer = false;
-			if (wh - abs(currentTime) < (Judge::hitWindows[1] * 0.5) && wh - abs(currentTime) > -(Judge::hitWindows[1] * 0.2))
+			if (wh - abs(currentTime) < (Judge::hitWindows[1] * 0.5) && wh - abs(currentTime) > -(Judge::hitWindows[1] * 0.2) && obj->type != Note_Mine && obj->type != Note_Fake)
 			{
 				fuck[obj->lane]->lightUpTimer = 195;
 				if (!findClapped(obj->beat) && Game::save->GetBool("nonChange_noteTick"))

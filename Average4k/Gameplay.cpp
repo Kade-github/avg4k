@@ -1158,12 +1158,18 @@ void Gameplay::update(Events::updateEvent event)
 			}
 		}
 
+		std::map<int, int> realIndex;
+		realIndex[0] = 0;
+		realIndex[1] = 0;
+		realIndex[2] = 0;
+		realIndex[3] = 0;
+
 		{
 			for (int i = 0; i < spawnedNotes.size(); i++)
 			{
 				NoteObject* note = spawnedNotes[i];
 				note->rTime = positionInSong;
-				if ((keys[note->lane] || holding[note->lane]) && note->type == Note_Mine)
+				if ((keys[note->lane] || holding[note->lane]) && note->type == Note_Mine && (realIndex[note->lane] == 0))
 				{
 					if (!note->blownUp)
 					{
@@ -1172,7 +1178,7 @@ void Gameplay::update(Events::updateEvent event)
 						float diff = std::abs(wh - positionInSong);
 
 						judgement j = Judge::judgeNote(diff);
-						if (j == judgement::Judge_marvelous)
+						if (j == judgement::Judge_marvelous || j == judgement::Judge_perfect)
 						{
 							noteTimings[positionInSong] = Judge::hitWindows[4];
 
@@ -1337,6 +1343,8 @@ void Gameplay::update(Events::updateEvent event)
 						//std::cout << "remove note " << wh << " " << positionInSong << std::endl;
 					}
 				}
+				if (note->active && note->time > positionInSong)
+					realIndex[note->lane]++;
 			}
 		}
 

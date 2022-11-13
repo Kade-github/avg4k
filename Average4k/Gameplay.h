@@ -49,6 +49,10 @@ class Gameplay :
 
 		int highestCombo;
 
+		bpmSegment lastSeg;
+
+		bool xmod = false;
+
 		std::vector<gameplayControl> controls;
 
 		bool paused = false;

@@ -19,6 +19,11 @@ struct createtexStruct {
 	std::string filename;
 };
 
+struct notif {
+	std::string text;
+	float time;
+};
+
 class Game
 {
 public:
@@ -50,6 +55,8 @@ public:
 	static bool startConnect;
 	static Menu* toGoTo;
 
+	std::vector<notif> Notifs;
+
 	static void asyncShowErrorWindow(std::string title, std::string description, bool minor);
 	static void showErrorWindow(std::string title, std::string description, bool minor, Color topColor = { 255, 55, 79 });
 
@@ -77,6 +84,8 @@ public:
 
 	static Game* instance;
 	static bool patched;
+
+	static void queueNotif(std::string notif, bool clear = false);
 
 	static int gameWidth;
 	static int gameHeight;

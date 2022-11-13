@@ -59,6 +59,12 @@ class NoteObject : public Object
 
 		float drawAngle = 0;
 
+		bpmSegment curSeg;
+
+		bool xmod = false;
+
+		float tempStopOffset = 0;
+		float stopTime = -1;
 
 		int frame;
 		int fps = 24;
@@ -97,7 +103,7 @@ class NoteObject : public Object
 
 
 		float calcCMod(float diff);
-
+		float calcXMod(float diff, float bpm);
 		Shader* customShader;
 
 		Chart* currentChart;

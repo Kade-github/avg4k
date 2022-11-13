@@ -28,16 +28,23 @@ NoteObject::NoteObject()
         }
 }
 
+// Find the distance the note should be from the receptor
+
 float NoteObject::calcCMod(float diff)
 {
 
     float bps = (cmod / 60) / Gameplay::rate;
 
-    if (Gameplay::instance != NULL)
-        if (Gameplay::instance->runModStuff)
-            bps = (modCMOD / 60) / Gameplay::rate;
-
     float noteOffset = (bps * (diff / 1000)) * (64 * size);
+
+    return noteOffset;
+}
+
+// Find the distance the note should be from the receptor (in beats!)
+
+float NoteObject::calcXMod(float diff, float bpm)
+{
+    float noteOffset = ((diff * (64 * size)) * (bpm / 200)) * (cmod / 200);
 
     return noteOffset;
 }
@@ -51,7 +58,7 @@ void NoteObject::draw() {
     MUTATE_START
     float position = rTime;
 
-    float currentBeat = currentChart->getBeatFromTime(position, currentChart->getSegmentFromTime(position));
+    float currentBeat = currentChart->getBeatFromTime(position, curSeg);
 
     Rect receptor;
 
@@ -62,13 +69,25 @@ void NoteObject::draw() {
     receptor.w = obj->w;
     receptor.h = obj->h;
 
-    bpmSegment bruh = currentChart->getSegmentFromBeat(beat);
+    bpmSegment bruh = curSeg;
 
     float wh = currentChart->getTimeFromBeat(beat, bruh);
 
     float diff = (wh)-(rTime);
-
     float noteOffset = calcCMod(diff);
+
+    if (xmod)
+    {
+        if (currentBeat < beat + stopOffset)
+        {
+            diff = (beat + stopOffset) - currentBeat;
+        }
+        else
+        {
+            diff = beat - currentBeat;
+        }
+        noteOffset = calcXMod(diff, curSeg.bpm);
+    }
 
     cmodOffset = noteOffset;
 
@@ -273,6 +292,13 @@ void NoteObject::draw() {
 
         float endPos = calcCMod(difff);
 
+        float diffBeat = endBeat - beat;
+
+        if (xmod)
+        {
+            endPos = calcXMod(diffBeat, bruh.bpm);
+        }
+
         line.h = endPos;
         line.w = 4;
         line.x = x + (32 * size);
@@ -322,8 +348,10 @@ void NoteObject::draw() {
                 float oldY = square.y;
                 if (ModManager::doMods)
                 {
-                    float ttime = currentChart->getTimeFromBeat(holdBeat, currentChart->getSegmentFromBeat(holdBeat));
-                    float ttime2 = currentChart->getTimeFromBeat(holdBeat + fBeat, currentChart->getSegmentFromBeat(holdBeat + fBeat));
+                    bpmSegment hS1 = currentChart->getSegmentFromBeat(holdBeat);
+                    bpmSegment hS2 = currentChart->getSegmentFromBeat(holdBeat + fBeat);
+                    float ttime = currentChart->getTimeFromBeat(holdBeat, hS1);
+                    float ttime2 = currentChart->getTimeFromBeat(holdBeat + fBeat, hS2);
 
 
                     float holdDiff = ttime - position;
@@ -331,7 +359,21 @@ void NoteObject::draw() {
                     float cmodHold = calcCMod(holdDiff);
                     float cmodHold2 = calcCMod(holdDiff2);
 
-  
+                    if (xmod)
+                    {
+                        if (currentBeat < holdBeat + stopOffset)
+                        {
+                            holdDiff = (holdBeat + stopOffset) - currentBeat;
+                            holdDiff2 = (holdBeat + fBeat  + stopOffset) - currentBeat;
+                        }
+                        else
+                        {
+                            holdDiff = holdBeat - currentBeat;
+                            holdDiff2 = (holdBeat + fBeat) - currentBeat;
+                        }
+                        cmodHold = calcXMod(holdDiff, hS1.bpm);
+                        cmodHold2 = calcXMod(holdDiff2, hS2.bpm);
+                    }
 
                     ArrowEffects::Arrow offsetA2;
                     std::vector<ArrowEffects::Arrow> real = arrowEffects->finishEffects(obj->x, obj->y, cmodHold, obj->type, time, position, holdDiff, holdBeat, currentBeat);
@@ -461,6 +503,8 @@ void NoteObject::draw() {
                 }
 
                 float dBeats = 8;
+                if (xmod)
+                    dBeats = (8 * (curSeg.bpm / 100)) * (cmod / 100);
                 if (arrowEffects)
                     dBeats = arrowEffects->drawBeats;
 

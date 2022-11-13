@@ -22,7 +22,7 @@ SaveFile::SaveFile()
     // {takesActive, takesString, takesDouble, defaultActive, defaultString, defaultDouble, defaultMin, defaultMax, defaultIncrm, unique, suffix, isDropdown}
 
     settingHeader defaultHeader;
-    defaultHeader.settingsVersion = "v3.2"; // KADE PLEASE FUCKING CHANGE THIS GOD DAMN IT - kade from the past
+    defaultHeader.settingsVersion = "v3.4"; // KADE PLEASE FUCKING CHANGE THIS GOD DAMN IT - kade from the past
 
     defaultSettings.push_back(CreateSetting("Downscroll",{true}));
     defaultSettings.push_back(CreateSetting("Scrollspeed",{false,false,true,false,"",800,200,1900}));
@@ -58,6 +58,7 @@ SaveFile::SaveFile()
     defaultSettings.push_back(CreateSetting("Ignore mod scrollspeed", { true }));
     defaultSettings.push_back(CreateSetting("Ignore mod starting scroll", { true }));
     defaultSettings.push_back(CreateSetting("Show Song Position", { true, false, false, true }));
+    defaultSettings.push_back(CreateSetting("Use XMOD Scroll", { true, false, false, false }));
     defaultHeader.settings = defaultSettings;
 
     std::string bang = getPath();
@@ -277,7 +278,7 @@ std::vector<std::string> SaveFile::ObtainDropDownSettingList(std::string set)
             if (entry.is_directory())
             {
                 std::vector<std::string> spl = Chart::split(entry.path().string(), '/');
-                noteskins.push_back(spl[spl.size() - 1]);
+                noteskins.push_back(spl[spl.size() - 1].c_str());
             }
         }
 

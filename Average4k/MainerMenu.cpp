@@ -80,7 +80,14 @@ void refreshLobbies() {
 	VM_END
 }
 
-void shittyShitShit(std::string s)
+void settingDouble(std::string s, setting set)
+{
+	MainerMenu* menu = (MainerMenu*)Game::instance->currentMenu;
+	if ((set.name == "Scrollspeed" && Game::save->GetBool("Use XMOD Scroll")) && menu->selectedContainerIndex == 2)
+		Game::queueNotif("XMod mutliplier set to " + std::to_string(Game::save->GetDouble("scrollspeed") / 200) + "x", true);
+}
+
+void shittyShitShit(std::string s, setting set)
 {
 	MainerMenu* menu = (MainerMenu*)Game::instance->currentMenu;
 	menu->createNewLobbies(s);
@@ -112,7 +119,7 @@ void selectThing(int mx, int my, Object* o)
 }
 
 
-void shittyCreateLobby(std::string s)
+void shittyCreateLobby(std::string s, setting set)
 {
 	MainerMenu* menu = (MainerMenu*)Game::instance->currentMenu;
 	if (menu->selectedContainerIndex != 1 || s.size() == 0)
@@ -820,6 +827,7 @@ void MainerMenu::create()
 	std::vector<setting> gameplaySettings;
 	gameplaySettings.push_back(Game::save->getSetting("FPS Limit"));
 	gameplaySettings.push_back(Game::save->getSetting("scrollspeed"));
+	gameplaySettings.push_back(Game::save->getSetting("Use XMOD Scroll"));
 	gameplaySettings.push_back(Game::save->getSetting("downscroll"));
 	gameplaySettings.push_back(Game::save->getSetting("offset"));
 	gameplaySettings.push_back(Game::save->getSetting("keybinds "));
@@ -1584,7 +1592,7 @@ void MainerMenu::dropFile(SDL_DropEvent ev)
 			else
 			{
 				std::vector<std::string> files = Chart::split(entry.path().string(), '\\');
-				std::string dirFile = files[files.size() - 1];
+				std::string dirFile = files[files.size() - 1].data();
 				if (!std::filesystem::is_directory(entry))
 				{
 					rename(entry.path(), std::string(toPath) + "/" + dirFile);
@@ -1623,7 +1631,7 @@ void MainerMenu::onSteam(std::string s)
 
 			std::vector<std::string> split = Chart::split(replaced2, '/');
 
-			Game::steam->uploadToItem(&currentSelectedSong, Game::steam->createdId, split[split.size() - 1]);
+			Game::steam->uploadToItem(&currentSelectedSong, Game::steam->createdId, split[split.size() - 1].data());
 		}
 	}
 
@@ -2565,7 +2573,7 @@ void MainerMenu::addSettings(std::string catNam, std::vector<setting> settings)
 	int startY = settingsContainer->findItemByName("searchBox")->y + 42 + (52 * catIndex);
 	int startX = settingsContainer->findItemByName("searchBox")->x;
 
-	std::string name = "_catName:" + catNam;
+	std::string name = "_cat_" + catNam;
 
 	settingsContainer->addObject(new Text(startX, startY + lastHeight, catNam, 18, "arialbd"), name);
 	((Text*)settingsContainer->findItemByName(name))->setCharacterSpacing(3);
@@ -2629,6 +2637,7 @@ void MainerMenu::addSettings(std::string catNam, std::vector<setting> settings)
 			((AvgTextBar*)settingsContainer->findItemByName(boxName))->spacedOut = 4;
 			((AvgTextBar*)settingsContainer->findItemByName(boxName))->suffix = set.settingSuffix;
 			((AvgTextBar*)settingsContainer->findItemByName(boxName))->resyncText();
+			((AvgTextBar*)settingsContainer->findItemByName(boxName))->callback = settingDouble;
 		}
 
 		setInd++;

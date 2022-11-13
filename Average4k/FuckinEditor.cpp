@@ -498,7 +498,7 @@ void window_waveProperties() {
 
 	std::vector<std::string> colorSaved = Chart::split(bruh, ',');
 
-	float c[3] = {std::stof(colorSaved[0]) / 255,std::stof(colorSaved[1]) / 255,std::stof(colorSaved[2]) / 255 };
+	float c[3] = {std::stof(colorSaved[0].c_str()) / 255,std::stof(colorSaved[1].c_str()) / 255,std::stof(colorSaved[2].c_str()) / 255 };
 	ImGui::Text("Waveform Color:");
 	ImGui::ColorEdit3("##WaveformColor",(float*)&c);
 	Game::save->SetString("nonChange_colorShit", std::to_string(c[0] * 255) + "," + std::to_string(c[1] * 255) + "," + std::to_string(c[2] * 255));
@@ -1438,11 +1438,14 @@ void fileMenu() {
 			{
 				if (ind > 10)
 					break;
-				std::string name = file.substr(file.find_last_of("\\") + 1, file.size());
+				std::string name = file.data();
+				name = name.substr(file.find_last_of("\\") + 1, file.size());;
+				std::string o = file.data();
+				o = o.substr(0, file.find_last_of("\\"));
 				if (name.size() == 0)
 					continue;
 				if (ImGui::MenuItem(name.c_str()))
-					openChart(file, file.substr(0, file.find_last_of("\\")));
+					openChart(file.data(), o);
 				ind++;
 			}
 		ImGui::EndMenu();

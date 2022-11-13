@@ -151,10 +151,11 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                                         for (int ii = 0; ii < bpmSeg.size(); ii += 1)
                                         {
                                             bpmSegment seg;
-                                            seg.startBeat = std::stod(Chart::split(bpmSeg[ii], '=')[0]);
+                                            std::vector<std::string> ss = Chart::split(bpmSeg[ii], '=');
+                                            seg.startBeat = std::stod(ss[0]);
                                             seg.endBeat = INT_MAX;
                                             seg.length = INT_MAX;
-                                            seg.bpm = std::stof(Chart::split(bpmSeg[ii], '=')[1]);
+                                            seg.bpm = std::stof(ss[1]);
                                             seg.startTime = 0;
 
                                             if (bpmIndex != 0) // previous lol
@@ -182,8 +183,9 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                                         for (int ii = 0; ii < bpmSeg.size(); ii += 2)
                                         {
                                             stopSegment seg;
-                                            seg.beat = std::stod(Chart::split(bpmSeg[ii], '=')[0]);
-                                            seg.length = std::stof(Chart::split(bpmSeg[ii], '=')[1]) * 1000;
+                                            std::vector<std::string> ss = Chart::split(bpmSeg[ii], '=');
+                                            seg.beat = std::stod(ss[0]);
+                                            seg.length = std::stof(ss[1]) * 1000;
 
                                             meta.stops.push_back(seg);
                                         }

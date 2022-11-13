@@ -377,19 +377,26 @@ void Chart::getInfo()
 	}
 }
 
-std::vector<std::string> Chart::split(std::string str, char delimiter)
+std::vector<std::string> Chart::split(std::string s, char delimiter)
 {
-    std::vector < std::string > internal;
-    std::stringstream ss(str);
-    std::string tok;
+	size_t start = 0;
+	size_t end = s.find_first_of(delimiter);
 
-    while (std::getline(ss, tok, delimiter)) {
-        internal.push_back(tok);
-    }
+	std::vector<std::string> output;
 
-    return internal;
+	while (end <= std::string::npos)
+	{
+		output.emplace_back(s.substr(start, end - start));
+
+		if (end == std::string::npos)
+			break;
+
+		start = end + 1;
+		end = s.find_first_of(delimiter, start);
+	}
+
+	return output;
 }
-
 
 float Chart::getTimeFromBeat(float beat, bpmSegment seg) {
     float beatThing = (beat - seg.startBeat) / (seg.bpm / 60);

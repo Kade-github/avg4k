@@ -22,6 +22,15 @@ class QuaverFile
 
         bpmSegment getSegmentFromTime(float time, std::vector<bpmSegment>& toSearch) {
             bpmSegment seg;
+            if (toSearch.size() == 0)
+            {
+                seg.bpm = 120;
+                seg.startBeat = 0;
+                seg.startTime = 0;
+                seg.endBeat = INT_MAX;
+                seg.length = INT_MAX;
+                return seg;
+            }
             seg.bpm = toSearch[0].bpm;
             seg.startBeat = 0;
             seg.startTime = 0;

@@ -31,6 +31,8 @@ AvgRect* __transRect;
 
 vector<Object*>* Game::objects;
 
+Text* notifTexts;
+
 static const char* white_vert = R"(
 in vec2 v_position;
 in vec2 v_uv;
@@ -239,6 +241,14 @@ void Game::db_addLine(std::string s) {
 	toRemove.clear();
 }
 
+void Game::queueNotif(std::string notif, bool clear)
+{
+	std::lock_guard cock(pog);
+	if (clear)
+		instance->Notifs.clear();
+	instance->Notifs.push_back({ notif, 0 });
+}
+
 void transCall() {
 	MUTATE_START
 	Tweening::TweenManager::activeTweens.clear();
@@ -291,6 +301,7 @@ void Game::createGame()
 	steam = new Steam();
 	steam->InitSteam();
 	
+	notifTexts = new Text(0,0,"", 22, "Futura Bold");
 
 	discord::Result resu = discord::Core::Create(981919302234021909, DiscordCreateFlags_NoRequireDiscord, &core);
 	if (resu != discord::Result::Ok)
@@ -510,6 +521,7 @@ void Game::update(Events::updateEvent update)
 			}
 		}
 
+
 		for (int i = 0; i < bruh.size(); i++)
 		{
 			// uh
@@ -609,6 +621,37 @@ void Game::update(Events::updateEvent update)
 
 	Rendering::drawBatch();
 
+	{
+		std::lock_guard cock(pog);
+		if (Notifs.size() > 0)
+		{
+			notif& n = Notifs[0];
+			if (n.time < 2)
+			{
+				n.time += deltaTime * 0.0025;
+
+				float alpha = std::lerp(0.8f, 0.0f, n.time / 2);
+				if (notifTexts->text != n.text)
+					notifTexts->setText(n.text);
+				notifTexts->x = 16;
+				notifTexts->y = Game::gameHeight - 25;
+				notifTexts->alpha = alpha + 0.2;
+				Rect notifRect = { 0,Game::gameHeight - 30, Game::gameWidth, 30, 0,0,0,alpha };
+				Rect notifSrc = { 0,0,1,1 };
+
+				Rendering::PushQuad(&notifRect, &notifSrc, NULL, NULL);
+
+				Rendering::drawBatch();
+
+				notifTexts->draw();
+			}
+			else
+				Notifs.erase(Notifs.begin());
+			Rendering::drawBatch();
+		}
+	}
+
+
 	if (fpsText && !debugConsole)
 	{
 		if (alphaWatermark->x < Game::gameWidth + (alphaWatermark->surfW / 2))
@@ -630,6 +673,8 @@ void Game::update(Events::updateEvent update)
 	//SDL_SetRenderTarget(renderer, NULL);
 
 	//SDL_RenderCopyEx(renderer, mainCamera->cameraTexture, NULL, &DestR, mainCamera->angle, NULL, SDL_FLIP_NONE);
+
+
 
 
 	if (transitioning)

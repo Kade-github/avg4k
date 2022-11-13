@@ -551,7 +551,6 @@ void Gameplay::create() {
 
 	std::string path = MainerMenu::currentSelectedSong.meta.folder + "/" + MainerMenu::currentSelectedSong.meta.audio;
 
-
 	if (SoundManager::getChannelByName("prevSong") == NULL)
 	{
 		song = SoundManager::createChannel(path.c_str(), "prevSong");
@@ -805,6 +804,10 @@ void Gameplay::create() {
 		positionInSong = -5000;
 	else
 		positionInSong = -(Game::save->GetDouble("Start Delay") * 1000);
+	lastSeg.startTime = -1;
+	lastSeg.length = 0;
+
+	xmod = Game::save->GetBool("Use XMOD Scroll");
 
 	MUTATE_END
 }
@@ -862,6 +865,7 @@ void Gameplay::update(Events::updateEvent event)
 	}
 
 
+
 	if (play)
 	{
 		/*float songPos = song->getPos();
@@ -896,7 +900,11 @@ void Gameplay::update(Events::updateEvent event)
 	if (MainerMenu::currentSelectedSong.meta.songName.size() == 0)
 		return;
 
-	curSeg = MainerMenu::currentSelectedSong.getSegmentFromTime(positionInSong);
+	if (lastSeg.startTime + lastSeg.length < positionInSong)
+	{
+		curSeg = MainerMenu::currentSelectedSong.getSegmentFromTime(positionInSong);
+		lastSeg = curSeg;
+	}
 	beat = MainerMenu::currentSelectedSong.getBeatFromTime(positionInSong, curSeg);
 
 	if (lastBPM != curSeg.bpm)
@@ -1049,7 +1057,9 @@ void Gameplay::update(Events::updateEvent event)
 	bool spawned = false;
 	for (Playfield* p : playFields)
 	{
-		note& n = notesToPlay[0];
+		if (notesToPlay.size() > 0)
+		{
+			note& n = notesToPlay[0];
 			if (n.beat < beat + p->arrowEff.drawBeats && n.type != Note_Tail) // if its in draw beats
 			{
 				NoteObject* object = new NoteObject();
@@ -1068,17 +1078,21 @@ void Gameplay::update(Events::updateEvent event)
 				double stopBeatOffset = (stopOffset / 1000) * (preStopSeg.bpm / 60);
 
 				object->stopOffset = stopBeatOffset;
+				object->curSeg = preStopSeg;
 
-				object->beat = (double)n.beat + stopBeatOffset;
+				object->beat = (double)n.beat;
+				if (!xmod)
+					object->beat += stopBeatOffset;
+				object->xmod = xmod;
+				object->tempStopOffset = object->stopOffset;
 				object->lane = n.lane;
 				object->connectedReceptor = p->screenReceptors[n.lane];
 				object->type = n.type;
 				object->endTime = -1;
 				object->endBeat = -1;
 
-				bpmSegment noteSeg = MainerMenu::currentSelectedSong.getSegmentFromBeat(object->beat);
 
-				object->time = MainerMenu::currentSelectedSong.getTimeFromBeatOffset(object->beat, noteSeg);
+				object->time = MainerMenu::currentSelectedSong.getTimeFromBeatOffset(object->beat, preStopSeg);
 				rect.y = Game::gameHeight + 400;
 				rect.x = 0;
 				rect.w = 64 * Game::save->GetDouble("Note Size");
@@ -1087,9 +1101,8 @@ void Gameplay::update(Events::updateEvent event)
 
 				note tail;
 
-				bpmSegment bruh = MainerMenu::currentSelectedSong.getSegmentFromBeat(object->beat);
 
-				float wh = MainerMenu::currentSelectedSong.getTimeFromBeat(beat, bruh);
+				float wh = MainerMenu::currentSelectedSong.getTimeFromBeat(beat, preStopSeg);
 
 				float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
 
@@ -1112,7 +1125,7 @@ void Gameplay::update(Events::updateEvent event)
 
 						object->endBeat = nn.beat + nstopBeatOffset;
 
-						object->endTime = MainerMenu::currentSelectedSong.getTimeFromBeatOffset(nn.beat + nstopBeatOffset, noteSeg);
+						object->endTime = MainerMenu::currentSelectedSong.getTimeFromBeatOffset(nn.beat + nstopBeatOffset, preStopSeg);
 						tail = nn;
 						break;
 					}
@@ -1128,7 +1141,7 @@ void Gameplay::update(Events::updateEvent event)
 			{
 				notesToPlay.erase(notesToPlay.begin());
 			}
-
+		}
 		for (int i = 0; i < p->screenReceptors.size(); i++)
 		{
 			if (keys[i] || holding[i])

@@ -11,6 +11,11 @@ public:
 	static char encoding_table[];
 	static char* decoding_table;
 
+	struct from_chars_result {
+		const char* ptr;
+		std::errc ec;
+	};
+
 	static Rect rotate_point(float cx, float cy, float angle, Rect p)
 	{
 		float s = sin(angle * (3.14159265 / 180));

@@ -6,9 +6,9 @@
 #include "Text.h"
 #include "Helpers.h"
 
-typedef void(__cdecl* doneTypingCallback)(std::string);
+typedef void(__cdecl* doneTypingCallback)(std::string, setting);
 
-void doneTyping(std::string s)
+void doneTyping(std::string s, setting set)
 {
 
 }
@@ -109,7 +109,7 @@ public:
 		if (typing && ev.keysym.sym == SDLK_RETURN)
 		{
 			typing = false;
-			callback(type);
+			callback(type, toModify);
 		}
 
 		if (typing && ev.keysym.sym == SDLK_BACKSPACE && type.size() > 0)
@@ -282,7 +282,7 @@ public:
 				Game::save->Save();
 			}
 
-			callback(type);
+			callback(type, toModify);
 
 			if (type.size() == 0)
 				setText(true,false,true);

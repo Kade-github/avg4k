@@ -827,7 +827,7 @@ void MainerMenu::create()
 	std::vector<setting> gameplaySettings;
 	gameplaySettings.push_back(Game::save->getSetting("FPS Limit"));
 	gameplaySettings.push_back(Game::save->getSetting("scrollspeed"));
-	gameplaySettings.push_back(Game::save->getSetting("Use XMOD Scroll"));
+	//gameplaySettings.push_back(Game::save->getSetting("Use XMOD Scroll"));
 	gameplaySettings.push_back(Game::save->getSetting("downscroll"));
 	gameplaySettings.push_back(Game::save->getSetting("offset"));
 	gameplaySettings.push_back(Game::save->getSetting("keybinds "));

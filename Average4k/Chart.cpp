@@ -377,26 +377,19 @@ void Chart::getInfo()
 	}
 }
 
-std::vector<std::string> Chart::split(std::string s, char delimiter)
+std::vector<std::string> Chart::split(std::string str, char delimiter)
 {
-	size_t start = 0;
-	size_t end = s.find_first_of(delimiter);
+    std::vector < std::string > internal;
+    std::stringstream ss(str);
+    std::string tok;
 
-	std::vector<std::string> output;
+    while (std::getline(ss, tok, delimiter)) {
+        internal.emplace_back(tok);
+    }
 
-	while (end <= std::string::npos)
-	{
-		output.emplace_back(s.substr(start, end - start));
-
-		if (end == std::string::npos)
-			break;
-
-		start = end + 1;
-		end = s.find_first_of(delimiter, start);
-	}
-
-	return output;
+    return internal;
 }
+
 
 float Chart::getTimeFromBeat(float beat, bpmSegment seg) {
     float beatThing = (beat - seg.startBeat) / (seg.bpm / 60);
@@ -418,7 +411,7 @@ float Chart::getBeatFromTimeOffset(float timestamp, bpmSegment seg) {
 }
 
 bpmSegment Chart::getSegmentFromTime(float time) {
-    float offsetTime = time + (meta.chartOffset * 1000);
+    float offsetTime = time;
     if (offsetTime >= previouslyFound.startTime && offsetTime < ((previouslyFound.startTime) + previouslyFound.length) && previouslyFound.length != -1)
         return previouslyFound;
     bpmSegment seg;

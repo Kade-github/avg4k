@@ -35,7 +35,7 @@ ChatObject::ChatObject(float _x, float _y)
 	y = _y;
 
 	h = 288;
-	w = 1280;
+	w = Game::gameWidth;
 
 	chatBody = new AvgRect(0, Game::gameHeight + h, w, h);
 	chatBody->alpha = 0.6;
@@ -205,6 +205,7 @@ void ChatObject::onPacket(PacketType pt, char* data, int32_t length)
 void ChatObject::draw()
 {
 	MUTATE_START
+	chatBody->w = Game::gameWidth;
 	chatSend->h = sendText->surfH + 8;
 	chatSend->y = (chatBody->y + chatBody->h) - chatSend->h;
 

@@ -127,11 +127,14 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                         {
                             stuff[0].erase(std::remove(stuff[0].begin(), stuff[0].end(), ','), stuff[0].end());
                             std::vector < std::string > bpmSeg = Chart::split(stuff[0], '=');
-                            stopSegment seg;
-                            seg.beat = std::stod(bpmSeg[0]);
-                            seg.length = std::stof(bpmSeg[1]) * 1000;
+                            if (bpmSeg.size() != 0)
+                            {
+                                stopSegment seg;
+                                seg.beat = std::stod(bpmSeg[0]);
+                                seg.length = std::stof(bpmSeg[1]) * 1000;
 
-                            meta.stops.push_back(seg);
+                                meta.stops.push_back(seg);
+                            }
 
                         }
                     }

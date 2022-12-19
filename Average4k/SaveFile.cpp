@@ -33,8 +33,8 @@ SaveFile::SaveFile()
     defaultSettings.push_back(CreateSetting("Noteskin", {false,true,false,false, "arrow",0,0,0,0,false,"",true}));
     defaultSettings.push_back(CreateSetting("Resolution", { false,true,false,false, "1280x720",0,0,0,0,false,"",true }));
     defaultSettings.push_back(CreateSetting("Fullscreen", { false,true,false,false, "Windowed",0,0,0,0,false,"",true }));
-    defaultSettings.push_back(CreateSetting("Music Volume", { false,false,true,false,"",1,0.1,1,0.1,false}));
-    defaultSettings.push_back(CreateSetting("Hitsounds Volume", { false,false,true,false,"",1,0.1,1,0.1,false }));
+    defaultSettings.push_back(CreateSetting("Music Volume", { false,false,true,false,"",0.1,0.1,1,0.1,false}));
+    defaultSettings.push_back(CreateSetting("Hitsounds Volume", { false,false,true,false,"",0.4,0.1,1,0.1,false }));
     defaultSettings.push_back(CreateSetting("Auto Accent Colors", { true, false, false, true }));
     defaultSettings.push_back(CreateSetting("Accent Color R", { false,false,true,false,"",0,0,255,1,false }));
     defaultSettings.push_back(CreateSetting("Accent Color G", { false,false,true,false,"",0,0,255,1,false }));

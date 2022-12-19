@@ -356,7 +356,7 @@ void selectedSongCallback(int sId)
 
 	float cdTitleOff = moreInf->h - (moreInf->h / 2);
 
-	if (MainerMenu::selectedSong.c.meta.cdtitle.contains("."))
+	if (MainerMenu::selectedSong.c.meta.cdtitle.find(".") != std::string::npos)
 	{
 		// create cdtitle
 

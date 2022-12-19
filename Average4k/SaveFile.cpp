@@ -245,7 +245,7 @@ std::vector<scoreHeader> SaveFile::getScores(std::string name, std::string artis
     {
         std::string s = entry.path().string();
 
-        if (s.contains(name) && s.contains(artist))
+        if (s.find(name) != std::string::npos && s.find(artist) != std::string::npos)
         {
             scoreHeader h;
             h.t = {};

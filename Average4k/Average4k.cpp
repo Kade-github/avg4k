@@ -313,7 +313,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	//SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	
 	Logging::writeLog("OpenGL version loaded: " + std::to_string(GLVersion.major) + "." + std::to_string(GLVersion.minor));
-
+	 
 	glEnable(GL_MULTISAMPLE);
 
 	IMGUI_CHECKVERSION();

@@ -2327,6 +2327,8 @@ void MainerMenu::lobbyUpdatePlayers()
 
 	AvgContainer* iconContainers = (AvgContainer*)multiContainer->findItemByName("lobbyIcons");
 
+	iconContainers->drawBG = false;
+
 	for (Object* obj : iconContainers->above)
 		delete obj;
 

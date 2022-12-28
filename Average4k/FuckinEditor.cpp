@@ -1163,14 +1163,13 @@ void FuckinEditor::update(Events::updateEvent event)
 		else
 			obj->drawCall = true;
 		obj->rTime = currentTime;
-		float wh = FuckinEditor::selectedChart->getTimeFromBeat(obj->beat, FuckinEditor::selectedChart->getSegmentFromBeat(obj->beat));
-		if (songPlaying)
+		if (obj->type != Note_Mine && obj->type != Note_Fake)
 		{
+			float wh = FuckinEditor::selectedChart->getTimeFromBeat(obj->beat, FuckinEditor::selectedChart->getSegmentFromBeat(obj->beat));
 			bool removeLayer = false;
-			if (wh - abs(currentTime) < (Judge::hitWindows[1] * 0.5) && wh - abs(currentTime) > -(Judge::hitWindows[1] * 0.2) && obj->type != Note_Mine && obj->type != Note_Fake)
+			if (wh - abs(currentTime) < (Judge::hitWindows[1] * 0.5) && wh - abs(currentTime) > -(Judge::hitWindows[1] * 0.2))
 			{
-				fuck[obj->lane]->lightUpTimer = 195;
-				if (!findClapped(obj->beat) && Game::save->GetBool("nonChange_noteTick"))
+				if (!findClapped(obj->beat) && Game::save->GetBool("nonChange_noteTick") && songPlaying)
 				{
 					beatsClapped.push_back(obj->beat);
 					Channel* c = SoundManager::createChannel("assets/sounds/hitSound.wav", "clap_" + std::to_string(obj->beat), true);
@@ -1180,14 +1179,13 @@ void FuckinEditor::update(Events::updateEvent event)
 				}
 			}
 
-			for (holdTile tile : obj->heldTilings)
-			{
-				wh = FuckinEditor::selectedChart->getTimeFromBeat(tile.beat, FuckinEditor::selectedChart->getSegmentFromBeat(tile.beat));
-				if (wh - abs(currentTime) < (Judge::hitWindows[1] * 0.5) && wh - abs(currentTime) > -(Judge::hitWindows[1] * 0.2))
-				{
-					fuck[obj->lane]->lightUpTimer = 195;
-				}
-			}
+			float eTime = obj->endTime;
+
+			if (eTime == -1)
+				eTime = wh + Judge::hitWindows[1];
+
+			if (currentTime < eTime && currentTime > wh)
+				fuck[obj->lane]->lightUpTimer = 195;
 		}
 
 	}

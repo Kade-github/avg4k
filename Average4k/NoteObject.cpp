@@ -286,7 +286,9 @@ void NoteObject::draw() {
     if (endBeat != -1 && !missHold)
     {
 
-        float ewh = currentChart->getTimeFromBeat(endBeat, bruh);
+        endTime = currentChart->getTimeFromBeat(endBeat, bruh);
+
+        float ewh = endTime;
 
         float difff = (ewh)-(wh);
 

@@ -972,9 +972,6 @@ void FuckinEditor::create()
 	add(rectShitBitch);
 
 
-	miniMapCursor = new AvgRect(x, y, 42, 4);
-	miniMapCursor->c = { 255,255,255 };;
-
 	lunderBorder = new AvgSprite(laneUnderway.x, laneUnderway.y, Noteskin::getGameplayElement(Game::noteskin, "underwayBorder.png"));
 	add(lunderBorder);
 	lunderBorder->alpha = 1;
@@ -1027,7 +1024,6 @@ void FuckinEditor::create()
 	add(gameplay);
 	add(top);
 	add(miniMap);
-	add(miniMapCursor);
 	top->add(selectionRect);
 	selectionRect->alpha = 0.6;
 	selectionRect->c = { 255,255,255 };
@@ -1098,12 +1094,27 @@ void FuckinEditor::update(Events::updateEvent event)
 {
 	if (!FuckinEditor::selectedChart)
 		return;
+
+	if (songPlaying)
+	{
+		float songPos = song->getPos() + (selectedChart->BASS_OFFSET * 1000);
+
+		currentTime = songPos;
+		bpmSegment curSeg = FuckinEditor::selectedChart->getSegmentFromTime(currentTime);
+
+		currentBeat = FuckinEditor::selectedChart->getBeatFromTime(currentTime, curSeg);
+	}
+
 	if (notes.size() > 0)
 	{
-		float perc = (currentTime - (FuckinEditor::selectedChart->meta.chartOffset * 1000)) / (song->length);
+		bpmSegment lastSeg = FuckinEditor::selectedChart->getSegmentFromTime(song->length);
+		float lastBeat = FuckinEditor::selectedChart->getBeatFromTime(song->length, lastSeg);
+
+
+		float perc = currentBeat / lastBeat;
 		if (perc > 1)
 			perc = 1;
-		miniMapCursor->y = (miniMap->y + (miniMap->h * (perc))) + (miniMapCursor->h / 2);
+		miniMapCursor->y = (miniMap->h * (perc));
 
 		int x, y;
 		Game::GetMousePos(&x, &y);
@@ -1114,10 +1125,10 @@ void FuckinEditor::update(Events::updateEvent event)
 				(y > miniMap->y && y < miniMap->y + miniMap->h))
 			{
 				float relativeY = y - miniMap->y;
-				int time = (song->length * (relativeY / miniMap->h)) - (FuckinEditor::selectedChart->meta.chartOffset * 1000);
-				currentTime = time;
-				bpmSegment curSeg = FuckinEditor::selectedChart->getSegmentFromTime(currentTime);
-				currentBeat = FuckinEditor::selectedChart->getBeatFromTime(currentTime, curSeg);
+				int beat = (lastBeat * (relativeY / miniMap->h));
+				bpmSegment curSeg = FuckinEditor::selectedChart->getSegmentFromBeat(beat);
+				currentBeat = beat;
+				currentTime = FuckinEditor::selectedChart->getTimeFromBeat(beat, curSeg);
 			}
 			else
 			{
@@ -1136,11 +1147,11 @@ void FuckinEditor::update(Events::updateEvent event)
 				l.rect->alpha = 1;
 				l.rect->drawCall = true;
 				
-				float tim = l.time;
+				float tim = l.beat;
 
-				float notePerc = tim / (song->length);
+				float notePerc = tim / lastBeat;
 
-				l.rect->y = (miniMap->y + (miniMap->h * (notePerc))) + (l.rect->h / 2);
+				l.rect->y = (miniMap->h * (notePerc));
 			}
 		}
 		else
@@ -1347,16 +1358,6 @@ void FuckinEditor::update(Events::updateEvent event)
 		waveInd++;
 	}
 
-
-	if (songPlaying)
-	{
-		float songPos = song->getPos() + (selectedChart->BASS_OFFSET * 1000);
-
-		currentTime = songPos;
-		bpmSegment curSeg = FuckinEditor::selectedChart->getSegmentFromTime(currentTime);
-
-		currentBeat = FuckinEditor::selectedChart->getBeatFromTime(currentTime, curSeg);
-	}
 
 	for (note& n : saved)
 	{
@@ -2073,6 +2074,12 @@ void FuckinEditor::loadNotes(difficulty diff)
 	{
 		generateNoteObject(n, diff, FuckinEditor::selectedChart, notes);
 	}
+	float x = 0;
+	float y = 24;
+	miniMapCursor = new AvgRect(x, y, 42, 4);
+	miniMapCursor->c = { 255,255,255 };
+
+	miniMap->add(miniMapCursor);
 
 	mouseWheel(1);
 }

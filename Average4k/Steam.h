@@ -40,6 +40,8 @@ public:
 
 	void doesWorkshopItemExist(std::string name);
 
+	static void SetPresence(const char* presence);
+
 	void createWorkshopItem();
 	void uploadToItem(Chart* c, PublishedFileId_t id, std::string fileName);
 	void uploadPack(Pack* p, PublishedFileId_t id);

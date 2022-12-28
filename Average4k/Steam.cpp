@@ -84,6 +84,13 @@ void Steam::doesWorkshopItemExist(std::string name)
     SteamUGC()->ReleaseQueryUGCRequest(h);
 }
 
+void Steam::SetPresence(const char* presence)
+{
+    SteamFriends()->ClearRichPresence();
+    SteamFriends()->SetRichPresence("gamestatus", presence);
+    SteamFriends()->SetRichPresence("steam_display", "#Status");
+}
+
 void Steam::OnName(SteamUGCQueryCompleted_t* result, bool bIOFailure)
 {
     MUTATE_START

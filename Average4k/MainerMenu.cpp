@@ -603,6 +603,7 @@ void selectedSongCallback(int sId)
 
 void MainerMenu::create()
 {
+	Steam::SetPresence("Selecting a chart in the Main Menu");
 	Judge::initJudge();
 	if (Noteskin::type != Game::save->GetString("Noteskin"))
 	{
@@ -674,7 +675,6 @@ void MainerMenu::create()
 	lobbyShader->SetUniform("radius", 0.5f);
 
 	Game::DiscordUpdatePresence("In the Main Menu", "Browsing Charts", "Average4K", -1, -1, "");
-	SteamFriends()->SetRichPresence("gamestatus", "Browsing Charts");
 
 	bg = new AvgSprite(-16, -16, Noteskin::getMenuElement(Game::noteskin, "darkmodebg.png"));
 	bg->create();
@@ -2214,6 +2214,8 @@ void MainerMenu::createNewLobbies(std::string searchTerm)
 
 void MainerMenu::createLobby()
 {
+	
+
 	multiplayerObjects.push_back(multiContainer->addObject(new Text(28,28, currentLobby.LobbyName, 18, "arial"), "lobbyName"));
 	multiplayerObjects.push_back(multiContainer->addObject(new Text(28,50, std::to_string(currentLobby.Players) + "/" + std::to_string(currentLobby.MaxPlayers), 14, "ariali"), "lobbyPlayers"));
 
@@ -2364,6 +2366,8 @@ void MainerMenu::lobbyUpdatePlayers()
 		ind++;
 	}
 	iconContainers->addObject(host, "hostCrown");
+
+	Steam::SetPresence(("In lobby " + currentLobby.LobbyName + " (" + std::to_string(currentLobby.Players) + "/" + std::to_string(currentLobby.MaxPlayers) + ")").c_str());
 }
 
 void MainerMenu::cleanLobby()
@@ -2399,6 +2403,8 @@ void MainerMenu::cleanLobby()
 	currentLobby = {};
 	if (chat->opened)
 		chat->close();
+
+	Steam::SetPresence("Selecting a chart in the Main Menu");
 }
 
 void MainerMenu::selectContainer(int container)

@@ -33,6 +33,9 @@ void MainMenu::create() {
 	
 	MUTATE_START
 
+	Steam::SetPresence("Selecting a chart in the Main Menu");
+
+
 	bg = new AvgSprite(-16, -16, Noteskin::getMenuElement(Game::noteskin, "darkmodebg.png"));
 	bg->create();
 	bg->y = Game::gameHeight;

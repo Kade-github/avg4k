@@ -29,10 +29,10 @@ void MultiplayerLobbies::create()
 	MUTATE_START;
 	
 	Game::DiscordUpdatePresence("Browsing lobbies", "Playing Multiplayer", "Average4K", -1, -1, "");
-	SteamFriends()->SetRichPresence("gamestatus", "Browsing lobbies");
+	Steam::SetPresence("Browsing lobbies");
 	SteamFriends()->SetRichPresence("steam_player_group", nullptr);
 	SteamFriends()->SetRichPresence("steam_player_group_size", nullptr);
-	SteamFriends()->SetRichPresence("status", nullptr);
+	Steam::SetPresence(nullptr);
 	SteamFriends()->SetRichPresence("connect", nullptr);
 	refreshTimer = 3000;
 	if (Multiplayer::loggedIn)

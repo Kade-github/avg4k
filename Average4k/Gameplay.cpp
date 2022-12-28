@@ -228,7 +228,7 @@ void Gameplay::onPacket(PacketType pt, char* data, int32_t length)
 			{
 				Placement->setText(placementt);
 				Placement->x = (Game::gameWidth - Placement->surfW) - 24;
-				SteamFriends()->SetRichPresence("status", Placement->text.c_str());
+				Steam::SetPresence(Placement->text.c_str());
 				Game::DiscordUpdatePresence(MainerMenu::currentSelectedSong.meta.songName + " in " + MainerMenu::currentLobby.LobbyName, "Playing Multiplayer (" + Placement->text + ")", "Average4K", MainerMenu::currentLobby.Players, MainerMenu::currentLobby.MaxPlayers, "");
 			}
 			bool found = false;
@@ -412,6 +412,8 @@ void Gameplay::create() {
 
 	MUTATE_START
 
+
+
 		if (Noteskin::type != Game::save->GetString("Noteskin"))
 		{
 			Noteskin::resetNoteskin(Game::noteskin);
@@ -443,6 +445,10 @@ void Gameplay::create() {
 	downscroll = Game::save->GetBool("downscroll");
 	if (MainerMenu::currentSelectedSong.isModFile)
 		downscroll = false;
+
+
+	Steam::SetPresence(("Playing " + MainerMenu::currentSelectedSong.meta.songName).c_str());
+
 	Judge::initJudge();
 
 	Judge::judgeNote(174);
@@ -1256,6 +1262,8 @@ void Gameplay::update(Events::updateEvent event)
 									}
 
 									combo++;
+									Steam::SetPresence(("Playing " + MainerMenu::currentSelectedSong.meta.songName + " | Botplay").c_str());
+
 									if (combo > highestCombo)
 										highestCombo = combo;
 									if (Game::noteskin->bounce)
@@ -1645,6 +1653,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 					judge->h *= (1 + (Game::multipliery != 1 ? Game::multipliery : 0));
 
 					combo++;
+					Steam::SetPresence(("Playing " + MainerMenu::currentSelectedSong.meta.songName + " | " + std::to_string(combo) + "x, " + std::to_string(accuracy) + "%").c_str());
 					if (Game::noteskin->bounce)
 					{
 						judge->scale = 1.15;

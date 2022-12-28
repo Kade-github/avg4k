@@ -538,7 +538,11 @@ void window_chartProperties() {
 			ImGui::PushItemWidth(180);
 			ImGui::Text("Song Title:");
 			ImGui::InputText("##Title", buff, sizeof(buff));
-			FuckinEditor::selectedChart->meta.songName = std::string(buff);
+			if (buff != FuckinEditor::selectedChart->meta.songName)
+			{
+				FuckinEditor::selectedChart->meta.songName = std::string(buff);
+				Steam::SetPresence(("In the editor, modifying " + FuckinEditor::selectedChart->meta.songName + ".").c_str());
+			}
 
 
 			char bufff[32];
@@ -907,11 +911,14 @@ void openChart(std::string path, std::string folder) {
 	editor->loadNotes(FuckinEditor::selectedChart->meta.difficulties[0]);
 	editor->song->setVolume(0.4);
 	FuckinEditor::currentDiff = 0;
+
+	Steam::SetPresence(("In the editor, modifying " + FuckinEditor::selectedChart->meta.songName + ".").c_str());
 }
 
 
 void FuckinEditor::create()
 {
+	Steam::SetPresence("In the editor, selecting a chart.");
 	ModManager::doMods = false;
 	if (SoundManager::getChannelByName("prevSong") != NULL)
 	{

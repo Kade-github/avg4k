@@ -30,6 +30,7 @@ void ModEditor::resetSprites()
 
 void ModEditor::create()
 {
+	Steam::SetPresence(("In the mod editor, previewing " + FuckinEditor::selectedChart->meta.songName + ".").c_str());
 	ssnapSelect = 3;
 	ssnap = 16;
 	ssnapConvert = { {4,1}, {8,2},{12,3},{16,4}, {24,6}, {32,8}, {64,16} };

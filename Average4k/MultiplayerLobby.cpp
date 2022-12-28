@@ -69,10 +69,10 @@ void MultiplayerLobby::refreshLobby(lobby l)
 	helpDisplay->setText("Lobby: " + l.LobbyName + " (" + std::to_string(l.Players) + "/" + std::to_string(l.MaxPlayers) + ") " + (isHost ? "You are the host!" : ""));
 	//warningDisplay->setText("");
 	Game::DiscordUpdatePresence(CurrentLobby.LobbyName, "Playing Multiplayer", "Average4K", MultiplayerLobby::CurrentLobby.Players, MultiplayerLobby::CurrentLobby.MaxPlayers, "");
-	SteamFriends()->SetRichPresence("gamestatus", "Playing Multiplayer");
+	Steam::SetPresence("Playing Multiplayer");
 	SteamFriends()->SetRichPresence("steam_player_group", std::to_string(l.LobbyID).c_str());
 	SteamFriends()->SetRichPresence("steam_player_group_size", std::to_string(l.PlayerList.size()).c_str());
-	SteamFriends()->SetRichPresence("status", "In a lobby");
+	Steam::SetPresence("In a lobby");
 	SteamFriends()->SetRichPresence("connect", ("-joinLobby " + std::to_string(l.LobbyID)).c_str());
 	STR_ENCRYPT_END
 }

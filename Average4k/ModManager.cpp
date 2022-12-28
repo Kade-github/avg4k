@@ -50,6 +50,7 @@ void genNObject(note n, difficulty diff, Chart* selectedChart, bool findTail, Pl
 		double stopBeatOffset = (stopOffset / 1000) * (preStopSeg.bpm / 60);
 
 		object->stopOffset = stopBeatOffset;
+		object->curSeg = preStopSeg;
 
 		object->beat = (double)n.beat + stopBeatOffset;
 		object->lane = n.lane;
@@ -589,9 +590,13 @@ void ModManager::setModProperties(AppliedMod& m, float tween)
 
 void ModManager::runMods(AppliedMod m, float beat)
 {
-	if (killed)
+	if (killed || m.done)
 		return;
-	setModStart(m);
+	if (!m.started)
+	{
+		m.started = true;
+		setModStart(m);
+	}
 
 	if (m.tweenLen == 0)
 	{
@@ -1000,6 +1005,8 @@ void ModManager::createFunctions()
 		mod.confusion = 0;
 		mod.movex = 0;
 		mod.movey = 0;
+		mod.ogX = x;
+		mod.ogY = y;
 		mod.spr = spr;
 
 		instance->sprites[name] = mod;

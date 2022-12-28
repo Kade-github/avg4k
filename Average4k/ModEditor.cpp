@@ -24,6 +24,11 @@ void ModEditor::resetSprites()
 		value.isPlayField = false;
 		value.mini = 0.5;
 		value.confusion = 0;
+		if (value.spr != NULL)
+		{
+			value.spr->x = value.ogX;
+			value.spr->y = value.ogY;
+		}
 	}
 }
 
@@ -98,9 +103,9 @@ void ModEditor::create()
 		spriteField->h = Game::gameHeight;
 		spriteField->flip = true;
 		spriteField->dontDelete = true;
-		add(manager.spriteCamera);
+		//add(manager.spriteCamera);
 		manager.spriteCamera->fuckingNo = true;
-		add(spriteField);
+		//add(spriteField);
 	}
 
 	add(gameplay);
@@ -131,12 +136,16 @@ void ModEditor::doModsUntilThisPos()
 	resetSprites();
 	for (Playfield* p : playfields)
 		p->arrowEff.resetEffects();
+
+
 	for (AppliedMod& mod : manager.appliedMods)
 	{
+		if (mod.tweenStart > beat)
+			continue;
 		mod.started = false;
 		float endMod = mod.tweenStart + mod.tweenLen;
 
-		if (mod.tweenStart + mod.tweenLen < beat)
+		if (endMod < beat)
 		{
 			manager.runMods(mod, endMod);
 		}
@@ -151,24 +160,13 @@ void ModEditor::doModsUntilThisPos()
 		if (m.beat == 0)
 			m.beat = beat;
 		m.hit = false;
-		if (beat >= m.beat)
+		if (beat >= m.beat && !m.hit)
 		{
 			m.hit = true;
 			m.toCall();
 		}
 	}
 
-
-	for (auto& [key, value] : manager.sprites) {
-		value.offsetX = 0;
-		value.offsetY = 0;
-
-
-		if (value.finish != "" && value.spr->sparrow)
-		{
-			(*manager.lua)[value.finish](value.spr->sparrow->currentAnim);
-		}
-	}
 }
 
 void ModEditor::refresh()
@@ -226,9 +224,9 @@ void ModEditor::refresh()
 		spriteField->w = Game::gameWidth;
 		spriteField->h = Game::gameHeight;
 		spriteField->flip = true;
-		add(manager.spriteCamera);
+		//add(manager.spriteCamera);
 		manager.spriteCamera->fuckingNo = true;
-		add(spriteField);
+		//add(spriteField);
 	}
 
 	SpriteMod mod2;
@@ -333,6 +331,7 @@ void ModEditor::generateNoteObject(note n, difficulty diff, Chart* selectedChart
 		double stopBeatOffset = (stopOffset / 1000) * (preStopSeg.bpm / 60);
 
 		object->stopOffset = stopBeatOffset;
+		object->curSeg = preStopSeg;
 
 		object->beat = (double)n.beat + stopBeatOffset;
 		object->lane = n.lane;

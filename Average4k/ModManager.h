@@ -32,6 +32,9 @@ struct SpriteMod {
 
 	bool notModCreated = false;
 
+	float ogX = 0;
+	float ogY = 0;
+
 	float movex;
 	float movey;
 	float mini = 0.5;

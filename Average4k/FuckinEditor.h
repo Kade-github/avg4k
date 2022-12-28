@@ -293,6 +293,7 @@ public:
 		double stopBeatOffset = (stopOffset / 1000) * (preStopSeg.bpm / 60);
 
 		object->stopOffset = stopBeatOffset;
+		object->curSeg = preStopSeg;
 
 		object->beat = (double)n.beat + stopBeatOffset;
 		object->lane = n.lane;

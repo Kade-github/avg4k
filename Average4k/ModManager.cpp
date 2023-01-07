@@ -636,47 +636,6 @@ void ModManager::runMods(AppliedMod& m, float beat)
 	{
 		setModProperties(m, 0);
 	}
-	if (m.spriteName != "-1")
-	{
-		if (!ModManager::instance->sprites[m.spriteName].spr)
-		{
-			consolePrint("Couldn't find sprite " + m.spriteName);
-			return;
-		}
-		SpriteMod& value = ModManager::instance->sprites[m.spriteName];
-
-		float anchorX = value.spr->defX;
-		float anchorY = value.spr->defY;
-
-		if (value.anchor != "")
-		{
-			SpriteMod anchor = ModManager::instance->sprites[value.anchor];
-			anchorX = anchor.spr->defX + anchor.movex;
-			anchorY = anchor.spr->defY + anchor.movey;
-		}
-
-		float x = anchorX + value.movex;
-		float y = anchorY + value.movey;
-		float rot = value.spr->defRot + value.confusion;
-
-		if (value.isPlayField)
-		{
-			x = anchorX + (value.movex * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)));
-			y = anchorY + (value.movey * (1 + (Game::multipliery != 1 ? Game::multipliery : 0)));
-		}
-
-		value.spr->x = x + value.offsetX;
-		value.spr->y = y + value.offsetY;
-
-		value.spr->angle = rot;
-		value.spr->alpha = 1 - value.stealth;
-		value.spr->scale = 0.5 / value.mini;
-
-		if (value.spr->animationFinished && value.finish != "" && value.spr->sparrow)
-		{
-			(*instance->lua)[value.finish](value.spr->sparrow->currentAnim);
-		}
-	}
 }
 
 float getWidth(std::string name)

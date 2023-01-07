@@ -25,7 +25,7 @@ public:
 
 	float currentTime = 0;
 
-	void resetSprites();
+	void resetSprites(bool resetAnchor = false);
 
 	float beat = 0;
 

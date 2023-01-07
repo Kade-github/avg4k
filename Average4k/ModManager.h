@@ -125,7 +125,7 @@ public:
 	void setModStart(AppliedMod& m);
 	void setModProperties(AppliedMod& m, float tween);
 
-	void runMods(AppliedMod mod, float beat);
+	void runMods(AppliedMod& mod, float beat);
 
 	void createFunctions();
 	void populateLuaMap();

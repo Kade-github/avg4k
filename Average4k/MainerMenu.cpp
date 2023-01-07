@@ -604,6 +604,7 @@ void selectedSongCallback(int sId)
 void MainerMenu::create()
 {
 	Steam::SetPresence("Selecting a chart in the Main Menu");
+	Game::DiscordUpdatePresence("In the Main Menu", "Selecting a chart", "Average4K", -1, -1, "");
 	Judge::initJudge();
 	if (Noteskin::type != Game::save->GetString("Noteskin"))
 	{
@@ -673,8 +674,6 @@ void MainerMenu::create()
 	lobbyShader->SetUniform("centerX", 0.5f);
 	lobbyShader->SetUniform("centerY", 0.5f);
 	lobbyShader->SetUniform("radius", 0.5f);
-
-	Game::DiscordUpdatePresence("In the Main Menu", "Browsing Charts", "Average4K", -1, -1, "");
 
 	bg = new AvgSprite(-16, -16, Noteskin::getMenuElement(Game::noteskin, "darkmodebg.png"));
 	bg->create();

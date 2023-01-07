@@ -336,15 +336,17 @@ void ModManager::runMods()
 		return;
 	for (AppliedMod& m : appliedMods)
 	{
-		if (m.tweenLen == 0)
-		{
-			m.tweenLen = 0.1;
-			m.instant = true;
-		}
-		if (m.tweenStart == 0)
-			m.tweenStart = beat;
+		if (m.tweenStart > beat)
+			continue;
 
-		if ((beat >= m.tweenStart) && ((beat < m.tweenStart + m.tweenLen)))
+		if (m.tweenLen == 0)
+			m.instant = true;
+		
+		if (m.done)
+			continue;
+			
+
+		if (((beat >= m.tweenStart) || m.tweenStart == 0) && ((beat < m.tweenStart + m.tweenLen) || (m.instant)))
 		{
 			if (!m.started)
 			{
@@ -588,7 +590,7 @@ void ModManager::setModProperties(AppliedMod& m, float tween)
 		modPlayfields[m.pid]->arrowEff.SplineDensity = std::lerp(m.modStartAmount, m.amount, tween);
 }
 
-void ModManager::runMods(AppliedMod m, float beat)
+void ModManager::runMods(AppliedMod& m, float beat)
 {
 	if (killed || m.done)
 		return;
@@ -603,8 +605,6 @@ void ModManager::runMods(AppliedMod m, float beat)
 		m.tweenLen = 0.1;
 		m.instant = true;
 	}
-	if (m.tweenStart == 0)
-		m.tweenStart = beat;
 
 	if (m.mod != "showPath")
 	{
@@ -643,34 +643,38 @@ void ModManager::runMods(AppliedMod m, float beat)
 			consolePrint("Couldn't find sprite " + m.spriteName);
 			return;
 		}
+		SpriteMod& value = ModManager::instance->sprites[m.spriteName];
 
-		for (const auto& [key, value] : sprites) {
-			if (!value.spr)
-				continue;
-			float anchorX = value.spr->defX;
-			float anchorY = value.spr->defY;
+		float anchorX = value.spr->defX;
+		float anchorY = value.spr->defY;
 
-			if (value.anchor != "")
-			{
-				SpriteMod anchor = ModManager::instance->sprites[value.anchor];
-				anchorX = anchor.spr->defX + anchor.movex;
-				anchorY = anchor.spr->defY + anchor.movey;
-			}
+		if (value.anchor != "")
+		{
+			SpriteMod anchor = ModManager::instance->sprites[value.anchor];
+			anchorX = anchor.spr->defX + anchor.movex;
+			anchorY = anchor.spr->defY + anchor.movey;
+		}
 
-			float x = anchorX + value.movex;
-			float y = anchorY + value.movey;
-			float rot = value.spr->defRot + value.confusion;
+		float x = anchorX + value.movex;
+		float y = anchorY + value.movey;
+		float rot = value.spr->defRot + value.confusion;
 
-			value.spr->x = x + value.offsetX;
-			value.spr->y = y + value.offsetY;
+		if (value.isPlayField)
+		{
+			x = anchorX + (value.movex * (1 + (Game::multiplierx != 1 ? Game::multiplierx : 0)));
+			y = anchorY + (value.movey * (1 + (Game::multipliery != 1 ? Game::multipliery : 0)));
+		}
 
-			value.spr->angle = rot;
-			value.spr->alpha = 1 - value.stealth;
+		value.spr->x = x + value.offsetX;
+		value.spr->y = y + value.offsetY;
 
-			if (value.spr->animationFinished && value.finish != "" && value.spr->sparrow)
-			{
-				(*instance->lua)[value.finish](value.spr->sparrow->currentAnim);
-			}
+		value.spr->angle = rot;
+		value.spr->alpha = 1 - value.stealth;
+		value.spr->scale = 0.5 / value.mini;
+
+		if (value.spr->animationFinished && value.finish != "" && value.spr->sparrow)
+		{
+			(*instance->lua)[value.finish](value.spr->sparrow->currentAnim);
 		}
 	}
 }

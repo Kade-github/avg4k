@@ -10,7 +10,7 @@ int ssnapSelect;
 
 std::map<float, float> ssnapConvert;
 
-void ModEditor::resetSprites()
+void ModEditor::resetSprites(bool resetAnchor)
 {
 	for (auto& [key, value] : manager.sprites) {
 		value.confusion = 0;
@@ -18,7 +18,8 @@ void ModEditor::resetSprites()
 		value.finish = "";
 		value.movex = 0;
 		value.movey = 0;
-		value.anchor = "";
+		if (resetAnchor)
+			value.anchor = "";
 		value.offsetX = 0;
 		value.offsetY = 0;
 		value.isPlayField = false;
@@ -103,9 +104,9 @@ void ModEditor::create()
 		spriteField->h = Game::gameHeight;
 		spriteField->flip = true;
 		spriteField->dontDelete = true;
-		//add(manager.spriteCamera);
+		add(manager.spriteCamera);
 		manager.spriteCamera->fuckingNo = true;
-		//add(spriteField);
+		add(spriteField);
 	}
 
 	add(gameplay);
@@ -137,12 +138,15 @@ void ModEditor::doModsUntilThisPos()
 	for (Playfield* p : playfields)
 		p->arrowEff.resetEffects();
 
-
+	std::sort(manager.appliedMods.begin(), manager.appliedMods.end(), AppliedMod());
 	for (AppliedMod& mod : manager.appliedMods)
 	{
+		mod.instant = false;
+		mod.started = false;
+		mod.done = false;
+
 		if (mod.tweenStart > beat)
 			continue;
-		mod.started = false;
 		float endMod = mod.tweenStart + mod.tweenLen;
 
 		if (endMod < beat)
@@ -224,9 +228,9 @@ void ModEditor::refresh()
 		spriteField->w = Game::gameWidth;
 		spriteField->h = Game::gameHeight;
 		spriteField->flip = true;
-		//add(manager.spriteCamera);
+		add(manager.spriteCamera);
 		manager.spriteCamera->fuckingNo = true;
-		//add(spriteField);
+		add(spriteField);
 	}
 
 	SpriteMod mod2;
@@ -506,7 +510,7 @@ void ModEditor::keyDown(SDL_KeyboardEvent ev)
 {
 	if (ev.keysym.sym == SDLK_ESCAPE)
 	{
-		resetSprites();
+		resetSprites(true);
 		FuckinEditor::dontDeleteChart = true;
 		Game::instance->transitionToMenu(new FuckinEditor());
 		return;

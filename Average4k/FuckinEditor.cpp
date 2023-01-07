@@ -541,6 +541,7 @@ void window_chartProperties() {
 			if (buff != FuckinEditor::selectedChart->meta.songName)
 			{
 				FuckinEditor::selectedChart->meta.songName = std::string(buff);
+				Game::DiscordUpdatePresence("In the Editor", "Modifying " + FuckinEditor::selectedChart->meta.songName, "Average4K", -1, -1, "");
 				Steam::SetPresence(("In the editor, modifying " + FuckinEditor::selectedChart->meta.songName + ".").c_str());
 			}
 
@@ -913,12 +914,14 @@ void openChart(std::string path, std::string folder) {
 	FuckinEditor::currentDiff = 0;
 
 	Steam::SetPresence(("In the editor, modifying " + FuckinEditor::selectedChart->meta.songName + ".").c_str());
+	Game::DiscordUpdatePresence("In the Editor", "Modifying " + FuckinEditor::selectedChart->meta.songName, "Average4K", -1, -1, "");
 }
 
 
 void FuckinEditor::create()
 {
 	Steam::SetPresence("In the editor, selecting a chart.");
+	Game::DiscordUpdatePresence("In the Editor", "Selecting a chart", "Average4K", -1, -1, "");
 	ModManager::doMods = false;
 	if (SoundManager::getChannelByName("prevSong") != NULL)
 	{

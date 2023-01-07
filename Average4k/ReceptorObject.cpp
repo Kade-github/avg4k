@@ -50,8 +50,6 @@ void ReceptorObject::draw() {
 
 	if (ModManager::doMods)
 	{
-		x += (((64 * arrowEffects->noteSize) + 12) * type);
-
 		ArrowEffects::Arrow a = arrowEffects->finishEffects(x, y, type, positionInSong);
 		defAlpha = a.opac;
 		drawAngle = a.rot;

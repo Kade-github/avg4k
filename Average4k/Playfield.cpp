@@ -9,7 +9,7 @@ void Playfield::update(float positionInSong, float beat)
 		{
 			ReceptorObject* rec = screenReceptors[i];
 			rec->positionInSong = positionInSong;
-			rec->x = x;
+			rec->x = x + (((64 * arrowEff.noteSize) + 12) * rec->type);
 
 			rec->modX = rec->x;
 			rec->modY = rec->y;
@@ -17,7 +17,7 @@ void Playfield::update(float positionInSong, float beat)
 
 		for (NoteObject* obj : screenNotes)
 		{
-			if ((obj->beat > beat + arrowEff.drawBeats) || (obj->beat < beat - arrowEff.drawBeats))
+			if ((obj->beat > beat + arrowEff.drawBeats) || (obj->beat < beat - arrowEff.drawBeats) || (!showNotes))
 			{
 				obj->drawCall = false;
 				continue;

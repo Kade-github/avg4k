@@ -15,6 +15,8 @@ public:
 
 	bool mod = false;
 
+	bool showNotes = true;
+
 	float x, y;
 
 	Playfield(int _x, int _y, AvgGroup* g)

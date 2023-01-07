@@ -227,6 +227,10 @@ void ModEditor::refresh()
 		delete p;
 	playfields.clear();
 
+	removeObj(gameplay);
+
+	gameplay = new AvgGroup(0, 0, 1280, 720);
+
 	Playfield* p = new Playfield(
 		(640 - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)), 60, gameplay);
 	p->mod = true;
@@ -287,6 +291,8 @@ void ModEditor::refresh()
 	mod2.notModCreated = true;
 	mod2.def = manager.spriteCamera;
 	manager.sprites["sprites"] = mod2;
+
+	add(gameplay);
 
 	callModEvent("create", 0);
 	doModsUntilThisPos();

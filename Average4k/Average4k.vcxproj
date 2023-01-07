@@ -436,6 +436,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="OsuFile.cpp" />
     <ClCompile Include="Pack.cpp" />
     <ClCompile Include="pch.cpp" />
+    <ClCompile Include="Playfield.cpp" />
     <ClCompile Include="pugixml.cpp" />
     <ClCompile Include="QuaverFile.cpp" />
     <ClCompile Include="ReceptorObject.cpp" />

@@ -489,17 +489,7 @@ void ModEditor::update(Events::updateEvent event)
 
 	for (Playfield* p : playfields)
 	{
-		for (NoteObject* obj : p->screenNotes)
-		{
-			if (currentTime >= obj->time)
-			{
-				if (!obj->wasHit || (obj->endTime > currentTime))
-				{
-					obj->wasHit = true;
-					manager.callEvent("hit", obj->lane);
-				}
-			}
-		}
+
 		p->update(currentTime, beat);
 	}
 

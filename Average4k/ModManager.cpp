@@ -291,7 +291,7 @@ void ModManager::callEvent(std::string event, float args)
 		killed = true;
 		return;
 	}
-	std::sort(appliedMods.begin(), appliedMods.end(), AppliedMod());
+
 }
 
 void ModManager::initLuaFunctions()
@@ -342,6 +342,9 @@ void ModManager::runMods()
 		if (m.tweenLen == 0)
 			m.instant = true;
 		
+		if (m.tweenStart + m.tweenLen < beat && !m.instant)
+			continue;
+
 		if (m.done)
 			continue;
 			

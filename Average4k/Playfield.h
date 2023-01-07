@@ -2,7 +2,6 @@
 #include "Object.h"
 #include "NoteObject.h"
 #include "ReceptorObject.h"
-#include "ModManager.h"
 #include "ArrowEffects.h"
 #include "AvgGroup.h"
 class Playfield
@@ -64,26 +63,6 @@ public:
 		gInstance->add(ob);
 	}
 
-	void update(float positionInSong, float beat)
-	{
-		if (mod)
-		{
-			for (int i = 0; i < screenReceptors.size(); i++)
-			{
-				ReceptorObject* rec = screenReceptors[i];
-				rec->positionInSong = positionInSong;
-				rec->x = x;
+	void update(float positionInSong, float beat);
 
-				rec->modX = rec->x;
-				rec->modY = rec->y;
-			}
-
-			for (NoteObject* obj : screenNotes)
-			{
-				obj->rTime = positionInSong;
-				obj->modCMOD = obj->cmod;
-				obj->endCMOD = obj->modCMOD;
-			}
-		}
-	}
 };

@@ -493,7 +493,6 @@ void Gameplay::create() {
 		manager.currentPId++;
 		manager.cam = cam;
 		manager.instance = &manager;
-
 		if (!manager.killed)
 		{
 			spriteField = new AvgSprite(0, 0, manager.spriteCamera->ctb);

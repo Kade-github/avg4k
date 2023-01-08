@@ -110,7 +110,7 @@ void selectThing(int mx, int my, Object* o)
 		if (i.name.starts_with("lead_name_"))
 			id = i.name.substr(i.name.find_last_of("_") + 1, i.name.size());
 		if (i.name.starts_with("lead_place_"))
-			place = std::stoi(i.name.substr(i.name.find_last_of("_") + 1, i.name.size()))
+			place = std::stoi(i.name.substr(i.name.find_last_of("_") + 1, i.name.size()));
 	}
 
 	int i = 0;

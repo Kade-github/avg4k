@@ -48,20 +48,7 @@ public:
 		if (parent != NULL)
 		{
 			AvgContainer* c = (AvgContainer*)parent;
-			if (clipRect.x < (c->clipRect.x))
-				clipRect.x = c->clipRect.x;
-			if (clipRect.y < (c->clipRect.y))
-				clipRect.y = c->clipRect.y;
-
-			if (clipRect.x > (c->clipRect.x + c->w))
-				clipRect.x = c->clipRect.x;
-			if (clipRect.y > (c->clipRect.y + c->h))
-				clipRect.y = c->clipRect.y;
-
-			if (clipRect.x + clipRect.w > c->x + c->w)
-				clipRect.w = (c->x + c->w) - (clipRect.x + clipRect.w);
-			if (clipRect.y + clipRect.h > c->y + c->h)
-				clipRect.h = (c->y + c->y) - (clipRect.y + clipRect.h);
+			clipRect = c->clipRect;
 		}
 
 
@@ -73,11 +60,11 @@ public:
 
 		Rect src = { 0,0,1,1 };
 
-		Rect r = { x,y,6,h };
+		Rect r = { x,y,4,h };
 
 		Rendering::PushQuad(&r, &src, NULL, GL::genShader);
 
-		r = { x,y + h - 6.0f,(float)w,6.0f };
+		r = { x,y + h - 4.0f,(float)w,4.0f };
 
 		Rendering::PushQuad(&r, &src, NULL, GL::genShader);
 
@@ -96,7 +83,7 @@ public:
 
 			float yy = y + ((hh - 12) * (centered / latest));
 
-			r = { x + 6,yy,(float)w - 6,4};
+			r = { x + 6,yy,(float)w - 4,4};
 
 			judgement j = Judge::judgeNote(f);
 

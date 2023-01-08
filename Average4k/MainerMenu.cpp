@@ -101,20 +101,27 @@ void selectThing(int mx, int my, Object* o)
 	AvgContainer* moreInf = (AvgContainer*)MainerMenu::soloContainer->findItemByName("moreInfo");
 	AvgHitGraph* graph = (AvgHitGraph*)moreInf->findItemByName("hitGraph");
 	AvgContainer* c = (AvgContainer*)o;
+
+	int place = 0;
+
 	std::string id = "";
 	for (itemId i : c->items)
 	{
 		if (i.name.starts_with("lead_name_"))
 			id = i.name.substr(i.name.find_last_of("_") + 1, i.name.size());
+		if (i.name.starts_with("lead_place_"))
+			place = std::stoi(i.name.substr(i.name.find_last_of("_") + 1, i.name.size()))
 	}
 
+	int i = 0;
 	for (auto c : leaderboardScores)
 	{
-		if (c.second.steamid == id)
+		if (c.second.steamid == id && i == place)
 		{
 			graph->dataPoints = c.second.noteTiming;
 			return;
 		}
+		i++;
 	}
 }
 
@@ -230,6 +237,11 @@ void updateLeaderboard(std::vector<LeaderboardEntry> entries, bool online)
 			guy->border = true;
 			guy->borderColor = { 0,0,0 };
 		}
+
+		Text* place = new Text(0, 0, "b", 16, "arialbd");
+		place->drawCall = false;
+
+		cont->addObject(place, "lead_place_" + std::to_string(i));
 
 		cont->addObject(guy, "lead_name_" + e.steamid);
 

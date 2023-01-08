@@ -965,8 +965,6 @@ void Game::resizeGame(int w, int h, int fullscreen)
 	gameWidth = w;
 	gameHeight = h;
 
-	SDL_SetWindowPosition(Game::window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-
 	switch (fullscreen)
 	{
 	case 0:
@@ -995,6 +993,7 @@ void Game::resizeGame(int w, int h, int fullscreen)
 	GL::projection = glm::ortho(0.0f, (float)gameWidth, (float)gameHeight, 0.0f, -1.0f, 1.0f);
 	GL::genShader->setProject(GL::projection);
 	whiteShader->setProject(GL::projection);
+	SDL_SetWindowPosition(Game::window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 }
 
 //asd

@@ -190,7 +190,9 @@ void updateLeaderboard(std::vector<LeaderboardEntry> entries, bool online)
 		if ((online && !e.online) || (!online && e.online))
 			continue;
 
-		leaderboardScores[e.steamid] = e;
+
+
+		leaderboardScores[e.steamid + "-" + std::to_string(i)] = e;
 
 		int combo = 0;
 

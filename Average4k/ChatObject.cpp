@@ -1,32 +1,6 @@
 #include "ChatObject.h"
-#include "AvgRect.h"
-#include "Text.h"
-#include "TweenManager.h"
 
-struct message {
-	std::string name;
-	std::string tag;
 
-	Text* tagT;
-	Text* text;
-
-	int ind;
-};
-
-AvgRect* chatBody;
-AvgRect* chatSend;
-AvgRect* chatNotif;
-AvgGroup* texts;
-std::vector<message> messages;
-Text* sendText;
-Text* rank;
-
-Text* notifText;
-Text* notifRank;
-
-bool shouldNotif = false;
-
-std::string fuckin;
 
 ChatObject::ChatObject(float _x, float _y)
 {
@@ -68,9 +42,6 @@ ChatObject::ChatObject(float _x, float _y)
 	add(rank);
 
 
-
-	texts = new AvgGroup(0, 0, w, chatBody->h);
-	add(texts);
 	add(chatNotif);
 	add(notifText);
 	add(notifRank);
@@ -114,8 +85,8 @@ void ChatObject::clearMessages()
 	Tweening::TweenManager::removeTween("chat_notif");
 	for (message& mess : messages)
 	{
-		texts->removeObj(mess.tagT);
-		texts->removeObj(mess.text);
+		removeObj(mess.tagT);
+		removeObj(mess.text);
 	}
 	messages.clear();
 }
@@ -154,8 +125,8 @@ void ChatObject::addMessage(SPacketOnChat packetChat)
 	for (message& m : messages)
 		m.ind += 1;
 	if (packetChat.tagText != "NO_TAG")
-		texts->add(tag);
-	texts->add(text);
+		add(tag);
+	add(text);
 
 	messages.push_back(msg);
 	
@@ -221,8 +192,6 @@ void ChatObject::draw()
 		sendText->x = 0;
 
 
-	texts->y = chatBody->y;
-
 		notifRank->y = chatNotif->y + (notifRank->surfH / 2);
 		notifText->y = notifRank->y;
 
@@ -253,13 +222,20 @@ void ChatObject::draw()
 
 	for (message& msg : messages)
 	{
-		msg.tagT->y = ((((texts->h + texts->y) - 16)) - (16 * msg.ind)) - (chatSend->h + 4);
+		msg.tagT->y = ((((chatBody->h + chatBody->y) - 16)) - (16 * msg.ind)) - (chatSend->h + 4);
 		msg.text->y = msg.tagT->y + 1;
+		if (msg.tagT->y < chatBody->y)
+		{
+			msg.tagT->drawCall = false;
+			msg.text->drawCall = false;
+			continue;
+		}
 		if (msg.tagT->text != "NO_TAG")
 			msg.text->x = msg.tagT->surfW + 8;
 		else
 			msg.text->x = 0;
 	}
+
 	MUTATE_END
 }
 

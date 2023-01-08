@@ -4,12 +4,39 @@
 #include "SPacketOnChat.h"
 #include "CPacketSendMessage.h"
 #include "GL.h"
+#include "AvgRect.h"
+#include "Text.h"
+#include "TweenManager.h"
+
+struct message {
+	std::string name;
+	std::string tag;
+
+	Text* tagT;
+	Text* text;
+
+	int ind;
+};
 
 class ChatObject : public Object
 {
 public:
 	bool opened;
 	bool typing;
+
+	AvgRect* chatBody;
+	AvgRect* chatSend;
+	AvgRect* chatNotif;
+	std::vector<message> messages;
+	Text* sendText;
+	Text* rank;
+
+	Text* notifText;
+	Text* notifRank;
+
+	bool shouldNotif = false;
+
+	std::string fuckin;
 
 	int w;
 	int h;

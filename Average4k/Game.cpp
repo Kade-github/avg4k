@@ -201,8 +201,8 @@ void Game::showErrorWindow(std::string title, std::string description, bool majo
 			error_minor = Noteskin::getMenuElement(noteskin, "minorerroricon.png");
 		}
 
-		int startingX = (1280 / 2) - (433 / 2);
-		int startingY = (720 / 2) - (185 / 2);
+		int startingX = (Game::gameWidth / 2) - (433 / 2);
+		int startingY = (Game::gameHeight / 2) - (185 / 2);
 
 		errorButtonRect.x = startingX + (433 - 92);
 		errorButtonRect.y = startingY + (185 - 46);

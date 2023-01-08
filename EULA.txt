@@ -1,5 +1,5 @@
 1. License Grant
-We grant you a personal, non-transferable, non-exclusive license to use the game for your personal use. 
+We grant you a personal, non-transferable, revocable, non-exclusive license to use the game for your personal use. 
 You may not sell, rent, lease, lend, distribute, or transfer the game or any copies thereof. 
 You may not modify, reverse engineer, decompile, or create derivative works based on the game.
 
@@ -9,7 +9,7 @@ You are solely responsible for any content that you post, and you represent and 
 We reserve the right to remove or suspend users who post copyrighted content without permission.
 
 3. Digital Millennium Copyright Act (DMCA)
-We respect the intellectual property rights of others and we expect our users to do the same. 
+We respect the intellectual property rights of others, and we expect our users to do the same. 
 If you believe that your copyrighted work has been copied and is accessible on the game in a way that constitutes copyright infringement, 
 you may notify us by providing the following information to our business email address with the following:
 

@@ -2558,6 +2558,16 @@ void dropdown_callback(std::string set, std::string value)
 		else if (fsType == "Fullscreen")
 			fs = 1;
 
+		if (isInLobby)
+		{
+			CPacketLeave leave;
+			leave.Order = 0;
+			leave.PacketType = eCPacketLeave;
+
+			Multiplayer::sendMessage<CPacketLeave>(leave);
+			cleanLobby();
+		}
+
 		Game::instance->resizeGame(res[0], res[1], fs);
 		Game::instance->transitionToMenu(new MainerMenu());
 		delete ((MainerMenu*)Game::instance->currentMenu)->lobbyShader;

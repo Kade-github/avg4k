@@ -951,7 +951,7 @@ void FuckinEditor::create()
 	Rect laneUnderway;
 
 	laneUnderway.x = ((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) - 4;
-	laneUnderway.y = -200;
+	laneUnderway.y = 0;
 	laneUnderway.w = (((Game::gameWidth / 2) - ((64 * noteZoom + 12) * 2)) + ((64 * noteZoom + 12) * 3) - laneUnderway.x) + (68 * noteZoom + 12);
 	laneUnderway.h = Game::gameHeight * (1 + (Game::multipliery != 1 ? Game::multipliery : 0));
 
@@ -1311,7 +1311,7 @@ void FuckinEditor::update(Events::updateEvent event)
 		l.background->x = (lunder->x + lunder->w) + 25;
 		l.text->x = l.background->x + 4;
 		l.text->y = l.background->y + 2;
-		if (l.background->y > 720 || l.background->y + l.background->h < 0)
+		if (l.background->y > Game::gameHeight || l.background->y + l.background->h < 0)
 			l.background->drawCall = false;
 		else
 			l.background->drawCall = true;

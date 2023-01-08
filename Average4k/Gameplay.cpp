@@ -1442,6 +1442,12 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 {
 	MUTATE_START
 	float colHeight = 0;
+
+	if (ModManager::doMods)
+	{
+		manager.callEvent("key_pressed", event.keysym.sym);
+	}
+
 	switch (event.keysym.sym)
 	{
 		case SDLK_ESCAPE:
@@ -1678,6 +1684,10 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 
 void Gameplay::keyUp(SDL_KeyboardEvent ev)
 {
+	if (ModManager::doMods)
+	{
+		manager.callEvent("key_released", ev.keysym.sym);
+	}
 	for (int i = 0; i < 4; i++)
 	{
 		gameplayControl& control = controls[i];

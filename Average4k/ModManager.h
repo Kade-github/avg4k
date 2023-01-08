@@ -73,6 +73,8 @@ public:
 	bool killed = false;
 	static ModManager* instance;
 
+	bool dontStop = false;
+
 	AvgGroup* modGame;
 
 	int currentPId = 0;

@@ -112,20 +112,22 @@ void Gameplay::removeNote(NoteObject* object, Playfield* p)
 			return nn->beat == object->beat && nn->lane == object->lane;
 			}),
 		spawnedNotes.end());
-	NoteObject* o = NULL;
-	for (NoteObject* no : p->screenNotes)
-		if (no->beat == object->beat && object->lane == no->lane)
-			o = no;
-	if (o != NULL)
-	{
-		o->connected->killed = true;
-		gameplay->removeObj(o);
-		p->screenNotes.erase(
-			std::remove_if(p->screenNotes.begin(), p->screenNotes.end(), [&](NoteObject* const nn) {
-				return nn->beat == object->beat && nn->lane == object->lane;
-				}),
-			p->screenNotes.end());
-	}
+
+		NoteObject* o = NULL;
+		for (NoteObject* no : p->screenNotes)
+			if (no->beat == object->beat && object->lane == no->lane)
+				o = no;
+		if (o != NULL)
+		{
+			o->connected->killed = true;
+			gameplay->removeObj(o);
+			p->screenNotes.erase(
+				std::remove_if(p->screenNotes.begin(), p->screenNotes.end(), [&](NoteObject* const nn) {
+					return nn->beat == object->beat && nn->lane == object->lane;
+					}),
+				p->screenNotes.end());
+		}
+	
 }
 
 void Gameplay::miss(NoteObject* object)
@@ -1602,12 +1604,14 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				{
 					p->screenReceptors[closestObject->lane]->loop = false;
 					p->screenReceptors[closestObject->lane]->hit = true;
+					removeNote(closestObject, p);
 				}
 
 				if (ModManager::doMods)
 					manager.callEvent("hit", closestObject->lane);
 				closestObject->active = false;
 				closestObject->wasHit = true;
+
 
 				noteTimings[positionInSong] = diff;
 

@@ -137,7 +137,6 @@ void ModEditor::doModsUntilThisPos()
 	resetSprites();
 	for (Playfield* p : playfields)
 		p->arrowEff.resetEffects();
-
 	std::sort(manager.appliedMods.begin(), manager.appliedMods.end(), AppliedMod());
 	for (AppliedMod& mod : manager.appliedMods)
 	{
@@ -224,7 +223,9 @@ void ModEditor::refresh()
 		delete manager.spriteCamera;
 	}
 	for (Playfield* p : playfields)
+	{
 		delete p;
+	}
 	playfields.clear();
 
 	Playfield* p = new Playfield(
@@ -288,8 +289,6 @@ void ModEditor::refresh()
 	mod2.def = manager.spriteCamera;
 	manager.sprites["sprites"] = mod2;
 
-	add(gameplay);
-
 	callModEvent("create", 0);
 	doModsUntilThisPos();
 
@@ -347,8 +346,8 @@ void ModEditor::move(float amount)
 	lastPos = currentTime;
 	song->setPos(currentTime);
 
-	callModEvent("editor_scroll", 0);
 	doModsUntilThisPos();
+	callModEvent("editor_scroll", 0);
 }
 
 

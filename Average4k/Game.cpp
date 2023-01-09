@@ -1110,7 +1110,15 @@ void Game::postUpdate()
 		//Rendering::SetClipRect(&clip);
 
 		for (Text* t : lines)
+		{
+			if (t->y < 0 && t->isActive)
+			{
+				t->isActive = false;
+				delete t->message;
+				continue;
+			}
 			t->draw();
+		}
 
 		Rendering::SetClipRect(NULL);
 

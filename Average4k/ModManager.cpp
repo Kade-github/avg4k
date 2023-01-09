@@ -886,6 +886,7 @@ void ModManager::createFunctions()
 
 			difficulty diff = currentChart->meta.difficulties[FuckinEditor::currentDiff];
 
+
 			for (note n : diff.notes)
 				genNObject(n, diff, currentChart, true, p);
 		}
@@ -894,7 +895,7 @@ void ModManager::createFunctions()
 	});
 
 	lua->set_function("tween", [](float from, float to, float t, std::string tween) {
-		return Easing::getEasingFunction(tween)(std::lerp(from, to, t));
+		return std::lerp((float)from, (float)to, (float)Easing::getEasingFunction(tween)(t));
 		});
 
 

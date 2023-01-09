@@ -130,6 +130,23 @@ void Gameplay::removeNote(NoteObject* object, Playfield* p)
 	
 }
 
+void Gameplay::setHolding(NoteObject* object, Playfield* p, bool holding)
+{
+	NoteObject* o = NULL;
+	for (NoteObject* no : p->screenNotes)
+		if (no->beat == object->beat && object->lane == no->lane)
+			o = no;
+	if (o != NULL)
+	{
+		o->holding = holding;
+		if (!o->holding)
+		{
+			o->holdstoppedbeat = beat;
+			o->holdstoppedtime = positionInSong;
+		}
+	}
+}
+
 void Gameplay::miss(NoteObject* object)
 {
 	if (MainerMenu::isInLobby)
@@ -1319,12 +1336,13 @@ void Gameplay::update(Events::updateEvent event)
 								botplayHittingNote = false;
 								p->screenReceptors[note->lane]->loop = true;
 								p->screenReceptors[note->lane]->hit = true;
-								note->holding = true;
+								setHolding(note, p, true);
 							}
 							else if (positionInSong >= startTime + Judge::hitWindows[4] && !holding[note->lane])
 							{
 								if (note->holding)
 								{
+									setHolding(note, p, false);
 									note->holdstoppedbeat = beat;
 									note->holdstoppedtime = positionInSong;
 								}

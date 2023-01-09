@@ -196,6 +196,7 @@ class Gameplay :
 		void initControls();
 
 		void removeNote(NoteObject* object, Playfield* p);
+		void setHolding(NoteObject* object, Playfield* p, bool hold);
 
 		void updateAccuracy(double hitWorth);
 		

@@ -22,6 +22,8 @@ public:
 
 	Channel* song;
 
+	float lastUpdate = 0;
+
 
 	float currentTime = 0;
 

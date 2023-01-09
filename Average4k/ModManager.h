@@ -126,6 +126,10 @@ public:
 
 	void setModStart(AppliedMod& m);
 	void setModProperties(AppliedMod& m, float tween);
+	void setModProperties(std::string mod, int pid, int col, float tween);
+	void setSpriteMod(std::string sprite, std::string mod, float tween);
+	float getSpriteMod(std::string sprite, std::string mod);
+	float getModProperty(std::string mod, float pid, int col);
 
 	void runMods(AppliedMod& mod, float beat);
 

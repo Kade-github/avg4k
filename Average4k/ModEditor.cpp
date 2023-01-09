@@ -227,10 +227,6 @@ void ModEditor::refresh()
 		delete p;
 	playfields.clear();
 
-	removeObj(gameplay);
-
-	gameplay = new AvgGroup(0, 0, 1280, 720);
-
 	Playfield* p = new Playfield(
 		(640 - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)), 60, gameplay);
 	p->mod = true;
@@ -351,6 +347,7 @@ void ModEditor::move(float amount)
 	lastPos = currentTime;
 	song->setPos(currentTime);
 
+	callModEvent("editor_scroll", 0);
 	doModsUntilThisPos();
 }
 
@@ -504,8 +501,12 @@ void ModEditor::update(Events::updateEvent event)
 
 	if (playing)
 	{
+		if (std::abs(currentTime - lastUpdate) > 2)
+		{
+			lastUpdate = currentTime;
+			callModEvent("update", beat);
+		}
 		manager.runMods();
-		callModEvent("update", beat);
 	}
 
 }

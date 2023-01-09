@@ -1016,8 +1016,15 @@ void Gameplay::update(Events::updateEvent event)
 
 	//SDL_RenderDrawRectF(Game::renderer, &outline);
 
+	bool onGodEnd = true;
 
-	if (!ended && ((notesToPlay.size() == 0 && spawnedNotes.size() == 0) || ((lastTime - positionInSong) > 4000 || !song->isPlaying)) && positionInSong > 0)
+	if (ModManager::doMods)
+	{
+		if (manager.dontStop)
+			onGodEnd = false;
+	}
+
+	if (!ended && ((notesToPlay.size() == 0 && spawnedNotes.size() == 0) || ((lastTime - positionInSong) > 4000 || !song->isPlaying)) && positionInSong > 0 && onGodEnd)
 	{
 		ended = true;
 		if (!MainerMenu::isInLobby)
@@ -1376,9 +1383,9 @@ void Gameplay::update(Events::updateEvent event)
 
 	if (!ended) 
 	{
-		if (ModManager::doMods && lastCallUpdates + 40 < positionInSong)
+		if (ModManager::doMods && lastCallUpdates + 2 < positionInSong)
 		{
-			lastCallUpdates = positionInSong + 40;
+			lastCallUpdates = positionInSong + 2;
 			manager.callEvent("update", (float)beat);
 		}
 	}
@@ -1460,7 +1467,18 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				Multiplayer::sendMessage<CPacketHostEndChart>(end);
 				return;
 			}
-			else if (!MainerMenu::isInLobby)
+			else if (MainerMenu::isInLobby)
+			{
+				CPacketLeave leave;
+				leave.Order = 0;
+				leave.PacketType = eCPacketLeave;
+
+				Multiplayer::sendMessage<CPacketLeave>(leave);
+				MainerMenu::currentSelectedSong.destroy();
+				cleanUp();
+				Game::instance->transitionToMenu(new MainerMenu());
+			}
+			else
 			{
 				MainerMenu::currentSelectedSong.destroy();
 				cleanUp();

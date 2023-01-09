@@ -485,6 +485,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 
 			ImGui_ImplOpenGL3_RenderDrawData(da);
+			Rendering::drawBatch();
 
 			game->postUpdate();
 

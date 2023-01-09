@@ -405,6 +405,7 @@ int lastFPS = 0;
 void Game::update(Events::updateEvent update)
 {
 	MUTATE_START
+	Rendering::drawBatch();
 	if (Multiplayer::connectedToServer)
 		SteamAPI_RunCallbacks();
 
@@ -668,6 +669,8 @@ void Game::update(Events::updateEvent update)
 
 
 
+
+
 	//SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
 	//SDL_SetRenderTarget(renderer, NULL);
@@ -676,7 +679,7 @@ void Game::update(Events::updateEvent update)
 
 
 
-
+	Rendering::drawBatch();
 	if (transitioning)
 		__transRect->draw();
 

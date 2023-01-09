@@ -171,7 +171,7 @@ ModManager::ModManager(std::string luaPath)
 	lua = std::make_unique<sol::state>();
 
 	lua->open_libraries(sol::lib::base);
-
+	lua->open_libraries(sol::lib::table);
 	lua->open_libraries(sol::lib::math);
 
 	lua->set_panic(sol::c_call<decltype(&my_panic), &my_panic>);
@@ -204,6 +204,7 @@ ModManager::ModManager(std::string luaPath)
 void ModManager::populateLuaMap()
 {
 	luaMap["create"] = (*lua)["create"];
+	luaMap["editor_scroll"] = (*lua)["editor_scroll"];
 	luaMap["update"] = (*lua)["update"];
 	luaMap["destroy"] = (*lua)["destroy"];
 	luaMap["hit"] = (*lua)["hit"];
@@ -457,6 +458,8 @@ void ModManager::runMods()
 	}
 }
 
+#pragma region This is the worst code ive ever made
+
 void ModManager::setModStart(AppliedMod& m)
 {
 	if (m.spriteName != "-1")
@@ -521,6 +524,39 @@ void ModManager::setModStart(AppliedMod& m)
 		m.modStartAmount = modPlayfields[m.pid]->arrowEff.SplineDensity;
 	if (m.mod == "rotz")
 		m.modStartAmount = modPlayfields[m.pid]->arrowEff.rotz;
+}
+
+void ModManager::setSpriteMod(std::string sprite, std::string mod, float tween)
+{
+	if (mod == "movex")
+		sprites[sprite].movex = tween;
+	if (mod == "movey")
+		sprites[sprite].movey = tween;
+	if (mod == "stealth")
+		sprites[sprite].stealth = tween;
+	if (mod == "confusion")
+		sprites[sprite].confusion = tween;
+	if (mod == "defPosX")
+		sprites[sprite].spr->defX = tween;
+	if (mod == "defPosY")
+		sprites[sprite].spr->defY = tween;
+}
+
+
+float ModManager::getSpriteMod(std::string sprite, std::string mod)
+{
+	if (mod == "movex")
+		return sprites[sprite].movex;
+	if (mod == "movey")
+		return sprites[sprite].movey;
+	if (mod == "stealth")
+		return sprites[sprite].stealth;
+	if (mod == "confusion")
+		return sprites[sprite].confusion;
+	if (mod == "defPosX")
+		return sprites[sprite].spr->defX;
+	if (mod == "defPosY")
+		return sprites[sprite].spr->defY;
 }
 
 void ModManager::setModProperties(AppliedMod& m, float tween)
@@ -592,6 +628,131 @@ void ModManager::setModProperties(AppliedMod& m, float tween)
 	if (m.mod == "pathDensity")
 		modPlayfields[m.pid]->arrowEff.SplineDensity = std::lerp(m.modStartAmount, m.amount, tween);
 }
+
+void ModManager::setModProperties(std::string mod, int pid, int col, float tween)
+{
+	if (pid > modPlayfields.size() - 1)
+	{
+		consolePrint("setModProperties failed due to " + std::to_string(pid) + " playfield not existing.");
+		return;
+	}
+
+	if (col > 3)
+	{
+		consolePrint("setModProperties failed due to " + std::to_string(pid) + " column not existing.");
+		return;
+	}
+	if (mod == "drunk")
+		modPlayfields[pid]->arrowEff.drunk = tween;
+	if (mod == "rotz")
+		modPlayfields[pid]->arrowEff.rotz = tween;
+	if (mod == "mini")
+		modPlayfields[pid]->arrowEff.mini = tween;
+	if (mod == "tipsy")
+		modPlayfields[pid]->arrowEff.tipsy = tween;
+	if (mod == "dizzy")
+		modPlayfields[pid]->arrowEff.dizzy = tween;
+	if (mod == "wave")
+		modPlayfields[pid]->arrowEff.wave = tween;
+	if (mod == "amovex")
+		modPlayfields[pid]->arrowEff.amovex = tween;
+	if (mod == "amovey")
+		modPlayfields[pid]->arrowEff.amovey = tween;
+	if (mod == "aconfusion")
+		modPlayfields[pid]->arrowEff.aconfusion = tween;
+	if (mod == "drawBeats")
+		modPlayfields[pid]->arrowEff.drawBeats = tween;
+	if (mod == "showPath")
+		modPlayfields[pid]->arrowEff.ShowSplines = tween;
+	if (mod == "pathAlpha")
+		modPlayfields[pid]->arrowEff.SplineAlpha = tween;
+	if (mod == "pathDensity")
+		modPlayfields[pid]->arrowEff.SplineDensity = tween;
+
+	if (col != -1)
+	{
+		if (mod == "confusion")
+			modPlayfields[pid]->arrowEff.confusion[col] = tween;
+		if (mod == "reverse")
+			modPlayfields[pid]->arrowEff.reverse[col] = tween;
+		if (mod == "movex")
+			modPlayfields[pid]->arrowEff.movex[col] = tween;
+		if (mod == "movey")
+			modPlayfields[pid]->arrowEff.movey[col] = tween;
+		if (mod == "drunkCol")
+			modPlayfields[pid]->arrowEff.drunkCol[col] = tween;
+		if (mod == "tipsyCol")
+			modPlayfields[pid]->arrowEff.tipsyCol[col] = tween;
+		if (mod == "waveCol")
+			modPlayfields[pid]->arrowEff.waveCol[col] = tween;
+		if (mod == "miniCol")
+			modPlayfields[pid]->arrowEff.miniCol[col] = tween;
+		if (mod == "stealthWhite")
+			modPlayfields[pid]->arrowEff.stealthWhite[col] = tween;
+		if (mod == "stealthReceptorOpacity")
+			modPlayfields[pid]->arrowEff.stealthReceptorOpacity[col] = tween;
+		if (mod == "stealthOpacity")
+			modPlayfields[pid]->arrowEff.stealthOpacity[col] = tween;
+	}
+}
+
+float ModManager::getModProperty(std::string mod, float pid, int col)
+{
+	if (mod == "drunk")
+		return modPlayfields[pid]->arrowEff.drunk;
+	if (mod == "rotz")
+		return modPlayfields[pid]->arrowEff.rotz;
+	if (mod == "mini")
+		return modPlayfields[pid]->arrowEff.mini;
+	if (mod == "tipsy")
+		return modPlayfields[pid]->arrowEff.tipsy;
+	if (mod == "dizzy")
+		return modPlayfields[pid]->arrowEff.dizzy;
+	if (mod == "wave")
+		return modPlayfields[pid]->arrowEff.wave;
+	if (mod == "showPath")
+		return modPlayfields[pid]->arrowEff.ShowSplines;
+	if (mod == "pathAlpha")
+		return modPlayfields[pid]->arrowEff.SplineAlpha;
+	if (mod == "pathDensity")
+		return modPlayfields[pid]->arrowEff.SplineDensity;
+	if (mod == "amovex")
+		return modPlayfields[pid]->arrowEff.amovex;
+	if (mod == "amovey")
+		return modPlayfields[pid]->arrowEff.amovey;
+	if (mod == "aconfusion")
+		return modPlayfields[pid]->arrowEff.aconfusion;
+	if (mod == "drawBeats")
+		return modPlayfields[pid]->arrowEff.drawBeats;
+
+	if (col != -1)
+	{
+		if (mod == "confusion")
+			return modPlayfields[pid]->arrowEff.confusion[col];
+		if (mod == "reverse")
+			return modPlayfields[pid]->arrowEff.reverse[col];
+		if (mod == "movex")
+			return modPlayfields[pid]->arrowEff.movex[col];
+		if (mod == "movey")
+			return modPlayfields[pid]->arrowEff.movey[col];
+		if (mod == "stealthWhite")
+			return modPlayfields[pid]->arrowEff.stealthWhite[col];
+		if (mod == "stealthReceptorOpacity")
+			return modPlayfields[pid]->arrowEff.stealthReceptorOpacity[col];
+		if (mod == "stealthOpacity")
+			return modPlayfields[pid]->arrowEff.stealthOpacity[col];
+		if (mod == "drunkCol")
+			return modPlayfields[pid]->arrowEff.drunkCol[col];
+		if (mod == "tipsyCol")
+			return modPlayfields[pid]->arrowEff.tipsyCol[col];
+		if (mod == "waveCol")
+			return modPlayfields[pid]->arrowEff.waveCol[col];
+		if (mod == "miniCol")
+			return modPlayfields[pid]->arrowEff.miniCol[col];
+	}
+}
+
+#pragma endregion
 
 void ModManager::runMods(AppliedMod& m, float beat)
 {
@@ -689,6 +850,10 @@ void ModManager::createFunctions()
 
 	// special functions
 
+	lua->set_function("formCompletePath", [](std::string file) {
+		return instance->assetPath + "/" + file;
+	});
+
 	lua->set_function("consolePrint", consolePrint);
 
 
@@ -728,6 +893,12 @@ void ModManager::createFunctions()
 		return id;
 	});
 
+	lua->set_function("tween", [](float from, float to, float t, std::string tween) {
+		return Easing::getEasingFunction(tween)(std::lerp(from, to, t));
+		});
+
+
+
 	lua->set_function("setPlayfield", [](int pid) {
 		if (pid < 0)
 			return;
@@ -739,6 +910,25 @@ void ModManager::createFunctions()
 		instance->curPid = pid;
 	});
 
+	lua->set_function("getModProperty", [](std::string mod, int pid, int col) {
+		return instance->getModProperty(mod, pid, col);
+	});
+
+	lua->set_function("setModProperty", [](std::string mod, int pid, int col, float amount) {
+		return instance->setModProperties(mod, pid, col, amount);
+	});
+
+	lua->set_function("getSpriteMod", [](std::string sprite, std::string mod) {
+		return instance->getSpriteMod(sprite, mod);
+	});
+
+	lua->set_function("setSpriteMod", [](std::string sprite, std::string mod, float amount) {
+		return instance->setSpriteMod(sprite, mod, amount);
+	});
+
+	lua->set_function("setAutoEnd", [](bool end) {
+		instance->dontStop = end;
+	});
 
 	lua->set_function("activateMod", [](std::string name, float tweenStart, float tweenLen, std::string easingFunc, float amount) {
 		AppliedMod aMod;

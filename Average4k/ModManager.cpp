@@ -123,6 +123,7 @@ void genNObject(note n, difficulty diff, Chart* selectedChart, bool findTail, Pl
 void consolePrint(std::string print)
 {
 	Game::instance->db_addLine("[LUA] " + print);
+	Logging::writeLog("[LUA] " + print);
 }
 
 inline void my_panic(sol::optional<std::string> maybe_msg) {

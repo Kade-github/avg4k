@@ -213,9 +213,38 @@ void NoteObject::draw() {
         offsetA = ar[1];
         ArrowEffects::Arrow a = ar[0];
 
+        float beatOffset = beat - currentBeat;
+        white = a.whiteV;
+        if (beatOffset > arrowEffects->drawSize[1])
+            a.opac = 0;
+        else if (beatOffset < arrowEffects->drawSize[1])
+        {
+            if (beatOffset < arrowEffects->drawSize[0])
+            {
+                float t = 1 - ((arrowEffects->drawSize[0] - beatOffset) * 3);
+                a.opac *= t;
+            }
+            else
+            {
+                float t = (arrowEffects->drawSize[1] - beatOffset) / 1;
+                a.opac *= t;
+                if (white < 0.1)
+                    white = 1 - t;
+            }
+        }
+        
+        if (a.opac > 1)
+            a.opac = 1;
+        else if (a.opac < 0)
+            a.opac = 0;
+
+        if (white > 1)
+            white = 1;
+        else if (white < 0)
+            white = 0;
+
         dstRect.x = a.x;
         dstRect.y = a.y;
-        white = a.whiteV;
         dstRect.a = a.opac;
         ogAlpha = dstRect.a;
         addAngle = a.rot;
@@ -387,6 +416,28 @@ void NoteObject::draw() {
                     square.x = a.x;
                     square.y = a.y;
 
+                    float beatOffset = holdBeat - currentBeat;
+                    if (beatOffset > arrowEffects->drawSize[1])
+                        a.opac = 0;
+                    else if (beatOffset < arrowEffects->drawSize[1])
+                    {
+                        if (beatOffset < arrowEffects->drawSize[0])
+                        {
+                            float t = 1 - ((arrowEffects->drawSize[0] - beatOffset) * 3);
+                            a.opac *= t;
+                        }
+                        else
+                        {
+                            float t = (arrowEffects->drawSize[1] - beatOffset) / 1;
+                            a.opac *= t;
+                        }
+                    }
+
+                    if (a.opac > 1)
+                        a.opac = 1;
+                    else if (a.opac < 0)
+                        a.opac = 0;
+
 
                     float size = Game::instance->save->GetDouble("Note Size") * (0.5 / a.mini);
 
@@ -431,36 +482,38 @@ void NoteObject::draw() {
                     float lefty = (real[0].y + yyOffset);
                     float righty = (real[0].y - yyOffset);
 
+                    if (a.opac <= 0)
+                        continue;
 
-                    if (i != 0)
+                    if (i != 0 && bodies.size() != 0)
                     {
                         holdBody& lB = bodies.back();
                         if (!downscroll || sparrow)
                             lB.verts.push_back({ leftx, lefty,
                                 0, -1,
-                                (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // upscroll bl
+                                (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(a.opac) }); // upscroll bl
                         else
                             lB.verts.push_back({ leftx, lefty,
                                 0, -1,
-                                (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // downscroll bl
+                                (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(a.opac) }); // downscroll bl
                         if (!downscroll || sparrow)
                             lB.verts.push_back({ rightx, righty,
                                 1, -1,
-                               (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // upscroll br
+                               (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(a.opac) }); // upscroll br
                         else
                             lB.verts.push_back({ rightx, righty,
                                 1, -1,
-                                (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // downscroll br
+                                (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(a.opac) }); // downscroll br
                         if (i == amountToDraw - 1)
                             break;
                     }
 
                     body.verts.push_back({ leftx, lefty,
                         0, 0,
-                        (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // tl
+                        (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(a.opac) }); // tl
                     body.verts.push_back({ rightx , righty,
                         1, 0,
-                       (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(dstRect.a) }); // tr
+                       (dstRect.r) / 255.f,(dstRect.g) / 255.f,(dstRect.b) / 255.f,(a.opac) }); // tr
                 }
                 else
                 {
@@ -611,6 +664,9 @@ void NoteObject::draw() {
             }
         }
     }
+
+    if (dstRect.a == 0)
+        return;
 
     //Rendering::SetClipRect(NULL);
     if (active) {

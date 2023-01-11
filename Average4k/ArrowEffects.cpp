@@ -135,6 +135,7 @@ void ArrowEffects::resetEffects()
 	ArrowEffects::SplineAlpha = 0;
 	ArrowEffects::SplineDensity = 0.04;
 	ArrowEffects::mini = 0.5;
+	ArrowEffects::drawSize = { {0, -drawBeats},{1,drawBeats} };
 	ArrowEffects::splines.clear();
 	for (int i = 0; i < 4; i++)
 	{

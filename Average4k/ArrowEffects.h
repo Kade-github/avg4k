@@ -45,6 +45,8 @@ public:
 
 	float drunk, tipsy, dizzy, amovex, amovey, aconfusion, wave, mini, rotz;
 
+	std::map<int, float> drawSize;
+
 	std::map<int, float> stealthWhite;
 	std::map<int, float> stealthOpacity;
 	std::map<int, float> stealthReceptorOpacity;

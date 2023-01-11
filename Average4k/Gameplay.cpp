@@ -1622,7 +1622,8 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 				{
 					p->screenReceptors[closestObject->lane]->loop = false;
 					p->screenReceptors[closestObject->lane]->hit = true;
-					removeNote(closestObject, p);
+					if (closestObject->type != noteType::Note_Head)
+						removeNote(closestObject, p);
 				}
 
 				if (ModManager::doMods)

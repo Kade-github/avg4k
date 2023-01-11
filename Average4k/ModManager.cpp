@@ -614,6 +614,8 @@ void ModManager::setModProperties(AppliedMod& m, float tween)
 		modPlayfields[m.pid]->arrowEff.stealthOpacity[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "drawBeats")
 		modPlayfields[m.pid]->arrowEff.drawBeats = m.amount;
+	if (m.mod == "drawSize" && m.col <= 1 && m.col > -1)
+		modPlayfields[m.pid]->arrowEff.drawSize[m.col] = m.amount;
 	if (m.mod == "drunkCol")
 		modPlayfields[m.pid]->arrowEff.drunkCol[m.col] = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "tipsyCol")
@@ -692,6 +694,8 @@ void ModManager::setModProperties(std::string mod, int pid, int col, float tween
 			modPlayfields[pid]->arrowEff.stealthWhite[col] = tween;
 		if (mod == "stealthReceptorOpacity")
 			modPlayfields[pid]->arrowEff.stealthReceptorOpacity[col] = tween;
+		if (mod == "drawSize" && col <= 1 && col > -1)
+			modPlayfields[pid]->arrowEff.drawSize[col] = tween;
 		if (mod == "stealthOpacity")
 			modPlayfields[pid]->arrowEff.stealthOpacity[col] = tween;
 	}
@@ -858,10 +862,10 @@ void ModManager::createFunctions()
 	lua->set_function("consolePrint", consolePrint);
 
 
-	lua->set_function("setScrollSpeed", [](float speed) {
+	lua->set_function("setScrollSpeed", [](float speed, int plr) {
 		if (Game::instance->save->GetBool("Ignore mod scrollspeed"))
 			return;
-		instance->modPlayfields[instance->curPid]->arrowEff.scrollSpeed = speed;
+		instance->modPlayfields[plr]->arrowEff.scrollSpeed = speed;
 	});
 
 	lua->set_function("setNoteSize", [](float size) {

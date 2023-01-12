@@ -1487,6 +1487,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 	case SDLK_ESCAPE:
 		if (!isInLobby && !lobbyUp && !SongGather::steamRegAsyncAlready)
 		{
+			currentSelectedSong = {};
 			lobbyUp = true;
 			Tweening::TweenManager::createNewTween("movingContainer2", settingsContainer, Tweening::tt_Y, 1000, 160, Game::gameHeight + 200, (Tweening::tweenCallback)endTrans, Easing::EaseOutCubic);
 			Tweening::TweenManager::createNewTween("movingContainer1", multiContainer, Tweening::tt_Y, 900, 160, Game::gameHeight + 200, NULL, Easing::EaseOutCubic);

@@ -2330,7 +2330,7 @@ void MainerMenu::createLobby()
 
 	streamT->x = 24;
 	streamT->y = diff->y + 38;
-	jumpstreamT->x = 4;
+	jumpstreamT->x = 24;
 	jumpstreamT->y = streamT->y + 24;
 
 	chordjackT->x = 24;

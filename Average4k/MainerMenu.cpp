@@ -2570,6 +2570,7 @@ void dropdown_callback(std::string set, std::string value)
 		if (fsType == "Borderless")
 		{
 			fs = 2;
+
 		}
 		else if (fsType == "Fullscreen")
 			fs = 1;

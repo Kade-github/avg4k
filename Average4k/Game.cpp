@@ -972,9 +972,11 @@ void Game::resizeGame(int w, int h, int fullscreen)
 	{
 	case 0:
 		SDL_SetWindowFullscreen(Game::window, 0);
+		SDL_SetWindowPosition(Game::window, SDL_WINDOWPOS_CENTERED, 64);
 		break;
 	case 1:
 		SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_FULLSCREEN);
+		SDL_SetWindowPosition(Game::window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 		break;
 	case 2:
 		// get resolution
@@ -989,13 +991,14 @@ void Game::resizeGame(int w, int h, int fullscreen)
 		multiplierx = (float)1280 / (float)wW;
 		multipliery = (float)720 / (float)wH;
 		SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_BORDERLESS);
+		SDL_SetWindowPosition(Game::window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 		break;
 	}
 	Rendering::rendW = gameWidth;
 	Rendering::rendH = gameHeight;
 	GL::projection = glm::ortho(0.0f, (float)gameWidth, (float)gameHeight, 0.0f, -1.0f, 1.0f);
 	GL::genShader->setProject(GL::projection);
-	SDL_SetWindowPosition(Game::window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+
 }
 
 //asd

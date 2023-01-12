@@ -1324,7 +1324,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 	switch (event.keysym.sym)
 	{
 	case SDLK_TAB:
-		if (selectedContainerIndex == 0 && !fetchingScores && currentSelectedSong.meta.audio.size() > 0)
+		if (selectedContainerIndex == 0 && !fetchingScores && currentSelectedSong.meta.difficulties.size() != 0)
 		{
 			moreinfo = !moreinfo;
 
@@ -1733,6 +1733,34 @@ void MainerMenu::onSteam(std::string s)
 
 		std::string display = currentSelectedSong.meta.songName;
 		std::string secondLine = "";
+
+		int stream = (std::round(currentSelectedSong.meta.difficulties[MainerMenu::selectedDiffIndex].info.stream * 100));
+		int jumpstream = (std::round(currentSelectedSong.meta.difficulties[MainerMenu::selectedDiffIndex].info.jumpstream * 100));
+		int chordjacks = (std::round(currentSelectedSong.meta.difficulties[MainerMenu::selectedDiffIndex].info.chordjack * 100));
+		int handstream = (std::round(currentSelectedSong.meta.difficulties[MainerMenu::selectedDiffIndex].info.handstream * 100));
+		int jack = (std::round(currentSelectedSong.meta.difficulties[MainerMenu::selectedDiffIndex].info.jacks * 100));
+		int tech = (std::round(currentSelectedSong.meta.difficulties[MainerMenu::selectedDiffIndex].info.technical * 100));
+		float nps = currentSelectedSong.meta.difficulties[MainerMenu::selectedDiffIndex].info.averageNPS;
+		int maxNps = std::round(currentSelectedSong.meta.difficulties[MainerMenu::selectedDiffIndex].info.maxNPS);
+
+		Text* streamT = (Text*)cont->findItemByName("streamText");
+		Text* jumpstreamT = (Text*)cont->findItemByName("jumpstreamText");
+		Text* chordjackT = (Text*)cont->findItemByName("chordjackText");
+		Text* handstreamT = (Text*)cont->findItemByName("handstreamText");
+		Text* jacksT = (Text*)cont->findItemByName("jacksText");
+		Text* techT = (Text*)cont->findItemByName("techText");
+		Text* avgNPS = (Text*)cont->findItemByName("avgNPSText");
+		Text* maxNPS = (Text*)cont->findItemByName("maxNPSText");
+
+		streamT->setText("Stream: " + std::to_string(stream) + "%");
+		jumpstreamT->setText("Jumpstream: " + std::to_string(jumpstream) + "%");
+		chordjackT->setText("Chordjack: " + std::to_string(chordjacks) + "%");
+		handstreamT->setText("Handstream: " + std::to_string(handstream) + "%");
+		jacksT->setText("Jacks: " + std::to_string(jack) + "%");
+		techT->setText("Techical: " + std::to_string(tech) + "%");
+		avgNPS->setText("Average NPS: " + std::to_string((int)nps));
+		maxNPS->setText("Max NPS: " + std::to_string((int)maxNps));
+
 
 		if (display.size() > 25)
 		{
@@ -2284,6 +2312,10 @@ void MainerMenu::createLobby()
 	int handstream = 0;
 	int jack = 0;
 	int tech = 0;
+	int nps = 0;
+	int maxNps = 0;
+
+
 
 	Text* streamT = new Text(0, 0, "Stream: " + std::to_string(stream) + "%", 14, "arial");
 	Text* jumpstreamT = new Text(0, 0, "Jumpstream: " + std::to_string(jumpstream) + "%", 14, "arial");
@@ -2291,28 +2323,40 @@ void MainerMenu::createLobby()
 	Text* handstreamT = new Text(0, 0, "Handstream: " + std::to_string(handstream) + "%", 14, "arial");
 	Text* jacksT = new Text(0, 0, "Jacks: " + std::to_string(jack) + "%", 14, "arial");
 	Text* techT = new Text(0, 0, "Technical: " + std::to_string(tech) + "%", 14, "arial");
+	Text* avgNPS = new Text(0, 0, "Average NPS: " + std::to_string((int)nps) + "", 14, "arial");
 
-	streamT->x = 4;
+	Text* maxNPS = new Text(0, 0, "Max NPS: " + std::to_string((int)maxNps) + "", 14, "arial");
+
+	streamT->x = 24;
 	streamT->y = diff->y + 38;
 	jumpstreamT->x = 4;
 	jumpstreamT->y = streamT->y + 24;
 
-	chordjackT->x = 4;
+	chordjackT->x = 24;
 	chordjackT->y = jumpstreamT->y + 24;
-	handstreamT->x = 4;
+	handstreamT->x = 24;
 	handstreamT->y = chordjackT->y + 24;
-	jacksT->x = 4;
+	jacksT->x = 24;
 	jacksT->y = handstreamT->y + 24;
 
-	techT->x = 4;
+	techT->x = 24;
 	techT->y = jacksT->y + 24;
+
+	avgNPS->x = 24;
+	avgNPS->y = techT->y + 24;
+
+	maxNPS->x = 24;
+	maxNPS->y = avgNPS->y + 24;
+
 
 	cont->addObject(streamT, "streamText");
 	cont->addObject(jumpstreamT, "jumpstreamText");
 	cont->addObject(chordjackT, "chordjackText");
 	cont->addObject(handstreamT, "handstreamText");
 	cont->addObject(jacksT, "jacksText");
-	cont->addObject(techT, "techT");
+	cont->addObject(techT, "techText");
+	cont->addObject(avgNPS, "avgNPSText");
+	cont->addObject(maxNPS, "maxNPSText");
 
 	Text* chartType = new Text(0, 0, "", 14, "arial");
 	chartType->setCharacterSpacing(4.17);
@@ -2516,7 +2560,7 @@ void MainerMenu::selectContainer(int container)
 void MainerMenu::leftMouseDown()
 {
 	MUTATE_START
-	if (moreinfo || lobbyUp)
+	if (lobbyUp)
 		return;
 	int x, y;
 	Game::GetMousePos(&x, &y);

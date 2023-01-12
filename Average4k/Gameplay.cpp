@@ -676,6 +676,9 @@ void Gameplay::create() {
 	rightGrad->colorR = darkestColor.r;
 	rightGrad->colorG = darkestColor.g;
 	rightGrad->colorB = darkestColor.b;
+
+	rightGrad->h = Game::gameHeight;
+
 	rightGrad->alpha = Game::save->GetDouble("Lane Underway Transparency");
 	if (MainerMenu::currentSelectedSong.isModFile)
 		rightGrad->alpha = 0;
@@ -700,6 +703,8 @@ void Gameplay::create() {
 		leftGradBorder->alpha = (0.8 / Game::save->GetDouble("Lane Underway Transparency"));
 		if (!ModManager::doMods)
 			add(leftGradBorder);
+
+		leftGradBorder->h = Game::gameHeight;
 
 		Mrv->x = leftGradBorder->x + leftGradBorder->w + 12;
 		Prf->x = Mrv->x;

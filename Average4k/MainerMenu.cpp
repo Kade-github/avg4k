@@ -2568,7 +2568,9 @@ void dropdown_callback(std::string set, std::string value)
 
 		std::string fsType = Game::save->GetString("Fullscreen");
 		if (fsType == "Borderless")
+		{
 			fs = 2;
+		}
 		else if (fsType == "Fullscreen")
 			fs = 1;
 

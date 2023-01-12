@@ -327,6 +327,15 @@ std::vector<int> SaveFile::ObtainResolution()
 {
     STR_ENCRYPT_START
     std::string resText = GetString("Resolution");
+    if (GetString("Fullscreen") == "Borderless")
+    {
+        int mw, mh;
+
+        Helpers::GetDesktopResolution(mw, mh);
+        resText = std::to_string(mw) + "x" + std::to_string(mh);
+    }
+
+
     STR_ENCRYPT_END
     if (resText == "640x480")
         resText = "1280x720";

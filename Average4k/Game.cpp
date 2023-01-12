@@ -972,7 +972,7 @@ void Game::resizeGame(int w, int h, int fullscreen)
 	{
 	case 0:
 		SDL_SetWindowFullscreen(Game::window, 0);
-		SDL_SetWindowPosition(Game::window, SDL_WINDOWPOS_CENTERED, 64);
+		SDL_SetWindowPosition(Game::window, SDL_WINDOWPOS_CENTERED, 20);
 		break;
 	case 1:
 		SDL_SetWindowFullscreen(Game::window, SDL_WINDOW_FULLSCREEN);

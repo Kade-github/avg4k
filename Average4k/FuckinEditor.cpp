@@ -785,31 +785,34 @@ void window_chartProperties() {
 		}
 		ImGui::EndTabItem();
 	}
-	if (ImGui::BeginTabItem("BPM Detect"))
+	if (editor->song != NULL)
 	{
-		ImGui::Text("Tempo Detection Results:");
-		int ind = 0;
-		if (editor->song->bpmCan.size() == 0 && editor->triedBPM)
+		if (ImGui::BeginTabItem("BPM Detect"))
 		{
-			ImGui::Text("Seems like I failed to detect the bpm, uh. woops, idfk.");
+			ImGui::Text("Tempo Detection Results:");
+			int ind = 0;
+			if (editor->song->bpmCan.size() == 0 && editor->triedBPM)
+			{
+				ImGui::Text("Seems like I failed to detect the bpm, uh. woops, idfk.");
+			}
+			for (double d : editor->song->bpmCan)
+			{
+				ImGui::PushItemWidth(100);
+				double dd = d;
+				ImGui::InputDouble(("##Beat" + std::to_string(d)).c_str(), &dd, 0, 0, "%.2f");
+				ind++;
+				if (ind > 8)
+					break;
+			}
+			if (ImGui::Button("Detect Tempo"))
+			{
+				editor->triedBPM = true;
+				float sampl = (editor->song->returnSampleRate() * (editor->song->length / 1000)) / 2;
+				float* samples = editor->song->returnSamples(sampl, NULL);
+				editor->song->bpmDetect(samples, sampl, true);
+			}
+			ImGui::EndTabItem();
 		}
-		for (double d : editor->song->bpmCan)
-		{
-			ImGui::PushItemWidth(100);
-			double dd = d;
-			ImGui::InputDouble(("##Beat" + std::to_string(d)).c_str(), &dd, 0, 0, "%.2f");
-			ind++;
-			if (ind > 8)
-				break;
-		}
-		if (ImGui::Button("Detect Tempo"))
-		{
-			editor->triedBPM = true;
-			float sampl = (editor->song->returnSampleRate() * (editor->song->length / 1000)) / 2;
-			float* samples = editor->song->returnSamples(sampl, NULL);
-			editor->song->bpmDetect(samples, sampl, true);
-		}
-		ImGui::EndTabItem();
 	}
 	if (ImGui::BeginTabItem("Extras"))
 	{

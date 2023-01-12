@@ -67,7 +67,7 @@ void Gameplay::updateAccuracy(double hitWorth)
 		format.erase(format.find_last_not_of('.') + 1, std::string::npos);
 
 	if (format.ends_with('.'))
-		format = format.substr(0, format.length - 1);
+		format = format.substr(0, format.size() - 1);
 
 	Accuracy->setText(format + "%");
 	Accuracy->x = (Game::gameWidth - Accuracy->surfW) - 24;

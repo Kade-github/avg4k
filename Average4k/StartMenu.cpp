@@ -22,7 +22,7 @@ void StartMenu::create()
 	add(kadedev);
 
 	// create and play start song
-	ch = SoundManager::createChannel(Noteskin::getMusicElement(Game::noteskin, "MenuTheme.wav"), "prevSong");
+	ch = SoundManager::createChannel(Noteskin::getMusicElement(Game::noteskin, "MenuTheme.ogg"), "prevSong");
 	ch->play();
 
 	ch->bpm = 155;

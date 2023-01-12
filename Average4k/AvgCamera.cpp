@@ -4,7 +4,9 @@
 void AvgCamera::leDraw(Object* obj)
 {
 	glViewport(0, 0, Game::gameWidth, Game::gameHeight);
-	GL::genShader->setProject(glm::ortho(0.0f, (float)Game::gameWidth, (float)Game::gameHeight, 0.0f, -1.0f, 1.0f));
+	glm::mat4 pro = glm::ortho(0.0f, (float)Game::gameWidth, (float)Game::gameHeight, 0.0f, -1.0f, 1.0f);
+	GL::genShader->setProject(pro);
+	Game::instance->whiteShader->setProject(pro);
 	Rendering::rendW = Game::gameWidth;
 	Rendering::rendH = Game::gameHeight;
 	if (obj->children.size() < 900000)
@@ -18,7 +20,8 @@ void AvgCamera::leDraw(Object* obj)
 			Rendering::setBlend();
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glViewport(0, 0, Game::gameWidth, Game::gameHeight);
-			GL::genShader->setProject(glm::ortho(0.0f, (float)Game::gameWidth, (float)Game::gameHeight, 0.0f, -1.0f, 1.0f));
+			GL::genShader->setProject(pro);
+			Game::instance->whiteShader->setProject(pro);
 			Rendering::rendW = Game::gameWidth;
 			Rendering::rendH = Game::gameHeight;
 

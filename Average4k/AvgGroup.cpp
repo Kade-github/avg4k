@@ -1,4 +1,4 @@
-#include "AvgGroup.h"
+#include "Game.h"
 
 
 
@@ -43,8 +43,10 @@ void AvgGroup::draw()
 		glClearColor(0, 0, 0, 0);
 
 		glViewport(0, 0, w, h);
-		GL::genShader->setProject(glm::ortho(0.0f, (float)w, (float)h, 0.0f, -1.0f, 1.0f));
+		glm::mat4 pro = glm::ortho(0.0f, (float)w, (float)h, 0.0f, -1.0f, 1.0f);
 
+		GL::genShader->setProject(pro);
+		Game::instance->whiteShader->setProject(pro);
 		Rendering::rendW = w;
 		Rendering::rendH = h;
 

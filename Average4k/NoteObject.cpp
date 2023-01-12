@@ -542,16 +542,17 @@ void NoteObject::draw() {
 
                 }
 
-                body.x = square.x;
-                body.y = square.y;
-                body.w = square.w;
-                body.h = square.h;
-                bodies.push_back(body);
+                    body.x = square.x;
+                    body.y = square.y;
+                    body.w = square.w;
+                    body.h = square.h;
+                    bodies.push_back(body);
+                
             }
             int i = 0;
             for (holdBody& body : bodies)
             {
-                if (body.y > Game::gameHeight + 100 || body.y < -200 || (body.beat - 0.15 < holdstoppedbeat))
+                if (body.y > Game::gameHeight + 100 || body.y < -200 || (body.beat - 0.15 < holdstoppedbeat) || body.verts.size() < 4)
                 {
                     i++;
                     continue;

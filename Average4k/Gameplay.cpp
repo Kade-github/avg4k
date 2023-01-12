@@ -134,8 +134,13 @@ void Gameplay::setHolding(NoteObject* object, Playfield* p, bool holding)
 {
 	NoteObject* o = NULL;
 	for (NoteObject* no : p->screenNotes)
+	{
 		if (no->beat == object->beat && object->lane == no->lane)
+		{
 			o = no;
+			break;
+		}
+	}
 	if (o != NULL)
 	{
 		o->holding = holding;
@@ -1624,13 +1629,28 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 					p->screenReceptors[closestObject->lane]->hit = true;
 					if (closestObject->type != noteType::Note_Head)
 						removeNote(closestObject, p);
+					else
+					{
+						NoteObject* o = NULL;
+						for (NoteObject* no : p->screenNotes)
+						{
+							if (no->beat == closestObject->beat && closestObject->lane == no->lane)
+							{
+								o = no;
+								break;
+							}
+						}
+						if (o != NULL)
+						{
+							o->active = false;
+						}
+					}
 				}
 
 				if (ModManager::doMods)
 					manager.callEvent("hit", closestObject->lane);
 				closestObject->active = false;
 				closestObject->wasHit = true;
-
 
 				noteTimings[positionInSong] = diff;
 

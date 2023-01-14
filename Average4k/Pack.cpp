@@ -228,26 +228,6 @@ void SongGather::gatherPacksAsync()
 				loaded++;
 			}
 			steamRegAsyncAlready = false;
-
-			int sum = 0;
-			int peak = 0;
-			int lowest = 1;
-			float avg = 0;
-
-			for (int i : quaTimes)
-			{
-				sum += i;
-				if (i > peak)
-					peak = i;
-				if (i < lowest || lowest == -1)
-					lowest = i;
-			}
-			avg = sum / quaTimes.size();
-
-			std::ofstream s;
-			s.open("times.txt");
-			s << "Quaver File Time: " << avg << "ms. Peak: " << peak << "ms. Lowest: " << lowest << "ms.";
-			s.close();
 			});
 		t.detach();
 	}
@@ -468,7 +448,6 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 							break;
 						}
 					}
-					auto start = std::chrono::high_resolution_clock::now();
 					if (smFiles.size() > 0)
 					{
 
@@ -498,8 +477,6 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 							songs.push_back(s);
 							loaded++;
 						}
-						auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start);
-						quaTimes.push_back(duration.count());
 						continue;
 					}
 

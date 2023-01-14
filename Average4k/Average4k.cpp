@@ -44,6 +44,8 @@ using namespace std;
 #pragma comment(lib,"x64\\discord_game_sdk.lib")
 #pragma comment(lib,"x64_static\\bz2.lib")
 #pragma comment(lib,"x64_static\\zlib.lib")
+#pragma comment(lib,"x64_static\\zlib.lib")
+#pragma comment(lib,"x64_static\\yaml-cpp.lib")
 //brotlidec-static.lib
 #pragma comment(lib,"x64_static\\brotlidec-static.lib")
 #pragma comment(lib,"x64_static\\brotlienc-static.lib")

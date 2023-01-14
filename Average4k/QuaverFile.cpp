@@ -1,11 +1,85 @@
 #include "QuaverFile.h"
 #include "Helpers.h"
+#include "yaml-cpp/yaml.h"
+
+
 
 QuaverFile::QuaverFile()
 {
    // bruh
 }
 
+struct TimingPoint {
+    float StartTime;
+    float Bpm;
+
+    inline bool operator==(TimingPoint a) {
+        if (a.StartTime == StartTime)
+            return true;
+        else
+            return false;
+    }
+};
+
+struct HitObject {
+    float StartTime;
+    int Lane;
+    int EndTime;
+
+    inline bool operator==(HitObject a) {
+        if (a.StartTime == StartTime)
+            return true;
+        else
+            return false;
+    }
+};
+
+namespace YAML {
+
+    template<>
+    struct convert<TimingPoint> {
+        static bool decode(const Node& node, TimingPoint& rhs) {
+            if (!node.IsMap())
+                return false;
+            if (node["StartTime"])
+            {
+                rhs.StartTime = node["StartTime"].as<float>();
+                rhs.Bpm = node["Bpm"].as<float>();
+                return true;
+            }
+            if (node["Bpm"])
+            {
+                rhs.StartTime = 0;
+                rhs.Bpm = std::stof(node["Bpm"].as<std::string>());
+                return true;
+            }
+            return false;
+        }
+    };
+    template<>
+    struct convert<HitObject> {
+        static bool decode(const Node& node, HitObject& rhs) {
+            if (!node.IsMap())
+                return false;
+            if (!node["StartTime"])
+            {
+                if (!node["Lane"])
+                    return false;
+                else
+                    rhs.StartTime = 0;
+            }
+            else
+                rhs.StartTime = node["StartTime"].as<float>();
+            rhs.Lane = node["Lane"].as<int>();
+            auto eT = node["Endtime"];
+            if (eT)
+                rhs.EndTime = eT.as<int>();
+            else
+                rhs.EndTime = -1;
+            return true;
+        }
+    };
+}
 
 bool note_sort(note const& lhs, note const& rhs) {
     return lhs.beat < rhs.beat;
@@ -17,203 +91,89 @@ chartMeta QuaverFile::returnChart(std::string path)
     meta.folder = path;
     meta.chartType = 1;
 
-    bool generatedBPMS = false;
-
-    bool noteStarted = false;
-
     std::string lines;
 
-    for (const auto& e : std::filesystem::directory_iterator(path))
+    auto saved = std::filesystem::directory_iterator(path);
+
+    for (const auto& e : saved)
     {
-        if (!ends_with(e.path().string(), ".qua"))
+        std::string p = e.path().string();
+        if (!ends_with(p, ".qua"))
             continue;
-        bool notes = false;
-        bool bpm = false;
-        std::ifstream infile(e.path());
-        std::string line;
+        YAML::Node qua = YAML::LoadFile(p);
+
+        if (qua["Mode"].as<std::string>() != "Keys4")
+            continue;
 
         difficulty diff;
-        diff.name = "unknown";
-        diff.charter = "unknown";
 
-        meta.difficulties.push_back(diff);
-
-        difficulty& ddiff = meta.difficulties.back();
-
-        bpmSegment seg;
-
-        seg.startTime = 0;
-        seg.startBeat = 0;
-        seg.endBeat = INT_MAX;
-        seg.length = INT_MAX;
-
-        int bpmIndex = 0;
-
-        float firstBruh = 0; // offset
-
-        currentWorkingNote = {};
-        currentWorkingNote.beat = -1;
-
-        bool conti = false;
-
-        while (std::getline(infile, line)) {
-            lines += line;
-            if (conti)
-                break;
-            std::istringstream iss(line);
-            std::string s = iss.str();
-            std::vector<std::string> split = Chart::split(s, ':'); // property: value
-            if (split.size() != 1)
-                split[1].erase(0, 1); // remove the starting space
-            if (bpm && !generatedBPMS)
+        if (meta.audio.size() == 0)
+        {
+            meta.artist = qua["Artist"].as<std::string>();
+            meta.audio = qua["AudioFile"].as<std::string>();
+            meta.background = qua["BackgroundFile"].as<std::string>();
+            meta.songName = qua["Title"].as<std::string>();
+            std::vector<TimingPoint> points = qua["TimingPoints"].as<std::vector<TimingPoint>>();
+            for (TimingPoint p : points)
             {
-                if (split.size() != 2)
+                bpmSegment seg;
+                seg.bpm = p.Bpm;
+                seg.length = INT_MAX;
+                seg.endBeat = INT_MAX;
+                if (meta.bpms.size() != 0)
                 {
-                    if (meta.bpms.size() != 0)
-                    {
-                        bpmSegment& prevSeg = meta.bpms.back();
-                        float endBeat = getBeatFromTimeOffset(seg.startTime, prevSeg);
-                        prevSeg.endBeat = endBeat;
-                        prevSeg.length = ((prevSeg.endBeat - prevSeg.startBeat) / (prevSeg.bpm / 60)) * 1000;
-                    }
-                    meta.bpms.push_back(seg); // last seg
-                    bpm = false;
-                    generatedBPMS = true;
+                    seg.startTime = p.StartTime;
+                    seg.startBeat = (seg.startTime / 1000) * (seg.bpm / 60);
                 }
                 else
                 {
-                    if (s[0] == '-' && bpmIndex != 0)
-                    {
-                        float endBeat = getBeatFromTimeOffset(std::stod(split[1]), seg);
-                        seg.endBeat = endBeat;
-                        seg.length = ((seg.endBeat - seg.startBeat) / (seg.bpm / 60)) * 1000;
-                        meta.bpms.push_back(seg);
-                        bpmSegment storage = seg;
-                        seg = storage; // create a copy in another variable lol
-                        seg.bpm = 0;
-                        seg.startTime = 0;
-                        seg.startBeat = endBeat;
-                        seg.endBeat = INT_MAX;
-                        seg.length = INT_MAX;
-                    }
-                    if (split[0] == "- StartTime")
-                    {
-                        if (bpmIndex == 0)
-                        {
-                            firstBruh = std::stod(split[1]);
-                            meta.chartOffset = 0;
-                        }
-                        seg.startTime = (std::stod(split[1]));
-                        bpmIndex++;
-                    }
-                    if (split[0] == "- Bpm") // for weird charts
-                    {
-                        seg.bpm = std::stod(split[1]);
-                        seg.startBeat = 0;
-                        seg.startTime = 0;
-                        seg.endBeat = INT_MAX;
-                        seg.length = INT_MAX;
-                    }
-                    else if (split[0] == "  Bpm")
-                    {
-                        seg.bpm = std::stod(split[1]);
-                        if (bpmIndex == 1)
-                            seg.startBeat = (seg.startTime / 1000) * (seg.bpm / 60); // we can guess this cuz its the first bpm segment, we dont have to worry about bpm changes.
-                    }
+                    seg.startTime = 0;
+                    seg.startBeat = 0;
                 }
-            }
-            if (notes)
-            {
-                if (split.size() != 2)
-                    notes = false;
-                if (split[0] == "- StartTime")
+                if (meta.bpms.size() != 0)
                 {
-                    float time = std::stod(split[1]);
-                    float beat = getBeatFromTimeOffset(time, getSegmentFromTime(time, meta.bpms));
-
-                    if (currentWorkingNote.beat != -1)
-                    {
-                        ddiff.notes.push_back(currentWorkingNote);
-                        currentWorkingNote = {};
-                    }
-                    currentWorkingNote.type = Note_Normal;
-                    currentWorkingNote.beat = beat;
+                    bpmSegment& prevSeg = meta.bpms.back();
+                    float endBeat = getBeatFromTimeOffset(seg.startBeat, seg);
+                    prevSeg.endBeat = seg.startBeat;
+                    prevSeg.length = ((prevSeg.endBeat - prevSeg.startBeat) / (prevSeg.bpm / 60)) * 1000;
                 }
-                else if (split[0] == "- Lane") // wtf quaver, why are you so weird
-                {
-                    currentWorkingNote = {};
-                    currentWorkingNote.beat = -1;
-
-                }
-                else if (split[0] == "- EndTime") // wtf quaver, why are you so weird
-                {
-                    currentWorkingNote = {};
-                    currentWorkingNote.beat = -1;
-
-                }
-                else
-                {
-                    if (split[0] == "  Lane")
-                    {
-                        currentWorkingNote.lane = std::stod(split[1]) - 1;
-                    }
-
-                    if (split[0] == "  EndTime")
-                    {
-                        float time = std::stod(split[1]);
-                        float beat = getBeatFromTimeOffset(time, getSegmentFromTime(time, meta.bpms));
-
-                        currentWorkingNote.type = Note_Head;
-
-                        note tail;
-                        tail.beat = beat;
-                        tail.lane = currentWorkingNote.lane;
-                        tail.type = Note_Tail;
-                        ddiff.notes.push_back(tail);
-                    }
-                }
-            }
-            else
-            {
-                // blah blah, string has to be a enum value aka we cant use a switch case
-                if (!generatedBPMS)
-                {
-                    if (split[0] == "AudioFile")
-                    {
-                        std::string& audio = meta.audio;
-                        audio = split[1];
-                    }
-                    if (split[0] == "Title")
-                    {
-                        std::string& name = meta.songName;
-                        name = split[1];
-                    }
-                }
-                if (split[0] == "BackgroundFile")
-                {
-                    meta.background = split[1];
-                    meta.banner = split[1];
-                }
-                if (split[0] == "SongPreviewTime")
-                {
-                    meta.start = std::stof(split[1]);
-                }
-                if (split[0] == "Artist")
-                    meta.artist = split[1];
-                if (split[0] == "Creator")
-                    meta.difficulties.back().charter = split[1];
-                if (split[0] == "DifficultyName")
-                    meta.difficulties.back().name = split[1];
-                if (split[0] == "Mode")
-                    if (split[1] != "Keys4")
-                        conti = true;
-                if (split[0] == "TimingPoints")
-                    bpm = true;
-                if (split[0] == "HitObjects")
-                    notes = true;
+                meta.bpms.push_back(seg);
             }
         }
-        infile.close();
+
+        diff.name = qua["DifficultyName"].as<std::string>();
+        diff.charter = qua["Creator"].as<std::string>();
+
+        std::vector<HitObject> hitObjects = qua["HitObjects"].as<std::vector<HitObject>>();
+
+        meta.chartOffset = meta.bpms[0].startTime / 1000;
+        meta.bpms[0].startTime = 0;
+        diff.notes = {};
+        for (HitObject obj : hitObjects)
+        {
+            note n;
+            if (obj.EndTime != -1)
+                n.type = Note_Head;
+            else
+                n.type = Note_Normal;
+            n.beat = getBeatFromTimeOffset(obj.StartTime, getSegmentFromTime(obj.StartTime, meta.bpms));
+            n.lane = obj.Lane - 1;
+
+            diff.notes.push_back(n);
+            if (n.type == Note_Head)
+            {
+                note tN;
+                tN.type = Note_Tail;
+                tN.beat = getBeatFromTimeOffset(obj.EndTime, getSegmentFromTime(obj.EndTime, meta.bpms));
+                tN.lane = obj.Lane - 1;
+
+                diff.notes.push_back(tN);
+            }
+
+            lines += std::to_string(n.beat) + std::to_string(n.lane) + std::to_string(n.type);
+        }
+        meta.difficulties.push_back(diff);
+        remove(p.c_str());
     }
     for (difficulty& diff : meta.difficulties)
     {

@@ -18,12 +18,19 @@ int SongGather::localId = 0;
 
 int SongGather::max = 0;
 
+std::list<int> smTimes = {};
+std::list<int> quaTimes = {};
+std::list<int> osuTimes = {};
+
 std::string SongGather::currentPack;
 
 std::mutex lock;
 
 void SongGather::gatherPacksAsync()
 {
+	smTimes = {};
+	quaTimes = {};
+	osuTimes = {};
 	if (!steamRegAsyncAlready)
 	{
 		localId = 0;
@@ -220,7 +227,6 @@ void SongGather::gatherPacksAsync()
 				MainerMenu::asyncSongs.push_back(s);
 				loaded++;
 			}
-
 			steamRegAsyncAlready = false;
 			});
 		t.detach();
@@ -442,9 +448,9 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 							break;
 						}
 					}
-
 					if (smFiles.size() > 0)
 					{
+
 						Song s;
 						SMFile file = SMFile(smFiles[0], entry.path().string(), false);
 						s.c = Chart(file.meta);
@@ -454,6 +460,7 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 							songs.push_back(s);
 							loaded++;
 						}
+
 						continue;
 					}
 
@@ -467,6 +474,7 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 						s.path = quaverFiles[0];
 						songs.push_back(s);
 						loaded++;
+
 						continue;
 					}
 

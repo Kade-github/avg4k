@@ -523,8 +523,7 @@ void ModManager::setModStart(AppliedMod& m)
 		m.modStartAmount = modPlayfields[m.pid]->arrowEff.SplineAlpha;
 	if (m.mod == "pathDensity")
 		m.modStartAmount = modPlayfields[m.pid]->arrowEff.SplineDensity;
-	if (m.mod == "rotz")
-		m.modStartAmount = modPlayfields[m.pid]->arrowEff.rotz;
+
 }
 
 void ModManager::setSpriteMod(std::string sprite, std::string mod, float tween)
@@ -582,8 +581,6 @@ void ModManager::setModProperties(AppliedMod& m, float tween)
 	}
 	if (m.mod == "drunk")
 		modPlayfields[m.pid]->arrowEff.drunk = std::lerp(m.modStartAmount, m.amount, tween);
-	if (m.mod == "rotz")
-		modPlayfields[m.pid]->arrowEff.rotz = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "mini")
 		modPlayfields[m.pid]->arrowEff.mini = std::lerp(m.modStartAmount, m.amount, tween);
 	if (m.mod == "tipsy")
@@ -647,8 +644,6 @@ void ModManager::setModProperties(std::string mod, int pid, int col, float tween
 	}
 	if (mod == "drunk")
 		modPlayfields[pid]->arrowEff.drunk = tween;
-	if (mod == "rotz")
-		modPlayfields[pid]->arrowEff.rotz = tween;
 	if (mod == "mini")
 		modPlayfields[pid]->arrowEff.mini = tween;
 	if (mod == "tipsy")
@@ -705,8 +700,7 @@ float ModManager::getModProperty(std::string mod, float pid, int col)
 {
 	if (mod == "drunk")
 		return modPlayfields[pid]->arrowEff.drunk;
-	if (mod == "rotz")
-		return modPlayfields[pid]->arrowEff.rotz;
+
 	if (mod == "mini")
 		return modPlayfields[pid]->arrowEff.mini;
 	if (mod == "tipsy")

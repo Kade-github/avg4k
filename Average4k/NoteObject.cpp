@@ -217,7 +217,7 @@ void NoteObject::draw() {
                 float t = (arrowEffects->drawSize[1] - beatOffset) / 1;
                 a.opac *= t;
                 if (white < 0.1)
-                    white = 1 - t;
+                    white = 1 - (t * 1.4);
             }
         }
         
@@ -312,11 +312,6 @@ void NoteObject::draw() {
         float endPos = calcCMod(difff);
 
         float diffBeat = endBeat - beat;
-
-        if (xmod)
-        {
-            endPos = calcXMod(diffBeat, bruh.bpm);
-        }
 
         line.h = endPos;
         line.w = 4;
@@ -552,7 +547,7 @@ void NoteObject::draw() {
                 if (arrowEffects)
                     dBeats = arrowEffects->drawBeats;
 
-                if (body.beat > beat + dBeats)
+                if (body.beat > currentBeat + dBeats)
                     break;
 
                 std::vector<GL_Vertex> verts;

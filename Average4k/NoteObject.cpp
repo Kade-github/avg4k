@@ -542,8 +542,7 @@ void NoteObject::draw() {
                 }
 
                 float dBeats = 8;
-                if (xmod)
-                    dBeats = (8 * (curSeg.bpm / 100)) * (cmod / 100);
+
                 if (arrowEffects)
                     dBeats = arrowEffects->drawBeats;
 
@@ -551,7 +550,6 @@ void NoteObject::draw() {
                     break;
 
                 std::vector<GL_Vertex> verts;
-
 
                 if (body.beat < currentBeat && holding)
                     Rendering::SetClipRect(&test);

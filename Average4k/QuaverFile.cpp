@@ -36,10 +36,6 @@ chartMeta QuaverFile::returnChart(std::string path)
         diff.name = "unknown";
         diff.charter = "unknown";
 
-        meta.difficulties.push_back(diff);
-
-        difficulty& ddiff = meta.difficulties.back();
-
         bpmSegment seg;
 
         seg.startTime = 0;
@@ -122,7 +118,7 @@ chartMeta QuaverFile::returnChart(std::string path)
                     }
                 }
             }
-            else
+            else if (generatedBPMS)
                 continue;
             if (notes)
             {
@@ -135,7 +131,7 @@ chartMeta QuaverFile::returnChart(std::string path)
 
                     if (currentWorkingNote.beat != -1)
                     {
-                        ddiff.notes.push_back(currentWorkingNote);
+                        diff.notes.push_back(currentWorkingNote);
                         currentWorkingNote = {};
                     }
                     currentWorkingNote.type = Note_Normal;
@@ -171,7 +167,7 @@ chartMeta QuaverFile::returnChart(std::string path)
                         tail.beat = beat;
                         tail.lane = currentWorkingNote.lane;
                         tail.type = Note_Tail;
-                        ddiff.notes.push_back(tail);
+                        diff.notes.push_back(tail);
                     }
                 }
             }
@@ -214,6 +210,8 @@ chartMeta QuaverFile::returnChart(std::string path)
                     notes = true;
             }
         }
+
+        meta.difficulties.push_back(diff);
         infile.close();
     }
     for (difficulty& diff : meta.difficulties)
@@ -221,11 +219,17 @@ chartMeta QuaverFile::returnChart(std::string path)
         std::sort(diff.notes.begin(), diff.notes.end(), &note_sort);
     }
 
-    meta.ext = Chart::split(meta.audio, '.')[1];
-    std::transform(meta.ext.begin(), meta.ext.end(), meta.ext.begin(), Helpers::asciitolower);
+    if (meta.audio.size() != 0)
+    {
 
-    meta.hash = Helpers::setHash(lines);
+        meta.ext = Chart::split(meta.audio, '.')[1];
+        std::transform(meta.ext.begin(), meta.ext.end(), meta.ext.begin(), Helpers::asciitolower);
 
-    MUTATE_END
-        return meta;
+        meta.hash = Helpers::setHash(lines);
+
+        MUTATE_END
+            return meta;
+    }
+    else
+        return {};
 }

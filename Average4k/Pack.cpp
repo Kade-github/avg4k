@@ -472,8 +472,11 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 						chartMeta m = file.returnChart(entry.path().string());
 						s.c = Chart(m);
 						s.path = quaverFiles[0];
-						songs.push_back(s);
-						loaded++;
+						if (m.difficulties.size() != 0)
+						{
+							songs.push_back(s);
+							loaded++;
+						}
 
 						continue;
 					}

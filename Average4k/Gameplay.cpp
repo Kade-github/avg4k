@@ -1230,9 +1230,10 @@ void Gameplay::update(Events::updateEvent event)
 		{
 			for (int i = 0; i < spawnedNotes.size(); i++)
 			{
+				int firstBeat = spawnedNotes[0]->beat;
 				NoteObject* note = spawnedNotes[i];
 				note->rTime = positionInSong;
-				if ((keys[note->lane] || holding[note->lane]) && note->type == Note_Mine && (realIndex[note->lane] == 0))
+				if ((keys[note->lane] || holding[note->lane]) && note->type == Note_Mine && (realIndex[note->lane] == 0) && note->beat == firstBeat)
 				{
 					if (!note->blownUp)
 					{

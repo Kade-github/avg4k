@@ -24,6 +24,7 @@ void StartMenu::create()
 	// create and play start song
 	ch = SoundManager::createChannel(Noteskin::getMusicElement(Game::noteskin, "MenuTheme.ogg"), "prevSong");
 	ch->play();
+	ch->setVolume(Game::save->GetDouble("Music Volume"));
 
 	ch->bpm = 155;
 

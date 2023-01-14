@@ -1,6 +1,6 @@
 #include "QuaverFile.h"
 #include "Helpers.h"
-
+#include "SMFile.h"
 QuaverFile::QuaverFile()
 {
     // bruh
@@ -65,6 +65,12 @@ chartMeta QuaverFile::returnChart(std::string path)
             {
                 if (split.size() != 2)
                 {
+                    if (seg.startTime < 0)
+                    {
+                        bpm = false;
+                        generatedBPMS = true;
+                        continue;
+                    }
                     if (meta.bpms.size() != 0)
                     {
                         bpmSegment& prevSeg = meta.bpms.back();
@@ -83,7 +89,10 @@ chartMeta QuaverFile::returnChart(std::string path)
                         float endBeat = getBeatFromTimeOffset(std::stod(split[1]), seg);
                         seg.endBeat = endBeat;
                         seg.length = ((seg.endBeat - seg.startBeat) / (seg.bpm / 60)) * 1000;
-                        meta.bpms.push_back(seg);
+                        if (seg.startTime > 0)
+                        {
+                            meta.bpms.push_back(seg);
+                        }
                         bpmSegment storage = seg;
                         seg = storage; // create a copy in another variable lol
                         seg.bpm = 0;
@@ -199,9 +208,9 @@ chartMeta QuaverFile::returnChart(std::string path)
                 if (split[0] == "Artist")
                     meta.artist = split[1];
                 if (split[0] == "Creator")
-                    meta.difficulties.back().charter = split[1];
+                    diff.charter = split[1];
                 if (split[0] == "DifficultyName")
-                    meta.difficulties.back().name = split[1];
+                    diff.name = split[1];
                 if (split[0] == "Mode" && split[1] != "Keys4")
                     conti = true;
                 if (split[0] == "TimingPoints")
@@ -218,6 +227,35 @@ chartMeta QuaverFile::returnChart(std::string path)
     {
         std::sort(diff.notes.begin(), diff.notes.end(), &note_sort);
     }
+    std::vector<int> remove = {};
+
+    int index = 0;
+    for (bpmSegment& seg : meta.bpms)
+    {
+        if (index != 0)
+            if (meta.bpms[index - 1].bpm == seg.bpm)
+            {
+                remove.push_back(index);
+            }
+        index++;
+    }
+
+    index = 0;
+    for (int i : remove)
+    {
+        meta.bpms.erase(meta.bpms.begin() + (i - index));
+        index++;
+    }
+    index = 0;
+    for (bpmSegment& seg : meta.bpms) // final pass
+    {
+        seg.length = INT_MAX;
+        if (index != 0)
+        {
+            seg.endBeat = meta.bpms[index - 1].startBeat;
+            seg.length = ((seg.endBeat - seg.startBeat) / (seg.bpm / 60)) * 1000;
+        }
+    }
 
     if (meta.audio.size() != 0)
     {
@@ -228,7 +266,8 @@ chartMeta QuaverFile::returnChart(std::string path)
         meta.hash = Helpers::setHash(lines);
 
         MUTATE_END
-            return meta;
+
+        return meta;
     }
     else
         return {};

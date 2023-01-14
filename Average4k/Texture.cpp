@@ -2,9 +2,34 @@
 #include "Rendering.h"
 #include "Game.h"
 //Constructors and destructor
-		
+
+// png file header 137 80 78 71 13 10 26 10
+
+bool validPng(std::string path)
+{
+	std::fstream s(path);
+	if (s.bad())
+		return false;
+
+	// read the data
+	char buff[8 + 1]{ 0 };
+	s.read(buff, 8);
+
+	std::string st = std::string(buff);
+
+	if (!st.starts_with("‰PNG"))
+		return false;
+	return true;
+}
+
 Texture* Texture::createWithImage(std::string filePath)
 {
+	if (!validPng(filePath))
+	{
+		Game::instance->db_addLine("Failed to load PNG (returning NULL)");
+		unsigned char c[] = { 255, 255, 255, 255 };
+		return new Texture(c, 1, 1);
+	}
 	Texture* t = stbi_h::stbi_load_file(filePath);
 	t->fromSTBI = true;
 

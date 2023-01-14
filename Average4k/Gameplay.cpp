@@ -902,7 +902,7 @@ void Gameplay::update(Events::updateEvent event)
 	{
 		if (!play)
 		{
-			song->setPos(0);
+			song->setPos((startTime + (MainerMenu::currentSelectedSong.BASS_OFFSET * 1000)) + Game::save->GetDouble("offset"));
 			song->setVolume(Game::save->GetDouble("Music Volume"));
 			song->play();
 			play = true;
@@ -928,7 +928,7 @@ void Gameplay::update(Events::updateEvent event)
 			positionInSong += (Game::deltaTime - Game::save->GetDouble("offset"));*/
 		if (!paused)
 		{
-			positionInSong = (song->getPos() + (MainerMenu::currentSelectedSong.BASS_OFFSET * 1000)) + Game::save->GetDouble("offset");
+			positionInSong = song->getPos();
 			lastTime += Game::deltaTime;
 		}
 	}

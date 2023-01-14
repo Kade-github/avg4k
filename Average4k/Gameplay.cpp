@@ -1241,7 +1241,7 @@ void Gameplay::update(Events::updateEvent event)
 						float diff = std::abs(wh - positionInSong);
 
 						judgement j = Judge::judgeNote(diff);
-						if (j == judgement::Judge_marvelous || j == judgement::Judge_perfect)
+						if (j == judgement::Judge_marvelous)
 						{
 							noteTimings[positionInSong] = Judge::hitWindows[4];
 

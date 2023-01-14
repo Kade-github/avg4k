@@ -76,18 +76,6 @@ void NoteObject::draw() {
     float diff = (wh)-(rTime);
     float noteOffset = calcCMod(diff);
 
-    if (xmod)
-    {
-        if (currentBeat < beat + stopOffset)
-        {
-            diff = (beat + stopOffset) - currentBeat;
-        }
-        else
-        {
-            diff = beat - currentBeat;
-        }
-        noteOffset = calcXMod(diff, curSeg.bpm);
-    }
 
     cmodOffset = noteOffset;
 

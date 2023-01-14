@@ -26,7 +26,6 @@ Texture* Texture::createWithImage(std::string filePath)
 {
 	if (!validPng(filePath))
 	{
-		Game::instance->db_addLine("Failed to load PNG (returning NULL)");
 		unsigned char c[] = { 255, 255, 255, 255 };
 		return new Texture(c, 1, 1);
 	}

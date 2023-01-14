@@ -1125,9 +1125,8 @@ void Gameplay::update(Events::updateEvent event)
 				object->curSeg = preStopSeg;
 
 				object->beat = (double)n.beat;
-				if (!xmod)
-					object->beat += stopBeatOffset;
-				object->xmod = xmod;
+				object->beat += stopBeatOffset;
+				object->xmod = false;
 				object->tempStopOffset = object->stopOffset;
 				object->lane = n.lane;
 				object->connectedReceptor = p->screenReceptors[n.lane];

@@ -118,7 +118,7 @@ chartMeta QuaverFile::returnChart(std::string path)
                     }
                 }
             }
-            else if (generatedBPMS)
+            else if (generatedBPMS && bpm)
                 continue;
             if (notes)
             {

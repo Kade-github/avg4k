@@ -489,12 +489,17 @@ void Gameplay::create() {
 	std::string bg = MainerMenu::currentSelectedSong.meta.folder + "/" + MainerMenu::currentSelectedSong.meta.background;
 
 	background = new AvgSprite(0, 0, bg);
-	background->w = Game::gameWidth;
-	background->h = Game::gameHeight;
 
-	background->alpha = Game::save->GetDouble("Background Transparency");
+	if (background->tex->fromSTBI)
+	{
 
-	add(background);
+		background->w = Game::gameWidth;
+		background->h = Game::gameHeight;
+
+		background->alpha = Game::save->GetDouble("Background Transparency");
+
+		add(background);
+	}
 
 	Playfield* p = NULL;
 	if (downscroll)

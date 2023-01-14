@@ -262,7 +262,8 @@ chartMeta QuaverFile::returnChart(std::string path)
             }
         }
 
-        meta.difficulties.push_back(diff);
+        if (diff.notes.size() != 0)
+            meta.difficulties.push_back(diff);
         infile.close();
     }
     for (difficulty& diff : meta.difficulties)

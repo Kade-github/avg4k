@@ -441,6 +441,7 @@ void Gameplay::create() {
 
 
 
+
 		if (Noteskin::type != Game::save->GetString("Noteskin"))
 		{
 			Noteskin::resetNoteskin(Game::noteskin);
@@ -475,6 +476,9 @@ void Gameplay::create() {
 
 
 	Steam::SetPresence(("Playing " + MainerMenu::currentSelectedSong.meta.songName).c_str());
+
+	MainerMenu::currentSelectedSong.previouslyFound = {};
+	MainerMenu::currentSelectedSong.previouslyFound.length = -1;
 
 	Judge::initJudge();
 

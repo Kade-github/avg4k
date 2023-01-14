@@ -81,11 +81,9 @@ public:
 
 class Chart
 {
-	private:
+	public:
 		bpmSegment previouslyFound;
 		bpmSegment nextSeg;
-	public:
-
 		float BASS_OFFSET;
 
 		Chart() {};

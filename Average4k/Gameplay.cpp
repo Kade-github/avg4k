@@ -788,6 +788,22 @@ void Gameplay::create() {
 
 	if (ModManager::doMods)
 	{
+		SpriteMod mod;
+		mod.anchor = "";
+		mod.confusion = 0;
+		mod.finish = "";
+		mod.movex = 0;
+		mod.movey = 0;
+		mod.offsetX = 0;
+		mod.offsetY = 0;
+		mod.stealth = 0;
+		mod.mini = 0.5;
+		mod.spr = playField;
+		playField->customShader = NULL;
+		mod.notModCreated = true;
+		mod.def = playField;
+		manager.sprites["camera"] = mod;
+
 		SpriteMod mod2;
 		mod2.anchor = "";
 		mod2.confusion = 0;
@@ -798,9 +814,10 @@ void Gameplay::create() {
 		mod2.offsetY = 0;
 		mod2.stealth = 0;
 		mod2.mini = 0.5;
-		mod2.spr = NULL;
+		mod2.spr = spriteField;
 		mod2.notModCreated = true;
 		mod2.def = manager.spriteCamera;
+		spriteField->customShader = NULL;
 		manager.sprites["sprites"] = mod2;
 
 
@@ -1458,6 +1475,11 @@ void Gameplay::cleanUp()
 
 		if (ModManager::doMods)
 		{
+			for (const auto& s : manager.shaders)
+			{
+				delete s.second;
+			}
+			manager.shaders.clear();
 			manager.kill();
 			removeObj(manager.spriteCamera);
 		}

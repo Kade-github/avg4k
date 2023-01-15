@@ -6,10 +6,10 @@ public:
 	// time, msDiff
 	std::map<float, float> noteTiming;
 
-	long chartIndex;
-	long diffIndex;
+	long long chartIndex;
+	long long diffIndex;
 
-	unsigned long ChartId;
+	unsigned long long ChartId;
 
 	std::string hash;
 

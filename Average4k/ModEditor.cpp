@@ -27,7 +27,6 @@ void ModEditor::resetSprites(bool resetAnchor)
 		value.confusion = 0;
 		if (value.spr != NULL)
 		{
-			value.spr->customShader = NULL;
 			value.spr->x = value.ogX;
 			value.spr->y = value.ogY;
 		}
@@ -306,6 +305,7 @@ void ModEditor::refresh()
 	mod.stealth = 0;
 	mod.mini = 0.5;
 	mod.spr = playField;
+	playField->customShader = NULL;
 	mod.notModCreated = true;
 	mod.def = playField;
 	manager.sprites["camera"] = mod;
@@ -323,6 +323,7 @@ void ModEditor::refresh()
 	mod2.spr = spriteField;
 	mod2.notModCreated = true;
 	mod2.def = manager.spriteCamera;
+	spriteField->customShader = NULL;
 	manager.sprites["sprites"] = mod2;
 
 	callModEvent("create", 0);

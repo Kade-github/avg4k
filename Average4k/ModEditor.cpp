@@ -27,6 +27,7 @@ void ModEditor::resetSprites(bool resetAnchor)
 		value.confusion = 0;
 		if (value.spr != NULL)
 		{
+			value.spr->customShader = NULL;
 			value.spr->x = value.ogX;
 			value.spr->y = value.ogY;
 		}
@@ -113,6 +114,21 @@ void ModEditor::create()
 
 	add(playField);
 
+	SpriteMod mod;
+	mod.anchor = "";
+	mod.confusion = 0;
+	mod.finish = "";
+	mod.movex = 0;
+	mod.movey = 0;
+	mod.offsetX = 0;
+	mod.offsetY = 0;
+	mod.stealth = 0;
+	mod.mini = 0.5;
+	mod.spr = playField;
+	mod.notModCreated = true;
+	mod.def = playField;
+	manager.sprites["camera"] = mod;
+
 	SpriteMod mod2;
 	mod2.anchor = "";
 	mod2.confusion = 0;
@@ -123,7 +139,7 @@ void ModEditor::create()
 	mod2.offsetY = 0;
 	mod2.stealth = 0;
 	mod2.mini = 0.5;
-	mod2.spr = NULL;
+	mod2.spr = spriteField;
 	mod2.notModCreated = true;
 	mod2.def = manager.spriteCamera;
 	manager.sprites["sprites"] = mod2;
@@ -215,6 +231,11 @@ void ModEditor::doModsUntilThisPos()
 void ModEditor::refresh()
 {
 	notes.clear();
+	for (const auto& s : manager.shaders) 
+	{
+		delete s.second;
+	}
+	manager.shaders.clear();
 	if (!manager.killed)
 	{
 		removeObj(spriteField);
@@ -274,6 +295,21 @@ void ModEditor::refresh()
 		add(spriteField);
 	}
 
+	SpriteMod mod;
+	mod.anchor = "";
+	mod.confusion = 0;
+	mod.finish = "";
+	mod.movex = 0;
+	mod.movey = 0;
+	mod.offsetX = 0;
+	mod.offsetY = 0;
+	mod.stealth = 0;
+	mod.mini = 0.5;
+	mod.spr = playField;
+	mod.notModCreated = true;
+	mod.def = playField;
+	manager.sprites["camera"] = mod;
+
 	SpriteMod mod2;
 	mod2.anchor = "";
 	mod2.confusion = 0;
@@ -284,7 +320,7 @@ void ModEditor::refresh()
 	mod2.offsetY = 0;
 	mod2.stealth = 0;
 	mod2.mini = 0.5;
-	mod2.spr = NULL;
+	mod2.spr = spriteField;
 	mod2.notModCreated = true;
 	mod2.def = manager.spriteCamera;
 	manager.sprites["sprites"] = mod2;

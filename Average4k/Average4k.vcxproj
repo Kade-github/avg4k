@@ -443,6 +443,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClCompile Include="Rendering.cpp" />
     <ClCompile Include="SaveFile.cpp" />
     <ClCompile Include="SDL2_gfxPrimitives.c" />
+    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SMFile.cpp" />
     <ClCompile Include="SongSelect.cpp" />
     <ClCompile Include="SoundManager.cpp" />

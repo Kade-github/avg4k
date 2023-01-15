@@ -279,6 +279,8 @@ chartMeta QuaverFile::returnChart(std::string path)
 
         meta.hash = Helpers::setHash(lines);
 
+        //SMFile::SaveSM(meta, path + "/converted.sm", meta.chartOffset);
+
         MUTATE_END
 
         return meta;

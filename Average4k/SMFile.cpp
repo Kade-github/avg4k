@@ -383,9 +383,65 @@ float getSmallestSnap(std::vector<note> notes)
     return 1.0f / smallestSnap;
 }
 
-void SMFile::SaveSM(chartMeta meta, std::string outFile)
+float getTimeFromBeatOffset(float beat, bpmSegment seg) {
+    float beatThing = (beat - seg.startBeat) / (seg.bpm / 60);
+    return (seg.startTime + (beatThing * 1000));
+}
+
+
+float getBeatFromTimeOffset(float timestamp, bpmSegment seg) {
+    return seg.startBeat + ((((timestamp / 1000) - (((seg.startTime) / 1000))) * (seg.bpm / 60)));
+}
+
+bpmSegment getSegmentFromTime(float time, std::vector<bpmSegment> bpms) {
+    float offsetTime = time;
+    bpmSegment seg;
+    seg.bpm = bpms[0].bpm;
+    seg.startBeat = 0;
+    seg.startTime = 0;
+    seg.endBeat = INT_MAX;
+    seg.length = INT_MAX;
+    for (int i = 0; i < bpms.size(); i++) {
+        bpmSegment segment = bpms[i];
+        if (offsetTime >= segment.startTime && offsetTime < ((segment.startTime) + segment.length))
+        {
+            seg = segment;
+            break;
+        }
+    }
+
+
+    return seg;
+}
+
+bpmSegment getSegmentFromBeat(float beat, std::vector<bpmSegment> bpms) 
+{
+    bpmSegment seg;
+    seg.bpm = bpms[0].bpm;
+    seg.startBeat = 0;
+    seg.startTime = 0;
+    seg.endBeat = INT_MAX;
+    seg.length = INT_MAX;
+
+    for (int i = 0; i < bpms.size(); i++) {
+        bpmSegment segment = bpms[i];
+        if (beat >= segment.startBeat && beat < segment.endBeat)
+        {
+            seg = segment;
+            break;
+        }
+    }
+
+
+    return seg;
+}
+
+void SMFile::SaveSM(chartMeta meta, std::string outFile, float offset)
 {
     std::ofstream ostream;
+
+
+
 
     ostream.open(outFile, std::fstream::out);
 
@@ -421,6 +477,12 @@ void SMFile::SaveSM(chartMeta meta, std::string outFile)
 
         for (difficulty diff : meta.difficulties)
         {
+            if (offset != 0)
+                for (note& n : diff.notes)
+                {
+                    float time = getTimeFromBeatOffset(n.beat, getSegmentFromBeat(n.beat, meta.bpms)) + offset;
+                    n.beat = getBeatFromTimeOffset(time, getSegmentFromTime(time, meta.bpms));
+                }
             ostream << "//---------------dance-single - " << diff.charter << " ----------------" << std::endl;
             ostream << "#NOTES:" << std::endl;
             ostream << "     dance-single:" << std::endl;

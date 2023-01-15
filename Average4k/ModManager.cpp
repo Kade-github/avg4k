@@ -477,8 +477,6 @@ void ModManager::setModStart(AppliedMod& m)
 			m.modStartAmount = sprites[m.spriteName].spr->defX;
 		if (m.mod == "defPosY")
 			m.modStartAmount = sprites[m.spriteName].spr->defY;
-		if (m.mod == "shaderUniform")
-			m.modStartAmount = 0;
 		return;
 	}
 	if (m.mod == "drunk")
@@ -576,7 +574,10 @@ void ModManager::setModProperties(AppliedMod& m, float tween)
 		if (m.mod == "defPosY")
 			sprites[m.spriteName].spr->defY = std::lerp(m.modStartAmount, m.amount, tween);
 		if (m.mod == "shaderUniform")
+		{
+			shaders[m.shader]->GL_Use();
 			shaders[m.shader]->SetUniform(m.param, std::lerp(m.modStartAmount, m.amount, tween));
+		}
 		return;
 	}
 	if (m.mod == "drunk")
@@ -995,25 +996,15 @@ void ModManager::createFunctions()
 
 	});
 
-	lua->set_function("activateModUniform", [](std::string shader, std::string param, float tweenStart, float tweenLen, std::string easingFunc, float value)
+	lua->set_function("setShaderUniform", [](std::string shader, std::string param, float value)
 	{
 		if (!instance->shaders[shader])
 		{
 			consolePrint(shader + " doesn't exist!");
 			return;
 		}
-		AppliedMod aMod;
-		aMod.mod = "shaderUniform";
-		aMod.spriteName = shader;
-		aMod.tweenStart = tweenStart;
-		aMod.param = param;
-		aMod.tweenLen = tweenLen;
-		aMod.tweenCurve = Easing::getEasingFunction(easingFunc);
-		aMod.amount = value;
-		aMod.modStartAmount = -999;
-		aMod.pid = instance->curPid;
-
-		instance->appliedMods.push_back(aMod);
+		instance->shaders[shader]->GL_Use();
+		instance->shaders[shader]->SetUniform(param, value);
 	});
 
 	lua->set_function("getSpriteHeight", &getHeight);

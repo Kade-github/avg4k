@@ -92,9 +92,8 @@ ArrowEffects::Arrow ArrowEffects::ArrowEff(float ydiff, int col, float pos)
 
 	if (reverse[col] != 0)
 	{
-
-			a.cmod = a.cmod * ((reverse[col] * -2) + 1);
-			a.y += (500 - noteSize) * reverse[col];
+		a.cmod = a.cmod * ((reverse[col] * -2) + 1);
+		a.y += (500 - noteSize) * reverse[col];
 	}
 
 	if (rotz != 0)

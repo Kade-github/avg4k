@@ -292,7 +292,7 @@ void Steam::OnUploadedItemCallback(SubmitItemUpdateResult_t* result, bool bIOFai
     {
         if (result->m_eResult != k_EResultOK)
         {
-            Logging::writeLog("Failed to upload steam item." + (result->m_bUserNeedsToAcceptWorkshopLegalAgreement ? " User hasn't accepted the Eula for the workshop." : ""));
+            Logging::writeLog("Failed to upload steam item." + std::string((result->m_bUserNeedsToAcceptWorkshopLegalAgreement ? " User hasn't accepted the Eula for the workshop." : "")));
             Game::currentMenu->onSteam("failedItem");
             SteamUGC()->UnsubscribeItem(createdId);
             SteamUGC()->DeleteItem(createdId);

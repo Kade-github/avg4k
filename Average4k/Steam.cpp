@@ -4,11 +4,14 @@
 #include "Pack.h"
 #include "CPacketJoinServer.h"
 #include "Helpers.h"
+
+bool Steam::eulaAccepted = false;
+
 void Steam::InitSteam()
 {
     MUTATE_START
         SteamAPI_Init();
-
+    getEula();
     MUTATE_END
 }
 
@@ -89,6 +92,21 @@ void Steam::SetPresence(const char* presence)
     SteamFriends()->ClearRichPresence();
     SteamFriends()->SetRichPresence("gamestatus", presence);
     SteamFriends()->SetRichPresence("steam_display", "#Status");
+}
+
+void Steam::getEula()
+{
+    SteamAPICall_t call = SteamUGC()->GetWorkshopEULAStatus();
+    WorkshopEULACallback.Set(call, this, &Steam::OnWorkshopEULACallback);
+}
+
+void Steam::showEula()
+{
+    if (!SteamUGC()->ShowWorkshopEULA())
+    {
+        Logging::writeLog("User needs to accept the steam workshop eula, but I can't show it!");
+        Game::instance->showErrorWindow("Steam Error", "You need to accept the workshop eula!", false);
+    }
 }
 
 void Steam::OnName(SteamUGCQueryCompleted_t* result, bool bIOFailure)
@@ -471,6 +489,14 @@ std::string Steam::ReplaceString(std::string subject, const std::string& search,
         pos += replace.length();
     }
     return subject;
+}
+
+void Steam::OnWorkshopEULACallback(WorkshopEULAStatus_t* result, bool bIOFailure)
+{
+    if (result->m_nAppID != 1828580)
+        return;
+
+    eulaAccepted = !result->m_bNeedsAction;
 }
 
 void Steam::OnUGCQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFailure)

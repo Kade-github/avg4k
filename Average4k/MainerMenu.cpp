@@ -1404,15 +1404,23 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 						break;
 					}
 
-				if ((!chartUploading && (event.keysym.mod & KMOD_ALT)) || chartUploading)
+				if (Steam::eulaAccepted)
 				{
-					if (!mp3)
+					if ((!chartUploading && (event.keysym.mod & KMOD_ALT)) || chartUploading)
 					{
-						uploading = true;
-						Game::steam->createWorkshopItem();
+						if (!mp3)
+						{
+							uploading = true;
+							Game::steam->createWorkshopItem();
+						}
+						else
+							Game::showErrorWindow("This pack has MP3 Files!", "Please convert them to WAV/OGG to upload.", false);
 					}
-					else
-						Game::showErrorWindow("This pack has MP3 Files!","Please convert them to WAV/OGG to upload.", false);
+				}
+				else
+				{
+					Game::steam->showEula();
+					Game::instance->showErrorWindow("Steam", "Please accept the Steam Workshop EULA to upload!", false);
 				}
 			}
 			break;

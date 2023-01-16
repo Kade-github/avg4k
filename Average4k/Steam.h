@@ -42,6 +42,12 @@ public:
 
 	static void SetPresence(const char* presence);
 
+	static bool eulaAccepted;
+
+	void getEula();
+
+	void showEula();
+
 	void createWorkshopItem();
 	void uploadToItem(Chart* c, PublishedFileId_t id, std::string fileName);
 	void uploadPack(Pack* p, PublishedFileId_t id);
@@ -53,6 +59,9 @@ public:
 	char chartWorkshop[512];
 	static std::string ReplaceString(std::string subject, const std::string& search, const std::string& replace);
 private:
+	STEAM_CALLBACK(Steam, CallbackWorkshopEULA, WorkshopEULAStatus_t);
+	CCallResult<Steam, WorkshopEULAStatus_t> WorkshopEULACallback;
+	void OnWorkshopEULACallback(WorkshopEULAStatus_t* result, bool bIOFailure);
 	STEAM_CALLBACK(Steam, CallbackDownload, DownloadItemResult_t);
 	CCallResult<Steam, SteamUGCQueryCompleted_t> UGCQueryCallback;
 	void OnUGCQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFailure);

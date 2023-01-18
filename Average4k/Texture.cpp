@@ -26,7 +26,7 @@ Texture* Texture::createWithImage(std::string filePath)
 {
 	if (!validPng(filePath))
 	{
-		unsigned char c[] = { 255, 255, 255, 255 };
+		unsigned char c[] = { 0, 0, 0, 255 };
 		return new Texture(c, 1, 1);
 	}
 	Texture* t = stbi_h::stbi_load_file(filePath);
@@ -34,7 +34,7 @@ Texture* Texture::createWithImage(std::string filePath)
 
 	if (stbi_h::get_error())
 	{
-		unsigned char c[] = { 255, 255, 255, 255 };
+		unsigned char c[] = { 0, 0, 0, 255 };
 		delete t;
 		return new Texture(c, 1, 1);
 	}

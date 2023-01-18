@@ -145,6 +145,8 @@ void AvgContainer::draw() {
 		}
 	}
 
+	renderedScroll = scroll;
+
 
 	for (Object* b : below)
 	{

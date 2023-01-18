@@ -1527,6 +1527,12 @@ void MainerMenu::addPack(std::string name, texData bg, bool showText, bool isSte
 	obj->w = packContainer->w;
 	obj->h = 75;
 	packContainer->addObject(obj, "packInd" + packIndex);
+	if (packContainer->renderedScroll)
+		for (Object* o : packContainer->children)
+			o->w = 50;
+	else
+		for (Object* o : packContainer->children)
+			o->w = 75;
 	packIndex++;
 	VM_END
 }

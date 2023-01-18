@@ -22,7 +22,7 @@ public:
 	float scrollProg = 0;
 	float scrollAddition = 0;
 	float maxScroll = 0;
-
+	bool renderedScroll = false;
 	float drawX = 0;
 	float drawY = 0;
 

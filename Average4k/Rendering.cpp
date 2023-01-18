@@ -351,4 +351,4 @@ void Rendering::PushQuad(std::vector<GL_Vertex> vertices, Texture* tex, Shader* 
 		batch_buffer.push_back(vert);
 
 
-}
+} 

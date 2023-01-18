@@ -59,7 +59,6 @@ public:
 	char chartWorkshop[512];
 	static std::string ReplaceString(std::string subject, const std::string& search, const std::string& replace);
 private:
-	STEAM_CALLBACK(Steam, CallbackWorkshopEULA, WorkshopEULAStatus_t);
 	CCallResult<Steam, WorkshopEULAStatus_t> WorkshopEULACallback;
 	void OnWorkshopEULACallback(WorkshopEULAStatus_t* result, bool bIOFailure);
 	STEAM_CALLBACK(Steam, CallbackDownload, DownloadItemResult_t);

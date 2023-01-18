@@ -121,6 +121,10 @@ public:
 		obj->parent = this;
 		obj->create();
 		items.push_back(id);
+		if (id.obj->y > h || id.obj->y < 0) // yes!
+		{
+			renderedScroll = true;
+		}
 		return obj;
 	}
 

@@ -31,6 +31,7 @@ void ModEditor::resetSprites(bool resetAnchor)
 			value.spr->y = value.ogY;
 		}
 	}
+	manager.sprites["background"].stealth = 0.4;
 }
 
 

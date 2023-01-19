@@ -3,6 +3,20 @@
 #include "Game.h"
 //Constructors and destructor
 
+Texture* returnDoesNotExist()
+{
+	Texture* t = Noteskin::getMenuElement(Game::noteskin, "doesNotExist.png");
+	t->fromSTBI = true;
+
+	if (stbi_h::get_error())
+	{
+		unsigned char c[] = { 0, 0, 0, 255 };
+		delete t;
+		return new Texture(c, 1, 1);
+	}
+	return t;
+}
+
 // png file header 137 80 78 71 13 10 26 10
 
 bool validPng(std::string path)
@@ -26,8 +40,7 @@ Texture* Texture::createWithImage(std::string filePath)
 {
 	if (!validPng(filePath))
 	{
-		unsigned char c[] = { 0, 0, 0, 255 };
-		return new Texture(c, 1, 1);
+		return returnDoesNotExist();
 	}
 	Texture* t = stbi_h::stbi_load_file(filePath);
 	t->fromSTBI = true;

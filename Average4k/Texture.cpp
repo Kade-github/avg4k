@@ -1,6 +1,7 @@
 #include "stbi.h"
 #include "Rendering.h"
 #include "Game.h"
+#include "imageinfo.hpp"
 //Constructors and destructor
 
 Texture* returnDoesNotExist()
@@ -17,28 +18,23 @@ Texture* returnDoesNotExist()
 	return t;
 }
 
-// png file header 137 80 78 71 13 10 26 10
-
-bool validPng(std::string path)
+bool validImage(std::string path)
 {
-	std::fstream s(path);
-	if (s.bad())
+	FILE* file = fopen(path.c_str(), "rb");
+	auto imageInfo = getImageInfo<IIFileReader>(file);
+	fclose(file);
+
+	if (imageInfo.getErrorCode() != II_ERR_OK || (imageInfo.getFormat() != II_FORMAT_PNG && imageInfo.getFormat() != II_FORMAT_JPEG))
+	{
+		Logging::writeLog("Failure to open file " + path + ", " + (imageInfo.getErrorMsg() != "Ok" ? std::string(imageInfo.getErrorMsg()) + ", " : "") + "Format: " + std::string(imageInfo.getExt()) + " (We only support JPEG/PNG's)");
 		return false;
-
-	// read the data
-	char buff[8 + 1]{ 0 };
-	s.read(buff, 8);
-
-	std::string st = std::string(buff);
-
-	if (!st.starts_with("‰PNG"))
-		return false;
+	}
 	return true;
 }
 
 Texture* Texture::createWithImage(std::string filePath)
 {
-	if (!validPng(filePath))
+	if (!validImage(filePath))
 	{
 		return returnDoesNotExist();
 	}

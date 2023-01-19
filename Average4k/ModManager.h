@@ -35,6 +35,9 @@ struct SpriteMod {
 	float ogX = 0;
 	float ogY = 0;
 
+	float skewX = 0;
+	float skewY = 0;
+
 	float movex;
 	float movey;
 	float mini = 0.5;

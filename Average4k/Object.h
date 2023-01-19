@@ -87,5 +87,27 @@ public:
 
 	virtual void setX(float x);
 	virtual void setY(float y);
+
+	/// <summary>
+	/// Expensive function for setting an object to the back of the childrens vector.
+	/// Expensive because it preserves the item order of the vector.
+	/// </summary>
+	/// <param name="obj">The object to send to the back</param>
+	virtual void setBack(Object* obj)
+	{
+		int index = -1;
+
+		for (int i = 0; i < children.size(); i++)
+		{
+			if (children[i]->id == obj->id)
+				index = i;
+		}
+
+		if (index != -1)
+		{
+			auto it = children.begin() + index;
+			std::rotate(it, it + 1, children.end()); // preserves item order, o(n)/
+		}
+	}
 };
 

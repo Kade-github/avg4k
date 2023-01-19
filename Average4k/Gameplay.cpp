@@ -501,8 +501,6 @@ void Gameplay::create() {
 		background->h = Game::gameHeight;
 
 		background->alpha = Game::save->GetDouble("Background Transparency");
-
-		add(background);
 	}
 
 	Playfield* p = NULL;
@@ -535,6 +533,7 @@ void Gameplay::create() {
 			spriteField->w = Game::gameWidth;
 			spriteField->h = Game::gameHeight;
 			spriteField->flip = true;
+			manager.spriteCamera->add(background);
 			add(manager.spriteCamera);
 			manager.spriteCamera->fuckingNo = true;
 			add(spriteField);
@@ -543,6 +542,8 @@ void Gameplay::create() {
 	else
 	{
 		ModManager::doMods = false;
+
+		add(background);
 	}
 
 
@@ -788,6 +789,22 @@ void Gameplay::create() {
 
 	if (ModManager::doMods)
 	{
+		background->alpha = 0.6;
+		SpriteMod mod3;
+		mod3.anchor = "";
+		mod3.confusion = 0;
+		mod3.finish = "";
+		mod3.movex = 0;
+		mod3.movey = 0;
+		mod3.offsetX = 0;
+		mod3.offsetY = 0;
+		mod3.stealth = 0.4;
+		mod3.mini = 0.5;
+		mod3.spr = background;
+		mod3.notModCreated = true;
+		mod3.def = background;
+		manager.sprites["background"] = mod3;
+
 		SpriteMod mod;
 		mod.anchor = "";
 		mod.confusion = 0;

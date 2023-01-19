@@ -758,6 +758,9 @@
     <ClInclude Include="Logging.h">
       <Filter>Source Files\Average4k\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="imageinfo.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Average4k.rc">

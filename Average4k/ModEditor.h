@@ -35,6 +35,7 @@ public:
 
 	AvgSprite* playField;
 	AvgSprite* spriteField;
+	AvgSprite* background;
 
 	float startTime = 0;
 

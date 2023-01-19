@@ -121,6 +121,8 @@ void ArrowEffects::resetEffects()
 	ArrowEffects::drunkCol = { {0,0}, {1,0}, {2,0}, {3,0} };
 	ArrowEffects::waveCol = { {0,0}, {1,0}, {2,0}, {3,0} };
 	ArrowEffects::tipsyCol = { {0,0}, {1,0}, {2,0}, {3,0} };
+	ArrowEffects::skewX = { {0,0}, {1,0}, {2,0}, {3,0} };
+	ArrowEffects::skewY = { {0,0}, {1,0}, {2,0}, {3,0} };
 	ArrowEffects::miniCol = { {0,0.5}, {1,0.5}, {2,0.5}, {3,0.5} };
 	ArrowEffects::drunk = 0;
 	ArrowEffects::wave = 0;

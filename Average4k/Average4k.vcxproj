@@ -518,6 +518,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
     <ClInclude Include="Gameplay.h" />
     <ClInclude Include="GL.h" />
     <ClInclude Include="Helpers.h" />
+    <ClInclude Include="imageinfo.hpp" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="ImGuiFileDialog.h" />

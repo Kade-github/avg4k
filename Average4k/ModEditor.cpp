@@ -95,7 +95,18 @@ void ModEditor::create()
 	playField->flip = true;
 	playField->dontDelete = true;
 	gameplay->fuckingNo = true;
-;
+
+	std::string bg = currentChart->meta.folder + "/" + currentChart->meta.background;
+
+	background = new AvgSprite(0, 0, bg);
+
+	if (background->tex->fromSTBI)
+	{
+		background->w = Game::gameWidth;
+		background->h = Game::gameHeight;
+
+		background->alpha = 0.6;
+	}
 
 	if (!manager.killed)
 	{
@@ -104,14 +115,32 @@ void ModEditor::create()
 		spriteField->h = Game::gameHeight;
 		spriteField->flip = true;
 		spriteField->dontDelete = true;
+		manager.spriteCamera->add(background);
 		add(manager.spriteCamera);
 		manager.spriteCamera->fuckingNo = true;
 		add(spriteField);
 	}
 
+
+
 	add(gameplay);
 
 	add(playField);
+
+	SpriteMod mod3;
+	mod3.anchor = "";
+	mod3.confusion = 0;
+	mod3.finish = "";
+	mod3.movex = 0;
+	mod3.movey = 0;
+	mod3.offsetX = 0;
+	mod3.offsetY = 0;
+	mod3.stealth = 0.4;
+	mod3.mini = 0.5;
+	mod3.spr = background;
+	mod3.notModCreated = true;
+	mod3.def = background;
+	manager.sprites["background"] = mod3;
 
 	SpriteMod mod;
 	mod.anchor = "";
@@ -237,6 +266,7 @@ void ModEditor::refresh()
 	manager.shaders.clear();
 	if (!manager.killed)
 	{
+		manager.spriteCamera->removeObj(background);
 		removeObj(spriteField);
 		delete spriteField;
 		removeObj(manager.spriteCamera);
@@ -247,6 +277,18 @@ void ModEditor::refresh()
 		delete p;
 	}
 	playfields.clear();
+	Chart* currentChart = FuckinEditor::selectedChart;
+
+	std::string bg = currentChart->meta.folder + "/" + currentChart->meta.background;
+
+	background = new AvgSprite(0, 0, bg);
+
+	if (background->tex->fromSTBI)
+	{
+		background->w = Game::gameWidth;
+		background->h = Game::gameHeight;
+		background->alpha = 0.6;
+	}
 
 	Playfield* p = new Playfield(
 		(640 - ((64 * Game::save->GetDouble("Note Size") + 12) * 2)), 60, gameplay);
@@ -254,7 +296,6 @@ void ModEditor::refresh()
 	playfields.push_back(p);
 
 
-	Chart* currentChart = FuckinEditor::selectedChart;
 
 	difficulty diff = currentChart->meta.difficulties[FuckinEditor::currentDiff];
 
@@ -289,10 +330,29 @@ void ModEditor::refresh()
 		spriteField->w = Game::gameWidth;
 		spriteField->h = Game::gameHeight;
 		spriteField->flip = true;
+		manager.spriteCamera->add(background);
 		add(manager.spriteCamera);
 		manager.spriteCamera->fuckingNo = true;
 		add(spriteField);
 	}
+
+	playField->drawLast = true;
+
+	SpriteMod mod3;
+	mod3.anchor = "";
+	mod3.confusion = 0;
+	mod3.finish = "";
+	mod3.movex = 0;
+	mod3.movey = 0;
+	mod3.offsetX = 0;
+	mod3.offsetY = 0;
+	mod3.stealth = 0.4;
+	mod3.mini = 0.5;
+	mod3.spr = background;
+	mod3.notModCreated = true;
+	mod3.def = background;
+	manager.sprites["background"] = mod3;
+
 
 	SpriteMod mod;
 	mod.anchor = "";

@@ -1789,6 +1789,12 @@ void FuckinEditor::keyDown(SDL_KeyboardEvent event)
 	{
 		if (FuckinEditor::selectedChart)
 			FuckinEditor::selectedChart->destroy();
+		if (song)
+		{
+			song->stop();
+			song->free();
+		}
+
 		notes.clear();
 		sideStuff.clear();
 		Game::useImGUI = false;

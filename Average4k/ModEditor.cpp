@@ -644,6 +644,8 @@ void ModEditor::keyDown(SDL_KeyboardEvent ev)
 {
 	if (ev.keysym.sym == SDLK_ESCAPE)
 	{
+		song->stop();
+		song->free();
 		resetSprites(true);
 		FuckinEditor::dontDeleteChart = true;
 		Game::instance->transitionToMenu(new FuckinEditor());

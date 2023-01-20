@@ -1074,12 +1074,8 @@ void ModManager::createFunctions()
 		}
 	});
 
-	lua->set_function("setFontFolder", [](std::string folder) {
-		instance->fontFolder = instance->assetPath + "/" + folder + "/";
-	});
-
 	lua->set_function("createText", [](std::string name, std::string font, std::string initialText, int size, int x, int y) {
-		Text* t = new Text(x, y, initialText, size, font, instance->fontFolder);
+		Text* t = new Text(x, y, initialText, size, font);
 		instance->texts[name] = t;
 		instance->spriteCamera->add(t);
 	});

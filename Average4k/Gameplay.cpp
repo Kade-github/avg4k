@@ -1523,6 +1523,8 @@ void Gameplay::cleanUp()
 	//if (background)
 	//	SDL_DestroyTexture(background);
 
+	Font::ClearAll();
+
 	MUTATE_END
 }
 

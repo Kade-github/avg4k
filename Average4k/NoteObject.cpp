@@ -471,6 +471,20 @@ void NoteObject::draw() {
                     if (i != 0 && bodies.size() != 0)
                     {
                         holdBody& lB = bodies.back();
+                        // need to test if this fucks up sideways splines, but im too lazy to test
+                        /*if (i == amountToDraw - 1)
+                        {
+                            if (downscroll)
+                            {
+                                lefty -= 32 * size;
+                                righty -= 32 * size;
+                            }
+                            else
+                            {
+                                lefty += 32 * size;
+                                righty += 32 * size;
+                            }
+                        }*/
                         if (!downscroll || sparrow)
                             lB.verts.push_back({ leftx, lefty,
                                 0, -1,

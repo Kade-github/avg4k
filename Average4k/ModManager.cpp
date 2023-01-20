@@ -1074,6 +1074,45 @@ void ModManager::createFunctions()
 		}
 	});
 
+	lua->set_function("setFontFolder", [](std::string folder) {
+		instance->fontFolder = instance->assetPath + "/" + folder + "/";
+	});
+
+	lua->set_function("createText", [](std::string name, std::string font, std::string initialText, int size, int x, int y) {
+		Text* t = new Text(x, y, initialText, size, font, instance->fontFolder);
+		instance->texts[name] = t;
+		instance->spriteCamera->add(t);
+	});
+
+	lua->set_function("setText", [](std::string name, std::string text) {
+		if (instance->texts[name] == NULL)
+		{
+			consolePrint("Couldn't find text " + name);
+			return;
+		}
+		instance->texts[name]->setText(text);
+	});
+
+	lua->set_function("setTextPos", [](std::string name, int x, int y) {
+		if (instance->texts[name] == NULL)
+		{
+			consolePrint("Couldn't find text " + name);
+			return;
+		}
+		instance->texts[name]->x = x;
+		instance->texts[name]->y = y;
+	});
+
+	lua->set_function("freeText", [](std::string name) {
+		if (instance->texts[name] == NULL)
+		{
+			consolePrint("Couldn't find text " + name);
+			return;
+		}
+		instance->spriteCamera->removeObj(instance->texts[name]);
+		instance->texts.erase(name);
+	});
+
 	lua->set_function("dom", [](sol::function f, float beat) {
 		FunctionMod m;
 		m.toCall = f;

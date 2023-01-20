@@ -264,6 +264,12 @@ void ModEditor::refresh()
 	{
 		delete s.second;
 	}
+
+	for (const auto& s : manager.texts)
+	{
+		manager.spriteCamera->removeObj(s.second);
+	}
+	manager.texts.clear();
 	manager.shaders.clear();
 	if (!manager.killed)
 	{

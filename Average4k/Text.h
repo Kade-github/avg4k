@@ -92,6 +92,27 @@ public:
 		setText(temp);
 	};
 
+	Text(int x, int y, std::string temp, int _size, std::string fontName, std::string folder) : Object(x, y) {
+		ogFont = fontName;
+		curFont = fontName;
+		Arial = Font::getFontByName(fontName, folder, _size);
+		TTF_SetFontHinting(Arial, TTF_HINTING_LIGHT);
+		this->text = temp;
+		this->w = w;
+		this->h = h;
+		this->rW = w;
+		this->rH = h;
+		size = _size;
+		font = fontName;
+		border = false;
+		scale = 1;
+		alpha = 1;
+
+		color = { 255,255,255 };
+
+		setText(temp);
+	};
+
 	virtual void setAlpha(float _alpha)
 	{
 		alpha = _alpha;

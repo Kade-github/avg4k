@@ -94,7 +94,11 @@ public:
 
 	std::map<std::string, Shader*> shaders;
 
+	std::string fontFolder = "assets/graphical/fonts/";
+
 	std::vector<FunctionMod> funcMod;
+
+	std::map<std::string, Text*> texts;
 
 	std::vector<AppliedMod> appliedMods;
 

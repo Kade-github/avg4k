@@ -650,6 +650,7 @@ void ModEditor::keyDown(SDL_KeyboardEvent ev)
 {
 	if (ev.keysym.sym == SDLK_ESCAPE)
 	{
+		Font::ClearAll();
 		song->stop();
 		song->free();
 		resetSprites(true);

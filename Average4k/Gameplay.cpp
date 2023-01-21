@@ -1381,6 +1381,9 @@ void Gameplay::update(Events::updateEvent event)
 						float startTime = MainerMenu::currentSelectedSong.getTimeFromBeat(note->beat, MainerMenu::currentSelectedSong.getSegmentFromBeat(note->beat));
 						float endTime = MainerMenu::currentSelectedSong.getTimeFromBeat(note->endBeat, MainerMenu::currentSelectedSong.getSegmentFromBeat(note->endBeat));
 
+						if (botplay)
+							starthold[note->lane] = positionInSong;
+
 						if ((startTime < positionInSong + Judge::hitWindows[2] && positionInSong < endTime + Judge::hitWindows[2]) && startTime < starthold[note->lane] + Judge::hitWindows[2])
 						{
 							note->holdPerc = beat / note->endBeat;

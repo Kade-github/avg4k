@@ -4,8 +4,6 @@
 
 SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
 
-    MUTATE_START
-
         if (path.find("\\") != std::string::npos)
             path.replace(path.find("\\"), sizeof("\\") - 1, "/");
 
@@ -339,9 +337,7 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
     else
         dontUse = true;
 
-    meta.hash = Helpers::setHash(lines);
 
-    MUTATE_END
 }
 
 float getSmallestSnap(std::vector<note> notes)

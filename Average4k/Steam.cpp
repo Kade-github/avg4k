@@ -322,7 +322,7 @@ void Steam::populateWorkshopItems(int page) {
 
 void Steam::OnUGCAllQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFailure)
 {
-    MUTATE_START
+
     downloadedList.clear();
     for (int i = 0; i < result->m_unNumResultsReturned; i++)
     {
@@ -350,7 +350,6 @@ void Steam::OnUGCAllQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFail
             downloadedList.push_back(i);
         }
     }
-    MUTATE_END
 }
 
 // get subscribe

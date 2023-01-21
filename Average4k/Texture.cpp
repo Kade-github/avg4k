@@ -21,6 +21,9 @@ Texture* returnDoesNotExist()
 bool validImage(std::string path)
 {
 	FILE* file = fopen(path.c_str(), "rb");
+	if (file == NULL)
+		return false;
+
 	auto imageInfo = getImageInfo<IIFileReader>(file);
 	fclose(file);
 

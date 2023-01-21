@@ -16,7 +16,7 @@ public:
 
 	bool online;
 
-	MSGPACK_DEFINE_MAP(accuracy, username, steamid);
+	MSGPACK_DEFINE_MAP(noteTiming, accuracy, username, steamid);
 };
 
 class Leaderboard {

@@ -114,6 +114,8 @@ class Gameplay :
 		Pixel lightestColor;
 		Pixel darkestColor;
 
+		std::vector<float> starthold = {0,0,0,0};
+
 		std::vector<NoteObject*> spawnedNotes;
 
 		std::vector<float> clapped;

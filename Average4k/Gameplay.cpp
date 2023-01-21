@@ -1372,7 +1372,7 @@ void Gameplay::update(Events::updateEvent event)
 						float startTime = MainerMenu::currentSelectedSong.getTimeFromBeat(note->beat, MainerMenu::currentSelectedSong.getSegmentFromBeat(note->beat));
 						float endTime = MainerMenu::currentSelectedSong.getTimeFromBeat(note->endBeat, MainerMenu::currentSelectedSong.getSegmentFromBeat(note->endBeat));
 
-						if (startTime < positionInSong + Judge::hitWindows[2] && positionInSong < endTime + Judge::hitWindows[2])
+						if ((startTime < positionInSong + Judge::hitWindows[2] && positionInSong < endTime + Judge::hitWindows[2]) && startTime < starthold[note->lane] + Judge::hitWindows[2])
 						{
 							note->holdPerc = beat / note->endBeat;
 							if (holding[note->lane] || (botplay && startTime < positionInSong && positionInSong < endTime)) // holding that lane!
@@ -1661,7 +1661,7 @@ void Gameplay::keyDown(SDL_KeyboardEvent event)
 			{
 				keys[control.lane] = true;
 				holding[control.lane] = true;
-
+				starthold[control.lane] = positionInSong;
 			}
 			else
 				continue;

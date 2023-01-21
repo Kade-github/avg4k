@@ -297,7 +297,7 @@ void endTrans()
 }
 void selectedSongCallback(int sId)
 {
-	MUTATE_START
+	
 	MainerMenu::packSongIndex = sId;
 	if (MainerMenu::selected.songs.size() == 0)
 		return;
@@ -612,7 +612,7 @@ void selectedSongCallback(int sId)
 
 	moreInf->addObject(graph, "hitGraph");
 
-	MUTATE_END
+	
 }
 
 void MainerMenu::create()
@@ -976,7 +976,7 @@ void MainerMenu::create()
 void MainerMenu::update(Events::updateEvent ev)
 {
 
-	MUTATE_START
+	
 
 	Channel* ch = SoundManager::getChannelByName("prevSong");
 
@@ -1210,13 +1210,13 @@ void MainerMenu::update(Events::updateEvent ev)
 			((Text*)cont->findItemByName("diff"))->centerX();
 		}
 	}
-	MUTATE_END
+	
 }
 
 
 void updateDiff()
 {
-	MUTATE_START
+	
 	AvgContainer* cont = (AvgContainer*)MainerMenu::soloContainer->findItemByName("songContainer");
 	if (!cont) // lol
 		return;
@@ -1311,13 +1311,13 @@ void updateDiff()
 	}
 	else
 		updateLeaderboard(convertLocalToOnline(scores), false);
-	MUTATE_END
+	
 }
 
 
 void MainerMenu::keyDown(SDL_KeyboardEvent event)
 {
-	MUTATE_START
+	
 	switch (event.keysym.sym)
 	{
 	case SDLK_TAB:
@@ -1512,7 +1512,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 		break;
 	}
 
-	MUTATE_END
+	
 }
 
 
@@ -2082,7 +2082,7 @@ void MainerMenu::postUpdate(Events::updateEvent ev)
 
 void MainerMenu::clearPacks()
 {
-	MUTATE_START
+	
 	stop = true;
 	packIndex = 0;
 	AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");
@@ -2092,12 +2092,12 @@ void MainerMenu::clearPacks()
 		delete obj;
 	}
 	packContainer->items.clear();
-	MUTATE_END
+	
 }
 
 void MainerMenu::selectPack(int index)
 {
-	MUTATE_START
+	
 	AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");
 	int ind = 0;
 
@@ -2113,7 +2113,7 @@ void MainerMenu::selectPack(int index)
 
 		ind++;
 	}
-	MUTATE_END	
+		
 }
 
 void transContainerThing()
@@ -2477,7 +2477,7 @@ void MainerMenu::cleanLobby()
 
 void MainerMenu::selectContainer(int container)
 {
-	MUTATE_START
+	
 
 	if ((!isHost && isInLobby && container == 0 && isTransDone) || cantSwitch)
 		return;
@@ -2565,12 +2565,12 @@ void MainerMenu::selectContainer(int container)
 		Tweening::TweenManager::createNewTween("movingContainer2", currentContainer, Tweening::tt_X, 750, Game::gameWidth, (Game::gameWidth / 2) - (currentContainer->w / 2), NULL, Easing::EaseOutCubic);
 	lastTrans = container;
 	selectedContainerIndex = container;
-	MUTATE_END
+	
 }
 
 void MainerMenu::leftMouseDown()
 {
-	MUTATE_START
+	
 	if (lobbyUp)
 		return;
 	int x, y;
@@ -2609,12 +2609,12 @@ void MainerMenu::leftMouseDown()
 			}
 		}
 	}
-	MUTATE_END
+	
 }
 
 void dropdown_callback(std::string set, std::string value)
 {
-	MUTATE_START
+	
 	if (set == "Fullscreen" || set == "Resolution")
 	{
 		std::vector<int> res = Game::save->ObtainResolution();
@@ -2652,13 +2652,12 @@ void dropdown_callback(std::string set, std::string value)
 	}
 
 	Game::save->Save();
-	MUTATE_END
+	
 }
 
 
 void MainerMenu::addSettings(std::string catNam, std::vector<setting> settings)
 {
-	VM_START
 	int startY = settingsContainer->findItemByName("searchBox")->y + 42 + (52 * catIndex);
 	int startX = settingsContainer->findItemByName("searchBox")->x;
 
@@ -2733,5 +2732,4 @@ void MainerMenu::addSettings(std::string catNam, std::vector<setting> settings)
 	}
 
 	lastHeight += (52 * settings.size()) + 52;
-	VM_END
 }

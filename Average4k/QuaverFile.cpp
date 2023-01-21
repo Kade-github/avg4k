@@ -276,8 +276,6 @@ chartMeta QuaverFile::returnChart(std::string path)
         meta.ext = Chart::split(meta.audio, '.')[1];
         std::transform(meta.ext.begin(), meta.ext.end(), meta.ext.begin(), Helpers::asciitolower);
 
-        meta.hash = Helpers::setHash(lines);
-
         //SMFile::SaveSM(meta, path + "/converted.sm", meta.chartOffset);
 
 

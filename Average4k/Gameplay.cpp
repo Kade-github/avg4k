@@ -1130,10 +1130,19 @@ void Gameplay::update(Events::updateEvent event)
 			submit.noteTiming = noteTimings;
 			submit.Order = 0;
 			submit.PacketType = eCPacketSubmitScore;
-			submit.hash = MainerMenu::selectedSong.c.meta.hash;
 
 			if ((MainerMenu::selected.isSteam || MainerMenu::selectedSong.isSteam))
+			{
+				std::string nHash = "";
+
+				for (note n : MainerMenu::selectedSong.c.meta.difficulties[MainerMenu::selectedDiffIndex].notes)
+				{
+					nHash += std::to_string(n.beat) + std::to_string(n.lane) + std::to_string(n.type);
+				}
+
+				submit.hash = Helpers::setHash(nHash);
 				Multiplayer::sendMessage<CPacketSubmitScore>(submit);
+			}
 
 			Game::instance->save->saveScore(noteTimings, accuracy, highestCombo, MainerMenu::currentSelectedSong.meta.songName, MainerMenu::currentSelectedSong.meta.artist, submit.ChartId, submit.chartIndex, MainerMenu::selectedDiffIndex);
 

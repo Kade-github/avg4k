@@ -56,8 +56,6 @@ OsuFile::OsuFile(std::string path)
 	meta.folder = path;
 	meta.difficulties = diffs;
 
-	meta.hash = Helpers::setHash(lines);
-
 	meta.ext = Chart::split(meta.audio, '.')[1];
 	std::transform(meta.ext.begin(), meta.ext.end(), meta.ext.begin(), Helpers::asciitolower);
 }

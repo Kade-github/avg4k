@@ -143,7 +143,7 @@ chartMeta QuaverFile::returnChart(std::string path)
                             firstBruh = std::stod(split[1]);
                             if (firstBruh < 0)
                                 firstBruh = 0;
-                            meta.chartOffset = firstBruh;
+                            meta.chartOffset = 0;
                         }
                         seg.startBeat = 0;
                         seg.startTime = (std::stod(split[1]));

@@ -20,9 +20,14 @@ Texture* returnDoesNotExist()
 
 bool validImage(std::string path)
 {
-	FILE* file = fopen(path.c_str(), "rb");
-	auto imageInfo = getImageInfo<IIFileReader>(file);
-	fclose(file);
+	std::ifstream file(path);
+	if (file.bad())
+	{
+		Logging::writeLog("Failure to open " + path + " it does not exist.");
+		return false;
+	}
+	file.close();
+	ImageInfo imageInfo = getImageInfo<IIFileStreamReader>(path.c_str());
 
 	if (imageInfo.getErrorCode() != II_ERR_OK || (imageInfo.getFormat() != II_FORMAT_PNG && imageInfo.getFormat() != II_FORMAT_JPEG))
 	{
@@ -36,7 +41,8 @@ Texture* Texture::createWithImage(std::string filePath)
 {
 	if (!validImage(filePath))
 	{
-		return returnDoesNotExist();
+		unsigned char c[] = { 0, 0, 0, 255 };
+		return new Texture(c, 1, 1);
 	}
 	Texture* t = stbi_h::stbi_load_file(filePath);
 	t->fromSTBI = true;

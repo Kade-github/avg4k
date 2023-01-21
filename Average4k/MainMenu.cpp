@@ -155,7 +155,6 @@ void MainMenu::onPacket(PacketType pt, char* data, int32_t length)
 // little helper for this shit
 bpmSegment getBPMSegmentFromChart(Chart chart)
 {
-	VM_START
 	Channel* ch = SoundManager::getChannelByName("prevSong");
 	if (ch->id == -1)
 	{
@@ -164,7 +163,6 @@ bpmSegment getBPMSegmentFromChart(Chart chart)
 	}
 	float pos = ch->getPos();
 	bpmSegment seg = chart.getSegmentFromTime(pos);
-	VM_END
 	return seg;
 }
 

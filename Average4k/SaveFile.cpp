@@ -123,7 +123,7 @@ std::string SaveFile::getPath()
 {
     PWSTR   docs;
 
-    HRESULT hr = SHGetKnownFolderPath(FOLDERID_Documents, 0, NULL, &docs);
+    HRESULT hr = SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, NULL, &docs);
 
 
     std::string bangerPath = "";
@@ -132,21 +132,11 @@ std::string SaveFile::getPath()
     if (SUCCEEDED(hr)) {
         std::wstring str = std::wstring(docs);
 
-        bangerPath = std::string(str.begin(), str.end()) + "/My Games/";
+        bangerPath = std::string(str.begin(), str.end()) + "/Average4K/";
 
-        if (CreateDirectory(Helpers::s2ws((bangerPath)).c_str(), NULL) || ERROR_ALREADY_EXISTS == GetLastError())
-        {
-            bangerPath.append("/Average4K/");
-            if (CreateDirectory(Helpers::s2ws((bangerPath)).c_str(), NULL) || ERROR_ALREADY_EXISTS == GetLastError())
-            {
-                // too lazy
-            }
-            else
-            {
-                bangerPath = "/data/";
-            }
-        }
-        else
+        CreateDirectory(Helpers::s2ws((bangerPath)).c_str(), NULL);
+
+        if (GetLastError() != ERROR_ALREADY_EXISTS && GetLastError() != ERROR_SUCCESS)
         {
             bangerPath = "/data/";
         }
@@ -169,7 +159,7 @@ void SaveFile::saveScore(std::map<float, float> noteTimings, float acc, int comb
 
     std::string p = getPath();
 
-    CreateDirectory(Helpers::s2ws((p + "scores")).c_str(), NULL); // this will create a directory and if it already exists, it will do nothing.
+    CreateDirectory(Helpers::s2ws((p + "scores/")).c_str(), NULL); // this will create a directory and if it already exists, it will do nothing.
 
     std::ofstream of(p + "scores/" + name + "-" + artist + "-" + std::to_string(std::time(0)) + ".avgScore", std::ios::binary | std::ios::out);
 

@@ -17,7 +17,6 @@ bool note_sort(note const& lhs, note const& rhs) {
 
 chartMeta QuaverFile::returnChart(std::string path)
 {
-    MUTATE_START
         meta.folder = path;
     meta.chartType = 1;
 
@@ -281,7 +280,6 @@ chartMeta QuaverFile::returnChart(std::string path)
 
         //SMFile::SaveSM(meta, path + "/converted.sm", meta.chartOffset);
 
-        MUTATE_END
 
         return meta;
     }

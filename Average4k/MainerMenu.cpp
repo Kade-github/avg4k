@@ -628,7 +628,6 @@ void MainerMenu::create()
 
 	isTransDone = true;
 	fetchingScores = false;
-	VM_START
 	isInMainerMenu = true;
 	shad = new Shader();
 
@@ -972,8 +971,6 @@ void MainerMenu::create()
 	{
 		obj->isActive = false;
 	}
-
-	VM_END
 }
 
 void MainerMenu::update(Events::updateEvent ev)
@@ -1521,7 +1518,6 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 
 void MainerMenu::addPack(std::string name, texData bg, bool showText, bool isSteam)
 {
-	VM_START
 	Texture* background = Texture::loadTextureFromData(bg.data,bg.w,bg.h);
 	AvgContainer* packContainer = (AvgContainer*)soloContainer->findItemByName("packContainer");
 	PackObject* obj = NULL;
@@ -1536,7 +1532,6 @@ void MainerMenu::addPack(std::string name, texData bg, bool showText, bool isSte
 		for (Object* o : packContainer->above)
 			o->w = packContainer->w;
 	packIndex++;
-	VM_END
 }
 
 void MainerMenu::dropFile(SDL_DropEvent ev)

@@ -21,6 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+#include "Base64.h"
+
 #ifndef PICOSHA2_H
 #define PICOSHA2_H
 // picosha2:20140213
@@ -46,23 +48,6 @@ namespace picosha2 {
         inline byte_t mask_8bit(byte_t x) { return x & 0xff; }
 
         inline word_t mask_32bit(word_t x) { return x & 0xffffffff; }
-
-        const word_t add_constant[64] = {
-            0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1,
-            0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
-            0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786,
-            0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
-            0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147,
-            0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13,
-            0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85, 0xa2bfe8a1, 0xa81a664b,
-            0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
-            0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a,
-            0x5b9cca4f, 0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208,
-            0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2 };
-
-        const word_t initial_message_digest[8] = { 0x6a09e667, 0xbb67ae85, 0x3c6ef372,
-                                                  0xa54ff53a, 0x510e527f, 0x9b05688c,
-                                                  0x1f83d9ab, 0x5be0cd19 };
 
         inline word_t ch(word_t x, word_t y, word_t z) { return (x & y) ^ ((~x) & z); }
 
@@ -90,6 +75,7 @@ namespace picosha2 {
 
         template <typename RaIter1, typename RaIter2>
         void hash256_block(RaIter1 message_digest, RaIter2 first, RaIter2 last) {
+            VM_START
             assert(first + 64 == last);
             static_cast<void>(last);  // for avoiding unused-variable warning
             word_t w[64];
@@ -114,8 +100,16 @@ namespace picosha2 {
             word_t g = *(message_digest + 6);
             word_t h = *(message_digest + 7);
 
+            const char* add_constant_str = "mC+KQpFEN3HP+8C1pdu16VvCVjnxEfFZpII/ktVeHKuYqgfYAVuDEr6FMSTDfQxVdF2+cv6x3oCnBtybdPGbwcFpm+SGR77vxp3BD8yhDCRvLOktqoR0StypsFzaiPl2UlE+mG3GMajIJwOwx39Zv/ML4MZHkafVUWPKBmcpKRSFCrcnOCEbLvxtLE0TDThTVHMKZbsKanYuycKBhSxykqHov6JLZhqocItLwqNRbMcZ6JLRJAaZ1oU1DvRwoGoQFsGkGQhsNx5Md0gntbywNLMMHDlKqthOT8qcW/NvLmjugo90b2OleBR4yIQIAseM+v++kOtsUKT3o/m+8nhxxg==";
+           
+            std::string out_const;
+            
+            macaron::Base64::Decode(std::string(add_constant_str), out_const);
+
+            word_t* decrypted = (word_t*)out_const.data();
+
             for (std::size_t i = 0; i < 64; ++i) {
-                word_t temp1 = h + bsig1(e) + ch(e, f, g) + add_constant[i] + w[i];
+                word_t temp1 = h + bsig1(e) + ch(e, f, g) + decrypted[i] + w[i];
                 word_t temp2 = bsig0(a) + maj(a, b, c);
                 h = g;
                 g = f;
@@ -137,12 +131,14 @@ namespace picosha2 {
             for (std::size_t i = 0; i < 8; ++i) {
                 *(message_digest + i) = mask_32bit(*(message_digest + i));
             }
+            VM_END
         }
 
     }  // namespace detail
 
     template <typename InIter>
     void output_hex(InIter first, InIter last, std::ostream& os) {
+        VM_START
         os.setf(std::ios::hex, std::ios::basefield);
         while (first != last) {
             os.width(2);
@@ -151,13 +147,16 @@ namespace picosha2 {
             ++first;
         }
         os.setf(std::ios::dec, std::ios::basefield);
+        VM_END
     }
 
     template <typename InIter>
     void bytes_to_hex_string(InIter first, InIter last, std::string& hex_str) {
+        VM_START
         std::ostringstream oss;
         output_hex(first, last, oss);
         hex_str.assign(oss.str());
+        VM_END
     }
 
     template <typename InContainer>
@@ -184,14 +183,26 @@ namespace picosha2 {
         hash256_one_by_one() { init(); }
 
         void init() {
+            VM_START
             buffer_.clear();
             std::fill(data_length_digits_, data_length_digits_ + 4, word_t(0));
-            std::copy(detail::initial_message_digest,
-                detail::initial_message_digest + 8, h_);
+
+            const char* shitfuck = "Z+YJaoWuZ7ty8248OvVPpX9SDlGMaAWbq9mDHxnN4Fs=";
+
+            std::string out_const;
+
+            macaron::Base64::Decode(std::string(shitfuck), out_const);
+
+            word_t* decrypted = (word_t*)out_const.data();
+
+            std::copy(decrypted,
+                decrypted + 8, h_);
+            VM_END
         }
 
         template <typename RaIter>
         void process(RaIter first, RaIter last) {
+            VM_START
             add_to_data_length(static_cast<word_t>(std::distance(first, last)));
             std::copy(first, last, std::back_inserter(buffer_));
             std::size_t i = 0;
@@ -200,9 +211,11 @@ namespace picosha2 {
                     buffer_.begin() + i + 64);
             }
             buffer_.erase(buffer_.begin(), buffer_.begin() + i);
+            VM_END
         }
 
         void finish() {
+            VM_START
             byte_t temp[64];
             std::fill(temp, temp + 64, byte_t(0));
             std::size_t remains = buffer_.size();
@@ -220,6 +233,7 @@ namespace picosha2 {
 
             write_data_bit_length(&(temp[56]));
             detail::hash256_block(h_, temp, temp + 64);
+            VM_END
         }
 
         template <typename OutIter>

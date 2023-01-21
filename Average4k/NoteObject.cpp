@@ -126,7 +126,10 @@ void NoteObject::draw() {
         if (!Game::noteskin->disableQuant)
         {
 
-            float beatRow = (beat - stopOffset) * 48;
+            float realTime = wh + (currentChart->meta.proprietaryChartFormatOffset * 1000);
+            float realBeat = currentChart->getBeatFromTime(realTime, currentChart->getSegmentFromTime(realTime));
+
+            float beatRow = (realBeat - stopOffset) * 48;
 
             if (fmod(beatRow, (192 / 4)) == 0)
                 texture = Game::noteskin->fourth;

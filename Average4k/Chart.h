@@ -73,6 +73,7 @@ public:
 		std::vector<bpmSegment> bpms;
 		std::vector<stopSegment> stops;
 		std::vector<difficulty> difficulties;
+		float proprietaryChartFormatOffset = 0;
 		float chartOffset;
 		float start = 0;
 		int chartType = 0;

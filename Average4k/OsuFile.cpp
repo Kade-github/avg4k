@@ -197,6 +197,7 @@ difficulty OsuFile::generateDiff(std::string file, chartMeta* toAdd, std::string
 				{
 					seg.startBeat = 0;
 					toAdd->chartOffset = std::stof(timingpointData[0]);
+					toAdd->proprietaryChartFormatOffset = toAdd->chartOffset;
 				}
 
 				seg.endBeat = INT_MAX;

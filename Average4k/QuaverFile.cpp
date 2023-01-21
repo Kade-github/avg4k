@@ -144,6 +144,7 @@ chartMeta QuaverFile::returnChart(std::string path)
                             if (firstBruh < 0)
                                 firstBruh = 0;
                             meta.chartOffset = 0;
+                            meta.proprietaryChartFormatOffset = firstBruh / 1000;
                         }
                         seg.startBeat = 0;
                         seg.startTime = (std::stod(split[1]));

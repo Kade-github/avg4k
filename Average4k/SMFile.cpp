@@ -4,11 +4,6 @@
 
 SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
 
-        if (path.find("\\") != std::string::npos)
-            path.replace(path.find("\\"), sizeof("\\") - 1, "/");
-
-    std::ifstream infile(path);
-
     auto pathSplit = Chart::split(path, '/');
 
     meta.folder = folder;
@@ -344,10 +339,6 @@ float getSmallestSnap(std::vector<note> notes)
 {
     float smallestSnap = 1.0f;
 
-    if (notes.size() == 0)
-        return 1.0f;
-
-    for (note n : notes)
     {
         float beatRow = (n.beat) * 48;
 

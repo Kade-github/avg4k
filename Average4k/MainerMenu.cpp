@@ -2122,7 +2122,6 @@ void MainerMenu::selectPack(int index)
 void transContainerThing()
 {
 	MainerMenu* instance = (MainerMenu*)Game::currentMenu;
-	instance->selectedContainerIndex = transToContainer;
 	instance->isTransDone = true;
 	switch (despawn)
 	{
@@ -2485,7 +2484,6 @@ void MainerMenu::selectContainer(int container)
 
 	if ((!isHost && isInLobby && container == 0 && isTransDone) || cantSwitch)
 		return;
-
 	isTransDone = false;
 
 	if (container == 1 && !isInLobby)
@@ -2569,6 +2567,7 @@ void MainerMenu::selectContainer(int container)
 	else
 		Tweening::TweenManager::createNewTween("movingContainer2", currentContainer, Tweening::tt_X, 750, Game::gameWidth, (Game::gameWidth / 2) - (currentContainer->w / 2), NULL, Easing::EaseOutCubic);
 	lastTrans = container;
+	selectedContainerIndex = container;
 	MUTATE_END
 }
 

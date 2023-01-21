@@ -33,7 +33,7 @@ namespace macaron {
     public:
 
         static std::string Encode(const std::string data) {
-            VM_START
+            MUTATE_START
             char sEncodingTable[] = {
               'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
               'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
@@ -69,12 +69,12 @@ namespace macaron {
                 }
                 *p++ = '=';
             }
-            VM_END
+            MUTATE_END
             return ret;
         }
 
         static std::string Decode(const std::string& input, std::string& out) {
-            VM_START
+            MUTATE_START
             unsigned char kDecodingTable[] = {
               64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
               64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
@@ -115,7 +115,7 @@ namespace macaron {
                 if (j < out_len) out[j++] = (triple >> 1 * 8) & 0xFF;
                 if (j < out_len) out[j++] = (triple >> 0 * 8) & 0xFF;
             }
-            VM_END
+            MUTATE_END
             return "";
         }
 

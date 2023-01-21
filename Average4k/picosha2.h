@@ -49,6 +49,10 @@ namespace picosha2 {
 
         inline word_t mask_32bit(word_t x) { return x & 0xffffffff; }
 
+       
+
+
+
         inline word_t ch(word_t x, word_t y, word_t z) { return (x & y) ^ ((~x) & z); }
 
         inline word_t maj(word_t x, word_t y, word_t z) {

@@ -13,5 +13,5 @@ public:
 
 	std::string hash;
 
-	MSGPACK_DEFINE_MAP(chartIndex, diffIndex, ChartId, hash);
+	MSGPACK_DEFINE_MAP(noteTiming, chartIndex, diffIndex, ChartId, hash);
 };

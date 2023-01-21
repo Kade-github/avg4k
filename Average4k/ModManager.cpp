@@ -919,11 +919,39 @@ void ModManager::createFunctions()
 		return instance->setModProperties(mod, pid, col, amount);
 	});
 
+	lua->set_function("getSpriteFrame", [](std::string sprite) {
+		if (!instance->sprites[sprite].spr)
+		{
+			consolePrint("Couldn't find sprite " + sprite);
+			return -1;
+		}
+		return instance->sprites[sprite].spr->frame;
+	});
+
+	lua->set_function("getSpriteFinished", [](std::string sprite) {
+		if (!instance->sprites[sprite].spr)
+		{
+			consolePrint("Couldn't find sprite " + sprite);
+			return false;
+		}
+		return instance->sprites[sprite].spr->animationFinished;
+	});
+
 	lua->set_function("getSpriteMod", [](std::string sprite, std::string mod) {
+		if (!instance->sprites[sprite].spr)
+		{
+			consolePrint("Couldn't find sprite " + sprite);
+			return -1.0f;
+		}
 		return instance->getSpriteMod(sprite, mod);
 	});
 
 	lua->set_function("setSpriteMod", [](std::string sprite, std::string mod, float amount) {
+		if (!instance->sprites[sprite].spr)
+		{
+			consolePrint("Couldn't find sprite " + sprite);
+			return;
+		}
 		return instance->setSpriteMod(sprite, mod, amount);
 	});
 
@@ -1075,6 +1103,11 @@ void ModManager::createFunctions()
 	});
 
 	lua->set_function("createText", [](std::string name, std::string font, std::string initialText, int size, int x, int y) {
+		if (initialText.size() > 512)
+		{
+			consolePrint("Text character limit reached! " + std::to_string(initialText.size()) + "/512 on text object " + name);
+			return;
+		}
 		Text* t = new Text(x, y, initialText, size, font);
 		instance->texts[name] = t;
 		instance->spriteCamera->add(t);
@@ -1084,6 +1117,11 @@ void ModManager::createFunctions()
 		if (instance->texts[name] == NULL)
 		{
 			consolePrint("Couldn't find text " + name);
+			return;
+		}
+		if (text.size() > 512)
+		{
+			consolePrint("Text character limit reached! " + std::to_string(text.size()) + "/512 on text object " + name);
 			return;
 		}
 		instance->texts[name]->setText(text);
@@ -1125,6 +1163,16 @@ void ModManager::createFunctions()
 			return;
 		}
 		SpriteMod& m = instance->sprites[sprite];
+
+		if (prop == "frame")
+		{
+			m.spr->setFrame(std::stoi(val));
+		}
+
+		if (prop == "sheet")
+		{
+			m.spr->setSheet(std::stoi(val));
+		}
 
 		if (prop == "sparrow")
 		{

@@ -126,8 +126,20 @@ public:
 		h = tex->height;
 	}
 
+	bool isSheet = false;
+
+	void setSheet(int frameW)
+	{
+		isSheet = true;
+		sparrow = new AvgSparrow(tex->width, tex->height, frameW);
+		AvgFrame firstFrame = sparrow->animations.begin()->second.frames[0];
+		w = firstFrame.frameRect.w;
+		h = firstFrame.frameRect.h;
+	}
+
 	void setSparrow(std::string xml)
 	{
+		isSheet = false;
 		sparrow = new AvgSparrow(xml, tex->width, tex->height);
 		AvgFrame firstFrame = sparrow->animations.begin()->second.frames[0];
 		w = firstFrame.frameRect.w;
@@ -141,6 +153,11 @@ public:
 		sparrow->playAnim(name);
 		fps = _fps;
 		loop = _loop;
+	}
+
+	void setFrame(int frame)
+	{
+		animTime = (frame / fps) * 1000;
 	}
 
 	virtual void draw() {
@@ -194,7 +211,7 @@ public:
 				if (frame > size - maxFrame - 1)
 					frame = minFrame;
 			}
-			AvgFrame fr = sparrow->getRectFromFrame(frame);
+			AvgFrame fr = sparrow->getRectFromFrame(frame, isSheet);
 			srcRect = fr.srcRect;
 			dstRect.x = uX + ((fr.frameRect.x * scale) + mpx) + ofX;
 			dstRect.y = uY + ((fr.frameRect.y * scale) + mpy) + ofY;

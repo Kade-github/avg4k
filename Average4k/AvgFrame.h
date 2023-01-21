@@ -93,11 +93,27 @@ public:
 		return src;
 	}
 
-	AvgFrame getRectFromFrame(int frame)
+	AvgFrame getRectFromFrame(int frame, bool searchIndex = false)
 	{
+		AvgFrame src;
+		if (searchIndex)
+		{
+			int i = 0;
+			for (AvgFrame f : animations[currentAnim].frames)
+			{
+
+				if (i == frame)
+				{
+					src = f;
+					break;
+				}
+				i++;
+			}
+			return src;
+		}
 		char buffer[4];
 		left_fill_zeros(buffer, std::to_string(frame).c_str(), 4);
-		AvgFrame src;
+
 
 		if (framesToPlay.size() != 0)
 		{
@@ -155,7 +171,7 @@ public:
 			f.srcRect = { (i * tileW) / _w, 0, tileW / _w, 1};
 			f.name = "anim" + std::to_string(i);
 			f.numba = i;
-			f.frameRect = { 0,0,0,0 };
+			f.frameRect = { 0,0,tileW,_h };
 			anim.frames.push_back(f);
 		}
 		animations["anim"] = anim;

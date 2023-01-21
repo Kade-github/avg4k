@@ -250,7 +250,7 @@ void Game::queueNotif(std::string notif, bool clear)
 }
 
 void transCall() {
-	MUTATE_START
+	
 	Tweening::TweenManager::activeTweens.clear();
 	Game::currentMenu->removeAll();
 	Game::mainCamera->children.clear();
@@ -262,19 +262,19 @@ void transCall() {
 	Game::currentMenu->created = true;
 	__transRect->alpha = 0;
 	transCompleted = true;
-	MUTATE_END
+	
 }
 
 void Game::transitionToMenu(Menu* m)
 {
-	MUTATE_START
+	
 	transCompleted = false;
 	toGoTo = m;
 	Tweening::tweenCallback callback = (Tweening::tweenCallback)transCall;
 	transitioning = true;
 	Tweening::TweenManager::activeTweens.clear();
 	Tweening::TweenManager::createNewTween("_trans", __transRect, Tweening::tt_Alpha, 235, 0, 1, callback, Easing::EaseInSine, false);
-	MUTATE_END
+	
 }
 
 void Game::switchMenu(Menu* m)
@@ -404,7 +404,7 @@ int lastFPS = 0;
 
 void Game::update(Events::updateEvent update)
 {
-	MUTATE_START
+	
 	Rendering::drawBatch();
 	if (Multiplayer::connectedToServer)
 		SteamAPI_RunCallbacks();
@@ -769,7 +769,7 @@ void Game::update(Events::updateEvent update)
 	}
 
 	//SDL_RenderPresent(renderer);
-	MUTATE_END
+	
 }
 
 void Game::keyDown(SDL_KeyboardEvent ev)
@@ -778,7 +778,7 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 		return;
 	if (!currentMenu->created)
 		return;
-	MUTATE_START
+	
 	if (ev.keysym.sym == SDLK_ESCAPE && debug_takingInput)
 	{
 		debug_takingInput = false;
@@ -922,7 +922,7 @@ void Game::keyDown(SDL_KeyboardEvent ev)
 		for (Object* obj : mainCamera->children)
 			obj->keyDown(ev);
 
-	MUTATE_END
+	
 }
 
 void Game::keyUp(SDL_KeyboardEvent ev)
@@ -1007,10 +1007,10 @@ void Game::resizeGame(int w, int h, int fullscreen)
 //asd
 void Game::weGotPacket(Events::packetEvent p)
 {
-	MUTATE_START
+	
 	std::lock_guard<std::mutex> s(pog);
 	packetsToBeHandeld.push_back(p);
-	MUTATE_END
+	
 }
 
 void Game::createTexture(std::string filename, Texture* tex)

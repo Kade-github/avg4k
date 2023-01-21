@@ -53,7 +53,6 @@ const float min(const float a, const float b)
 
 void Gameplay::updateAccuracy(double hitWorth)
 {
-	MUTATE_START
 	notesPlayed++;
 	notesHit += hitWorth;
 	accuracy = ((notesHit / notesPlayed) * 100);
@@ -104,7 +103,6 @@ void Gameplay::updateAccuracy(double hitWorth)
 	Yke->setText("Bad: " + std::to_string(Yikes));
 	Mis->setText("Misses: " + std::to_string(Misses));
 
-	MUTATE_END
 }
 
 
@@ -925,7 +923,6 @@ float lastBPM = 0;
 
 void Gameplay::update(Events::updateEvent event)
 {
-	MUTATE_START
 
 	botplayHittingNote = false;
 
@@ -1478,7 +1475,6 @@ void Gameplay::update(Events::updateEvent event)
 		}
 	}
 
-	MUTATE_END
 }
 void Gameplay::postUpdate(Events::updateEvent ev)
 {

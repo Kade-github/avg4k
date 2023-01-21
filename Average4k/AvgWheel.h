@@ -89,7 +89,6 @@ public:
 
 	void setSongs(std::vector<Song> songs)
 	{
-		MUTATE_START
 		for (wheelObject& obj : wheelObjects)
 		{
 			if (obj.drawBanner)
@@ -131,7 +130,6 @@ public:
 			isDone = true;
 		});
 		t.detach();
-		MUTATE_END
 	}
 
 

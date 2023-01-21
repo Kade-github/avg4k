@@ -76,7 +76,6 @@ public:
 
 	void setText(bool de = false, bool include_ = true, bool checkForLong = false)
 	{
-		MUTATE_START
 		std::string todo = de ? def : type;
 
 		if (todo.size() == 0 && !include_)
@@ -98,13 +97,11 @@ public:
 		}
 		textPart->setText(todo + (include_ ? "_" : "") + suffix);
 	
-
-		MUTATE_END
 	}
 
 	void keyDown(SDL_KeyboardEvent ev)
 	{
-		MUTATE_START
+
 
 		if (typing && ev.keysym.sym == SDLK_RETURN)
 		{
@@ -175,12 +172,11 @@ public:
 		}
 
 
-		MUTATE_END
 	}
 
 	void textInput(SDL_TextInputEvent event)
 	{
-		MUTATE_START
+
 		if (typing && toModify.name != "Keybinds ")
 		{
 			if (unique)
@@ -233,12 +229,11 @@ public:
 			}
 			setText();
 		}
-		MUTATE_END
+
 	}
 
 	void mouseDown()
 	{
-		MUTATE_START
 		int _x, _y;
 		Game::GetMousePos(&_x, &_y);
 
@@ -289,7 +284,7 @@ public:
 			else
 				setText(false,false,true);
 		}
-		MUTATE_END
+
 	}
 
 	void draw()

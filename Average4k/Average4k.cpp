@@ -390,7 +390,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	int lastFramelimit = 0;
 
 	VM_END
-	MUTATE_START
 	while (run)
 	{
 		auto now_tick = Clock::now();
@@ -526,7 +525,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 
 	}
-	MUTATE_END
 
 	VM_START
 

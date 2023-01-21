@@ -55,7 +55,6 @@ void NoteObject::draw() {
 
     bool sparrow = Game::noteskin->sparrowImg;
 
-    MUTATE_START
     float position = rTime;
 
     float currentBeat = currentChart->getBeatFromTime(position, curSeg);
@@ -812,5 +811,4 @@ void NoteObject::draw() {
         dstRect.a = alpha;
     }
 
-    MUTATE_END
 }

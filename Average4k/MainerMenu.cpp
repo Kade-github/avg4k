@@ -1454,7 +1454,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 						delete lobbyShader;
 						cantSwitch = true;
 					}
-					else if (selectedSong.isSteam || selected.isSteam)
+					else if ((selectedSong.isSteam || selected.isSteam) && isTransDone)
 					{
 						selectContainer(1);
 						CPacketHostChangeChart chart;

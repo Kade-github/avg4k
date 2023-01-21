@@ -27,7 +27,7 @@ bool validImage(std::string path)
 		return false;
 	}
 	file.close();
-	ImageInfo imageInfo = getImageInfo<IIFileStreamReader>(path.c_str());
+	ImageInfo imageInfo = getImageInfo<IIFilePathReader>(path.c_str());
 
 	if (imageInfo.getErrorCode() != II_ERR_OK || (imageInfo.getFormat() != II_FORMAT_PNG && imageInfo.getFormat() != II_FORMAT_JPEG))
 	{

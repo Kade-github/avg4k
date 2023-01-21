@@ -1326,19 +1326,23 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 	case SDLK_TAB:
 		if (selectedContainerIndex == 0 && !fetchingScores && currentSelectedSong.meta.difficulties.size() != 0)
 		{
-			moreinfo = !moreinfo;
-
-			scrollLeaderboard = 0;
+	
 
 			AvgContainer* moreInf = (AvgContainer*)MainerMenu::soloContainer->findItemByName("moreInfo");
+			if (moreInf->items.size() > 1)
+			{
+				moreinfo = !moreinfo;
 
-			if (moreinfo)
-			{
-				Tweening::TweenManager::createNewTween("tab", moreInf, Tweening::TweenType::tt_X, 1000, moreInf->x, 0, NULL, Easing::EaseOutCubic);
-			}
-			else
-			{
-				Tweening::TweenManager::createNewTween("tab", moreInf, Tweening::TweenType::tt_X, 1000, moreInf->x, moreInf->w, NULL, Easing::EaseOutCubic);
+				scrollLeaderboard = 0;
+
+				if (moreinfo)
+				{
+					Tweening::TweenManager::createNewTween("tab", moreInf, Tweening::TweenType::tt_X, 1000, moreInf->x, 0, NULL, Easing::EaseOutCubic);
+				}
+				else
+				{
+					Tweening::TweenManager::createNewTween("tab", moreInf, Tweening::TweenType::tt_X, 1000, moreInf->x, moreInf->w, NULL, Easing::EaseOutCubic);
+				}
 			}
 		}
 		if (isInLobby && selectedContainerIndex == 1)

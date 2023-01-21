@@ -11,7 +11,6 @@ void Steam::InitSteam()
 {
     MUTATE_START
         SteamAPI_Init();
-    getEula();
     MUTATE_END
 }
 

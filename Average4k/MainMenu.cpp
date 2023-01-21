@@ -264,6 +264,7 @@ void MainMenu::keyDown(SDL_KeyboardEvent event)
 		return;
 	if (event.keysym.sym == SDLK_RETURN && !tweenDone && Multiplayer::loggedIn)
 	{
+		Game::steam->getEula();
 		tweenDone = true;
 		Tweening::TweenManager::createNewTween("hello", hello, Tweening::tt_Alpha, 600, 1, 0, NULL, Easing::EaseInSine);
 		Tweening::TweenManager::createNewTween("bottom", bottom, Tweening::tt_Alpha, 600, 1, 0, NULL, Easing::EaseInSine);

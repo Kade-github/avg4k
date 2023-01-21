@@ -231,6 +231,8 @@ std::vector<scoreHeader> SaveFile::getScores(std::string name, std::string artis
 
     std::string p = getPath();
 
+    CreateDirectory(Helpers::s2ws((p + "scores/")).c_str(), NULL); // this will create a directory and if it already exists, it will do nothing.
+
     for (const auto& entry : std::filesystem::directory_iterator(p + "scores"))
     {
         std::string s = entry.path().string();

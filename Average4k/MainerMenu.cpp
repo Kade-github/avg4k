@@ -1326,8 +1326,6 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 	case SDLK_TAB:
 		if (selectedContainerIndex == 0 && !fetchingScores && currentSelectedSong.meta.difficulties.size() != 0)
 		{
-	
-
 			AvgContainer* moreInf = (AvgContainer*)MainerMenu::soloContainer->findItemByName("moreInfo");
 			if (moreInf->items.size() > 1)
 			{

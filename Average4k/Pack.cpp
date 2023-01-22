@@ -88,12 +88,14 @@ void SongGather::gatherPacksAsync()
 						if (split[0] == "packName")
 						{
 							p.packName = end;
-							currentPack = p.packName;
+							
 						}
 						if (split[0] == "showName")
 							p.showName = (end == "false" ? false : true);
 					}
 					fs.close();
+
+					currentPack = p.packName;
 
 					std::vector<Song> songs = gatherSongsInFolder(entry.path().string() + "/");
 
@@ -146,25 +148,27 @@ void SongGather::gatherPacksAsync()
 
 				while (std::getline(fs, str))
 				{
-					if (str.starts_with("#"))
-						continue;
-					std::vector<std::string> split = Chart::split(str, ':');
-					std::string end = split[1].erase(0, 1);
-					if (split[0] == "banner")
+					if (!str.starts_with("#"))
 					{
-						p.background = folder + "/" + end;
-						p.banner = Texture::getTextureData(p.background);
-						p.hasBanner = true;
+						std::vector<std::string> split = Chart::split(str, ':');
+						std::string end = split[1].erase(0, 1);
+						if (split[0] == "banner")
+						{
+							p.background = folder + "/" + end;
+							p.banner = Texture::getTextureData(p.background);
+							p.hasBanner = true;
+						}
+						if (split[0] == "packName")
+						{
+							p.packName = end;
+						}
+						if (split[0] == "showName")
+							p.showName = (end == "false" ? false : true);
 					}
-					if (split[0] == "packName")
-					{
-						p.packName = end;
-						currentPack = p.packName;
-					}
-					if (split[0] == "showName")
-						p.showName = (end == "false" ? false : true);
 				}
 				fs.close();
+
+				currentPack = p.packName;
 
 				std::vector<Song> songs = gatherSongsInFolder(folder + "/");
 
@@ -187,10 +191,12 @@ void SongGather::gatherPacksAsync()
 				loaded++;
 			});
 
-			currentPack = "Workshop Songs";
 			loaded = 0;
 
+			currentPack = "Workshop Songs";
+
 			std::for_each(std::execution::par, copy.begin(), copy.end(), [](auto&& entry) {
+
 				steamItem st = entry;
 
 				if (st.isPackFolder)
@@ -264,17 +270,18 @@ Pack SongGather::gatherPack(std::string filePath, bool checkForMod, bool isSteam
 
 	while (std::getline(fs, str))
 	{
-		if (str.starts_with("#"))
-			continue;
-		std::vector<std::string> split = Chart::split(str, ':');
-		std::string end = split[1].erase(0, 1);
-		if (split[0] == "banner")
-			p.background = filePath + "/" + end;
-		if (split[0] == "packName")
-			p.packName = end;
-		if (split[0] == "showName")
-			p.showName = (end == "false" ? false : true);
-		p.isSteam = isSteam;
+		if (!str.starts_with("#"))
+		{
+			std::vector<std::string> split = Chart::split(str, ':');
+			std::string end = split[1].erase(0, 1);
+			if (split[0] == "banner")
+				p.background = filePath + "/" + end;
+			if (split[0] == "packName")
+				p.packName = end;
+			if (split[0] == "showName")
+				p.showName = (end == "false" ? false : true);
+			p.isSteam = isSteam;
+		}
 	}
 
 
@@ -297,68 +304,6 @@ Pack SongGather::gatherPack(std::string filePath, bool checkForMod, bool isSteam
 	return p;
 }
 
-std::vector<Pack> SongGather::gatherPacks()
-{
-	std::vector<Pack> packs;
-
-	std::vector<std::filesystem::directory_entry> dirs = std::vector<std::filesystem::directory_entry>();
-
-	for (const auto& entry : std::filesystem::directory_iterator("assets/charts/"))
-	{
-		dirs.push_back(entry);
-	}
-
-	std::for_each(std::execution::par, dirs.begin(), dirs.end(), [&packs](auto&& entry)
-	{
-		if (SongUtils::IsDirectory(entry.path()))
-		{
-			Pack p;
-
-			std::ifstream fs;
-			// meta
-			fs.open(entry.path().string() + "/pack.meta");
-
-			if (!fs.good())
-				return;
-
-			p.metaPath = entry.path().string() + "/pack.meta";
-
-			std::string str;
-
-			while (std::getline(fs, str))
-			{
-				if (str.starts_with("#"))
-					continue;
-				std::vector<std::string> split = Chart::split(str, ':');
-				std::string end = split[1].erase(0, 1);
-				if (split[0] == "banner")
-					p.background = entry.path().string() + "/" + end;
-				if (split[0] == "packName")
-					p.packName = end;
-				if (split[0] == "showName")
-					p.showName = (end == "false" ? false : true);
-			}
-
-
-			std::vector<Song> songs = gatherSongsInFolder(entry.path().string() + "/");
-
-			if (songs.size() == 0)
-				return;
-
-			for (Song s : songs)
-				p.songs.push_back(s);
-
-				packs.push_back(p);
-			
-		}
-	});
-	return packs;
-}
-
-std::vector<Song> SongGather::gatherNoPackSongs()
-{
-	return gatherSongsInFolder();
-}
 
 Chart SongGather::extractAndGetChart(std::string file)
 {
@@ -473,68 +418,48 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 							[](unsigned char c) { return std::tolower(c); });
 						if (SongUtils::ends_with(bruh, ".sm") || SongUtils::ends_with(bruh, ".ssc"))
 						{
-							smFiles.push_back(bruh);
-							break;
+							Song s;
+							SMFile file = SMFile(bruh, entry.path().string(), false);
+							s.c = Chart(file.meta);
+							s.path = bruh;
+							if (!file.dontUse)
+							{
+								lock.lock();
+								songs.push_back(s);
+								lock.unlock();
+								loaded++;
+							}
+
+							return;
 						}
 						if (SongUtils::ends_with(bruh, ".qua"))
 						{
-							quaverFiles.push_back(bruh);
-
-							break;
+							Song s;
+							QuaverFile file = QuaverFile();
+							chartMeta m = file.returnChart(entry.path().string());
+							s.c = Chart(m);
+							s.path = bruh;
+							if (m.difficulties.size() != 0)
+							{
+								lock.lock();
+								songs.push_back(s);
+								lock.unlock();
+								loaded++;
+							}
+							return;
 						}
 						if (SongUtils::ends_with(bruh, ".osu"))
 						{
-							osuFiles.push_back(bruh);
-							break;
-						}
-					}
-					if (smFiles.size() > 0)
-					{
-
-						Song s;
-						SMFile file = SMFile(smFiles[0], entry.path().string(), false);
-						s.c = Chart(file.meta);
-						s.path = smFiles[0];
-						if (!file.dontUse)
-						{
+							Song s;
+							OsuFile file = OsuFile(entry.path().string());
+							s.c = Chart(file.meta);
+							s.path = bruh;
 							lock.lock();
 							songs.push_back(s);
 							lock.unlock();
 							loaded++;
+							return;
 						}
-
-						return;
-					}
-
-
-					if (quaverFiles.size() > 0)
-					{
-						Song s;
-						QuaverFile file = QuaverFile();
-						chartMeta m = file.returnChart(entry.path().string());
-						s.c = Chart(m);
-						s.path = quaverFiles[0];
-						if (m.difficulties.size() != 0)
-						{
-							lock.lock();
-							songs.push_back(s);
-							lock.unlock();
-							loaded++;
-						}
-						return;
-					}
-
-					if (osuFiles.size() > 0)
-					{
-						Song s;
-						OsuFile file = OsuFile(entry.path().string());
-						s.c = Chart(file.meta);
-						s.path = osuFiles[0];
-						lock.lock();
-						songs.push_back(s);
-						lock.unlock();
-						loaded++;
-						return;
 					}
 				}
 			}

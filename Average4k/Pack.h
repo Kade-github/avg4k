@@ -71,9 +71,6 @@ public:
 	static bool packAsyncAlready;
 	static bool steamRegAsyncAlready;
 
-	static std::vector<Pack> gatherPacks();
-
-	static std::vector<Song> gatherNoPackSongs();
 
 	static Chart extractAndGetChart(std::string file);
 

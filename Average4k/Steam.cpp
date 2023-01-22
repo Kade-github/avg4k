@@ -404,18 +404,18 @@ void Steam::OnUGCSubscribedQueryCallback(SteamUGCQueryCompleted_t* result, bool 
 {
     MUTATE_START
     subscribedList.clear();
-    for (int i = 0; i < result->m_unNumResultsReturned; i++)
+    for (int is = 0; is < result->m_unNumResultsReturned; is++)
     {
         SteamUGCDetails_t id;
-        bool yes = SteamUGC()->GetQueryUGCResult(result->m_handle, i, &id);
+        bool yes = SteamUGC()->GetQueryUGCResult(result->m_handle, is, &id);
         if (yes)
         {
             char* chartType = (char*)malloc(512);
             char* chartFile = (char*)malloc(512);
             char* tag = (char*)malloc(512);
-            SteamUGC()->GetQueryUGCKeyValueTag(result->m_handle, i, "chartType", chartType, 512);
-            SteamUGC()->GetQueryUGCKeyValueTag(result->m_handle, i, "chartFile", chartFile, 512);
-            SteamUGC()->GetQueryUGCTagDisplayName(result->m_handle, i, 0, tag, 512);
+            SteamUGC()->GetQueryUGCKeyValueTag(result->m_handle, is, "chartType", chartType, 512);
+            SteamUGC()->GetQueryUGCKeyValueTag(result->m_handle, is, "chartFile", chartFile, 512);
+            SteamUGC()->GetQueryUGCTagDisplayName(result->m_handle, is, 0, tag, 512);
 
             steamItem i;
             i.details = id;

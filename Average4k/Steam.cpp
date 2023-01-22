@@ -540,7 +540,7 @@ void Steam::OnUGCQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFailure
     }
     if (chartTypestd == "pack")
     {
-        Steam::downloadedPack = SongGather::gatherPack(path, false);
+        Steam::downloadedPack = SongGather::gatherPack(path, false, true);
         if (Game::currentMenu != nullptr)
             Game::currentMenu->onSteam("chartAquired");
     }

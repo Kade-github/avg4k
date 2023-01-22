@@ -128,6 +128,7 @@ public:
 class MainerMenu : public Menu
 {
 public:
+	static Pack steamPack;
 	AvgContainer* moreInfo;
 	static bool isInMainerMenu;
 	static Chart currentSelectedSong;

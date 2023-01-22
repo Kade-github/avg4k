@@ -42,6 +42,8 @@ Song MainerMenu::selectedSong;
 
 Pack MainerMenu::selected;
 
+Pack MainerMenu::steamPack;
+
 bool MainerMenu::isInLobby = false;
 bool MainerMenu::isHost = false;
 
@@ -1481,7 +1483,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 	switch (event.keysym.sym)
 	{
 	case SDLK_RETURN:
-		if (selectedContainerIndex == 1 && !chat->opened)
+		if (selectedContainerIndex == 1 && !chat->opened && isTransDone)
 		{
 			if (isHost)
 			{
@@ -1684,7 +1686,7 @@ void MainerMenu::onSteam(std::string s)
 	{
 		if (downloadingPack)
 		{
-			selected = Game::steam->downloadedPack;
+			steamPack = Game::steam->downloadedPack;
 			currentSelectedSong = selected.songs[MainerMenu::packSongIndex].c.meta;
 		}
 		else

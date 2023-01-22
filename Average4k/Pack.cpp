@@ -233,7 +233,7 @@ void SongGather::gatherPacksAsync()
 	}
 }
 
-Pack SongGather::gatherPack(std::string filePath, bool checkForMod)
+Pack SongGather::gatherPack(std::string filePath, bool checkForMod, bool isSteam)
 {
 	Pack p;
 
@@ -259,6 +259,7 @@ Pack SongGather::gatherPack(std::string filePath, bool checkForMod)
 			p.packName = end;
 		if (split[0] == "showName")
 			p.showName = (end == "false" ? false : true);
+		p.isSteam = isSteam;
 	}
 
 
@@ -275,6 +276,7 @@ Pack SongGather::gatherPack(std::string filePath, bool checkForMod)
 			s.c.pathToLua = "";
 		}
 		p.songs.push_back(s);
+		s.isSteam = isSteam;
 	}
 
 	return p;

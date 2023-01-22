@@ -65,7 +65,7 @@ public:
 	static int max;
 	static int loaded;
 	static void gatherPacksAsync();
-	static Pack gatherPack(std::string filePath, bool checkForMod = true);
+	static Pack gatherPack(std::string filePath, bool checkForMod = true, bool isSteam = false);
 
 
 	static bool packAsyncAlready;

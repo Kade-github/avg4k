@@ -1419,10 +1419,10 @@ void Gameplay::update(Events::updateEvent event)
 								if (!botplay)
 									p->screenReceptors[note->lane]->hit = false;
 								note->holding = false;
-								note->fuckTimer = positionInSong / (note->holdstoppedtime + 250);
+								note->fuckTimer = positionInSong / (note->holdstoppedtime + 100);
 								if (pIndex == 0)
 								{
-									if (note->fuckTimer >= 1 && note->holdstoppedtime + 250 < endTime)
+									if (note->fuckTimer >= 1 && note->holdstoppedtime + 100 < endTime)
 									{
 										note->active = false;
 										note->missHold = true;

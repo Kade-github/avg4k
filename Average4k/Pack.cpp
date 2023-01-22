@@ -51,7 +51,7 @@ void SongGather::gatherPacksAsync()
 				dirs.push_back(entry);
 			}
 
-			std::for_each(std::execution::par, dirs.begin(), dirs.end(), [](auto&& entry)
+			std::for_each(std::execution::par_unseq, dirs.begin(), dirs.end(), [](auto&& entry)
 			{
 				if (SongUtils::IsDirectory(entry.path()))
 				{
@@ -121,7 +121,7 @@ void SongGather::gatherPacksAsync()
 			std::copy(Game::steam->subscribedList.begin(), Game::steam->subscribedList.end(), std::back_inserter(copy));
 			
 
-			std::for_each(std::execution::par, copy.begin(), copy.end(), [](auto&& entry) {
+			std::for_each(std::execution::par_unseq, copy.begin(), copy.end(), [](auto&& entry) {
 				steamItem st = entry;
 
 				if (!st.isPackFolder)
@@ -190,9 +190,9 @@ void SongGather::gatherPacksAsync()
 			currentPack = "Workshop Songs";
 			loaded = 0;
 
-			std::for_each(std::execution::par, copy.begin(), copy.end(), [](auto&& entry) {
+			std::for_each(std::execution::par_unseq, copy.begin(), copy.end(), [](auto&& entry) {
 				steamItem st = entry;
-
+				
 				if (st.isPackFolder)
 					return;
 

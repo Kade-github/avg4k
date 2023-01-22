@@ -51,6 +51,8 @@ void SongGather::gatherPacksAsync()
 				dirs.push_back(entry);
 			}
 
+			currentPack = "Local Packs";
+
 			std::for_each(std::execution::par, dirs.begin(), dirs.end(), [](auto&& entry)
 			{
 				if (SongUtils::IsDirectory(entry.path()))
@@ -96,7 +98,6 @@ void SongGather::gatherPacksAsync()
 					}
 					fs.close();
 
-					currentPack = p.packName;
 
 					std::vector<Song> songs = gatherSongsInFolder(entry.path().string() + "/");
 
@@ -123,6 +124,8 @@ void SongGather::gatherPacksAsync()
 
 			std::copy(Game::steam->subscribedList.begin(), Game::steam->subscribedList.end(), std::back_inserter(copy));
 			
+
+			currentPack = "Workshop Packs";
 
 			std::for_each(std::execution::par, copy.begin(), copy.end(), [](auto&& entry) {
 				steamItem st = entry;
@@ -168,9 +171,6 @@ void SongGather::gatherPacksAsync()
 					}
 				}
 				fs.close();
-
-				currentPack = p.packName;
-
 				std::vector<Song> songs = gatherSongsInFolder(folder + "/");
 
 				if (songs.size() == 0)
@@ -383,7 +383,7 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 	{
 		dirs.push_back(entry);
 	}
-	std::for_each(std::execution::par, dirs.begin(), dirs.end(), [&songs, &lock](auto&& entry)
+	std::for_each(std::execution::par, dirs.begin(), dirs.end(), [&songs, &lock](auto& entry)
 	{
 		Logging::writeLog("Loading " + entry.path().string());
 		// qp (and osu zip files)

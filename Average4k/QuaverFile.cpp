@@ -255,7 +255,7 @@ chartMeta QuaverFile::returnChart(std::string path)
                     diff.name = split[1];
                 if (split[0] == "Mode" && split[1] != "Keys4")
                     conti = true;
-                if (split[0] == "TimingPoints")
+                if (split[0] == "TimingPoints" && !generatedBPMS)
                     bpm = true;
                 if (split[0] == "HitObjects")
                     notes = true;

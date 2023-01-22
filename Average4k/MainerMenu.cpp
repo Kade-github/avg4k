@@ -119,7 +119,8 @@ void selectThing(int mx, int my, Object* o)
 	int i = 0;
 	for (auto c : leaderboardScores)
 	{
-		if (c.second.steamid == id && i == place)
+		int rPlace = std::stoi(Chart::split(c.first, '-')[1]);
+		if (c.second.steamid == id && rPlace == place)
 		{
 			graph->dataPoints = c.second.noteTiming;
 			return;

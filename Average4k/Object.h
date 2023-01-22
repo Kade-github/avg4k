@@ -28,6 +28,7 @@ public:
 	virtual void mouseDown() {};
 	virtual void onPacket(PacketType pt, char* data, int32_t length) {};
 	virtual void keyDown(SDL_KeyboardEvent ev) {};
+	virtual void keyUp(SDL_KeyboardEvent ev) {};
 	virtual void textInput(SDL_TextInputEvent ev) {};
 	virtual void beforeDeath() {};
 	void add(Object* obj)

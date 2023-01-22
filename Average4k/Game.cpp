@@ -939,7 +939,7 @@ void Game::keyUp(SDL_KeyboardEvent ev)
 	for (int i = 0; i < objects->size(); i++)
 	{
 		Object* bruh = (*objects)[i];
-		//bruh->keyUp(ev);
+		bruh->keyUp(ev);
 	}
 }
 void Game::mouseWheel(float wheel)

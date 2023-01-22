@@ -91,6 +91,7 @@ Texture* Texture::createFromSurface(SDL_Surface* surf, bool free) {
 	return t;
 }
 
+
 Texture::Texture(unsigned char* data, const unsigned int width, const unsigned int height)
 {
 	//Create texture object and use given data
@@ -107,7 +108,8 @@ Texture::Texture(unsigned char* data, const unsigned int _width, const unsigned 
 	glBindTexture(GL_TEXTURE_2D, id);
 	glEnable(GL_TEXTURE_2D);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8,
+		_width, _height, GL_FALSE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

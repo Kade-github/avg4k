@@ -774,6 +774,8 @@ void MainerMenu::create()
 	moreInfo->clipRect.y = 160;
 	moreInfo->clipRect.w = soloContainer->w;
 	moreInfo->clipRect.h = soloContainer->h;
+	moreInfo->w = soloContainer->w;
+	moreInfo->h = soloContainer->h;
 	moreInfo->autoClip = false;
 	moreInfo->x += soloContainer->w;
 

@@ -174,6 +174,8 @@ ModManager::ModManager(std::string luaPath)
 	lua->open_libraries(sol::lib::base);
 	lua->open_libraries(sol::lib::table);
 	lua->open_libraries(sol::lib::math);
+	lua->open_libraries(sol::lib::string);
+	lua->open_libraries(sol::lib::utf8);
 
 	lua->set_panic(sol::c_call<decltype(&my_panic), &my_panic>);
 	lua->set_exception_handler(&my_exception_handler);

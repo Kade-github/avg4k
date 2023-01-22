@@ -163,6 +163,8 @@ public:
 
 	bool lobbyStuffCreated = false;
 
+	static std::mutex packMutex;
+
 	static lobby currentLobby;
 
 	Shader* shad;

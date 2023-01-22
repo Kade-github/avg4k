@@ -19,7 +19,7 @@ AvgContainer* MainerMenu::multiContainer;
 AvgContainer* MainerMenu::settingsContainer;
 AvgContainer* MainerMenu::testWorkshop;
 
-std::mutex packMutex;
+std::mutex MainerMenu::packMutex;
 
 Pack steamWorkshop;
 

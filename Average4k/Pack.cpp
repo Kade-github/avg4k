@@ -8,7 +8,8 @@
 #include "OsuFile.h"
 #include "Average4k.h"
 #include "MainerMenu.h"
-
+#include <algorithm>
+#include <execution>
 bool SongGather::packAsyncAlready;
 bool SongGather::steamRegAsyncAlready;
 
@@ -40,9 +41,17 @@ void SongGather::gatherPacksAsync()
 		MainerMenu::asyncPacks.clear();
 
 		currentPack = "";
-
+		
 		std::jthread t([]() {
+
+			std::vector<std::filesystem::directory_entry> dirs = std::vector<std::filesystem::directory_entry>();
+
 			for (const auto& entry : std::filesystem::directory_iterator("assets/charts/"))
+			{
+				dirs.push_back(entry);
+			}
+
+			std::for_each(std::execution::par, dirs.begin(), dirs.end(), [](auto&& entry)
 			{
 				if (SongUtils::IsDirectory(entry.path()))
 				{
@@ -53,7 +62,7 @@ void SongGather::gatherPacksAsync()
 					fs.open(entry.path().string() + "/pack.meta");
 
 					if (!fs.good())
-						continue;
+						return;
 
 					p.steamId = localId;
 					p.isSteam = false;
@@ -89,7 +98,7 @@ void SongGather::gatherPacksAsync()
 					std::vector<Song> songs = gatherSongsInFolder(entry.path().string() + "/");
 
 					if (songs.size() == 0)
-						continue;
+						return;
 
 					loaded = 0;
 
@@ -98,21 +107,25 @@ void SongGather::gatherPacksAsync()
 					{
 						p.songs.push_back(s);
 					}
-					std::lock_guard cock(lock);
-					{
-						MainerMenu::asyncPacks.push_back(p);
-					}
+					MainerMenu::packMutex.lock();
+					MainerMenu::asyncPacks.push_back(p);
+					MainerMenu::packMutex.unlock();
 					loaded++;
 					localId++;
 				}
-			}
+			});
 
-			for (int i = 0; i < Game::steam->subscribedList.size(); i++)
-			{
-				steamItem st = Game::steam->subscribedList[i];
+
+			std::vector<steamItem> copy;
+
+			std::copy(Game::steam->subscribedList.begin(), Game::steam->subscribedList.end(), std::back_inserter(copy));
+			
+
+			std::for_each(std::execution::par, copy.begin(), copy.end(), [](auto&& entry) {
+				steamItem st = entry;
 
 				if (!st.isPackFolder)
-					continue;
+					return;
 
 				Pack p;
 				p.steamId = (uint64_t)st.details.m_nPublishedFileId;
@@ -125,7 +138,7 @@ void SongGather::gatherPacksAsync()
 				fs.open(folder + "/pack.meta");
 
 				if (!fs.good())
-					continue;
+					return;
 
 				p.metaPath = folder + "/pack.meta";
 
@@ -156,7 +169,7 @@ void SongGather::gatherPacksAsync()
 				std::vector<Song> songs = gatherSongsInFolder(folder + "/");
 
 				if (songs.size() == 0)
-					continue;
+					return;
 
 
 				loaded = 0;
@@ -167,22 +180,21 @@ void SongGather::gatherPacksAsync()
 					s.isSteam = true;
 					p.songs.push_back(s);
 				}
-				{
-					std::lock_guard cock(lock);
-					MainerMenu::asyncPacks.push_back(p);
-				}
+				
+				MainerMenu::packMutex.lock();
+				MainerMenu::asyncPacks.push_back(p);
+				MainerMenu::packMutex.unlock();
 				loaded++;
-			}
+			});
 
 			currentPack = "Workshop Songs";
 			loaded = 0;
 
-			for (int i = 0; i < Game::steam->subscribedList.size(); i++)
-			{
-				steamItem st = Game::steam->subscribedList[i];
+			std::for_each(std::execution::par, copy.begin(), copy.end(), [](auto&& entry) {
+				steamItem st = entry;
 
 				if (st.isPackFolder)
-					continue;
+					return;
 
 				Song s;
 
@@ -193,7 +205,7 @@ void SongGather::gatherPacksAsync()
 				std::string path(st.folder);
 
 				if (path == "")
-					continue;
+					return;
 
 				std::string fullPath = path + "\\" + st.chartFile;
 
@@ -224,9 +236,12 @@ void SongGather::gatherPacksAsync()
 				}
 
 				s.c = c;
+				MainerMenu::packMutex.lock();
 				MainerMenu::asyncSongs.push_back(s);
+				MainerMenu::packMutex.unlock();
+
 				loaded++;
-			}
+			});
 			steamRegAsyncAlready = false;
 			});
 		t.detach();
@@ -283,7 +298,15 @@ Pack SongGather::gatherPack(std::string filePath, bool checkForMod)
 std::vector<Pack> SongGather::gatherPacks()
 {
 	std::vector<Pack> packs;
+
+	std::vector<std::filesystem::directory_entry> dirs = std::vector<std::filesystem::directory_entry>();
+
 	for (const auto& entry : std::filesystem::directory_iterator("assets/charts/"))
+	{
+		dirs.push_back(entry);
+	}
+
+	std::for_each(std::execution::par, dirs.begin(), dirs.end(), [&packs](auto&& entry)
 	{
 		if (SongUtils::IsDirectory(entry.path()))
 		{
@@ -294,7 +317,7 @@ std::vector<Pack> SongGather::gatherPacks()
 			fs.open(entry.path().string() + "/pack.meta");
 
 			if (!fs.good())
-				continue;
+				return;
 
 			p.metaPath = entry.path().string() + "/pack.meta";
 
@@ -318,14 +341,15 @@ std::vector<Pack> SongGather::gatherPacks()
 			std::vector<Song> songs = gatherSongsInFolder(entry.path().string() + "/");
 
 			if (songs.size() == 0)
-				continue;
+				return;
 
 			for (Song s : songs)
 				p.songs.push_back(s);
 
-			packs.push_back(p);
+				packs.push_back(p);
+			
 		}
-	}
+	});
 	return packs;
 }
 
@@ -398,10 +422,22 @@ Chart SongGather::extractAndGetChart(std::string file)
 std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 {
 	std::vector<Song> songs;
+
+	std::mutex lock;
 	if (folder == "")
 		folder = "assets/charts/";
+
+
+	std::vector<std::filesystem::directory_entry> dirs = std::vector<std::filesystem::directory_entry>();
+
+
 	for (const auto& entry : std::filesystem::directory_iterator(folder))
 	{
+		dirs.push_back(entry);
+	}
+	std::for_each(std::execution::par, dirs.begin(), dirs.end(), [&songs, &lock](auto&& entry)
+	{
+		Logging::writeLog("Loading " + entry.path().string());
 		// qp (and osu zip files)
 		try
 		{
@@ -413,7 +449,9 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 					Song s;
 					s.c = c;
 					s.path = entry.path().string();
+					lock.lock();
 					songs.push_back(s);
+					lock.unlock();
 					loaded++;
 				}
 			}
@@ -457,11 +495,13 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 						s.path = smFiles[0];
 						if (!file.dontUse)
 						{
+							lock.lock();
 							songs.push_back(s);
+							lock.unlock();
 							loaded++;
 						}
 
-						continue;
+						return;
 					}
 
 
@@ -474,10 +514,12 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 						s.path = quaverFiles[0];
 						if (m.difficulties.size() != 0)
 						{
+							lock.lock();
 							songs.push_back(s);
+							lock.unlock();
 							loaded++;
 						}
-						continue;
+						return;
 					}
 
 					if (osuFiles.size() > 0)
@@ -486,9 +528,11 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 						OsuFile file = OsuFile(entry.path().string());
 						s.c = Chart(file.meta);
 						s.path = osuFiles[0];
+						lock.lock();
 						songs.push_back(s);
+						lock.unlock();
 						loaded++;
-						continue;
+						return;
 					}
 				}
 			}
@@ -496,6 +540,6 @@ std::vector<Song> SongGather::gatherSongsInFolder(std::string folder)
 		catch (...) {
 
 		}
-	}
+	});
 	return songs;
 }

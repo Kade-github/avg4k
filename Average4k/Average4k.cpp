@@ -195,6 +195,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	std::string cmdLine(lpCmdLine);
 
+	VM_START
+
 	SetUnhandledExceptionFilter(UnhandledExceptionFilterHandler);
 
 	AddVectoredExceptionHandler(1, &PvectoredExceptionHandler);
@@ -203,6 +205,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	std::atexit(&atexit_handler);
 	std::at_quick_exit(atexit_handler);
 
+
 #ifdef  _DEBUG
 	AllocConsole();
 	freopen("conout$", "w", stdout);
@@ -210,7 +213,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	Logging::openLog();
 #endif
 	
-	VM_START
+	
 
 	startTime = Clock::now();
 

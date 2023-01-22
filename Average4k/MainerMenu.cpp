@@ -1404,13 +1404,6 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 			{
 				bool mp3 = false;
 
-				for (Song s : selected.songs)
-					if (s.c.meta.ext == "mp3")
-					{
-						mp3 = true;
-						break;
-					}
-
 				if (Steam::eulaAccepted)
 				{
 					if ((!chartUploading && (event.keysym.mod & KMOD_ALT)) || chartUploading)

@@ -421,7 +421,7 @@ void Steam::OnUGCSubscribedQueryCallback(SteamUGCQueryCompleted_t* result, bool 
             i.details = id;
             i.chartType = std::string(chartType);
             i.chartFile = std::string(chartFile);
-            i.isPackFolder = i.chartType == "pack" ? true : false;
+            i.isPackFolder = i.chartType == "pack";
 
             uint64 sizeOnDisk;
             uint32 timestamp;

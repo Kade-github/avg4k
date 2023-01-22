@@ -1164,9 +1164,12 @@ void MainerMenu::update(Events::updateEvent ev)
 				{
 					if (SoundManager::threadLoaded != NULL)
 					{
+						Chart c = currentSelectedSong;
+						if (selectedContainerIndex == 1 && isInLobby)
+							c = currentSelectedSteamSong;
 						std::string path = "";
-						if (currentSelectedSong.meta.audio.size() != 0)
-							path = MainerMenu::currentSelectedSong.meta.folder + "/" + MainerMenu::currentSelectedSong.meta.audio;
+						if (c.meta.audio.size() != 0)
+							path = c.meta.folder + "/" + c.meta.audio;
 						if (SoundManager::threadPath == path || path == "")
 						{
 							SoundManager::throwShitOntoVector(SoundManager::threadLoaded, "prevSong");
@@ -1174,7 +1177,7 @@ void MainerMenu::update(Events::updateEvent ev)
 							real->play();
 							real->loop = true;
 							if (path != "")
-								real->setPos(currentSelectedSong.meta.start);
+								real->setPos(c.meta.start);
 						}
 						else
 						{

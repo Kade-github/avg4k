@@ -85,7 +85,7 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                     {
                         if (iss.str() == ";" || iss.str()[0] == '#')
                             readingBPMS = false;
-                        else
+                        else if (stuff.size() > 1)
                         {
                             std::vector <std::string> uhuh = Chart::split(stuff[0], ',');
                             for (std::string s : uhuh)
@@ -117,7 +117,7 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                     {
                         if (iss.str() == ";" || iss.str()[0] == '#')
                             readingSTOPS = false;
-                        else
+                        else if (stuff.size() > 1)
                         {
                             stuff[0].erase(std::remove(stuff[0].begin(), stuff[0].end(), ','), stuff[0].end());
                             std::vector < std::string > bpmSeg = Chart::split(stuff[0], '=');

@@ -218,7 +218,7 @@ void updateLeaderboard(std::vector<LeaderboardEntry> entries, bool online)
 		float tY = st->y + 14 + (34 * realInd);
 
 		AvgContainer* cont = new AvgContainer(0, tY, NULL);
-		
+
 		cont->drawBG = false;
 		cont->w = leaderboard->w;
 		cont->h = 52;
@@ -253,22 +253,39 @@ void updateLeaderboard(std::vector<LeaderboardEntry> entries, bool online)
 
 		std::string s = "";
 
+		std::string prev = "";
+		std::string next = "";
+
+		std::stringstream stream;
+		stream << std::fixed << std::setprecision(2) << e.accuracy * 100;
+		s = stream.str();
+		stream = std::stringstream();
+
 		float nextAccuracy = 0;
 		float lastAccuracy = 0;
 		if (i + 1 < entries.size())
+		{
 			nextAccuracy = entries[i + 1].accuracy;
+			stream << std::fixed << std::setprecision(2) << nextAccuracy * 100;
+			next = stream.str();
+			stream = std::stringstream();
+		}
 		if (i != 0)
+		{
 			lastAccuracy = entries[i - 1].accuracy;
+			stream << std::fixed << std::setprecision(2) << lastAccuracy * 100;
+			prev = stream.str();
+		}
 
-		if ((int)nextAccuracy == (int)e.accuracy || (int)lastAccuracy == (int)e.accuracy)
+
+
+		if (prev == s || next == s)
 		{
 			s = std::to_string(e.accuracy * 100);
 		}
 		else
 		{
-			std::stringstream stream;
-			stream << std::fixed << std::setprecision(2) << e.accuracy * 100;
-			s = stream.str();
+
 		}
 
 		Text* guyAcc = new Text(8, 16, s + "%", 16, "arial");

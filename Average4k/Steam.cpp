@@ -495,7 +495,7 @@ void Steam::OnWorkshopEULACallback(WorkshopEULAStatus_t* result, bool bIOFailure
     if (result->m_nAppID != 1828580)
         return;
 
-    eulaAccepted = !result->m_bNeedsAction;
+    eulaAccepted = !result->m_bAccepted;
 }
 
 void Steam::OnUGCQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFailure)

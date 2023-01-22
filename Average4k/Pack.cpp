@@ -75,23 +75,24 @@ void SongGather::gatherPacksAsync()
 
 					while (std::getline(fs, str))
 					{
-						if (str.starts_with("#"))
-							continue;
-						std::vector<std::string> split = Chart::split(str, ':');
-						std::string end = split[1].erase(0, 1);
-						if (split[0] == "banner")
+						if (!str.starts_with("#"))
 						{
-							p.background = entry.path().string() + "/" + end;
-							p.banner = Texture::getTextureData(p.background);
-							p.hasBanner = true;
+							std::vector<std::string> split = Chart::split(str, ':');
+							std::string end = split[1].erase(0, 1);
+							if (split[0] == "banner")
+							{
+								p.background = entry.path().string() + "/" + end;
+								p.banner = Texture::getTextureData(p.background);
+								p.hasBanner = true;
+							}
+							if (split[0] == "packName")
+							{
+								p.packName = end;
+
+							}
+							if (split[0] == "showName")
+								p.showName = (end == "false" ? false : true);
 						}
-						if (split[0] == "packName")
-						{
-							p.packName = end;
-							
-						}
-						if (split[0] == "showName")
-							p.showName = (end == "false" ? false : true);
 					}
 					fs.close();
 

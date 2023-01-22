@@ -1096,7 +1096,7 @@ void Gameplay::update(Events::updateEvent event)
 			onGodEnd = false;
 	}
 
-	if (!ended && ((notesToPlay.size() == 0 && spawnedNotes.size() == 0) || ((lastTime - positionInSong) > 4000 || !song->isPlaying)) && positionInSong > 0 && onGodEnd)
+	if (!ended && ((notesToPlay.size() == 0 && spawnedNotes.size() == 0) || ((lastTime - positionInSong) > 8000 || !song->isPlaying)) && positionInSong > 0 && onGodEnd)
 	{
 		ended = true;
 		if (!MainerMenu::isInLobby)

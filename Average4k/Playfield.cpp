@@ -17,7 +17,9 @@ void Playfield::update(float positionInSong, float beat)
 
 		for (NoteObject* obj : screenNotes)
 		{
-			if ((obj->beat > beat + arrowEff.drawBeats) || (obj->beat < beat - arrowEff.drawBeats) || (!showNotes))
+			float eBeat = obj->type == noteType::Note_Head ? obj->endBeat : 0;
+
+			if ((obj->beat > beat + arrowEff.drawBeats) || (obj->beat + eBeat < beat - arrowEff.drawBeats) || (!showNotes))
 			{
 				obj->drawCall = false;
 				continue;

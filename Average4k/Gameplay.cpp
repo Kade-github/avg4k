@@ -59,11 +59,8 @@ void Gameplay::updateAccuracy(double hitWorth)
 	if (accuracy < 0)
 		accuracy = 0;
 
-	std::string format = std::to_string((double)((int)(accuracy * 100)) / 100);
+	std::string format = std::to_string(accuracy);
 	format.erase(format.find_last_not_of('0') + 1, std::string::npos);
-
-	if (accuracy == (int)accuracy)
-		format.erase(format.find_last_not_of('.') + 1, std::string::npos);
 
 	if (format.ends_with('.'))
 		format = format.substr(0, format.size() - 1);

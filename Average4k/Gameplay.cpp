@@ -59,13 +59,11 @@ void Gameplay::updateAccuracy(double hitWorth)
 	if (accuracy < 0)
 		accuracy = 0;
 
-	std::string format = std::to_string(accuracy);
-	format.erase(format.find_last_not_of('0') + 1, std::string::npos);
+	std::stringstream stream;
+	stream << std::fixed << std::setprecision(2) << accuracy;
+	std::string s = stream.str();
 
-	if (format.ends_with('.'))
-		format = format.substr(0, format.size() - 1);
-
-	Accuracy->setText(format + "%");
+	Accuracy->setText(s + "%");
 	Accuracy->x = (Game::gameWidth - Accuracy->surfW) - 24;
 
 	// calculate rank here

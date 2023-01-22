@@ -251,7 +251,27 @@ void updateLeaderboard(std::vector<LeaderboardEntry> entries, bool online)
 
 		cont->addObject(guy, "lead_name_" + e.steamid);
 
-		Text* guyAcc = new Text(8, 16, std::to_string(e.accuracy * 100) + "%", 16, "arial");
+		std::string s = "";
+
+		float nextAccuracy = 0;
+		float lastAccuracy = 0;
+		if (i + 1 < entries.size())
+			nextAccuracy = entries[i + 1].accuracy;
+		if (i != 0)
+			lastAccuracy = entries[i - 1].accuracy;
+
+		if ((int)nextAccuracy == (int)e.accuracy || (int)lastAccuracy == (int)e.accuracy)
+		{
+			s = std::to_string(e.accuracy * 100);
+		}
+		else
+		{
+			std::stringstream stream;
+			stream << std::fixed << std::setprecision(2) << e.accuracy * 100;
+			s = stream.str();
+		}
+
+		Text* guyAcc = new Text(8, 16, s + "%", 16, "arial");
 
 		cont->addObject(guyAcc, "lead_acc_" + e.steamid);
 

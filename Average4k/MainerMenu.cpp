@@ -661,6 +661,7 @@ void MainerMenu::create()
 		Game::noteskin = Noteskin::getNoteskin();
 	}
 
+	moreinfo = false;
 	isTransDone = true;
 	fetchingScores = false;
 	isInMainerMenu = true;

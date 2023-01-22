@@ -324,16 +324,16 @@ void Steam::OnUGCAllQueryCallback(SteamUGCQueryCompleted_t* result, bool bIOFail
 {
 
     downloadedList.clear();
-    for (int i = 0; i < result->m_unNumResultsReturned; i++)
+    for (int is = 0; is < result->m_unNumResultsReturned; is++)
     {
         SteamUGCDetails_t id;
-        bool yes = SteamUGC()->GetQueryUGCResult(result->m_handle, i, &id);
+        bool yes = SteamUGC()->GetQueryUGCResult(result->m_handle, is, &id);
         if (yes)
         {
             char* chartType = (char*)malloc(512);
             char* chartFile = (char*)malloc(512);
-            SteamUGC()->GetQueryUGCKeyValueTag(result->m_handle, i, "chartType", chartType, 512);
-            SteamUGC()->GetQueryUGCKeyValueTag(result->m_handle, i, "chartFile", chartFile, 512);
+            SteamUGC()->GetQueryUGCKeyValueTag(result->m_handle, is, "chartType", chartType, 512);
+            SteamUGC()->GetQueryUGCKeyValueTag(result->m_handle, is, "chartFile", chartFile, 512);
 
             std::string chartTypestd(chartType);
             std::string chartFilestd(chartFile);

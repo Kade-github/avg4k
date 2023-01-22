@@ -42,6 +42,8 @@ Song MainerMenu::selectedSong;
 
 Pack MainerMenu::selected;
 
+Pack MainerMenu::steamPack;
+
 bool MainerMenu::isInLobby = false;
 bool MainerMenu::isHost = false;
 
@@ -57,6 +59,7 @@ std::vector<Song> MainerMenu::asyncSongs;
 AvgWheel* MainerMenu::wheel;
 
 Chart MainerMenu::currentSelectedSong;
+Chart MainerMenu::currentSelectedSteamSong;
 int MainerMenu::selectedDiffIndex = 0;
 
 std::vector<steamItem> item;
@@ -774,6 +777,8 @@ void MainerMenu::create()
 	moreInfo->clipRect.y = 160;
 	moreInfo->clipRect.w = soloContainer->w;
 	moreInfo->clipRect.h = soloContainer->h;
+	moreInfo->w = soloContainer->w;
+	moreInfo->h = soloContainer->h;
 	moreInfo->autoClip = false;
 	moreInfo->x += soloContainer->w;
 
@@ -1159,9 +1164,12 @@ void MainerMenu::update(Events::updateEvent ev)
 				{
 					if (SoundManager::threadLoaded != NULL)
 					{
+						Chart c = currentSelectedSong;
+						if (selectedContainerIndex == 1 && isInLobby)
+							c = currentSelectedSteamSong;
 						std::string path = "";
-						if (currentSelectedSong.meta.audio.size() != 0)
-							path = MainerMenu::currentSelectedSong.meta.folder + "/" + MainerMenu::currentSelectedSong.meta.audio;
+						if (c.meta.audio.size() != 0)
+							path = c.meta.folder + "/" + c.meta.audio;
 						if (SoundManager::threadPath == path || path == "")
 						{
 							SoundManager::throwShitOntoVector(SoundManager::threadLoaded, "prevSong");
@@ -1169,7 +1177,7 @@ void MainerMenu::update(Events::updateEvent ev)
 							real->play();
 							real->loop = true;
 							if (path != "")
-								real->setPos(currentSelectedSong.meta.start);
+								real->setPos(c.meta.start);
 						}
 						else
 						{
@@ -1451,7 +1459,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 						delete lobbyShader;
 						cantSwitch = true;
 					}
-					else if ((selectedSong.isSteam || selected.isSteam) && isTransDone)
+					else if ((selectedSong.isSteam || selected.isSteam))
 					{
 						selectContainer(1);
 						CPacketHostChangeChart chart;
@@ -1474,15 +1482,16 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 			break;
 		}
 	}
-	if (moreinfo || lobbyUp)
+	if ((moreinfo || lobbyUp) && !isTransDone)
 		return;
 	switch (event.keysym.sym)
 	{
 	case SDLK_RETURN:
-		if (selectedContainerIndex == 1 && !chat->opened)
+		if (selectedContainerIndex == 1 && !chat->opened && isTransDone)
 		{
 			if (isHost)
 			{
+				currentSelectedSong = currentSelectedSteamSong;
 				CPacketHostStartGame start;
 				start.Order = 0;
 				start.PacketType = eCPacketHostStartGame;
@@ -1682,12 +1691,13 @@ void MainerMenu::onSteam(std::string s)
 	{
 		if (downloadingPack)
 		{
-			selected = Game::steam->downloadedPack;
-			currentSelectedSong = selected.songs[MainerMenu::packSongIndex].c.meta;
+			steamPack = Game::steam->downloadedPack;
+			currentSelectedSteamSong = steamPack.songs[MainerMenu::packSongIndex].c.meta;
+			currentSelectedSong = currentSelectedSteamSong;
 		}
 		else
 		{
-			currentSelectedSong = Game::steam->downloadedChart;
+			currentSelectedSteamSong = Game::steam->downloadedChart;
 		}
 
 		selectedSong = Song();
@@ -2266,7 +2276,7 @@ void MainerMenu::createNewLobbies(std::string searchTerm)
 
 void MainerMenu::createLobby()
 {
-	
+	currentSelectedSteamSong = {};
 
 	multiplayerObjects.push_back(multiContainer->addObject(new Text(28,28, currentLobby.LobbyName, 18, "arial"), "lobbyName"));
 	multiplayerObjects.push_back(multiContainer->addObject(new Text(28,50, std::to_string(currentLobby.Players) + "/" + std::to_string(currentLobby.MaxPlayers), 14, "ariali"), "lobbyPlayers"));
@@ -2543,6 +2553,21 @@ void MainerMenu::selectContainer(int container)
 		selectSolo->alpha = 0;
 		selectMulti->alpha = 1;
 		selectSettings->alpha = 0;
+
+		if (currentSelectedSteamSong.meta.audio != currentSelectedSong.meta.audio && isInLobby)
+		{
+			Channel* ch = SoundManager::getChannelByName("prevSong");
+
+			if (ch != NULL)
+			{
+				ch->stop();
+				ch->free();
+				SoundManager::removeChannel("prevSong");
+			}
+
+			SoundManager::createChannelThread(MainerMenu::currentSelectedSteamSong.meta.folder + "/" + MainerMenu::currentSelectedSteamSong.meta.audio);
+		}
+
 		break;
 	case 2:
 		currentContainer = settingsContainer;

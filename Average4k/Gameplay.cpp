@@ -1155,79 +1155,89 @@ void Gameplay::update(Events::updateEvent event)
 			note& n = notesToPlay[0];
 			if (n.beat < beat + p->arrowEff.drawBeats && n.type != Note_Tail) // if its in draw beats
 			{
-				NoteObject* object = new NoteObject();
-				object->currentChart = &MainerMenu::currentSelectedSong;
-				object->size = Game::save->GetDouble("Note Size");
-				object->connected = &n;
-				SDL_FRect rect;
-				object->wasHit = false;
-				object->clapped = false;
-				object->active = true;
-
 				bpmSegment preStopSeg = MainerMenu::currentSelectedSong.getSegmentFromBeat(n.beat);
 
 				float stopOffset = MainerMenu::currentSelectedSong.getStopOffsetFromBeat(n.beat);
 
 				double stopBeatOffset = (stopOffset / 1000) * (preStopSeg.bpm / 60);
 
-				object->stopOffset = stopBeatOffset;
-				object->curSeg = preStopSeg;
-
-				object->beat = (double)n.beat;
-				object->beat += stopBeatOffset;
-				object->xmod = false;
-				object->tempStopOffset = object->stopOffset;
-				object->lane = n.lane;
-				object->connectedReceptor = p->screenReceptors[n.lane];
-				object->type = n.type;
-				object->endTime = -1;
-				object->endBeat = -1;
-
-
-				object->time = MainerMenu::currentSelectedSong.getTimeFromBeatOffset(object->beat, preStopSeg);
-				rect.y = Game::gameHeight + 400;
-				rect.x = 0;
-				rect.w = 64 * Game::save->GetDouble("Note Size");
-				rect.h = 64 * Game::save->GetDouble("Note Size");
-				object->rect = rect;
-
-				note tail;
-
-
-				float wh = MainerMenu::currentSelectedSong.getTimeFromBeat(beat, preStopSeg);
-
-				float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
-
-
-				if (object->type == Note_Head)
+				float time = MainerMenu::currentSelectedSong.getTimeFromBeatOffset(n.beat, preStopSeg);
+				if (time + Game::save->GetDouble("offset") > song->length)
 				{
-					for (int i = 0; i < notesToPlay.size(); i++)
-					{
-						note& nn = notesToPlay[i];
-						if (nn.type != Note_Tail)
-							continue;
-						if (nn.lane != object->lane)
-							continue;
-
-						bpmSegment npreStopSeg = MainerMenu::currentSelectedSong.getSegmentFromBeat(nn.beat);
-
-						float nstopOffset = MainerMenu::currentSelectedSong.getStopOffsetFromBeat(nn.beat);
-
-						double nstopBeatOffset = (nstopOffset / 1000) * (npreStopSeg.bpm / 60);
-
-						object->endBeat = nn.beat + nstopBeatOffset;
-
-						object->endTime = MainerMenu::currentSelectedSong.getTimeFromBeatOffset(nn.beat + nstopBeatOffset, preStopSeg);
-						tail = nn;
-						break;
-					}
+					notesToPlay.erase(notesToPlay.begin());
 				}
+				else
+				{
 
-				if (!spawned)
-					spawnedNotes.push_back(object);
-				spawned = true;
-				object->create();
-				p->addNote(object);
+					NoteObject* object = new NoteObject();
+					object->currentChart = &MainerMenu::currentSelectedSong;
+					object->size = Game::save->GetDouble("Note Size");
+					object->connected = &n;
+					SDL_FRect rect;
+					object->wasHit = false;
+					object->clapped = false;
+					object->active = true;
+
+
+					object->stopOffset = stopBeatOffset;
+					object->curSeg = preStopSeg;
+
+					object->beat = (double)n.beat;
+					object->beat += stopBeatOffset;
+					object->xmod = false;
+					object->tempStopOffset = object->stopOffset;
+					object->lane = n.lane;
+					object->connectedReceptor = p->screenReceptors[n.lane];
+					object->type = n.type;
+					object->endTime = -1;
+					object->endBeat = -1;
+
+
+					object->time = time;
+					rect.y = Game::gameHeight + 400;
+					rect.x = 0;
+					rect.w = 64 * Game::save->GetDouble("Note Size");
+					rect.h = 64 * Game::save->GetDouble("Note Size");
+					object->rect = rect;
+
+					note tail;
+
+
+					float wh = MainerMenu::currentSelectedSong.getTimeFromBeat(beat, preStopSeg);
+
+					float bps = (Game::save->GetDouble("scrollspeed") / 60) / Gameplay::rate;
+
+
+					if (object->type == Note_Head)
+					{
+						for (int i = 0; i < notesToPlay.size(); i++)
+						{
+							note& nn = notesToPlay[i];
+							if (nn.type != Note_Tail)
+								continue;
+							if (nn.lane != object->lane)
+								continue;
+
+							bpmSegment npreStopSeg = MainerMenu::currentSelectedSong.getSegmentFromBeat(nn.beat);
+
+							float nstopOffset = MainerMenu::currentSelectedSong.getStopOffsetFromBeat(nn.beat);
+
+							double nstopBeatOffset = (nstopOffset / 1000) * (npreStopSeg.bpm / 60);
+
+							object->endBeat = nn.beat + nstopBeatOffset;
+
+							object->endTime = MainerMenu::currentSelectedSong.getTimeFromBeatOffset(nn.beat + nstopBeatOffset, preStopSeg);
+							tail = nn;
+							break;
+						}
+					}
+
+					if (!spawned)
+						spawnedNotes.push_back(object);
+					spawned = true;
+					object->create();
+					p->addNote(object);
+				}
 			}
 			else if (n.type == Note_Tail)
 			{

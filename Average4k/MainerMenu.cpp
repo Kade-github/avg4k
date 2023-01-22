@@ -2622,7 +2622,7 @@ void MainerMenu::selectContainer(int container)
 void MainerMenu::leftMouseDown()
 {
 	
-	if (lobbyUp)
+	if (lobbyUp || moreInfo)
 		return;
 	int x, y;
 	Game::GetMousePos(&x, &y);

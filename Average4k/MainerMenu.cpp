@@ -1687,7 +1687,7 @@ void MainerMenu::onSteam(std::string s)
 		if (downloadingPack)
 		{
 			steamPack = Game::steam->downloadedPack;
-			currentSelectedSong = selected.songs[MainerMenu::packSongIndex].c.meta;
+			currentSelectedSong = steamPack.songs[MainerMenu::packSongIndex].c.meta;
 		}
 		else
 		{

@@ -280,13 +280,7 @@ void updateLeaderboard(std::vector<LeaderboardEntry> entries, bool online)
 
 
 		if (prev == s || next == s)
-		{
 			s = std::to_string(e.accuracy * 100);
-		}
-		else
-		{
-
-		}
 
 		Text* guyAcc = new Text(8, 16, s + "%", 16, "arial");
 

@@ -60,7 +60,7 @@ public:
 	}
 
 
-	void keyDown(SDL_KeyboardEvent ev)
+	void keyUp(SDL_KeyboardEvent ev)
 	{
 		if (wheelObjects.size() == 0)
 			return;

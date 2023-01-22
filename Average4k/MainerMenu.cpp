@@ -1723,6 +1723,7 @@ void MainerMenu::onSteam(std::string s)
 		else
 		{
 			currentSelectedSteamSong = Game::steam->downloadedChart;
+			currentSelectedSong = currentSelectedSteamSong;
 		}
 
 		selectedSong = Song();

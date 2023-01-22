@@ -132,6 +132,7 @@ public:
 	AvgContainer* moreInfo;
 	static bool isInMainerMenu;
 	static Chart currentSelectedSong;
+	static Chart currentSelectedSteamSong;
 	static Song selectedSong;
 	static Pack selected;
 	static int packSongIndex;

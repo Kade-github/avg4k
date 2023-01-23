@@ -101,11 +101,7 @@ void Steam::getEula()
 
 void Steam::showEula()
 {
-    if (!SteamUGC()->ShowWorkshopEULA())
-    {
-        Logging::writeLog("User needs to accept the steam workshop eula, but I can't show it!");
-        Game::instance->showErrorWindow("Steam Error", "You need to accept the workshop eula!", false);
-    }
+    SteamFriends()->ActivateGameOverlayToWebPage("https://steamcommunity.com/workshop/workshoplegalagreement/");
 }
 
 void Steam::OnName(SteamUGCQueryCompleted_t* result, bool bIOFailure)

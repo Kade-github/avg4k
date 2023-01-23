@@ -208,6 +208,8 @@ void ModManager::populateLuaMap()
 {
 	luaMap["create"] = (*lua)["create"];
 	luaMap["editor_scroll"] = (*lua)["editor_scroll"];
+	luaMap["key_pressed"] = (*lua)["key_pressed"];
+	luaMap["key_released"] = (*lua)["key_released"];
 	luaMap["update"] = (*lua)["update"];
 	luaMap["destroy"] = (*lua)["destroy"];
 	luaMap["hit"] = (*lua)["hit"];

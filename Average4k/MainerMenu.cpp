@@ -1453,6 +1453,7 @@ void MainerMenu::keyDown(SDL_KeyboardEvent event)
 				else
 				{
 					Game::steam->showEula();
+					Game::steam->getEula();
 					Game::instance->showErrorWindow("Steam", "Please accept the Steam Workshop EULA to upload!", false);
 				}
 			}

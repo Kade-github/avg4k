@@ -221,7 +221,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		Logging::writeLog("SDL2 video subsystem couldn't be initialized. Error: " + std::string(SDL_GetError()));
 		exit(1);
 	}
-	Game::version = "b13h";
+	Game::version = "b13h2";
 
 	curl_global_init(CURL_GLOBAL_ALL);
 	Multiplayer::InitCrypto();

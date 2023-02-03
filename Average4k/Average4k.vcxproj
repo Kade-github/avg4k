@@ -316,7 +316,7 @@ xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
       <OmitFramePointers>false</OmitFramePointers>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <EnableEnhancedInstructionSet>NoExtensions</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>

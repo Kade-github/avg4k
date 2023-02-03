@@ -3,53 +3,53 @@
 #include "MainerMenu.h"
 
 void AvgContainer::mouseWheel(float amount)
+{
+	if (active)
 	{
-		if (active)
+		int mx, my;
+		Game::GetMousePos(&mx, &my);
+
+		int pH = h;
+
+		float realX = x;
+		float realY = y;
+
+		if (parent != NULL)
 		{
-			int mx, my;
-			Game::GetMousePos(&mx, &my);
+			int totalX = 0;
+			int totalY = 0;
 
-			int pH = h;
+			Object* o = parent;
 
-			float realX = x;
-			float realY = y;
-
-			if (parent != NULL)
+			while (o != NULL)
 			{
-				int totalX = 0;
-				int totalY = 0;
-
-				Object* o = parent;
-
-				while (o != NULL)
-				{
-					totalX += o->x;
-					totalY += o->y;
-					o = o->parent;
-				}
-
-				pH = parent->h;
-				realX += totalX;
-				realY += totalY;
+				totalX += o->x;
+				totalY += o->y;
+				o = o->parent;
 			}
 
-			bool one = (mx < realX + w && mx > realX);
-			bool two = (my < realY + pH && my > realY);
-			if (one && two && maxScroll > 0)
-			{
-				float max = (h - 15) - scrollAddition;
-				scrollAddition += -(amount * 40);
-				if (scrollAddition > maxScroll)
-					scrollAddition = maxScroll;
-				if (scrollAddition < 0)
-					scrollAddition = 0;
-			}
+			pH = parent->h;
+			realX += totalX;
+			realY += totalY;
 		}
-		for (Object* obj : above)
+
+		bool one = (mx < realX + w && mx > realX);
+		bool two = (my < realY + pH && my > realY);
+		if (one && two && maxScroll > 0)
 		{
-			obj->mouseWheel(amount);
+			float max = (h - 15) - scrollAddition;
+			scrollAddition += -(amount * 40);
+			if (scrollAddition > maxScroll)
+				scrollAddition = maxScroll;
+			if (scrollAddition < 0)
+				scrollAddition = 0;
 		}
 	}
+	for (Object* obj : above)
+	{
+		obj->mouseWheel(amount);
+	}
+}
 
 void AvgContainer::draw() {
 	if (!active)
@@ -112,6 +112,8 @@ void AvgContainer::draw() {
 	srcRect.w = 1;
 	srcRect.h = 1;
 
+	if (clipRect.w > 0 || clipRect.h > 0)
+		Rendering::SetClipRect(&clipRect);
 
 	// do we need to draw a scrollbar?
 	bool scroll = false;
@@ -155,12 +157,13 @@ void AvgContainer::draw() {
 		b->y -= y;
 	}
 
-	if ((clipRect.w > 0 || clipRect.h > 0) && !autoClip)
-		Rendering::SetClipRect(&clipRect);
+	if (autoClip)
+		if (clipRect.w > 0 || clipRect.h > 0)
+			Rendering::SetClipRect(NULL);
 	if (drawBG)
 		Rendering::PushQuad(&dstRect, &srcRect, tex, GL::genShader, angle);
 
-	if ((clipRect.w > 0 || clipRect.h > 0) && autoClip)
+	if (clipRect.w > 0 || clipRect.h > 0)
 		Rendering::SetClipRect(&clipRect);
 	if (shouldUseCallback)
 	{
@@ -254,6 +257,8 @@ void AvgContainer::draw() {
 					a->realPosX = a->x;
 					a->realPosY = a->y;
 					a->draw();
+					if (clipRect.w > 0 || clipRect.h > 0)
+						Rendering::SetClipRect(&clipRect);
 					a->x -= x + scrollBar.w;
 					a->y -= y - scrollAddition;
 				}

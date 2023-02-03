@@ -924,11 +924,11 @@ void Gameplay::update(Events::updateEvent event)
 	if (!song || Game::instance->transitioning)
 		return;
 
-	if (positionInSong >= (startTime + (MainerMenu::currentSelectedSong.BASS_OFFSET * 1000)) + Game::save->GetDouble("offset"))
+	if (positionInSong >= (startTime + (MainerMenu::currentSelectedSong.BASS_OFFSET * 1000)))
 	{
 		if (!play)
 		{
-			song->setPos((startTime + (MainerMenu::currentSelectedSong.BASS_OFFSET * 1000)) + Game::save->GetDouble("offset"));
+			song->setPos((startTime + (MainerMenu::currentSelectedSong.BASS_OFFSET * 1000)));
 			song->setVolume(Game::save->GetDouble("Music Volume"));
 			song->play();
 			play = true;
@@ -954,7 +954,7 @@ void Gameplay::update(Events::updateEvent event)
 			positionInSong += (Game::deltaTime - Game::save->GetDouble("offset"));*/
 		if (!paused)
 		{
-			positionInSong = song->getPos();
+			positionInSong = song->getPos() + Game::save->GetDouble("offset");
 			lastTime += Game::deltaTime;
 		}
 	}

@@ -12,6 +12,9 @@ struct Song {
 	bool hasBanner = false;
 	std::string folder;
 	Chart c;
+	boolean operator()(const Song& a, const Song& b) {
+		return a.c.meta.songName < b.c.meta.songName;
+	}
 };
 
 struct Pack {
@@ -25,6 +28,9 @@ struct Pack {
 	uint64_t steamId = -1;
 	bool isSteam = false;
 	bool showName;
+	boolean operator()(const Pack& a, const Pack& b) {
+		return a.packName < b.packName;
+	}
 };
 
 class SongUtils {

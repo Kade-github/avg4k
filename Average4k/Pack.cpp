@@ -111,6 +111,9 @@ void SongGather::gatherPacksAsync()
 					{
 						p.songs.push_back(s);
 					}
+
+					std::ranges::sort(p.songs, Song());
+
 					MainerMenu::packMutex.lock();
 					MainerMenu::asyncPacks.push_back(p);
 					MainerMenu::packMutex.unlock();
@@ -185,6 +188,9 @@ void SongGather::gatherPacksAsync()
 					s.isSteam = true;
 					p.songs.push_back(s);
 				}
+
+				std::ranges::sort(p.songs, Song());
+
 				
 				MainerMenu::packMutex.lock();
 				MainerMenu::asyncPacks.push_back(p);
@@ -249,6 +255,11 @@ void SongGather::gatherPacksAsync()
 
 				loaded++;
 			});
+
+			MainerMenu::packMutex.lock();
+			std::ranges::sort(MainerMenu::asyncPacks, Pack());
+			MainerMenu::packMutex.unlock();
+
 			steamRegAsyncAlready = false;
 			});
 		t.detach();

@@ -1086,7 +1086,10 @@ void MainerMenu::update(Events::updateEvent ev)
 				steamWorkshop.songs.push_back(s);
 				for (Pack& p : packs)
 					if (p.packName == "Workshop Songs")
+					{
 						p.songs = steamWorkshop.songs;
+						std::ranges::sort(p.songs, Song());
+					}
 			}
 		}
 		Text* t = (Text*)soloContainer->findItemByName("packsBottom");
@@ -1900,6 +1903,7 @@ void MainerMenu::loadPacks()
 		steamWorkshop.showName = true;
 		steamWorkshop.isSteam = false;
 		steamWorkshop.songs = {};
+
 
 		if (addWorkshop)
 		{

@@ -188,6 +188,12 @@ void atexit_handler()
 		outstream->dump();
 }
 
+template <class charT, charT sep>
+class punct_facet : public std::numpunct<charT> {
+protected:
+	charT do_decimal_point() const { return sep; }
+};
+
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	PSTR lpCmdLine, INT nCmdShow)
 {
@@ -213,7 +219,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	Logging::openLog();
 #endif
 	
-	
+	std::cout.imbue(std::locale(std::cout.getloc(), new punct_facet<char, '.'>));
 
 	startTime = Clock::now();
 

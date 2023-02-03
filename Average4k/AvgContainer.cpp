@@ -155,10 +155,12 @@ void AvgContainer::draw() {
 		b->y -= y;
 	}
 
+	if ((clipRect.w > 0 || clipRect.h > 0) && !autoClip)
+		Rendering::SetClipRect(&clipRect);
 	if (drawBG)
 		Rendering::PushQuad(&dstRect, &srcRect, tex, GL::genShader, angle);
 
-	if (clipRect.w > 0 || clipRect.h > 0)
+	if ((clipRect.w > 0 || clipRect.h > 0) && autoClip)
 		Rendering::SetClipRect(&clipRect);
 	if (shouldUseCallback)
 	{

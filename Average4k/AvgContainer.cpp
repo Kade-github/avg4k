@@ -112,8 +112,6 @@ void AvgContainer::draw() {
 	srcRect.w = 1;
 	srcRect.h = 1;
 
-	if (clipRect.w > 0 || clipRect.h > 0)
-		Rendering::SetClipRect(&clipRect);
 
 	// do we need to draw a scrollbar?
 	bool scroll = false;
@@ -157,9 +155,6 @@ void AvgContainer::draw() {
 		b->y -= y;
 	}
 
-	if (autoClip)
-		if (clipRect.w > 0 || clipRect.h > 0)
-			Rendering::SetClipRect(NULL);
 	if (drawBG)
 		Rendering::PushQuad(&dstRect, &srcRect, tex, GL::genShader, angle);
 
@@ -257,8 +252,6 @@ void AvgContainer::draw() {
 					a->realPosX = a->x;
 					a->realPosY = a->y;
 					a->draw();
-					if (clipRect.w > 0 || clipRect.h > 0)
-						Rendering::SetClipRect(&clipRect);
 					a->x -= x + scrollBar.w;
 					a->y -= y - scrollAddition;
 				}

@@ -81,13 +81,25 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                     s.erase(std::remove(s.begin(), s.end(), ';'), s.end());
                     std::vector < std::string > stuff = Chart::split(s, ':');
 
+                    bool noStart = false;
+
+                    if (stuff.size() == 0)
+                    {
+                        noStart = true;
+                        stuff = Chart::split(s, ',');
+                    }
+
                     if (readingBPMS)
                     {
                         if (iss.str() == ";" || iss.str()[0] == '#')
                             readingBPMS = false;
                         else if (stuff.size() > 1)
                         {
-                            std::vector <std::string> uhuh = Chart::split(stuff[0], ',');
+                            std::vector <std::string> uhuh;
+                            if (!noStart)
+                                uhuh = Chart::split(stuff[0], ',');
+                            else
+                                uhuh = stuff;
                             for (std::string s : uhuh)
                             {
                                 if (s.size() == 0)

@@ -412,7 +412,7 @@ float Chart::getBeatFromTimeOffset(float timestamp, bpmSegment seg) {
 
 bpmSegment Chart::getSegmentFromTime(float time) {
     float offsetTime = time;
-    if (offsetTime >= previouslyFound.startTime && offsetTime < ((previouslyFound.startTime) + previouslyFound.length) && previouslyFound.length != -1)
+    if (offsetTime >= previouslyFound.startTime && offsetTime < ((previouslyFound.startTime) + previouslyFound.length) && previouslyFound.length != -1 && previouslyFound.length != INT_MAX)
         return previouslyFound;
     bpmSegment seg;
     seg.bpm = meta.bpms[0].bpm;

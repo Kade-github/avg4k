@@ -164,6 +164,15 @@ public:
 		return (stat(name.c_str(), &buffer) == 0);
 	}
 
+	static void ReplaceString(std::string& subject, const std::string& search,
+		const std::string& replace) {
+		size_t pos = 0;
+		while ((pos = subject.find(search, pos)) != std::string::npos) {
+			subject.replace(pos, search.length(), replace);
+			pos += replace.length();
+		}
+	}
+
 	static std::string setHash(std::string file)
 	{
 		VM_START

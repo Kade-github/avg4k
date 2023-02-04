@@ -83,6 +83,7 @@ public:
 
 		if (Helpers::is_number(todo.c_str()) && checkForLong)
 		{
+			Helpers::ReplaceString(todo, ",", ".");
 			size_t n = std::count(todo.begin(), todo.end(), '.');
 			if (n == 1)
 			{

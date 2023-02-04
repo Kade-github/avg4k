@@ -461,7 +461,9 @@ void SMFile::SaveSM(chartMeta meta, std::string outFile, float offset)
         {
             if (ind != 0)
                 ostream << ",";
-            ostream << std::to_string(seg.startBeat) << "=" << std::to_string(seg.bpm);
+            std::string s = std::to_string(seg.startBeat) + "=" + std::to_string(seg.bpm);
+            Helpers::ReplaceString(s, ",", ".");
+            ostream << s;
             ind++;
         }
         ostream << ";" << std::endl;
@@ -471,7 +473,9 @@ void SMFile::SaveSM(chartMeta meta, std::string outFile, float offset)
         {
             if (ind != 0)
                 ostream << ",";
-            ostream << std::to_string(seg.beat) << "=" << std::to_string(seg.length) << ",";
+            std::string s = std::to_string(seg.beat) + "=" + std::to_string(seg.length);
+            Helpers::ReplaceString(s, ",", ".");
+            ostream << s << ",";
             ind++;
         }
         ostream << ";" << std::endl;

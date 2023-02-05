@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Average4K">
+      <UniqueIdentifier>{c4f048c9-6989-4c36-9493-6a9df7e52902}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k">
+      <UniqueIdentifier>{c77fcc55-86f2-4b46-9ae5-0775dc92628e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine">
+      <UniqueIdentifier>{c5fc04b5-7176-4eac-9da8-2e2f34bf8100}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\Audio">
+      <UniqueIdentifier>{04c3157a-517b-43d3-9521-0fb33da85ece}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\Utils">
+      <UniqueIdentifier>{11e060cb-d6f1-4e42-877d-e6f8a4aee535}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\Base">
+      <UniqueIdentifier>{4ecc1a83-c821-43b2-8673-e060c5d4028a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\Render">
+      <UniqueIdentifier>{5f1d20a4-c084-435f-8b20-955bd38de830}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\Render\OpenGL">
+      <UniqueIdentifier>{7ff9514b-f424-450a-a94d-95408414fe81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\External">
+      <UniqueIdentifier>{9b4de7d7-8a24-4155-85cd-09f8417ada20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\Menus">
+      <UniqueIdentifier>{24656bc5-c351-4b47-9414-43a85e60522e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>Average4K</Filter>
+    </ClCompile>
+    <ClCompile Include="Logging.cpp">
+      <Filter>Average4K\Engine\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Average4K\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Average4K\Engine\Render\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Average4K\Engine\Render\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="stbi.cpp">
+      <Filter>Average4K\Engine\External</Filter>
+    </ClCompile>
+    <ClCompile Include="BASS.cpp">
+      <Filter>Average4K\Engine\External</Filter>
+    </ClCompile>
+    <ClCompile Include="TweenManager.cpp">
+      <Filter>Average4K\Engine\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="StartScreen.cpp">
+      <Filter>Average4K\Avg4k\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
+      <Filter>Average4K\Engine\External</Filter>
+    </ClCompile>
+    <ClCompile Include="Display.cpp">
+      <Filter>Average4K\Engine\Render</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="includes.h">
+      <Filter>Average4K</Filter>
+    </ClInclude>
+    <ClInclude Include="Logging.h">
+      <Filter>Average4K\Engine\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Average4K\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Channel.h">
+      <Filter>Average4K\Engine\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>Average4K\Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Average4K\Engine\Render\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Average4K\Engine\Render\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="stbi.h">
+      <Filter>Average4K\Engine\External</Filter>
+    </ClInclude>
+    <ClInclude Include="imageinfo.hpp">
+      <Filter>Average4K\Engine\External</Filter>
+    </ClInclude>
+    <ClInclude Include="Display.h">
+      <Filter>Average4K\Engine\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Average4K\Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="BASS.h">
+      <Filter>Average4K\Engine\External</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Average4K\Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="TweenManager.h">
+      <Filter>Average4K\Engine\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>Average4K\Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="EventManager.h">
+      <Filter>Average4K\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="StartScreen.h">
+      <Filter>Average4K\Avg4k\Menus</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

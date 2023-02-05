@@ -1,0 +1,607 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="KadeDebug|Win32">
+      <Configuration>KadeDebug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="KadeDebug|x64">
+      <Configuration>KadeDebug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="KadeRelease|Win32">
+      <Configuration>KadeRelease</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="KadeRelease|x64">
+      <Configuration>KadeRelease</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{70d63f3e-d17c-4dcd-925d-1493526457c8}</ProjectGuid>
+    <RootNamespace>Average4k</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='KadeDebug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='KadeRelease|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='KadeDebug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+    <SpectreMitigation>false</SpectreMitigation>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='KadeRelease|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+    <SpectreMitigation>Spectre</SpectreMitigation>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='KadeDebug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='KadeRelease|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='KadeDebug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='KadeRelease|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='KadeDebug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='KadeRelease|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='KadeDebug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='KadeRelease|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnabled>false</VcpkgEnabled>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>./include</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ForcedIncludeFiles>pch.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>./lib</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='KadeDebug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>./include</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ForcedIncludeFiles>pch.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>./lib</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <ForcedIncludeFiles>pch.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='KadeRelease|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <ForcedIncludeFiles>pch.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>Disabled</Optimization>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(ProjectDir)assets" "$(Outdir)/assets" /E /H /C /I
+xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='KadeDebug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>Disabled</Optimization>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(ProjectDir)assets" "$(Outdir)/assets" /E /H /C /I
+xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <StringPooling>false</StringPooling>
+      <IntelJCCErratum>false</IntelJCCErratum>
+      <CallingConvention>StdCall</CallingConvention>
+      <Optimization>Disabled</Optimization>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <SupportJustMyCode>true</SupportJustMyCode>
+      <OmitFramePointers>false</OmitFramePointers>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>lib</AdditionalLibraryDirectories>
+      <GenerateMapFile>true</GenerateMapFile>
+      <TargetMachine>MachineX64</TargetMachine>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(ProjectDir)assets" "$(Outdir)/assets" /E /H /C /I
+xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='KadeRelease|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <StringPooling>false</StringPooling>
+      <IntelJCCErratum>true</IntelJCCErratum>
+      <CallingConvention>StdCall</CallingConvention>
+      <Optimization>Disabled</Optimization>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <SupportJustMyCode>true</SupportJustMyCode>
+      <OmitFramePointers>false</OmitFramePointers>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>lib</AdditionalLibraryDirectories>
+      <GenerateMapFile>true</GenerateMapFile>
+      <TargetMachine>MachineX64</TargetMachine>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(ProjectDir)assets" "$(Outdir)/assets" /E /H /C /I
+xcopy  "$(ProjectDir)buildLib" "$(Outdir)" /Y /I</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="ArrowEffects.cpp" />
+    <ClCompile Include="Average4k.cpp" />
+    <ClCompile Include="AvgCamera.cpp" />
+    <ClCompile Include="AvgContainer.cpp" />
+    <ClCompile Include="AvgGroup.cpp" />
+    <ClCompile Include="AvgWheel.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Chart.cpp" />
+    <ClCompile Include="ChatObject.cpp" />
+    <ClCompile Include="discord_sdk\achievement_manager.cpp" />
+    <ClCompile Include="discord_sdk\activity_manager.cpp" />
+    <ClCompile Include="discord_sdk\application_manager.cpp" />
+    <ClCompile Include="discord_sdk\core.cpp" />
+    <ClCompile Include="discord_sdk\image_manager.cpp" />
+    <ClCompile Include="discord_sdk\lobby_manager.cpp" />
+    <ClCompile Include="discord_sdk\network_manager.cpp" />
+    <ClCompile Include="discord_sdk\overlay_manager.cpp" />
+    <ClCompile Include="discord_sdk\relationship_manager.cpp" />
+    <ClCompile Include="discord_sdk\storage_manager.cpp" />
+    <ClCompile Include="discord_sdk\store_manager.cpp" />
+    <ClCompile Include="discord_sdk\types.cpp" />
+    <ClCompile Include="discord_sdk\user_manager.cpp" />
+    <ClCompile Include="discord_sdk\voice_manager.cpp" />
+    <ClCompile Include="Easing.cpp" />
+    <ClCompile Include="FONT\SDL_ttf.c" />
+    <ClCompile Include="FuckinEditor.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Gameplay.cpp" />
+    <ClCompile Include="GL.cpp" />
+    <ClCompile Include="glad.c" />
+    <ClCompile Include="Helper.cpp" />
+    <ClCompile Include="imgui.cpp" />
+    <ClCompile Include="ImGuiFileDialog.cpp" />
+    <ClCompile Include="imgui_demo.cpp" />
+    <ClCompile Include="imgui_draw.cpp" />
+    <ClCompile Include="imgui_impl_opengl3.cpp" />
+    <ClCompile Include="imgui_impl_sdl.cpp" />
+    <ClCompile Include="imgui_tables.cpp" />
+    <ClCompile Include="imgui_widgets.cpp" />
+    <ClCompile Include="Judge.cpp" />
+    <ClCompile Include="Logging.cpp" />
+    <ClCompile Include="MainerMenu.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="MenuCreator.cpp" />
+    <ClCompile Include="MiniBpm.cpp" />
+    <ClCompile Include="ModEditor.cpp" />
+    <ClCompile Include="ModManager.cpp" />
+    <ClCompile Include="Multiplayer.cpp" />
+    <ClCompile Include="MultiplayerLobbies.cpp" />
+    <ClCompile Include="MultiplayerLobby.cpp" />
+    <ClCompile Include="NoteObject.cpp" />
+    <ClCompile Include="Noteskin.cpp" />
+    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="OsuFile.cpp" />
+    <ClCompile Include="Pack.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="Playfield.cpp" />
+    <ClCompile Include="pugixml.cpp" />
+    <ClCompile Include="QuaverFile.cpp" />
+    <ClCompile Include="ReceptorObject.cpp" />
+    <ClCompile Include="Rendering.cpp" />
+    <ClCompile Include="SaveFile.cpp" />
+    <ClCompile Include="SDL2_gfxPrimitives.c" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="SMFile.cpp" />
+    <ClCompile Include="SongSelect.cpp" />
+    <ClCompile Include="SoundManager.cpp" />
+    <ClCompile Include="StartMenu.cpp" />
+    <ClCompile Include="stbi.cpp" />
+    <ClCompile Include="Steam.cpp" />
+    <ClCompile Include="Text.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TweenManager.cpp" />
+    <ClCompile Include="VerticesTest.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ArrowEffects.h" />
+    <ClInclude Include="Average4k.h" />
+    <ClInclude Include="AvgButton.h" />
+    <ClInclude Include="AvgCamera.h" />
+    <ClInclude Include="AvgCheckBox.h" />
+    <ClInclude Include="AvgContainer.h" />
+    <ClInclude Include="AvgDropDown.h" />
+    <ClInclude Include="AvgFrame.h" />
+    <ClInclude Include="AvgGroup.h" />
+    <ClInclude Include="AvgHitGraph.h" />
+    <ClInclude Include="AvgRect.h" />
+    <ClInclude Include="AvgTextBox.h" />
+    <ClInclude Include="AvgSprite.h" />
+    <ClInclude Include="AvgWheel.h" />
+    <ClInclude Include="Base64.h" />
+    <ClInclude Include="Chart.h" />
+    <ClInclude Include="ChatObject.h" />
+    <ClInclude Include="CPacketChartAcquired.h" />
+    <ClInclude Include="CPacketHello.h" />
+    <ClInclude Include="CPacketHostChangeChart.h" />
+    <ClInclude Include="CPacketHostEndChart.h" />
+    <ClInclude Include="CPacketHostServer.h" />
+    <ClInclude Include="CPacketHostStartGame.h" />
+    <ClInclude Include="CPacketHostUpdateLobby.h" />
+    <ClInclude Include="CPacketJoinServer.h" />
+    <ClInclude Include="CPacketLeaderboardRequest.h" />
+    <ClInclude Include="CPacketLeave.h" />
+    <ClInclude Include="CPacketNoteHit.h" />
+    <ClInclude Include="CPacketRequestAvatar.h" />
+    <ClInclude Include="CPacketSendMessage.h" />
+    <ClInclude Include="CPacketServerList.h" />
+    <ClInclude Include="CPacketSongFinished.h" />
+    <ClInclude Include="CPacketStatus.h" />
+    <ClInclude Include="CPacketSubmitScore.h" />
+    <ClInclude Include="CPacketWtfAmIn.h" />
+    <ClInclude Include="discord_sdk\achievement_manager.h" />
+    <ClInclude Include="discord_sdk\activity_manager.h" />
+    <ClInclude Include="discord_sdk\application_manager.h" />
+    <ClInclude Include="discord_sdk\core.h" />
+    <ClInclude Include="discord_sdk\discord.h" />
+    <ClInclude Include="discord_sdk\event.h" />
+    <ClInclude Include="discord_sdk\ffi.h" />
+    <ClInclude Include="discord_sdk\image_manager.h" />
+    <ClInclude Include="discord_sdk\lobby_manager.h" />
+    <ClInclude Include="discord_sdk\network_manager.h" />
+    <ClInclude Include="discord_sdk\overlay_manager.h" />
+    <ClInclude Include="discord_sdk\relationship_manager.h" />
+    <ClInclude Include="discord_sdk\storage_manager.h" />
+    <ClInclude Include="discord_sdk\store_manager.h" />
+    <ClInclude Include="discord_sdk\types.h" />
+    <ClInclude Include="discord_sdk\user_manager.h" />
+    <ClInclude Include="discord_sdk\voice_manager.h" />
+    <ClInclude Include="dr_mp3.h" />
+    <ClInclude Include="Easing.h" />
+    <ClInclude Include="Font.h" />
+    <ClInclude Include="FONT\SDL_ttf.h" />
+    <ClInclude Include="FuckinEditor.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Gameplay.h" />
+    <ClInclude Include="GL.h" />
+    <ClInclude Include="Helpers.h" />
+    <ClInclude Include="imageinfo.hpp" />
+    <ClInclude Include="imconfig.h" />
+    <ClInclude Include="imgui.h" />
+    <ClInclude Include="ImGuiFileDialog.h" />
+    <ClInclude Include="imgui_impl_opengl3.h" />
+    <ClInclude Include="imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="imgui_impl_sdl.h" />
+    <ClInclude Include="imgui_internal.h" />
+    <ClInclude Include="imstb_rectpack.h" />
+    <ClInclude Include="imstb_textedit.h" />
+    <ClInclude Include="imstb_truetype.h" />
+    <ClInclude Include="includes.h" />
+    <ClInclude Include="Judge.h" />
+    <ClInclude Include="Lobby.h" />
+    <ClInclude Include="Logging.h" />
+    <ClInclude Include="log_stream.h" />
+    <ClInclude Include="luaaa.h" />
+    <ClInclude Include="MainerMenu.h" />
+    <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="Menu.h" />
+    <ClInclude Include="MenuCreator.h" />
+    <ClInclude Include="MiniBpm.h" />
+    <ClInclude Include="ModEditor.h" />
+    <ClInclude Include="ModManager.h" />
+    <ClInclude Include="Multiplayer.h" />
+    <ClInclude Include="MultiplayerLobbies.h" />
+    <ClInclude Include="MultiplayerLobby.h" />
+    <ClInclude Include="NoteObject.h" />
+    <ClInclude Include="Noteskin.h" />
+    <ClInclude Include="Object.h" />
+    <ClInclude Include="OsuFile.h" />
+    <ClInclude Include="Pack.h" />
+    <ClInclude Include="Packet.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="picosha2.h" />
+    <ClInclude Include="Playfield.h" />
+    <ClInclude Include="pugiconfig.hpp" />
+    <ClInclude Include="pugixml.hpp" />
+    <ClInclude Include="QuaverFile.h" />
+    <ClInclude Include="ReceptorObject.h" />
+    <ClInclude Include="Rendering.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="SaveFile.h" />
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="SMFile.h" />
+    <ClInclude Include="SongSelect.h" />
+    <ClInclude Include="SoundBackend.h" />
+    <ClInclude Include="SoundManager.h" />
+    <ClInclude Include="SPacketAvatarRequestResponse.h" />
+    <ClInclude Include="SPacketFinalizeChart.h" />
+    <ClInclude Include="SPacketFuckYou.h" />
+    <ClInclude Include="SPacketHello.h" />
+    <ClInclude Include="SPacketHostServerReply.h" />
+    <ClInclude Include="SPacketInvalidPacket.h" />
+    <ClInclude Include="SPacketJoinServerReply.h" />
+    <ClInclude Include="SPacketLeaderboardResponse.h" />
+    <ClInclude Include="SPacketOnChat.h" />
+    <ClInclude Include="SPacketPlayerSongFinished.h" />
+    <ClInclude Include="SPacketScoreResult.h" />
+    <ClInclude Include="SPacketServerListReply.h" />
+    <ClInclude Include="SPacketStartLobbyGame.h" />
+    <ClInclude Include="SPacketStatus.h" />
+    <ClInclude Include="SPacketUpdateEncryptionParameters.h" />
+    <ClInclude Include="SPacketUpdateLeaderboard.h" />
+    <ClInclude Include="SPacketUpdateLobbyChart.h" />
+    <ClInclude Include="SPacketUpdateLobbyData.h" />
+    <ClInclude Include="SPacketWtfAmInReply.h" />
+    <ClInclude Include="StartMenu.h" />
+    <ClInclude Include="stbi.h" />
+    <ClInclude Include="Steam.h" />
+    <ClInclude Include="Text.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="TweenManager.h" />
+    <ClInclude Include="VerticesTest.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Average4k.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico" />
+    <Image Include="icon2.ico" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

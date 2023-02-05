@@ -1,0 +1,139 @@
+#pragma once
+#include "includes.h"
+#include <sstream>
+#include <string>
+#include <fstream>
+#include "picosha2.h"
+
+struct bpmSegment {
+	float startBeat;
+	float startTime;
+	float endBeat;
+	float length; // in ms
+	float bpm;
+};
+
+struct stopSegment {
+	float length;
+	float beat;
+};
+
+enum noteType {
+	Note_Normal = 1,
+	Note_Head = 2,
+	Note_Tail = 3,
+	Note_Mine = 5,
+	Note_Fake = 6
+};
+
+struct note {
+	float beat;
+	float row = -99;
+	noteType type;
+	int lane;
+
+	float connectedBeat = -1;
+
+	// gameplay var
+	bool played;
+	bool killed;
+};
+
+struct info {
+	float stream = 0;
+	float jacks = 0;
+	float jumpstream = 0;
+	float chordjack = 0;
+	float handstream = 0;
+	float technical = 0;
+	float maxNPS = 0;
+	float averageNPS = 0;
+};
+
+
+struct difficulty
+{
+	info info;
+	std::string name;
+	std::string charter;
+	std::vector<note> notes;
+};
+
+class chartMeta {
+public:
+		std::string hash;
+		std::string songName;
+		std::string audio;
+		std::string folder;
+		std::string background;
+		std::string banner;
+		std::string artist;
+		std::string cdtitle;
+		std::string ext;
+		std::vector<bpmSegment> bpms;
+		std::vector<stopSegment> stops;
+		std::vector<difficulty> difficulties;
+		float proprietaryChartFormatOffset = 0;
+		float chartOffset;
+		float start = 0;
+		int chartType = 0;
+};
+
+
+class Chart
+{
+	public:
+		bpmSegment previouslyFound;
+		bpmSegment nextSeg;
+		float BASS_OFFSET;
+
+		Chart() {};
+
+		void getInfo();
+
+
+		Chart(chartMeta m, bool checkformod = true) { 
+			meta = m;
+			previouslyFound.length = -1;
+			if (std::filesystem::exists(m.folder + "/mod") && checkformod)
+			{
+				isModFile = true;
+				pathToLua = m.folder + "/mod/mod.lua";
+			}
+			// mp3/other bass offsets
+
+			if (m.ext == "mp3")
+				BASS_OFFSET = 0.034f * 2.5f;
+			else
+				BASS_OFFSET = 0.034f;
+
+
+
+			// get info
+
+			getInfo();
+		};
+		chartMeta meta;
+
+		~Chart()
+		{
+			// not much lol
+		}
+		static std::vector < std::string > split(std::string str, char delimiter);
+
+		bool isModFile = false;
+
+		std::string pathToLua = "";
+
+		float getTimeFromBeat(float beat, bpmSegment seg);
+		float getTimeFromBeatOffset(float beat, bpmSegment seg);
+		float getBeatFromTime(float timestamp, bpmSegment seg);
+		float getBeatFromTimeOffset(float timestamp, bpmSegment seg);
+		bpmSegment getSegmentFromTime(float timestamp);
+		float getStopOffsetFromTime(float timestamp);
+		float getStopOffsetFromBeat(float beat);
+		bpmSegment getSegmentFromBeat(float beat);
+
+		void destroy();
+};
+

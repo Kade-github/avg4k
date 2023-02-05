@@ -18,7 +18,7 @@ namespace AvgEngine::Base
 			camera = Camera(Render::Display::width, Render::Display::height);
 		}
 		int lastObjectId = 0;
-		std::vector<GameObject> GameObjects;
+		std::vector<GameObject*> GameObjects;
 
 		Events::EventManager* eManager = NULL;
 
@@ -31,11 +31,11 @@ namespace AvgEngine::Base
 
 		virtual void draw()
 		{
-			for(GameObject ob : GameObjects)
+			for(GameObject* ob : GameObjects)
 			{
 				// Render objects' draw calls.
-				if (ob.render)
-					ob.draw();
+				if (ob->render)
+					ob->draw();
 			}
 
 			// Now we render the camera
@@ -46,10 +46,11 @@ namespace AvgEngine::Base
 		 * \brief Creates a copy of an object and puts the copy onto a vector with a given id
 		 * \param object Object to copy onto the vector
 		 */
-		virtual void addObject(GameObject object)
+		virtual void addObject(GameObject* object)
 		{
-			object.id = lastObjectId;
-			object.eManager = eManager;
+			object->id = lastObjectId;
+			object->eManager = eManager;
+			object->camera = &camera;
 			GameObjects.push_back(object);
 			lastObjectId++;
 		}
@@ -58,10 +59,10 @@ namespace AvgEngine::Base
 		 * \brief Removes an object
 		 * \param object The object to remove
 		 */
-		virtual void removeObject(GameObject object)
+		virtual void removeObject(GameObject* object)
 		{
 			GameObjects.erase(std::ranges::remove_if(GameObjects,
-				[&](const GameObject x) { return x == object; }).begin(), GameObjects.end());
+				[&](const GameObject* x) { return *x == *object; }).begin(), GameObjects.end());
 		}
 
 		/**
@@ -71,7 +72,7 @@ namespace AvgEngine::Base
 		virtual void removeObject(int id)
 		{
 			GameObjects.erase(std::ranges::remove_if(GameObjects,
-				[&](const GameObject x) { return x.id == id; }).begin(), GameObjects.end());
+				[&](const GameObject* x) { return x->id == id; }).begin(), GameObjects.end());
 		}
 
 	};

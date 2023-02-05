@@ -45,7 +45,7 @@ Texture* Texture::createWithImage(std::string filePath)
 	return t;
 }
 
-Texture* Texture::loadTextureFromData(unsigned char* data, int w, int h)
+Texture* Texture::loadTextureFromData(unsigned char* data, float w, float h)
 {
 	return new Texture(data, w, h);
 }

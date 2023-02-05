@@ -35,7 +35,8 @@ namespace AvgEngine
 			}
 			Instance = this;
 			Logging::writeLog("[AvgEngine] Game created, title: " + Title + ". Version: " + Version);
-
+			Render::Display::width = w;
+			Render::Display::height = h;
 		}
 
 		/**
@@ -80,6 +81,14 @@ namespace AvgEngine
 
 		void SwitchMenu(Base::Menu* menu)
 		{
+			if (CurrentMenu)
+			{
+				for(Base::GameObject* obj : CurrentMenu->GameObjects)
+				{
+					delete obj;
+				}
+				CurrentMenu->GameObjects.clear();
+			}
 			CurrentMenu = menu;
 			CurrentMenu->eManager = &eManager;
 			CurrentMenu->load();

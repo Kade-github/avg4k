@@ -1,16 +1,15 @@
 #include "StartScreen.h"
 
+#include "Sprite.h"
+
 StartScreen::StartScreen()
 {
 	
 }
 
-void KeyPress(AvgEngine::Events::Event e)
-{
-	AvgEngine::Logging::writeLog("Key Press " + std::to_string(e.data));
-}
-
 void StartScreen::load()
 {
-	eManager->Subscribe(AvgEngine::Events::EventType::Event_KeyPress, KeyPress);
+	Sprite* sprite = new Sprite(0, 0, "assets/skinDefaults/Menu/darkmodebg.png");
+	addObject(sprite);
+
 }

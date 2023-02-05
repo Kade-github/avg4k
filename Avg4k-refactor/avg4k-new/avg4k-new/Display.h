@@ -85,6 +85,8 @@ namespace AvgEngine::Render
 	{
 	public:
 
+		static OpenGL::Shader* defaultShader;
+
 		static int width, height;
 
 		static std::vector<Vertex> batch_buffer;
@@ -146,6 +148,9 @@ namespace AvgEngine::Render
 			glEnableVertexAttribArray(2);
 
 			glGenBuffers(1, &batch_vbo);
+
+			defaultShader = new OpenGL::Shader();
+			defaultShader->GL_CompileShader(NULL, NULL);
 		}
 
 		/**
@@ -204,8 +209,11 @@ namespace AvgEngine::Render
 			glBindVertexArray(batch_vao);
 			glBindBuffer(GL_ARRAY_BUFFER, batch_vbo);
 
+
 			shad->GL_Use();
+
 			tex->Bind();
+
 
 			//Set attribute pointers
 			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<GLvoid*>(offsetof(Vertex, x)));
@@ -213,8 +221,8 @@ namespace AvgEngine::Render
 			glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<GLvoid*>(offsetof(Vertex, r)));
 
 			glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * batch_buffer.size(), batch_buffer.data(), GL_STATIC_DRAW);
-
 			glDrawArrays(GL_TRIANGLES, 0, batch_buffer.size());
+
 
 			batch_buffer.clear(); // clear it out
 			glUseProgram(NULL);

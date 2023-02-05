@@ -24,13 +24,20 @@ namespace AvgEngine::OpenGL
 
 		static Texture* returnWhiteTexture()
 		{
-			unsigned char c[] = { 255, 255, 255, 255 };
-			return new Texture(c, 1, 1);
+			static Texture* t = NULL;
+			if (t == NULL)
+			{
+				unsigned char c[] = { 255, 255, 255, 255 };
+				t = new Texture(c, 1, 1);
+				t->dontDelete = true;
+			}
+			return t;
 		}
 
 		static Texture* createWithImage(std::string filePath);
 
-		static Texture* loadTextureFromData(unsigned char* data, int w, int h);
+		static Texture* loadTextureFromData(unsigned char* data, float w, float h);
+
 
 		static texData getTextureData(std::string filePath);
 

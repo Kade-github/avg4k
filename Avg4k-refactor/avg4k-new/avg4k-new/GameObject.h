@@ -14,13 +14,14 @@ namespace AvgEngine::Base
 
 		Events::EventManager* eManager = NULL;
 
-		Camera camera{};
+		Camera* camera{};
 
 		Render::Rect transform = Render::Rect();
 
 		int id = 0;
+		int zIndex = 0;
 
-		bool render = false;
+		bool render = true;
 
 		GameObject(Render::Rect _transform)
 		{

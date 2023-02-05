@@ -158,13 +158,20 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	Logging::writeLog("[Main] Starting game...");
 
+	glfwSwapInterval(1);
+
 	while (!glfwWindowShouldClose(g->Window))
 	{
+		glClearColor(0.05, 0.05, 0.05, 1);
+		glClear(GL_COLOR_BUFFER_BIT);
+
 		g->update();
 		g->CurrentMenu->draw();
 		glfwSwapBuffers(g->Window);
 		glfwPollEvents();
 	}
+
+	glfwDestroyWindow(g->Window);
 
 	glfwTerminate();
 	exit(EXIT_SUCCESS);

@@ -32,9 +32,9 @@ namespace AvgEngine::Base
 		std::vector<drawCall> drawCalls{};
 		Camera() = default;
 		int w, h;
-		Camera(int w, int h)
+		Camera(int _w, int _h)
 		{
-			resize(w, h);
+			resize(_w, _h);
 		}
 
 		glm::mat4 projection{};
@@ -44,9 +44,28 @@ namespace AvgEngine::Base
 		 * \param w The width to resize to
 		 * \param h The height to resize to
 		 */
-		void resize(float w, float h)
+		void resize(float _w, float _h)
 		{
-			projection = glm::ortho(0.0f, w, h, 0.0f, -1.0f, 1.0f);
+			w = _w;
+			h = _h;
+			projection = glm::ortho(0.0f, _w, _h, 0.0f, -1.0f, 1.0f);
+		}
+
+		/**
+		 * \brief A helper function to format draw calls
+		 * \param zIndex The zIndex of the draw call
+		 * \param texture The texture of the draw call
+		 * \param shader The shader of the draw call
+		 * \param vertices The vertices of the draw call
+		 * \return The formatted draw call struct
+		 */
+		static drawCall FormatDrawCall(int zIndex, OpenGL::Texture* texture, OpenGL::Shader* shader, std::vector<Render::Vertex> vertices)
+		{
+			drawCall call;
+			call.texture = texture;
+			call.zIndex = zIndex;
+			call.vertices = vertices;
+			return call;
 		}
 
 		/**
@@ -55,6 +74,10 @@ namespace AvgEngine::Base
 		 */
 		void addDrawCall(drawCall& call)
 		{
+			if (call.texture == NULL)
+				call.texture = OpenGL::Texture::returnWhiteTexture();
+			if (call.shad == NULL)
+				call.shad = Render::Display::defaultShader;
 			// See if we can find a draw call already with the same shader, texture, and zIndex
 			auto it = std::find(drawCalls.begin(), drawCalls.end(), call);
 			if (it != drawCalls.end()) {

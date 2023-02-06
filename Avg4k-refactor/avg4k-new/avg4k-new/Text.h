@@ -9,6 +9,8 @@ namespace AvgEngine::Base
 	public:
 		Fnt::Fnt* fnt;
 
+		bool wrap = false;
+
 		float size = 0;
 		float outlineThickness = 0;
 
@@ -50,14 +52,20 @@ namespace AvgEngine::Base
 			float scale = size / fnt->ogSize;
 			for(char ch : text)
 			{
-				Fnt::FntChar c = fnt->GetChar(ch);
+				const Fnt::FntChar c = fnt->GetChar(ch);
 				if (c.id == -1)
 					continue;
+				float advance = c.xAdvance * scale;
+				if (ch == 32)
+				{
+					dst.x += advance;
+					totalW += advance;
+					continue;
+				}
 				Render::Rect src = c.src;
 				dst.w = c.dst.w * scale;
 				dst.h = c.dst.h * scale;
 
-				float advance = c.xAdvance * scale;
 
 				if (highestH < dst.h)
 					highestH = dst.h;
@@ -74,13 +82,20 @@ namespace AvgEngine::Base
 					outline.r = 0;
 					outline.g = 0;
 					outline.b = 0;
-					for (Render::Vertex v : Render::DisplayHelper::RectToVertex(outline, src))
-						call.vertices.push_back(v);
+					std::vector<Render::Vertex> newVert = Render::DisplayHelper::RectToVertex(outline, src);
+
+					call.vertices.insert(call.vertices.end(), newVert.begin(), newVert.end());
 				}
-				for (Render::Vertex v : Render::DisplayHelper::RectToVertex(dst, src))
-					call.vertices.push_back(v);
+				std::vector<Render::Vertex> newVert = Render::DisplayHelper::RectToVertex(dst, src);
+
+				call.vertices.insert(call.vertices.end(), newVert.begin(), newVert.end());
 
 				dst.x += advance;
+				if (wrap && dst.x + dst.w > Render::Display::width && wrap)
+				{
+					dst.x = transform.x;
+					dst.y += highestH;
+				}
 				totalW += advance;
 			}
 			transform.w = totalW;

@@ -52,21 +52,18 @@ void Console::update()
 		ImGui::Text("Current FPS: %d", Game::Instance->fps);
 		if (ImPlot::BeginPlot("FPS")) {
 			ImPlot::SetupAxes("Report ID", "FPS");
-			ImPlot::SetupAxesLimits(0, 25, 0, 255, ImPlotCond_Always);
-			ImPlot::PlotLine("##FpsStuff", fpsData, 25);
+			ImPlot::SetupAxesLimits(0, 50, 0, 255, ImPlotCond_Always);
+			ImPlot::PlotLine("##FpsStuff", fpsData, 50);
 			ImPlot::EndPlot();
 		}
 		ImGui::Text("Draw Calls: %d", Game::Instance->CurrentMenu->camera.drawCalls.size());
 		if (ImPlot::BeginPlot("Draw Calls")) {
 			ImPlot::SetupAxes("Report ID", "Draw Calls");
-			ImPlot::SetupAxisLimits(ImAxis_X1, 0, 25, ImPlotCond_Always);
+			ImPlot::SetupAxisLimits(ImAxis_X1, 0, 50, ImPlotCond_Always);
 			ImPlot::SetupAxisLimits(ImAxis_Y1, 0, 100, ImPlotCond_Always);
-			ImPlot::PlotLine("##DrawCalls", drawData, 25,1,0,0,0,sizeof(int));
+			ImPlot::PlotLine("##DrawCalls", drawData, 50);
 			ImPlot::EndPlot();
 		}
-		float load = CPU::GetCPULoad() * 100.0f;
-
-		ImGui::Text("CPU Usage: %d percent", load);
 		ImGui::End();
 	}
 

@@ -152,6 +152,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+	glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
 	glfwWindowHint(GLFW_SAMPLES, 16);
 
 
@@ -219,8 +220,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	Logging::writeLog("[Main] Starting game...");
 
-	glfwSwapInterval(0);
-
 	double lastTime = glfwGetTime();
 	double fTime = glfwGetTime();
 	int frames = 0;
@@ -233,24 +232,14 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	framecount = 0;
 	frametimelast = 0;
 
+	glfwSwapInterval(1);
+
 	while (!glfwWindowShouldClose(g->Window))
 	{
+		glfwPollEvents();
+
 		glClearColor(0.05f, 0.05f, 0.05f, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
-
-		fpsthink(g);
-
-		if (g->fps < 0)
-			g->fps = 0;
-
-		reportId++;
-		if (reportId == 25)
-			reportId = 0;
-
-		g->console.fpsData[reportId] = g->fps;
-
-
-		glfwPollEvents();
 
 		External::ImGuiHelper::RenderStart();
 
@@ -284,10 +273,16 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 		glfwSwapBuffers(g->Window);
 
-		while (glfwGetTime() < lastTime + 1.0 / 244) {
-			Sleep(1);
-		}
-		lastTime += 1.0 / 244;
+		fpsthink(g);
+
+		if (g->fps < 0)
+			g->fps = 0;
+
+		reportId++;
+		if (reportId == 50)
+			reportId = 0;
+
+		g->console.fpsData[reportId] = g->fps;
 	}
 
 	External::ImGuiHelper::Destroy();

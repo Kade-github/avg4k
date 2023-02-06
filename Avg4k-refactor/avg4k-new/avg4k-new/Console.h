@@ -9,9 +9,8 @@ namespace AvgEngine::Debug
 	public:
 		bool open = false;
 
-		float fpsData[25];
-		float cpuData[25];
-		int drawData[25];
+		float fpsData[50];
+		int drawData[50];
 
 
 		bool showPerformance = false;

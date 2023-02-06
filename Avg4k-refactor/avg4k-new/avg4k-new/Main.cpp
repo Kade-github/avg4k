@@ -255,8 +255,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 		g->update();
 		g->CurrentMenu->draw();
-		g->console.drawData[reportId] = g->CurrentMenu->camera.drawCalls.size();
-		g->console.update();
 
 		// Special text draws'
 
@@ -274,6 +272,9 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		g->fpsText->draw();
 
 		// End of special text draws'
+
+		g->console.drawData[reportId] = g->CurrentMenu->camera.drawCalls.size();
+		g->console.update();
 
 		g->CurrentMenu->cameraDraw();
 

@@ -51,7 +51,7 @@ void Console::update()
 		ImGui::Text("Current FPS: %d", Game::Instance->fps);
 		if (ImPlot::BeginPlot("FPS")) {
 			ImPlot::SetupAxes("Report ID", "FPS");
-			ImPlot::SetupAxesLimits(0, 25, 0, 250, ImPlotCond_Always);
+			ImPlot::SetupAxesLimits(0, 25, 0, 255, ImPlotCond_Always);
 			ImPlot::PlotLine("##FpsStuff", fpsData, 25);
 			ImPlot::EndPlot();
 		}

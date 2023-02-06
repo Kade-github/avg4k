@@ -33,6 +33,9 @@ namespace AvgEngine::Base
 
 		virtual void draw()
 		{
+			// Update tweens
+			tween.Update();
+
 			for(GameObject* ob : GameObjects)
 			{
 				// Render objects' draw calls.

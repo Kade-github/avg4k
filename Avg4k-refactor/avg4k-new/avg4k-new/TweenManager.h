@@ -62,6 +62,7 @@ namespace AvgEngine
 			double curTime = std::abs(glfwGetTime() - tw.startTime);
 			double t = std::min(curTime / tw.length, 1.0);
 			double rT = tw.ease(t);
+			Logging::writeLog("Tween value: " + std::to_string(rT));
 			tw.toModify->x = std::lerp(tw.start.x, tw.end.x, rT);
 			tw.toModify->y = std::lerp(tw.start.y, tw.end.y, rT);
 			tw.toModify->a = std::lerp(tw.start.a, tw.end.a, rT);

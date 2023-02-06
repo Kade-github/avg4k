@@ -39,26 +39,26 @@ namespace AvgEngine
 
 			std::string date = std::string(tmBuff);
 
-			std::string log = "[" + date.substr(0, date.length() - 1) + "] " + l;
+			std::string logs = "[" + date.substr(0, date.length() - 1) + "] " + l;
 
 			// substr -1 because it appends a \n. it just hates me man
 #ifdef _DEBUG
 			std::cout << log << "\n";
 #else
-			log << log << "\n";
+			log << logs << "\n";
 #endif
 
 			int type = 0;
 
-			if (Utils::StringTools::Contains(log, "[User]"))
+			if (Utils::StringTools::Contains(logs, "[User]"))
 				type = 3;
-			else if (Utils::StringTools::Contains(log, "[Error]"))
+			else if (Utils::StringTools::Contains(logs, "[Error]"))
 				type = 2;
-			else if (Utils::StringTools::Contains(log, "[Warning]"))
+			else if (Utils::StringTools::Contains(logs, "[Warning]"))
 				type = 1;
 
 			ConsoleLog cLog;
-			cLog.text = log;
+			cLog.text = logs;
 
 			switch (type)
 			{

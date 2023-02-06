@@ -59,7 +59,7 @@ void Console::update()
 		if (ImPlot::BeginPlot("Draw Calls")) {
 			ImPlot::SetupAxes("Report ID", "Draw Calls");
 			ImPlot::SetupAxisLimits(ImAxis_X1, 0, 25, ImPlotCond_Always);
-			ImPlot::SetupAxisLimits(ImAxis_Y1, 0, 400, ImPlotCond_Always);
+			ImPlot::SetupAxisLimits(ImAxis_Y1, 0, 100, ImPlotCond_Always);
 			ImPlot::PlotLine("##DrawCalls", drawData, 25,1,0,0,0,sizeof(int));
 			ImPlot::EndPlot();
 		}

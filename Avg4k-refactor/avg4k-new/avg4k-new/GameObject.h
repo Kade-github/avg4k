@@ -2,6 +2,8 @@
 #include "Display.h"
 #include "Camera.h"
 #include "includes.h"
+#include "TweenManager.h"
+
 namespace AvgEngine::Base
 {
 	/**
@@ -13,6 +15,8 @@ namespace AvgEngine::Base
 		virtual ~GameObject() = default;
 
 		Events::EventManager* eManager = NULL;
+
+		TweenManager* tween;
 
 		Camera* camera{};
 

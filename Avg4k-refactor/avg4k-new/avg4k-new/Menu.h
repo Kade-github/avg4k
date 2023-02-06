@@ -20,6 +20,8 @@ namespace AvgEngine::Base
 		int lastObjectId = 0;
 		std::vector<GameObject*> GameObjects;
 
+		TweenManager tween{};
+
 		Events::EventManager* eManager = NULL;
 
 		Camera camera;
@@ -48,6 +50,7 @@ namespace AvgEngine::Base
 		 */
 		virtual void addObject(GameObject* object)
 		{
+			object->tween = &tween;
 			object->id = lastObjectId;
 			object->eManager = eManager;
 			object->camera = &camera;

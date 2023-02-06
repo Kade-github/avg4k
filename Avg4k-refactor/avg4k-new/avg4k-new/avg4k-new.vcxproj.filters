@@ -60,9 +60,6 @@
     <ClCompile Include="BASS.cpp">
       <Filter>Average4K\Engine\External</Filter>
     </ClCompile>
-    <ClCompile Include="TweenManager.cpp">
-      <Filter>Average4K\Engine\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="StartScreen.cpp">
       <Filter>Average4K\Avg4k\Menus</Filter>
     </ClCompile>
@@ -104,6 +101,9 @@
     </ClCompile>
     <ClCompile Include="implot_items.cpp">
       <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Easing.cpp">
+      <Filter>Average4K\Engine\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -199,6 +199,9 @@
     </ClInclude>
     <ClInclude Include="implot_internal.h">
       <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Easing.h">
+      <Filter>Average4K\Engine\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

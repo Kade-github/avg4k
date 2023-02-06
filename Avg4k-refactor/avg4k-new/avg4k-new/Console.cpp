@@ -75,7 +75,9 @@ void Console::update()
 	ImGui::BeginChild("Console", { s.x,s.y - 24 });
 	for(ConsoleLog& log : Logging::consoleLog)
 	{
-		ImGui::TextColored(log.color.Value, log.text.c_str());
+		ImGui::PushStyleColor(ImGuiCol_Text, log.color.Value);
+		ImGui::TextWrapped(log.text.c_str());
+		ImGui::PopStyleColor(1);
 	}
 	ImGui::SetScrollHereY(1.0f);
 	ImGui::EndChild();

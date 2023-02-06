@@ -14,7 +14,7 @@ namespace AvgEngine::Debug
 
 		bool showPerformance = false;
 
-		char input[128];
+		char input[256];
 
 		void registerEvents(Events::EventManager& e);
 

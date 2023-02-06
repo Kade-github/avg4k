@@ -1,0 +1,47 @@
+#pragma once 
+#include "includes.h"
+namespace AvgEngine::Easing
+{
+	class Easing {
+	public:
+		enum easing_functions
+		{
+			EaseLinear,
+			EaseInSine,
+			EaseOutSine,
+			EaseInOutSine,
+			EaseInQuad,
+			EaseOutQuad,
+			EaseInOutQuad,
+			EaseInCubic,
+			EaseOutCubic,
+			EaseInOutCubic,
+			EaseInQuart,
+			EaseOutQuart,
+			EaseInOutQuart,
+			EaseInQuint,
+			EaseOutQuint,
+			EaseInOutQuint,
+			EaseInExpo,
+			EaseOutExpo,
+			EaseInOutExpo,
+			EaseInCirc,
+			EaseOutCirc,
+			EaseInOutCirc,
+			EaseInBack,
+			EaseOutBack,
+			EaseInOutBack,
+			EaseInElastic,
+			EaseOutElastic,
+			EaseInOutElastic,
+			EaseInBounce,
+			EaseOutBounce,
+			EaseInOutBounce
+		};
+
+		typedef double(*easingFunction)(double);
+
+		static easingFunction getEasingFunction(easing_functions function);
+		static easingFunction getEasingFunction(std::string function);
+	};
+}

@@ -3,6 +3,7 @@
 #include "Display.h"
 #include "Game.h"
 #include "implot.h"
+#include "CPU.h"
 
 using namespace AvgEngine::Debug;
 
@@ -63,6 +64,9 @@ void Console::update()
 			ImPlot::PlotLine("##DrawCalls", drawData, 25,1,0,0,0,sizeof(int));
 			ImPlot::EndPlot();
 		}
+		float load = CPU::GetCPULoad() * 100.0f;
+
+		ImGui::Text("CPU Usage: %d%", load);
 		ImGui::End();
 	}
 

@@ -233,5 +233,8 @@
     <ClInclude Include="FntParser.h">
       <Filter>Average4K\Engine\External\SpriteFont</Filter>
     </ClInclude>
+    <ClInclude Include="CPU.h">
+      <Filter>Average4K\Engine\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

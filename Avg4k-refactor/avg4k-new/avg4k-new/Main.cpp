@@ -5,6 +5,7 @@
 #include "Display.h"
 #include "StartScreen.h"
 #include "ImGUIHelper.h"
+#include "CPU.h"
 
 
 #ifdef STATIC_LINK

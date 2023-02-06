@@ -11,6 +11,15 @@ namespace AvgEngine::Utils
 			return search.find(find) != std::string::npos;
 		}
 
+        static const wchar_t* GetWC(const char* c)
+        {
+            const size_t cSize = strlen(c) + 1;
+            wchar_t* wc = new wchar_t[cSize];
+            mbstowcs(wc, c, cSize);
+
+            return wc;
+        }
+
         static std::vector<std::string> Split(std::string s, std::string delimiter) {
             size_t pos_start = 0, pos_end, delim_len = delimiter.length();
             std::string token;

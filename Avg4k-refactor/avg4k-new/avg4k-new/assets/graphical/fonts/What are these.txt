@@ -1,0 +1,17 @@
+Hi!
+
+You might be a little confused on what these are, and well that's okay.
+
+These are sprite fonts, after taking in account vector fonts. I think it's better to have the speed of sprite fonts instead of the scalability of vectors,
+
+so thus we are now using sprite fonts.
+
+
+How do I make them?
+
+Well I made them by using http://www.angelcode.com/products/bmfont/ (which is awesome btw)
+
+I also added the config I used inside of this folder. If you want to know how to use this program, look it up. its not that hard.
+
+But if you're having trouble, join our discord and ask for help.
+

@@ -37,6 +37,21 @@
     <Filter Include="Average4K\Engine\Console">
       <UniqueIdentifier>{27369a98-1c5d-47dd-8ef2-de3625b14de1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Average4K\Engine\External\BASS">
+      <UniqueIdentifier>{bc486ad6-34e9-4548-9fa5-bb4eb4ae7cba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\External\Glad">
+      <UniqueIdentifier>{d237c3cf-7033-4c73-b751-9649bfa5876e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\External\Image">
+      <UniqueIdentifier>{a7a07912-a757-4ba8-882a-9114b4eb6be5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\External\XML">
+      <UniqueIdentifier>{46f730c2-bec4-4b0c-b467-fbe046c07daa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\External\SpriteFont">
+      <UniqueIdentifier>{cc847dc0-5386-4caf-9dfb-46a6d9c32530}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -54,17 +69,8 @@
     <ClCompile Include="Texture.cpp">
       <Filter>Average4K\Engine\Render\OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="stbi.cpp">
-      <Filter>Average4K\Engine\External</Filter>
-    </ClCompile>
-    <ClCompile Include="BASS.cpp">
-      <Filter>Average4K\Engine\External</Filter>
-    </ClCompile>
     <ClCompile Include="StartScreen.cpp">
       <Filter>Average4K\Avg4k\Menus</Filter>
-    </ClCompile>
-    <ClCompile Include="glad.c">
-      <Filter>Average4K\Engine\External</Filter>
     </ClCompile>
     <ClCompile Include="Display.cpp">
       <Filter>Average4K\Engine\Render</Filter>
@@ -90,9 +96,6 @@
     <ClCompile Include="imgui_widgets.cpp">
       <Filter>Average4K\Engine\External\ImGUI</Filter>
     </ClCompile>
-    <ClCompile Include="ImGUIHelper.cpp">
-      <Filter>Average4K\Engine\External</Filter>
-    </ClCompile>
     <ClCompile Include="Console.cpp">
       <Filter>Average4K\Engine\Console</Filter>
     </ClCompile>
@@ -104,6 +107,21 @@
     </ClCompile>
     <ClCompile Include="Easing.cpp">
       <Filter>Average4K\Engine\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="BASS.cpp">
+      <Filter>Average4K\Engine\External\BASS</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
+      <Filter>Average4K\Engine\External\Glad</Filter>
+    </ClCompile>
+    <ClCompile Include="stbi.cpp">
+      <Filter>Average4K\Engine\External\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUIHelper.cpp">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="pugixml.cpp">
+      <Filter>Average4K\Engine\External\XML</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -128,20 +146,11 @@
     <ClInclude Include="Texture.h">
       <Filter>Average4K\Engine\Render\OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="stbi.h">
-      <Filter>Average4K\Engine\External</Filter>
-    </ClInclude>
-    <ClInclude Include="imageinfo.hpp">
-      <Filter>Average4K\Engine\External</Filter>
-    </ClInclude>
     <ClInclude Include="Display.h">
       <Filter>Average4K\Engine\Render</Filter>
     </ClInclude>
     <ClInclude Include="GameObject.h">
       <Filter>Average4K\Engine\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="BASS.h">
-      <Filter>Average4K\Engine\External</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Average4K\Engine\Base</Filter>
@@ -185,9 +194,6 @@
     <ClInclude Include="imstb_truetype.h">
       <Filter>Average4K\Engine\External\ImGUI</Filter>
     </ClInclude>
-    <ClInclude Include="ImGUIHelper.h">
-      <Filter>Average4K\Engine\External</Filter>
-    </ClInclude>
     <ClInclude Include="Console.h">
       <Filter>Average4K\Engine\Console</Filter>
     </ClInclude>
@@ -202,6 +208,30 @@
     </ClInclude>
     <ClInclude Include="Easing.h">
       <Filter>Average4K\Engine\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Text.h">
+      <Filter>Average4K\Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="BASS.h">
+      <Filter>Average4K\Engine\External\BASS</Filter>
+    </ClInclude>
+    <ClInclude Include="imageinfo.hpp">
+      <Filter>Average4K\Engine\External\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="stbi.h">
+      <Filter>Average4K\Engine\External\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUIHelper.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="pugiconfig.hpp">
+      <Filter>Average4K\Engine\External\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="pugixml.hpp">
+      <Filter>Average4K\Engine\External\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="FntParser.h">
+      <Filter>Average4K\Engine\External\SpriteFont</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

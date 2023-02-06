@@ -129,7 +129,9 @@ namespace AvgEngine::Render
 		{
 			width = newWidth;
 			height = newHeight;
-			
+
+			glfwSetWindowSize(window, width, height);
+
 			Logging::writeLog("[Display] Resized to " + std::to_string(newWidth) + "x" + std::to_string(newHeight));
 		}
 

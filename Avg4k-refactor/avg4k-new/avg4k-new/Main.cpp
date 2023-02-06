@@ -1,8 +1,11 @@
+#include <numeric>
+
 #include "includes.h"
 #include "Game.h"
 #include "Display.h"
 #include "StartScreen.h"
 #include "ImGUIHelper.h"
+
 
 #ifdef STATIC_LINK
 #pragma comment(lib,"x64\\bass.lib")
@@ -61,6 +64,47 @@
 
 using namespace AvgEngine;
 
+#define FRAME_VALUES 60
+
+typedef std::chrono::high_resolution_clock Clock;
+
+double frametimes[FRAME_VALUES];
+
+double frametimelast;
+
+std::chrono::steady_clock::time_point startTime;
+
+uint32_t framecount;
+
+void fpsthink(Game* g) {
+	uint32_t frametimesindex;
+	uint32_t count;
+	uint32_t i;
+
+	frametimesindex = framecount % FRAME_VALUES;
+
+	double nowmills = (double)(std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - startTime).count());
+
+	frametimes[frametimesindex] = nowmills - frametimelast;
+
+	frametimelast = nowmills;
+
+	framecount++;
+
+	if (framecount < FRAME_VALUES)
+		count = framecount;
+	else
+		count = FRAME_VALUES;
+
+	g->fps = 0;
+	for (i = 0; i < count; i++)
+		g->fps += frametimes[i];
+
+	g->fps /= count;
+	g->fps = std::floorf(1000.f / g->fps);
+}
+
+
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	PSTR lpCmdLine, INT nCmdShow)
 {
@@ -107,9 +151,11 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+	glfwWindowHint(GLFW_SAMPLES, 2);
 
 
 	Game* g = new Game("Average4K", "b14");
+	g->alpha = true;
 
 	glfwMakeContextCurrent(g->Window);
 
@@ -161,6 +207,13 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	External::ImGuiHelper::Init(g->Window);
 	Logging::writeLog("[Main] Initialized ImGUI!");
 
+	g->fpsText = new Text(4, 4, "assets/graphical/fonts/", "FuturaBold.fnt", "FPS: 0", 12);
+	g->fpsText->transform.a = 0.75f;
+	g->fpsText->outlineThickness = 1.4;
+
+	g->alphaText = new Text(4, 4, "assets/graphical/fonts/", "FuturaBold.fnt", "- " + g->Title + " ALPHA " + g->Version + " - EVERYTHING IS SUBJECT TO CHANGE -", 14);
+	g->alphaText->transform.a = 0.6f;
+	g->alphaText->outlineThickness = 1.4;
 	g->SwitchMenu(new StartScreen());
 
 	Logging::writeLog("[Main] Starting game...");
@@ -173,29 +226,28 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	int reportId = 0;
 
+	glEnable(GL_MULTISAMPLE);
+
+	memset(frametimes, 0, sizeof(frametimes));
+	framecount = 0;
+	frametimelast = 0;
+
 	while (!glfwWindowShouldClose(g->Window))
 	{
 		glClearColor(0.05f, 0.05f, 0.05f, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		// Measure speed
-		double currentTime = glfwGetTime();
+		fpsthink(g);
 
-		double d = std::abs(lastTime - fTime);
-
-		if (d > 1)
-		{
-			fTime = glfwGetTime();
-			g->fps = frames;
-			frames = 0;
-		}
+		if (g->fps < 0)
+			g->fps = 0;
 
 		reportId++;
 		if (reportId == 25)
 			reportId = 0;
 
 		g->console.fpsData[reportId] = g->fps;
-		frames++;
+
 
 		glfwPollEvents();
 
@@ -205,7 +257,26 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		g->CurrentMenu->draw();
 		g->console.drawData[reportId] = g->CurrentMenu->camera.drawCalls.size();
 		g->console.update();
+
+		// Special text draws'
+
+		if (g->alpha)
+		{
+			g->alphaText->transform.x += 1;
+			g->alphaText->camera = &g->CurrentMenu->camera;
+			if (g->alphaText->transform.x > Render::Display::width + g->alphaText->transform.w)
+				g->alphaText->transform.x = -g->alphaText->transform.w;
+			g->alphaText->draw();
+		}
+
+		g->fpsText->text = "FPS: " + std::to_string(g->fps);
+		g->fpsText->camera = &g->CurrentMenu->camera;
+		g->fpsText->draw();
+
+		// End of special text draws'
+
 		g->CurrentMenu->cameraDraw();
+
 
 		External::ImGuiHelper::RenderEnd(g->Window);
 

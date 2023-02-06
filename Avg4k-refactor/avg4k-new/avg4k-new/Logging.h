@@ -43,7 +43,7 @@ namespace AvgEngine
 
 			// substr -1 because it appends a \n. it just hates me man
 #ifdef _DEBUG
-			std::cout << log << "\n";
+			std::cout << logs << "\n";
 #else
 			log << logs << "\n";
 #endif

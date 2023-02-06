@@ -3,6 +3,8 @@
 #include "Menu.h"
 #include "Console.h"
 #include "EventManager.h"
+#include "Text.h"
+
 namespace AvgEngine
 {
 	class Game
@@ -10,6 +12,8 @@ namespace AvgEngine
 	public:
 
 		static Game* Instance;
+
+		bool alpha = false;
 
 		int fps = 0;
 
@@ -27,6 +31,10 @@ namespace AvgEngine
 		std::string Version;
 
 		Base::Menu* CurrentMenu = NULL;
+
+		Base::Text* fpsText = NULL;
+
+		Base::Text* alphaText = NULL;
 
 		Game(std::string _title, std::string ver, int w = 1280, int h = 720)
 		{
@@ -46,6 +54,14 @@ namespace AvgEngine
 
 			eManager = {};
 			console.registerEvents(eManager);
+
+		}
+
+		void Resize(int w, int h)
+		{
+			Render::Display::Resize(Window, w, h);
+			if (CurrentMenu)
+				CurrentMenu->camera.resize(w, h);
 		}
 
 		/**

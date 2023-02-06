@@ -66,7 +66,7 @@ void Console::update()
 		}
 		float load = CPU::GetCPULoad() * 100.0f;
 
-		ImGui::Text("CPU Usage: %d%", load);
+		ImGui::Text("CPU Usage: %d percent", load);
 		ImGui::End();
 	}
 
@@ -84,7 +84,8 @@ void Console::update()
 		ImGui::TextWrapped(log.text.c_str());
 		ImGui::PopStyleColor(1);
 	}
-	ImGui::SetScrollHereY(1.0f);
+	if (shouldFocus)
+		ImGui::SetScrollHereY(1.0f);
 	ImGui::EndChild();
 
 	ImGui::PushItemWidth(s.x);
@@ -121,10 +122,10 @@ void Console::update()
 					Logging::writeLog("[Error] That command doesn't exist!");
 					break;
 			}
-
 		}
 		else
 			Logging::writeLog("[Error] That command doesn't exist!");
+		shouldFocus = instance->open;
 		memset(input, 0, sizeof input);
 	}
 	ImGui::End();

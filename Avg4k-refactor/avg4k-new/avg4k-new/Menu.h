@@ -42,7 +42,10 @@ namespace AvgEngine::Base
 				if (ob->render)
 					ob->draw();
 			}
+		}
 
+		virtual void cameraDraw()
+		{
 			// Now we render the camera
 			camera.draw();
 		}

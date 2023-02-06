@@ -70,8 +70,6 @@ namespace AvgEngine
 					eventMutex.unlock();
 				}
 			}
-
-			console.update();
 		}
 
 		void QueueEvent(Events::Event e)

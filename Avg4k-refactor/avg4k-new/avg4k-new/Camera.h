@@ -111,6 +111,7 @@ namespace AvgEngine::Base
 				// Draw all of the vertices
 				Render::Display::DrawBuffer(call.texture, call.shad);
 			}
+			
 			// Clear all of the draw calls so we don't draw things twice
 			drawCalls.clear();
 		}

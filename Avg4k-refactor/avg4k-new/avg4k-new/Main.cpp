@@ -195,7 +195,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			reportId = 0;
 
 		g->console.fpsData[reportId] = g->fps;
-		g->console.drawData[reportId] = g->CurrentMenu->camera.drawCalls.size();
 		frames++;
 
 		glfwPollEvents();
@@ -204,6 +203,9 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 		g->update();
 		g->CurrentMenu->draw();
+		g->console.drawData[reportId] = g->CurrentMenu->camera.drawCalls.size();
+		g->console.update();
+		g->CurrentMenu->cameraDraw();
 
 		External::ImGuiHelper::RenderEnd(g->Window);
 

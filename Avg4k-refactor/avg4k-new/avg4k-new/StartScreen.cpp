@@ -15,7 +15,7 @@ void StartScreen::load()
 	AvgEngine::Render::Rect nR = sprite->transform;
 	nR.x = 100;
 
-	tween.CreateTween(&sprite->transform, nR, 2, AvgEngine::Easing::Easing::getEasingFunction("inoutcubic"), []()
+	tween.CreateTween(&sprite->transform, nR, 6, AvgEngine::Easing::Easing::getEasingFunction("outcubic"), []()
 	{
 		AvgEngine::Logging::writeLog("done");
 	});

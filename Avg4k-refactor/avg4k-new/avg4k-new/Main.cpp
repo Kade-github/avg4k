@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "Display.h"
 #include "StartScreen.h"
+#include "ImGUIHelper.h"
 
 #ifdef STATIC_LINK
 #pragma comment(lib,"x64\\bass.lib")
@@ -103,6 +104,9 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
 
 	Game* g = new Game("Average4K", "b14");
@@ -154,22 +158,64 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	Render::Display::Init();
 	Logging::writeLog("[Main] Initialized Display!");
 
+	External::ImGuiHelper::Init(g->Window);
+	Logging::writeLog("[Main] Initialized ImGUI!");
+
 	g->SwitchMenu(new StartScreen());
 
 	Logging::writeLog("[Main] Starting game...");
 
-	glfwSwapInterval(1);
+	glfwSwapInterval(0);
+
+	double lastTime = glfwGetTime();
+	double fTime = glfwGetTime();
+	int frames = 0;
+
+	int reportId = 0;
 
 	while (!glfwWindowShouldClose(g->Window))
 	{
-		glClearColor(0.05, 0.05, 0.05, 1);
+		glClearColor(0.05f, 0.05f, 0.05f, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		// Measure speed
+		double currentTime = glfwGetTime();
+
+		double d = std::abs(lastTime - fTime);
+
+		if (d > 1)
+		{
+			fTime = glfwGetTime();
+			g->fps = frames;
+			frames = 0;
+		}
+
+		reportId++;
+		if (reportId == 25)
+			reportId = 0;
+
+		g->console.fpsData[reportId] = g->fps;
+		g->console.drawData[reportId] = g->CurrentMenu->camera.drawCalls.size();
+		frames++;
+
+		glfwPollEvents();
+
+		External::ImGuiHelper::RenderStart();
 
 		g->update();
 		g->CurrentMenu->draw();
+
+		External::ImGuiHelper::RenderEnd(g->Window);
+
 		glfwSwapBuffers(g->Window);
-		glfwPollEvents();
+
+		while (glfwGetTime() < lastTime + 1.0 / 244) {
+			Sleep(1);
+		}
+		lastTime += 1.0 / 244;
 	}
+
+	External::ImGuiHelper::Destroy();
 
 	glfwDestroyWindow(g->Window);
 

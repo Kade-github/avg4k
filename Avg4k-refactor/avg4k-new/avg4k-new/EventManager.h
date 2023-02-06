@@ -23,21 +23,36 @@ namespace AvgEngine::Events
 	{
 		EventType type = EventType::Event_Null;
 		std::function<void(Event)> toCall{};
+		bool clear = true;
+		int eId = 0;
+		bool operator==(const Listener& other) {
+			return eId == other.eId;
+		}
+
 	};
 
 	class EventManager
 	{
 	public:
+		int lastId = 0;
 		std::vector<Listener> Listeners{};
 
-		void Subscribe(EventType t, std::function<void(Event)> f)
+		void Subscribe(EventType t, std::function<void(Event)> f, bool autoClear = true)
 		{
-			Listeners.push_back({ t, f });
+			Listeners.push_back({ t, f , autoClear, lastId});
+			lastId++;
 		}
 
 		void Clear()
 		{
-			Listeners.clear();
+			std::vector<Listener> copy = Listeners;
+			for(int i = 0; i < copy.size(); i++)
+			{
+				Listener& l = copy[i];
+				if (l.clear)
+					Listeners.erase(std::ranges::remove_if(Listeners,
+						[&](const Listener x) { return x == l; }).begin(), Listeners.end());
+			}
 		}
 	};
 }

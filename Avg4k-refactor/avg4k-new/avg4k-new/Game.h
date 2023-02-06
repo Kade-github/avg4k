@@ -1,6 +1,7 @@
 #pragma once
 #include "includes.h"
 #include "Menu.h"
+#include "Console.h"
 #include "EventManager.h"
 namespace AvgEngine
 {
@@ -10,11 +11,15 @@ namespace AvgEngine
 
 		static Game* Instance;
 
+		int fps = 0;
+
+		Debug::Console console{};
+
 		std::mutex eventMutex;
 
 		std::vector<Events::Event> queuedEvents{};
 
-		Events::EventManager eManager{};
+		Events::EventManager eManager;
 
 		GLFWwindow* Window;
 
@@ -28,6 +33,7 @@ namespace AvgEngine
 			Title = _title;
 			Version = ver;
 			Window = glfwCreateWindow(w,h, _title.c_str(), NULL, NULL);
+			
 			if (!Window)
 			{
 				Logging::writeLog("[AvgEngine] [Error] Failed to create GLFW window (game will most definitely crash)");
@@ -37,6 +43,9 @@ namespace AvgEngine
 			Logging::writeLog("[AvgEngine] Game created, title: " + Title + ". Version: " + Version);
 			Render::Display::width = w;
 			Render::Display::height = h;
+
+			eManager = {};
+			console.registerEvents(eManager);
 		}
 
 		/**
@@ -61,6 +70,8 @@ namespace AvgEngine
 					eventMutex.unlock();
 				}
 			}
+
+			console.update();
 		}
 
 		void QueueEvent(Events::Event e)
@@ -91,6 +102,7 @@ namespace AvgEngine
 			}
 			CurrentMenu = menu;
 			CurrentMenu->eManager = &eManager;
+			eManager.Clear();
 			CurrentMenu->load();
 		}
 	};

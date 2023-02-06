@@ -2,13 +2,21 @@
 #include <chrono>
 #include <iostream>
 #include <fstream>
+#include "StringTools.h"
+#include "imgui.h"
 
 namespace AvgEngine
 {
-
+	struct ConsoleLog
+	{
+		ImColor color;
+		std::string text;
+	};
 	class Logging {
 	public:
 		static std::ofstream log;
+
+		static std::vector<ConsoleLog> consoleLog;
 
 		/**
 		 * \brief Create the log file
@@ -31,12 +39,43 @@ namespace AvgEngine
 
 			std::string date = std::string(tmBuff);
 
+			std::string log = "[" + date.substr(0, date.length() - 1) + "] " + l;
+
 			// substr -1 because it appends a \n. it just hates me man
 #ifdef _DEBUG
-			std::cout << "[" + date.substr(0, date.length() - 1) + "] " + l + "\n";
+			std::cout << log << "\n";
 #else
-			log << "[" + date.substr(0, date.length() - 1) + "] " + l + "\n";
+			log << log << "\n";
 #endif
+
+			int type = 0;
+
+			if (Utils::StringTools::Contains(log, "[User]"))
+				type = 3;
+			else if (Utils::StringTools::Contains(log, "[Error]"))
+				type = 2;
+			else if (Utils::StringTools::Contains(log, "[Warning]"))
+				type = 1;
+
+			ConsoleLog cLog;
+			cLog.text = log;
+
+			switch (type)
+			{
+			default: // normal
+				cLog.color = { ImColor(255,255,255,255) };
+				break;
+			case 1: // warning
+				cLog.color = { ImColor(245, 218, 86, 255) };
+				break;
+			case 2: // error
+				cLog.color = { ImColor(245, 86, 86, 255) };
+				break;
+			case 3: // other
+				cLog.color = { ImColor(95, 141, 250, 255) };
+				break;
+			}
+			consoleLog.push_back(cLog);
 
 		}
 

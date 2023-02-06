@@ -36,9 +36,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BASS.cpp" />
+    <ClCompile Include="Console.cpp" />
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="imgui.cpp" />
+    <ClCompile Include="ImGUIHelper.cpp" />
+    <ClCompile Include="imgui_demo.cpp" />
+    <ClCompile Include="imgui_draw.cpp" />
+    <ClCompile Include="imgui_impl_glfw.cpp" />
+    <ClCompile Include="imgui_impl_opengl3.cpp" />
+    <ClCompile Include="imgui_tables.cpp" />
+    <ClCompile Include="imgui_widgets.cpp" />
+    <ClCompile Include="implot.cpp" />
+    <ClCompile Include="implot_items.cpp" />
     <ClCompile Include="Logging.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -51,10 +62,23 @@
     <ClInclude Include="BASS.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Channel.h" />
+    <ClInclude Include="Console.h" />
     <ClInclude Include="Display.h" />
     <ClInclude Include="EventManager.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="imageinfo.hpp" />
+    <ClInclude Include="imconfig.h" />
+    <ClInclude Include="imgui.h" />
+    <ClInclude Include="ImGUIHelper.h" />
+    <ClInclude Include="imgui_impl_glfw.h" />
+    <ClInclude Include="imgui_impl_opengl3.h" />
+    <ClInclude Include="imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="imgui_internal.h" />
+    <ClInclude Include="implot.h" />
+    <ClInclude Include="implot_internal.h" />
+    <ClInclude Include="imstb_rectpack.h" />
+    <ClInclude Include="imstb_textedit.h" />
+    <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="includes.h" />
     <ClInclude Include="Logging.h" />
     <ClInclude Include="Menu.h" />
@@ -63,6 +87,7 @@
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="StartScreen.h" />
     <ClInclude Include="stbi.h" />
+    <ClInclude Include="StringTools.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TweenManager.h" />
   </ItemGroup>
@@ -243,6 +268,7 @@
       <ExceptionHandling>Async</ExceptionHandling>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

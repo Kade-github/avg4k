@@ -115,4 +115,49 @@ namespace AvgEngine::Base
 			drawCalls.clear();
 		}
 	};
+
+	class Primitives
+	{
+	public:
+		/**
+		 * \brief An !expensive! function to draw an outlined rectangle to a camera.
+		 * \param camera The camera to draw to
+		 * \param zIndex The zIndex of the call
+		 * \param thickness The thickness of the line
+		 * \param rect The transform of the rectangle
+		 */
+		static void DrawOutlinedRectangle(Camera* camera, int zIndex, float thickness, Render::Rect rect)
+		{
+			std::vector<Render::Vertex> vertices;
+
+			Render::Rect topLine = { rect.x, rect.y, rect.w, thickness, rect.r, rect.g, rect.b, rect.a };
+			Render::Rect bottomLine = { rect.x, rect.y + rect.h, rect.w, thickness, rect.r, rect.g, rect.b, rect.a };
+			Render::Rect leftLine = { rect.x, rect.y, thickness, rect.h, rect.r, rect.g, rect.b, rect.a };
+			Render::Rect rightLine = { rect.x + rect.w, rect.y, thickness, rect.h, rect.r,rect.g,rect.b, rect.a };
+
+			for (Render::Vertex v : Render::DisplayHelper::RectToVertex(topLine, { 0,0,1,1 }))
+				vertices.push_back(v);
+			for (Render::Vertex v : Render::DisplayHelper::RectToVertex(bottomLine, { 0,0,1,1 }))
+				vertices.push_back(v);
+			for (Render::Vertex v : Render::DisplayHelper::RectToVertex(leftLine, { 0,0,1,1 }))
+				vertices.push_back(v);
+			for (Render::Vertex v : Render::DisplayHelper::RectToVertex(rightLine, { 0,0,1,1 }))
+				vertices.push_back(v);
+
+			drawCall c = Camera::FormatDrawCall(zIndex, NULL, NULL, vertices);
+			camera->addDrawCall(c);
+		}
+
+		/**
+		 * \brief A function to draw a rectangle to a camera.
+		 * \param camera The camera to draw to
+		 * \param zIndex The zIndex of the call
+		 * \param rect The transform of the rectangle
+		 */
+		static void DrawRectangle(Camera* camera, int zIndex, Render::Rect rect)
+		{
+			drawCall c = Camera::FormatDrawCall(zIndex, NULL, NULL, Render::DisplayHelper::RectToVertex(rect, { 0,0,1,1 }));
+			camera->addDrawCall(c);
+		}
+	};
 }

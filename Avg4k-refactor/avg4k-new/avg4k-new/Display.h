@@ -81,6 +81,7 @@ namespace AvgEngine::Render
 		}
 	};
 
+
 	class Display
 	{
 	public:
@@ -92,6 +93,7 @@ namespace AvgEngine::Render
 		static std::vector<Vertex> batch_buffer;
 		static GLuint batch_vao;
 		static GLuint batch_vbo;
+
 
 		/**
 		 * \brief A helper function to set the window's fullscreen property

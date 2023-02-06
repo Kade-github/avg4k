@@ -31,6 +31,12 @@
     <Filter Include="Average4K\Avg4k\Menus">
       <UniqueIdentifier>{24656bc5-c351-4b47-9414-43a85e60522e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Average4K\Engine\External\ImGUI">
+      <UniqueIdentifier>{74d03ee1-197e-4881-9b05-e961897533bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\Console">
+      <UniqueIdentifier>{27369a98-1c5d-47dd-8ef2-de3625b14de1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -65,6 +71,39 @@
     </ClCompile>
     <ClCompile Include="Display.cpp">
       <Filter>Average4K\Engine\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_glfw.cpp">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_opengl3.cpp">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui.cpp">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_demo.cpp">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_draw.cpp">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_tables.cpp">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_widgets.cpp">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUIHelper.cpp">
+      <Filter>Average4K\Engine\External</Filter>
+    </ClCompile>
+    <ClCompile Include="Console.cpp">
+      <Filter>Average4K\Engine\Console</Filter>
+    </ClCompile>
+    <ClCompile Include="implot.cpp">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="implot_items.cpp">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +157,48 @@
     </ClInclude>
     <ClInclude Include="StartScreen.h">
       <Filter>Average4K\Avg4k\Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_glfw.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_opengl3.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_opengl3_loader.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imconfig.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_internal.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_rectpack.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_textedit.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_truetype.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUIHelper.h">
+      <Filter>Average4K\Engine\External</Filter>
+    </ClInclude>
+    <ClInclude Include="Console.h">
+      <Filter>Average4K\Engine\Console</Filter>
+    </ClInclude>
+    <ClInclude Include="StringTools.h">
+      <Filter>Average4K\Engine\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="implot.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="implot_internal.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -98,16 +98,13 @@ namespace AvgEngine::Base
 		{
 			// Viewport width and height
 			glViewport(0, 0, w, h);
-			// Sort all of the draw calls based on their zIndex
-			std::ranges::sort(drawCalls, drawCall());
+
 			for(drawCall& call : drawCalls)
 			{
 				// Clear the buffer so we know nothing is there
 				Render::Display::ClearBuffer();
 				// Add our call's vertices
 				Render::Display::AddVertex(call.vertices);
-				// Set our projection matrix to the shader
-				call.shad->setProject(projection);
 				// Draw all of the vertices
 				Render::Display::DrawBuffer(call.texture, call.shad);
 			}

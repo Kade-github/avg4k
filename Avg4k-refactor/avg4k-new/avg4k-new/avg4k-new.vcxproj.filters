@@ -52,6 +52,12 @@
     <Filter Include="Average4K\Engine\External\SpriteFont">
       <UniqueIdentifier>{cc847dc0-5386-4caf-9dfb-46a6d9c32530}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Average4K\Avg4k\External">
+      <UniqueIdentifier>{92c8287c-1e5f-465a-9338-93e8eea32cf6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\Steam">
+      <UniqueIdentifier>{c8efbc42-39aa-4891-b199-f4e1180373ac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -235,6 +241,18 @@
     </ClInclude>
     <ClInclude Include="CPU.h">
       <Filter>Average4K\Engine\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="SteamInterface.h">
+      <Filter>Average4K\Avg4k\External\Steam</Filter>
+    </ClInclude>
+    <ClInclude Include="SteamWorkshop.h">
+      <Filter>Average4K\Avg4k\External\Steam</Filter>
+    </ClInclude>
+    <ClInclude Include="SteamIncludes.h">
+      <Filter>Average4K\Avg4k\External\Steam</Filter>
+    </ClInclude>
+    <ClInclude Include="Average4K.h">
+      <Filter>Average4K\Avg4k</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

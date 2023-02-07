@@ -1,11 +1,10 @@
 #include <numeric>
 
+#include "Average4K.h"
 #include "includes.h"
 #include "Game.h"
 #include "Display.h"
-#include "StartScreen.h"
 #include "ImGUIHelper.h"
-#include "CPU.h"
 
 
 #ifdef STATIC_LINK
@@ -63,6 +62,7 @@
 #pragma comment(lib, "dbghelp.lib")
 #endif
 
+class Average4K;
 using namespace AvgEngine;
 
 #define FRAME_VALUES 60
@@ -76,6 +76,17 @@ double frametimelast;
 std::chrono::steady_clock::time_point startTime;
 
 uint32_t framecount;
+
+template <class Clock, class Duration>
+void
+sleep_until(std::chrono::time_point<Clock, Duration> tp)
+{
+	using namespace std::chrono;
+	std::this_thread::sleep_until(tp - 10us);
+	while (tp >= Clock::now())
+		;
+}
+
 
 void fpsthink(Game* g) {
 	uint32_t frametimesindex;
@@ -153,7 +164,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 	glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
-	glfwWindowHint(GLFW_SAMPLES, 16);
+	glfwWindowHint(GLFW_SAMPLES, 8);
 
 
 	Game* g = new Game("Average4K", "b14");
@@ -216,9 +227,10 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	g->alphaText = new Text(4, 4, "assets/graphical/fonts/", "FuturaBold.fnt", "- " + g->Title + " ALPHA " + g->Version + " - EVERYTHING IS SUBJECT TO CHANGE -", 14);
 	g->alphaText->transform.a = 0.6f;
 	g->alphaText->outlineThickness = 1.4;
-	g->SwitchMenu(new StartScreen());
 
 	Logging::writeLog("[Main] Starting game...");
+
+	Average4K::Start(g);
 
 	double lastTime = glfwGetTime();
 	double fTime = glfwGetTime();
@@ -232,11 +244,20 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	framecount = 0;
 	frametimelast = 0;
 
-	glfwSwapInterval(1);
+	glfwSwapInterval(0);
+
+	using framerate = std::chrono::duration<int, std::ratio<1, 244>>;
+	auto prev = std::chrono::system_clock::now();
+	auto next = prev + framerate{ 1 };
+	int N = 0;
+	std::chrono::system_clock::duration sum{ 0 };
+
+	Render::Display::defaultShader->setProject(g->CurrentMenu->camera.projection);
 
 	while (!glfwWindowShouldClose(g->Window))
 	{
-		glfwPollEvents();
+		::sleep_until(next);
+		next += framerate{ 1 };
 
 		glClearColor(0.05f, 0.05f, 0.05f, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -272,6 +293,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		External::ImGuiHelper::RenderEnd(g->Window);
 
 		glfwSwapBuffers(g->Window);
+		glfwPollEvents();
 
 		fpsthink(g);
 
@@ -283,7 +305,14 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			reportId = 0;
 
 		g->console.fpsData[reportId] = g->fps;
+
+		auto now = std::chrono::system_clock::now();
+		sum += now - prev;
+		++N;
+		prev = now;
 	}
+
+	Average4K::Destroy();
 
 	External::ImGuiHelper::Destroy();
 

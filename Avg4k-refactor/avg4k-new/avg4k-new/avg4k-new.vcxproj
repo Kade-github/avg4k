@@ -60,6 +60,7 @@
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Average4K.h" />
     <ClInclude Include="BASS.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Channel.h" />
@@ -93,6 +94,9 @@
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="StartScreen.h" />
     <ClInclude Include="stbi.h" />
+    <ClInclude Include="SteamIncludes.h" />
+    <ClInclude Include="SteamInterface.h" />
+    <ClInclude Include="SteamWorkshop.h" />
     <ClInclude Include="StringTools.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Texture.h" />

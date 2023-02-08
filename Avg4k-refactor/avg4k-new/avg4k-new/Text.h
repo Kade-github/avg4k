@@ -45,8 +45,8 @@ namespace AvgEngine::Base
 			Render::Rect dst = transform;
 			if (transformRatio)
 			{
-				dst.x = Render::Display::width * dst.x;
-				dst.y = Render::Display::height * dst.y;
+				dst.x = parent->x * dst.x;
+				dst.y = parent->y * dst.y;
 			}
 
 			drawCall call;
@@ -98,7 +98,7 @@ namespace AvgEngine::Base
 				call.vertices.insert(call.vertices.end(), newVert.begin(), newVert.end());
 
 				dst.x += advance;
-				if (wrap && dst.x + dst.w > Render::Display::width && wrap)
+				if (wrap && dst.x + dst.w > parent->w && wrap)
 				{
 					dst.x = transform.x;
 					dst.y += highestH;

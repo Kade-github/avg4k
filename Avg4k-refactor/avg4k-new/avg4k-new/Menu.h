@@ -35,8 +35,8 @@ namespace AvgEngine::Base
 
 		virtual void draw()
 		{
-			displayRect.x = Render::Display::width;
-			displayRect.y = Render::Display::height;
+			displayRect.w = Render::Display::width;
+			displayRect.h = Render::Display::height;
 			// Update tweens
 			tween.Update();
 
@@ -64,6 +64,7 @@ namespace AvgEngine::Base
 			object->id = lastObjectId;
 			object->eManager = eManager;
 			object->camera = &camera;
+			object->parent = &displayRect;
 			GameObjects.push_back(object);
 			lastObjectId++;
 		}

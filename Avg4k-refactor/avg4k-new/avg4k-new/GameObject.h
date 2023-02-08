@@ -84,6 +84,7 @@ namespace AvgEngine::Base
 			object->id = lastObjectId;
 			object->eManager = eManager;
 			object->camera = camera;
+			object->parent = &transform;
 			Children.push_back(object);
 			lastObjectId++;
 		}

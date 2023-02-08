@@ -1,33 +1,48 @@
 #pragma once
 #include "includes.h"
 #include "Game.h"
+#include "Multiplayer.h"
 #include "StartScreen.h"
 #include "SteamIncludes.h"
 
-class Average4K
+class Average4K : public AvgEngine::Game
 {
 public:
-	static Steam::SteamInterface* steam;
-	static Steam::SteamWorkshop* workshop;
+	Steam::SteamInterface* steam;
+	Steam::SteamWorkshop* workshop;
 
-	static void Start(AvgEngine::Game* g)
+	Average4K(std::string _t, std::string _v) : Game(_t, _v)
 	{
-		g->SwitchMenu(new StartScreen());
 		steam = new Steam::SteamInterface();
 		workshop = new Steam::SteamWorkshop();
+	}
+
+	void Start()
+	{
+		SwitchMenu(new StartScreen());
 
 		if (!steam->good)
 			return;
 
-		steam->SetPresence(g->Version + " Alpha | Testing");
+		steam->SetPresence(Version + " Alpha | Testing");
+
+		Multiplayer::InitCrypto();
+
+		std::jthread MultiplayerThread = std::jthread([this] {
+			Multiplayer::connect(this);
+		});
+		MultiplayerThread.detach();
 	}
 
-	static void Destroy()
+	void update() override
+	{
+		SteamAPI_RunCallbacks();
+		Game::update();
+	}
+
+	void Destroy()
 	{
 		steam->destroy();
 		workshop->destroy();
 	}
 };
-
-Steam::SteamInterface* Average4K::steam = NULL;
-Steam::SteamWorkshop* Average4K::workshop = NULL;

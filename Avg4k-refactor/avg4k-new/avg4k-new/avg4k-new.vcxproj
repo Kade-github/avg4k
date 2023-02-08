@@ -37,6 +37,7 @@
   <ItemGroup>
     <ClCompile Include="BASS.cpp" />
     <ClCompile Include="Console.cpp" />
+    <ClCompile Include="CPacketHostUpdateLobby.cpp" />
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="Easing.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -53,6 +54,7 @@
     <ClCompile Include="implot_items.cpp" />
     <ClCompile Include="Logging.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Multiplayer.cpp" />
     <ClCompile Include="pugixml.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="StartScreen.cpp" />
@@ -61,10 +63,29 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Average4K.h" />
+    <ClInclude Include="Base64.h" />
     <ClInclude Include="BASS.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Channel.h" />
     <ClInclude Include="Console.h" />
+    <ClInclude Include="CPacketChartAcquired.h" />
+    <ClInclude Include="CPacketHello.h" />
+    <ClInclude Include="CPacketHostChangeChart.h" />
+    <ClInclude Include="CPacketHostEndChart.h" />
+    <ClInclude Include="CPacketHostServer.h" />
+    <ClInclude Include="CPacketHostStartGame.h" />
+    <ClInclude Include="CPacketHostUpdateLobby.h" />
+    <ClInclude Include="CPacketJoinServer.h" />
+    <ClInclude Include="CPacketLeaderboardRequest.h" />
+    <ClInclude Include="CPacketLeave.h" />
+    <ClInclude Include="CPacketNoteHit.h" />
+    <ClInclude Include="CPacketRequestAvatar.h" />
+    <ClInclude Include="CPacketSendMessage.h" />
+    <ClInclude Include="CPacketServerList.h" />
+    <ClInclude Include="CPacketSongFinished.h" />
+    <ClInclude Include="CPacketStatus.h" />
+    <ClInclude Include="CPacketSubmitScore.h" />
+    <ClInclude Include="CPacketWtfAmIn.h" />
     <ClInclude Include="CPU.h" />
     <ClInclude Include="Display.h" />
     <ClInclude Include="Easing.h" />
@@ -88,9 +109,30 @@
     <ClInclude Include="Logging.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Multiplayer.h" />
+    <ClInclude Include="Packet.h" />
     <ClInclude Include="pugiconfig.hpp" />
     <ClInclude Include="pugixml.hpp" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="SPacketAvatarRequestResponse.h" />
+    <ClInclude Include="SPacketFinalizeChart.h" />
+    <ClInclude Include="SPacketFuckYou.h" />
+    <ClInclude Include="SPacketHello.h" />
+    <ClInclude Include="SPacketHostServerReply.h" />
+    <ClInclude Include="SPacketInvalidPacket.h" />
+    <ClInclude Include="SPacketJoinServerReply.h" />
+    <ClInclude Include="SPacketLeaderboardResponse.h" />
+    <ClInclude Include="SPacketOnChat.h" />
+    <ClInclude Include="SPacketPlayerSongFinished.h" />
+    <ClInclude Include="SPacketScoreResult.h" />
+    <ClInclude Include="SPacketServerListReply.h" />
+    <ClInclude Include="SPacketStartLobbyGame.h" />
+    <ClInclude Include="SPacketStatus.h" />
+    <ClInclude Include="SPacketUpdateEncryptionParameters.h" />
+    <ClInclude Include="SPacketUpdateLeaderboard.h" />
+    <ClInclude Include="SPacketUpdateLobbyChart.h" />
+    <ClInclude Include="SPacketUpdateLobbyData.h" />
+    <ClInclude Include="SPacketWtfAmInReply.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="StartScreen.h" />
     <ClInclude Include="stbi.h" />

@@ -58,6 +58,21 @@
     <Filter Include="Average4K\Avg4k\External\Steam">
       <UniqueIdentifier>{c8efbc42-39aa-4891-b199-f4e1180373ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Average4K\Avg4k\External\Multiplayer">
+      <UniqueIdentifier>{a62062cd-d902-477e-b733-6bf3b9f76ede}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\External\Base64">
+      <UniqueIdentifier>{4b2be164-2539-4a67-b070-ea6332126d75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\Multiplayer\Packet">
+      <UniqueIdentifier>{b92edd08-24fc-4ba4-a752-be22b788ef74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\Multiplayer\Packet\Client">
+      <UniqueIdentifier>{500aab8a-c236-4cef-a7b5-8e8c338f9bcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\Multiplayer\Packet\Server">
+      <UniqueIdentifier>{6470ce38-91f4-4fb0-8d20-e8ed7e69a16d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -128,6 +143,12 @@
     </ClCompile>
     <ClCompile Include="pugixml.cpp">
       <Filter>Average4K\Engine\External\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="Multiplayer.cpp">
+      <Filter>Average4K\Avg4k\External\Multiplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="CPacketHostUpdateLobby.cpp">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -253,6 +274,126 @@
     </ClInclude>
     <ClInclude Include="Average4K.h">
       <Filter>Average4K\Avg4k</Filter>
+    </ClInclude>
+    <ClInclude Include="Multiplayer.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Base64.h">
+      <Filter>Average4K\Engine\External\Base64</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketChartAcquired.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketHello.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketHostChangeChart.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketHostEndChart.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketHostServer.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketHostStartGame.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketHostUpdateLobby.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketJoinServer.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketLeaderboardRequest.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketLeave.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketNoteHit.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketRequestAvatar.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketSendMessage.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketServerList.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketSongFinished.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketStatus.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketSubmitScore.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketWtfAmIn.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketJoinServerReply.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketLeaderboardResponse.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketOnChat.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketPlayerSongFinished.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketScoreResult.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketServerListReply.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketStartLobbyGame.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketStatus.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketUpdateEncryptionParameters.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketUpdateLeaderboard.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketUpdateLobbyChart.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketUpdateLobbyData.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketWtfAmInReply.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketAvatarRequestResponse.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketFinalizeChart.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketFuckYou.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketHello.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketHostServerReply.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketInvalidPacket.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

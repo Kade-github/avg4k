@@ -10,6 +10,7 @@ namespace AvgEngine
 	class Game
 	{
 	public:
+		virtual ~Game() = default;
 
 		static Game* Instance;
 
@@ -74,7 +75,7 @@ namespace AvgEngine
 			glfwGetCursorPos(Window, x, y);
 		}
 
-		void update()
+		virtual void update()
 		{
 			if (queuedEvents.size() != 0)
 			{

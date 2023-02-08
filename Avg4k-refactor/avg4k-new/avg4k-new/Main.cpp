@@ -167,7 +167,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	glfwWindowHint(GLFW_SAMPLES, 8);
 
 
-	Game* g = new Game("Average4K", "b14");
+	Average4K* g = new Average4K("Average4K", "b14");
 	g->alpha = true;
 
 	glfwMakeContextCurrent(g->Window);
@@ -220,6 +220,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	External::ImGuiHelper::Init(g->Window);
 	Logging::writeLog("[Main] Initialized ImGUI!");
 
+
 	g->fpsText = new Text(4, 4, "assets/graphical/fonts/", "FuturaBold.fnt", "FPS: 0", 12);
 	g->fpsText->transform.a = 0.75f;
 	g->fpsText->outlineThickness = 1.4;
@@ -230,7 +231,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	Logging::writeLog("[Main] Starting game...");
 
-	Average4K::Start(g);
+	g->Start();
+
 
 	double lastTime = glfwGetTime();
 	double fTime = glfwGetTime();
@@ -312,7 +314,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		prev = now;
 	}
 
-	Average4K::Destroy();
+	g->Destroy();
 
 	External::ImGuiHelper::Destroy();
 

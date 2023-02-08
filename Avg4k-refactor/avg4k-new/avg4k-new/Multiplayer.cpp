@@ -668,12 +668,6 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
 
             reauth = new std::string(helloBack.reauth);
 
-            Multiplayer::username = SteamFriends()->GetPersonaName();
-
-            Multiplayer::tag = helloBack.chatTag;
-
-            Multiplayer::currentUserAvatar = helloBack.Avatar;
-
             AvgEngine::Logging::writeLog("[SERVER] Server agreed to give me the kids on the weekends (you logged in successfully)");
             VM_END
             break;

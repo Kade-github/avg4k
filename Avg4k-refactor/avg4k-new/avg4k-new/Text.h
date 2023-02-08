@@ -27,6 +27,7 @@ namespace AvgEngine::Base
 		{
 			if (fnt)
 				delete fnt;
+			
 		}
 
 		void SetSize(float _size)
@@ -41,12 +42,18 @@ namespace AvgEngine::Base
 
 		void draw() override
 		{
+			Render::Rect dst = transform;
+			if (transformRatio)
+			{
+				dst.x = Render::Display::width * dst.x;
+				dst.y = Render::Display::height * dst.y;
+			}
+
 			drawCall call;
 			call.texture = fnt->texture;
 			call.shad = NULL;
 			call.zIndex = zIndex;
 			call.vertices = {};
-			Render::Rect dst = transform;
 			int totalW = 0;
 			int highestH = 0;
 			float scale = size / fnt->ogSize;
@@ -102,6 +109,8 @@ namespace AvgEngine::Base
 			transform.h = highestH;
 
 			camera->addDrawCall(call);
+
+			GameObject::draw();
 		}
 	};
 }

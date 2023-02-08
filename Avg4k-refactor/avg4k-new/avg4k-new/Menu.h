@@ -20,6 +20,8 @@ namespace AvgEngine::Base
 		int lastObjectId = 0;
 		std::vector<GameObject*> GameObjects;
 
+		Render::Rect displayRect;
+
 		TweenManager tween{};
 
 		Events::EventManager* eManager = NULL;
@@ -33,6 +35,8 @@ namespace AvgEngine::Base
 
 		virtual void draw()
 		{
+			displayRect.x = Render::Display::width;
+			displayRect.y = Render::Display::height;
 			// Update tweens
 			tween.Update();
 

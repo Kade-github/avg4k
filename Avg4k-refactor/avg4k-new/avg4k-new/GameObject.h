@@ -11,8 +11,9 @@ namespace AvgEngine::Base
 	 */
 	class GameObject
 	{
+	private:
+		int lastObjectId = 0;
 	public:
-		virtual ~GameObject() = default;
 
 		Events::EventManager* eManager = NULL;
 
@@ -20,7 +21,15 @@ namespace AvgEngine::Base
 
 		Camera* camera{};
 
+		/**
+		 * \brief If the transform should base itself on percentages of the display's width/height
+		 */
+		bool transformRatio = false;
+
 		Render::Rect transform = Render::Rect();
+		Render::Rect* parent = NULL;
+
+		std::vector<GameObject*> Children;
 
 		int id = 0;
 		int zIndex = 0;
@@ -39,9 +48,23 @@ namespace AvgEngine::Base
 			transform.y = y;
 		}
 
+		virtual ~GameObject()
+		{
+			for (GameObject* o : Children)
+				delete o;
+		};
+
 		GameObject() = default;
 
-		virtual void draw() {};
+		virtual void draw()
+		{
+			for (GameObject* ob : Children)
+			{
+				// Render objects' draw calls.
+				if (ob->render)
+					ob->draw();
+			}
+		};
 
 		bool operator==(const GameObject& other) {
 			return id == other.id;
@@ -49,6 +72,40 @@ namespace AvgEngine::Base
 
 		bool operator()(const GameObject& a, const GameObject& b) {
 			return a.id < b.id;
+		}
+
+		/**
+		 * \brief Creates a copy of an object and puts the copy onto a vector with a given id
+		 * \param object Object to copy onto the vector
+		 */
+		virtual void addObject(GameObject* object)
+		{
+			object->tween = tween;
+			object->id = lastObjectId;
+			object->eManager = eManager;
+			object->camera = camera;
+			Children.push_back(object);
+			lastObjectId++;
+		}
+
+		/**
+		 * \brief Removes an object
+		 * \param object The object to remove
+		 */
+		virtual void removeObject(GameObject* object)
+		{
+			Children.erase(std::ranges::remove_if(Children,
+				[&](const GameObject* x) { return *x == *object; }).begin(), Children.end());
+		}
+
+		/**
+		 * \brief Removes an object
+		 * \param id The id of the object to remove
+		 */
+		virtual void removeObject(int id)
+		{
+			Children.erase(std::ranges::remove_if(Children,
+				[&](const GameObject* x) { return x->id == id; }).begin(), Children.end());
 		}
 	};
 }

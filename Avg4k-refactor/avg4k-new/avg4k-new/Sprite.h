@@ -47,8 +47,16 @@ namespace AvgEngine::Base
 
 		void draw() override
 		{
-			drawCall c = Camera::FormatDrawCall(zIndex, texture, shader, Render::DisplayHelper::RectToVertex(transform, src));
+			Render::Rect r = transform;
+			if (transformRatio)
+			{
+				r.x = Render::Display::width * r.x;
+				r.y = Render::Display::height * r.y;
+			}
+			drawCall c = Camera::FormatDrawCall(zIndex, texture, shader, Render::DisplayHelper::RectToVertex(r, src));
 			camera->addDrawCall(c);
+
+			GameObject::draw();
 		}
 	};
 }

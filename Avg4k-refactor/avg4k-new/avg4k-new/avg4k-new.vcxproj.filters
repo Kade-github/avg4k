@@ -73,6 +73,12 @@
     <Filter Include="Average4K\Avg4k\External\Multiplayer\Packet\Server">
       <UniqueIdentifier>{6470ce38-91f4-4fb0-8d20-e8ed7e69a16d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Average4K\Avg4k\External\Settings">
+      <UniqueIdentifier>{a2b1ae56-70e0-4228-b2c8-8c10187a44ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\Skin">
+      <UniqueIdentifier>{607997ea-051a-44d0-b1f7-ad1d7590ba21}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

@@ -17,6 +17,39 @@ namespace AvgEngine::Render
 		float x = 0, y = 0;
 		float w = 0, h = 0;
 		float r = 255, g = 255, b = 255, a = 1;
+
+		Rect() = default;
+		Rect(float _x, float _y, float _w, float _h)
+		{
+			x = _x;
+			y = _y;
+			w = _w;
+			h = _h;
+		}
+
+		Rect(float _x, float _y, float _w, float _h, float _r, float _g, float _b, float _a)
+		{
+			x = _x;
+			y = _y;
+			w = _w;
+			h = _h;
+			r = _r;
+			g = _g;
+			b = _b;
+			a = _a;
+		}
+
+		Rect(float _x, float _y, Rect _r)
+		{
+			x = _x;
+			y = _y;
+			w = _r.w;
+			h = _r.h;
+			r = _r.r;
+			g = _r.g;
+			b = _r.b;
+			a = _r.a;
+		}
 	};
 
 	class DisplayHelper

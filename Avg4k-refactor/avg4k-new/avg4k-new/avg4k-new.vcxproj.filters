@@ -401,5 +401,11 @@
     <ClInclude Include="SPacketInvalidPacket.h">
       <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
     </ClInclude>
+    <ClInclude Include="Settings.h">
+      <Filter>Average4K\Avg4k\External\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Paths.h">
+      <Filter>Average4K\Engine\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

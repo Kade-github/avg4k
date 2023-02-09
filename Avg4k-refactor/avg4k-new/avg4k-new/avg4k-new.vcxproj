@@ -111,8 +111,10 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Multiplayer.h" />
     <ClInclude Include="Packet.h" />
+    <ClInclude Include="Paths.h" />
     <ClInclude Include="pugiconfig.hpp" />
     <ClInclude Include="pugixml.hpp" />
+    <ClInclude Include="Settings.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SPacketAvatarRequestResponse.h" />
     <ClInclude Include="SPacketFinalizeChart.h" />

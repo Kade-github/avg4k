@@ -2,12 +2,15 @@
 #include "includes.h"
 #include "Game.h"
 #include "Multiplayer.h"
+#include "Paths.h"
+#include "Settings.h"
 #include "StartScreen.h"
 #include "SteamIncludes.h"
 
 class Average4K : public AvgEngine::Game
 {
 public:
+	Average4k::Settings::Settings settings;
 	Steam::SteamInterface* steam;
 	Steam::SteamWorkshop* workshop;
 
@@ -15,6 +18,7 @@ public:
 	{
 		steam = new Steam::SteamInterface();
 		workshop = new Steam::SteamWorkshop();
+		settings = Average4k::Settings::Settings(AvgEngine::Utils::Paths::getAppData("Average4K") + "settings.ave");
 	}
 
 	void Start()

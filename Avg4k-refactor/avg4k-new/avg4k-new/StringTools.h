@@ -20,6 +20,15 @@ namespace AvgEngine::Utils
             return wc;
         }
 
+        static bool isNumber(const std::string& s)
+        {
+            for (char const& ch : s) {
+                if (std::isdigit(ch) == 0 && ch != '.')
+                    return false;
+            }
+            return true;
+        }
+
         static std::vector<std::string> Split(std::string s, std::string delimiter) {
             size_t pos_start = 0, pos_end, delim_len = delimiter.length();
             std::string token;

@@ -7,7 +7,7 @@
 #define CURL_STATICLIB
 #endif
 
-
+#include <msgpack.hpp>
 
 #include <iostream>
 #include <algorithm>

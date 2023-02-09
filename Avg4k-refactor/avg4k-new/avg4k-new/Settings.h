@@ -51,7 +51,7 @@ namespace Average4k::Settings
 			nf.settings.push_back({ "Music Volume", "0.45", "0.45", S_Float, 0,1 });
 			nf.settings.push_back({ "Hitsound Volume", "0.8",  "0.8", S_Float, 0,1 });
 			nf.settings.push_back({ "Scrollspeed", "800",  "800", S_Int, 200,1800 });
-			nf.settings.push_back({ "Hitsound Volume", "0.8",  "0.8", S_Float, 0,1 });
+			nf.settings.push_back({ "Note Size", "1",  "1", S_Float, 0,2 });
 		}
 
 		void SetDefaults()

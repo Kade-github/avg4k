@@ -1,7 +1,7 @@
 #include "StartScreen.h"
 
+#include "Average4K.h"
 #include "Sprite.h"
-#include "FntParser.h"
 
 using namespace AvgEngine;
 
@@ -12,7 +12,7 @@ StartScreen::StartScreen()
 
 void StartScreen::load()
 {
-	Sprite* sprite = new Sprite(0, 2, "assets/skinDefaults/Menu/darkmodebg.png");
+	Sprite* sprite = new Sprite(0, 2, Average4K::skin->GetTexture("Menu/darkmodebg"));
 	sprite->transformRatio = true;
 	addObject(sprite);
 

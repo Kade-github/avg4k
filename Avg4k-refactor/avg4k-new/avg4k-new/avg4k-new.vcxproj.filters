@@ -159,6 +159,9 @@
     <ClCompile Include="CPacketHostUpdateLobby.cpp">
       <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
     </ClCompile>
+    <ClCompile Include="Average4K.cpp">
+      <Filter>Average4K\Avg4k</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes.h">

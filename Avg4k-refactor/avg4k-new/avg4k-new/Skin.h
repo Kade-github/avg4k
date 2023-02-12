@@ -25,10 +25,14 @@ namespace Average4k::Skin
 		std::string name = "";
 		std::string fullPath = "";
 
+		// basic values
+
 		bool rotate = false;
 		bool shrink = false;
 		bool bounce = false;
 		bool rotateMine = false;
+
+		std::string sparrow = "";
 
 		Skin() = default;
 
@@ -48,6 +52,8 @@ namespace Average4k::Skin
 			shrink = skinConfig.Bool("shrink");
 			bounce = skinConfig.Bool("bounce");
 			rotateMine = skinConfig.Bool("rotateMine");
+
+			sparrow = skinConfig.Value("sparrow");
 		}
 
 		~Skin()

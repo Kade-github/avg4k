@@ -2,8 +2,8 @@
 fileVersion=1
 
 # font settings
-fontName=Georgia
-fontFile=../../../Avg4k-old/assets/graphical/fonts/Helvetica-World.ttf
+fontName=Arial Unicode MS
+fontFile=C:/Users/kadep/Downloads/arial-unicode-ms.ttf
 charSet=0
 fontSize=128
 aa=1
@@ -34,8 +34,8 @@ forceZero=1
 widthPaddingFactor=0.00
 
 # output file
-outWidth=1050
-outHeight=1050
+outWidth=3000
+outHeight=2200
 outBitDepth=32
 fontDescFormat=1
 fourChnlPacked=0
@@ -54,6 +54,6 @@ invB=0
 outlineThickness=0
 
 # selected chars
-chars=32-126
+chars=32-126,4352-4441,4447-4514,4520-4601,12353-12436,12441-12446,12449-12542
 
 # imported icon images

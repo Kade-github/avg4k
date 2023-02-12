@@ -1,4 +1,4 @@
-#include <numeric>
+﻿#include <numeric>
 
 #include "Average4K.h"
 #include "includes.h"
@@ -313,6 +313,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		++N;
 		prev = now;
 	}
+
+	// let it rain the color of blood. あか
 
 	g->Destroy();
 

@@ -1,6 +1,8 @@
 #pragma once
 #include "includes.h"
 
+#include <msgpack.hpp>
+
 namespace Average4k::Settings
 {
 	enum SettingType
@@ -15,7 +17,7 @@ namespace Average4k::Settings
 		std::string name = "";
 		std::string value;
 		std::string defaultSet = "";
-		SettingType type = static_cast<SettingType>(0);
+		int type = 0;
 
 		int min = 0;
 		int max = 0;
@@ -24,7 +26,7 @@ namespace Average4k::Settings
 			return name == other.name;
 		}
 
-		MSGPACK_DEFINE(value, type, min, max);
+		MSGPACK_DEFINE(name, value, type, min, max);
 	};
 
 	struct File
@@ -39,19 +41,22 @@ namespace Average4k::Settings
 	class Settings
 	{
 		// Average Engine 1
-		std::string settingsVersion = "av.e.1";
+		std::string _settingsVersion = "Average4KSettingsFile:ver-av.e.1";
+		std::string _path;
 	public:
 		File f;
 
 		File GetDefaults()
 		{
 			File nf;
-			nf.settingsVersion = settingsVersion;
+			nf.settingsVersion = _settingsVersion;
 
 			nf.settings.push_back({ "Music Volume", "0.45", "0.45", S_Float, 0,1 });
 			nf.settings.push_back({ "Hitsound Volume", "0.8",  "0.8", S_Float, 0,1 });
 			nf.settings.push_back({ "Scrollspeed", "800",  "800", S_Int, 200,1800 });
+			nf.settings.push_back({ "Skin", "arrow",  "arrow", S_String, -1,-1 });
 			nf.settings.push_back({ "Note Size", "1",  "1", S_Float, 0,2 });
+			return nf;
 		}
 
 		void SetDefaults()
@@ -59,12 +64,27 @@ namespace Average4k::Settings
 			f = GetDefaults();
 		}
 
+		void Save()
+		{
+			std::ofstream st;
+			st.open(_path);
+			
+			std::stringstream s;
+
+			msgpack::pack(s, f);
+
+			st << s.str();
+			st.close();
+			#ifdef _DEBUG 
+			AvgEngine::Logging::writeLog("[Settings] [Debug] Saved " + _path + " successfully.");
+			#endif
+		}
+
 		void Validate()
 		{
-			bool checkForNew = f.settingsVersion != settingsVersion;
-
 			File def = GetDefaults();
 
+			bool checkForNew = (f.settingsVersion != _settingsVersion) || (def.settings.size() != f.settings.size());
 			int index = 0;
 
 			for (Setting& ns : f.settings)
@@ -74,7 +94,7 @@ namespace Average4k::Settings
 					if (index < def.settings.size())
 					{
 						Setting tD = def.settings[index];
-						if (tD != ns || tD.defaultSet != ns.defaultSet)
+						if (tD.name != ns.name || tD.defaultSet != ns.defaultSet)
 						{
 							ns = tD;
 							AvgEngine::Logging::writeLog("[Settings] " + ns.name + " is old.");
@@ -111,6 +131,11 @@ namespace Average4k::Settings
 					}
 				}
 			}
+			#ifdef _DEBUG
+			AvgEngine::Logging::writeLog("[Settings] [Debug] Validated " + _path + " successfully. " + (checkForNew ? "Updated old version." : "Version didn't need updating."));
+			#endif
+
+			Save();
 		}
 
 		void Set(Setting s)
@@ -118,24 +143,44 @@ namespace Average4k::Settings
 			for(Setting& ns : f.settings)
 				if (ns == s)
 				{
+					int v = 0;
 					switch(ns.type)
 					{
-					case S_Float:
-					case S_Int:
-						if (!AvgEngine::Utils::StringTools::isNumber(ns.value))
-						{
-							AvgEngine::Logging::writeLog("[Settings] Cannot set " + s.name + " because you're trying to set it to a non-number.");
-							return;
-						}
-						// end up converting it to an int since min/max are ints lol
-						int v = std::stoi(ns.value);
-						break;
-					case S_String:
-						break;
-					case S_Bool:
-						break;
+						case S_Float:
+						case S_Int:
+							if (!AvgEngine::Utils::StringTools::isNumber(s.value))
+							{
+								AvgEngine::Logging::writeLog("[Settings] Cannot set " + s.name + " because you're trying to set it to a non-number.");
+								return;
+							}
+							// end up converting it to an int since min/max are ints lol
+							v = std::stoi(s.value);
+							if (v > ns.max || v < ns.min)
+								return;
+							// Fall through to string
+						default:
+							// goto is a little weird, but it works so like uh
+							goto SetValue;
+						case S_Bool:
+							if (s.value != "false" && s.value != "true")
+							{
+								AvgEngine::Logging::writeLog("[Settings] Cannot set " + s.name + " because you're trying to set it to a non-bool.");
+								return;
+							}			
+							#ifdef _DEBUG
+							AvgEngine::Logging::writeLog("[Settings] [Debug] Set " + s.name + " to " + s.value + " successfully.");
+							#endif
+							ns.value = s.value;
+						SetValue:
+							#ifdef _DEBUG  
+							AvgEngine::Logging::writeLog("[Settings] [Debug] Set " + s.name + " to " + s.value + " successfully.");
+							#endif
+							ns.value = s.value;
+							break;
 					}
 				}
+			Save();
+
 		}
 
 		Setting Get(std::string name)
@@ -146,16 +191,34 @@ namespace Average4k::Settings
 			return {};
 		}
 
+		Settings()
+		{
+			SetDefaults();
+			_path = "settings.ave";
+		}
+
 		Settings(std::string file)
 		{
+			_path = file;
 			std::ifstream fl;
 			fl.open(file);
-			if (fl.bad())
+			if (!fl.good())
 			{
 				AvgEngine::Logging::writeLog("[Settings] Failure to read " + file);
 				SetDefaults();
+				Save();
 				return;
 			}
+
+			std::stringstream buffer;
+			buffer << fl.rdbuf();
+
+			fl.close();
+
+			msgpack::unpacked upd = msgpack::unpack(buffer.str().data(), buffer.str().size());
+			upd.get().convert(f);
+
+			Validate();
 		}
 	};
 }

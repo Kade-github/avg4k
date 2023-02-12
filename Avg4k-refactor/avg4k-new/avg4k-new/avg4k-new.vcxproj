@@ -67,6 +67,7 @@
     <ClInclude Include="BASS.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Channel.h" />
+    <ClInclude Include="ConfigReader.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="CPacketChartAcquired.h" />
     <ClInclude Include="CPacketHello.h" />
@@ -116,6 +117,7 @@
     <ClInclude Include="pugixml.hpp" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Skin.h" />
     <ClInclude Include="SPacketAvatarRequestResponse.h" />
     <ClInclude Include="SPacketFinalizeChart.h" />
     <ClInclude Include="SPacketFuckYou.h" />
@@ -324,6 +326,7 @@
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

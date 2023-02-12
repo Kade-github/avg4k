@@ -58,7 +58,7 @@ namespace AvgEngine
 
 		}
 
-		void Resize(int w, int h)
+		virtual void Resize(int w, int h)
 		{
 			Render::Display::Resize(Window, w, h);
 			if (CurrentMenu)
@@ -70,7 +70,7 @@ namespace AvgEngine
 		 * \param x A reference to a variable to output the x coordinate
 		 * \param y A reference to a variable to output the y coordinate
 		 */
-		void GetMousePos(double* x, double* y)
+		virtual void GetMousePos(double* x, double* y)
 		{
 			glfwGetCursorPos(Window, x, y);
 		}
@@ -89,7 +89,7 @@ namespace AvgEngine
 			}
 		}
 
-		void QueueEvent(Events::Event e)
+		virtual void QueueEvent(Events::Event e)
 		{
 			if (eventMutex.try_lock())
 			{
@@ -98,14 +98,14 @@ namespace AvgEngine
 			}
 		}
 
-		void Event(const Events::Event& e)
+		virtual void Event(const Events::Event& e)
 		{
 			for(Events::Listener listen : eManager.Listeners)
 				if (listen.type == e.type)
 					listen.toCall(e);
 		}
 
-		void SwitchMenu(Base::Menu* menu)
+		virtual void SwitchMenu(Base::Menu* menu)
 		{
 			if (CurrentMenu)
 			{

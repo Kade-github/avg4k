@@ -1,6 +1,10 @@
 #pragma once
 #include <algorithm>
 #include <vector>
+#include <sys/stat.h>
+#include <chrono>
+#include <wtypes.h>
+#include <cstdint>
 namespace AvgEngine::Utils
 {
 	class StringTools
@@ -20,6 +24,21 @@ namespace AvgEngine::Utils
             return wc;
         }
 
+        static std::string Trim(const std::string& s)
+        {
+            auto start = s.begin();
+            while (start != s.end() && std::isspace(*start)) {
+                start++;
+            }
+
+            auto end = s.end();
+            do {
+                end--;
+            } while (std::distance(start, end) > 0 && std::isspace(*end));
+
+            return std::string(start, end + 1);
+        }
+
         static bool isNumber(const std::string& s)
         {
             for (char const& ch : s) {
@@ -27,6 +46,18 @@ namespace AvgEngine::Utils
                     return false;
             }
             return true;
+        }
+
+        static std::wstring S2ws(const std::string& s, bool isUtf8 = true)
+        {
+            int len;
+            int slength = (int)s.length() + 1;
+            len = MultiByteToWideChar(isUtf8 ? CP_UTF8 : CP_ACP, 0, s.c_str(), slength, 0, 0);
+            std::wstring buf;
+            buf.resize(len);
+            MultiByteToWideChar(isUtf8 ? CP_UTF8 : CP_ACP, 0, s.c_str(), slength,
+                const_cast<wchar_t*>(buf.c_str()), len);
+            return buf;
         }
 
         static std::vector<std::string> Split(std::string s, std::string delimiter) {

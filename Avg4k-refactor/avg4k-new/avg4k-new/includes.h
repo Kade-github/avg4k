@@ -7,8 +7,6 @@
 #define CURL_STATICLIB
 #endif
 
-#include <msgpack.hpp>
-
 #include <iostream>
 #include <algorithm>
 #define GLFW_INCLUDE_NONE

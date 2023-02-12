@@ -79,6 +79,9 @@
     <Filter Include="Average4K\Avg4k\External\Skin">
       <UniqueIdentifier>{607997ea-051a-44d0-b1f7-ad1d7590ba21}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Average4K\Avg4k\External\CfgReader">
+      <UniqueIdentifier>{ac4aa50e-d2ee-477e-9d18-4121cd7f87bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -406,6 +409,12 @@
     </ClInclude>
     <ClInclude Include="Paths.h">
       <Filter>Average4K\Engine\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Skin.h">
+      <Filter>Average4K\Avg4k\External\Skin</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigReader.h">
+      <Filter>Average4K\Avg4k\External\CfgReader</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

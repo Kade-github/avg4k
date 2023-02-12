@@ -22,7 +22,7 @@ namespace AvgEngine::Utils
 
                 bangerPath = std::string(str.begin(), str.end()) + "/" + p + "/";
 
-                CreateDirectory(Helpers::s2ws((bangerPath)).c_str(), NULL);
+                CreateDirectory(StringTools::S2ws((bangerPath)).c_str(), NULL);
 
                 if (GetLastError() != ERROR_ALREADY_EXISTS && GetLastError() != ERROR_SUCCESS)
                 {

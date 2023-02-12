@@ -1,6 +1,8 @@
 #pragma once
 #include "includes.h"
 
+#include <msgpack.hpp>
+
 enum PacketType
 {
     //Client Packets

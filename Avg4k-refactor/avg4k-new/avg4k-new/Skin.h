@@ -17,6 +17,7 @@ namespace Average4k::Skin
 	class Skin
 	{
 		std::vector<CachedAsset> _cache{};
+		std::string _assetPath = "";
 
 	public:
 		External::ConfigReader skinConfig{};
@@ -24,14 +25,29 @@ namespace Average4k::Skin
 		std::string name = "";
 		std::string fullPath = "";
 
+		bool rotate = false;
+		bool shrink = false;
+		bool bounce = false;
+		bool rotateMine = false;
+
 		Skin() = default;
 
 		Skin(std::string _name, std::string _p)
 		{
-			fullPath = _p;
+			fullPath = fullPath + _name;
 			name = _name;
 
-			skinConfig = External::ConfigReader(fullPath + _name + "/config.skin");
+			skinConfig = External::ConfigReader(fullPath + "/config.skin");
+			std::string p = skinConfig.Value("path");
+			if (p != "default")
+				_assetPath = fullPath + "/" + p + "/";
+			else
+				_assetPath = "assets/skinDefaults/";
+
+			rotate = skinConfig.Bool("rotate");
+			shrink = skinConfig.Bool("shrink");
+			bounce = skinConfig.Bool("bounce");
+			rotateMine = skinConfig.Bool("rotateMine");
 		}
 
 		~Skin()
@@ -68,7 +84,7 @@ namespace Average4k::Skin
 
 		AvgEngine::OpenGL::Texture* GetTexture(std::string asset)
 		{
-			std::string p = fullPath + asset + ".png";
+			std::string p = _assetPath + asset + ".png";
 			const CachedAsset& a = Cache(p);
 			if (a.id != -1)
 				return a.texture;
@@ -80,7 +96,7 @@ namespace Average4k::Skin
 
 		std::vector<std::string> GetText(std::string asset)
 		{
-			std::string p = fullPath + asset;
+			std::string p = _assetPath + asset;
 			std::ifstream s;
 			s.open(p);
 			if (!s.good())

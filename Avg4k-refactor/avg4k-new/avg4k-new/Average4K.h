@@ -13,8 +13,8 @@ class Average4K : public AvgEngine::Game
 	double _startTrans = 0;
 
 public:
-	Average4k::Settings::Settings settings;
-	Average4k::Skin::Skin skin;
+	static Average4k::Settings::Settings* settings;
+	static Average4k::Skin::Skin* skin;
 
 	Steam::SteamInterface* steam;
 	Steam::SteamWorkshop* workshop;
@@ -23,7 +23,7 @@ public:
 	{
 		steam = new Steam::SteamInterface();
 		workshop = new Steam::SteamWorkshop();
-		settings = Average4k::Settings::Settings(AvgEngine::Utils::Paths::getAppData("Average4K") + "settings.ave");
+		settings = new Average4k::Settings::Settings(AvgEngine::Utils::Paths::getAppData("Average4K") + "settings.ave");
 	}
 
 	void SetSkin(std::string skinName, bool setValue = true)
@@ -31,19 +31,20 @@ public:
 		const std::string n = skinName;
 		if (setValue)
 		{
-			Average4k::Settings::Setting s = settings.Get("Skin");
+			Average4k::Settings::Setting s = settings->Get("Skin");
 			s.value = n;
-			settings.Set(s);
+			settings->Set(s);
 		}
 
-		skin.EmptyCache();
-		skin = Average4k::Skin::Skin(settings.Get("Skin").value, "assets/noteskin/");
+		if (skin)
+			skin->EmptyCache();
+		skin = new Average4k::Skin::Skin(settings->Get("Skin").value, "assets/noteskin/");
 		SwitchMenu(new StartScreen());
 	}
 
 	void Start()
 	{
-		SetSkin(settings.Get("Skin").value, false);
+		SetSkin(settings->Get("Skin").value, false);
 
 		if (!steam->good)
 			return;
@@ -95,3 +96,6 @@ public:
 		MultiplayerThread.detach();
 	}
 };
+
+Average4k::Settings::Settings* Average4K::settings = NULL;
+Average4k::Skin::Skin* Average4K::skin = NULL;

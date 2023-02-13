@@ -126,12 +126,14 @@ namespace Average4k::Skin
 
 		std::string GetPath(std::string asset)
 		{
-			return fullPath + asset;
+			return _assetPath + asset;
 		}
 
 		std::string GetFontPath()
 		{
 			return _assetPath + "Fonts";
 		}
+
+		
 	};
 }

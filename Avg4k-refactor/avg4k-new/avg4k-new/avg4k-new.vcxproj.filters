@@ -82,6 +82,12 @@
     <Filter Include="Average4K\Avg4k\External\CfgReader">
       <UniqueIdentifier>{ac4aa50e-d2ee-477e-9d18-4121cd7f87bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Average4K\Avg4k\Audio">
+      <UniqueIdentifier>{f318e679-af56-493a-85e5-46fa8787b8b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\Utils">
+      <UniqueIdentifier>{8dd899ff-d80e-422a-a935-ccefe98144f1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -164,6 +170,9 @@
     </ClCompile>
     <ClCompile Include="FntParser.cpp">
       <Filter>Average4K\Engine\External\SpriteFont</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinUtils.cpp">
+      <Filter>Average4K\Avg4k\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -421,6 +430,15 @@
     </ClInclude>
     <ClInclude Include="ConfigReader.h">
       <Filter>Average4K\Avg4k\External\CfgReader</Filter>
+    </ClInclude>
+    <ClInclude Include="RhythmChannel.h">
+      <Filter>Average4K\Avg4k\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeUtils.h">
+      <Filter>Average4K\Avg4k\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinUtils.h">
+      <Filter>Average4K\Avg4k\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

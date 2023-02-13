@@ -59,6 +59,7 @@
     <ClCompile Include="Multiplayer.cpp" />
     <ClCompile Include="pugixml.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="SkinUtils.cpp" />
     <ClCompile Include="StartScreen.cpp" />
     <ClCompile Include="stbi.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -117,9 +118,11 @@
     <ClInclude Include="Paths.h" />
     <ClInclude Include="pugiconfig.hpp" />
     <ClInclude Include="pugixml.hpp" />
+    <ClInclude Include="RhythmChannel.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Skin.h" />
+    <ClInclude Include="SkinUtils.h" />
     <ClInclude Include="SPacketAvatarRequestResponse.h" />
     <ClInclude Include="SPacketFinalizeChart.h" />
     <ClInclude Include="SPacketFuckYou.h" />
@@ -148,6 +151,7 @@
     <ClInclude Include="StringTools.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TimeUtils.h" />
     <ClInclude Include="TweenManager.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

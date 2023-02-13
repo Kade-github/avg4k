@@ -32,7 +32,7 @@ namespace Average4k::External
 
 			std::string line;
 
-			using namespace Utils;
+			using namespace AvgEngine::Utils;
 			while (std::getline(f, line)) {
 				if (!StringTools::Contains(line, ":"))
 					continue;

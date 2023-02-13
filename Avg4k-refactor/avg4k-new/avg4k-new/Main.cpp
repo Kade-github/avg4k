@@ -221,14 +221,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	Logging::writeLog("[Main] Initialized ImGUI!");
 
 
-	g->fpsText = new Text(4, 4, "assets/graphical/fonts/", "FuturaBold.fnt", "FPS: 0", 12);
-	g->fpsText->transform.a = 0.75f;
-	g->fpsText->outlineThickness = 1.4;
-
-	g->alphaText = new Text(4, 4, "assets/graphical/fonts/", "FuturaBold.fnt", "- " + g->Title + " ALPHA " + g->Version + " - EVERYTHING IS SUBJECT TO CHANGE -", 14);
-	g->alphaText->transform.a = 0.6f;
-	g->alphaText->outlineThickness = 1.4;
-
 	Logging::writeLog("[Main] Starting game...");
 
 	g->Start();
@@ -267,24 +259,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		External::ImGuiHelper::RenderStart();
 
 		g->update();
-		g->CurrentMenu->draw();
-
-		// Special text draws'
-
-		if (g->alpha)
-		{
-			g->alphaText->transform.x += 1;
-			g->alphaText->camera = &g->CurrentMenu->camera;
-			if (g->alphaText->transform.x > Render::Display::width + g->alphaText->transform.w)
-				g->alphaText->transform.x = -g->alphaText->transform.w;
-			g->alphaText->draw();
-		}
-
-		g->fpsText->text = "FPS: " + std::to_string(g->fps);
-		g->fpsText->camera = &g->CurrentMenu->camera;
-		g->fpsText->draw();
-
-		// End of special text draws'
 
 		g->console.drawData[reportId] = g->CurrentMenu->camera.drawCalls.size();
 		g->console.update();

@@ -39,11 +39,28 @@ public:
 		if (skin)
 			skin->EmptyCache();
 		skin = new Average4k::Skin::Skin(settings->Get("Skin").value, "assets/noteskin/");
+
+		if (setValue)
+		{
+			fpsText->SetFont(skin->GetFontPath(), "FuturaBold.fnt");
+			alphaText->SetFont(skin->GetFontPath(), "FuturaBold.fnt");
+		}
+
+		QueueEvent({ AvgEngine::Events::EventType::Event_ReloadFont,0, skin->GetFontPath() });
 		SwitchMenu(new StartScreen());
 	}
 
 	void Start()
 	{
+
+		fpsText = new Text(4, 4, "assets/skinDefaults/Fonts", "FuturaBold.fnt", "FPS: 0", 12);
+		fpsText->transform.a = 0.75f;
+		fpsText->outlineThickness = 1.4;
+
+		alphaText = new Text(4, 4, "assets/skinDefaults/Fonts", "FuturaBold.fnt", "- " + Title + " ALPHA " + Version + " - EVERYTHING IS SUBJECT TO CHANGE -", 14);
+		alphaText->transform.a = 0.6f;
+		alphaText->outlineThickness = 1.4;
+
 		SetSkin(settings->Get("Skin").value, false);
 
 		if (!steam->good)
@@ -56,12 +73,28 @@ public:
 	void update() override
 	{
 		SteamAPI_RunCallbacks();
-		Game::update();
-
 		if (!CurrentMenu)
 			return;
 
+		Game::update();
+
+		// Special text draws'
+
 		using namespace AvgEngine::Render;
+
+		if (alpha)
+		{
+			alphaText->transform.x += 1;
+			alphaText->camera = &CurrentMenu->camera;
+			if (alphaText->transform.x > Display::width + alphaText->transform.w)
+				alphaText->transform.x = -alphaText->transform.w;
+			alphaText->draw();
+		}
+
+		fpsText->text = "FPS: " + std::to_string(fps);
+		fpsText->camera = &CurrentMenu->camera;
+		fpsText->draw();
+
 		// Rect transition
 		Rect r = Rect(
 			0.0f,0.0f, Display::width, Display::height,

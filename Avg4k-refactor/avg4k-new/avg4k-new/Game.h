@@ -87,6 +87,7 @@ namespace AvgEngine
 					eventMutex.unlock();
 				}
 			}
+			CurrentMenu->draw();
 		}
 
 		virtual void QueueEvent(Events::Event e)

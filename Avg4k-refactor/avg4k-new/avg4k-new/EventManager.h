@@ -10,13 +10,15 @@ namespace AvgEngine::Events
 		Event_MouseRelease = 3,
 		Event_LoadMenu = 4,
 		Event_UnloadMenu = 5,
+		Event_ReloadFont = 6,
 		Event_Null = -1
 	};
 
 	struct Event
 	{
 		EventType type = EventType::Event_Null;
-		int data;
+		int data = 0;
+		std::string sData = "";
 	};
 
 	struct Listener

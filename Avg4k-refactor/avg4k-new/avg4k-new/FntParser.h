@@ -65,10 +65,10 @@ namespace AvgEngine::Fnt
 		{
 			fontFile = file;
 			pugi::xml_document doc;
-			pugi::xml_parse_result result = doc.load_file((folder + file).c_str());
+			pugi::xml_parse_result result = doc.load_file((folder + "/" + file).c_str());
 			if (!result)
 			{
-				Logging::writeLog("[Error] [FNT] Failed to parse " + file);
+				Logging::writeLog("[Error] [FNT] Failed to parse " + (folder + "/" + file));
 				return;
 			}
 
@@ -88,7 +88,7 @@ namespace AvgEngine::Fnt
 			n = doc.child("font").child("pages");
 			if (n != NULL)
 			{
-				std::string toLoad = folder + n.first_child().attribute("file").as_string();
+				std::string toLoad = folder + "/" + n.first_child().attribute("file").as_string();
 				texture = OpenGL::Texture::createWithImage(toLoad);
 			}
 			else

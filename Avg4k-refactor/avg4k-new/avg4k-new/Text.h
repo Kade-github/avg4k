@@ -18,7 +18,7 @@ namespace AvgEngine::Base
 
 		Text(int x, int y, std::string folder, std::string font, std::string _text, float _size) : GameObject(x,y)
 		{
-			fnt = Fnt::Fnt::GetFont(folder, font);
+			SetFont(folder, font);
 			SetSize(_size);
 			SetText(_text);
 		}
@@ -28,6 +28,16 @@ namespace AvgEngine::Base
 			if (fnt)
 				delete fnt;
 			
+		}
+
+		void SetFont(std::string folder, std::string font)
+		{
+			if (fnt)
+				delete fnt;
+			fnt = Fnt::Fnt::GetFont(folder, font);
+			#ifdef _DEBUG
+			Logging::writeLog("[Fnt] [Debug] Set " + font + " to path " + folder + " successfully.");
+			#endif
 		}
 
 		void SetSize(float _size)

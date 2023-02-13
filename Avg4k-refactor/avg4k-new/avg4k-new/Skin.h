@@ -38,7 +38,7 @@ namespace Average4k::Skin
 
 		Skin(std::string _name, std::string _p)
 		{
-			fullPath = fullPath + _name;
+			fullPath = _p + _name;
 			name = _name;
 
 			skinConfig = External::ConfigReader(fullPath + "/config.skin");
@@ -123,6 +123,11 @@ namespace Average4k::Skin
 		std::string GetPath(std::string asset)
 		{
 			return fullPath + asset;
+		}
+
+		std::string GetFontPath()
+		{
+			return _assetPath + "Fonts";
 		}
 	};
 }

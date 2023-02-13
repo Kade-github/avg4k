@@ -54,8 +54,8 @@ namespace AvgEngine::Base
 			Render::Rect dst = transform;
 			if (transformRatio)
 			{
-				dst.x = parent->x * dst.x;
-				dst.y = parent->y * dst.y;
+				dst.x = parent->w * dst.x;
+				dst.y = parent->h * dst.y;
 			}
 
 			drawCall call;

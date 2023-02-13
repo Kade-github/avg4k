@@ -16,6 +16,8 @@ namespace AvgEngine::Base
 		Menu()
 		{
 			camera = Camera(Render::Display::width, Render::Display::height);
+			displayRect.w = Render::Display::width;
+			displayRect.h = Render::Display::height;
 		}
 		int lastObjectId = 0;
 		std::vector<GameObject*> GameObjects;

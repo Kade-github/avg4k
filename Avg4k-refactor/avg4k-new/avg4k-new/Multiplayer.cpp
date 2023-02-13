@@ -201,7 +201,6 @@ DWORD WINAPI SendPacketT(LPVOID param) {
             continue;
          }
 
-
             VM_START
 
             websocketpp::lib::error_code ec;

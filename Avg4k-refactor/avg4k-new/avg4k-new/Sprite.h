@@ -50,8 +50,8 @@ namespace AvgEngine::Base
 			Render::Rect r = transform;
 			if (transformRatio)
 			{
-				r.x = parent->x * r.x;
-				r.y = parent->y * r.y;
+				r.x = parent->w * r.x;
+				r.y = parent->h * r.y;
 			}
 			drawCall c = Camera::FormatDrawCall(zIndex, texture, shader, Render::DisplayHelper::RectToVertex(r, src));
 			camera->addDrawCall(c);

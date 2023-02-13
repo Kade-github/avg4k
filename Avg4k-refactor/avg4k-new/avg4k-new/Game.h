@@ -4,6 +4,7 @@
 #include "Console.h"
 #include "EventManager.h"
 #include "Text.h"
+#include "FntParser.h"
 
 namespace AvgEngine
 {
@@ -55,6 +56,9 @@ namespace AvgEngine
 
 			eManager = {};
 			console.registerEvents(eManager);
+
+			// create font cache
+			Fnt::Fnt::fonts = new std::vector<Fnt::Fnt*>();
 
 		}
 

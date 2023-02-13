@@ -18,7 +18,8 @@ namespace AvgEngine::Base
 
 		Text(int x, int y, std::string folder, std::string font, std::string _text, float _size) : GameObject(x,y)
 		{
-			SetFont(folder, font);
+			if (folder.size() != 0 && font.size() != 0)
+				SetFont(folder, font);
 			SetSize(_size);
 			SetText(_text);
 		}
@@ -32,12 +33,8 @@ namespace AvgEngine::Base
 
 		void SetFont(std::string folder, std::string font)
 		{
-			if (fnt)
-				delete fnt;
+			// this doesn't actually reload the font's texture if it already existed.
 			fnt = Fnt::Fnt::GetFont(folder, font);
-			#ifdef _DEBUG
-			Logging::writeLog("[Fnt] [Debug] Set " + font + " to path " + folder + " successfully.");
-			#endif
 		}
 
 		void SetSize(float _size)
@@ -52,6 +49,8 @@ namespace AvgEngine::Base
 
 		void draw() override
 		{
+			if (!fnt)
+				return;
 			Render::Rect dst = transform;
 			if (transformRatio)
 			{

@@ -40,11 +40,10 @@ public:
 			skin->EmptyCache();
 		skin = new Average4k::Skin::Skin(settings->Get("Skin").value, "assets/noteskin/");
 
-		if (setValue)
-		{
-			fpsText->SetFont(skin->GetFontPath(), "FuturaBold.fnt");
-			alphaText->SetFont(skin->GetFontPath(), "FuturaBold.fnt");
-		}
+		AvgEngine::Fnt::Fnt::ClearCache();
+
+		fpsText->SetFont(skin->GetFontPath(), "FuturaBold.fnt");
+		alphaText->SetFont(skin->GetFontPath(), "FuturaBold.fnt");
 
 		QueueEvent({ AvgEngine::Events::EventType::Event_ReloadFont,0, skin->GetFontPath() });
 		SwitchMenu(new StartScreen());
@@ -53,11 +52,11 @@ public:
 	void Start()
 	{
 
-		fpsText = new Text(4, 4, "assets/skinDefaults/Fonts", "FuturaBold.fnt", "FPS: 0", 12);
+		fpsText = new Text(4, 4, "", "", "FPS: 0", 12);
 		fpsText->transform.a = 0.75f;
 		fpsText->outlineThickness = 1.4;
 
-		alphaText = new Text(4, 4, "assets/skinDefaults/Fonts", "FuturaBold.fnt", "- " + Title + " ALPHA " + Version + " - EVERYTHING IS SUBJECT TO CHANGE -", 14);
+		alphaText = new Text(4, 4, "", "", "- " + Title + " ALPHA " + Version + " - EVERYTHING IS SUBJECT TO CHANGE -", 14);
 		alphaText->transform.a = 0.6f;
 		alphaText->outlineThickness = 1.4;
 

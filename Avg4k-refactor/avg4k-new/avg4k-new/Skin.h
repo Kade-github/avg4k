@@ -54,6 +54,10 @@ namespace Average4k::Skin
 			rotateMine = skinConfig.Bool("rotateMine");
 
 			sparrow = skinConfig.Value("sparrow");
+
+			#ifdef _DEBUG
+			AvgEngine::Logging::writeLog("[Skin] [Debug] Loaded " + name + " successfully!");
+			#endif
 		}
 
 		~Skin()

@@ -1,4 +1,5 @@
 #pragma once
+#include "Display.h"
 #include "includes.h"
 #include "pugixml.hpp"
 #include "Texture.h"
@@ -16,6 +17,7 @@ namespace AvgEngine::Fnt
 	class Fnt
 	{
 	public:
+		static std::vector<Fnt*>* fonts;
 		std::vector<FntChar> chars{};
 		std::string fontFile = "";
 		std::string name = "";
@@ -23,15 +25,34 @@ namespace AvgEngine::Fnt
 
 		OpenGL::Texture* texture = NULL;
 
+		static void ClearCache()
+		{
+			if (fonts->size() == 0)
+			{
+				#ifdef _DEBUG
+				Logging::writeLog("[Fnt] [Debug] No fonts to clear.");
+				#endif
+				return;
+			}
+			#ifdef _DEBUG
+			Logging::writeLog("[Fnt] [Debug] Clearing " + std::to_string(fonts->size()) + " fonts.");
+			#endif
+			for (Fnt* f : *fonts)
+				delete f;
+			fonts->clear();
+			#ifdef _DEBUG
+			Logging::writeLog("[Fnt] [Debug] Cleared successfully!");
+			#endif
+		}
+
 		static Fnt* GetFont(std::string folder, std::string font)
 		{
-			static std::vector<Fnt*>* fonts;
-
-			if (fonts == NULL)
-				fonts = new std::vector<Fnt*>();
 			for (Fnt* f : *fonts)
 				if (f->fontFile == font)
 					return f;
+			#ifdef _DEBUG 
+			Logging::writeLog("[Fnt] [Debug] First time load of " + font + ". Adding to cache...");
+			#endif
 			fonts->push_back(new Fnt(font, folder));
 			for (Fnt* f : *fonts)
 				if (f->fontFile == font)

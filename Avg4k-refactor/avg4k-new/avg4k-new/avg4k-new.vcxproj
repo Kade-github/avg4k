@@ -41,6 +41,7 @@
     <ClCompile Include="CPacketHostUpdateLobby.cpp" />
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="Easing.cpp" />
+    <ClCompile Include="FntParser.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="imgui.cpp" />

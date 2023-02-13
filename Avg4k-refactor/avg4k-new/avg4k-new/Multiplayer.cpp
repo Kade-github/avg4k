@@ -211,7 +211,7 @@ DWORD WINAPI SendPacketT(LPVOID param) {
             char* sendData = (char*)malloc(dataStr.length() + 8);
 
             if (!sendData) {
-	            AvgEngine::Logging::writeLog("[SERVER] Alloc error 1 (Packet Dropped)");
+	            AvgEngine::Logging::writeLog("[Server] Alloc error 1 (Packet Dropped)");
                 return 0;
             }
 
@@ -226,7 +226,7 @@ DWORD WINAPI SendPacketT(LPVOID param) {
             unsigned char* cipherplusIV = (unsigned char*)malloc(dataStr.length() + 256);
 
             if (!cipherplusIV) {
-	            AvgEngine::Logging::writeLog("[SERVER] Alloc error 2 (Packet Dropped)");
+	            AvgEngine::Logging::writeLog("[Server] Alloc error 2 (Packet Dropped)");
                 return 0;
             }
 
@@ -241,20 +241,20 @@ DWORD WINAPI SendPacketT(LPVOID param) {
             aesCtx = EVP_CIPHER_CTX_new();
 
             if (!aesCtx) {
-	            AvgEngine::Logging::writeLog("[SERVER] Crypto error 1 (Packet Dropped)");
+	            AvgEngine::Logging::writeLog("[Server] Crypto error 1 (Packet Dropped)");
                 unfuckPlease.unlock();
                 return 0;
             }
 
             if (EVP_EncryptInit_ex(aesCtx, EVP_aes_256_cbc(), NULL, NULL, NULL) != 1) {
-	            AvgEngine::Logging::writeLog("[SERVER] Crypto error 2 (Packet Dropped)");
+	            AvgEngine::Logging::writeLog("[Server] Crypto error 2 (Packet Dropped)");
                 unfuckPlease.unlock();
                 return 0;
             }
 
 
             if (EVP_CIPHER_CTX_set_padding(aesCtx, EVP_PADDING_PKCS7) != 1) {
-	            AvgEngine::Logging::writeLog("[SERVER] Crypto error 4 (Packet Dropped)");
+	            AvgEngine::Logging::writeLog("[Server] Crypto error 4 (Packet Dropped)");
                 unfuckPlease.unlock();
                 return 0;
             }
@@ -262,7 +262,7 @@ DWORD WINAPI SendPacketT(LPVOID param) {
 
 
             if (RAND_bytes(cipherplusIV, 16) != 1) {
-	            AvgEngine::Logging::writeLog("[SERVER] Crypto error 5 (Packet Dropped)");
+	            AvgEngine::Logging::writeLog("[Server] Crypto error 5 (Packet Dropped)");
                 unfuckPlease.unlock();
                 return 0;
             }
@@ -274,13 +274,13 @@ DWORD WINAPI SendPacketT(LPVOID param) {
             }
 
             if (EVP_EncryptInit_ex(aesCtx, NULL, NULL, buf, cipherplusIV) != 1) {
-	            AvgEngine::Logging::writeLog("[SERVER] Crypto error 6 (Packet Dropped)");
+	            AvgEngine::Logging::writeLog("[Server] Crypto error 6 (Packet Dropped)");
                 unfuckPlease.unlock();
                 return 0;
             }
 
             if (EVP_EncryptUpdate(aesCtx, ciphertext, &len, (unsigned char*)sendData, dataStr.length() + 8) != 1) {
-                AvgEngine::Logging::writeLog("[SERVER] Crypto error 7 (Packet Dropped)");
+                AvgEngine::Logging::writeLog("[Server] Crypto error 7 (Packet Dropped)");
                 unfuckPlease.unlock();
                 return 0;
             }
@@ -288,7 +288,7 @@ DWORD WINAPI SendPacketT(LPVOID param) {
             ciphertext_len = len;
 
             if (EVP_EncryptFinal_ex(aesCtx, ciphertext + len, &len) != 1) {
-                AvgEngine::Logging::writeLog("[SERVER] Crypto error 8 (Packet Dropped)");
+                AvgEngine::Logging::writeLog("[Server] Crypto error 8 (Packet Dropped)");
                 unfuckPlease.unlock();
                 return 0;
             }
@@ -308,7 +308,7 @@ DWORD WINAPI SendPacketT(LPVOID param) {
                 }
             }
             catch (std::exception ex) {
-                AvgEngine::Logging::writeLog("[SERVER] Something something problem send: " + std::string(ex.what()));
+                AvgEngine::Logging::writeLog("[Server] Something something problem send: " + std::string(ex.what()));
             }
 
             if (!success && packetData->attempts < 5) {
@@ -588,18 +588,18 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
             {
             case 403:
                 VM_START
-                AvgEngine::Logging::writeLog("[SERVER] Logging in...");
+                AvgEngine::Logging::writeLog("[Server] Logging in...");
 				Multiplayer::MInstance->login();
                 VM_END
                 break;
             case 409:
                 VM_START
-                AvgEngine::Logging::writeLog("[SERVER] Conflict status...");
+                AvgEngine::Logging::writeLog("[Server] Conflict status...");
                 VM_END
                 break;
             case 404:
                 VM_START
-                AvgEngine::Logging::writeLog("[SERVER] Not Found status");
+                AvgEngine::Logging::writeLog("[Server] Not Found status");
                 VM_END
                 break;
             case 3301:
@@ -624,12 +624,12 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
                 break;
             case 3305:
                 VM_START
-                AvgEngine::Logging::writeLog("[SERVER] " + status.Status);
+                AvgEngine::Logging::writeLog("[Server] " + status.Status);
                 VM_END
                 break;
             case 3306:
                 VM_START
-                    AvgEngine::Logging::writeLog("[SERVER] " + status.Status);
+                    AvgEngine::Logging::writeLog("[Server] " + status.Status);
                 VM_END
                 break;
             case 3307:
@@ -668,7 +668,7 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
 
             reauth = new std::string(helloBack.reauth);
 
-            AvgEngine::Logging::writeLog("[SERVER] Server agreed to give me the kids on the weekends (you logged in successfully)");
+            AvgEngine::Logging::writeLog("[Server] Server agreed to give me the kids on the weekends (you logged in successfully)");
             VM_END
             break;
         }
@@ -705,7 +705,7 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
         }
     }
     catch (std::exception e) {
-        AvgEngine::Logging::writeLog("[SERVER] Shit " + std::string(e.what()) + " - THINGY CASTING " + std::to_string(type));
+        AvgEngine::Logging::writeLog("[Server] Shit " + std::string(e.what()) + " - THINGY CASTING " + std::to_string(type));
     }
     
     __nop();
@@ -829,7 +829,7 @@ void Multiplayer::connect(AvgEngine::Game* g)
    
     std::string url = "wss://titnoas.xyz/ballsandsex/";
    
-    AvgEngine::Logging::writeLog("[SERVER] Connecting...");
+    AvgEngine::Logging::writeLog("[Server] Connecting...");
     CreateThread(NULL, NULL, SendPacketT, NULL, NULL, NULL);
 
     try {
@@ -868,10 +868,10 @@ void Multiplayer::connect(AvgEngine::Game* g)
             websocketpp::lib::error_code ec;
             client::connection_ptr con = connectionData->c.get_connection(url, ec);
             if (ec) {
-                AvgEngine::Logging::writeLog("[SERVER] Connection Failed: " + ec.message());
+                AvgEngine::Logging::writeLog("[Server] Connection Failed: " + ec.message());
                 return;
             }
-            AvgEngine::Logging::writeLog("[SERVER] Connected successfully!");
+            AvgEngine::Logging::writeLog("[Server] Connected successfully!");
 
             if (reauth) {
                 con->append_header("Reauth", *reauth);
@@ -924,7 +924,7 @@ void Multiplayer::connect(AvgEngine::Game* g)
 
             connectedToServer = true;
             connectionData->c.run();
-            AvgEngine::Logging::writeLog("[SERVER] Connection closed");
+            AvgEngine::Logging::writeLog("[Server] Connection closed");
             Multiplayer::loggedIn = false;
             connectedToServer = false;
 
@@ -933,7 +933,7 @@ void Multiplayer::connect(AvgEngine::Game* g)
 
             if (closeReason.size() != 0)
             {
-                AvgEngine::Logging::writeLog("[SERVER] Disconnected by server: " + closeReason);
+                AvgEngine::Logging::writeLog("[Server] Disconnected by server: " + closeReason);
             }
 
 
@@ -941,7 +941,7 @@ void Multiplayer::connect(AvgEngine::Game* g)
         }
     }
     catch (websocketpp::exception const& e) {
-        AvgEngine::Logging::writeLog("[SERVER] Server connection failed: " + std::string(e.what()));
+        AvgEngine::Logging::writeLog("[Server] Server connection failed: " + std::string(e.what()));
         loggedIn = false;
         connectedToServer = false;
     }
@@ -961,13 +961,13 @@ void Multiplayer::login()
 
 
     if (SteamUser() == nullptr) {
-        AvgEngine::Logging::writeLog("[SERVER] User not logged into steam");
+        AvgEngine::Logging::writeLog("[Server] User not logged into steam");
         return;
     }
 
     SteamAPICall_t call = SteamUser()->RequestEncryptedAppTicket(&c, 5);
     steamEncryptedAppTicketCall.Set(call, this, &Multiplayer::OnSteamAuthTicket);
-    AvgEngine::Logging::writeLog("[SERVER] Awaiting auth ticket from steam");
+    AvgEngine::Logging::writeLog("[Server] Awaiting auth ticket from steam");
     VM_END
 }
 
@@ -978,7 +978,7 @@ void Multiplayer::OnSteamAuthTicket(EncryptedAppTicketResponse_t* pEncryptedAppT
 
     hello.PacketType = eCPacketHello;
 
-    AvgEngine::Logging::writeLog("[SERVER] Sending auth ticket...");
+    AvgEngine::Logging::writeLog("[Server] Sending auth ticket...");
 
     char* buf = new char[4096];
 

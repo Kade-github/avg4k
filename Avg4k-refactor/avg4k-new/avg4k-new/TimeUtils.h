@@ -29,8 +29,7 @@ namespace Average4k::Utils
 		 */
 		static double ConvertTimeToBeat(double bpm, float time, double startBeat = 0, float startTime = 0)
 		{
-			const double result = startBeat + (((static_cast<double>(time) / 1000.0)) - ((static_cast<double>(startTime) / 1000.0))) * (bpm / 60.0);
-			return result;
+			return startBeat + ((static_cast<double>((time / 1000)) - static_cast<double>((startTime / 1000))) * (bpm / 60));
 		}
 	};
 }

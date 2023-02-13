@@ -18,28 +18,28 @@ namespace Average4k::Audio
 	{
 	public:
 		std::vector<TimeSegment> timeSegments{};
-
+		TimeSegment* lastSegment = NULL;
 		RhythmChannel(unsigned long _id) : Channel(_id)
 		{
 			// empty
 		}
 
-		TimeSegment FindSegment(float time)
+		TimeSegment* FindSegment(float time)
 		{
 			for(TimeSegment& s : timeSegments)
 			{
 				if (s.startTime <= time && s.startTime + s.length > time)
-					return s;
+					return &s;
 			}
 			return {};
 		}
 
-		TimeSegment FindSegment(double beat)
+		TimeSegment* FindSegment(double beat)
 		{
 			for (TimeSegment& s : timeSegments)
 			{
 				if (s.startBeat <= beat && s.endBeat > beat)
-					return s;
+					return &s;
 			}
 			return {};
 		}
@@ -54,27 +54,24 @@ namespace Average4k::Audio
 			if (timeSegments.empty())
 				return 0;
 
-			float pos = GetPos();
-
-			static TimeSegment* lastSegment;
+			const float pos = GetPos();
 
 			if (lastSegment != NULL)
 			{
-				if (lastSegment->startTime < pos || lastSegment->startTime + lastSegment->length < pos)
+				if (lastSegment->startTime <= pos && lastSegment->startTime + lastSegment->length < pos)
 					goto findSeg;
 				return Utils::TimeUtils::ConvertTimeToBeat(lastSegment->bpm, pos, lastSegment->startBeat, lastSegment->startTime);
 			}
 
 		findSeg:
-			TimeSegment seg = FindSegment(pos);
-			if (seg.id == -1)
+			lastSegment = FindSegment(pos);
+			if (lastSegment->id == -1)
 			{
 				AvgEngine::Logging::writeLog("[RhythmChannel] [Error] Failure to get the bpm segment (@ " + std::to_string(static_cast<int>(pos)) + "ms)!");
 				return 0;
 			}
 
-			lastSegment = &seg;
-			return Utils::TimeUtils::ConvertTimeToBeat(seg.bpm, pos, seg.startBeat, seg.startTime);
+			return Utils::TimeUtils::ConvertTimeToBeat(lastSegment->bpm, pos, lastSegment->startBeat, lastSegment->startTime);
 		}
 	};
 

@@ -1,1 +1,5 @@
 bpm: 155
+# this is when the logo will appear.
+# the other events for like the kade dev team logo and stuff
+# are based off this value
+beat: 32

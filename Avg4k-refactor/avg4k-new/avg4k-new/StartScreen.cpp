@@ -12,11 +12,10 @@ StartScreen::StartScreen()
 
 void StartScreen::load()
 {
-	Sprite* sprite = new Sprite(0, 2, Average4K::skin->GetTexture("Menu/darkmodebg"));
-	sprite->transformRatio = true;
-	addObject(sprite);
+	bg = new Sprite(0, 2, Average4K::skin->GetTexture("Menu/darkmodebg"));
+	bg->transformRatio = true;
+	addObject(bg);
 
-	tween.CreateTween(&sprite->transform, Render::Rect(0, 0, sprite->transform), 8, Easing::Easing::getEasingFunction("outcubic"), NULL);
 	c = Average4k::Audio::RhythmBASSHelper::CreateChannel("menu", Average4K::skin->GetPath("Music/MenuTheme.ogg"));
 	c->SetSegments({ Average4k::Utils::SkinUtils::GetMenuThemeTiming() });
 	c->Play();
@@ -24,6 +23,12 @@ void StartScreen::load()
 
 void StartScreen::draw()
 {
-	Logging::writeLog("[StartScreen] Beat: " + std::to_string(static_cast<int>(c->GetBeat())));
+	const float beat = c->GetBeat();
+	const float s = c->timeSegments[0].id;
+	if (beat >= s && !started)
+	{
+		started = true;
+		tween.CreateTween(&bg->transform, Render::Rect(0, 0, bg->transform), 1, Easing::Easing::getEasingFunction("outcubic"), NULL);
+	}
 	Menu::draw();
 }

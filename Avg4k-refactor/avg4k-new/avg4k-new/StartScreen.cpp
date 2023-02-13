@@ -29,7 +29,6 @@ void StartScreen::draw()
 	{
 		started = true;
 		tween.CreateTween(&bg->transform, Render::Rect(0, 0, bg->transform), 1, Easing::Easing::getEasingFunction("outcubic"), NULL);
-
 	}
 	Menu::draw();
 }

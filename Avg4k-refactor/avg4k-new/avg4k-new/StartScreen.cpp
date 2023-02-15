@@ -1,6 +1,7 @@
 #include "StartScreen.h"
 
 #include "Average4K.h"
+#include "MainMenu.h"
 #include "Sprite.h"
 
 using namespace AvgEngine;
@@ -20,7 +21,10 @@ void StartScreen::load()
 	eManager->Subscribe(Events::EventType::Event_KeyPress, [&](Events::Event e)
 	{
 		if (e.data == GLFW_KEY_ENTER && c)
-			c->SetPos(Average4k::Utils::TimeUtils::ConvertBeatToTime(bpm, _eBeat));
+			if (!started)
+				c->SetPos(Average4k::Utils::TimeUtils::ConvertBeatToTime(bpm, _eBeat));
+			else
+				Average4K::Instance->SwitchMenu(new MainMenu());
 	});
 
 

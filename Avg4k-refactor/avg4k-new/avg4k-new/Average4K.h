@@ -11,6 +11,8 @@
 class Average4K : public AvgEngine::Game
 {
 	double _startTrans = 0;
+	bool _out = false;
+	Menu* _toSwitch;
 
 public:
 	static Average4k::Settings::Settings* settings;
@@ -46,7 +48,7 @@ public:
 		alphaText->SetFont(skin->GetFontPath(), "FuturaBold.fnt");
 
 		QueueEvent({ AvgEngine::Events::EventType::Event_ReloadFont,0, skin->GetFontPath() });
-		SwitchMenu(new StartScreen());
+		SwitchNoTrans(new StartScreen());
 	}
 
 	void Start()
@@ -100,16 +102,41 @@ public:
 			0.0f,0.0f,0.0f,1.0f);
 
 		// 1 second trans time
-		float t = std::min(static_cast<float>(std::abs(_startTrans - glfwGetTime())) / 0.5f, 1.0f);
-		r.a = std::lerp(1, 0, t);
-		drawCall c =  CurrentMenu->camera.FormatDrawCall(0, NULL, NULL, DisplayHelper::RectToVertex(r, { 0,0,1,1 }));
-		CurrentMenu->camera.addDrawCall(c);
+		if (!_out)
+		{
+			float t = std::min(static_cast<float>(std::abs(_startTrans - glfwGetTime())) / 0.5f, 1.0f);
+			r.a = std::lerp(0, 1, t);
+			drawCall c = CurrentMenu->camera.FormatDrawCall(0, NULL, NULL, DisplayHelper::RectToVertex(r, { 0,0,1,1 }));
+
+			CurrentMenu->camera.addDrawCall(c);
+
+			if (t >= 1)
+			{
+				_startTrans = glfwGetTime();
+				Game::SwitchMenu(_toSwitch);
+				_out = true;
+			}
+		}
+		else
+		{
+			float t = std::min(static_cast<float>(std::abs(_startTrans - glfwGetTime())) / 0.5f, 1.0f);
+			r.a = std::lerp(1, 0, t);
+			drawCall c = CurrentMenu->camera.FormatDrawCall(0, NULL, NULL, DisplayHelper::RectToVertex(r, { 0,0,1,1 }));
+
+			CurrentMenu->camera.addDrawCall(c);
+		}
+	}
+
+	void SwitchNoTrans(Menu* menu)
+	{
+		Game::SwitchMenu(menu);
 	}
 
 	void SwitchMenu(Menu* menu) override
 	{
-		Game::SwitchMenu(menu);
+		_toSwitch = menu;
 		_startTrans = glfwGetTime();
+		_out = false;
 	}
 
 	void Destroy()

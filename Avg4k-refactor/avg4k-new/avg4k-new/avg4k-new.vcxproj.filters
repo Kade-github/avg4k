@@ -88,6 +88,15 @@
     <Filter Include="Average4K\Avg4k\Utils">
       <UniqueIdentifier>{8dd899ff-d80e-422a-a935-ccefe98144f1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Average4K\Avg4k\Menus\Main">
+      <UniqueIdentifier>{c51b3f83-8c57-4580-8f95-e051924f7fae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\Menus\Gameplay">
+      <UniqueIdentifier>{0d355aef-e03a-42f7-bb0f-3c3920a25a38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\Menus\Editor">
+      <UniqueIdentifier>{0ac290b2-cc89-4591-b836-acfb87a13280}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -173,6 +182,9 @@
     </ClCompile>
     <ClCompile Include="SkinUtils.cpp">
       <Filter>Average4K\Avg4k\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenu.cpp">
+      <Filter>Average4K\Avg4k\Menus\Main</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -439,6 +451,9 @@
     </ClInclude>
     <ClInclude Include="SkinUtils.h">
       <Filter>Average4K\Avg4k\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenu.h">
+      <Filter>Average4K\Avg4k\Menus\Main</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

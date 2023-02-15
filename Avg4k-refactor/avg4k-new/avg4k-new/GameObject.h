@@ -41,7 +41,7 @@ namespace AvgEngine::Base
 			transform = _transform;
 		}
 
-		GameObject(int x, int y)
+		GameObject(float x, float y)
 		{
 			transform = Render::Rect();
 			transform.x = x;

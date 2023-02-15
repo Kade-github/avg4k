@@ -17,6 +17,8 @@ namespace AvgEngine::Render
 		float x = 0, y = 0;
 		float w = 0, h = 0;
 		float r = 255, g = 255, b = 255, a = 1;
+		float scale = 1;
+		float angle = 0;
 
 		Rect() = default;
 		Rect(float _x, float _y, float _w, float _h)
@@ -64,45 +66,75 @@ namespace AvgEngine::Render
 		static std::vector<Vertex> RectToVertex(Rect dst, Rect src)
 		{
 			std::vector<Vertex> verts;
+
+			Rect rD = dst;
+			float mpx = (rD.w * (1 - rD.scale)) / 2;
+			float mpy = (rD.h * (1 - rD.scale)) / 2;
+			rD.x += mpx;
+			rD.y += mpy;
+
+			rD.w *= rD.scale;
+			rD.h *= rD.scale;
+
+
 			Vertex tl;
-			tl.x = dst.x;
-			tl.y = dst.y;
+			tl.x = rD.x;
+			tl.y = rD.y;
 			tl.u = src.x;
 			tl.v = src.y;
-			tl.r = dst.r / 255;
-			tl.g = dst.g / 255;
-			tl.b = dst.b / 255;
-			tl.a = dst.a;
+			tl.r = rD.r / 255;
+			tl.g = rD.g / 255;
+			tl.b = rD.b / 255;
+			tl.a = rD.a;
 
 			Vertex bl;
-			bl.x = dst.x;
-			bl.y = dst.y + dst.h;
+			bl.x = rD.x;
+			bl.y = rD.y + rD.h;
 			bl.u = src.x;
 			bl.v = src.y + src.h;
-			bl.r = dst.r / 255;
-			bl.g = dst.g / 255;
-			bl.b = dst.b / 255;
-			bl.a = dst.a;
+			bl.r = rD.r / 255;
+			bl.g = rD.g / 255;
+			bl.b = rD.b / 255;
+			bl.a = rD.a;
 
 			Vertex tr;
-			tr.x = dst.x + dst.w;
-			tr.y = dst.y;
+			tr.x = rD.x + rD.w;
+			tr.y = rD.y;
 			tr.u = src.x + src.w;
 			tr.v = src.y;
-			tr.r = dst.r / 255;
-			tr.g = dst.g / 255;
-			tr.b = dst.b / 255;
-			tr.a = dst.a;
+			tr.r = rD.r / 255;
+			tr.g = rD.g / 255;
+			tr.b = rD.b / 255;
+			tr.a = rD.a;
 
 			Vertex br;
-			br.x = dst.x + dst.w;
-			br.y = dst.y + dst.h;
+			br.x = rD.x + rD.w;
+			br.y = rD.y + rD.h;
 			br.u = src.x + src.w;
 			br.v = src.y + src.h;
-			br.r = dst.r / 255;
-			br.g = dst.g / 255;
-			br.b = dst.b / 255;
-			br.a = dst.a;
+			br.r = rD.r / 255;
+			br.g = rD.g / 255;
+			br.b = rD.b / 255;
+			br.a = rD.a;
+
+			if (rD.angle != 0)
+			{
+				float s = sin(rD.angle * (3.14159265 / 180));
+				float c = cos(rD.angle * (3.14159265 / 180));
+				float cx = rD.x + rD.w * 0.5f;
+				float cy = rD.y + rD.h * 0.5f;
+
+				Vertex* verts[] = { &tl, &bl, &tr, &br };
+				for (Vertex* vert : verts)
+				{
+					float tx = vert->x - cx;
+					float ty = vert->y - cy;
+					float rx = tx * c - ty * s;
+					float ry = tx * s + ty * c;
+					vert->x = rx + cx;
+					vert->y = ry + cy;
+				}
+			}
 
 			verts.push_back(tl);
 			verts.push_back(bl);

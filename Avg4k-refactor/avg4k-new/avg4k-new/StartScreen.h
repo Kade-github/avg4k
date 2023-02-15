@@ -10,9 +10,15 @@ using namespace AvgEngine::Base;
 class StartScreen : public Menu
 {
 public:
+	bool startedT = false;
 	bool started = false;
+	double _eBeat = 0;
+	double _tBeat = 0;
+	double bpm = 0;
 	Sprite* bg = NULL;
+	Sprite* bump = NULL;
 	Sprite* logo = NULL;
+	Sprite* whs = NULL;
 	Average4k::Audio::RhythmChannel* c = NULL;
 	StartScreen();
 

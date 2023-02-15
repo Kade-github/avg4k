@@ -10,7 +10,7 @@
 
 class Average4K : public AvgEngine::Game
 {
-	double _startTrans = 0;
+	double _startTrans = -1;
 	bool _out = false;
 	Menu* _toSwitch;
 
@@ -102,7 +102,7 @@ public:
 			0.0f,0.0f,0.0f,1.0f);
 
 		// 1 second trans time
-		if (!_out)
+		if (!_out && _startTrans > 0)
 		{
 			float t = std::min(static_cast<float>(std::abs(_startTrans - glfwGetTime())) / 0.5f, 1.0f);
 			r.a = std::lerp(0, 1, t);

@@ -50,16 +50,24 @@ void StartScreen::load()
 	addObject(bump);
 
 	c = Average4k::Audio::RhythmBASSHelper::CreateChannel("menu", Average4K::skin->GetPath("Music/MenuTheme.ogg"));
-	c->SetSegments({ Average4k::Utils::SkinUtils::GetMenuThemeTiming() });
-	bpm = c->timeSegments[0].bpm;
-	_eBeat = c->timeSegments[0].id;
+	Average4k::External::ConfigReader cf = Average4k::External::ConfigReader(Average4K::skin->GetPath("Music/MenuTheme.meta"));
+	bpm = cf.Float("bpm");
+	c->SetSegments({ Average4k::Utils::SkinUtils::GetMenuThemeTiming(bpm) });
+	_eBeat = cf.Float("beat");
 	_tBeat = _eBeat / 2;
+	beatOffset = cf.Float("startOffset");
 	c->Play();
+
+	if (beatOffset < 0)
+		beatOffset = 0;
+
+	if (beatOffset != 0)
+		c->SetPos(Average4k::Utils::TimeUtils::ConvertBeatToTime(bpm, beatOffset));
 
 	Render::Rect r = logo->transform;
 	r.a = 1;
 	tween.CreateTween(&logo->transform, r, Average4k::Utils::TimeUtils::ConvertBeatToTime(bpm, _tBeat) / 1000, Easing::Easing::getEasingFunction("outcubic"), NULL);
-
+	bopBeat = c->timeSegments[0].startTime * 1000;
 	bSecond = Average4k::Utils::TimeUtils::ConvertBeatToTime(bpm, 1) / 1000;
 	bSecond4 = Average4k::Utils::TimeUtils::ConvertBeatToTime(bpm, 4) / 1000;
 	outCubic = Easing::Easing::getEasingFunction("outcubic");
@@ -70,7 +78,7 @@ void StartScreen::draw()
 	static int lastBeat = 0;
 	static double bumpTime = 0;
 	const double beat = c->GetBeat();
-	if (std::floor(beat) >= lastBeat + 4)
+	if (std::floor(beat) > lastBeat + bopBeat)
 	{
 		bumpTime = glfwGetTime();
 		lastBeat = static_cast<int>(beat);

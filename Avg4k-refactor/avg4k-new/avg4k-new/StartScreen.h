@@ -14,7 +14,9 @@ public:
 	bool started = false;
 	double _eBeat = 0;
 	double _tBeat = 0;
+	double bopBeat = 0;
 	double bpm = 0;
+	double beatOffset = 0;
 	Sprite* bg = NULL;
 	Sprite* bump = NULL;
 	Sprite* logo = NULL;

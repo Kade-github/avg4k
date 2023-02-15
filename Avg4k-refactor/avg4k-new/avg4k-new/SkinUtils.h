@@ -7,6 +7,6 @@ namespace Average4k::Utils
 	class SkinUtils
 	{
 	public:
-		static Audio::TimeSegment GetMenuThemeTiming();
+		static Audio::TimeSegment GetMenuThemeTiming(float bpm);
 	};
 }

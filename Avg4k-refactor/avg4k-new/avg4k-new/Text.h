@@ -13,6 +13,7 @@ namespace AvgEngine::Base
 
 		float size = 0;
 		float outlineThickness = 0;
+		float characterSpacing = 0;
 
 		std::string text = "";
 
@@ -71,7 +72,7 @@ namespace AvgEngine::Base
 				const Fnt::FntChar c = fnt->GetChar(ch);
 				if (c.id == -1)
 					continue;
-				float advance = c.xAdvance * scale;
+				float advance = (c.xAdvance + characterSpacing) * scale;
 				if (ch == 32)
 				{
 					dst.x += advance;

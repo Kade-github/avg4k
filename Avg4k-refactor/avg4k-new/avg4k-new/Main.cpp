@@ -197,16 +197,23 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	glfwSetMouseButtonCallback(g->Window, [](GLFWwindow* window, int button, int action, int mods)
 		{
 			Events::Event e;
+			double xpos, ypos;
+			glfwGetCursorPos(window, &xpos, &ypos);
+			Events::Vec v;
+			v.x = xpos;
+			v.y = ypos;
 			switch (action)
 			{
 			case GLFW_PRESS:
 				e.type = Events::EventType::Event_MouseDown;
 				e.data = button;
+				e.vector = v;
 				Game::Instance->QueueEvent(e);
 				break;
 			case GLFW_RELEASE:
 				e.type = Events::EventType::Event_MouseRelease;
 				e.data = button;
+				e.vector = v;
 				Game::Instance->QueueEvent(e);
 				break;
 			default:

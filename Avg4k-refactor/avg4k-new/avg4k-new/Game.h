@@ -116,7 +116,8 @@ namespace AvgEngine
 			{
 				for(Base::GameObject* obj : CurrentMenu->GameObjects)
 				{
-					delete obj;
+					if (!obj->dontDelete)
+						delete obj;
 				}
 				CurrentMenu->GameObjects.clear();
 			}

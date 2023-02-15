@@ -17,7 +17,7 @@ namespace AvgEngine::Base
 
 		Events::EventManager* eManager = NULL;
 
-		TweenManager* tween;
+		TweenManager* tween{};
 
 		Camera* camera{};
 
@@ -25,6 +25,8 @@ namespace AvgEngine::Base
 		 * \brief If the transform should base itself on percentages of the display's width/height
 		 */
 		bool transformRatio = false;
+
+		bool dontDelete = false;
 
 		Render::Rect transform = Render::Rect();
 		Render::Rect* parent = NULL;
@@ -50,8 +52,11 @@ namespace AvgEngine::Base
 
 		virtual ~GameObject()
 		{
-			for (GameObject* o : Children)
-				delete o;
+			if (!dontDelete)
+			{
+				for (GameObject* o : Children)
+					delete o;
+			}
 		};
 
 		GameObject() = default;
@@ -74,6 +79,11 @@ namespace AvgEngine::Base
 			return a.id < b.id;
 		}
 
+		virtual void Added()
+		{
+			
+		}
+
 		/**
 		 * \brief Creates a copy of an object and puts the copy onto a vector with a given id
 		 * \param object Object to copy onto the vector
@@ -85,6 +95,7 @@ namespace AvgEngine::Base
 			object->eManager = eManager;
 			object->camera = camera;
 			object->parent = &transform;
+			object->Added();
 			Children.push_back(object);
 			lastObjectId++;
 		}

@@ -20,13 +20,17 @@ void StartScreen::load()
 {
 	eManager->Subscribe(Events::EventType::Event_KeyPress, [&](Events::Event e)
 	{
+		using namespace Average4k::Utils;
 		if (e.data == GLFW_KEY_ENTER && c)
 			if (!started)
-				c->SetPos(Average4k::Utils::TimeUtils::ConvertBeatToTime(bpm, _eBeat));
+			{
+				c->SetPos(TimeUtils::ConvertBeatToTime(bpm, _eBeat));
+			}
 			else
+			{
 				Average4K::Instance->SwitchMenu(new MainMenu());
+			}
 	});
-
 
 	logo = new Sprite(0.5, 0.5, Average4K::skin->GetTexture("Start/KadeDevTeam"));
 	logo->transformRatio = true;

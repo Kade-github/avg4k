@@ -3,7 +3,7 @@
 
 #include <msgpack.hpp>
 
-namespace Average4k::Settings
+namespace Average4k
 {
 	enum SettingType
 	{

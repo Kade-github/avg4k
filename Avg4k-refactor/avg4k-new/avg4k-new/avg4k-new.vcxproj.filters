@@ -455,5 +455,11 @@
     <ClInclude Include="MainMenu.h">
       <Filter>Average4K\Avg4k\Menus\Main</Filter>
     </ClInclude>
+    <ClInclude Include="Notifications.h">
+      <Filter>Average4K\Avg4k\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>Average4K\Engine\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

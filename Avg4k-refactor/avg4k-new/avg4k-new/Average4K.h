@@ -6,8 +6,7 @@
 #include "Settings.h"
 #include "StartScreen.h"
 #include "SteamIncludes.h"
-#include "Skin.h"
-
+#include "Notifications.h"
 class Average4K : public AvgEngine::Game
 {
 	double _startTrans = -1;
@@ -15,8 +14,10 @@ class Average4K : public AvgEngine::Game
 	Menu* _toSwitch;
 
 public:
-	static Average4k::Settings::Settings* settings;
-	static Average4k::Skin::Skin* skin;
+	static Average4k::Settings* settings;
+	static Average4k::Skin* skin;
+
+	Average4k::Utils::Notifications* notif;
 
 	Steam::SteamInterface* steam;
 	Steam::SteamWorkshop* workshop;
@@ -25,7 +26,8 @@ public:
 	{
 		steam = new Steam::SteamInterface();
 		workshop = new Steam::SteamWorkshop();
-		settings = new Average4k::Settings::Settings(AvgEngine::Utils::Paths::getAppData("Average4K") + "settings.ave");
+		settings = new Average4k::Settings(AvgEngine::Utils::Paths::getAppData("Average4K") + "settings.ave");
+		notif = new Average4k::Utils::Notifications(0,0);
 	}
 
 	void SetSkin(std::string skinName, bool setValue = true)
@@ -33,19 +35,21 @@ public:
 		const std::string n = skinName;
 		if (setValue)
 		{
-			Average4k::Settings::Setting s = settings->Get("Skin");
+			Average4k::Setting s = settings->Get("Skin");
 			s.value = n;
 			settings->Set(s);
 		}
 
 		if (skin)
 			skin->EmptyCache();
-		skin = new Average4k::Skin::Skin(settings->Get("Skin").value, "assets/noteskin/");
+		skin = new Average4k::Skin(settings->Get("Skin").value, "assets/noteskin/");
 
 		AvgEngine::Fnt::Fnt::ClearCache();
 
 		fpsText->SetFont(skin->GetFontPath(), "FuturaBold.fnt");
 		alphaText->SetFont(skin->GetFontPath(), "FuturaBold.fnt");
+
+		notif->InitNotifications(skin);
 
 		QueueEvent({ AvgEngine::Events::EventType::Event_ReloadFont,0, skin->GetFontPath() });
 		SwitchNoTrans(new StartScreen());
@@ -114,6 +118,7 @@ public:
 			{
 				_startTrans = glfwGetTime();
 				Game::SwitchMenu(_toSwitch);
+				CurrentMenu->addObject(notif);
 				_out = true;
 			}
 		}

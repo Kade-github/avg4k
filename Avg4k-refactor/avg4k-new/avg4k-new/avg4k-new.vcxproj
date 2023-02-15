@@ -71,6 +71,7 @@
     <ClInclude Include="BASS.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Channel.h" />
+    <ClInclude Include="Collision.h" />
     <ClInclude Include="ConfigReader.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="CPacketChartAcquired.h" />
@@ -116,6 +117,7 @@
     <ClInclude Include="Menu.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Multiplayer.h" />
+    <ClInclude Include="Notifications.h" />
     <ClInclude Include="Packet.h" />
     <ClInclude Include="Paths.h" />
     <ClInclude Include="pugiconfig.hpp" />

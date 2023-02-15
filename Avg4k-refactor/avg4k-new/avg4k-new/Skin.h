@@ -3,7 +3,7 @@
 #include "includes.h"
 #include "Texture.h"
 
-namespace Average4k::Skin
+namespace Average4k
 {
 	struct CachedAsset
 	{

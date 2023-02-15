@@ -14,10 +14,16 @@ namespace AvgEngine::Events
 		Event_Null = -1
 	};
 
+	struct Vec
+	{
+		float x, y;
+	};
+
 	struct Event
 	{
 		EventType type = EventType::Event_Null;
 		int data = 0;
+		Vec vector = {};
 		std::string sData = "";
 	};
 

@@ -54,8 +54,8 @@ void StartScreen::load()
 	bpm = cf.Float("bpm");
 	c->SetSegments({ Average4k::Utils::SkinUtils::GetMenuThemeTiming(bpm) });
 	_eBeat = cf.Float("beat");
-	_tBeat = _eBeat / 2;
 	beatOffset = cf.Float("startOffset");
+	_tBeat = (_eBeat - beatOffset) / 2;
 	c->Play();
 
 	if (beatOffset < 0)
@@ -83,7 +83,7 @@ void StartScreen::draw()
 		bumpTime = glfwGetTime();
 		lastBeat = static_cast<int>(beat);
 	}
-	if (beat >= _tBeat && !startedT)
+	if (beat >= beatOffset + _tBeat && !startedT)
 	{
 		startedT = true;
 		Render::Rect r = logo->transform;
@@ -91,7 +91,7 @@ void StartScreen::draw()
 		tween.CreateTween(&logo->transform, r, bSecond, outCubic, NULL);
 		r = whs->transform;
 		r.a = 1;
-		tween.CreateTween(&whs->transform, r, Average4k::Utils::TimeUtils::ConvertBeatToTime(bpm, _eBeat - _tBeat) / 1000, outCubic, NULL);
+		tween.CreateTween(&whs->transform, r, Average4k::Utils::TimeUtils::ConvertBeatToTime(bpm, _eBeat - (beatOffset + _tBeat)) / 1000, outCubic, NULL);
 	}
 	if (beat >= _eBeat && !started)
 	{

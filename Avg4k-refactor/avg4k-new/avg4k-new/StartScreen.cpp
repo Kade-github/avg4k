@@ -17,14 +17,12 @@ StartScreen::StartScreen()
 
 void StartScreen::load()
 {
-	bg = new Sprite(0, 2, Average4K::skin->GetTexture("Menu/darkmodebg"));
-	bg->transformRatio = true;
-	addObject(bg);
+	eManager->Subscribe(Events::EventType::Event_KeyPress, [&](Events::Event e)
+	{
+		if (e.data == GLFW_KEY_ENTER && c)
+			c->SetPos(Average4k::Utils::TimeUtils::ConvertBeatToTime(bpm, _eBeat));
+	});
 
-	bump = new Sprite(0.5, 2, Average4K::skin->GetTexture("Menu/avg4k"));
-	bump->transformRatio = true;
-	bump->center = true;
-	addObject(bump);
 
 	logo = new Sprite(0.5, 0.5, Average4K::skin->GetTexture("Start/KadeDevTeam"));
 	logo->transformRatio = true;
@@ -37,6 +35,15 @@ void StartScreen::load()
 	whs->center = true;
 	whs->transform.a = 0;
 	addObject(whs);
+
+	bg = new Sprite(0, 2, Average4K::skin->GetTexture("Menu/darkmodebg"));
+	bg->transformRatio = true;
+	addObject(bg);
+
+	bump = new Sprite(0.5, 2, Average4K::skin->GetTexture("Menu/avg4k"));
+	bump->transformRatio = true;
+	bump->center = true;
+	addObject(bump);
 
 	c = Average4k::Audio::RhythmBASSHelper::CreateChannel("menu", Average4K::skin->GetPath("Music/MenuTheme.ogg"));
 	c->SetSegments({ Average4k::Utils::SkinUtils::GetMenuThemeTiming() });

@@ -67,7 +67,7 @@ void StartScreen::load()
 	Render::Rect r = logo->transform;
 	r.a = 1;
 	tween.CreateTween(&logo->transform, r, Average4k::Utils::TimeUtils::ConvertBeatToTime(bpm, _tBeat) / 1000, Easing::Easing::getEasingFunction("outcubic"), NULL);
-	bopBeat = c->timeSegments[0].startTime * 1000;
+	bopBeat = cf.Float("bop");
 	bSecond = Average4k::Utils::TimeUtils::ConvertBeatToTime(bpm, 1) / 1000;
 	bSecond4 = Average4k::Utils::TimeUtils::ConvertBeatToTime(bpm, 4) / 1000;
 	outCubic = Easing::Easing::getEasingFunction("outcubic");

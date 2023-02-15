@@ -101,12 +101,12 @@ public:
 			0.0f,0.0f, Display::width, Display::height,
 			0.0f,0.0f,0.0f,1.0f);
 
-		// 1 second trans time
+		// 0.15 second trans time
 		if (!_out && _startTrans > 0)
 		{
-			float t = std::min(static_cast<float>(std::abs(_startTrans - glfwGetTime())) / 0.5f, 1.0f);
+			float t = std::min(static_cast<float>(std::abs(_startTrans - glfwGetTime())) / 0.15f, 1.0f);
 			r.a = std::lerp(0, 1, t);
-			drawCall c = CurrentMenu->camera.FormatDrawCall(0, NULL, NULL, DisplayHelper::RectToVertex(r, { 0,0,1,1 }));
+			drawCall c = Camera::FormatDrawCall(0, NULL, NULL, DisplayHelper::RectToVertex(r, { 0,0,1,1 }));
 
 			CurrentMenu->camera.addDrawCall(c);
 
@@ -119,9 +119,9 @@ public:
 		}
 		else
 		{
-			float t = std::min(static_cast<float>(std::abs(_startTrans - glfwGetTime())) / 0.5f, 1.0f);
+			float t = std::min(static_cast<float>(std::abs(_startTrans - glfwGetTime())) / 0.15f, 1.0f);
 			r.a = std::lerp(1, 0, t);
-			drawCall c = CurrentMenu->camera.FormatDrawCall(0, NULL, NULL, DisplayHelper::RectToVertex(r, { 0,0,1,1 }));
+			drawCall c = Camera::FormatDrawCall(0, NULL, NULL, DisplayHelper::RectToVertex(r, { 0,0,1,1 }));
 
 			CurrentMenu->camera.addDrawCall(c);
 		}

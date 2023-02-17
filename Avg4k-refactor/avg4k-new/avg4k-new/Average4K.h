@@ -17,7 +17,7 @@ public:
 	static Average4k::Settings* settings;
 	static Average4k::Skin* skin;
 
-	Average4k::Utils::Notifications* notif;
+	static Average4k::Utils::Notifications* notif;
 
 	Steam::SteamInterface* steam;
 	Steam::SteamWorkshop* workshop;

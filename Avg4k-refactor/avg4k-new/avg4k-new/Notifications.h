@@ -156,6 +156,9 @@ namespace Average4k::Utils
 			buttonText->transform.x = button->transform.x + ((button->transform.w / 2) - (buttonText->transform.w / 2));
 			buttonText->transform.y = button->transform.y + ((button->transform.h / 2) - (buttonText->transform.h / 2));
 
+			if (text->transform.y + text->transform.h > button->transform.y)
+				text->transform.y -= (text->transform.y + text->transform.h) - button->transform.y;
+
 			GameObject::draw();
 		}
 

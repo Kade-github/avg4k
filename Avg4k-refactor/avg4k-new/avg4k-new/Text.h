@@ -105,7 +105,8 @@ namespace AvgEngine::Base
 					{
 						dst.x = transform.x;
 						dst.y += highestH;
-						d = highestH + highestH;
+						d += highestH;
+						highestH = 0;
 						currentLine.w = totalW;
 						lines.push_back(currentLine);
 						currentLine = {};

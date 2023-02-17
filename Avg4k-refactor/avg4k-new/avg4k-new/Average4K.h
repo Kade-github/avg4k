@@ -71,6 +71,9 @@ public:
 		if (!steam->good)
 			return;
 
+		notif->eManager = &eManager;
+		notif->Added();
+
 		steam->SetPresence(Version + " Alpha | Testing");
 		InitMultiplayer();
 	}
@@ -117,7 +120,7 @@ public:
 			if (t >= 1)
 			{
 				_startTrans = glfwGetTime();
-				Game::SwitchMenu(_toSwitch);
+				SwitchNoTrans(_toSwitch);
 				_out = true;
 			}
 		}

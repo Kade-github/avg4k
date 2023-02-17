@@ -4,6 +4,22 @@
 #include "GameObject.h"
 namespace AvgEngine::Base
 {
+	struct CharacterLine
+	{
+		Render::Rect dst;
+		Render::Rect src;
+		bool outline = false;
+		bool space = false;
+		int advance;
+	};
+
+	struct Line
+	{
+		int w;
+		std::vector<CharacterLine> characters;
+	};
+
+
 	class Text : public GameObject
 	{
 	public:
@@ -14,6 +30,8 @@ namespace AvgEngine::Base
 		float size = 0;
 		float outlineThickness = 0;
 		float characterSpacing = 0;
+
+		bool centerLines = false;
 
 		std::string text = "";
 
@@ -67,6 +85,9 @@ namespace AvgEngine::Base
 			int totalW = 0;
 			int highestH = 0;
 			float scale = size / fnt->ogSize;
+			std::vector<Line> lines;
+			Line currentLine;
+			int d = 0;
 			for(char ch : text)
 			{
 				const Fnt::FntChar c = fnt->GetChar(ch);
@@ -75,8 +96,24 @@ namespace AvgEngine::Base
 				float advance = (c.xAdvance + characterSpacing) * scale;
 				if (ch == 32)
 				{
-					dst.x += advance;
+					CharacterLine l;
+					l.space = true;
+					l.advance = advance;
 					totalW += advance;
+					dst.x += advance;
+					if (wrap && dst.x + dst.w > parent->x + parent->w && wrap)
+					{
+						dst.x = transform.x;
+						dst.y += highestH;
+						d = highestH + highestH;
+						currentLine.w = totalW;
+						lines.push_back(currentLine);
+						currentLine = {};
+						transform.w = totalW;
+						totalW = 0;
+					}
+
+					currentLine.characters.push_back(l);
 					continue;
 				}
 				Render::Rect src = c.src;
@@ -86,6 +123,11 @@ namespace AvgEngine::Base
 
 				if (highestH < dst.h)
 					highestH = dst.h;
+
+				CharacterLine l;
+				l.dst = dst;
+				l.src = src;
+				l.advance = advance;
 
 				if (outlineThickness != 0)
 				{
@@ -99,24 +141,55 @@ namespace AvgEngine::Base
 					outline.r = 0;
 					outline.g = 0;
 					outline.b = 0;
-					std::vector<Render::Vertex> newVert = Render::DisplayHelper::RectToVertex(outline, src);
-
-					call.vertices.insert(call.vertices.end(), newVert.begin(), newVert.end());
+					CharacterLine ll;
+					ll.dst = outline;
+					ll.outline = true;
+					ll.src = src;
+					ll.advance = advance;
+					currentLine.characters.push_back(ll);
 				}
-				std::vector<Render::Vertex> newVert = Render::DisplayHelper::RectToVertex(dst, src);
-
-				call.vertices.insert(call.vertices.end(), newVert.begin(), newVert.end());
-
+				currentLine.characters.push_back(l);
 				dst.x += advance;
-				if (wrap && dst.x + dst.w > parent->w && wrap)
-				{
-					dst.x = transform.x;
-					dst.y += highestH;
-				}
 				totalW += advance;
 			}
-			transform.w = totalW;
-			transform.h = highestH;
+			currentLine.w = totalW;
+			lines.push_back(currentLine);
+			currentLine = {};
+
+
+			if (d == 0)
+				d = highestH;
+
+			if (totalW > transform.w)
+				transform.w = totalW;
+
+			for(Line& line : lines)
+			{
+				int newStartX = transform.x;
+				if (centerLines)
+					newStartX = transform.x - (line.w / 2);
+
+				int currentAdvance = 0;
+
+				for(CharacterLine& c : line.characters)
+				{
+					int newStartY = c.dst.y;
+					if (centerLines)
+						newStartY = c.dst.y - (d / 2);
+					c.dst.x = newStartX + currentAdvance;
+					c.dst.y = newStartY;
+					if (!c.space)
+					{
+						drawCall ca = Camera::FormatDrawCall(zIndex, fnt->texture, NULL, Render::DisplayHelper::RectToVertex(c.dst, c.src));
+						camera->addDrawCall(ca);
+					}
+					if (!c.outline)
+						currentAdvance += c.advance;
+				}
+			}
+
+
+			transform.h = d;
 
 			camera->addDrawCall(call);
 

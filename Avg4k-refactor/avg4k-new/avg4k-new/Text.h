@@ -93,7 +93,7 @@ namespace AvgEngine::Base
 				const Fnt::FntChar c = fnt->GetChar(ch);
 				if (c.id == -1)
 					continue;
-				float advance = (c.xAdvance + characterSpacing) * scale;
+				float advance = (static_cast<float>(c.xAdvance) * scale) + characterSpacing;
 				if (ch == 32)
 				{
 					CharacterLine l;

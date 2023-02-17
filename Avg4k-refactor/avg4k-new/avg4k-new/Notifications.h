@@ -28,12 +28,14 @@ namespace Average4k::Utils
 		{
 			color = c;
 			text = new Text(0, 0, skin->GetFontPath(), "Arial.fnt", _t, 18);
-			text->characterSpacing = 2.33f;
+			text->zIndex = 99;
+			text->characterSpacing = 1.33f;
 			title = new Text(0, 0, skin->GetFontPath(), "Arial.fnt", _ti, 18);
-			title->characterSpacing = 3;
-			buttonText = new Text(0, 0, skin->GetFontPath(), "Arial.fnt", _b, 14);
-			buttonText->characterSpacing = 2.33f;
-
+			title->characterSpacing = 2;
+			title->zIndex = 99;
+			buttonText = new Text(0, 0, skin->GetFontPath(), "Arial.fnt", _b, 18);
+			buttonText->characterSpacing = 1.33f;
+			buttonText->zIndex = 99;
 			buttonText->transform.r = 0;
 			buttonText->transform.g = 0;
 			buttonText->transform.b = 0;
@@ -51,6 +53,8 @@ namespace Average4k::Utils
 				errorIcon->transform.a = 1;
 			else
 				minorIcon->transform.a = 1;
+
+			button->transform.a = 1;
 
 			addObject(text);
 			addObject(title);
@@ -77,10 +81,10 @@ namespace Average4k::Utils
 					if (!AvgEngine::Utils::Collision::AABB(vector.x, vector.y, 
 						button->transform.x, button->transform.y, 
 						button->transform.w, button->transform.h, static_cast<float>(Render::Display::width), static_cast<float>(
-							Render::Display::height), true))
+							Render::Display::height), false))
 						return;
 					Hide();
-				});
+				}, false);
 		}
 
 		void InitNotifications(Skin* _skin)
@@ -92,8 +96,11 @@ namespace Average4k::Utils
 			skin = _skin;
 
 			errorIcon = new Sprite(0, 0, skin->GetTexture("Menu/majorerroricon"));
+			errorIcon->zIndex = 99;
 			minorIcon = new Sprite(0, 0, skin->GetTexture("Menu/minorerroricon"));
+			minorIcon->zIndex = 99;
 			button = new Sprite(0, 0, skin->GetTexture("Menu/roundedbutton_ok"));
+			button->zIndex = 99;
 			addObject(errorIcon);
 			addObject(minorIcon);
 			addObject(button);
@@ -137,11 +144,17 @@ namespace Average4k::Utils
 			minorIcon->transform.x = x;
 			minorIcon->transform.y = y;
 
-			title->transform.x = x + errorIcon->transform.w;
-			title->transform.y = y + 4;
+			title->transform.x = x + errorIcon->transform.w + 4;
+			title->transform.y = y + ((errorIcon->transform.h / 2) - (title->transform.h / 2));
 			text->transform.x = x + (w / 2);
 			text->transform.y = y + (h / 2);
 			text->wrap = true;
+
+			button->transform.x = (x + w) - (button->transform.w + 8);
+			button->transform.y = (y + h) - (button->transform.h + 8);
+
+			buttonText->transform.x = button->transform.x + ((button->transform.w / 2) - (buttonText->transform.w / 2));
+			buttonText->transform.y = button->transform.y + ((button->transform.h / 2) - (buttonText->transform.h / 2));
 
 			GameObject::draw();
 		}

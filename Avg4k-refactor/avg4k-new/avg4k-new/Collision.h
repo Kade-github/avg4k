@@ -1,5 +1,4 @@
 #pragma once
-#include "Display.h"
 #include "includes.h"
 namespace AvgEngine::Utils
 {
@@ -20,14 +19,14 @@ namespace AvgEngine::Utils
 		static bool AABB(
 			float x1, float y1, 
 			float x2, float y2, 
-			float w2, float h2, bool ratio = false)
+			float w2, float h2, float dW, float dH, bool ratio = false)
 		{
 			float _x2 = x2;
 			float _y2 = y2;
 			if (ratio)
 			{
-				_x2 = _x2 * static_cast<float>(Render::Display::width);
-				_y2 = _y2 * static_cast<float>(Render::Display::height);
+				_x2 = _x2 * dW;
+				_y2 = _y2 * dH;
 			}
 
 			return x1 > _x2 && 

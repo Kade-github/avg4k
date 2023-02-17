@@ -67,7 +67,11 @@ namespace AvgEngine::Base
 			{
 				// Render objects' draw calls.
 				if (ob->render)
+				{
+					ob->camera = camera;
+					ob->parent = &transform;
 					ob->draw();
+				}
 			}
 		};
 

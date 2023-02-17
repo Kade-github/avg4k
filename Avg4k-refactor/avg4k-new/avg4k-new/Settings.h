@@ -46,6 +46,8 @@ namespace Average4k
 	public:
 		File f;
 
+		float upscale = 1.0f;
+
 		File GetDefaults()
 		{
 			File nf;
@@ -56,6 +58,7 @@ namespace Average4k
 			nf.settings.push_back({ "Scrollspeed", "800",  "800", S_Int, 200,1800 });
 			nf.settings.push_back({ "Skin", "arrow",  "arrow", S_String, -1,-1 });
 			nf.settings.push_back({ "Note Size", "1",  "1", S_Float, 0,2 });
+			nf.settings.push_back({ "Resolution", "1280x720",  "1280x720", S_String, -1,-1 });
 			return nf;
 		}
 

@@ -75,6 +75,8 @@ void StartScreen::load()
 	bSecond = Average4k::Utils::TimeUtils::ConvertBeatToTime(bpm, 1) / 1000;
 	bSecond4 = Average4k::Utils::TimeUtils::ConvertBeatToTime(bpm, 4) / 1000;
 	outCubic = Easing::Easing::getEasingFunction("outcubic");
+
+	static_cast<Average4K*>(Average4K::Instance)->notif->Show("test", "holy moly this is wrapped text so it can go down a line? That's insane lois! I'm peter griffin", "ok");
 }
 
 void StartScreen::draw()

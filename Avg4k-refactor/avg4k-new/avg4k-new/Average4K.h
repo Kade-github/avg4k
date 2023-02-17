@@ -51,7 +51,7 @@ public:
 
 		notif->InitNotifications(skin);
 
-		QueueEvent({ AvgEngine::Events::EventType::Event_ReloadFont,0, skin->GetFontPath() });
+		QueueEvent({ AvgEngine::Events::EventType::Event_ReloadFont,0, {}, skin->GetFontPath() });
 		SwitchNoTrans(new StartScreen());
 	}
 
@@ -118,7 +118,6 @@ public:
 			{
 				_startTrans = glfwGetTime();
 				Game::SwitchMenu(_toSwitch);
-				CurrentMenu->addObject(notif);
 				_out = true;
 			}
 		}
@@ -130,6 +129,9 @@ public:
 
 			CurrentMenu->camera.addDrawCall(c);
 		}
+		notif->camera = &CurrentMenu->camera;
+		notif->parent = &CurrentMenu->displayRect;
+		notif->draw();
 	}
 
 	void SwitchNoTrans(Menu* menu)

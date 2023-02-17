@@ -49,6 +49,9 @@ namespace AvgEngine::Base
 
 		void draw() override
 		{
+			if (transform.a <= 0)
+				return;
+
 			Render::Rect r = transform;
 			if (transformRatio)
 			{

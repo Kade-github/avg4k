@@ -97,6 +97,9 @@
     <Filter Include="Average4K\Avg4k\Menus\Editor">
       <UniqueIdentifier>{0ac290b2-cc89-4591-b836-acfb87a13280}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Average4K\Avg4k\Elements">
+      <UniqueIdentifier>{86d05a05-dd38-42b4-a912-1018cfed6529}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -460,6 +463,9 @@
     </ClInclude>
     <ClInclude Include="Collision.h">
       <Filter>Average4K\Engine\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Container.h">
+      <Filter>Average4K\Avg4k\Elements</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -46,8 +46,6 @@ namespace Average4k
 	public:
 		File f;
 
-		float upscale = 1.0f;
-
 		File GetDefaults()
 		{
 			File nf;
@@ -141,57 +139,14 @@ namespace Average4k
 			Save();
 		}
 
-		void Set(Setting s)
-		{
-			for(Setting& ns : f.settings)
-				if (ns == s)
-				{
-					int v = 0;
-					switch(ns.type)
-					{
-						case S_Float:
-						case S_Int:
-							if (!AvgEngine::Utils::StringTools::isNumber(s.value))
-							{
-								AvgEngine::Logging::writeLog("[Settings] Cannot set " + s.name + " because you're trying to set it to a non-number.");
-								return;
-							}
-							// end up converting it to an int since min/max are ints lol
-							v = std::stoi(s.value);
-							if (v > ns.max || v < ns.min)
-								return;
-							// Fall through to string
-						default:
-							// goto is a little weird, but it works so like uh
-							goto SetValue;
-						case S_Bool:
-							if (s.value != "false" && s.value != "true")
-							{
-								AvgEngine::Logging::writeLog("[Settings] Cannot set " + s.name + " because you're trying to set it to a non-bool.");
-								return;
-							}			
-							#ifdef _DEBUG
-							AvgEngine::Logging::writeLog("[Settings] [Debug] Set " + s.name + " to " + s.value + " successfully.");
-							#endif
-							ns.value = s.value;
-						SetValue:
-							#ifdef _DEBUG  
-							AvgEngine::Logging::writeLog("[Settings] [Debug] Set " + s.name + " to " + s.value + " successfully.");
-							#endif
-							ns.value = s.value;
-							break;
-					}
-				}
-			Save();
 
-		}
-
-		Setting Get(std::string name)
+		Setting& Get(std::string name)
 		{
 			for (Setting& ns : f.settings)
 				if (ns.name == name)
 					return ns;
-			return {};
+			Setting s;
+			return s;
 		}
 
 		Settings()

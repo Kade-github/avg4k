@@ -74,6 +74,7 @@
     <ClInclude Include="Collision.h" />
     <ClInclude Include="ConfigReader.h" />
     <ClInclude Include="Console.h" />
+    <ClInclude Include="Container.h" />
     <ClInclude Include="CPacketChartAcquired.h" />
     <ClInclude Include="CPacketHello.h" />
     <ClInclude Include="CPacketHostChangeChart.h" />

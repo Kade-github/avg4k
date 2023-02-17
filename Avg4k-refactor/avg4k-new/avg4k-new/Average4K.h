@@ -35,9 +35,9 @@ public:
 		const std::string n = skinName;
 		if (setValue)
 		{
-			Average4k::Setting s = settings->Get("Skin");
+			Average4k::Setting& s = settings->Get("Skin");
 			s.value = n;
-			settings->Set(s);
+
 		}
 
 		if (skin)
@@ -52,14 +52,28 @@ public:
 		notif->InitNotifications(skin);
 
 		QueueEvent({ AvgEngine::Events::EventType::Event_ReloadFont,0, {}, skin->GetFontPath() });
+	
+		SetResolution(settings->Get("Resolution").value);
+		fpsText->transform.scale = skin->upscale;
+		alphaText->transform.scale = skin->upscale;
 		SwitchNoTrans(new StartScreen());
+	}
+
+	void SetResolution(std::string res)
+	{
+		std::vector<std::string> s = AvgEngine::Utils::StringTools::Split(res, "x");
+		int w = std::stoi(s[0]);
+		int h = std::stoi(s[1]);
+
+		skin->upscale = static_cast<float>(w) / 1280.0f;
+
+		Game::Resize(w, h);
 	}
 
 	void Start()
 	{
-
 		fpsText = new Text(4, 4, "", "", "FPS: 0", 12);
-		fpsText->transform.a = 0.75f;
+		fpsText->transform.a = 0.6f;
 		fpsText->outlineThickness = 1.4;
 
 		alphaText = new Text(4, 4, "", "", "- " + Title + " ALPHA " + Version + " - EVERYTHING IS SUBJECT TO CHANGE -", 14);
@@ -67,7 +81,6 @@ public:
 		alphaText->outlineThickness = 1.4;
 
 		SetSkin(settings->Get("Skin").value, false);
-
 		if (!steam->good)
 			return;
 
@@ -108,10 +121,10 @@ public:
 			0.0f,0.0f, Display::width, Display::height,
 			0.0f,0.0f,0.0f,1.0f);
 
-		// 0.15 second trans time
+		// 0.35 second trans time
 		if (!_out && _startTrans > 0)
 		{
-			float t = std::min(static_cast<float>(std::abs(_startTrans - glfwGetTime())) / 0.15f, 1.0f);
+			float t = std::min(static_cast<float>(std::abs(_startTrans - glfwGetTime())) / 0.35f, 1.0f);
 			r.a = std::lerp(0, 1, t);
 			drawCall c = Camera::FormatDrawCall(0, NULL, NULL, DisplayHelper::RectToVertex(r, { 0,0,1,1 }));
 

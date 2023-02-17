@@ -93,7 +93,7 @@ namespace AvgEngine::Base
 				const Fnt::FntChar c = fnt->GetChar(ch);
 				if (c.id == -1)
 					continue;
-				float advance = (static_cast<float>(c.xAdvance) * scale) + characterSpacing;
+				float advance = ((static_cast<float>(c.xAdvance) * scale) + characterSpacing) * transform.scale;
 				if (ch == 32)
 				{
 					CharacterLine l;
@@ -134,7 +134,7 @@ namespace AvgEngine::Base
 				{
 					Render::Rect outline = dst;
 					float outlineScale = (outlineThickness / 1);
-					float nX = (dst.w * (1 - outlineScale)) / 2;
+					float nX = (dst.w * (1 - outlineScale));
 					outline.x += nX;
 					outline.y += (dst.h * (1 - outlineScale)) / 2;
 					outline.w *= outlineScale;
@@ -178,6 +178,11 @@ namespace AvgEngine::Base
 					if (centerLines)
 						newStartY = c.dst.y - (d / 2);
 					c.dst.x = newStartX + currentAdvance;
+					if (c.outline)
+					{
+						c.dst.x -= outlineThickness;
+						c.dst.y += outlineThickness;
+					}
 					c.dst.y = newStartY;
 					if (!c.space)
 					{

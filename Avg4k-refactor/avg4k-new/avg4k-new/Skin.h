@@ -20,6 +20,8 @@ namespace Average4k
 		std::string _assetPath = "";
 
 	public:
+		float upscale = 1.0f;
+
 		External::ConfigReader skinConfig{};
 
 		std::string name = "";
@@ -99,6 +101,7 @@ namespace Average4k
 			if (a.id != -1)
 				return a.texture;
 			AvgEngine::OpenGL::Texture* t = AvgEngine::OpenGL::Texture::createWithImage(p);
+			t->dontDelete = true;
 			CachedAsset as = { t,p, static_cast<int>(t->id) };
 			_cache.push_back(as);
 			return t;

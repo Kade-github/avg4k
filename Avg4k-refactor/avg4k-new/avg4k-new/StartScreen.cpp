@@ -24,11 +24,14 @@ void StartScreen::load()
 		if (e.data == GLFW_KEY_ENTER && c)
 			if (!started)
 			{
+
 				c->SetPos(TimeUtils::ConvertBeatToTime(bpm, _eBeat));
 			}
 			else
 			{
-				Average4K::Instance->SwitchMenu(new MainMenu());
+				tween.CreateTween(&bump->transform, Render::Rect(0.5, 1.2, bump->transform), 1, outCubic, [&]() {
+					Average4K::Instance->SwitchMenu(new MainMenu());
+				});;
 			}
 	});
 

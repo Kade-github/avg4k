@@ -119,7 +119,7 @@ public:
 			0.0f,0.0f, Display::width, Display::height,
 			0.0f,0.0f,0.0f,1.0f);
 
-		// 0.35 second trans time
+		// 0.2 second trans time
 		if (!_out && _startTrans > 0)
 		{
 			float t = std::min(static_cast<float>(std::abs(_startTrans - glfwGetTime())) / 0.20f, 1.0f);

@@ -74,11 +74,9 @@ public:
 	{
 		fpsText = new Text(4, 4, "", "", "FPS: 0", 12);
 		fpsText->transform.a = 0.6f;
-		fpsText->outlineThickness = 1.4;
 
 		alphaText = new Text(4, 4, "", "", "- " + Title + " ALPHA " + Version + " - EVERYTHING IS SUBJECT TO CHANGE -", 14);
 		alphaText->transform.a = 0.6f;
-		alphaText->outlineThickness = 1.4;
 
 		SetSkin(settings->Get("Skin").value, false);
 		if (!steam->good)
@@ -139,7 +137,7 @@ public:
 		}
 		else
 		{
-			float t = std::min(static_cast<float>(std::abs(_startTrans - glfwGetTime())) / 0.15f, 1.0f);
+			float t = std::min(static_cast<float>(std::abs(_startTrans - glfwGetTime())) / 0.35f, 1.0f);
 			r.a = std::lerp(1, 0, t);
 			drawCall c = Camera::FormatDrawCall(0, NULL, NULL, DisplayHelper::RectToVertex(r, { 0,0,1,1 }));
 

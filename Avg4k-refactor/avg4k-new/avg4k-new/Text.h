@@ -41,6 +41,7 @@ namespace AvgEngine::Base
 				SetFont(folder, font);
 			SetSize(_size);
 			SetText(_text);
+			iTransform = transform;
 		}
 
 		~Text()
@@ -85,8 +86,10 @@ namespace AvgEngine::Base
 			int totalW = 0;
 			int highestH = 0;
 			float scale = size / fnt->ogSize;
+			std::vector<Line> outlines;
 			std::vector<Line> lines;
 			Line currentLine;
+			Line currentOutline;
 			int d = 0;
 			for(char ch : text)
 			{
@@ -108,12 +111,19 @@ namespace AvgEngine::Base
 						d += highestH;
 						highestH = 0;
 						currentLine.w = totalW;
+						if (outlineThickness != 0)
+						{
+							currentOutline.w = totalW;
+							outlines.push_back(currentOutline);
+						}
 						lines.push_back(currentLine);
 						currentLine = {};
+						currentOutline = {};
 						transform.w = totalW;
 						totalW = 0;
 					}
-
+					if (outlineThickness != 0)
+						currentOutline.characters.push_back(l);
 					currentLine.characters.push_back(l);
 					continue;
 				}
@@ -133,12 +143,7 @@ namespace AvgEngine::Base
 				if (outlineThickness != 0)
 				{
 					Render::Rect outline = dst;
-					float outlineScale = (outlineThickness / 1);
-					float nX = (dst.w * (1 - outlineScale));
-					outline.x += nX;
-					outline.y += (dst.h * (1 - outlineScale)) / 2;
-					outline.w *= outlineScale;
-					outline.h *= outlineScale;
+
 					outline.r = 0;
 					outline.g = 0;
 					outline.b = 0;
@@ -147,13 +152,18 @@ namespace AvgEngine::Base
 					ll.outline = true;
 					ll.src = src;
 					ll.advance = advance;
-					currentLine.characters.push_back(ll);
+					currentOutline.characters.push_back(ll);
 				}
 				currentLine.characters.push_back(l);
 				dst.x += advance;
 				totalW += advance;
 			}
 			currentLine.w = totalW;
+			if (outlineThickness != 0)
+			{
+				currentOutline.w = totalW;
+				outlines.push_back(currentOutline);
+			}
 			lines.push_back(currentLine);
 			currentLine = {};
 
@@ -163,6 +173,37 @@ namespace AvgEngine::Base
 
 			if (totalW > transform.w)
 				transform.w = totalW;
+
+			for (Line& line : outlines)
+			{
+				int newStartX = transform.x;
+				if (centerLines)
+					newStartX = transform.x - (line.w / 2);
+
+				int currentAdvance = 0;
+
+				for (CharacterLine& c : line.characters)
+				{
+					int newStartY = c.dst.y;
+					if (centerLines)
+						newStartY = c.dst.y - (d / 2);
+					c.dst.x = newStartX + currentAdvance;
+					c.dst.y = newStartY;
+					float outlineScale = (outlineThickness / 1);
+					float mpx = (c.dst.w * (1 - outlineScale)) / 2;
+					float mpy = (c.dst.h * (1 - outlineScale)) / 2;
+					c.dst.x += mpx;
+					c.dst.y += mpy;
+					c.dst.w *= outlineScale;
+					c.dst.h *= outlineScale;
+					if (!c.space)
+					{
+						drawCall ca = Camera::FormatDrawCall(zIndex, fnt->texture, NULL, Render::DisplayHelper::RectToVertex(c.dst, c.src));
+						camera->addDrawCall(ca);
+					}
+					currentAdvance += c.advance;
+				}
+			}
 
 			for(Line& line : lines)
 			{
@@ -178,12 +219,16 @@ namespace AvgEngine::Base
 					if (centerLines)
 						newStartY = c.dst.y - (d / 2);
 					c.dst.x = newStartX + currentAdvance;
+					c.dst.y = newStartY;
 					if (c.outline)
 					{
-						c.dst.x -= outlineThickness;
-						c.dst.y += outlineThickness;
+						float outlineScale = (outlineThickness / 1);
+						float nX = (c.dst.w * (1 - outlineScale));
+						c.dst.x += nX / 2;
+						c.dst.y += (c.dst.h * (1 - outlineScale)) / 2;
+						c.dst.w *= outlineScale;
+						c.dst.h *= outlineScale;
 					}
-					c.dst.y = newStartY;
 					if (!c.space)
 					{
 						drawCall ca = Camera::FormatDrawCall(zIndex, fnt->texture, NULL, Render::DisplayHelper::RectToVertex(c.dst, c.src));

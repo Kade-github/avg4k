@@ -16,6 +16,10 @@ void MainMenu::load()
 	bg->center = true;
 	bg->transform.scale = Average4K::skin->upscale;
 	addObject(bg);
+
+	soloContainer = new Container(Average4K::skin, 0.5, 0.5, "MainMenu/Solo/maincontainer_solo");
+	soloContainer->center = true;
+	addObject(soloContainer);
 }
 
 void MainMenu::draw()

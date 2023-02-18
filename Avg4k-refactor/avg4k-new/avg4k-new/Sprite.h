@@ -23,6 +23,7 @@ namespace AvgEngine::Base
 			texture = OpenGL::Texture::loadTextureFromData(data, w, h);
 			transform.w = static_cast<float>(texture->width);
 			transform.h = static_cast<float>(texture->height);
+			iTransform = transform;
 		}
 
 		Sprite(float x, float y, OpenGL::Texture* _texture) : GameObject(x, y)
@@ -31,6 +32,7 @@ namespace AvgEngine::Base
 			texture = _texture;
 			transform.w = static_cast<float>(texture->width);
 			transform.h = static_cast<float>(texture->height);
+			iTransform = transform;
 		}
 
 		Sprite(float x, float y, std::string filePath) : GameObject(x, y)
@@ -39,6 +41,7 @@ namespace AvgEngine::Base
 			texture = OpenGL::Texture::createWithImage(filePath);
 			transform.w = static_cast<float>(texture->width);
 			transform.h = static_cast<float>(texture->height);
+			iTransform = transform;
 		}
 
 		~Sprite()

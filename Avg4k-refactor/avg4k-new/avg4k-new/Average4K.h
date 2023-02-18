@@ -122,7 +122,7 @@ public:
 		// 0.35 second trans time
 		if (!_out && _startTrans > 0)
 		{
-			float t = std::min(static_cast<float>(std::abs(_startTrans - glfwGetTime())) / 0.35f, 1.0f);
+			float t = std::min(static_cast<float>(std::abs(_startTrans - glfwGetTime())) / 0.20f, 1.0f);
 			r.a = std::lerp(0, 1, t);
 			drawCall c = Camera::FormatDrawCall(0, NULL, NULL, DisplayHelper::RectToVertex(r, { 0,0,1,1 }));
 
@@ -137,7 +137,7 @@ public:
 		}
 		else
 		{
-			float t = std::min(static_cast<float>(std::abs(_startTrans - glfwGetTime())) / 0.35f, 1.0f);
+			float t = std::min(static_cast<float>(std::abs(_startTrans - glfwGetTime())) / 0.20f, 1.0f);
 			r.a = std::lerp(1, 0, t);
 			drawCall c = Camera::FormatDrawCall(0, NULL, NULL, DisplayHelper::RectToVertex(r, { 0,0,1,1 }));
 

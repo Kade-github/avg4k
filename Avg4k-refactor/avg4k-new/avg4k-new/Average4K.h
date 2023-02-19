@@ -19,6 +19,8 @@ public:
 
 	static Average4k::Utils::Notifications* notif;
 
+	static bool instant;
+
 	Steam::SteamInterface* steam;
 	Steam::SteamWorkshop* workshop;
 
@@ -155,6 +157,12 @@ public:
 
 	void SwitchMenu(Menu* menu) override
 	{
+		if (instant)
+		{
+			instant = false;
+			SwitchNoTrans(menu);
+			return;
+		}
 		_toSwitch = menu;
 		_startTrans = glfwGetTime();
 		_out = false;

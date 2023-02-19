@@ -38,7 +38,7 @@ namespace AvgEngine
 
 		Base::Text* alphaText = NULL;
 
-		Game(std::string _title, std::string ver, int w = 1280, int h = 720)
+		Game(std::string _title, std::string ver, int w = 1920, int h = 1080)
 		{
 			Title = _title;
 			Version = ver;

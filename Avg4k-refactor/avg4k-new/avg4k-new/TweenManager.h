@@ -57,6 +57,10 @@ namespace AvgEngine
 			Tweens.push_back(t);
 		}
 
+		void Clear()
+		{
+			Tweens.clear();
+		}
 		void DoTween(Tween tw)
 		{
 			double curTime = std::abs(glfwGetTime() - tw.startTime);

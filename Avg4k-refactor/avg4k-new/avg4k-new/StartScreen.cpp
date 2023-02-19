@@ -30,6 +30,8 @@ void StartScreen::load()
 			else
 			{
 				tween.CreateTween(&bump->transform, Render::Rect(0.5, 1.2, bump->transform), 1, outCubic, [&]() {
+					tween.Clear();
+					Average4K::instant = true;
 					Average4K::Instance->SwitchMenu(new MainMenu());
 				});;
 			}

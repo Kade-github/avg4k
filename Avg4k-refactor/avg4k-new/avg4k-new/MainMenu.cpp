@@ -17,9 +17,11 @@ void MainMenu::load()
 	bg->transform.scale = Average4K::skin->upscale;
 	addObject(bg);
 
-	soloContainer = new Container(Average4K::skin, 0.5, 0.5, "MainMenu/Solo/maincontainer_solo");
+	soloContainer = new Container(Average4K::skin, 0.5, 1.2, "MainMenu/container");
 	soloContainer->center = true;
 	addObject(soloContainer);
+
+	tween.CreateTween(&soloContainer->transform, Render::Rect(0.5, 0.5, soloContainer->transform), 1.2, Easing::Easing::getEasingFunction("outCubic"), NULL);
 }
 
 void MainMenu::draw()

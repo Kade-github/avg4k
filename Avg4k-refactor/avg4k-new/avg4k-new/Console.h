@@ -2,6 +2,7 @@
 #include "includes.h"
 #include "imgui.h"
 #include "EventManager.h"
+#include "ConsoleCommandHandler.h"
 namespace AvgEngine::Debug
 {
 	class Console
@@ -12,6 +13,9 @@ namespace AvgEngine::Debug
 		float fpsData[50];
 		int drawData[50];
 
+		static Console* instance;
+
+		ConsoleCommandHandler* handler;
 
 		bool showPerformance = false;
 

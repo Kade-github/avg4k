@@ -7,16 +7,16 @@
 
 using namespace AvgEngine::Debug;
 
-Console* instance;
+Console* Console::instance = NULL;
 
 bool shouldFocus = false;
 
-void keyPress(AvgEngine::Events::Event e)
+static void keyPress(AvgEngine::Events::Event e)
 {
 	if (e.data == GLFW_KEY_GRAVE_ACCENT)
 	{
-		instance->open = !instance->open;
-		shouldFocus = instance->open;
+		Console::instance->open = !Console::instance->open;
+		shouldFocus = Console::instance->open;
 	}
 }
 
@@ -26,18 +26,7 @@ void Console::registerEvents(Events::EventManager& e)
 	instance = this;
 	e.Subscribe(Events::EventType::Event_KeyPress, keyPress, false);
 
-}
-
-inline constexpr auto hash_djb2a(const std::string_view sv) {
-	unsigned long hash{ 5381 };
-	for (unsigned char c : sv) {
-		hash = ((hash << 5) + hash) ^ c;
-	}
-	return hash;
-}
-
-inline constexpr auto operator"" _sh(const char* str, size_t len) {
-	return hash_djb2a(std::string_view{ str, len });
+	handler = new ConsoleCommandHandler();
 }
 
 void Console::update()
@@ -103,22 +92,7 @@ void Console::update()
 		{
 			std::string cmd = split[0];
 			Utils::StringTools::ToLower(cmd);
-			switch(hash_djb2a(cmd))
-			{
-				case "help"_sh:
-					Logging::writeLog("[Help] Commands:");
-					Logging::writeLog("[Help] game, performgraph");
-					break;
-				case "game"_sh:
-					Logging::writeLog("[Game] " + Game::Instance->Title + ":" + Game::Instance->Version);
-					break;
-				case "performgraph"_sh:
-					showPerformance = !showPerformance;
-					break;
-				default:
-					Logging::writeLog("[Error] That command doesn't exist!");
-					break;
-			}
+			handler->Handle(cmd);
 		}
 		else
 			Logging::writeLog("[Error] That command doesn't exist!");

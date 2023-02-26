@@ -3,14 +3,14 @@
 #include "includes.h"
 #include "Menu.h"
 #include "Container.h"
-class MainMenu :
-    public AvgEngine::Base::Menu
+#include "LuaMenu.h"
+
+class MainMenu : public Average4k::Lua::LuaMenu
 {
 public:
 	AvgEngine::Base::Text* soloText = NULL;
 
 	Container* soloContainer;
-	
 
 	MainMenu();
 

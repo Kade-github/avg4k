@@ -5,9 +5,10 @@
 #include "RhythmChannel.h"
 #include "SkinUtils.h"
 #include "Sprite.h"
+#include "LuaMenu.h"
 using namespace AvgEngine::Base;
 
-class StartScreen : public Menu
+class StartScreen : public Average4k::Lua::LuaMenu
 {
 public:
 	bool startedT = false;

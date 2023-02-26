@@ -21,7 +21,18 @@ void MainMenu::load()
 	soloContainer->center = true;
 	addObject(soloContainer);
 
+	soloText = new Text(0.33,-0.25, Average4K::skin->GetFontPath(), "AndaleMono.fnt", "solo", 24);
+	soloText->characterSpacing = 3;
+	soloText->SetColor(255, 255, 255);
+	soloText->transformRatio = true;
+
+	addObject(soloText);
+
+
+	// Tweens
+
 	tween.CreateTween(&soloContainer->transform, Render::Rect(0.5, 0.5, soloContainer->transform), 1.2, Easing::Easing::getEasingFunction("outCubic"), NULL);
+	tween.CreateTween(&soloText->transform, Render::Rect(0.33, 0.05, soloText->transform), 1.2, Easing::Easing::getEasingFunction("outCubic"), NULL);
 }
 
 void MainMenu::draw()

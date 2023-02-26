@@ -97,8 +97,12 @@ namespace Average4k::Utils
 
 			errorIcon = new Sprite(0, 0, skin->GetTexture("Menu/majorerroricon"));
 			errorIcon->zIndex = 99;
+			errorIcon->transform.w = 32;
+			errorIcon->transform.h = 32;
 			minorIcon = new Sprite(0, 0, skin->GetTexture("Menu/minorerroricon"));
 			minorIcon->zIndex = 99;
+			minorIcon->transform.w = 32;
+			minorIcon->transform.h = 32;
 			button = new Sprite(0, 0, skin->GetTexture("Menu/roundedbutton_ok"));
 			button->zIndex = 99;
 			addObject(errorIcon);

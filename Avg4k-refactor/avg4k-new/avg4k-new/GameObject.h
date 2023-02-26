@@ -50,6 +50,13 @@ namespace AvgEngine::Base
 			transform.y = y;
 		}
 
+		void SetColor(float r, float g, float b)
+		{
+			transform.r = r;
+			transform.g = g;
+			transform.b = b;
+		}
+
 		virtual ~GameObject()
 		{
 			if (!dontDelete)

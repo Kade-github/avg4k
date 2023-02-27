@@ -17,8 +17,8 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 		Average4k::Lua::LuaMenu* m = static_cast<Average4k::Lua::LuaMenu*>(Game::Instance->CurrentMenu);
 		if (m->luaMenu)
 		{
-			m->file.Reload();
-			Logging::writeLog("[Menu] Reloaded " + m->file._path);
+			m->file->Reload();
+			Logging::writeLog("[Menu] Reloaded " + m->file->_path);
 		}
 		else
 			Logging::writeLog("[Menu] Sorry, that menu isn't a lua menu and cannot be reloaded!");

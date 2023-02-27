@@ -9,11 +9,25 @@ namespace Average4k::Lua
 	public:
 		bool luaMenu = false;
 
-		MenuLuaFile file;
+		MenuLuaFile* file;
+
 
 		LuaMenu() : AvgEngine::Base::Menu()
 		{
+			file = NULL;
+		}
 
+		LuaMenu(std::string path) : AvgEngine::Base::Menu()
+		{
+			file = new MenuLuaFile(path);
+			luaMenu = true;
+		}
+
+		void LuaLoad()
+		{
+			for (AvgEngine::Base::GameObject* obj : GameObjects)
+				delete obj;
+			GameObjects.clear();
 		}
 	};
 }

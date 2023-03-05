@@ -9,7 +9,7 @@ namespace Average4k::Lua::Base
 		int id = 0;
 		rect transform{};
 		bool isTop = false;
-		gameObject* parrent;
+		gameObject* parrent = NULL;
 		std::vector<gameObject> children;
 
 		void add(gameObject o)
@@ -21,6 +21,11 @@ namespace Average4k::Lua::Base
 		{
 			children.erase(std::ranges::remove_if(children,
 				[&](const gameObject x) { return x.id == id; }).begin(), children.end());
+		}
+
+		gameObject(float x, float y) {
+			transform.x = x;
+			transform.y = y;
 		}
 
 	};

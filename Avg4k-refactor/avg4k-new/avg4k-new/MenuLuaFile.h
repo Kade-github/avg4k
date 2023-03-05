@@ -35,6 +35,8 @@ namespace Average4k::Lua
 
 		void Load() override
 		{
+			using namespace Average4k::Lua::Base;
+
 			lua->set_function("create", [&](int type, std::unordered_set<std::pair<std::string, std::string>> args)
 			{
 				switch(type)
@@ -45,14 +47,22 @@ namespace Average4k::Lua
 				}
 			});
 
-			lua->set_function("tween", [&](std::string tween, int id, Base::rect endRect) {
-				GameObject* o = Average4K::Instance->CurrentMenu->getObject(id);
-				
+			lua->set_function("tween", [&](std::string tween, gameObject ob, Base::rect endRect) {
+				GameObject* o = Average4K::Instance->CurrentMenu->getObject(ob.id);
+				if (o == NULL)
+				{
+					AvgEngine::Logging::writeLog("[Lua] [Error] Failed to tween " + std::to_string(ob.id) + ", it doesn't exist!");
+					return;
+				}
 			});
 
-			lua->set_function("add", [&](int id) {
-				GameObject* o = GetUnspawned(id);
+			lua->set_function("add", [&](gameObject ob) {
+				GameObject* o = GetUnspawned(ob.id);
 				if (o == NULL)
+				{
+					AvgEngine::Logging::writeLog("[Lua] [Error] Failed to add " + std::to_string(ob.id) + ", it doesn't exist!");
+					return;
+				}
 			});
 
 			lua->set_function("remove", [&](int id) {

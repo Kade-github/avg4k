@@ -36,8 +36,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Average4K.cpp" />
+    <ClCompile Include="Avg4kCmdHandler.cpp" />
     <ClCompile Include="BASS.cpp" />
     <ClCompile Include="Console.cpp" />
+    <ClCompile Include="ConsoleCommandHandler.cpp" />
     <ClCompile Include="CPacketHostUpdateLobby.cpp" />
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="Easing.cpp" />
@@ -55,6 +57,7 @@
     <ClCompile Include="implot.cpp" />
     <ClCompile Include="implot_items.cpp" />
     <ClCompile Include="Logging.cpp" />
+    <ClCompile Include="LuaFile.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Multiplayer.cpp" />
@@ -67,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Average4K.h" />
+    <ClInclude Include="Avg4kCmdHandler.h" />
     <ClInclude Include="Base64.h" />
     <ClInclude Include="BASS.h" />
     <ClInclude Include="Camera.h" />
@@ -74,6 +78,7 @@
     <ClInclude Include="Collision.h" />
     <ClInclude Include="ConfigReader.h" />
     <ClInclude Include="Console.h" />
+    <ClInclude Include="ConsoleCommandHandler.h" />
     <ClInclude Include="Container.h" />
     <ClInclude Include="CPacketChartAcquired.h" />
     <ClInclude Include="CPacketHello.h" />
@@ -114,9 +119,12 @@
     <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="includes.h" />
     <ClInclude Include="Logging.h" />
+    <ClInclude Include="LuaFile.h" />
+    <ClInclude Include="LuaMenu.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="MenuLuaFile.h" />
     <ClInclude Include="Multiplayer.h" />
     <ClInclude Include="Notifications.h" />
     <ClInclude Include="Packet.h" />

@@ -100,6 +100,9 @@
     <Filter Include="Average4K\Avg4k\Elements">
       <UniqueIdentifier>{86d05a05-dd38-42b4-a912-1018cfed6529}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Average4K\Avg4k\External\LuaInterfaces">
+      <UniqueIdentifier>{6ab7d735-c9dc-4075-952f-20c70bcf02b6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -188,6 +191,15 @@
     </ClCompile>
     <ClCompile Include="MainMenu.cpp">
       <Filter>Average4K\Avg4k\Menus\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaFile.cpp">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="ConsoleCommandHandler.cpp">
+      <Filter>Average4K\Engine\Console</Filter>
+    </ClCompile>
+    <ClCompile Include="Avg4kCmdHandler.cpp">
+      <Filter>Average4K\Avg4k</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -466,6 +478,21 @@
     </ClInclude>
     <ClInclude Include="Container.h">
       <Filter>Average4K\Avg4k\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuLuaFile.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaFile.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsoleCommandHandler.h">
+      <Filter>Average4K\Engine\Console</Filter>
+    </ClInclude>
+    <ClInclude Include="Avg4kCmdHandler.h">
+      <Filter>Average4K\Avg4k</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaMenu.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -39,6 +39,18 @@ void LuaFile::Launch(std::string path)
 	lua->set_panic(sol::c_call<decltype(&lua_panic), &lua_panic>);
 	lua->set_exception_handler(&lua_exception);
 
+	// Setup base types
+
+	using namespace Average4k::Lua::Base;
+
+	sol::usertype<rect> rect_type = lua->new_usertype<rect>("rect",
+		// 4 constructors, x y, x y w h, x y w h r g b a, x y w h r g b a s d
+		sol::constructors<rect(), rect(float, float), rect(float, float, float, float), rect(float, float, float, float, float, float, float, float), rect(float, float, float, float, float, float, float, float, float, float)>());
+
+
+
+	using namespace Average4k::Lua;
+
 	auto result = lua->safe_script_file(path, &sol::script_pass_on_error);
 
 	if (result.valid())

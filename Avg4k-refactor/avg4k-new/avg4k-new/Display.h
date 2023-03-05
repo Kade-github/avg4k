@@ -40,6 +40,19 @@ namespace AvgEngine::Render
 			b = _b;
 			a = _a;
 		}
+		Rect(float _x, float _y, float _w, float _h, float _r, float _g, float _b, float _a, float _s, float _d)
+		{
+			x = _x;
+			y = _y;
+			w = _w;
+			h = _h;
+			r = _r;
+			g = _g;
+			b = _b;
+			a = _a;
+			scale = _s;
+			angle = _d;
+		}
 
 		Rect(float _x, float _y, Rect _r)
 		{

@@ -72,6 +72,19 @@ namespace AvgEngine::Base
 			lastObjectId++;
 		}
 
+
+		/**
+		 * \brief Get an object by id
+		 * \returns object The object
+		 */
+		virtual GameObject* getObject(int id)
+		{
+			for (int i = 0; i < GameObjects.size(); i++)
+				if (GameObjects[i]->id == id)
+					return GameObjects[i];
+			return NULL;
+		}
+
 		/**
 		 * \brief Removes an object
 		 * \param object The object to remove

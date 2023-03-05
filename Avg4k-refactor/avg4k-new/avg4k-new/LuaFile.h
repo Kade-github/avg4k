@@ -1,6 +1,8 @@
 #pragma once
 #include "includes.h"
 
+#include "LuaRect.h"
+
 #define SOL_ALL_SAFETIES_ON 1
 #include <sol.hpp>
 

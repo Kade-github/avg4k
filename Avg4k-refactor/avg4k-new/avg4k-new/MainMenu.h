@@ -12,7 +12,10 @@ public:
 
 	Container* soloContainer;
 
-	MainMenu();
+	MainMenu(std::string path) : Average4k::Lua::LuaMenu(path)
+	{
+
+	}
 
 	void load()	override;
 

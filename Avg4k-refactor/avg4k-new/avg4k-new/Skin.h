@@ -126,6 +126,11 @@ namespace Average4k
 			return lines;
 		}
 
+		std::string GetLua(std::string asset)
+		{
+			return _assetPath + "Lua/" + asset + ".lua";
+		}
+
 
 		std::string GetPath(std::string asset)
 		{

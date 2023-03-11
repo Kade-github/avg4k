@@ -31,7 +31,7 @@ namespace Average4k::Lua
 
 		virtual void Reload()
 		{
-			Launch(_path);
+			Launch();
 		}
 
 		virtual void Function(std::string func, std::string args)

@@ -13,8 +13,6 @@ namespace Average4k::Lua::Base
 			tex.w = tex.tex->width;
 			tex.h = tex.tex->height;
 			tex.path = path;
-
-			o = new Sprite(x,y,tex.tex);
 		}
 
 		void Destroy()

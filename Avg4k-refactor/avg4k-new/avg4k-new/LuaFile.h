@@ -22,7 +22,7 @@ namespace Average4k::Lua
 			Reload();
 		}
 
-		void Launch(std::string path);
+		void Launch();
 
 		virtual void Load()
 		{

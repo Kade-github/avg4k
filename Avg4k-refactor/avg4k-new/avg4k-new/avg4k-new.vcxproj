@@ -60,6 +60,7 @@
     <ClCompile Include="LuaFile.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="MenuLuaFile.cpp" />
     <ClCompile Include="Multiplayer.cpp" />
     <ClCompile Include="pugixml.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -123,6 +124,7 @@
     <ClInclude Include="LuaGameObject.h" />
     <ClInclude Include="LuaMenu.h" />
     <ClInclude Include="LuaRect.h" />
+    <ClInclude Include="LuaSprite.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="GameObject.h" />

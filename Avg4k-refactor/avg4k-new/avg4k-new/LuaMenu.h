@@ -20,6 +20,7 @@ namespace Average4k::Lua
 		LuaMenu(std::string path) : AvgEngine::Base::Menu()
 		{
 			file = new MenuLuaFile(path);
+
 			luaMenu = true;
 		}
 

@@ -23,7 +23,7 @@ int lua_exception(lua_State* L, sol::optional<const std::exception&> maybe_excep
 	return sol::stack::push(L, description);
 }
 
-void LuaFile::Launch(std::string path)
+void LuaFile::Launch()
 {
 	if (lua)
 		delete lua;
@@ -47,18 +47,33 @@ void LuaFile::Launch(std::string path)
 		// 4 constructors, x y, x y w h, x y w h r g b a, x y w h r g b a s d
 		sol::constructors<rect(), rect(float, float), rect(float, float, float, float), rect(float, float, float, float, float, float, float, float), rect(float, float, float, float, float, float, float, float, float, float)>());
 
+	sol::usertype<gameObject> object_type = lua->new_usertype<gameObject>("gameObject",
+		sol::constructors<gameObject()>());
 
 
 	using namespace Average4k::Lua;
 
-	auto result = lua->safe_script_file(path, &sol::script_pass_on_error);
+	lua->set_function("print", [&](std::string log) {
+		AvgEngine::Logging::writeLog("[Lua] " + log);
+	});
+
+	lua->set_function("printe", [&](std::string log) {
+		AvgEngine::Logging::writeLog("[Lua] [Error] " + log);
+	});
+
+	lua->set_function("printw", [&](std::string log) {
+		AvgEngine::Logging::writeLog("[Lua] [Warning] " + log);
+	});
+
+
+	auto result = lua->safe_script_file(_path, &sol::script_pass_on_error);
 
 	if (result.valid())
-		AvgEngine::Logging::writeLog("[Lua] Ran " + path);
+		AvgEngine::Logging::writeLog("[Lua] Loaded " + _path);
 	else
 	{
 		sol::error error = result;
-		AvgEngine::Logging::writeLog("[Lua] Failed to run " + path);
+		AvgEngine::Logging::writeLog("[Lua] Failed to load " + _path);
 		AvgEngine::Logging::writeLog("[Lua] Lua Error!\n" + std::string(error.what()));
 		return;
 	}

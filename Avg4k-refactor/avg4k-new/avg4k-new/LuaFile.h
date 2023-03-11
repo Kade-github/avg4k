@@ -26,7 +26,7 @@ namespace Average4k::Lua
 
 		virtual void Load()
 		{
-
+			Function("create", "");
 		}
 
 		virtual void Reload()

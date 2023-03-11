@@ -58,5 +58,5 @@ void Average4k::Lua::MenuLuaFile::Load()
 		RemoveObject(ob);
 	});
 
-	Function("create", "");
+	Average4k::Lua::LuaFile::Load();
 }

@@ -1,3 +1,3 @@
 function create()
-    print("hello world!");
+    cprint("hello world!");
 end

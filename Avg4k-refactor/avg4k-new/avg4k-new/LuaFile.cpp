@@ -53,15 +53,15 @@ void LuaFile::Launch()
 
 	using namespace Average4k::Lua;
 
-	lua->set_function("print", [&](std::string log) {
+	lua->set_function("cprint", [&](std::string log) {
 		AvgEngine::Logging::writeLog("[Lua] " + log);
 	});
 
-	lua->set_function("printe", [&](std::string log) {
+	lua->set_function("cprinte", [&](std::string log) {
 		AvgEngine::Logging::writeLog("[Lua] [Error] " + log);
 	});
 
-	lua->set_function("printw", [&](std::string log) {
+	lua->set_function("cprintw", [&](std::string log) {
 		AvgEngine::Logging::writeLog("[Lua] [Warning] " + log);
 	});
 

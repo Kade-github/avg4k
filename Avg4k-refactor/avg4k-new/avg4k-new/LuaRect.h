@@ -16,9 +16,24 @@ namespace Average4k::Lua::Base
 
 		rect() = default;
 
+		float getX() { return x; };
+		float getY() { return y; };
+		float getW() { return w; };
+		float getH() { return h; };
+		float getR() { return r; };
+		float getG() { return g; };
+		float getB() { return b; };
+		float getA() { return a; };
+		float getS() { return scale; };
+		float getD() { return deg; };
+
 		void setX(float x) { x = x; if (base) base->x = x; };
 		void setY(float x) { y = x; if (base) base->y = x; };
-		void setW(float x) { w = x; if (base) base->w = x; };
+		void setW(float x) { 
+			w = x; 
+			if (base) 
+				base->w = x;
+		};
 		void setH(float x) { h = x; if (base) base->h = x; };
 		void setR(float x) { r = x; if (base) base->r = x; };
 		void setG(float x) { g = x; if (base) base->g = x; };

@@ -36,6 +36,11 @@ void Average4k::Lua::MenuLuaFile::AddObject(Average4k::Lua::Base::gameObject& ob
 	case 1: // sprite
 		Average4k::Lua::Base::sprite s = static_cast<Average4k::Lua::Base::sprite&>(ob);
 		tex = getTexture(s.tex.id);
+		if (tex == NULL)
+		{
+			AvgEngine::Logging::writeLog("[Lua] [Error] Failed to add " + std::to_string(s.id) + ", did you forget a loadTexture?");
+			return;
+		}
 		sp = new Sprite(s.transform.x, s.transform.y, tex);
 		sp->transform = AvgEngine::Render::Rect(ob.transform.x, ob.transform.y,
 			ob.transform.w, ob.transform.h,
@@ -71,16 +76,16 @@ void Average4k::Lua::MenuLuaFile::Load()
 	sol::usertype<rect> rect_type = lua->new_usertype<rect>("rect",
 		// 4 constructors, x y, x y w h, x y w h r g b a, x y w h r g b a s d
 		sol::constructors<rect(), rect(float, float), rect(float, float, float, float), rect(float, float, float, float, float, float, float, float), rect(float, float, float, float, float, float, float, float, float, float)>(),
-		"x", sol::property(&rect::x, &rect::setX),
-		"y", sol::property(&rect::y, &rect::setY),
-		"w", sol::property(&rect::w, &rect::setW),
-		"h", sol::property(&rect::h, &rect::setH),
-		"r", sol::property(&rect::r, &rect::setR),
-		"g", sol::property(&rect::g, &rect::setG),
-		"b", sol::property(&rect::b, &rect::setB),
-		"alpha", sol::property(&rect::a, &rect::setA),
-		"angle", sol::property(&rect::deg, &rect::setD),
-		"scale", sol::property(&rect::scale, &rect::setS)
+		"x", sol::property(&rect::getX, &rect::setX),
+		"y", sol::property(&rect::getY, &rect::setY),
+		"w", sol::property(&rect::getW, &rect::setW),
+		"h", sol::property(&rect::getH, &rect::setH),
+		"r", sol::property(&rect::getR, &rect::setR),
+		"g", sol::property(&rect::getG, &rect::setG),
+		"b", sol::property(&rect::getB, &rect::setB),
+		"alpha", sol::property(&rect::getA, &rect::setA),
+		"angle", sol::property(&rect::getD, &rect::setD),
+		"scale", sol::property(&rect::getS, &rect::setS)
 		);
 	 
 	sol::usertype<gameObject> object_type = lua->new_usertype<gameObject>("gameObject",

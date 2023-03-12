@@ -77,11 +77,29 @@ namespace AvgEngine::Base
 			if (!fnt)
 				return;
 			Render::Rect dst = transform;
-			if (transformRatio)
+			if (parent)
 			{
-				dst.x = parent->w * dst.x;
-				dst.y = parent->h * dst.y;
+				if (transformRatio)
+				{
+					if (transform.w > 1)
+						transform.w = (dst.w / parent->w);
+					if (transform.h > 1)
+						transform.h = (dst.h / parent->h);
+					dst = transform;
+
+					dst.x = parent->x + (parent->w * dst.x);
+					dst.y = parent->y + (parent->h * dst.y);
+					dst.w = parent->w * dst.w;
+					dst.h = parent->h * dst.h;
+				}
+				else
+				{
+					dst.x += parent->x;
+					dst.y += parent->y;
+				}
 			}
+
+			Render::Rect start = dst;
 
 			drawCall call;
 			call.texture = fnt->texture;
@@ -181,9 +199,9 @@ namespace AvgEngine::Base
 
 			for (Line& line : outlines)
 			{
-				int newStartX = transform.x;
+				int newStartX = start.x;
 				if (centerLines)
-					newStartX = transform.x - (line.w / 2);
+					newStartX = start.x - (line.w / 2);
 
 				int currentAdvance = 0;
 
@@ -212,9 +230,9 @@ namespace AvgEngine::Base
 
 			for(Line& line : lines)
 			{
-				int newStartX = transform.x;
+				int newStartX = start.x;
 				if (centerLines)
-					newStartX = transform.x - (line.w / 2);
+					newStartX = start.x - (line.w / 2);
 
 				int currentAdvance = 0;
 

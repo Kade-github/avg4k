@@ -41,8 +41,8 @@ namespace Average4k::Lua
 			else
 			{
 				sol::error error = result;
-				AvgEngine::Logging::writeLog("[Lua] Failed to load " + _path);
-				AvgEngine::Logging::writeLog("[Lua] Lua Error!\n" + std::string(error.what()));
+				AvgEngine::Logging::writeLog("[Lua] [Error] Failed to load " + _path);
+				AvgEngine::Logging::writeLog("[Lua] [Error] Lua Error!\n" + std::string(error.what()));
 				return;
 			}
 
@@ -69,7 +69,7 @@ namespace Average4k::Lua
 			sol::function_result x = f(args);
 			if (!x.valid()) {
 				sol::error errorstring = x;
-				AvgEngine::Logging::writeLog("[Lua] Lua Error while running " + func + "!\n" + std::string(errorstring.what()));
+				AvgEngine::Logging::writeLog("[Lua] [Error] Lua Error while running " + func + "!\n" + std::string(errorstring.what()));
 			}
 		}
 	};

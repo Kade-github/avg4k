@@ -213,6 +213,12 @@
     <ClCompile Include="MenuLuaFile.cpp">
       <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
     </ClCompile>
+    <ClCompile Include="LuaText.cpp">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaGameObject.cpp">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes.h">

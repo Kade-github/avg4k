@@ -15,6 +15,19 @@ namespace Average4k::Lua::Base
 		int id = 0;
 		int type = 0;
 
+		bool getRatio()
+		{
+			if (base)
+				return base->transformRatio;
+			return false;
+		}
+
+		void setRatio(bool ratio)
+		{
+			if (base)
+				base->transformRatio = ratio;
+		}
+
 		gameObject() {
 			id = 0;
 			type = 0;
@@ -34,6 +47,8 @@ namespace Average4k::Lua::Base
 			transform = {};
 			base = NULL;
 		}
+
+		void destroy();
 
 		void add(gameObject& o)
 		{

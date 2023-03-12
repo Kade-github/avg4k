@@ -58,6 +58,8 @@
     <ClCompile Include="implot_items.cpp" />
     <ClCompile Include="Logging.cpp" />
     <ClCompile Include="LuaFile.cpp" />
+    <ClCompile Include="LuaGameObject.cpp" />
+    <ClCompile Include="LuaText.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="MenuLuaFile.cpp" />

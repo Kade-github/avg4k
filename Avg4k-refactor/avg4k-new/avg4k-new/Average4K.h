@@ -59,6 +59,7 @@ public:
 		SetResolution(settings->Get("Resolution").value);
 		fpsText->transform.scale = skin->upscale;
 		alphaText->transform.scale = skin->upscale;
+
 		SwitchNoTrans(new StartScreen());
 	}
 
@@ -105,6 +106,9 @@ public:
 		// Special text draws'
 
 		using namespace AvgEngine::Render;
+
+		fpsText->parent = &CurrentMenu->displayRect;
+		alphaText->parent = &CurrentMenu->displayRect;
 
 		if (alpha)
 		{

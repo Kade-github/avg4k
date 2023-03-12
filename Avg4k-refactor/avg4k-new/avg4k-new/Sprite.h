@@ -62,9 +62,23 @@ namespace AvgEngine::Base
 			Render::Rect r = transform;
 			if (transformRatio)
 			{
-				r.x = parent->w * r.x;
-				r.y = parent->h * r.y;
+				if (transform.w > 1)
+					transform.w = (r.w / parent->w);
+				if (transform.h > 1)
+					transform.h = (r.h / parent->h);
+				r = transform;
+
+				r.x = parent->x + (parent->w * r.x);
+				r.y = parent->y + (parent->h * r.y);
+				r.w = parent->w * r.w;
+				r.h = parent->h * r.h;
 			}
+			else
+			{
+				r.x += parent->x;
+				r.y += parent->y;
+			}
+
 			if (center)
 			{
 				r.x -= r.w / 2;

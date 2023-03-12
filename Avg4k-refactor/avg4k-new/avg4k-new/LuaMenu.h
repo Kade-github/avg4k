@@ -21,7 +21,6 @@ namespace Average4k::Lua
 		{
 			file = new MenuLuaFile(path);
 			luaMenu = true;
-			
 		}
 
 		void draw() override
@@ -43,11 +42,12 @@ namespace Average4k::Lua
 		}
 #endif
 
-		void LuaLoad()
+		void load()	override
 		{
-			for (AvgEngine::Base::GameObject* obj : GameObjects)
-				delete obj;
-			GameObjects.clear();
+			file->Launch();
+			file->Start();
+			Menu::load();
 		}
+
 	};
 }

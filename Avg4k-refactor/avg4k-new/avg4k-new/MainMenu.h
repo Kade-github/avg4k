@@ -17,7 +17,6 @@ public:
 
 	}
 
-	void load()	override;
 
 	void draw() override;
 };

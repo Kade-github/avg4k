@@ -4,11 +4,6 @@
 
 using namespace AvgEngine;
 
-void MainMenu::load()
-{
-
-}
-
 void MainMenu::draw()
 {
 

@@ -13,8 +13,9 @@ namespace Average4k::Lua
 		MenuLuaFile(std::string path) : LuaFile(path)
 		{
 			objects = {};
-			Reload();
 		}
+
+
 
 
 		void Reload() override;

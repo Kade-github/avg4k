@@ -515,5 +515,8 @@
     <ClInclude Include="LuaSprite.h">
       <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
     </ClInclude>
+    <ClInclude Include="LuaTexture.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

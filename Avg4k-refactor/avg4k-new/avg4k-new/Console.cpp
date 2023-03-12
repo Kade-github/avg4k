@@ -86,13 +86,9 @@ void Console::update()
 
 		Logging::writeLog("[User] " + s);
 
-		std::vector<std::string> split = Utils::StringTools::Split(s, " ");
-
-		if (!split.empty())
+		if (!s.empty())
 		{
-			std::string cmd = split[0];
-			Utils::StringTools::ToLower(cmd);
-			handler->Handle(cmd);
+			handler->Handle(s);
 		}
 		else
 			Logging::writeLog("[Error] That command doesn't exist!");

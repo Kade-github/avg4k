@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "includes.h"
 #include "TweenManager.h"
+#include "EventManager.h"
 
 namespace AvgEngine::Base
 {

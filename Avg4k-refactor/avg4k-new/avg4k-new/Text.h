@@ -1,7 +1,12 @@
 #pragma once
+
+#ifndef AVG_TEXT_H
+#define AVG_TEXT_H
+
 #include "FntParser.h"
 #include "includes.h"
 #include "GameObject.h"
+
 namespace AvgEngine::Base
 {
 	struct CharacterLine
@@ -248,3 +253,5 @@ namespace AvgEngine::Base
 		}
 	};
 }
+
+#endif

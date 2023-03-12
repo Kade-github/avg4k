@@ -13,6 +13,12 @@ namespace AvgEngine::Debug
 
 	class ConsoleCommandHandler {
 	public:
+		std::vector<std::string> commands{};
+		ConsoleCommandHandler()
+		{
+			commands.push_back("help");
+			commands.push_back("performgraph");
+		}
 		virtual void Handle(std::string cmd);
 	};
 }

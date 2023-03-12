@@ -6,6 +6,7 @@
 #include "Settings.h"
 #include "StartScreen.h"
 #include "SteamIncludes.h"
+#include "Avg4kCmdHandler.h"
 #include "Notifications.h"
 class Average4K : public AvgEngine::Game
 {
@@ -89,6 +90,8 @@ public:
 
 		steam->SetPresence(Version + " Alpha | Testing");
 		InitMultiplayer();
+
+		console.handler = new Avg4kCmdHandler();
 	}
 
 	void update() override

@@ -5,14 +5,27 @@ namespace Average4k::Lua::Base
 {
 	struct rect {
 	public:
+		AvgEngine::Render::Rect* base;
+
 		float x = 0, y = 0;
 		float w = 0, h = 0;
-		float r = 0, g = 0, b = 0;
+		float r = 255, g = 255, b = 255;
 		float a = 1;
 		float scale = 1;
 		float deg = 0;
 
 		rect() = default;
+
+		void setX(float x) { x = x; if (base) base->x = x; };
+		void setY(float x) { y = x; if (base) base->y = x; };
+		void setW(float x) { w = x; if (base) base->w = x; };
+		void setH(float x) { h = x; if (base) base->h = x; };
+		void setR(float x) { r = x; if (base) base->r = x; };
+		void setG(float x) { g = x; if (base) base->g = x; };
+		void setB(float x) { b = x; if (base) base->b = x; };
+		void setA(float x) { a = x; if (base) base->a = x; };
+		void setS(float x) { scale = x; if (base) base->scale = x; };
+		void setD(float x) { deg = x; if (base) base->angle = x; };
 
 		rect(float _x, float _y)
 		{

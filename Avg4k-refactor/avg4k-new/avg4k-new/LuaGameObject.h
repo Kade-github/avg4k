@@ -1,36 +1,53 @@
 #pragma once
 #include "includes.h"
 #include "LuaRect.h"
-#include "Display.h"
+#include "GameObject.h"
 namespace Average4k::Lua::Base
 {
 	struct gameObject {
 	public:
+		AvgEngine::Base::GameObject* base;
 		rect transform{};
-		bool isTop = false;
-		gameObject* parrent = NULL;
+		gameObject* parent = NULL;
 		std::vector<gameObject> children;
 
+		virtual ~gameObject() {}
 		int id = 0;
 		int type = 0;
 
-		gameObject() = default;
-
-		void add(gameObject o)
-		{
-			children.push_back(o);
-		}
-
-		void removeObject(int id)
-		{
-			children.erase(std::ranges::remove_if(children,
-				[&](const gameObject x) { return x.id == id; }).begin(), children.end());
+		gameObject() {
+			id = 0;
+			type = 0;
+			parent = NULL;
+			children = {};
+			transform = {};
+			base = NULL;
 		}
 
 		gameObject(float x, float y) {
 			transform.x = x;
 			transform.y = y;
+			id = 0;
+			type = 0;
+			parent = NULL;
+			children = {};
+			transform = {};
+			base = NULL;
 		}
+
+		void add(gameObject& o)
+		{
+			base->addObject(o.base);
+			children.push_back(o);
+		}
+
+		void removeObject(gameObject& o)
+		{
+			base->removeObject(o.id);
+			children.erase(std::ranges::remove_if(children,
+				[&](const gameObject x) { return x.id == o.id; }).begin(), children.end());
+		}
+
 
 	};
 }

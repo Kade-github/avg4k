@@ -1,6 +1,10 @@
 #pragma once
+#ifndef AVG_SPRITE_H
+#define AVG_SPRITE_H
+
 #include "includes.h"
 #include "GameObject.h"
+
 
 namespace AvgEngine::Base
 {
@@ -74,3 +78,5 @@ namespace AvgEngine::Base
 		}
 	};
 }
+
+#endif

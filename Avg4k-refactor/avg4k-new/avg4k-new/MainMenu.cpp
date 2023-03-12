@@ -12,5 +12,5 @@ void MainMenu::load()
 void MainMenu::draw()
 {
 
-	Menu::draw();
+	Average4k::Lua::LuaMenu::draw();
 }

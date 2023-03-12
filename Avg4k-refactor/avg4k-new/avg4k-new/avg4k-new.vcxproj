@@ -125,6 +125,7 @@
     <ClInclude Include="LuaMenu.h" />
     <ClInclude Include="LuaRect.h" />
     <ClInclude Include="LuaSprite.h" />
+    <ClInclude Include="LuaTexture.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="GameObject.h" />

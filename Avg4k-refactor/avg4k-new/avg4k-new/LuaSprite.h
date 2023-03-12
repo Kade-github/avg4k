@@ -5,19 +5,14 @@ namespace Average4k::Lua::Base
 {
 	struct sprite : public gameObject {
 	public:
-		texture tex{};
+		texture tex = texture("");
 
-		sprite(float x, float y, std::string path) : gameObject(x, y)
+		sprite(float x, float y, texture _tex) : gameObject(x, y)
 		{
-			tex.tex = AvgEngine::OpenGL::Texture::createWithImage(path);
-			tex.w = tex.tex->width;
-			tex.h = tex.tex->height;
-			tex.path = path;
-		}
-
-		void Destroy()
-		{
-
+			type = 1;
+			tex = _tex;
+			transform.w = tex.w;
+			transform.h = tex.h;
 		}
 	};
 }

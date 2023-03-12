@@ -20,9 +20,28 @@ namespace Average4k::Lua
 		LuaMenu(std::string path) : AvgEngine::Base::Menu()
 		{
 			file = new MenuLuaFile(path);
-
 			luaMenu = true;
+			
 		}
+
+		void draw() override
+		{
+			if ((int)glfwGetTime() % 4 == 0)
+				file->Function("update", std::to_string(glfwGetTime()));
+			Menu::draw();
+		}
+
+#ifdef _DEBUG
+		void RunLua(std::string luaCode)
+		{
+			auto result = file->lua->safe_script(luaCode);
+			if (!result.valid())
+			{
+				sol::error error = result;
+				AvgEngine::Logging::writeLog("[Lua] [Error] Lua error!\n" + std::string(error.what()));
+			}
+		}
+#endif
 
 		void LuaLoad()
 		{

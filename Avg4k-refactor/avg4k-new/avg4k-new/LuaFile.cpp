@@ -1,5 +1,5 @@
 #include "LuaFile.h"
-
+#include "Average4K.h"
 using namespace Average4k::Lua;
 
 inline void lua_panic(sol::optional<std::string> maybe_msg) {
@@ -26,7 +26,12 @@ int lua_exception(lua_State* L, sol::optional<const std::exception&> maybe_excep
 void LuaFile::Launch()
 {
 	if (lua)
+	{
+		for (AvgEngine::OpenGL::Texture* t : textures)
+			delete t;
+		textures.clear();
 		delete lua;
+	}
 	
 	lua = new sol::state();
 
@@ -35,49 +40,49 @@ void LuaFile::Launch()
 	lua->open_libraries(sol::lib::math);
 	lua->open_libraries(sol::lib::string);
 	lua->open_libraries(sol::lib::utf8);
+	lua->open_libraries(sol::lib::debug);
 
 	lua->set_panic(sol::c_call<decltype(&lua_panic), &lua_panic>);
 	lua->set_exception_handler(&lua_exception);
+
+	Load();
+}
+
+void LuaFile::Load()
+{
+	using namespace Average4k::Lua;
+
+	lua->set_function("cprint", [&](std::string log) {
+		AvgEngine::Logging::writeLog("[Lua] " + log);
+		});
+
+	lua->set_function("cprinte", [&](std::string log) {
+		AvgEngine::Logging::writeLog("[Lua] [Error] " + log);
+		});
+
+	lua->set_function("cprintw", [&](std::string log) {
+		AvgEngine::Logging::writeLog("[Lua] [Warning] " + log);
+		});
+
 
 	// Setup base types
 
 	using namespace Average4k::Lua::Base;
 
-	sol::usertype<rect> rect_type = lua->new_usertype<rect>("rect",
-		// 4 constructors, x y, x y w h, x y w h r g b a, x y w h r g b a s d
-		sol::constructors<rect(), rect(float, float), rect(float, float, float, float), rect(float, float, float, float, float, float, float, float), rect(float, float, float, float, float, float, float, float, float, float)>());
 
-	sol::usertype<gameObject> object_type = lua->new_usertype<gameObject>("gameObject",
-		sol::constructors<gameObject()>());
-
-
-	using namespace Average4k::Lua;
-
-	lua->set_function("cprint", [&](std::string log) {
-		AvgEngine::Logging::writeLog("[Lua] " + log);
-	});
-
-	lua->set_function("cprinte", [&](std::string log) {
-		AvgEngine::Logging::writeLog("[Lua] [Error] " + log);
-	});
-
-	lua->set_function("cprintw", [&](std::string log) {
-		AvgEngine::Logging::writeLog("[Lua] [Warning] " + log);
-	});
-
-
-	auto result = lua->safe_script_file(_path, &sol::script_pass_on_error);
-
-	if (result.valid())
-		AvgEngine::Logging::writeLog("[Lua] Loaded " + _path);
-	else
-	{
-		sol::error error = result;
-		AvgEngine::Logging::writeLog("[Lua] Failed to load " + _path);
-		AvgEngine::Logging::writeLog("[Lua] Lua Error!\n" + std::string(error.what()));
-		return;
-	}
-
-	good = true;
-	Load();
+	sol::usertype<texture> tex_type = lua->new_usertype<texture>("texture",
+		sol::constructors<texture(std::string)>(),
+		"id", &texture::id,
+		"width", &texture::w,
+		"height", &texture::h,
+		"path", &texture::path
+		);
+	lua->set_function("loadTexture", [&](texture& tex) {
+		AvgEngine::OpenGL::Texture* t = Average4K::skin->GetTexture(tex.path, true);
+		t->dontDelete = true;
+		textures.push_back(t);
+		tex.w = t->width;
+		tex.h = t->height;
+		tex.id = t->id;
+		});
 }

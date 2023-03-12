@@ -1,6 +1,11 @@
 #pragma once
+#ifndef AVG_CAMERA_H
+#define AVG_CAMERA_H
+
 #include "includes.h"
 #include "Display.h"
+
+
 namespace AvgEngine::Base
 {
 	struct drawCall
@@ -159,3 +164,5 @@ namespace AvgEngine::Base
 		}
 	};
 }
+
+#endif

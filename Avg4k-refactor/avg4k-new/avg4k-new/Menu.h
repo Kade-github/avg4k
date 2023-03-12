@@ -1,9 +1,13 @@
 #pragma once
+#ifndef AVG_MENU_H
+#define AVG_MENU_H
+
 #include "includes.h"
 #include "Camera.h"
 #include "Display.h"
 #include "EventManager.h"
 #include "GameObject.h"
+
 namespace AvgEngine::Base
 {
 	/**
@@ -107,3 +111,5 @@ namespace AvgEngine::Base
 
 	};
 }
+
+#endif

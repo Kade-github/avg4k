@@ -16,22 +16,47 @@ namespace Average4k::Lua
 
 		bool good = false;
 
+		std::vector<AvgEngine::OpenGL::Texture*> textures;
+
+		AvgEngine::OpenGL::Texture* getTexture(int id)
+		{
+			for (int i = 0; i < textures.size(); i++)
+				if (textures[i]->id == id)
+					return textures[i];
+			return NULL;
+		}
+
 		LuaFile(std::string path)
 		{
 			_path = path;
-			Reload();
+			textures = std::vector<AvgEngine::OpenGL::Texture*>();
+		}
+
+		void Start()
+		{
+			auto result = lua->safe_script_file(_path, &sol::script_pass_on_error);
+
+			if (result.valid())
+				AvgEngine::Logging::writeLog("[Lua] Loaded " + _path);
+			else
+			{
+				sol::error error = result;
+				AvgEngine::Logging::writeLog("[Lua] Failed to load " + _path);
+				AvgEngine::Logging::writeLog("[Lua] Lua Error!\n" + std::string(error.what()));
+				return;
+			}
+
+			good = true;
+			Function("create", "");
 		}
 
 		void Launch();
 
-		virtual void Load()
-		{
-			Function("create", "");
-		}
+		virtual void Load();
 
 		virtual void Reload()
 		{
-			Launch();
+
 		}
 
 		virtual void Function(std::string func, std::string args)

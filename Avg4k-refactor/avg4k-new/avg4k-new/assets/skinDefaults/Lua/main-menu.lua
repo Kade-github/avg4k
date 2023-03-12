@@ -1,3 +1,4 @@
+o = gameObject.new()
 function create()
-    cprint("hello world!");
+    add(o)
 end

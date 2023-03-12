@@ -104,15 +104,6 @@ void Average4k::Lua::MenuLuaFile::Load()
 		sol::base_classes, sol::bases<gameObject>()
 		);
 
-	lua->set_function("tween", [&](std::string tween, gameObject ob, Base::rect endRect) {
-		GameObject* o = Average4K::Instance->CurrentMenu->getObject(ob.id);
-		if (o == NULL)
-		{
-			AvgEngine::Logging::writeLog("[Lua] [Error] Failed to tween " + std::to_string(ob.id) + ", it doesn't exist!");
-			return;
-		}
-	});
-
 	lua->set_function("add", [&](gameObject& ob) {
 		objects.push_back(ob);
 		AddObject(ob);

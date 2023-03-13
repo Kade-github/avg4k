@@ -47,7 +47,7 @@ namespace Average4k::Lua
 			}
 
 			good = true;
-			Function("create", "");
+			Function("Create", "");
 		}
 
 		void Launch();

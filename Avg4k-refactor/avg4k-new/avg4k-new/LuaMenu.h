@@ -26,7 +26,7 @@ namespace Average4k::Lua
 		void draw() override
 		{
 			if ((int)glfwGetTime() % 4 == 0)
-				file->Function("update", std::to_string(glfwGetTime()));
+				file->Function("Update", std::to_string(glfwGetTime()));
 			Menu::draw();
 		}
 

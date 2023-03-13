@@ -11,6 +11,8 @@ Console* Console::instance = NULL;
 
 bool shouldFocus = false;
 
+static char* Strdup(const char* s) { size_t len = strlen(s) + 1; void* buf = malloc(len); IM_ASSERT(buf); return (char*)memcpy(buf, (const void*)s, len); }
+
 static void keyPress(AvgEngine::Events::Event e)
 {
 	if (e.data == GLFW_KEY_GRAVE_ACCENT)
@@ -20,11 +22,47 @@ static void keyPress(AvgEngine::Events::Event e)
 	}
 }
 
+ImVector<const char*> History;
+int HistoryPos = -1;
+
+// thank you imgui demo file <3
+int TextEditCallback(ImGuiInputTextCallbackData* data)
+{
+	switch (data->EventFlag)
+	{
+		case ImGuiInputTextFlags_CallbackHistory:
+		{
+			// Example of HISTORY
+			const int prev_history_pos = HistoryPos;
+			if (data->EventKey == ImGuiKey_UpArrow)
+			{
+				if (HistoryPos == -1)
+					HistoryPos = History.size() - 1;
+				else if (HistoryPos > 0)
+					HistoryPos--;
+			}
+			else if (data->EventKey == ImGuiKey_DownArrow)
+			{
+				if (HistoryPos != -1)
+					if (++HistoryPos >= History.size())
+						HistoryPos = -1;
+			}
+			// A better implementation would preserve the data on the current input line along with cursor position.
+			if (prev_history_pos != HistoryPos)
+			{
+				const char* history_str = (HistoryPos >= 0) ? History[HistoryPos] : "";
+				data->DeleteChars(0, data->BufTextLen);
+				data->InsertChars(0, history_str);
+			}
+		}
+	}
+	return 0;
+}
 
 void Console::registerEvents(Events::EventManager& e)
 {
 	instance = this;
-	e.Subscribe(Events::EventType::Event_KeyPress, keyPress, false);
+	e.Subscribe(Events::EventType::Event_KeyPress, keyPress, false, true);
 
 	handler = new ConsoleCommandHandler();
 }
@@ -80,7 +118,7 @@ void Console::update()
 		ImGui::SetKeyboardFocusHere(0);
 		shouldFocus = false;
 	}
-	if (ImGui::InputText("##InputText", input,sizeof(input), ImGuiInputTextFlags_EnterReturnsTrue))
+	if (ImGui::InputText("##InputText", input,sizeof(input), (ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackHistory), TextEditCallback))
 	{
 		std::string s = std::string(input);
 
@@ -88,6 +126,8 @@ void Console::update()
 
 		if (!s.empty())
 		{
+			HistoryPos = -1;
+			History.push_back(Strdup(s.c_str()));
 			handler->Handle(s);
 		}
 		else

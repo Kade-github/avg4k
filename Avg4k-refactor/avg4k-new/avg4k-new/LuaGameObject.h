@@ -6,7 +6,7 @@ namespace Average4k::Lua::Base
 {
 	struct gameObject {
 	public:
-		AvgEngine::Base::GameObject* base;
+		AvgEngine::Base::GameObject* base = NULL;
 		rect transform{};
 		gameObject* parent = NULL;
 		std::vector<gameObject> children;

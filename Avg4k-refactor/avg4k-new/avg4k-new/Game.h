@@ -106,7 +106,7 @@ namespace AvgEngine
 		virtual void Event(const Events::Event& e)
 		{
 			for(Events::Listener listen : eManager.Listeners)
-				if (listen.type == e.type)
+				if (listen.type == e.type && (console.open ? listen.console : true))
 					listen.toCall(e);
 		}
 

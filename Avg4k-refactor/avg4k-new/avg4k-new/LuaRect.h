@@ -5,7 +5,7 @@ namespace Average4k::Lua::Base
 {
 	struct rect {
 	public:
-		AvgEngine::Render::Rect* base;
+		AvgEngine::Render::Rect* base = NULL;
 
 		float x = 0, y = 0;
 		float w = 0, h = 0;

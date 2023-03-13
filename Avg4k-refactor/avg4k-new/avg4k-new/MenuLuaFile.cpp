@@ -70,7 +70,8 @@ void Average4k::Lua::MenuLuaFile::CreateObject(Average4k::Lua::Base::gameObject&
 
 void Average4k::Lua::MenuLuaFile::AddObject(Average4k::Lua::Base::gameObject& ob)
 {
-	CreateObject(ob);
+	if (!ob.base)
+		CreateObject(ob);
 	Average4K::Instance->CurrentMenu->addObject(ob.base);
 }
 
@@ -126,6 +127,7 @@ void Average4k::Lua::MenuLuaFile::Load()
 		sol::base_classes, sol::bases<gameObject>()
 		);
 
+
 	sol::usertype<textObject> text_type = lua->new_usertype<textObject>("text",
 		sol::constructors<textObject(float, float, std::string, std::string)>(),
 		"font", sol::property(&textObject::getFont, &textObject::setFont),
@@ -137,11 +139,15 @@ void Average4k::Lua::MenuLuaFile::Load()
 		sol::base_classes, sol::bases<gameObject>()
 		);
 
-	(*lua)["online"] = lua->create_table_with("connected",Multiplayer::loggedIn,"username",Multiplayer::username, "avatarData", Multiplayer::currentUserAvatar);
+	sol::global_table t = lua->globals();
 
-	sol::table t = (*lua)["settings"] = lua->create_table_with("version", &Average4K::settings->f.settingsVersion);
+	t["online"] = lua->create_table_with("connected",Multiplayer::loggedIn,"username",Multiplayer::username, "avatarData", Multiplayer::currentUserAvatar);
+
+	sol::table ta = lua->create_table_with("version", &Average4K::settings->f.settingsVersion);
 	for (Setting& s : Average4K::settings->f.settings)
-		t.add(&s.name, &s.value);
+		ta.add(&s.name, &s.value);
+
+	t["settings"] = ta;
 
 	lua->set_function("create", [&](gameObject& ob) {
 		objects.push_back(ob);
@@ -158,6 +164,14 @@ void Average4k::Lua::MenuLuaFile::Load()
 		RemoveObject(ob);
 	});
 
+	lua->set_function("copyRect", [&](rect& r) {
+		return rect(r.x, r.y, r.w, r.h, r.r, r.g, r.b, r.a, r.scale, r.deg);
+	});
+
+	lua->set_function("resource", [&](std::string fileName) {
+		Average4K* k = static_cast<Average4K*>(Average4K::Instance);
+		return k->skin->GetPath(fileName);
+	});
 
 	lua->set_function("tween", [&](Average4k::Lua::Base::gameObject& ob, Average4k::Lua::Base::rect endRect, float length, std::string easing) {
 		if (!ob.base)

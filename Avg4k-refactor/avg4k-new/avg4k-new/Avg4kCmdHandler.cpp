@@ -34,6 +34,16 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 		else
 			Logging::writeLog("[Menu] Sorry, that menu isn't a lua menu and cannot be reloaded!");
 		break;
+	case "bind"_sh:
+		if (spl.size() < 2)
+		{
+			Logging::writeLog("[Bind] Syntax: bind <key> <command>");
+			return;
+		}
+
+
+
+		break;
 #ifdef _DEBUG
 	case "lua"_sh:
 		m = static_cast<Average4k::Lua::LuaMenu*>(Game::Instance->CurrentMenu);

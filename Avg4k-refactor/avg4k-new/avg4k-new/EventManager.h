@@ -31,6 +31,7 @@ namespace AvgEngine::Events
 	{
 		EventType type = EventType::Event_Null;
 		std::function<void(Event)> toCall{};
+		bool console = false;
 		bool clear = true;
 		int eId = 0;
 		bool operator==(const Listener& other) {
@@ -45,9 +46,9 @@ namespace AvgEngine::Events
 		int lastId = 0;
 		std::vector<Listener> Listeners{};
 
-		void Subscribe(EventType t, std::function<void(Event)> f, bool autoClear = true)
+		void Subscribe(EventType t, std::function<void(Event)> f, bool autoClear = true, bool ignoreConsole = false)
 		{
-			Listeners.push_back({ t, f , autoClear, lastId});
+			Listeners.push_back({ t, f , ignoreConsole, autoClear, lastId});
 			lastId++;
 		}
 

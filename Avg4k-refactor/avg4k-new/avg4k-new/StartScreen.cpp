@@ -3,12 +3,15 @@
 #include "Average4K.h"
 #include "MainMenu.h"
 #include "Sprite.h"
-
+#include "CPacketRequestAvatar.h"
+#include "SPacketAvatarRequestResponse.h"
 using namespace AvgEngine;
 
 double bSecond = 0;
 double bSecond4 = 0;
 
+bool avatar = false;
+Average4K* a4k = NULL;
 Easing::Easing::easingFunction outCubic = NULL;
 
 StartScreen::StartScreen()
@@ -18,6 +21,7 @@ StartScreen::StartScreen()
 
 void StartScreen::load()
 {
+	a4k = static_cast<Average4K*>(Average4K::Instance);
 	eManager->Subscribe(Events::EventType::Event_KeyPress, [&](Events::Event e)
 	{
 		using namespace Average4k::Utils;
@@ -29,11 +33,14 @@ void StartScreen::load()
 			}
 			else
 			{
-				tween.CreateTween(&bump->transform, Render::Rect(0.5, 1.2, bump->transform), 1, outCubic, [&]() {
-					tween.Clear();
+				if (Multiplayer::loggedIn)
+				{
+					tween.CreateTween(&bump->transform, Render::Rect(0.5, 1.2, bump->transform), 1, outCubic, [&]() {
+						tween.Clear();
 					Average4K::instant = true;
 					Average4K::Instance->SwitchMenu(new MainMenu(Average4K::skin->GetLua("main-menu")));
-				});;
+						});
+				}
 			}
 	});
 
@@ -91,6 +98,13 @@ void StartScreen::load()
 
 void StartScreen::draw()
 {
+	if (!avatar && Multiplayer::loggedIn)
+	{
+		avatar = true;
+		Multiplayer::username = a4k->steam->self.nickname;
+		AvgEngine::Logging::writeLog("[Steam] User details: " + a4k->steam->self.nickname + ":" + a4k->steam->self.id64);
+	}
+
 	static int lastBeat = 0;
 	static double bumpTime = 0;
 	const double beat = c->GetBeat();

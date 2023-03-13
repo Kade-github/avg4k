@@ -14,6 +14,18 @@ function create()
     soloText.transform.y = 0.25
     soloText.center = true
     soloText.size = 40
+
+    if online["connected"] then
+        local avatar = texture.new(online["avatarData"])
+        loadTextureData(avatar)
+        local avSpr = sprite.new(0,0,avatar)
+        add(avSpr)
+        avSpr.ratio = true
+        avSpr.transform.scale = 0.35
+        avSpr.transform.x = 0.05
+        avSpr.transform.y = 0.05
+
+    end
 end
 
 -- last time

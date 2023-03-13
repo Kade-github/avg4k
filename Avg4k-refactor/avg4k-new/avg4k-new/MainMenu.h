@@ -8,15 +8,11 @@
 class MainMenu : public Average4k::Lua::LuaMenu
 {
 public:
-	AvgEngine::Base::Text* soloText = NULL;
-
-	Container* soloContainer;
-
 	MainMenu(std::string path) : Average4k::Lua::LuaMenu(path)
 	{
-
 	}
 
+	void load() override;
 
 	void draw() override;
 };

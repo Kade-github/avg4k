@@ -1,6 +1,6 @@
 #include "MenuLuaFile.h"
 #include "Average4K.h"
-#include "LuaText.h"
+
 void Average4k::Lua::MenuLuaFile::Reload()
 {
 	using namespace AvgEngine::Base;
@@ -14,14 +14,14 @@ void Average4k::Lua::MenuLuaFile::Reload()
 	Start();
 }
 
-void Average4k::Lua::MenuLuaFile::AddObject(Average4k::Lua::Base::gameObject& ob)
+void Average4k::Lua::MenuLuaFile::CreateObject(Average4k::Lua::Base::gameObject& ob)
 {
 	int t = ob.type;
 	GameObject* o = NULL;
 	Sprite* sp = NULL;
 	AvgEngine::OpenGL::Texture* tex = NULL;
 	Text* te = NULL;
-	Average4k::Lua::Base::sprite s = Average4k::Lua::Base::sprite(0,0, Average4k::Lua::Base::texture(""));
+	Average4k::Lua::Base::sprite s = Average4k::Lua::Base::sprite(0, 0, Average4k::Lua::Base::texture(""));
 	Average4k::Lua::Base::textObject text = Average4k::Lua::Base::textObject(0, 0, "", "");
 	switch (t) // creation of that type
 	{
@@ -29,12 +29,11 @@ void Average4k::Lua::MenuLuaFile::AddObject(Average4k::Lua::Base::gameObject& ob
 		o = new GameObject(ob.transform.x, ob.transform.y);
 		ob.id = o->id;
 		ob.transform.base = &o->transform;
-		o->transform = AvgEngine::Render::Rect(ob.transform.x, ob.transform.y, 
-			ob.transform.w, ob.transform.h, 
-			ob.transform.r, ob.transform.g, ob.transform.b, ob.transform.a, 
+		o->transform = AvgEngine::Render::Rect(ob.transform.x, ob.transform.y,
+			ob.transform.w, ob.transform.h,
+			ob.transform.r, ob.transform.g, ob.transform.b, ob.transform.a,
 			ob.transform.scale, ob.transform.deg);
 		ob.base = o;
-		Average4K::Instance->CurrentMenu->addObject(o);
 		break;
 	case 1: // sprite
 		s = static_cast<Average4k::Lua::Base::sprite&>(ob);
@@ -52,7 +51,6 @@ void Average4k::Lua::MenuLuaFile::AddObject(Average4k::Lua::Base::gameObject& ob
 		ob.id = sp->id;
 		ob.transform.base = &sp->transform;
 		ob.base = sp;
-		Average4K::Instance->CurrentMenu->addObject(sp);
 		break;
 	case 2:
 		text = static_cast<Average4k::Lua::Base::textObject&>(ob);
@@ -66,9 +64,14 @@ void Average4k::Lua::MenuLuaFile::AddObject(Average4k::Lua::Base::gameObject& ob
 		ob.id = te->id;
 		ob.transform.base = &te->transform;
 		ob.base = te;
-		Average4K::Instance->CurrentMenu->addObject(te);
 		break;
 	}
+}
+
+void Average4k::Lua::MenuLuaFile::AddObject(Average4k::Lua::Base::gameObject& ob)
+{
+	CreateObject(ob);
+	Average4K::Instance->CurrentMenu->addObject(ob.base);
 }
 
 void Average4k::Lua::MenuLuaFile::RemoveObject(Average4k::Lua::Base::gameObject& ob)
@@ -134,6 +137,18 @@ void Average4k::Lua::MenuLuaFile::Load()
 		sol::base_classes, sol::bases<gameObject>()
 		);
 
+	(*lua)["online"] = lua->create_table_with("connected",Multiplayer::loggedIn,"username",Multiplayer::username, "avatarData", Multiplayer::currentUserAvatar);
+
+	sol::table t = (*lua)["settings"] = lua->create_table_with("version", &Average4K::settings->f.settingsVersion);
+	for (Setting& s : Average4K::settings->f.settings)
+		t.add(&s.name, &s.value);
+
+	lua->set_function("create", [&](gameObject& ob) {
+		objects.push_back(ob);
+		CreateObject(ob);
+	});
+
+
 	lua->set_function("add", [&](gameObject& ob) {
 		objects.push_back(ob);
 		AddObject(ob);
@@ -141,6 +156,23 @@ void Average4k::Lua::MenuLuaFile::Load()
 
 	lua->set_function("remove", [&](gameObject& ob) {
 		RemoveObject(ob);
+	});
+
+
+	lua->set_function("tween", [&](Average4k::Lua::Base::gameObject& ob, Average4k::Lua::Base::rect endRect, float length, std::string easing) {
+		if (!ob.base)
+		{
+			AvgEngine::Logging::writeLog("[Lua] [Error] Failure to start tween! Object does not have a base. (did you forget to create it?)");
+			return;
+		}
+		Average4K::Instance->CurrentMenu->tween.CreateTween(&ob.base->transform,
+			AvgEngine::Render::Rect(endRect.x, endRect.y, 
+				endRect.w, endRect.h, 
+				endRect.r, endRect.g, endRect.b, endRect.a, 
+				endRect.scale, 
+				endRect.deg), 
+			length, AvgEngine::Easing::Easing::getEasingFunction(easing), 
+			NULL);
 	});
 
 }

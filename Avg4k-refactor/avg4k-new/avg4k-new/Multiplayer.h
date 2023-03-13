@@ -21,6 +21,11 @@ struct PacketData {
 	int attempts;
 };
 
+struct QueuedPacket {
+	msgpack::v2::object obj;
+	int type;
+};
+
 class Multiplayer
 {
 public:

@@ -1,7 +1,7 @@
 #pragma once
 #include "includes.h"
 #include "LuaFile.h"
-
+#include "LuaText.h"
 namespace Average4k::Lua
 {
 	class MenuLuaFile : public LuaFile
@@ -19,6 +19,8 @@ namespace Average4k::Lua
 
 
 		void Reload() override;
+
+		void CreateObject(Average4k::Lua::Base::gameObject& ob);
 
 		void AddObject(Average4k::Lua::Base::gameObject& ob);
 

@@ -5,6 +5,7 @@
 #include "SPacketHello.h"
 #include "SPacketStatus.h"
 #include "SPacketUpdateEncryptionParameters.h"
+#include "Average4K.h"
 
 
 bool Multiplayer::connectedToServer = false;
@@ -636,6 +637,10 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
                 Multiplayer::speed = true;
                 VM_END
                 break;
+            default:
+                if (status.Status != "Heartbeat")
+                    AvgEngine::Logging::writeLog("[Server] Server Response: " + status.Status);
+                break;
             }
             VM_START
 
@@ -666,6 +671,8 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
                 delete reauth;
 
             reauth = new std::string(helloBack.reauth);
+
+            Multiplayer::currentUserAvatar = helloBack.Avatar;
 
             AvgEngine::Logging::writeLog("[Server] Server agreed to give me the kids on the weekends (you logged in successfully)");
             VM_END
@@ -698,7 +705,13 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
         }
         default:
             VM_START
+            Average4K* game = static_cast<Average4K*>(Average4K::Instance);
 
+            unpack(result, data, length);
+
+            obj = msgpack::object(result.get());
+
+            game->queuedPackets.push_back({ obj, type });
             VM_END
             break;
         }

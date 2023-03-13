@@ -45,9 +45,9 @@ Texture* Texture::createWithImage(std::string filePath)
 	return t;
 }
 
-Texture* Texture::loadTextureFromData(unsigned char* data, float w, float h)
+Texture* Texture::loadTextureFromData(char* data, size_t outLength)
 {
-	return new Texture(data, w, h);
+	return External::stbi_h::stbi_load_memory(data, outLength);
 }
 
 texData Texture::getTextureData(std::string filePath)

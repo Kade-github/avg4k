@@ -21,10 +21,10 @@ namespace AvgEngine::Base
 
 		bool center = false;
 
-		Sprite(float x, float y, float w, float h, unsigned char* data) : GameObject(x, y)
+		Sprite(float x, float y, char* data, size_t size) : GameObject(x, y)
 		{
 			src = { 0,0,1,1 };
-			texture = OpenGL::Texture::loadTextureFromData(data, w, h);
+			texture = OpenGL::Texture::loadTextureFromData(data,size);
 			transform.w = static_cast<float>(texture->width);
 			transform.h = static_cast<float>(texture->height);
 			iTransform = transform;

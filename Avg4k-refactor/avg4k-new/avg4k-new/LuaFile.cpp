@@ -85,4 +85,15 @@ void LuaFile::Load()
 		tex.h = t->height;
 		tex.id = t->id;
 		});
+
+	lua->set_function("loadTextureData", [&](texture& tex) {
+		size_t out;
+		char* data = macaron::Base64::Decode(tex.path.c_str(),tex.path.length(),&out);
+		AvgEngine::OpenGL::Texture* t = AvgEngine::OpenGL::Texture::loadTextureFromData(data, out);
+		t->dontDelete = true;
+		textures.push_back(t);
+		tex.w = t->width;
+		tex.h = t->height;
+		tex.id = t->id;
+	});
 }

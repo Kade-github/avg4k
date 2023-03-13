@@ -37,6 +37,7 @@
   <ItemGroup>
     <ClCompile Include="Average4K.cpp" />
     <ClCompile Include="Avg4kCmdHandler.cpp" />
+    <ClCompile Include="Base64.cpp" />
     <ClCompile Include="BASS.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="ConsoleCommandHandler.cpp" />

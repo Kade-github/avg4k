@@ -25,12 +25,15 @@ public:
 	Steam::SteamInterface* steam;
 	Steam::SteamWorkshop* workshop;
 
+	std::vector<QueuedPacket> queuedPackets;
+
 	Average4K(std::string _t, std::string _v) : Game(_t, _v)
 	{
 		steam = new Steam::SteamInterface();
 		workshop = new Steam::SteamWorkshop();
 		settings = new Average4k::Settings(AvgEngine::Utils::Paths::getAppData("Average4K") + "settings.ave");
 		notif = new Average4k::Utils::Notifications(0,0);
+		queuedPackets = {};
 	}
 
 	void SetSkin(std::string skinName, bool setValue = true)
@@ -155,6 +158,9 @@ public:
 		notif->camera = &CurrentMenu->camera;
 		notif->parent = &CurrentMenu->displayRect;
 		notif->draw();
+
+		if (queuedPackets.size() > 0)
+			queuedPackets.clear();
 	}
 
 	void SwitchNoTrans(Menu* menu)

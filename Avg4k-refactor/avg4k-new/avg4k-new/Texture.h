@@ -36,7 +36,7 @@ namespace AvgEngine::OpenGL
 
 		static Texture* createWithImage(std::string filePath);
 
-		static Texture* loadTextureFromData(unsigned char* data, float w, float h);
+		static Texture* loadTextureFromData(char* data, size_t outLength);
 
 
 		static texData getTextureData(std::string filePath);

@@ -59,4 +59,6 @@
 #include <filesystem>
 #include <io.h>
 
+#include "Base64.h"
+
 #include "Collision.h"

@@ -41,7 +41,7 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 			return;
 		}
 
-
+		
 
 		break;
 #ifdef _DEBUG

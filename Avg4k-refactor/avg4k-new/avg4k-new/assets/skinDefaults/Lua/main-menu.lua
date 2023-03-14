@@ -3,6 +3,7 @@ HelperFiles = {'avatar.lua', 'container.lua', 'selection.lua'}
 
 function Create()
     -- dofile on all helper files
+    dofile(resource("Lua/helper-functions.lua"))
     for i = 1, #HelperFiles, 1 do
         dofile(resource("Lua/main-menu/" .. HelperFiles[i]))
     end

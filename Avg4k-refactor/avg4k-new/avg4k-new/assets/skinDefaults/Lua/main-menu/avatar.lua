@@ -1,6 +1,8 @@
 Avatar = {}
 
-function Avatar.createBorder(default)
+function Avatar.createIcon(default)
+    -- create the border using usertypes.
+
     local border = helper.createSprite("Menu/border", 0,0)
     add(border)
     border.ratio = true
@@ -10,9 +12,8 @@ function Avatar.createBorder(default)
     endRect.y = 0 
 
     tween(border, endRect, 1, "outcubic")
-end
 
-function Avatar.createIcon()
+
     -- we create a texture usertype, with the "path" of the avatar data
     -- this is actually just a base64 repersentation of the jpg data returned by steam
 
@@ -26,20 +27,11 @@ function Avatar.createIcon()
 
     local sprite = sprite.new(0,0, avatarTexture)
     -- a lot of functions are blocked behind actually creating the sprite, so lets do that
-    add(sprite)
-    sprite.transform.y = -0.1
+    create(sprite)
+    -- add it as a child to the border
+    border:add(sprite)
     
-    -- the reason why we have (what is called normalized) coordinates is because we're toggling the "ratio" property on the sprite
-    sprite.ratio = true
-    -- this basically positions the x,y according to the width/height of the game window (or parent)
-    -- it also does the same to the width/height of the sprite
-    -- basically think of it as, the x coordinate is 5% of the way to the windows width.
 
-    -- now lets make it tween down smoothly to where it actually should be
-    local endRect = copyRect(sprite.transform) -- copies the current transform and stores it
-    endRect.y = 0 -- set the y to where we want it to be
-
-    tween(sprite, endRect, 1, "outcubic") -- tween it, arguments are: the sprite, the end transform, length (in seconds), the easing function to use
 end
 
 function Avatar.create()
@@ -51,10 +43,9 @@ function Avatar.create()
 
     if not isConnected then
         -- create default icon
-        Avatar:createBorder(true)
+        Avatar:createIcon(true)
         return
     end
 
-    Avatar:createIcon()
-    Avatar:createBorder(false)
+    Avatar:createIcon(false)
 end

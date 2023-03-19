@@ -58,16 +58,14 @@ void StartScreen::load()
 	whs->transform.scale = Average4K::skin->upscale;
 	addObject(whs);
 
-	bg = new Sprite(0.5, 2, Average4K::skin->GetTexture("Menu/darkmodebg"));
+	bg = new Sprite(0, 2, Average4K::skin->GetTexture("Menu/darkmodebg"));
 	bg->transformRatio = true;
-	bg->center = true;
 	bg->transform.scale = Average4K::skin->upscale;
 	addObject(bg);
 
 	bump = new Sprite(0.5, 2, Average4K::skin->GetTexture("Menu/avg4k"));
 	bump->transformRatio = true;
 	bump->center = true;
-	bump->transform.scale = Average4K::skin->upscale;
 	addObject(bump);
 
 	c = Average4k::Audio::RhythmBASSHelper::CreateChannel("menu", Average4K::skin->GetPath("Music/MenuTheme.ogg"));
@@ -129,12 +127,12 @@ void StartScreen::draw()
 		r.a = 0;
 		tween.CreateTween(&whs->transform, r, bSecond, Easing::Easing::getEasingFunction("outcubic"), NULL);
 		started = true;
-		tween.CreateTween(&bg->transform, Render::Rect(0.5, 0.5, bg->transform), 1, outCubic, NULL);
+		tween.CreateTween(&bg->transform, Render::Rect(0, 0, bg->transform), 1, outCubic, NULL);
 		tween.CreateTween(&bump->transform, Render::Rect(0.5, 0.5, bump->transform), 1, outCubic, NULL);
 	}
 	double t = glfwGetTime();
 	double s = std::min((t - bumpTime) / bSecond4, 1.0);
-	bump->transform.scale = std::lerp(1.1, 1.0, outCubic(s));
+	bump->transform.scale = std::lerp(1.05, 1, outCubic(s));
 
 	Menu::draw();
 }

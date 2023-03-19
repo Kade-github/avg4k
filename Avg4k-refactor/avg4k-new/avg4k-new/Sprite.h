@@ -62,16 +62,8 @@ namespace AvgEngine::Base
 			Render::Rect r = transform;
 			if (transformRatio)
 			{
-				if (transform.w > 1)
-					transform.w = (r.w / parent->w);
-				if (transform.h > 1)
-					transform.h = (r.h / parent->h);
-				r = transform;
-
 				r.x = parent->x + (parent->w * r.x);
 				r.y = parent->y + (parent->h * r.y);
-				r.w = parent->w * (r.w * transform.scale);
-				r.h = parent->h * (r.h * transform.scale);
 			}
 			else
 			{
@@ -79,10 +71,13 @@ namespace AvgEngine::Base
 				r.y += parent->y;
 			}
 
+			r.w = transform.w * transform.scale;
+			r.h = transform.h * transform.scale;
+
 			if (center)
 			{
-				r.x -= (r.w * transform.scale) / 2;
-				r.y -= (r.h * transform.scale) / 2;
+				r.x -= r.w / 2;
+				r.y -= r.h / 2;
 			}
 
 			drawCall c = Camera::FormatDrawCall(zIndex, texture, shader, Render::DisplayHelper::RectToVertex(r, src));

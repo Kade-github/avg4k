@@ -143,11 +143,13 @@ void Average4k::Lua::MenuLuaFile::Load()
 
 	t["online"] = lua->create_table_with("connected",Multiplayer::loggedIn,"username",Multiplayer::username, "avatarData", Multiplayer::currentUserAvatar);
 
-	sol::table ta = lua->create_table_with("version", &Average4K::settings->f.settingsVersion);
+	sol::table ta = lua->create_table_with("version", Average4K::settings->f.settingsVersion);
 	for (Setting& s : Average4K::settings->f.settings)
 		ta.add(&s.name, &s.value);
 
 	t["settings"] = ta;
+
+	t["skin"] = lua->create_table_with("upscale", Average4K::skin->upscale);
 
 	lua->set_function("create", [&](gameObject& ob) {
 		if (ob.base)

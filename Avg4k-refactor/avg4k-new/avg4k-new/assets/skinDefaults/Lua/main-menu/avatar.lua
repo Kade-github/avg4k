@@ -13,18 +13,31 @@ function Avatar.createIcon(notDefault)
     endRect.y = 0 
 
     tween(border, endRect, 1, "outcubic")
-    
+
+    local helloText = text.new(0,0, "ArialBold.fnt", "Not logged in.")
+    create(helloText)
+    helloText.ratio = true
+    helloText.size = 16 * skin["upscale"]
+    helloText.center = true
+    -- put it half way (ish) down the border
+    helloText.transform.y = 0.4
+    -- put it outside the border to the right
+    helloText.transform.x = 1.15
+
     if not notDefault then
         -- if we're not connected to the server, we'll just use the default avatar
         local sprite = helper.createSprite("Menu/genericAvatar", 0,0)
         create(sprite)
         border:add(sprite)
+        border:add(helloText)
         sprite.transform.w = 1
         sprite.transform.h = 1
         sprite.transform.scale = 0.55
         sprite.ratio = true
         return
     end
+
+    helloText.text = "Hi " .. online["username"]
 
     -- we create a texture usertype, with the "path" of the avatar data
     -- this is actually just a base64 repersentation of the jpg data returned by steam
@@ -41,11 +54,11 @@ function Avatar.createIcon(notDefault)
     -- a lot of functions are blocked behind actually creating the sprite, so lets do that
     create(sprite)
     border:add(sprite)
+    border:add(helloText)
     -- this makes it take up the entire sprite (since 100% of the width/height is well, 100% of the width/height)
     sprite.transform.w = 1
     sprite.transform.h = 1
-
-    sprite.transform.scale = 0.55
+    -- so we don't need to do a transform.scale since it'll set it to the size anyways
 
     sprite.ratio = true
 

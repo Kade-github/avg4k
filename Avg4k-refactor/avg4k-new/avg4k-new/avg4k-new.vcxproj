@@ -123,6 +123,7 @@
     <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="includes.h" />
     <ClInclude Include="Logging.h" />
+    <ClInclude Include="LuaConfig.h" />
     <ClInclude Include="LuaFile.h" />
     <ClInclude Include="LuaGameObject.h" />
     <ClInclude Include="LuaMenu.h" />

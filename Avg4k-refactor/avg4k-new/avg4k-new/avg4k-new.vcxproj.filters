@@ -530,5 +530,8 @@
     <ClInclude Include="LuaText.h">
       <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
     </ClInclude>
+    <ClInclude Include="LuaConfig.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

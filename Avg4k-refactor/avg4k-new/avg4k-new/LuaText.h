@@ -6,8 +6,8 @@ namespace Average4k::Lua::Base
 	struct textObject : public gameObject {
 	public:
 
-		int spacing = 0;
-		int size = 12;
+		float spacing = 0;
+		float size = 12;
 
 		bool wrap = false;
 		bool center = false;
@@ -15,7 +15,7 @@ namespace Average4k::Lua::Base
 		std::string font = "";
 		std::string text = "";
 
-		void setSize(int _size)
+		void setSize(float _size)
 		{
 			size = _size;
 			if (base)
@@ -30,7 +30,7 @@ namespace Average4k::Lua::Base
 			return size;
 		}
 
-		void setSpacing(int _spacing)
+		void setSpacing(float _spacing)
 		{
 			spacing = _spacing;
 			if (base)

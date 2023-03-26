@@ -64,6 +64,8 @@ namespace AvgEngine::Base
 			{
 				transform.x = (parent->w * transform.x);
 				transform.y = (parent->h * transform.y);
+ 				transform.w = (transform.w * transform.scale);
+				transform.h = (transform.h * transform.scale);
 			}
 			GameObject::draw();
 

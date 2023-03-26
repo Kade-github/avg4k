@@ -27,20 +27,28 @@ namespace Average4k::Lua::Base
 		float getS() { return scale; };
 		float getD() { return deg; };
 
-		void setX(float x) { x = x; if (base) base->x = x; };
-		void setY(float x) { y = x; if (base) base->y = x; };
+		void setX(float x) { x = x; if (base) base->x = x; else AvgEngine::Logging::writeLog("[Lua] [Error] Base doesn't exist for rect. Please create the base object!"); };
+		void setY(float x) { y = x; if (base) base->y = x; else AvgEngine::Logging::writeLog("[Lua] [Error] Base doesn't exist for rect. Please create the base object!");
+		};
 		void setW(float x) { 
 			w = x; 
 			if (base) 
-				base->w = x;
+				base->w = x; else AvgEngine::Logging::writeLog("[Lua] [Error] Base doesn't exist for rect. Please create the base object!");
 		};
-		void setH(float x) { h = x; if (base) base->h = x; };
-		void setR(float x) { r = x; if (base) base->r = x; };
-		void setG(float x) { g = x; if (base) base->g = x; };
-		void setB(float x) { b = x; if (base) base->b = x; };
-		void setA(float x) { a = x; if (base) base->a = x; };
-		void setS(float x) { scale = x; if (base) base->scale = x; };
-		void setD(float x) { deg = x; if (base) base->angle = x; };
+		void setH(float x) { h = x; if (base) base->h = x; else AvgEngine::Logging::writeLog("[Lua] [Error] Base doesn't exist for rect. Please create the base object!");
+		};
+		void setR(float x) { r = x; if (base) base->r = x; else AvgEngine::Logging::writeLog("[Lua] [Error] Base doesn't exist for rect. Please create the base object!");
+		};
+		void setG(float x) { g = x; if (base) base->g = x; else AvgEngine::Logging::writeLog("[Lua] [Error] Base doesn't exist for rect. Please create the base object!");
+		};
+		void setB(float x) { b = x; if (base) base->b = x; else AvgEngine::Logging::writeLog("[Lua] [Error] Base doesn't exist for rect. Please create the base object!");
+		};
+		void setA(float x) { a = x; if (base) base->a = x; else AvgEngine::Logging::writeLog("[Lua] [Error] Base doesn't exist for rect. Please create the base object!");
+		};
+		void setS(float x) { scale = x; if (base) base->scale = x; else AvgEngine::Logging::writeLog("[Lua] [Error] Base doesn't exist for rect. Please create the base object!");
+		};
+		void setD(float x) { deg = x; if (base) base->angle = x; else AvgEngine::Logging::writeLog("[Lua] [Error] Base doesn't exist for rect. Please create the base object!");
+		};
 
 		rect(float _x, float _y)
 		{

@@ -59,11 +59,30 @@ namespace AvgEngine::Base
 			if (transform.a <= 0)
 				return;
 
+			Render::Rect prevTrans = transform;
+			if (transformRatio && parent) // reverse the ratio
+			{
+				transform.x = (parent->w * transform.x);
+				transform.y = (parent->h * transform.y);
+			}
+			GameObject::draw();
+
+			transform = prevTrans;
+
 			Render::Rect r = transform;
-			if (transformRatio)
+			if (transformRatio && parent)
 			{
 				r.x = parent->x + (parent->w * r.x);
 				r.y = parent->y + (parent->h * r.y);
+
+				if (r.w > 1)
+				{
+					r.w = texture->width / parent->w;
+					r.h = texture->height / parent->h;
+				}
+
+				r.w = parent->w * r.w;
+				r.h = parent->h * r.h;
 			}
 			else
 			{
@@ -71,8 +90,8 @@ namespace AvgEngine::Base
 				r.y += parent->y;
 			}
 
-			r.w = transform.w * transform.scale;
-			r.h = transform.h * transform.scale;
+			r.w = r.w * transform.scale;
+			r.h = r.h * transform.scale;
 
 			if (center)
 			{
@@ -82,8 +101,6 @@ namespace AvgEngine::Base
 
 			drawCall c = Camera::FormatDrawCall(zIndex, texture, shader, Render::DisplayHelper::RectToVertex(r, src));
 			camera->addDrawCall(c);
-
-			GameObject::draw();
 		}
 	};
 }

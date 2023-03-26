@@ -83,6 +83,11 @@ namespace AvgEngine::Base
 			}
 		};
 
+		virtual void setRatio(bool ratio)
+		{
+			transformRatio = ratio;
+		}
+
 		bool operator==(const GameObject& other) {
 			return id == other.id;
 		}

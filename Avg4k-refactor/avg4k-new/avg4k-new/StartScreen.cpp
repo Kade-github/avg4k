@@ -45,28 +45,29 @@ void StartScreen::load()
 	});
 
 	logo = new Sprite(0.5, 0.5, Average4K::skin->GetTexture("Start/KadeDevTeam"));
-	logo->transformRatio = true;
 	logo->center = true;
 	logo->transform.a = 0;
 	logo->transform.scale = Average4K::skin->upscale;
 	addObject(logo);
+	logo->setRatio(true);
 
 	whs = new Sprite(0.5, 0.5, Average4K::skin->GetTexture("Start/MiscLogo"));
-	whs->transformRatio = true;
 	whs->center = true;
 	whs->transform.a = 0;
 	whs->transform.scale = Average4K::skin->upscale;
 	addObject(whs);
+	whs->setRatio(true);
 
 	bg = new Sprite(0, 2, Average4K::skin->GetTexture("Menu/darkmodebg"));
-	bg->transformRatio = true;
 	bg->transform.scale = Average4K::skin->upscale;
 	addObject(bg);
+	bg->setRatio(true);
 
 	bump = new Sprite(0.5, 2, Average4K::skin->GetTexture("Menu/avg4k"));
-	bump->transformRatio = true;
 	bump->center = true;
+	bump->transform.scale = Average4K::skin->upscale;
 	addObject(bump);
+	bump->setRatio(true);
 
 	c = Average4k::Audio::RhythmBASSHelper::CreateChannel("menu", Average4K::skin->GetPath("Music/MenuTheme.ogg"));
 	Average4k::External::ConfigReader cf = Average4k::External::ConfigReader(Average4K::skin->GetPath("Music/MenuTheme.meta"));
@@ -103,7 +104,7 @@ void StartScreen::draw()
 		AvgEngine::Logging::writeLog("[Steam] User details: " + a4k->steam->self.nickname + ":" + a4k->steam->self.id64);
 	}
 
-	static int lastBeat = 0;
+	static int lastBeat = 0;	
 	static double bumpTime = 0;
 	const double beat = c->GetBeat();
 	if (std::floor(beat) > lastBeat + bopBeat)

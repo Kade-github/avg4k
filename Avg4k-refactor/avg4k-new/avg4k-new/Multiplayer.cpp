@@ -60,7 +60,7 @@ void Multiplayer::InitCrypto() {
 
     const char* publicKey = publicKeyStr.c_str();
 
-        BIO* bo = BIO_new(BIO_s_mem());
+    BIO* bo = BIO_new(BIO_s_mem());
     BIO_write(bo, publicKey, strlen(publicKey));
     PEM_read_bio_RSA_PUBKEY(bo, &rsa, 0, 0);
     BIO_free(bo);

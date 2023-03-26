@@ -6,13 +6,25 @@ function Avatar.createIcon(default)
     local border = helper.createSprite("Menu/border", 0,0)
     add(border)
     border.ratio = true
-    border.transform.y = -0.1
+    border.transform.y = -0.15
+    border.transform.scale = 0.55
 
     local endRect = copyRect(border.transform)
     endRect.y = 0 
 
     tween(border, endRect, 1, "outcubic")
 
+    if default then
+        -- if we're not connected to the server, we'll just use the default avatar
+        local sprite = helper.createSprite("Menu/genericAvatar", 0,0)
+        create(sprite)
+        border:add(sprite)
+        sprite.transform.w = 1
+        sprite.transform.h = 1
+        sprite.transform.scale = 0.55
+        sprite.ratio = true
+        return
+    end
 
     -- we create a texture usertype, with the "path" of the avatar data
     -- this is actually just a base64 repersentation of the jpg data returned by steam
@@ -28,9 +40,14 @@ function Avatar.createIcon(default)
     local sprite = sprite.new(0,0, avatarTexture)
     -- a lot of functions are blocked behind actually creating the sprite, so lets do that
     create(sprite)
-    -- add it as a child to the border
     border:add(sprite)
-    
+    -- this makes it take up the entire sprite (since 100% of the width/height is well, 100% of the width/height)
+    sprite.transform.w = 1
+    sprite.transform.h = 1
+
+    sprite.transform.scale = 0.55
+
+    sprite.ratio = true
 
 end
 
@@ -41,11 +58,5 @@ function Avatar.create()
 
     local isConnected = online["connected"]
 
-    if not isConnected then
-        -- create default icon
-        Avatar:createIcon(true)
-        return
-    end
-
-    Avatar:createIcon(false)
+    Avatar:createIcon(not isConnected)
 end

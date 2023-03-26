@@ -150,17 +150,32 @@ void Average4k::Lua::MenuLuaFile::Load()
 	t["settings"] = ta;
 
 	lua->set_function("create", [&](gameObject& ob) {
+		if (ob.base)
+		{
+			AvgEngine::Logging::writeLog("[Lua] [Error] Failed to create " + std::to_string(ob.id) + ", it already exists!");
+			return;
+		}
 		objects.push_back(ob);
 		CreateObject(ob);
 	});
 
 
 	lua->set_function("add", [&](gameObject& ob) {
+		if (ob.base)
+		{
+			AvgEngine::Logging::writeLog("[Lua] [Error] Failed to add " + std::to_string(ob.id) + ", it already exists!");
+			return;
+		}
 		objects.push_back(ob);
 		AddObject(ob);
 	});
 
 	lua->set_function("remove", [&](gameObject& ob) {
+		if (!ob.base)
+		{
+			AvgEngine::Logging::writeLog("[Lua] [Error] Failed to remove " + std::to_string(ob.id) + ", it doesn't exist!");
+			return;
+		}
 		RemoveObject(ob);
 	});
 

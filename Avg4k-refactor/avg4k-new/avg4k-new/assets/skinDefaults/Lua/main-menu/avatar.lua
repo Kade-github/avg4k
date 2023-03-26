@@ -13,8 +13,6 @@ function Avatar.createIcon(notDefault)
     local endRect = copyRect(border.transform)
     endRect.y = 0.025
 
-    cprint(tostring(endRect.x))
-
     tween(border, endRect, 1, "outcubic")
 
     local helloText = text.new(0,0, "ArialBold.fnt", "Not logged in.")

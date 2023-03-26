@@ -59,13 +59,13 @@ void StartScreen::load()
 	whs->setRatio(true);
 
 	bg = new Sprite(0, 2, Average4K::skin->GetTexture("Menu/darkmodebg"));
-	bg->transform.scale = Average4K::skin->upscale;
+	bg->transform.w = 1;
+	bg->transform.h = 1;
 	addObject(bg);
 	bg->setRatio(true);
 
 	bump = new Sprite(0.5, 2, Average4K::skin->GetTexture("Menu/avg4k"));
 	bump->center = true;
-	bump->transform.scale = Average4K::skin->upscale;
 	addObject(bump);
 	bump->setRatio(true);
 

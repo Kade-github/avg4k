@@ -1,6 +1,6 @@
 Avatar = {}
 
-function Avatar.createIcon(default)
+function Avatar.createIcon(notDefault)
     -- create the border using usertypes.
 
     local border = helper.createSprite("Menu/border", 0,0)
@@ -13,8 +13,8 @@ function Avatar.createIcon(default)
     endRect.y = 0 
 
     tween(border, endRect, 1, "outcubic")
-
-    if default then
+    
+    if not notDefault then
         -- if we're not connected to the server, we'll just use the default avatar
         local sprite = helper.createSprite("Menu/genericAvatar", 0,0)
         create(sprite)
@@ -58,5 +58,5 @@ function Avatar.create()
 
     local isConnected = online["connected"]
 
-    Avatar:createIcon(not isConnected)
+    Avatar:createIcon(isConnected)
 end

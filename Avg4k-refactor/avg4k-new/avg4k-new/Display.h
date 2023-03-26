@@ -76,15 +76,18 @@ namespace AvgEngine::Render
 		 * \param src The source struct
 		 * \return An array of Vertex's
 		 */
-		static std::vector<Vertex> RectToVertex(Rect dst, Rect src)
+		static std::vector<Vertex> RectToVertex(Rect dst, Rect src, bool center = false)
 		{
 			std::vector<Vertex> verts;
 
 			Rect rD = dst;
-			float mpx = (rD.w * (1 - rD.scale)) / 2;
-			float mpy = (rD.h * (1 - rD.scale)) / 2;
-			rD.x += mpx;
-			rD.y += mpy;
+			if (center)
+			{
+				float mpx = (rD.w * (1 - rD.scale)) / 2;
+				float mpy = (rD.h * (1 - rD.scale)) / 2;
+				rD.x += mpx;
+				rD.y += mpy;
+			}
 
 			rD.w *= rD.scale;
 			rD.h *= rD.scale;

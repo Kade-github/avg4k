@@ -27,7 +27,7 @@ namespace Average4k::Lua::Base
 		float getS() { return scale; };
 		float getD() { return deg; };
 
-		void setX(float x) { x = x; if (base) base->x = x; };
+		void setX(float _x) { x = _x; if (base) base->x = x; };
 		void setY(float x) { y = x; if (base) base->y = x; };
 		void setW(float x) { 
 			w = x; 

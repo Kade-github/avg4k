@@ -81,7 +81,6 @@ namespace AvgEngine::Base
 			{
 				if (transformRatio)
 				{
-					dst = transform;
 
 					dst.x = parent->x + (parent->w * dst.x);
 					dst.y = parent->y + (parent->h * dst.y);
@@ -123,7 +122,7 @@ namespace AvgEngine::Base
 					dst.x += advance;
 					if (wrap && dst.x + dst.w > parent->x + parent->w && wrap)
 					{
-						dst.x = transform.x;
+						dst.x = start.x;
 						dst.y += highestH;
 						d += highestH;
 						highestH = 0;

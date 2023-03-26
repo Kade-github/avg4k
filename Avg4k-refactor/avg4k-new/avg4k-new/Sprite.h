@@ -64,8 +64,8 @@ namespace AvgEngine::Base
 			{
 				transform.x = (parent->w * transform.x);
 				transform.y = (parent->h * transform.y);
- 				transform.w = (transform.w * transform.scale);
-				transform.h = (transform.h * transform.scale);
+ 				transform.w = (static_cast<float>(texture->width) * transform.scale);
+				transform.h = (static_cast<float>(texture->height) * transform.scale);
 			}
 			GameObject::draw();
 
@@ -79,8 +79,8 @@ namespace AvgEngine::Base
 
 				if (r.w > 1)
 				{
-					r.w = texture->width / parent->w;
-					r.h = texture->height / parent->h;
+					r.w = static_cast<float>(texture->width) / parent->w;
+					r.h = static_cast<float>(texture->height) / parent->h;
 				}
 
 				r.w = parent->w * r.w;
@@ -101,7 +101,7 @@ namespace AvgEngine::Base
 				r.y -= r.h / 2;
 			}
 
-			drawCall c = Camera::FormatDrawCall(zIndex, texture, shader, Render::DisplayHelper::RectToVertex(r, src));
+			drawCall c = Camera::FormatDrawCall(zIndex, texture, shader, Render::DisplayHelper::RectToVertex(r, src, center));
 			camera->addDrawCall(c);
 		}
 	};

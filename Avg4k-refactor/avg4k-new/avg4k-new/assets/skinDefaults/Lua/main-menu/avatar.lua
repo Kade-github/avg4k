@@ -6,23 +6,24 @@ function Avatar.createIcon(notDefault)
     local border = helper.createSprite("Menu/border", 0,0)
     add(border)
     border.ratio = true
+    border.transform.x = 0.01
     border.transform.y = -0.15
     border.transform.scale = 0.55
 
     local endRect = copyRect(border.transform)
-    endRect.y = 0 
+    endRect.y = 0.025
+
+    cprint(tostring(endRect.x))
 
     tween(border, endRect, 1, "outcubic")
 
     local helloText = text.new(0,0, "ArialBold.fnt", "Not logged in.")
     create(helloText)
     helloText.ratio = true
-    helloText.size = 16 * skin["upscale"]
+    helloText.size = 16 * (skin["upscale"] * 0.9)
     helloText.center = true
-    -- put it half way (ish) down the border
-    helloText.transform.y = 0.4
-    -- put it outside the border to the right
-    helloText.transform.x = 1.15
+    helloText.transform.y = 0.1375
+    helloText.transform.x = 0.9
 
     if not notDefault then
         -- if we're not connected to the server, we'll just use the default avatar
@@ -30,8 +31,8 @@ function Avatar.createIcon(notDefault)
         create(sprite)
         border:add(sprite)
         border:add(helloText)
-        sprite.transform.w = 1
-        sprite.transform.h = 1
+        sprite.transform.w = 1.0
+        sprite.transform.h = 1.0
         sprite.transform.scale = 0.55
         sprite.ratio = true
         return
@@ -55,10 +56,9 @@ function Avatar.createIcon(notDefault)
     create(sprite)
     border:add(sprite)
     border:add(helloText)
-    -- this makes it take up the entire sprite (since 100% of the width/height is well, 100% of the width/height)
-    sprite.transform.w = 1
-    sprite.transform.h = 1
-    -- so we don't need to do a transform.scale since it'll set it to the size anyways
+    -- this makes it take up the entire sprite, since it's scalled down .55. (since 55% of the width/height is well, 100% of the width/height if it's scaled 55% down)
+    sprite.transform.w = 0.55
+    sprite.transform.h = 0.55
 
     sprite.ratio = true
 

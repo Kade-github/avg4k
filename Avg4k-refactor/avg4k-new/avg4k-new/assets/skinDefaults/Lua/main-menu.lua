@@ -13,10 +13,11 @@ function Create()
     local bg = helper.createSprite("Menu/darkModeBg", 0,0)
 
     add(bg)
-
+    bg.transform.x = 0.0
+    bg.transform.y = 0.0
     bg.ratio = true
-    bg.transform.w = 1
-    bg.transform.h = 1
+    bg.transform.w = 1.0
+    bg.transform.h = 1.0
 
     -- helper file calls
 

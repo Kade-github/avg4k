@@ -23,6 +23,16 @@ namespace Average4k::Lua
 			luaMenu = true;
 		}
 
+		virtual void Reload()
+		{
+
+		}
+
+		~LuaMenu()
+		{
+			delete file;
+		}
+
 		void draw() override
 		{
 			if ((int)glfwGetTime() % 4 == 0)

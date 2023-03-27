@@ -80,8 +80,8 @@ namespace AvgEngine::Base
 				if (transformRatio)
 				{
 
-					dst.x = parent->x + (parent->w * transform.x);
-					dst.y = parent->y + (parent->h * transform.y);
+					dst.x = parent->x + (parent->w * (transform.x / 100));
+					dst.y = parent->y + (parent->h * (transform.y / 100));
 				}
 				else
 				{

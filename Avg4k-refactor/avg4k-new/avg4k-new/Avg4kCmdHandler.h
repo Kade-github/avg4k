@@ -8,6 +8,7 @@ public:
 	{
 		commands.push_back("reload");
 		commands.push_back("bind");
+		commands.push_back("objects");
 #ifdef _DEBUG
 		commands.push_back("lua");
 #endif

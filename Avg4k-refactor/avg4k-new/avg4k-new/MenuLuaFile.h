@@ -16,9 +16,12 @@ namespace Average4k::Lua
 		}
 
 
-
-
-		void Reload() override;
+		~MenuLuaFile()
+		{
+			objects.clear();
+			sol::state* l = lua.release();
+			delete l;
+		}
 
 		void CreateObject(Average4k::Lua::Base::gameObject& ob);
 

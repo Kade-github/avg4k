@@ -2,14 +2,14 @@
 fileVersion=1
 
 # font settings
-fontName=Heisei Kaku Gothic Std W7
-fontFile=C:/Users/kadep/Downloads/HeiseiKakuGoStd-W7.otf
+fontName=Arial
+fontFile=../../../Avg4k-old/assets/graphical/fonts/arialbd.ttf
 charSet=0
 fontSize=128
 aa=1
 scaleH=100
 useSmoothing=1
-isBold=0
+isBold=1
 isItalic=0
 useUnicode=1
 disableBoxChars=1
@@ -35,7 +35,7 @@ widthPaddingFactor=0.00
 
 # output file
 outWidth=2000
-outHeight=1700
+outHeight=400
 outBitDepth=32
 fontDescFormat=1
 fourChnlPacked=0
@@ -54,6 +54,6 @@ invB=0
 outlineThickness=0
 
 # selected chars
-chars=33-126,12353-12436,12443-12446,12449-12542
+chars=33-126
 
 # imported icon images

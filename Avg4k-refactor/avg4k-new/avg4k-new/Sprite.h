@@ -62,8 +62,8 @@ namespace AvgEngine::Base
 			Render::Rect prevTrans = transform;
 			if (transformRatio && parent) // reverse the ratio
 			{
-				transform.x = (parent->w * transform.x);
-				transform.y = (parent->h * transform.y);
+				transform.x = (parent->w * (transform.x / 100));
+				transform.y = (parent->h * (transform.y / 100));
  				transform.w = (static_cast<float>(texture->width) * transform.scale);
 				transform.h = (static_cast<float>(texture->height) * transform.scale);
 			}
@@ -74,17 +74,17 @@ namespace AvgEngine::Base
 			Render::Rect r = transform;
 			if (transformRatio && parent)
 			{
-				r.x = parent->x + (parent->w * r.x);
-				r.y = parent->y + (parent->h * r.y);
+				r.x = parent->x + (parent->w * (r.x / 100));
+				r.y = parent->y + (parent->h * (r.y / 100));
 
-				if (r.w > 1)
+				if (r.w > 100)
 				{
-					r.w = static_cast<float>(texture->width) / parent->w;
-					r.h = static_cast<float>(texture->height) / parent->h;
+					r.w = (static_cast<float>(texture->width) / parent->w) * 100;
+					r.h = (static_cast<float>(texture->height) / parent->h) * 100;
 				}
 
-				r.w = parent->w * r.w;
-				r.h = parent->h * r.h;
+				r.w = parent->w * (r.w / 100);
+				r.h = parent->h * (r.h / 100);
 			}
 			else
 			{

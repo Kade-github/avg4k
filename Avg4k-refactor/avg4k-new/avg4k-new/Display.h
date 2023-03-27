@@ -65,6 +65,10 @@ namespace AvgEngine::Render
 			b = _r.b;
 			a = _r.a;
 		}
+
+		std::string toString() {
+			return "XYWH {" + std::to_string(x) + "," + std::to_string(y) + "," + std::to_string(w) + "," + std::to_string(h) + "} RGBA {" + std::to_string(r) + "," + std::to_string(g) + "," + std::to_string(b) + "," + std::to_string(a) + "}";
+		}
 	};
 
 	class DisplayHelper

@@ -1,19 +1,7 @@
 #include "MenuLuaFile.h"
 #include "Average4K.h"
 
-void Average4k::Lua::MenuLuaFile::Reload()
-{
-	using namespace AvgEngine::Base;
-	std::vector<GameObject*>* gameObjects = &Average4K::Instance->CurrentMenu->GameObjects;
-	for (GameObject* obj : *gameObjects)
-		delete obj;
 
-	gameObjects->clear();
-	lua.reset();
-
-	Launch();
-	Start();
-}
 
 void Average4k::Lua::MenuLuaFile::CreateObject(Average4k::Lua::Base::gameObject& ob)
 {

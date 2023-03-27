@@ -28,11 +28,10 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 		m = static_cast<Average4k::Lua::LuaMenu*>(Game::Instance->CurrentMenu);
 		if (m->luaMenu)
 		{
-			m->file->Reload();
-			Logging::writeLog("[Menu] Reloaded " + m->file->_path);
+			m->Reload();
 		}
 		else
-			Logging::writeLog("[Menu] Sorry, that menu isn't a lua menu and cannot be reloaded!");
+			Logging::writeLog("[Menu] [Error] Sorry, that menu isn't a lua menu and cannot be reloaded!");
 		break;
 	case "bind"_sh:
 		if (spl.size() < 2)
@@ -43,6 +42,22 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 
 		
 
+		break;
+	case "objects"_sh:
+		m = static_cast<Average4k::Lua::LuaMenu*>(Game::Instance->CurrentMenu);
+		if (m->luaMenu)
+		{
+			for (AvgEngine::Base::GameObject* o : m->GameObjects)
+			{
+				Logging::writeLog("[Menu] Object-" + std::to_string(o->id) + ", " + o->transform.toString() + ", Ratio: " + (o->transformRatio ? "yes" : "no") + ", Children: " + std::to_string(o->Children.size()));
+				for (AvgEngine::Base::GameObject* ob : o->Children)
+				{
+					Logging::writeLog("		Child -> Object-" + std::to_string(ob->id) + ", " + ob->transform.toString() + ", Ratio: " + (ob->transformRatio ? "yes" : "no") + ", Children: " + std::to_string(ob->Children.size()) + ".");
+				}
+			}
+		}
+		else
+			Logging::writeLog("[Menu] [Error] Sorry, that menu isn't a lua menu and the object list cannot be shown!");
 		break;
 #ifdef _DEBUG
 	case "lua"_sh:

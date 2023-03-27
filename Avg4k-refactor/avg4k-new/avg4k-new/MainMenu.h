@@ -12,6 +12,8 @@ public:
 	{
 	}
 
+	void Reload() override;
+
 	void load() override;
 
 	void draw() override;

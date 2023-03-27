@@ -6,12 +6,12 @@ function Avatar.createIcon(notDefault)
     local border = helper.createSprite("Menu/border", 0,0)
     add(border)
     border.ratio = true
-    border.transform.x = 0.01
-    border.transform.y = -0.15
+    border.transform.x = 1
+    border.transform.y = -15
     border.transform.scale = 0.55
 
     local endRect = copyRect(border.transform)
-    endRect.y = 0.025
+    endRect.y = 2.5
 
     tween(border, endRect, 1, "outcubic")
 
@@ -19,27 +19,27 @@ function Avatar.createIcon(notDefault)
     create(helloText)
     helloText.ratio = true
     helloText.size = 16.0 * (skin["upscale"] * 0.9)
-    helloText.transform.y = 0.12
-    helloText.transform.x = 0.6
+    helloText.transform.y = 12
+    helloText.transform.x = 60
 
     local versionText = text.new(0,0, "ArialBold.fnt", "Avg4k indev-" .. online["version"])
     create(versionText)
     versionText.ratio = true
     versionText.size = 16.0 * (skin["upscale"] * 0.9)
-    versionText.transform.y = 0.24
-    versionText.transform.x = 0.6
+    versionText.transform.y = 24
+    versionText.transform.x = 60
 
     if not notDefault then
         -- if we're not connected to the server, we'll just use the default avatar
-        local sprite = helper.createSprite("Menu/genericAvatar", 0,0)
-        create(sprite)
-        border:add(sprite)
+        local genAv = helper.createSprite("Menu/genericAvatar", 0,0)
+        create(genAv)
+        border:add(genAv)
         border:add(helloText)
         border:add(versionText)
-        sprite.transform.w = 1.0
-        sprite.transform.h = 1.0
-        sprite.transform.scale = 0.55
-        sprite.ratio = true
+        genAv.transform.w = 100
+        genAv.transform.h = 100
+        genAv.transform.scale = 0.55
+        genAv.ratio = true
         return
     end
 
@@ -56,17 +56,17 @@ function Avatar.createIcon(notDefault)
 
     -- cool, now lets create the sprite (which is also another usertype)
 
-    local sprite = sprite.new(0,0, avatarTexture)
+    local av = sprite.new(0,0, avatarTexture)
     -- a lot of functions are blocked behind actually creating the sprite, so lets do that
-    create(sprite)
-    border:add(sprite)
+    create(av)
+    border:add(av)
     border:add(helloText)
     border:add(versionText)
     -- this makes it take up the entire sprite, since it's scalled down .55. (since 55% of the width/height is well, 100% of the width/height if it's scaled 55% down)
-    sprite.transform.w = 0.55
-    sprite.transform.h = 0.55
+    av.transform.w = 55
+    av.transform.h = 55
 
-    sprite.ratio = true
+    av.ratio = true
 
 end
 

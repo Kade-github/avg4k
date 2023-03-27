@@ -5,6 +5,11 @@
 using namespace AvgEngine;
 Average4K* a4er = NULL;
 
+void MainMenu::Reload()
+{
+	Average4K::Instance->SwitchMenu(new MainMenu(Average4K::skin->GetLua("main-menu")));
+}
+
 void MainMenu::load()
 {
 	a4er = static_cast<Average4K*>(Average4K::Instance);

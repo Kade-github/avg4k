@@ -35,7 +35,7 @@ void StartScreen::load()
 			{
 				if (Multiplayer::loggedIn)
 				{
-					tween.CreateTween(&bump->transform, Render::Rect(0.5, 1.2, bump->transform), 1, outCubic, [&]() {
+					tween.CreateTween(&bump->transform, Render::Rect(50, 120, bump->transform), 1, outCubic, [&]() {
 						tween.Clear();
 					Average4K::instant = true;
 					Average4K::Instance->SwitchMenu(new MainMenu(Average4K::skin->GetLua("main-menu")));
@@ -44,27 +44,27 @@ void StartScreen::load()
 			}
 	});
 
-	logo = new Sprite(0.5, 0.5, Average4K::skin->GetTexture("Start/KadeDevTeam"));
+	logo = new Sprite(50, 50, Average4K::skin->GetTexture("Start/KadeDevTeam"));
 	logo->center = true;
 	logo->transform.a = 0;
 	logo->transform.scale = Average4K::skin->upscale;
 	addObject(logo);
 	logo->setRatio(true);
 
-	whs = new Sprite(0.5, 0.5, Average4K::skin->GetTexture("Start/MiscLogo"));
+	whs = new Sprite(50, 50, Average4K::skin->GetTexture("Start/MiscLogo"));
 	whs->center = true;
 	whs->transform.a = 0;
 	whs->transform.scale = Average4K::skin->upscale;
 	addObject(whs);
 	whs->setRatio(true);
 
-	bg = new Sprite(0, 2, Average4K::skin->GetTexture("Menu/darkmodebg"));
-	bg->transform.w = 1;
-	bg->transform.h = 1;
+	bg = new Sprite(0, 200, Average4K::skin->GetTexture("Menu/darkmodebg"));
+	bg->transform.w = 100;
+	bg->transform.h = 100;
 	addObject(bg);
 	bg->setRatio(true);
 
-	bump = new Sprite(0.5, 2, Average4K::skin->GetTexture("Menu/avg4k"));
+	bump = new Sprite(50, 200, Average4K::skin->GetTexture("Menu/avg4k"));
 	bump->center = true;
 	addObject(bump);
 	bump->setRatio(true);
@@ -129,7 +129,7 @@ void StartScreen::draw()
 		tween.CreateTween(&whs->transform, r, bSecond, Easing::Easing::getEasingFunction("outcubic"), NULL);
 		started = true;
 		tween.CreateTween(&bg->transform, Render::Rect(0, 0, bg->transform), 1, outCubic, NULL);
-		tween.CreateTween(&bump->transform, Render::Rect(0.5, 0.5, bump->transform), 1, outCubic, NULL);
+		tween.CreateTween(&bump->transform, Render::Rect(50, 50, bump->transform), 1, outCubic, NULL);
 	}
 	double t = glfwGetTime();
 	double s = std::min((t - bumpTime) / bSecond4, 1.0);

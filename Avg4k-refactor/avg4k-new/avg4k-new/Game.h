@@ -67,6 +67,7 @@ namespace AvgEngine
 			Render::Display::Resize(Window, w, h);
 			if (CurrentMenu)
 				CurrentMenu->camera.resize(w, h);
+
 		}
 
 		/**

@@ -215,7 +215,11 @@ namespace AvgEngine::Render
 			width = newWidth;
 			height = newHeight;
 
-			glfwSetWindowSize(window, width, height);
+
+			int max_width = GetSystemMetrics(SM_CXSCREEN);
+			int max_hieght = GetSystemMetrics(SM_CYSCREEN);
+
+			glfwSetWindowMonitor(window, NULL, (max_width / 2) - (width / 2), (max_hieght / 2) - (height / 2), width, height, GLFW_DONT_CARE);
 
 			Logging::writeLog("[Display] Resized to " + std::to_string(newWidth) + "x" + std::to_string(newHeight));
 		}

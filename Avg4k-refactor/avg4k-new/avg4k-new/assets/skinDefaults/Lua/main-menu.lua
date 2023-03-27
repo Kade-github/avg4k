@@ -10,12 +10,12 @@ function Create()
 
     -- setup background (darkModeBg.png)
 
-    local bg = helper.createSprite("Menu/darkModeBg", 0,0)
+    local bg = helper.createSprite("Menu/darkModeBg", 0.0,0.0)
 
     add(bg)
+    bg.ratio = true
     bg.transform.x = 0.0
     bg.transform.y = 0.0
-    bg.ratio = true
     bg.transform.w = 1.0
     bg.transform.h = 1.0
 

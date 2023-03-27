@@ -18,10 +18,16 @@ function Avatar.createIcon(notDefault)
     local helloText = text.new(0,0, "ArialBold.fnt", "Not logged in.")
     create(helloText)
     helloText.ratio = true
-    helloText.size = 16 * (skin["upscale"] * 0.9)
-    helloText.center = true
-    helloText.transform.y = 0.1375
-    helloText.transform.x = 0.9
+    helloText.size = 16.0 * (skin["upscale"] * 0.9)
+    helloText.transform.y = 0.12
+    helloText.transform.x = 0.6
+
+    local versionText = text.new(0,0, "ArialBold.fnt", "Avg4k indev-" .. online["version"])
+    create(versionText)
+    versionText.ratio = true
+    versionText.size = 16.0 * (skin["upscale"] * 0.9)
+    versionText.transform.y = 0.24
+    versionText.transform.x = 0.6
 
     if not notDefault then
         -- if we're not connected to the server, we'll just use the default avatar
@@ -29,6 +35,7 @@ function Avatar.createIcon(notDefault)
         create(sprite)
         border:add(sprite)
         border:add(helloText)
+        border:add(versionText)
         sprite.transform.w = 1.0
         sprite.transform.h = 1.0
         sprite.transform.scale = 0.55
@@ -54,6 +61,7 @@ function Avatar.createIcon(notDefault)
     create(sprite)
     border:add(sprite)
     border:add(helloText)
+    border:add(versionText)
     -- this makes it take up the entire sprite, since it's scalled down .55. (since 55% of the width/height is well, 100% of the width/height if it's scaled 55% down)
     sprite.transform.w = 0.55
     sprite.transform.h = 0.55

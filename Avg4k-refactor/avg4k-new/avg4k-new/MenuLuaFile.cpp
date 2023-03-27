@@ -9,6 +9,7 @@ void Average4k::Lua::MenuLuaFile::Reload()
 		delete obj;
 
 	gameObjects->clear();
+	lua.reset();
 
 	Launch();
 	Start();
@@ -96,7 +97,7 @@ void Average4k::Lua::MenuLuaFile::Load()
 
 	sol::usertype<rect> rect_type = lua->new_usertype<rect>("rect",
 		// 4 constructors, x y, x y w h, x y w h r g b a, x y w h r g b a s d
-		sol::constructors<rect(), rect(float, float), rect(float, float, float, float), rect(float, float, float, float, float, float, float, float), rect(float, float, float, float, float, float, float, float, float, float)>(),
+		sol::constructors<rect(), rect(double, double), rect(double, double, double, double), rect(double, double, double, double, double, double, double, double), rect(double, double, double, double, double, double, double, double, double, double)>(),
 		"x", sol::property(&rect::getX, &rect::setX),
 		"y", sol::property(&rect::getY, &rect::setY),
 		"w", sol::property(&rect::getW, &rect::setW),
@@ -110,7 +111,7 @@ void Average4k::Lua::MenuLuaFile::Load()
 		);
 	 
 	sol::usertype<gameObject> object_type = lua->new_usertype<gameObject>("gameObject",
-		sol::constructors<gameObject(float, float), gameObject()>(),
+		sol::constructors<gameObject(double, double), gameObject()>(),
 		"id", &gameObject::id,
 		"transform", &gameObject::transform,
 		"parent", &gameObject::parent,
@@ -122,14 +123,14 @@ void Average4k::Lua::MenuLuaFile::Load()
 		);
 
 	sol::usertype<sprite> sprite_type = lua->new_usertype<sprite>("sprite",
-		sol::constructors<sprite(float, float, texture)>(),
+		sol::constructors<sprite(double, double, texture)>(),
 		"texture", &sprite::tex,
 		sol::base_classes, sol::bases<gameObject>()
 		);
 
 
 	sol::usertype<textObject> text_type = lua->new_usertype<textObject>("text",
-		sol::constructors<textObject(float, float, std::string, std::string)>(),
+		sol::constructors<textObject(double, double, std::string, std::string)>(),
 		"font", sol::property(&textObject::getFont, &textObject::setFont),
 		"text", sol::property(&textObject::getText, &textObject::setText),
 		"wrap", sol::property(&textObject::getWrapped, &textObject::setWrapped),
@@ -141,7 +142,7 @@ void Average4k::Lua::MenuLuaFile::Load()
 
 	sol::global_table t = lua->globals();
 
-	t["online"] = lua->create_table_with("connected",Multiplayer::loggedIn,"username",Multiplayer::username, "avatarData", Multiplayer::currentUserAvatar);
+	t["online"] = lua->create_table_with("version", Average4K::Instance->Version, "connected",Multiplayer::loggedIn,"username",Multiplayer::username, "avatarData", Multiplayer::currentUserAvatar);
 
 	sol::table ta = lua->create_table_with("version", Average4K::settings->f.settingsVersion);
 	for (Setting& s : Average4K::settings->f.settings)
@@ -190,7 +191,7 @@ void Average4k::Lua::MenuLuaFile::Load()
 		return k->skin->GetPath(fileName);
 	});
 
-	lua->set_function("tween", [&](Average4k::Lua::Base::gameObject& ob, Average4k::Lua::Base::rect endRect, float length, std::string easing) {
+	lua->set_function("tween", [&](Average4k::Lua::Base::gameObject& ob, Average4k::Lua::Base::rect endRect, double length, std::string easing) {
 		if (!ob.base)
 		{
 			AvgEngine::Logging::writeLog("[Lua] [Error] Failure to start tween! Object does not have a base. (did you forget to create it?)");

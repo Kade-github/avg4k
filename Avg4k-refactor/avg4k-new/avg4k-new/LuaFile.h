@@ -10,7 +10,7 @@ namespace Average4k::Lua
 {
 	class LuaFile {
 	public:
-		sol::state* lua;
+		std::unique_ptr<sol::state> lua;
 
 		std::string _path;
 

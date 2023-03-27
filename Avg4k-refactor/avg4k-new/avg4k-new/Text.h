@@ -51,9 +51,7 @@ namespace AvgEngine::Base
 
 		~Text()
 		{
-			if (fnt)
-				delete fnt;
-			
+		
 		}
 
 		void SetFont(std::string folder, std::string font)
@@ -82,8 +80,8 @@ namespace AvgEngine::Base
 				if (transformRatio)
 				{
 
-					dst.x = parent->x + (parent->w * dst.x);
-					dst.y = parent->y + (parent->h * dst.y);
+					dst.x = parent->x + (parent->w * transform.x);
+					dst.y = parent->y + (parent->h * transform.y);
 				}
 				else
 				{

@@ -38,7 +38,11 @@ namespace AvgEngine::Fnt
 			Logging::writeLog("[Fnt] [Debug] Clearing " + std::to_string(fonts->size()) + " fonts.");
 			#endif
 			for (Fnt* f : *fonts)
+			{
+				if (f->texture)
+					delete f->texture;
 				delete f;
+			}
 			fonts->clear();
 			#ifdef _DEBUG
 			Logging::writeLog("[Fnt] [Debug] Cleared successfully!");
@@ -57,13 +61,6 @@ namespace AvgEngine::Fnt
 			for (Fnt* f : *fonts)
 				if (f->fontFile == font)
 					return f;
-		}
-
-		~Fnt()
-		{
-			if (texture)
-				if (!texture->dontDelete)
-					delete texture;
 		}
 
 		FntChar GetChar(char c)

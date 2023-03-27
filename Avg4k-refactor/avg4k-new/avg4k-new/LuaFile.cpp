@@ -25,15 +25,11 @@ int lua_exception(lua_State* L, sol::optional<const std::exception&> maybe_excep
 
 void LuaFile::Launch()
 {
-	if (lua)
-	{
-		for (AvgEngine::OpenGL::Texture* t : textures)
-			delete t;
-		textures.clear();
-		delete lua;
-	}
+	for (AvgEngine::OpenGL::Texture* t : textures)
+		delete t;
+	textures.clear();
 	
-	lua = new sol::state();
+	lua = std::make_unique<sol::state>();
 
 	lua->open_libraries(sol::lib::base);
 	lua->open_libraries(sol::lib::table);

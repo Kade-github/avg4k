@@ -7,48 +7,50 @@ namespace Average4k::Lua::Base
 	public:
 		AvgEngine::Render::Rect* base = NULL;
 
-		float x = 0, y = 0;
-		float w = 0, h = 0;
-		float r = 255, g = 255, b = 255;
-		float a = 1;
-		float scale = 1;
-		float deg = 0;
+		double x = 0, y = 0;
+		double w = 0, h = 0;
+		double r = 255, g = 255, b = 255;
+		double a = 1;
+		double scale = 1;
+		double deg = 0;
 
 		rect() = default;
 
-		float getX() { return x; };
-		float getY() { return y; };
-		float getW() { return w; };
-		float getH() { return h; };
-		float getR() { return r; };
-		float getG() { return g; };
-		float getB() { return b; };
-		float getA() { return a; };
-		float getS() { return scale; };
-		float getD() { return deg; };
+		double getX() { return x; };
+		double getY() { return y; };
+		double getW() { return w; };
+		double getH() { return h; };
+		double getR() { return r; };
+		double getG() { return g; };
+		double getB() { return b; };
+		double getA() { return a; };
+		double getS() { return scale; };
+		double getD() { return deg; };
 
-		void setX(float _x) { x = _x; if (base) base->x = x; };
-		void setY(float x) { y = x; if (base) base->y = x; };
-		void setW(float x) { 
+		void setX(double _x) { 
+			x = _x; 
+			if (base) base->x = x; };
+		void setY(double x) { y = x; if (base) base->y = x; };
+		void setW(double x) { 
 			w = x; 
 			if (base) 
 				base->w = x;
 		};
-		void setH(float x) { h = x; if (base) base->h = x; };
-		void setR(float x) { r = x; if (base) base->r = x; };
-		void setG(float x) { g = x; if (base) base->g = x; };
-		void setB(float x) { b = x; if (base) base->b = x; };
-		void setA(float x) { a = x; if (base) base->a = x; };
-		void setS(float x) { scale = x; if (base) base->scale = x; };
-		void setD(float x) { deg = x; if (base) base->angle = x; };
+		void setH(double x) { h = x; if (base) base->h = x; };
+		void setR(double x) { r = x; if (base) base->r = x; };
+		void setG(double x) { g = x; if (base) base->g = x; };
+		void setB(double x) { b = x; if (base) base->b = x; };
+		void setA(double x) { a = x; if (base) base->a = x; };
+		void setS(double x) { scale = x; if (base) base->scale = x; };
+		void setD(double x) { deg = x; if (base) base->angle = x; };
 
-		rect(float _x, float _y)
+		rect(double _x, double _y)
 		{
 			x = _x;
 			y = _y;
 		}
 
-		rect(float _x, float _y, float _w, float _h)
+		rect(double _x, double _y, double _w, double _h)
 		{
 			x = _x;
 			y = _y;
@@ -56,7 +58,7 @@ namespace Average4k::Lua::Base
 			h = _h;
 		}
 
-		rect(float _x, float _y, float _w, float _h, float _r, float _g, float _b, float _a)
+		rect(double _x, double _y, double _w, double _h, double _r, double _g, double _b, double _a)
 		{
 			x = _x;
 			y = _y;
@@ -68,7 +70,7 @@ namespace Average4k::Lua::Base
 			a = _a;
 		}
 
-		rect(float _x, float _y, float _w, float _h, float _r, float _g, float _b, float _a, float _s, float _d)
+		rect(double _x, double _y, double _w, double _h, double _r, double _g, double _b, double _a, double _s, double _d)
 		{
 			x = _x;
 			y = _y;

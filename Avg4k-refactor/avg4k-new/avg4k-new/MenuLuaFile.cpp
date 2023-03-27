@@ -113,6 +113,7 @@ void Average4k::Lua::MenuLuaFile::Load()
 	sol::usertype<sprite> sprite_type = lua->new_usertype<sprite>("sprite",
 		sol::constructors<sprite(double, double, texture)>(),
 		"texture", &sprite::tex,
+		"center", sol::property(&sprite::getCenter, &sprite::setCenter),
 		sol::base_classes, sol::bases<gameObject>()
 		);
 

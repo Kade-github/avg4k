@@ -7,6 +7,10 @@ namespace Average4k::Lua::Base
 	public:
 		texture tex = texture("");
 
+		void setCenter(bool center);
+
+		bool getCenter();
+
 		sprite(float x, float y, texture _tex) : gameObject(x, y)
 		{
 			type = 1;

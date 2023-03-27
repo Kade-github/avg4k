@@ -1,5 +1,5 @@
 -- helper files
-HelperFiles = {'avatar.lua', 'container.lua', 'selection.lua'}
+HelperFiles = {'avatar.lua', 'containers.lua', 'selection.lua'}
 
 function Create()
     -- dofile on all helper files
@@ -22,6 +22,7 @@ function Create()
     -- helper file calls
 
     Avatar.create()
+    Containers.create()
 end
 
 -- last time

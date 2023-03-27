@@ -222,6 +222,9 @@
     <ClCompile Include="Base64.cpp">
       <Filter>Average4K\Engine\External\Base64</Filter>
     </ClCompile>
+    <ClCompile Include="LuaSprite.cpp">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes.h">

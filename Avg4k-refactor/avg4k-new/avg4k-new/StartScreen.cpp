@@ -35,7 +35,7 @@ void StartScreen::load()
 			{
 				if (Multiplayer::loggedIn)
 				{
-					tween.CreateTween(&bump->transform, Render::Rect(50, 120, bump->transform), 1, outCubic, [&]() {
+					tween.CreateTween(&bump->transform, Render::Rect(50, 120, bump->transform), 0.65, outCubic, [&]() {
 						tween.Clear();
 					Average4K::instant = true;
 					Average4K::Instance->SwitchMenu(new MainMenu(Average4K::skin->GetLua("main-menu")));

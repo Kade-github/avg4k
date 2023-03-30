@@ -196,4 +196,27 @@ void Average4k::Lua::MenuLuaFile::Load()
 			NULL);
 	});
 
+	lua->set_function("aabb_object", [&](Average4k::Lua::Base::gameObject& ob, Average4k::Lua::Base::gameObject& ob2) {
+		if (!ob.base || !ob2.base)
+		{
+			AvgEngine::Logging::writeLog("[Lua] [Error] Failure to check AABB! Object does not have a base. (did you forget to create it?)");
+			return false;
+		}
+		return AvgEngine::Utils::Collision::AABB(ob.base->transform.x, ob.base->transform.y, ob2.base->transform.x, ob2.base->transform.y, ob2.base->transform.w, ob2.base->transform.h, ob.base->transform.w, ob.base->transform.h, ob.base->transformRatio);
+	});
+
+	lua->set_function("aabb_rect", [&](rect r1, rect r2, bool ratio) {
+		return AvgEngine::Utils::Collision::AABB(r1.x, r1.y, r2.x, r2.y, r2.w, r2.h, r1.w, r1.h, ratio);
+	});
+
+	lua->set_function("vec2torect", [&](std::string s) {
+		std::vector<std::string> split = AvgEngine::Utils::StringTools::Split(s, ",");
+		if (split.size() != 2)
+		{
+			AvgEngine::Logging::writeLog("[Lua] [Error] Failed to convert vec2 to rect! Invalid string '" + s + "'!");
+			return rect(0, 0);
+		}
+		return rect(std::stod(split[0]), std::stod(split[1]));
+	});
+
 }

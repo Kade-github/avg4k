@@ -17,6 +17,11 @@ namespace AvgEngine::Events
 	struct Vec
 	{
 		float x, y;
+
+		std::string toString()
+		{
+			return std::to_string(x) + "," + std::to_string(y);
+		}
 	};
 
 	struct Event

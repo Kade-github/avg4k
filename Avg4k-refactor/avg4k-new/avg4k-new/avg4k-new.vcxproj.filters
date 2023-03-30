@@ -225,6 +225,9 @@
     <ClCompile Include="LuaSprite.cpp">
       <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
     </ClCompile>
+    <ClCompile Include="MenuLua.cpp">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes.h">

@@ -52,12 +52,8 @@ namespace Average4k::Lua
 		}
 #endif
 
-		void load()	override
-		{
-			file->Launch();
-			file->Start();
-			Menu::load();
-		}
+		void load()	override;
+
 
 	};
 }

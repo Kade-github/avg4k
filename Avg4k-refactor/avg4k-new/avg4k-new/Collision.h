@@ -34,5 +34,6 @@ namespace AvgEngine::Utils
 				x1 < _x2 + w2 && 
 				y1< _y2 + h2;
 		}
+
 	};
 }

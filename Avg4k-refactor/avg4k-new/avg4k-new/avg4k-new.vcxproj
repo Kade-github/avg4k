@@ -64,6 +64,7 @@
     <ClCompile Include="LuaText.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="MenuLua.cpp" />
     <ClCompile Include="MenuLuaFile.cpp" />
     <ClCompile Include="Multiplayer.cpp" />
     <ClCompile Include="pugixml.cpp" />

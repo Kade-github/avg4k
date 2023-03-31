@@ -1,12 +1,13 @@
 #include "LuaMenu.h"
-
-
+#include "Average4K.h"
 namespace Average4k::Lua
 {
 	void LuaMenu::load()
 	{
 		file->Launch();
 		file->Start();
+
+		Menu::load();
 
 		eManager->Subscribe(AvgEngine::Events::EventType::Event_KeyPress, [&](AvgEngine::Events::Event e)
 		{
@@ -28,6 +29,11 @@ namespace Average4k::Lua
 			file->Function("MouseUp", e.vector.toString());
 		});
 
-		Menu::load();
+		eManager->Subscribe(AvgEngine::Events::EventType::Event_Resize, [&](AvgEngine::Events::Event e)
+		{
+			sol::global_table t = file->lua->globals();
+			t["skin"]["upscale"] = Average4K::skin->upscale;
+			file->Function("Resize", e.vector.toString());
+		}, true, true);
 	}
 }

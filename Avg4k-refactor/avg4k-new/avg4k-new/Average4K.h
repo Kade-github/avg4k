@@ -72,7 +72,7 @@ public:
 		int w = std::stoi(s[0]);
 		int h = std::stoi(s[1]);
 
-		skin->upscale = static_cast<float>(w) / 1280.0f;
+		skin->upscale = static_cast<float>(w) / 1920.0f;
 
 		Game::Resize(w, h);
 	}

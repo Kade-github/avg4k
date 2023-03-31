@@ -1,16 +1,21 @@
 Containers = {}
 
 function Containers.create()
-    local solo = helper.createContainer("container", 0, 0)
-    add(solo)
-    solo.ratio = true
-    solo.transform.x = 50
-    solo.center = true
-    solo.transform.y = -50
-    solo.transform.scale = skin["upscale"] * 0.75
+    Containers.solo = helper.createContainer("container", 0, 0)
+    add(Containers.solo)
+    Containers.solo.ratio = true
+    Containers.solo.transform.x = 50
+    Containers.solo.center = true
+    Containers.solo.transform.y = -50
+    Containers.solo.transform.scale = skin["upscale"]
 
-    local endRect = copyRect(solo.transform)
-    endRect.y = 55
+    Containers.endRect = copyRect(Containers.solo.transform)
+    Containers.endRect.y = 55
 
-    tween(solo, endRect, 1, "outcubic")
+    tween(Containers.solo, Containers.endRect, 1, "outcubic")
+end
+
+function Containers.Resize()
+    Containers.solo.transform.scale = skin["upscale"]
+    cprint("resized container")
 end

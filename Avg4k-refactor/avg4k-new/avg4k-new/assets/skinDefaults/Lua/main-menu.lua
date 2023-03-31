@@ -23,6 +23,16 @@ function Create()
 
     Avatar.create()
     Containers.create()
+    Selection.create()
+
+    cprint("menu created!")
+end
+
+function Resize()
+    cprint("resizing elements...")
+    Avatar.Resize()
+    Containers.Resize()
+    Selection.Resize()
 end
 
 -- last time

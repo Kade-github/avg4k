@@ -64,10 +64,13 @@ namespace AvgEngine
 
 		virtual void Resize(int w, int h)
 		{
-			Render::Display::Resize(Window, w, h);
 			if (CurrentMenu)
+			{
 				CurrentMenu->camera.resize(w, h);
-
+				Render::Display::defaultShader->setProject(CurrentMenu->camera.projection);
+			}
+			Render::Display::Resize(Window, w, h);
+			Event(Events::Event(Events::EventType::Event_Resize));
 		}
 
 		/**

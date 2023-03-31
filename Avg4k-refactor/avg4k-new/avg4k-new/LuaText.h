@@ -25,7 +25,7 @@ namespace Average4k::Lua::Base
 			}
 		}
 
-		bool getSize()
+		float getSize()
 		{
 			return size;
 		}

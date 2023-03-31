@@ -61,7 +61,8 @@ void Average4k::Lua::MenuLuaFile::AddObject(Average4k::Lua::Base::gameObject& ob
 {
 	if (!ob.base)
 		CreateObject(ob);
-	Average4K::Instance->CurrentMenu->addObject(ob.base);
+	if (ob.base)
+		Average4K::Instance->CurrentMenu->addObject(ob.base);
 }
 
 void Average4k::Lua::MenuLuaFile::RemoveObject(Average4k::Lua::Base::gameObject& ob)
@@ -199,7 +200,7 @@ void Average4k::Lua::MenuLuaFile::Load()
 	lua->set_function("aabb_object", [&](Average4k::Lua::Base::gameObject& ob, Average4k::Lua::Base::gameObject& ob2) {
 		if (!ob.base || !ob2.base)
 		{
-			AvgEngine::Logging::writeLog("[Lua] [Error] Failure to check AABB! Object does not have a base. (did you forget to create it?)");
+			AvgEngine::Logging::writeLog("[Lua] [Error] Failure to check AABB! Object(s) do not have (a) base(s). (did you forget to create it?)");
 			return false;
 		}
 		return AvgEngine::Utils::Collision::AABB(ob.base->transform.x, ob.base->transform.y, ob2.base->transform.x, ob2.base->transform.y, ob2.base->transform.w, ob2.base->transform.h, ob.base->transform.w, ob.base->transform.h, ob.base->transformRatio);
@@ -217,6 +218,17 @@ void Average4k::Lua::MenuLuaFile::Load()
 			return rect(0, 0);
 		}
 		return rect(std::stod(split[0]), std::stod(split[1]));
+	});
+
+	lua->set_function("setResolution", [&](int w, int h) {
+		if (w <= 0 || h <= 0)
+		{
+			AvgEngine::Logging::writeLog("[Lua] [Error] Cannot set the resolution to a negative value (or 0)!");
+			return;
+		}
+		Average4K* c = static_cast<Average4K*>(Average4K::Instance);
+
+		c->SetResolution(std::to_string(w) + "x" + std::to_string(h));
 	});
 
 }

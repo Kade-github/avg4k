@@ -54,6 +54,24 @@ namespace AvgEngine::Base
 				delete texture;
 		}
 
+		void setRatio(bool r) override
+		{
+			if (transform.w > 1)
+			{
+				if (r)
+				{
+					transform.w = (static_cast<float>(texture->width) / parent->w);
+					transform.h = (static_cast<float>(texture->height) / parent->h);
+				}
+				else
+				{
+					transform.w = texture->width;
+					transform.h = texture->height;
+				}
+			}
+			GameObject::setRatio(r);
+		}
+
 		void draw() override
 		{
 			if (transform.a <= 0)
@@ -62,38 +80,37 @@ namespace AvgEngine::Base
 			Render::Rect prevTrans = transform;
 			if (transformRatio && parent) // reverse the ratio
 			{
-				transform.x = parent->x + (parent->w * (transform.x / 100));
-				transform.y = parent->y + (parent->h * (transform.y / 100));
- 				transform.w = (static_cast<float>(texture->width) * transform.scale);
-				transform.h = (static_cast<float>(texture->height) * transform.scale);
+				transform.x = parent->x + (parent->w * (transform.x));
+				transform.y = parent->y + (parent->h * (transform.y));
+				transform.w = parent->w * (transform.w);
+				transform.h = parent->h * (transform.h);
+				transform.w = transform.w * transform.scale;
+				transform.h = transform.h * transform.scale;
+
+				if (center)
+				{
+					transform.x -= transform.w / 2;
+					transform.y -= transform.h / 2;
+				}
 			}
 			GameObject::draw();
 
 			transform = prevTrans;
 
 			Render::Rect r = transform;
-			if (transformRatio && parent)
+			if (transformRatio && parent) 
 			{
-				r.x = parent->x + (parent->w * (r.x / 100));
-				r.y = parent->y + (parent->h * (r.y / 100));
+				r.x = parent->x + (parent->w * (r.x));
+				r.y = parent->y + (parent->h * (r.y));
 
-				if (r.w > 100)
-				{
-					r.w = (static_cast<float>(texture->width) / parent->w) * 100;
-					r.h = (static_cast<float>(texture->height) / parent->h) * 100;
-				}
-
-				r.w = parent->w * (r.w / 100);
-				r.h = parent->h * (r.h / 100);
+				r.w = parent->w * (r.w);
+				r.h = parent->h * (r.h);
 			}
 			else
 			{
 				r.x += parent->x;
 				r.y += parent->y;
 			}
-
-			r.w = r.w * transform.scale;
-			r.h = r.h * transform.scale;
 
 			if (center)
 			{

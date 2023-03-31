@@ -80,8 +80,10 @@ namespace AvgEngine::Base
 				if (transformRatio)
 				{
 
-					dst.x = parent->x + (parent->w * (transform.x / 100));
-					dst.y = parent->y + (parent->h * (transform.y / 100));
+					float xRatio = (parent->w * (transform.x));
+					float yRatio = (parent->h * (transform.y));
+					dst.x = parent->x + xRatio;
+					dst.y = parent->y + yRatio;
 				}
 				else
 				{

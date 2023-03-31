@@ -6,28 +6,30 @@ function Avatar.createIcon(notDefault)
     Avatar.border = helper.createSprite("Menu/border", 0,0)
     add(Avatar.border)
     Avatar.border.ratio = true
-    Avatar.border.transform.x = 1
-    Avatar.border.transform.y = -15
-    Avatar.border.transform.scale = skin["upscale"] * 0.55
+    Avatar.border.transform.x = 0.01
+    Avatar.border.transform.y = -0.15
+    Avatar.border.transform.scale = skin["upscale"] * 0.35
+
+    cprint("loaded border " .. tostring(Avatar.border.texture.width) .. "x" .. tostring(Avatar.border.texture.height))
 
     local endRect = copyRect(Avatar.border.transform)
-    endRect.y = 2.5
+    endRect.y = 0.02
 
     tween(Avatar.border, endRect, 1, "outcubic")
 
     Avatar.helloText = text.new(0,0, "ArialBold.fnt", "Not logged in.")
     create(Avatar.helloText)
     Avatar.helloText.ratio = true
-    Avatar.helloText.size = 24 * skin["upscale"]
-    Avatar.helloText.transform.y = 12 
-    Avatar.helloText.transform.x = 60
+    Avatar.helloText.size = 24.0 * skin["upscale"]
+    Avatar.helloText.transform.y = (14 * skin["upscale"]) / 100
+    Avatar.helloText.transform.x = 1.2
 
     Avatar.versionText = text.new(0,0, "ArialBold.fnt", "Avg4k indev-" .. online["version"])
     create(Avatar.versionText)
     Avatar.versionText.ratio = true
-    Avatar.versionText.size = 24 * skin["upscale"]
-    Avatar.versionText.transform.y = 24
-    Avatar.versionText.transform.x = 60
+    Avatar.versionText.size = 24.0 * skin["upscale"]
+    Avatar.versionText.transform.y = (40 * skin["upscale"]) / 100
+    Avatar.versionText.transform.x = 1.2
 
     if not notDefault then
         -- if we're not connected to the server, we'll just use the default avatar
@@ -36,8 +38,8 @@ function Avatar.createIcon(notDefault)
         Avatar.border:add(Avatar.av)
         Avatar.border:add(Avatar.helloText)
         Avatar.border:add(Avatar.versionText)
-        Avatar.av.transform.w = 55 * skin["upscale"];
-        Avatar.av.transform.h = 55 * skin["upscale"];
+        Avatar.av.transform.w = 1;
+        Avatar.av.transform.h = 1;
         Avatar.av.ratio = true
         return
     end
@@ -64,16 +66,18 @@ function Avatar.createIcon(notDefault)
     Avatar.border:add(Avatar.helloText)
     Avatar.border:add(Avatar.versionText)
     -- this makes it take up the entire sprite, since it's scalled down .55. (since 55% of the width/height is well, 100% of the width/height if it's scaled 55% down)
-    Avatar.av.transform.w = 55 * skin["upscale"];
-    Avatar.av.transform.h = 55 * skin["upscale"];
+    Avatar.av.transform.w = 1;
+    Avatar.av.transform.h = 1;
     Avatar.av.ratio = true
 
 end
 
 function Avatar.Resize()
-    Avatar.border.transform.scale = skin["upscale"]
-    Avatar.helloText.size = 24 * skin["upscale"]
-    Avatar.versionText.size = 24 * skin["upscale"]
+    Avatar.border.transform.scale = skin["upscale"] * 0.35
+    Avatar.helloText.size = 24.0 * skin["upscale"]
+    Avatar.helloText.transform.y = (14 * skin["upscale"]) / 100
+    Avatar.versionText.size = 24.0 * skin["upscale"]
+    Avatar.versionText.transform.y = (40 * skin["upscale"]) / 100
     
 end
 

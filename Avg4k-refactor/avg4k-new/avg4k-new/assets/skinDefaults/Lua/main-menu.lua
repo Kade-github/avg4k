@@ -16,8 +16,8 @@ function Create()
     bg.ratio = true
     bg.transform.x = 0.0
     bg.transform.y = 0.0
-    bg.transform.w = 100
-    bg.transform.h = 100
+    bg.transform.w = 1
+    bg.transform.h = 1
 
     -- helper file calls
 

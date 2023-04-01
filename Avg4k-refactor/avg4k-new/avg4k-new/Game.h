@@ -19,6 +19,8 @@ namespace AvgEngine
 
 		int fps = 0;
 
+		float fpsCap = 144;
+
 		Debug::Console console{};
 
 		std::mutex eventMutex;

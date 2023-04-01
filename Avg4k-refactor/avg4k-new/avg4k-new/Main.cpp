@@ -77,16 +77,35 @@ std::chrono::steady_clock::time_point startTime;
 
 uint32_t framecount;
 
-template <class Clock, class Duration>
-void
-sleep_until(std::chrono::time_point<Clock, Duration> tp)
-{
+void preciseSleep(double seconds) {
+	using namespace std;
 	using namespace std::chrono;
-	std::this_thread::sleep_until(tp - 10us);
-	while (tp >= Clock::now())
-		;
-}
 
+	static double estimate = 5e-3;
+	static double mean = 5e-3;
+	static double m2 = 0;
+	static int64_t count = 1;
+
+	while (seconds > estimate) {
+		auto start = high_resolution_clock::now();
+		Sleep(1);
+		auto end = high_resolution_clock::now();
+
+		double observed = (end - start).count() / 1e9;
+		seconds -= observed;
+
+		++count;
+		double delta = observed - mean;
+		mean += delta / count;
+		m2 += delta * (observed - mean);
+		double stddev = sqrt(m2 / (count - 1));
+		estimate = mean + stddev;
+	}
+
+	// spin lock
+	auto start = high_resolution_clock::now();
+	while ((high_resolution_clock::now() - start).count() / 1e9 < seconds);
+}
 
 void fpsthink(Game* g) {
 	uint32_t frametimesindex;
@@ -113,7 +132,7 @@ void fpsthink(Game* g) {
 		g->fps += frametimes[i];
 
 	g->fps /= count;
-	g->fps = std::floorf(1000.f / g->fps);
+	g->fps = std::floorf(1000.f / (float)g->fps);
 }
 
 
@@ -127,6 +146,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	Logging::openLog();
 #endif
 	Logging::writeLog("[Main] Logging system initialized.");
+
+	startTime = Clock::now();
 
 	if (!glfwInit())
 	{
@@ -247,19 +268,15 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	glfwSwapInterval(0);
 
-	using framerate = std::chrono::duration<int, std::ratio<1, 244>>;
-	auto prev = std::chrono::system_clock::now();
-	auto next = prev + framerate{ 1 };
-	int N = 0;
-	std::chrono::system_clock::duration sum{ 0 };
+	auto next_tick = Clock::now();
 
 	Render::Display::defaultShader->setProject(g->CurrentMenu->camera.projection);
 
 	while (!glfwWindowShouldClose(g->Window))
 	{
-		::sleep_until(next);
-		next += framerate{ 1 };
-
+		auto now_tick = Clock::now();
+		if (now_tick < next_tick)
+			continue;
 		glClearColor(0.05f, 0.05f, 0.05f, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
 
@@ -289,10 +306,11 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 		g->console.fpsData[reportId] = g->fps;
 
-		auto now = std::chrono::system_clock::now();
-		sum += now - prev;
-		++N;
-		prev = now;
+		auto nano = std::chrono::nanoseconds((int)(1e9 / g->fpsCap));
+
+		next_tick = now_tick + nano;
+
+		preciseSleep(std::chrono::duration_cast<std::chrono::microseconds>(next_tick - Clock::now()).count() / 1e6);
 	}
 
 	// let it rain the color of blood. あか

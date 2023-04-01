@@ -74,7 +74,21 @@ namespace AvgEngine::Base
 			for (GameObject* ob : Children)
 			{
 				// Render objects' draw calls.
-				if (ob->render)
+				if (ob->render && ob->zIndex <= zIndex)
+				{
+					ob->camera = camera;
+					ob->parent = &transform;
+					ob->draw();
+				}
+			}
+		};
+
+		virtual void drawTopZIndex()
+		{
+			for (GameObject* ob : Children)
+			{
+				// Render objects' draw calls.
+				if (ob->render && ob->zIndex > zIndex)
 				{
 					ob->camera = camera;
 					ob->parent = &transform;

@@ -6,12 +6,18 @@
 
 namespace AvgEngine::Fnt
 {
+	struct Kerning {
+		int with = 0;
+		int amount = 0;
+	};
+
 	struct FntChar
 	{
 		Render::Rect dst{};
 		Render::Rect src{};
-		int id = 0;
+		int id = -1;
 		int xAdvance = 0;
+		std::vector<Kerning> kernings;
 	};
 
 	class Fnt
@@ -77,6 +83,17 @@ namespace AvgEngine::Fnt
 			return cc;
 		}
 
+		FntChar* GetCharPtr(char c)
+		{
+			unsigned int u = c;
+
+			for (FntChar& cc : chars)
+				if (cc.id == u)
+					return &cc;
+
+			return NULL;
+		}
+
 		Fnt() = default;
 
 		Fnt(std::string file, std::string folder)
@@ -86,7 +103,7 @@ namespace AvgEngine::Fnt
 			pugi::xml_parse_result result = doc.load_file((folder + "/" + file).c_str());
 			if (!result)
 			{
-				Logging::writeLog("[Error] [FNT] Failed to parse " + (folder + "/" + file));
+				Logging::writeLog("[FNT] [Error] Failed to parse " + (folder + "/" + file));
 				return;
 			}
 
@@ -99,7 +116,7 @@ namespace AvgEngine::Fnt
 			}
 			else
 			{
-				Logging::writeLog("[Error] [FNT] " + file + " doesn't have a info node.");
+				Logging::writeLog("[FNT] [Error] " + file + " doesn't have a info node.");
 				return;
 			}
 
@@ -111,7 +128,7 @@ namespace AvgEngine::Fnt
 			}
 			else
 			{
-				Logging::writeLog("[Error] [FNT] " + file + " doesn't have a pages node.");
+				Logging::writeLog("[FNT] [Error] " + file + " doesn't have a pages node.");
 				return;
 			}
 
@@ -134,10 +151,43 @@ namespace AvgEngine::Fnt
 					ch.src = { x / texture->width, y / texture->height,w / texture->width, h / texture->height };
 					chars.push_back(ch);
 				}
+				#ifdef _DEBUG
+				Logging::writeLog("[Fnt] [Debug] Loaded " + std::to_string(chars.size()) + " characters.");
+				#endif
 			}
 			else
 			{
-				Logging::writeLog("[Error] [FNT] " + file + " doesn't have a chars node.");
+				Logging::writeLog("[FNT] [Error] " + file + " doesn't have a chars node.");
+				return;
+			}
+
+			n = doc.child("font").child("kernings");
+			if (n != NULL)
+			{
+				int loaded = 0;
+				for (pugi::xml_node c : n)
+				{
+					FntChar* cha = GetCharPtr(c.attribute("first").as_int());
+
+					if (!cha)
+					{
+						Logging::writeLog("[FNT] [Kernings] [Warning] " + std::string(c.attribute("first").as_string()) + " doesn't exist!");
+						continue;
+					}
+
+					Kerning k;
+					k.with = c.attribute("second").as_int();
+					k.amount = c.attribute("amount").as_int();
+					cha->kernings.push_back(k);
+					loaded++;
+				}
+				#ifdef _DEBUG
+				Logging::writeLog("[Fnt] [Debug] Loaded " + std::to_string(loaded) + " kernings.");
+				#endif
+			}
+			else
+			{
+				Logging::writeLog("[FNT] [Error] " + file + " doesn't have a kernings node.");
 				return;
 			}
 			

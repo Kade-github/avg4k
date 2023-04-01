@@ -56,6 +56,11 @@ namespace AvgEngine::Base
 
 		void setRatio(bool r) override
 		{
+			if (!parent)
+			{
+				AvgEngine::Logging::writeLog("[Sprite] [Error] You cannot set the ratio when the parent is null!");
+				return;
+			}
 			if (transform.w > 1)
 			{
 				if (r)
@@ -72,11 +77,8 @@ namespace AvgEngine::Base
 			GameObject::setRatio(r);
 		}
 
-		void draw() override
+		void drawChildren(bool zIndex)
 		{
-			if (transform.a <= 0)
-				return;
-
 			Render::Rect prevTrans = transform;
 			if (transformRatio && parent) // reverse the ratio
 			{
@@ -93,9 +95,23 @@ namespace AvgEngine::Base
 					transform.y -= transform.h / 2;
 				}
 			}
+			if (zIndex)
+			{
+				GameObject::drawTopZIndex();
+				transform = prevTrans;
+				return;
+			}
 			GameObject::draw();
-
 			transform = prevTrans;
+		}
+
+		void draw() override
+		{
+			if (transform.a <= 0)
+				return;
+
+
+			drawChildren(false);
 
 			Render::Rect r = transform;
 			if (transformRatio && parent) 
@@ -120,6 +136,8 @@ namespace AvgEngine::Base
 
 			drawCall c = Camera::FormatDrawCall(zIndex, texture, shader, Render::DisplayHelper::RectToVertex(r, src, center));
 			camera->addDrawCall(c);
+
+			drawChildren(true);
 		}
 	};
 }

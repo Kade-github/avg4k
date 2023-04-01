@@ -107,12 +107,27 @@ namespace AvgEngine::Base
 			Line currentLine;
 			Line currentOutline;
 			int d = 0;
-			for(char ch : text)
+			for(int i = 0; i < text.size(); i++)
 			{
+				char ch = text[i];
 				const Fnt::FntChar c = fnt->GetChar(ch);
 				if (c.id == -1)
 					continue;
-				float advance = ((static_cast<float>(c.xAdvance) * scale) + characterSpacing) * transform.scale;
+				float fileAdvance = static_cast<float>(c.xAdvance);
+				if (i + 1 < text.size())
+				{
+					// check kerning
+					char next = text[i + 1];
+					for (int j = 0; j < c.kernings.size(); j++)
+					{
+						if (c.kernings[j].with == next)
+						{
+							fileAdvance -= c.kernings[j].amount;
+							break;
+						}
+					}
+				}
+				float advance = ((fileAdvance * scale) + characterSpacing) * transform.scale;
 				if (ch == 32)
 				{
 					CharacterLine l;

@@ -338,9 +338,6 @@
     <ClInclude Include="FntParser.h">
       <Filter>Average4K\Engine\External\SpriteFont</Filter>
     </ClInclude>
-    <ClInclude Include="CPU.h">
-      <Filter>Average4K\Engine\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="SteamInterface.h">
       <Filter>Average4K\Avg4k\External\Steam</Filter>
     </ClInclude>
@@ -537,6 +534,12 @@
       <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
     </ClInclude>
     <ClInclude Include="LuaConfig.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Rectangle.h">
+      <Filter>Average4K\Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaRectangle.h">
       <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
     </ClInclude>
   </ItemGroup>

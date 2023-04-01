@@ -104,7 +104,6 @@
     <ClInclude Include="CPacketStatus.h" />
     <ClInclude Include="CPacketSubmitScore.h" />
     <ClInclude Include="CPacketWtfAmIn.h" />
-    <ClInclude Include="CPU.h" />
     <ClInclude Include="Display.h" />
     <ClInclude Include="Easing.h" />
     <ClInclude Include="EventManager.h" />
@@ -130,6 +129,7 @@
     <ClInclude Include="LuaGameObject.h" />
     <ClInclude Include="LuaMenu.h" />
     <ClInclude Include="LuaRect.h" />
+    <ClInclude Include="LuaRectangle.h" />
     <ClInclude Include="LuaSprite.h" />
     <ClInclude Include="LuaText.h" />
     <ClInclude Include="LuaTexture.h" />
@@ -143,6 +143,7 @@
     <ClInclude Include="Paths.h" />
     <ClInclude Include="pugiconfig.hpp" />
     <ClInclude Include="pugixml.hpp" />
+    <ClInclude Include="Rectangle.h" />
     <ClInclude Include="RhythmChannel.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="Shader.h" />

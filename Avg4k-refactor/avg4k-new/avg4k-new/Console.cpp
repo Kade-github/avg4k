@@ -3,7 +3,6 @@
 #include "Display.h"
 #include "Game.h"
 #include "implot.h"
-#include "CPU.h"
 
 using namespace AvgEngine::Debug;
 

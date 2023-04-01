@@ -1,6 +1,6 @@
 #include "MenuLuaFile.h"
 #include "Average4K.h"
-
+#include "LuaRectangle.h"
 
 
 void Average4k::Lua::MenuLuaFile::CreateObject(Average4k::Lua::Base::gameObject& ob)
@@ -10,8 +10,10 @@ void Average4k::Lua::MenuLuaFile::CreateObject(Average4k::Lua::Base::gameObject&
 	Sprite* sp = NULL;
 	AvgEngine::OpenGL::Texture* tex = NULL;
 	Text* te = NULL;
+	AvgEngine::Base::Rectangle* re = NULL;
 	Average4k::Lua::Base::sprite s = Average4k::Lua::Base::sprite(0, 0, Average4k::Lua::Base::texture(""));
 	Average4k::Lua::Base::textObject text = Average4k::Lua::Base::textObject(0, 0, "", "");
+	Average4k::Lua::Base::rectangle r = Average4k::Lua::Base::rectangle(0, 0, 0, 0);
 	switch (t) // creation of that type
 	{
 	case 0: // default ass game object
@@ -53,6 +55,17 @@ void Average4k::Lua::MenuLuaFile::CreateObject(Average4k::Lua::Base::gameObject&
 		ob.id = te->id;
 		ob.transform.base = &te->transform;
 		ob.base = te;
+		break;
+	case 3:
+		re = new AvgEngine::Base::Rectangle(ob.transform.x,ob.transform.y,ob.transform.w,ob.transform.h);
+		ob.base = re;
+		re->transform = AvgEngine::Render::Rect(ob.transform.x, ob.transform.y,
+			ob.transform.w, ob.transform.h,
+			ob.transform.r, ob.transform.g, ob.transform.b, ob.transform.a,
+			ob.transform.scale, ob.transform.deg);
+		ob.id = re->id;
+		ob.transform.base = &re->transform;
+		ob.base = re;
 		break;
 	}
 }
@@ -106,6 +119,7 @@ void Average4k::Lua::MenuLuaFile::Load()
 		"parent", &gameObject::parent,
 		"children", &gameObject::children,
 		"ratio", sol::property(&gameObject::getRatio, &gameObject::setRatio),
+		"order", sol::property(&gameObject::getZIndex, &gameObject::setZIndex),
 		"add", &gameObject::add,
 		"remove", &gameObject::removeObject,
 		"destroy", &gameObject::destroy
@@ -115,6 +129,12 @@ void Average4k::Lua::MenuLuaFile::Load()
 		sol::constructors<sprite(double, double, texture)>(),
 		"texture", &sprite::tex,
 		"center", sol::property(&sprite::getCenter, &sprite::setCenter),
+		sol::base_classes, sol::bases<gameObject>()
+		);
+
+	sol::usertype<rectangle> rectangle_type = lua->new_usertype<rectangle>("rectangle",
+		sol::constructors<rectangle(double, double, double, double)>(),
+		"outlineThickness", sol::property(&rectangle::getOutline, &rectangle::setOutline),
 		sol::base_classes, sol::bases<gameObject>()
 		);
 

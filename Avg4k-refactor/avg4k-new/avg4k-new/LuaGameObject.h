@@ -15,6 +15,19 @@ namespace Average4k::Lua::Base
 		int id = 0;
 		int type = 0;
 
+		int getZIndex()
+		{
+			if (base)
+				return base->transformRatio;
+			return false;
+		}
+
+		void setZIndex(int z)
+		{
+			if (base)
+				base->zIndex = z;
+		}
+
 		bool getRatio()
 		{
 			if (base)

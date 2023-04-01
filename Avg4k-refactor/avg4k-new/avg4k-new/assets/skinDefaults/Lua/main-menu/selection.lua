@@ -8,7 +8,7 @@ function Selection.create()
     Selection.soloText.size = 36 * (skin["upscale"])
     Selection.soloText.characterSpacing = 3
 
-    Selection.soloText.transform.y = Containers.endRect.y - 0.35
+    Selection.soloText.transform.y = 0.15
     Selection.soloText.transform.x = Containers.endRect.x - 0.27
 
     local sTEnd = copyRect(Selection.soloText.transform)
@@ -20,7 +20,7 @@ function Selection.create()
     Selection.multiplayerText.size = 36 * (skin["upscale"])
     Selection.multiplayerText.characterSpacing = 3
 
-    Selection.multiplayerText.transform.y = Containers.endRect.y - 0.35
+    Selection.multiplayerText.transform.y = 0.15
     Selection.multiplayerText.transform.x = Containers.endRect.x - 0.01
 
     local mTEnd = copyRect(Selection.multiplayerText.transform)
@@ -32,7 +32,7 @@ function Selection.create()
     Selection.settingsText.size = 36 * (skin["upscale"])
     Selection.settingsText.characterSpacing = 3
 
-    Selection.settingsText.transform.y = Containers.endRect.y - 0.35
+    Selection.settingsText.transform.y = 0.15
     Selection.settingsText.transform.x = Containers.endRect.x + 0.27
 
     local seTEnd = copyRect(Selection.settingsText.transform)
@@ -46,7 +46,7 @@ function Selection.create()
     tween(Selection.settingsText, seTEnd, 1.2, "outcubic")
 end
 
-function Resize()
+function Selection.Resize()
     Selection.soloText.size = 36 * (skin["upscale"])
     Selection.multiplayerText.size = 36 * (skin["upscale"])
     Selection.settingsText.size = 36 * (skin["upscale"])

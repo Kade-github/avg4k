@@ -7,15 +7,19 @@ function Avatar.createIcon(notDefault)
     add(Avatar.border)
     Avatar.border.ratio = true
     Avatar.border.transform.x = 0.01
-    Avatar.border.transform.y = -0.15
+    Avatar.border.transform.y = -0.8
     Avatar.border.transform.scale = skin["upscale"] * 0.35
-
-    cprint("loaded border " .. tostring(Avatar.border.texture.width) .. "x" .. tostring(Avatar.border.texture.height))
+    Avatar.oborder = helper.createSprite("Menu/outerBorder", 0,0)
+    add(Avatar.oborder)
+    Avatar.oborder.ratio = true
+    Avatar.oborder.transform.x = 0.01
+    Avatar.oborder.transform.y = -0.8
+    Avatar.oborder.transform.scale = skin["upscale"] * 0.35
 
     local endRect = copyRect(Avatar.border.transform)
     endRect.y = 0.02
 
-    tween(Avatar.border, endRect, 1, "outcubic")
+    tween(Avatar.border, endRect, 1.5, "outcubic")
 
     Avatar.helloText = text.new(0,0, "ArialBold.fnt", "Not logged in.")
     create(Avatar.helloText)
@@ -40,6 +44,10 @@ function Avatar.createIcon(notDefault)
         Avatar.border:add(Avatar.versionText)
         Avatar.av.transform.w = 1;
         Avatar.av.transform.h = 1;
+        Avatar.av.transform.scale = 0.9
+        Avatar.av.transform.x = 0.5
+        Avatar.av.transform.y = 0.5
+        Avatar.av.center = true
         Avatar.av.ratio = true
         return
     end
@@ -68,16 +76,19 @@ function Avatar.createIcon(notDefault)
     -- this makes it take up the entire sprite, since it's scalled down .55. (since 55% of the width/height is well, 100% of the width/height if it's scaled 55% down)
     Avatar.av.transform.w = 1;
     Avatar.av.transform.h = 1;
+    Avatar.av.transform.scale = 0.9
+    Avatar.av.transform.x = 0.5
+    Avatar.av.transform.y = 0.5
+    Avatar.av.center = true
     Avatar.av.ratio = true
 
 end
 
 function Avatar.Resize()
+    Avatar.oborder.transform.scale = skin["upscale"] * 0.35
     Avatar.border.transform.scale = skin["upscale"] * 0.35
     Avatar.helloText.size = 24.0 * skin["upscale"]
-    Avatar.helloText.transform.y = (14 * skin["upscale"]) / 100
     Avatar.versionText.size = 24.0 * skin["upscale"]
-    Avatar.versionText.transform.y = (40 * skin["upscale"]) / 100
     
 end
 

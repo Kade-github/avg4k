@@ -21,6 +21,8 @@ function Create()
 
     -- helper file calls
 
+    cprint("Initial scale: " .. tostring(skin["upscale"]))
+
     Avatar.create()
     Containers.create()
     Selection.create()
@@ -29,7 +31,7 @@ function Create()
 end
 
 function Resize()
-    cprint("resizing elements...")
+    cprint("Resize scale: " .. tostring(skin["upscale"]))
     Avatar.Resize()
     Containers.Resize()
     Selection.Resize()

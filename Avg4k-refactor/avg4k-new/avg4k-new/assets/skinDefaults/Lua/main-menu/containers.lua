@@ -16,6 +16,4 @@ function Containers.create()
 end
 
 function Containers.Resize()
-    Containers.solo.transform.scale = skin["upscale"]
-    cprint("resized container")
 end

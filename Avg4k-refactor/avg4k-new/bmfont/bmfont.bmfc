@@ -9,8 +9,8 @@ fontSize=128
 aa=1
 scaleH=100
 useSmoothing=1
-isBold=1
-isItalic=0
+isBold=0
+isItalic=1
 useUnicode=1
 disableBoxChars=1
 outputInvalidCharGlyph=0
@@ -35,7 +35,7 @@ widthPaddingFactor=0.00
 
 # output file
 outWidth=2000
-outHeight=400
+outHeight=700
 outBitDepth=32
 fontDescFormat=1
 fourChnlPacked=0
@@ -54,6 +54,6 @@ invB=0
 outlineThickness=0
 
 # selected chars
-chars=33-126
+chars=32-126
 
 # imported icon images

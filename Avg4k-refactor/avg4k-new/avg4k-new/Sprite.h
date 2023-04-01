@@ -114,18 +114,21 @@ namespace AvgEngine::Base
 			drawChildren(false);
 
 			Render::Rect r = transform;
-			if (transformRatio && parent) 
+			if (parent)
 			{
-				r.x = parent->x + (parent->w * (r.x));
-				r.y = parent->y + (parent->h * (r.y));
+				if (transformRatio)
+				{
+					r.x = parent->x + (parent->w * (r.x));
+					r.y = parent->y + (parent->h * (r.y));
 
-				r.w = parent->w * (r.w);
-				r.h = parent->h * (r.h);
-			}
-			else
-			{
-				r.x += parent->x;
-				r.y += parent->y;
+					r.w = parent->w * (r.w);
+					r.h = parent->h * (r.h);
+				}
+				else
+				{
+					r.x += parent->x;
+					r.y += parent->y;
+				}
 			}
 
 			if (center)

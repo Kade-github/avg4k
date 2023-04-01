@@ -29,20 +29,22 @@ namespace Average4k::Lua::Base
 
 		void setX(double _x) { 
 			x = _x; 
-			if (base) base->x = x; };
-		void setY(double x) { y = x; if (base) base->y = x; };
-		void setW(double x) { 
-			w = x; 
 			if (base) 
-				base->w = x;
+				base->x = _x; 
 		};
-		void setH(double x) { h = x; if (base) base->h = x; };
-		void setR(double x) { r = x; if (base) base->r = x; };
-		void setG(double x) { g = x; if (base) base->g = x; };
-		void setB(double x) { b = x; if (base) base->b = x; };
-		void setA(double x) { a = x; if (base) base->a = x; };
-		void setS(double x) { scale = x; if (base) base->scale = x; };
-		void setD(double x) { deg = x; if (base) base->angle = x; };
+		void setY(double _x) { y = _x; if (base) base->y = _x; };
+		void setW(double _x) { 
+			w = _x; 
+			if (base) 
+				base->w = _x;
+		};
+		void setH(double _x) { h = _x; if (base) base->h = _x; };
+		void setR(double _x) { r = _x; if (base) base->r = _x; };
+		void setG(double _x) { g = _x; if (base) base->g = _x; };
+		void setB(double _x) { b = _x; if (base) base->b = _x; };
+		void setA(double _x) { a = _x; if (base) base->a = _x; };
+		void setS(double _x) { scale = _x; if (base) base->scale = _x; };
+		void setD(double _x) { deg = _x; if (base) base->angle = _x; };
 
 		rect(double _x, double _y)
 		{

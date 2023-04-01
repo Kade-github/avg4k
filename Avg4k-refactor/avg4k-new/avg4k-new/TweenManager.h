@@ -73,9 +73,10 @@ namespace AvgEngine
 			tw.toModify->r = std::lerp(tw.start.r, tw.end.r, rT);
 			tw.toModify->g = std::lerp(tw.start.g, tw.end.g, rT);
 			tw.toModify->b = std::lerp(tw.start.b, tw.end.b, rT);
-			if (tw.func && t >= 1)
+			if (t >= 1)
 			{
-				tw.func();
+				if (tw.func)
+					tw.func();
 				Tweens.erase(std::ranges::remove_if(Tweens,
 					[&](const Tween x) { return x == tw; }).begin(), Tweens.end());
 			}

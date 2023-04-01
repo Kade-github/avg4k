@@ -43,10 +43,9 @@ void Average4k::Lua::MenuLuaFile::CreateObject(Average4k::Lua::Base::gameObject&
 		ob.transform.base = &sp->transform;
 		ob.base = sp;
 		break;
-	case 2:
+	case 2: // text
 		text = static_cast<Average4k::Lua::Base::textObject&>(ob);
 		te = new Text(text.transform.x, text.transform.y, Average4K::skin->GetFontPath(), text.font, text.text, text.size);
-		ob.base = te;
 		text.setText(text.text);
 		te->transform = AvgEngine::Render::Rect(ob.transform.x, ob.transform.y,
 			ob.transform.w, ob.transform.h,
@@ -56,9 +55,8 @@ void Average4k::Lua::MenuLuaFile::CreateObject(Average4k::Lua::Base::gameObject&
 		ob.transform.base = &te->transform;
 		ob.base = te;
 		break;
-	case 3:
+	case 3: // rectangle
 		re = new AvgEngine::Base::Rectangle(ob.transform.x,ob.transform.y,ob.transform.w,ob.transform.h);
-		ob.base = re;
 		re->transform = AvgEngine::Render::Rect(ob.transform.x, ob.transform.y,
 			ob.transform.w, ob.transform.h,
 			ob.transform.r, ob.transform.g, ob.transform.b, ob.transform.a,
@@ -75,7 +73,10 @@ void Average4k::Lua::MenuLuaFile::AddObject(Average4k::Lua::Base::gameObject& ob
 	if (!ob.base)
 		CreateObject(ob);
 	if (ob.base)
+	{
 		Average4K::Instance->CurrentMenu->addObject(ob.base);
+		ob.id = ob.base->id;
+	}
 }
 
 void Average4k::Lua::MenuLuaFile::RemoveObject(Average4k::Lua::Base::gameObject& ob)
@@ -135,6 +136,7 @@ void Average4k::Lua::MenuLuaFile::Load()
 	sol::usertype<rectangle> rectangle_type = lua->new_usertype<rectangle>("rectangle",
 		sol::constructors<rectangle(double, double, double, double)>(),
 		"outlineThickness", sol::property(&rectangle::getOutline, &rectangle::setOutline),
+		"center", sol::property(&rectangle::getCentered, &rectangle::setCentered),
 		sol::base_classes, sol::bases<gameObject>()
 		);
 

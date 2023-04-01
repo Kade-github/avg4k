@@ -76,6 +76,7 @@ namespace Average4k::Lua::Base
 				return;
 			}
 			base->addObject(o.base);
+			o.id = o.base->id;
 			children.push_back(o);
 		}
 
@@ -84,6 +85,11 @@ namespace Average4k::Lua::Base
 			if (!o.base)
 			{
 				AvgEngine::Logging::writeLog("[Lua] [Error] Failed to remove " + std::to_string(o.id) + ", it doesn't exist!");
+				return;
+			}
+			if (!base)
+			{
+				AvgEngine::Logging::writeLog("[Lua] [Error] Failed to remove " + std::to_string(o.id) + ", YOU don't exist. (you cant remove something from something that doesn't exist!)");
 				return;
 			}
 			base->removeObject(o.id);

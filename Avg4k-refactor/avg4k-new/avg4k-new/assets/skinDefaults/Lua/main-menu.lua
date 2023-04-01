@@ -30,6 +30,13 @@ function Create()
     cprint("menu created!")
 end
 
+function KeyPress(key)
+    local num = tonumber(key)
+    if num ~= nil then
+        Selection.keyPress(num)
+    end
+end
+
 function Resize()
     cprint("Resize scale: " .. tostring(skin["upscale"]))
     Avatar.Resize()
@@ -43,6 +50,5 @@ local lt = 0
 function Update(time)
     local delta = time - lt
     lt = time
-
 
 end

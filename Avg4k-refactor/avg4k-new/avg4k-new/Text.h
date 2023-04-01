@@ -114,7 +114,7 @@ namespace AvgEngine::Base
 				if (c.id == -1)
 					continue;
 				float fileAdvance = static_cast<float>(c.xAdvance);
-				if (i + 1 < text.size())
+				if (i + 1 < text.size() && fnt->hasKernings)
 				{
 					// check kerning
 					char next = text[i + 1];

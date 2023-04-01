@@ -1,5 +1,28 @@
 Selection = {}
 
+function Selection.select(container)
+    cprint("Selecting " .. tostring(container))
+    if container == 1 then
+        Selection.selectionRect.transform.x = Selection.soloText.transform.x
+    elseif container == 2 then
+        Selection.selectionRect.transform.x = Selection.multiplayerText.transform.x
+    elseif container == 3 then
+        Selection.selectionRect.transform.x = Selection.settingsText.transform.x
+    end
+end
+
+function Selection.keyPress(num)
+    if num == 49 then
+        Selection.select(1)
+    end
+    if num == 50 then
+        Selection.select(2)
+    end
+    if num == 51 then
+        Selection.select(3)
+    end
+end
+
 function Selection.create()
     Selection.soloText = text.new(0,0, "AndaleMono.fnt", "solo")
     add(Selection.soloText)
@@ -41,7 +64,24 @@ function Selection.create()
     Selection.multiplayerText.transform.y = -0.75
     Selection.settingsText.transform.y = -0.75
 
+
+    Selection.selectionRect = rectangle.new(0,0,0.15,0.004)
+    add(Selection.selectionRect)
+    Selection.selectionRect.ratio = true
+    Selection.selectionRect.center = true
+    Selection.selectionRect.transform.r = 83
+    Selection.selectionRect.transform.g = 234
+    Selection.selectionRect.transform.b = 209
+
+    Selection.selectionRect.transform.x = Selection.soloText.transform.x
+    Selection.selectionRect.transform.y = 0.17
+    local srEnd = copyRect(Selection.selectionRect.transform)
+
+    Selection.selectionRect.transform.y = -0.75
+
+
     tween(Selection.soloText, sTEnd, 1.2, "outcubic")
+    tween(Selection.selectionRect, srEnd, 1.2, "outcubic")
     tween(Selection.multiplayerText, mTEnd, 1.2, "outcubic")
     tween(Selection.settingsText, seTEnd, 1.2, "outcubic")
 end

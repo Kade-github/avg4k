@@ -29,6 +29,8 @@ namespace AvgEngine::Fnt
 		std::string name = "";
 		int ogSize = 0;
 
+		bool hasKernings = false;
+
 		OpenGL::Texture* texture = NULL;
 
 		static void ClearCache()
@@ -157,7 +159,7 @@ namespace AvgEngine::Fnt
 			}
 			else
 			{
-				Logging::writeLog("[FNT] [Error] " + file + " doesn't have a chars node.");
+				Logging::writeLog("[FNT] [Warning] " + file + " doesn't have a chars node.");
 				return;
 			}
 
@@ -181,13 +183,14 @@ namespace AvgEngine::Fnt
 					cha->kernings.push_back(k);
 					loaded++;
 				}
+				hasKernings = true;
 				#ifdef _DEBUG
 				Logging::writeLog("[Fnt] [Debug] Loaded " + std::to_string(loaded) + " kernings.");
 				#endif
 			}
 			else
 			{
-				Logging::writeLog("[FNT] [Error] " + file + " doesn't have a kernings node.");
+				Logging::writeLog("[FNT] [Warning] " + file + " doesn't have a kernings node.");
 				return;
 			}
 			

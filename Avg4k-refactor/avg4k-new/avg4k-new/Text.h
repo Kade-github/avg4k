@@ -40,7 +40,7 @@ namespace AvgEngine::Base
 
 		std::string text = "";
 
-		Text(int x, int y, std::string folder, std::string font, std::string _text, float _size) : GameObject(x,y)
+		Text(float x, float y, std::string folder, std::string font, std::string _text, float _size) : GameObject(x,y)
 		{
 			if (folder.size() != 0 && font.size() != 0)
 				SetFont(folder, font);

@@ -112,6 +112,15 @@
     <Filter Include="Average4K\Avg4k\External\LuaInterfaces\Base">
       <UniqueIdentifier>{0adde4ec-4e5e-4faa-a1c5-1c2e98d82b34}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Average4K\Avg4k\External\ChartParsers">
+      <UniqueIdentifier>{ff6df699-2656-4151-8400-24d04cb59a9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\ChartParsers\Stepmania">
+      <UniqueIdentifier>{187ea919-c5fa-46c8-b071-65250a3fd659}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\Packs">
+      <UniqueIdentifier>{9496398b-c6c6-43eb-8f29-a6718f85f1da}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -227,6 +236,9 @@
     </ClCompile>
     <ClCompile Include="MenuLua.cpp">
       <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadingPacksMenu.cpp">
+      <Filter>Average4K\Avg4k\Menus</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -541,6 +553,21 @@
     </ClInclude>
     <ClInclude Include="LuaRectangle.h">
       <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="ChartFile.h">
+      <Filter>Average4K\Avg4k\External\ChartParsers</Filter>
+    </ClInclude>
+    <ClInclude Include="StepFile.h">
+      <Filter>Average4K\Avg4k\External\ChartParsers\Stepmania</Filter>
+    </ClInclude>
+    <ClInclude Include="SongGatherer.h">
+      <Filter>Average4K\Avg4k\External\Packs</Filter>
+    </ClInclude>
+    <ClInclude Include="Pack.h">
+      <Filter>Average4K\Avg4k\External\Packs</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingPacksMenu.h">
+      <Filter>Average4K\Avg4k\Menus</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

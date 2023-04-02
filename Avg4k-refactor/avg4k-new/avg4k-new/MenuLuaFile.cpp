@@ -179,8 +179,6 @@ void Average4k::Lua::MenuLuaFile::Load()
 	t["gamepad_dpad_down"] = GLFW_GAMEPAD_BUTTON_DPAD_DOWN;
 	t["gamepad_dpad_left"] = GLFW_GAMEPAD_BUTTON_DPAD_LEFT;
 
-
-
 	lua->set_function("create", [&](gameObject& ob) {
 		if (ob.base)
 		{

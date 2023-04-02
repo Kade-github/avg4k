@@ -4,7 +4,7 @@
 #include "Multiplayer.h"
 #include "Paths.h"
 #include "Settings.h"
-#include "StartScreen.h"
+#include "LoadingPacksMenu.h"
 #include "SteamIncludes.h"
 #include "Avg4kCmdHandler.h"
 #include "Notifications.h"
@@ -63,7 +63,7 @@ public:
 		fpsText->transform.scale = skin->upscale;
 		alphaText->transform.scale = skin->upscale;
 
-		SwitchNoTrans(new StartScreen());
+		SwitchNoTrans(new LoadingPacksMenu());
 	}
 
 	void SetResolution(std::string res)

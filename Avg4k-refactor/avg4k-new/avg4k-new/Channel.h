@@ -31,6 +31,9 @@ namespace AvgEngine::Audio
 			Free();
 		}
 
+		/// <summary>
+		/// Free up the channel
+		/// </summary>
 		void Free()
 		{
 			if (id == -1)
@@ -42,6 +45,9 @@ namespace AvgEngine::Audio
 				std::free(data);
 		}
 
+		/// <summary>
+		/// Set the channel in a playing state
+		/// </summary>
 		void Play()
 		{
 			if (id == -1)
@@ -50,7 +56,9 @@ namespace AvgEngine::Audio
 			isPlaying = true;
 		}
 
-
+		/// <summary>
+		/// Stop the channel
+		/// </summary>
 		void Stop()
 		{
 			if (id == -1)
@@ -58,21 +66,34 @@ namespace AvgEngine::Audio
 			BASS_ChannelStop(id);
 		}
 
+		/// <summary>
+		/// Get the current position of the channel in seconds
+		/// </summary>
+		/// <returns>Seconds</returns>
 		float GetPos()
 		{
 			if (id == -1)
 				return 0;
-			return (BASS_ChannelBytes2Seconds(id, BASS_ChannelGetPosition(id, BASS_POS_BYTE))) * 1000;
+			return (BASS_ChannelBytes2Seconds(id, BASS_ChannelGetPosition(id, BASS_POS_BYTE)));
 		}
 
-		void SetPos(float ms)
+		/// <summary>
+		/// Set the current position of the channel
+		/// </summary>
+		/// <param name="s">Seconds</param>
+		void SetPos(float s)
 		{
 			if (id == -1)
 				return;
-			auto bytes = BASS_ChannelSeconds2Bytes(id, ms / 1000);
+			auto bytes = BASS_ChannelSeconds2Bytes(id, s);
 			BASS_ChannelSetPosition(id, bytes, BASS_POS_BYTE);
 		}
 
+		/// <summary>
+		/// Get a float* repersentation of the channel
+		/// </summary>
+		/// <param name="sampleLength">The length</param>
+		/// <returns>The sample</returns>
 		float* ReturnSongSample(float* sampleLength)
 		{
 			if (decode == -1)
@@ -93,6 +114,14 @@ namespace AvgEngine::Audio
 			return samples;
 		}
 
+		/// <summary>
+		/// Get a float* repersentation of the channel (optionally in FTT)
+		/// </summary>
+		/// <param name="length">The length of the channel</param>
+		/// <param name="nonFFTLength">The non FTT lenght of the channel</param>
+		/// <param name="FFT">Return an FTT repersentation?</param>
+		/// <returns>The samples</returns>
+		/// 
 		float* ReturnSamples(float length, float* nonFFTLength, bool FFT = true)
 		{
 			// FREE THIS KADE :))))
@@ -111,6 +140,10 @@ namespace AvgEngine::Audio
 			return samples;
 		}
 
+		/// <summary>
+		/// Get the current channels sample rate
+		/// </summary>
+		/// <returns>The sample rate</returns>
 		float SampleRate()
 		{
 			float sample;
@@ -118,7 +151,10 @@ namespace AvgEngine::Audio
 			return sample;
 		}
 
-
+		/// <summary>
+		/// Set the current channels time rate
+		/// </summary>
+		/// <param name="_rate">The rate to be set</param>
 		void RateChange(float _rate)
 		{
 			if (id == -1)
@@ -128,7 +164,9 @@ namespace AvgEngine::Audio
 			BASS_ChannelSetAttribute(id, BASS_ATTRIB_TEMPO, bassRate);
 		}
 
-
+		/// <summary>
+		/// Convert the channel to a Effects Channel
+		/// </summary>
 		void ConvertToFX()
 		{
 			if (id == -1)
@@ -137,6 +175,10 @@ namespace AvgEngine::Audio
 			id = BASS_FX_TempoCreate(BASS_StreamCreateFile(false, path.c_str(), 0, 0, BASS_STREAM_DECODE), BASS_FX_FREESOURCE);
 		}
 
+		/// <summary>
+		/// Set the current volume of the current channel
+		/// </summary>
+		/// <param name="vol">The volume to set</param>
 		void SetVolume(float vol)
 		{
 			if (id == -1)

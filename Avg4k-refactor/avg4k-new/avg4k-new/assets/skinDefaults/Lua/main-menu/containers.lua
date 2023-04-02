@@ -54,7 +54,22 @@ function Containers.create()
 
     Containers.soloCreate(Containers.solo)
 
-
+    Containers.multiplayer = helper.createContainer("container", 0, 0)
+    add(Containers.multiplayer)
+    Containers.multiplayer.ratio = true
+    Containers.multiplayer.transform.x = 1.5
+    Containers.multiplayer.center = true
+    Containers.multiplayer.transform.y = 0.5
+    Containers.multiplayer.transform.scale = skin["upscale"]
+    
+    Containers.settings = helper.createContainer("container", 0, 0)
+    add(Containers.settings)
+    Containers.settings.ratio = true
+    Containers.settings.transform.x = 1.5
+    Containers.settings.center = true
+    Containers.settings.transform.y = 0.5
+    Containers.settings.transform.scale = skin["upscale"]
+    
     -- Tweens
 
     tween(Containers.solo, Containers.endRect, 1, "outcubic")

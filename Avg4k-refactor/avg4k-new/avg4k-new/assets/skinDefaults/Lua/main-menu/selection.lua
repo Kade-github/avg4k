@@ -1,14 +1,56 @@
 Selection = {}
 
+Selection.currentContainerIndex = 1
+Selection.currentContainer = nil
+Selection.lastChange = 0
+
 function Selection.select(container)
+    if container == Selection.currentContainerIndex then 
+        return
+    end
+
+    local cTime = getTime()
+
+    if cTime > Selection.lastChange + 0.25 then
+        Selection.lastChange = cTime
+    else
+        return
+    end
+
     cprint("Selecting " .. tostring(container))
+
+    local cRect = copyRect(Selection.currentContainer.transform)
+    local nContainer = nil
+    
     if container == 1 then
+        nContainer = Containers.solo
         Selection.selectionRect.transform.x = Selection.soloText.transform.x
     elseif container == 2 then
+        nContainer = Containers.multiplayer
         Selection.selectionRect.transform.x = Selection.multiplayerText.transform.x
     elseif container == 3 then
+        nContainer = Containers.settings
         Selection.selectionRect.transform.x = Selection.settingsText.transform.x
     end
+
+    local nRect = copyRect(nContainer.transform)
+    nRect.x = 0.5
+    nRect.y = 0.5
+    cRect.y = 0.5
+
+    if container < Selection.currentContainerIndex then
+        nContainer.transform.x = -1.5
+        cRect.x = 1.5
+    else
+        nContainer.transform.x = 1.5
+        cRect.x = -1.5
+    end
+
+    tween(Selection.currentContainer, cRect, 0.75, "outCubic")
+    tween(nContainer, nRect, 0.75, "outCubic")
+
+    Selection.currentContainerIndex = container
+    Selection.currentContainer = nContainer
 end
 
 function Selection.keyPress(num)
@@ -32,7 +74,7 @@ function Selection.create()
     Selection.soloText.characterSpacing = 3
 
     Selection.soloText.transform.y = 0.15
-    Selection.soloText.transform.x = Containers.endRect.x - 0.27
+    Selection.soloText.transform.x = Containers.endRect.x - 0.25
 
     local sTEnd = copyRect(Selection.soloText.transform)
 
@@ -44,7 +86,7 @@ function Selection.create()
     Selection.multiplayerText.characterSpacing = 3
 
     Selection.multiplayerText.transform.y = 0.15
-    Selection.multiplayerText.transform.x = Containers.endRect.x - 0.01
+    Selection.multiplayerText.transform.x = Containers.endRect.x + 0.02
 
     local mTEnd = copyRect(Selection.multiplayerText.transform)
 
@@ -56,7 +98,7 @@ function Selection.create()
     Selection.settingsText.characterSpacing = 3
 
     Selection.settingsText.transform.y = 0.15
-    Selection.settingsText.transform.x = Containers.endRect.x + 0.27
+    Selection.settingsText.transform.x = Containers.endRect.x + 0.25
 
     local seTEnd = copyRect(Selection.settingsText.transform)
 
@@ -65,7 +107,7 @@ function Selection.create()
     Selection.settingsText.transform.y = -0.75
 
 
-    Selection.selectionRect = rectangle.new(0,0,0.15,0.004)
+    Selection.selectionRect = rectangle.new(0,0,0.2,0.004)
     add(Selection.selectionRect)
     Selection.selectionRect.ratio = true
     Selection.selectionRect.center = true
@@ -84,6 +126,9 @@ function Selection.create()
     tween(Selection.selectionRect, srEnd, 1.2, "outcubic")
     tween(Selection.multiplayerText, mTEnd, 1.2, "outcubic")
     tween(Selection.settingsText, seTEnd, 1.2, "outcubic")
+
+    Selection.currentContainer = Containers.solo
+    Selection.lastChange = getTime() + 1.2
 end
 
 function Selection.Resize()

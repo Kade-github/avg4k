@@ -44,11 +44,14 @@ function Resize()
     Selection.Resize()
 end
 
+Globals = {}
+
 -- last time
-local lt = 0
+Globals.lt = 0
 
 function Update(time)
-    local delta = time - lt
-    lt = time
+    local t = tonumber(time)
+    local delta = t - Globals.lt
+    Globals.lt = t
 
 end

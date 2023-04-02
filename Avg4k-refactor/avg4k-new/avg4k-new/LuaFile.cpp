@@ -92,4 +92,8 @@ void LuaFile::Load()
 		tex.h = t->height;
 		tex.id = t->id;
 	});
+
+	lua->set_function("getTime", [&]() {
+		return glfwGetTime();
+	});
 }

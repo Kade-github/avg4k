@@ -11,7 +11,9 @@ namespace AvgEngine::Events
 		Event_LoadMenu = 4,
 		Event_UnloadMenu = 5,
 		Event_ReloadFont = 6,
-		Event_Resize = 7,
+		Event_GamepadPress = 7,
+		Event_GamepadAxis = 8,
+		Event_Resize = 9,
 		Event_Null = -1
 	};
 

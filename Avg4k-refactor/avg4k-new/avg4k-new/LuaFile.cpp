@@ -96,4 +96,18 @@ void LuaFile::Load()
 	lua->set_function("getTime", [&]() {
 		return glfwGetTime();
 	});
+
+	lua->set_function("getMousePos", [&]() {
+		double x, y;
+		glfwGetCursorPos(Average4K::Instance->Window, &x, &y);
+		return std::make_tuple(x, y);
+	});
+
+	lua->set_function("getMousePosRelative", [&]() {
+		double x, y;
+		glfwGetCursorPos(Average4K::Instance->Window, &x, &y);
+		return std::make_tuple(x / AvgEngine::Render::Display::width, y / AvgEngine::Render::Display::height);
+	});
+
+
 }

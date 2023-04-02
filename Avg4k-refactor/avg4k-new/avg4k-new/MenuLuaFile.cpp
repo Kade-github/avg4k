@@ -164,6 +164,23 @@ void Average4k::Lua::MenuLuaFile::Load()
 
 	t["skin"] = lua->create_table_with("upscale", Average4K::skin->upscale);
 
+	t["gamepad_a"] = GLFW_GAMEPAD_BUTTON_A;
+	t["gamepad_b"] = GLFW_GAMEPAD_BUTTON_B;
+	t["gamepad_x"] = GLFW_GAMEPAD_BUTTON_X;
+	t["gamepad_y"] = GLFW_GAMEPAD_BUTTON_Y;
+	t["gamepad_lb"] = GLFW_GAMEPAD_BUTTON_LEFT_BUMPER;
+	t["gamepad_rb"] = GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER;
+	t["gamepad_back"] = GLFW_GAMEPAD_BUTTON_BACK;
+	t["gamepad_start"] = GLFW_GAMEPAD_BUTTON_START;
+	t["gamepad_ls"] = GLFW_GAMEPAD_BUTTON_LEFT_THUMB;
+	t["gamepad_rs"] = GLFW_GAMEPAD_BUTTON_RIGHT_THUMB;
+	t["gamepad_dpad_up"] = GLFW_GAMEPAD_BUTTON_DPAD_UP;
+	t["gamepad_dpad_right"] = GLFW_GAMEPAD_BUTTON_DPAD_RIGHT;
+	t["gamepad_dpad_down"] = GLFW_GAMEPAD_BUTTON_DPAD_DOWN;
+	t["gamepad_dpad_left"] = GLFW_GAMEPAD_BUTTON_DPAD_LEFT;
+
+
+
 	lua->set_function("create", [&](gameObject& ob) {
 		if (ob.base)
 		{

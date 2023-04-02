@@ -21,6 +21,8 @@ namespace AvgEngine
 
 		float fpsCap = 144;
 
+		std::string controllerName = "";
+
 		Debug::Console console{};
 
 		std::mutex eventMutex;
@@ -85,8 +87,30 @@ namespace AvgEngine
 			glfwGetCursorPos(Window, x, y);
 		}
 
+		virtual void HandleGamepad()
+		{
+			GLFWgamepadstate state;
+
+			if (glfwGetGamepadState(GLFW_JOYSTICK_1, &state))
+			{
+				if (controllerName.size() == 0)
+				{
+					controllerName = glfwGetGamepadName(GLFW_JOYSTICK_1);
+					AvgEngine::Logging::writeLog("[Gamepad] Controller conncted with name " + controllerName + " under slot 1.");
+				}
+
+				for (int i = 0; i < 15; i++)
+					if (state.buttons[i])
+						QueueEvent(Events::Event(Events::EventType::Event_GamepadPress, i));
+			}
+			else
+				controllerName = "";
+		}
+
 		virtual void update()
 		{
+			HandleGamepad();
+
 			if (queuedEvents.size() != 0)
 			{
 				if (eventMutex.try_lock())

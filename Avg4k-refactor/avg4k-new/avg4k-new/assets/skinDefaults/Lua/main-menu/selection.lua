@@ -65,6 +65,24 @@ function Selection.keyPress(num)
     end
 end
 
+function Selection.gamepadPress(num)
+    if num == gamepad_rb then
+        local next = Selection.currentContainerIndex + 1
+        if next > 3 then
+            next = 1
+        end
+        Selection.select(next)
+    end
+
+    if num == gamepad_lb then
+        local next = Selection.currentContainerIndex - 1
+        if next < 1 then
+            next = 3
+        end
+        Selection.select(next)
+    end
+end
+
 function Selection.create()
     Selection.soloText = text.new(0,0, "AndaleMono.fnt", "solo")
     add(Selection.soloText)

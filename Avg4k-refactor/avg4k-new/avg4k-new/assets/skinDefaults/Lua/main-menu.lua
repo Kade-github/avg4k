@@ -37,6 +37,13 @@ function KeyPress(key)
     end
 end
 
+function GamepadPress(key)
+    local num = tonumber(key)
+    if num ~= nil then
+        Selection.gamepadPress(num)
+    end
+end
+
 function Resize()
     cprint("Resize scale: " .. tostring(skin["upscale"]))
     Avatar.Resize()

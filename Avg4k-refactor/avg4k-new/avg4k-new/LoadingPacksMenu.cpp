@@ -25,7 +25,7 @@ void LoadingPacksMenu::load()
 void LoadingPacksMenu::draw()
 {
 	progress->text = std::to_string(gather.done) + " loaded.";
-	if (gather.finished)
+	if (gather.total == gather.done)
 	{
 		if (!isLoadingInto)
 		{

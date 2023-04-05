@@ -1,6 +1,8 @@
 #pragma once
 #include "includes.h"
-#include <boost/thread.hpp>
+#include <boost/asio/thread_pool.hpp>
+#include <boost/asio/post.hpp>
+
 #include "StepFile.h"
 #include "Pack.h"
 
@@ -12,8 +14,8 @@ namespace Average4k::Chart::Collection
 	class SongGatherer
 	{
 	public:
+		int total = 0;
 		int done = 0;
-		bool finished = false;
 		std::vector<Pack> packs = {};
 
 		std::vector<std::thread> threads{};
@@ -21,43 +23,23 @@ namespace Average4k::Chart::Collection
 		void FindPacks(std::string directory)
 		{
 			// itterate through the directory
-			finished = false;
+
 			packs.clear();
 
-
+			total = 0;
 			done = 0;
 
-			// TODO: multithread the shit out of this (too lazy rn)
+			static std::mutex l;
 
+			boost::asio::thread_pool pool(8);
 
-			for (const auto& entry : std::filesystem::directory_iterator(directory))
-			{
-				if (entry.is_directory())
-				{
-					std::string path = entry.path().string();
-					Pack p = Pack(path);
-					if (p.good)
-					{
-						std::vector<ChartFile> charts = FindCharts(path);
-
-						// copy all the charts found onto the pack.
-						for (ChartFile c : charts)
-							p.files.push_back(c);
-
-						// push the pack onto the list
-						packs.push_back(p);
-					}
-					done++;
-
-				}
-			}
-			finished = true;
-
+			
+	
 		}
 
-		std::vector<ChartFile> FindCharts(std::string dir)
+		std::vector<std::string> FindCharts(std::string dir)
 		{
-			std::vector<ChartFile> charts = {};
+			std::vector<std::string> charts = {};
 			// itterate through the directory
 			for (const auto& entry : std::filesystem::directory_iterator(dir))
 			{
@@ -69,14 +51,8 @@ namespace Average4k::Chart::Collection
 					{
 						if (file.is_regular_file())
 						{
-							std::string ext = file.path().extension().string();
-							if (ext == ".sm" || ext == ".ssc") // Stepmania/Stepmania 5
-							{
-								StepFile f = StepFile(file.path().string());
-								f.Parse();
-								if (f.good)
-									charts.push_back(f);
-							}
+							std::string p = file.path().string();
+							charts.push_back(p);
 						}
 					}
 				}

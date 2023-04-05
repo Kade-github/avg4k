@@ -5,6 +5,7 @@
 #include <chrono>
 #include <wtypes.h>
 #include <cstdint>
+#include <boost/algorithm/string.hpp>
 namespace AvgEngine::Utils
 {
 	class StringTools
@@ -26,17 +27,9 @@ namespace AvgEngine::Utils
 
         static std::string Trim(const std::string& s)
         {
-            auto start = s.begin();
-            while (start != s.end() && std::isspace(*start)) {
-                start++;
-            }
-
-            auto end = s.end();
-            do {
-                end--;
-            } while (std::distance(start, end) > 0 && std::isspace(*end));
-
-            return std::string(start, end + 1);
+            std::string t = s;
+            boost::trim(t);
+            return t;
         }
 
         static bool isNumber(const std::string& s)

@@ -86,10 +86,10 @@ void StartScreen::load()
 
 	Render::Rect r = logo->transform;
 	r.a = 1;
-	tween.CreateTween(&logo->transform, r, Average4k::Utils::TimeUtils::ConvertBeatToTime(bpm, _tBeat) / 1000, Easing::Easing::getEasingFunction("outcubic"), NULL);
+	tween.CreateTween(&logo->transform, r, Average4k::Utils::TimeUtils::ConvertBeatToTime(bpm, _tBeat), Easing::Easing::getEasingFunction("outcubic"), NULL);
 	bopBeat = cf.Float("bop");
-	bSecond = Average4k::Utils::TimeUtils::ConvertBeatToTime(bpm, 1) / 1000;
-	bSecond4 = Average4k::Utils::TimeUtils::ConvertBeatToTime(bpm, 4) / 1000;
+	bSecond = Average4k::Utils::TimeUtils::ConvertBeatToTime(bpm, 1);
+	bSecond4 = Average4k::Utils::TimeUtils::ConvertBeatToTime(bpm, 4);
 	outCubic = Easing::Easing::getEasingFunction("outcubic");
 
 	
@@ -120,7 +120,7 @@ void StartScreen::draw()
 		tween.CreateTween(&logo->transform, r, bSecond, outCubic, NULL);
 		r = whs->transform;
 		r.a = 1;
-		tween.CreateTween(&whs->transform, r, Average4k::Utils::TimeUtils::ConvertBeatToTime(bpm, _eBeat - (beatOffset + _tBeat)) / 1000, outCubic, NULL);
+		tween.CreateTween(&whs->transform, r, Average4k::Utils::TimeUtils::ConvertBeatToTime(bpm, _eBeat - (beatOffset + _tBeat)), outCubic, NULL);
 	}
 	if (beat >= _eBeat && !started)
 	{

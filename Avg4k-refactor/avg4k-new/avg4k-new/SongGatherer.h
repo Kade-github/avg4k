@@ -2,6 +2,7 @@
 #include "includes.h"
 #include <boost/asio/thread_pool.hpp>
 #include <boost/asio/post.hpp>
+#include <boost/bind.hpp>
 
 #include "StepFile.h"
 #include "Pack.h"
@@ -20,22 +21,7 @@ namespace Average4k::Chart::Collection
 
 		std::vector<std::thread> threads{};
 
-		void FindPacks(std::string directory)
-		{
-			// itterate through the directory
-
-			packs.clear();
-
-			total = 0;
-			done = 0;
-
-			static std::mutex l;
-
-			boost::asio::thread_pool pool(8);
-
-			
-	
-		}
+		void FindPacks(std::string directory);
 
 		std::vector<std::string> FindCharts(std::string dir)
 		{
@@ -49,10 +35,13 @@ namespace Average4k::Chart::Collection
 					// itterate through all the files in this directory, find a chart file.
 					for (const auto& file : std::filesystem::directory_iterator(path))
 					{
-						if (file.is_regular_file())
+						std::string ext = file.path().extension().string();
+
+						if (file.is_regular_file() && (ext == ".sm" || ext == ".ssc"))
 						{
 							std::string p = file.path().string();
 							charts.push_back(p);
+							break;
 						}
 					}
 				}

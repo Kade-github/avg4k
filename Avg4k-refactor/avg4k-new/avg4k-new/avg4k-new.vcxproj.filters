@@ -240,6 +240,9 @@
     <ClCompile Include="LoadingPacksMenu.cpp">
       <Filter>Average4K\Avg4k\Menus</Filter>
     </ClCompile>
+    <ClCompile Include="SongGatherer.cpp">
+      <Filter>Average4K\Avg4k\External\Packs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes.h">
@@ -557,9 +560,6 @@
     <ClInclude Include="ChartFile.h">
       <Filter>Average4K\Avg4k\External\ChartParsers</Filter>
     </ClInclude>
-    <ClInclude Include="StepFile.h">
-      <Filter>Average4K\Avg4k\External\ChartParsers\Stepmania</Filter>
-    </ClInclude>
     <ClInclude Include="SongGatherer.h">
       <Filter>Average4K\Avg4k\External\Packs</Filter>
     </ClInclude>
@@ -568,6 +568,9 @@
     </ClInclude>
     <ClInclude Include="LoadingPacksMenu.h">
       <Filter>Average4K\Avg4k\Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="StepFile.h">
+      <Filter>Average4K\Avg4k\External\ChartParsers\Stepmania</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

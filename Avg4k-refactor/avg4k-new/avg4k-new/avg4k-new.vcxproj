@@ -71,6 +71,7 @@
     <ClCompile Include="pugixml.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SkinUtils.cpp" />
+    <ClCompile Include="SongGatherer.cpp" />
     <ClCompile Include="StartScreen.cpp" />
     <ClCompile Include="stbi.cpp" />
     <ClCompile Include="Texture.cpp" />

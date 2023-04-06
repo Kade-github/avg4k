@@ -19,7 +19,6 @@ namespace Average4k::Chart::Collection
 		int done = 0;
 		std::vector<Pack> packs = {};
 
-		std::vector<std::thread> threads{};
 
 		void FindPacks(std::string directory);
 

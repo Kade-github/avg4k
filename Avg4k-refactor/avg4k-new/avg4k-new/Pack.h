@@ -13,7 +13,7 @@ namespace Average4k::Chart
 		std::string bannerPath = "";
 		bool showName = false;
 
-		std::vector<ChartFile*> files = {};
+		std::vector<ChartFile> files = {};
 
 		bool good = false;
 

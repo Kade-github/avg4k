@@ -55,6 +55,8 @@ namespace Average4k::Chart
 
 		int Chart_Type;
 
+		float previewStart = 0;
+
 		std::vector<TimingPoint> TimingPoints;
 		std::vector<StopPoint> Stops;
 		std::vector<Difficulty> Difficulties;

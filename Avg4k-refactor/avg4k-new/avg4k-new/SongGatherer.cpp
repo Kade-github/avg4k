@@ -1,15 +1,18 @@
 #include "SongGatherer.h"
 
-void ThreadTask(Average4k::Chart::Collection::SongGatherer* _this, std::vector<Average4k::Chart::Pack>&foundPacks, int i)
+std::mutex songGatherer_mutex;
+
+void ThreadTask(Average4k::Chart::Collection::SongGatherer* _this, std::string cPath, Average4k::Chart::Pack& pack)
 {
-	Average4k::Chart::Pack p = foundPacks[i];
-	std::vector<std::string> charts = _this->FindCharts(p.path);
-	for (int c = 0; c < charts.size(); c++)
+	Average4k::Chart::StepFile f = Average4k::Chart::StepFile(cPath);
+	f.Parse();
+	songGatherer_mutex.lock();
+	if (f.good)
 	{
-		std::string cPath = charts[c];
+ 		pack.files.push_back(f);
 	}
-	_this->packs.push_back(p);
 	_this->done++;
+	songGatherer_mutex.unlock();
 }
 
 void Average4k::Chart::Collection::SongGatherer::FindPacks(std::string directory)
@@ -24,7 +27,6 @@ void Average4k::Chart::Collection::SongGatherer::FindPacks(std::string directory
 
 	// itterate through the directory
 
-	std::vector<Pack> foundPacks{};
 	for (const auto& entry : std::filesystem::directory_iterator(directory))
 	{
 		std::string path = entry.path().string();
@@ -32,17 +34,28 @@ void Average4k::Chart::Collection::SongGatherer::FindPacks(std::string directory
 		{
 			Pack p = Pack(path);
 			if (p.good)
-				foundPacks.push_back(p);
+			{
+				packs.push_back(p);
+			}
 		}
 	}
 
-	total = foundPacks.size() - 1;
 
-	boost::asio::thread_pool pool(8);
+	boost::asio::thread_pool pool(24);
 
-	for (int i = 0; i < foundPacks.size(); i++)
+	int totalC = 0;
+
+	for (int i = 0; i < packs.size(); i++)
 	{
-		boost::asio::post(pool, boost::bind(ThreadTask, this, foundPacks, i));
+		std::vector<std::string> charts = {};
+		Pack& p = packs[i];
+		charts = FindCharts(p.path);
+		total += charts.size();
+		for (int j = 0; j < charts.size(); j++)
+		{
+			boost::asio::post(pool, boost::bind(ThreadTask, this, charts[j], std::ref(p)));
+			totalC++;
+		}
 	}
-
+	pool.wait();
 }

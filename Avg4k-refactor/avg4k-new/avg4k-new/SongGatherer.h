@@ -20,7 +20,7 @@ namespace Average4k::Chart::Collection
 		std::vector<Pack> packs = {};
 
 
-		void FindPacks(std::string directory);
+		void FindPacks(std::string directory, int threads);
 
 		std::vector<std::string> FindCharts(std::string dir)
 		{

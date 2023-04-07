@@ -1,0 +1,2 @@
+# setting this higher only affects good cpu's.
+threads: 24

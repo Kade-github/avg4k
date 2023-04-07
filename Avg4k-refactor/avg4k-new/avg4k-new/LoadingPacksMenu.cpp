@@ -21,7 +21,20 @@ void LoadingPacksMenu::load()
 	progress->setRatio(true);
 
 	loadingPacks_startTime = glfwGetTime();
-	gather.FindPacks("assets/charts/");
+	Average4k::External::ConfigReader c = Average4k::External::ConfigReader("assets/songGather.meta");
+
+	int threads = 24;
+	if (c.good)
+	{
+		threads = c.Int("threads");
+		AvgEngine::Logging::writeLog("[LoadingPacksMenu] Loading charts with thread count: " + std::to_string(threads));
+	}
+	else
+	{
+		AvgEngine::Logging::writeLog("[LoadingPacksMenu] [Warning] Failed to load songGather.meta, using default thread count of 24.");
+	}
+
+	gather.FindPacks("assets/charts/", threads);
 }
 
 void LoadingPacksMenu::draw()

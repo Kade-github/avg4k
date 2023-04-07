@@ -28,7 +28,7 @@ void ThreadTask(Average4k::Chart::Collection::SongGatherer* _this, std::string c
 	}
 }
 
-void Average4k::Chart::Collection::SongGatherer::FindPacks(std::string directory)
+void Average4k::Chart::Collection::SongGatherer::FindPacks(std::string directory, int threads)
 {
 
 	packs.clear();
@@ -54,7 +54,7 @@ void Average4k::Chart::Collection::SongGatherer::FindPacks(std::string directory
 	}
 
 
-	boost::asio::thread_pool pool(24);
+	boost::asio::thread_pool pool(threads);
 
 	int totalC = 0;
 

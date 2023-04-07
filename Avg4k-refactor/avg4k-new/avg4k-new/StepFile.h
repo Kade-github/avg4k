@@ -1,5 +1,6 @@
 #pragma once
 #include "ChartFile.h"
+#include <boost/lexical_cast.hpp>
 namespace Average4k::Chart
 {
 	class StepFile : public ChartFile {
@@ -16,16 +17,93 @@ namespace Average4k::Chart
 
 		void ParseStops(std::string& line, int* state)
 		{
+			// Clean up the line
+			if (line.find(':') != std::string::npos) // remove the starting "#STOPS:" if it exists
+				line = line.substr(line.find(':') + 1);
+
+			// check if ; exists
+			bool bracket = line.back() == ';';
+
+			// also formatted line, without a ";" at the end (IF IT EXISTS!)
+			std::string fLine = line;
+			if (bracket)
+				fLine = fLine.substr(0, fLine.length() - 1);
+
+			// Split the line via ","'s
+			std::vector<std::string> split = AvgEngine::Utils::StringTools::Split(fLine, ",");
+			for (auto& s : split)
+			{
+				// Split the line via "="'s
+				std::vector<std::string> split2 = AvgEngine::Utils::StringTools::Split(s, "=");
+				if (split2.size() != 2)
+					continue;
+
+				StopPoint p;
+				p.StartBeat = std::stof(split2[0]);
+				p.Length = std::stof(split2[1]);
+
+				TimingPoint tp = GetTimingPoint(p.StartBeat);
+
+				p.StartTimestamp = GetTimeFromBeat(p.StartBeat, tp);
+				p.EndTimestamp = p.StartTimestamp + p.Length;
+				p.EndBeat = GetBeatFromTime(p.EndTimestamp, tp);
+
+				chartMetadata.Stops.push_back(p);
+			}
+
 
 			// if line ends with ";", set state to 0
-			if (line.back() == ';')
+			if (bracket)
 				*state = 0;
 		}
 
 		void ParseBPMS(std::string& line, int* state)
 		{
+			// Clean up the line
+			if (line.find(':') != std::string::npos) // remove the starting "#BPMS:" if it exists
+				line = line.substr(line.find(':') + 1);
+
+			// check if ; exists
+			bool bracket = line.back() == ';';
+
+			// also formatted line, without a ";" at the end (IF IT EXISTS!)
+			std::string fLine = line;
+			if (bracket)
+				fLine = fLine.substr(0, fLine.length() - 1);
+
+
+			// Split the line via ","'s
+			std::vector<std::string> split = AvgEngine::Utils::StringTools::Split(fLine, ",");
+			for (auto& s : split)
+			{
+				// Split the line via "="'s
+				std::vector<std::string> split2 = AvgEngine::Utils::StringTools::Split(s, "=");
+				if (split2.size() != 2)
+					continue;
+				TimingPoint p;
+				p.StartBeat = std::stof(split2[0]);
+				p.Bpm = std::stof(split2[1]);
+				p.EndBeat = INT_MAX;
+				p.EndTimestamp = INT_MAX;
+				p.LengthTimestamp = INT_MAX;
+				p.StartTimestamp = -chartMetadata.Song_Offset;
+
+				// Check if we are the first timing point
+				if (chartMetadata.TimingPoints.size() != 0)
+				{
+					// Get the last timing point pushed
+					TimingPoint& last = chartMetadata.TimingPoints.back();
+					last.EndBeat = p.StartBeat;
+					last.LengthTimestamp = (last.EndBeat - last.StartBeat) / (last.Bpm / 60);
+					p.StartTimestamp = last.StartTimestamp + last.LengthTimestamp;
+					last.EndTimestamp = p.StartTimestamp;
+				}
+
+				chartMetadata.TimingPoints.push_back(p);
+			}
+
 			// if line ends with ";", set state to 0
-			if (line.back() == ';')
+			if (bracket)
 				*state = 0;
 		}
 
@@ -53,8 +131,16 @@ namespace Average4k::Chart
 				case 4:
 					// diff rating
 					std::string endTrim = trim.substr(0, trim.length() - 1);
-					if (AvgEngine::Utils::StringTools::isNumber(endTrim))
-						workingDiff.DifficultyRating = std::stoi(endTrim);
+					try
+					{
+						workingDiff.DifficultyRating = boost::lexical_cast<int>(endTrim);
+					}
+					catch (boost::bad_lexical_cast&)
+					{
+						AvgEngine::Logging::writeLog("[StepFile] [Warning] " + path + " on difficulty " + workingDiff.Name + " by " + workingDiff.Charter + " has a bad difficulty rating!");
+						workingDiff.DifficultyRating = 0;
+					}
+
 					break;
 				}
 			}
@@ -205,8 +291,8 @@ namespace Average4k::Chart
 					else // Header metadata
 					{
 						// Get key value pairs by seperating the line by ":", and removing the start character, and end character.
-						std::string key = line.substr(1, line.find(":") - 1);
-						std::string value = line.substr(line.find(":") + 1, line.length());
+						std::string key = line.substr(1, line.find_first_of(":") - 1);
+						std::string value = line.substr(line.find_first_of(":") + 1, line.length());
 						value = value.substr(0, value.length() - 1);
 
 						// Set the metadata (if statement bad, ooooo. haunt your dreams!!!)
@@ -224,10 +310,30 @@ namespace Average4k::Chart
 							chartMetadata.Song_Background = value;
 						else if (key == "MUSIC")
 							chartMetadata.Song_File = value;
-						else if (key == "OFFSET" && AvgEngine::Utils::StringTools::isNumber(value))
-							chartMetadata.Song_Offset = std::stof(value);
-						else if (key == "SAMPLESTART" && AvgEngine::Utils::StringTools::isNumber(value))
-							chartMetadata.previewStart = std::stof(value);
+						else if (key == "OFFSET")
+						{
+							try
+							{
+								chartMetadata.Song_Offset = boost::lexical_cast<float>(value);
+							}
+							catch (boost::bad_lexical_cast&)
+							{
+								AvgEngine::Logging::writeLog("[StepFile] [Warning] " + path + " has a bad chart offset!");
+								chartMetadata.Song_Offset = 0;
+							}
+						}
+						else if (key == "SAMPLESTART")
+						{
+							try
+							{
+								chartMetadata.previewStart = boost::lexical_cast<float>(value);
+							}
+							catch (boost::bad_lexical_cast&)
+							{
+								AvgEngine::Logging::writeLog("[StepFile] [Warning] " + path + " has a bad sample start!");
+								chartMetadata.previewStart = 0;
+							}
+						}
 					}
 
 					break;

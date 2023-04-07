@@ -1,2 +1,4 @@
+# basic customization for how many threads the game uses while loading charts.
+# you can make it slower if it messes with performances/crashes
 # setting this higher only affects good cpu's.
 threads: 24

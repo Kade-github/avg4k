@@ -102,11 +102,47 @@ namespace Average4k::Chart
 			return tp;
 		}
 
+		TimingPoint GetTimingPointAfter(TimingPoint p, float beat)
+		{
+			if (p.EndBeat > beat)
+				return p;
+			TimingPoint tp{};
+			for (TimingPoint& _tp : chartMetadata.TimingPoints)
+			{
+				if (_tp.EndBeat < p.EndBeat)
+					continue;
+				if (_tp.StartBeat <= beat && _tp.EndBeat > beat)
+				{
+					tp = _tp;
+					break;
+				}
+			}
+			return tp;
+		}
+
 		StopPoint GetStopPoint(float beat)
 		{
 			StopPoint sp{};
 			for (StopPoint& _sp : chartMetadata.Stops)
 			{
+				if (_sp.StartBeat <= beat && _sp.EndBeat > beat)
+				{
+					sp = _sp;
+					break;
+				}
+			}
+			return sp;
+		}
+
+		StopPoint GetStopPointAfter(StopPoint p, float beat)
+		{
+			if (p.EndBeat > beat)
+				return p;
+			StopPoint sp{};
+			for (StopPoint& _sp : chartMetadata.Stops)
+			{
+				if (_sp.EndBeat < p.EndBeat)
+					continue;
 				if (_sp.StartBeat <= beat && _sp.EndBeat > beat)
 				{
 					sp = _sp;
@@ -142,6 +178,28 @@ namespace Average4k::Chart
 					beat = (tp.StartBeat + _time) * (tp.Bpm / 60);
 					break;
 				}
+			}
+			return beat;
+		}
+
+		float GetTimeFromBeat(float beat, TimingPoint tp)
+		{
+			float time = 0;
+			if (tp.StartBeat <= beat && tp.EndBeat > beat)
+			{
+				float _beat = (beat - tp.StartBeat) / (tp.Bpm);
+				time = (tp.StartTimestamp + _beat) - (chartMetadata.Song_Offset);
+			}
+			return time;
+		}
+
+		float GetBeatFromTime(float time, TimingPoint tp)
+		{
+			float beat = 0;
+			if (tp.StartTimestamp <= time && tp.EndTimestamp > time)
+			{
+				float _time = (time - tp.StartTimestamp) - (chartMetadata.Song_Offset);
+				beat = (tp.StartBeat + _time) * (tp.Bpm / 60);
 			}
 			return beat;
 		}

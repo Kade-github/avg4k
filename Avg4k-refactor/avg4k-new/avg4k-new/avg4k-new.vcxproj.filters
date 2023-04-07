@@ -572,5 +572,11 @@
     <ClInclude Include="StepFile.h">
       <Filter>Average4K\Avg4k\External\ChartParsers\Stepmania</Filter>
     </ClInclude>
+    <ClInclude Include="LuaPack.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaChart.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Menu</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

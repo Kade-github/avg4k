@@ -11,9 +11,10 @@ namespace Average4k::Lua::Base
 		gameObject* parent = NULL;
 		std::vector<gameObject> children;
 
-		virtual ~gameObject() {}
 		int id = 0;
 		int type = 0;
+
+		virtual ~gameObject() {}
 
 		int getZIndex()
 		{

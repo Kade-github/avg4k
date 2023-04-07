@@ -1,7 +1,95 @@
 #include "MenuLuaFile.h"
 #include "Average4K.h"
 #include "LuaRectangle.h"
+#include "LuaPack.h"
+#include "LuaChart.h"
+#include "LoadingPacksMenu.h"
 
+void Average4k::Lua::MenuLuaFile::SetPacks(sol::global_table t)
+{
+	using namespace Average4k::Lua::Menu;
+	float startTime = glfwGetTime();
+
+	// Lets set the packs
+	t["packs"] = lua->create_table();
+
+	// loop over all the packs in loadingpacksmenu
+	for (int i = 0; i < LoadingPacksMenu::packs.size(); i++)
+	{
+		auto pl = LoadingPacksMenu::packs[i];
+
+		// create a table for the pack
+		pack p = pack();
+		p.banner = pl.bannerPath;
+		p.name = pl.name;
+		p.showName = pl.showName;
+		// Loop over the files 
+		for (int j = 0; j < pl.files.size(); j++)
+		{
+			Average4k::Chart::ChartFile cf = pl.files[j];
+			chart c = chart();
+			// Set all the metadata types
+			c.songArtist = cf.chartMetadata.Song_Artist;
+			c.songTitle = cf.chartMetadata.Song_Title;
+			c.songSubtitle = cf.chartMetadata.Song_Subtitle;
+			c.previewStart = cf.chartMetadata.previewStart;
+			c.songBackground = cf.chartMetadata.Song_Background;
+			c.songBanner = cf.chartMetadata.Song_Banner;
+			c.songCredit = cf.chartMetadata.Song_Credit;
+			c.songOffset = cf.chartMetadata.Song_Offset;
+			c.songFile = cf.chartMetadata.Song_File;
+			c.chartType = cf.chartMetadata.Chart_Type;
+
+			for (Average4k::Chart::Difficulty d : cf.chartMetadata.Difficulties)
+			{
+				difficulty df;
+				df.charter = d.Charter;
+				df.difficultyRating = d.DifficultyRating;
+				df.name = d.Name;
+				for (Average4k::Chart::Note n : d.Notes)
+				{
+					note nt;
+					nt.beat = n.Beat;
+					nt.lane = n.Lane;
+					nt.type = n.Type;
+					df.notes.push_back(nt);
+				}
+				c.difficulties.push_back(df);
+			}
+
+			for (Average4k::Chart::StopPoint s : cf.chartMetadata.Stops)
+			{
+				stopPoint sp;
+				sp.endBeat = s.EndBeat;
+				sp.endTime = s.EndTimestamp;
+				sp.length = s.Length;
+				sp.startBeat = s.StartBeat;
+				sp.startTime = s.StartTimestamp;
+				c.stopPoints.push_back(sp);
+			}
+
+			for (Average4k::Chart::TimingPoint t : cf.chartMetadata.TimingPoints)
+			{
+				timingPoint tp;
+				tp.bpm = t.Bpm;
+				tp.endBeat = t.EndBeat;
+				tp.endTime = t.EndTimestamp;
+				tp.length = t.LengthTimestamp;
+				tp.startBeat = t.StartBeat;
+				tp.startTime = t.StartTimestamp;
+				c.timingPoints.push_back(tp);
+			}
+
+			p.files.push_back(c);
+		}
+
+		// Set the pack in the lua table
+		t["packs"][i + 1] = p;
+	}
+
+	float endTime = glfwGetTime();
+	AvgEngine::Logging::writeLog("[MenuLuaFile] Set packs in " + std::to_string(endTime - startTime) + " seconds");
+}
 
 void Average4k::Lua::MenuLuaFile::CreateObject(Average4k::Lua::Base::gameObject& ob)
 {
@@ -152,6 +240,71 @@ void Average4k::Lua::MenuLuaFile::Load()
 		sol::base_classes, sol::bases<gameObject>()
 		);
 
+
+	using namespace Average4k::Lua::Menu;
+
+	sol::usertype<pack> pack_type = lua->new_usertype<pack>("pack",
+		sol::constructors<pack()>(),
+		"name", &pack::name,
+		"banner", &pack::banner,
+		"showName", &pack::showName,
+		"files", &pack::files
+		);
+	
+	sol::usertype<note> note_type = lua->new_usertype<note>("note",
+		sol::constructors<note()>(),
+		"beat", &note::beat,
+		"lane", &note::lane,
+		"type", &note::type
+		);
+
+	sol::usertype<stopPoint> stopPoint_type = lua->new_usertype<stopPoint>("stopPoint",
+		sol::constructors<stopPoint()>(),
+		"startBeat", &stopPoint::startBeat,
+		"startTime", &stopPoint::startTime,
+		"length", &stopPoint::length,
+		"endBeat", &stopPoint::endBeat,
+		"endTime", &stopPoint::endTime
+		);
+
+	sol::usertype<timingPoint> timingPoint_type = lua->new_usertype<timingPoint>("timingPoint",
+		sol::constructors<timingPoint()>(),
+		"startBeat", &timingPoint::startBeat,
+		"endBeat", &timingPoint::endBeat,
+		"startTime", &timingPoint::startTime,
+		"endTime", &timingPoint::endTime,
+		"length", &timingPoint::length,
+		"bpm", &timingPoint::bpm
+		);
+
+	sol::usertype<difficulty> difficulty_type = lua->new_usertype<difficulty>("difficulty",
+		sol::constructors<difficulty()>(),
+		"name", &difficulty::name,
+		"charter", &difficulty::charter,
+		"difficultyRating", &difficulty::difficultyRating,
+		"notes", &difficulty::notes
+		);
+
+	sol::usertype<chart> chart_type = lua->new_usertype<chart>("chart",
+		sol::constructors<chart()>(),
+		"songArtist", &chart::songArtist,
+		"songTitle", &chart::songTitle,
+		"songSubtitle", &chart::songSubtitle,
+		"songCredit", &chart::songCredit,
+		"songBanner", &chart::songBanner,
+		"songBackground", &chart::songBackground,
+		"songFile", &chart::songFile,
+		"songOffset", &chart::songOffset,
+		"chartType", &chart::chartType,
+		"previewStart", &chart::previewStart,
+		"timingPoints", &chart::timingPoints,
+		"stopPoints", &chart::stopPoints,
+		"difficulties", &chart::difficulties
+		);
+
+
+	using namespace Average4k::Lua::Base;
+
 	sol::global_table t = lua->globals();
 
 	t["online"] = lua->create_table_with("version", Average4K::Instance->Version, "connected",Multiplayer::loggedIn,"username",Multiplayer::username, "avatarData", Multiplayer::currentUserAvatar);
@@ -267,5 +420,13 @@ void Average4k::Lua::MenuLuaFile::Load()
 
 		c->SetResolution(std::to_string(w) + "x" + std::to_string(h));
 	});
+
+	
+	lua->set_function("reloadPacks", [&]() {
+		// TODO: reload packs
+
+	});
+
+	SetPacks(t);
 
 }

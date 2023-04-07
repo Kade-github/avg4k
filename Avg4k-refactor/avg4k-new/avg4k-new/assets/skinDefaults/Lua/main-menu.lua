@@ -28,6 +28,11 @@ function Create()
     Selection.create()
 
     cprint("menu created!")
+
+    -- print all the packs
+    for i = 1, #packs, 1 do
+        cprint('pack ' .. packs[i].name .. ' has ' .. #packs[i].files .. ' charts')
+    end
 end
 
 function KeyPress(key)

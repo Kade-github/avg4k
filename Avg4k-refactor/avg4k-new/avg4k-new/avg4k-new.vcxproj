@@ -128,10 +128,12 @@
     <ClInclude Include="includes.h" />
     <ClInclude Include="LoadingPacksMenu.h" />
     <ClInclude Include="Logging.h" />
+    <ClInclude Include="LuaChart.h" />
     <ClInclude Include="LuaConfig.h" />
     <ClInclude Include="LuaFile.h" />
     <ClInclude Include="LuaGameObject.h" />
     <ClInclude Include="LuaMenu.h" />
+    <ClInclude Include="LuaPack.h" />
     <ClInclude Include="LuaRect.h" />
     <ClInclude Include="LuaRectangle.h" />
     <ClInclude Include="LuaSprite.h" />

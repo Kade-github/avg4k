@@ -23,6 +23,9 @@ namespace Average4k::Lua
 			delete l;
 		}
 
+		void SetPacks(sol::global_table t);
+
+
 		void CreateObject(Average4k::Lua::Base::gameObject& ob);
 
 		void AddObject(Average4k::Lua::Base::gameObject& ob);

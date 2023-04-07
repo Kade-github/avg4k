@@ -34,11 +34,8 @@ namespace AvgEngine::Utils
 
         static bool isNumber(const std::string& s)
         {
-            for (char const& ch : s) {
-                if (std::isdigit(ch) == 0 && ch != '.')
-                    return false;
-            }
-            return true;
+            return !s.empty() && std::find_if(s.begin(),
+                s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
         }
 
         static std::wstring S2ws(const std::string& s, bool isUtf8 = true)

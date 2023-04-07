@@ -5,10 +5,18 @@ namespace Average4k::Chart
 	class StepFile : public ChartFile {
 		
 		// Storage variable for the current working difficulty.
-		Difficulty workingDiff;
+		Difficulty workingDiff{};
+
+		// Storage variable if to skip the current difficulty
+		bool skipDiff = false;
+
+		// Storage variables for measures
+		int currentMeasure = 0;
+		std::vector<std::string> measure;
 
 		void ParseStops(std::string& line, int* state)
 		{
+
 			// if line ends with ";", set state to 0
 			if (line.back() == ';')
 				*state = 0;
@@ -23,9 +31,103 @@ namespace Average4k::Chart
 
 		void ParseNotes(std::string& line, int lineNumber, int* state)
 		{
+			// if it contains a ":" we are in a metadata section of the notes
+			if (line.find(':') != std::string::npos)
+			{
+				std::string trim = AvgEngine::Utils::StringTools::Trim(line);
+				switch (lineNumber)
+				{
+				case 1: // chart style
+					// if its not a dance single, we dont fuck wit it.
+					if (!AvgEngine::Utils::StringTools::Contains(line, "dance-single"))
+						skipDiff = true;
+					break;
+				case 2: // diff author (most of the time... or its in the CREDIT tag if theres no diff author)
+					// remove the last character
+					workingDiff.Charter = trim.substr(0, trim.length() - 1);
+					break;
+				case 3:
+					// diff name
+					workingDiff.Name = trim.substr(0, trim.length() - 1);
+					break;
+				case 4:
+					// diff rating
+					std::string endTrim = trim.substr(0, trim.length() - 1);
+					if (AvgEngine::Utils::StringTools::isNumber(endTrim))
+						workingDiff.DifficultyRating = std::stoi(endTrim);
+					break;
+				}
+			}
+			else
+			{
+				// We are in the notes section
+				if (line.back() == ';' || line.back() == ',')
+				{
+					// Time for big brain music theory math
+
+					if (measure.size() > 0)
+					{
+						float lengthInRows = static_cast<float>(192) / (measure.size());
+
+						// Storage for the row index (and beat)
+						int rowIndex = 0;
+						float beat = 0;
+
+						// Read the notes from the measure (for loop over the measure)
+						for (int i = 0; i < measure.size(); i++)
+						{
+							float noteRow = (currentMeasure * 192) + (lengthInRows * rowIndex);
+
+							beat = noteRow / 48;
+
+							for (int n = 0; n < measure[i].size(); n++) {
+								Note note{};
+								note.Row = noteRow;
+								note.Beat = beat;
+								note.Lane = n;
+								switch (measure[i][n])
+								{
+								case '1':
+									note.Type = NoteType_Tap;
+									break;
+								case '2':
+									note.Type = NoteType_Head;
+									break;
+								case '3':
+									note.Type = NoteType_Tail;
+									break;
+								case '4': // roll, but we convert it to a head.
+									note.Type = NoteType_Head;
+									break;
+								case 'F':
+									note.Type = NoteType_Fake;
+									break;
+								case 'M':
+									note.Type = NoteType_Mine;
+									break;
+								}
+								workingDiff.Notes.push_back(note);
+							}
+
+							rowIndex++;
+						}
+
+					}
+					measure = {};
+					currentMeasure++;
+				}
+				else
+					measure.push_back(line);
+			}
+
 			// if line ends with ";", set state to 0
 			if (line.back() == ';')
+			{
+				if (workingDiff.Notes.size() > 0)
+					chartMetadata.Difficulties.push_back(workingDiff);
+				workingDiff = {};
 				*state = 0;
+			}
 		}
 
 	public:
@@ -68,10 +170,14 @@ namespace Average4k::Chart
 				switch (state)
 				{
 				case 0:
+					skipDiff = false;
 					if (line.starts_with("#NOTES"))
 					{
 						// Reset line number for this section
 						lineNumber = 0;
+						// Also measure stuff
+						currentMeasure = 0;
+						measure = {};
 						// Switch the state to notes
 						state = 3;
 						break;
@@ -132,7 +238,14 @@ namespace Average4k::Chart
 					ParseStops(line, &state);
 					break;
 				case 3:
-					ParseNotes(line, lineNumber, &state);
+					if (!skipDiff)
+						ParseNotes(line, lineNumber, &state);
+					else
+					{
+						// If theres a ";" that means we can stop skipping
+						if (line.back() == ';')
+							state = 0;
+					}
 					break;
 				}
 				lineNumber++;

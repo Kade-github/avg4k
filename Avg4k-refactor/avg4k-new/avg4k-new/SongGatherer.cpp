@@ -4,15 +4,28 @@ std::mutex songGatherer_mutex;
 
 void ThreadTask(Average4k::Chart::Collection::SongGatherer* _this, std::string cPath, Average4k::Chart::Pack& pack)
 {
-	Average4k::Chart::StepFile f = Average4k::Chart::StepFile(cPath);
-	f.Parse();
-	songGatherer_mutex.lock();
-	if (f.good)
+	try
 	{
- 		pack.files.push_back(f);
+		Average4k::Chart::StepFile f = Average4k::Chart::StepFile(cPath);
+		f.Parse();
+		songGatherer_mutex.lock();
+		if (f.good)
+		{
+			pack.files.push_back(f);
+		}
+		_this->done++;
+		songGatherer_mutex.unlock();
 	}
-	_this->done++;
-	songGatherer_mutex.unlock();
+	catch (const std::exception& e)
+	{
+		AvgEngine::Logging::writeLog("[SongGatherer] [Error] " + cPath + " failed to load! (" + e.what() + ")");
+		_this->done++;
+	}
+	catch (...)
+	{
+		AvgEngine::Logging::writeLog("[SongGatherer] [Error] " + cPath + " failed to load! (and honestly I have no idea what the fuck happened)");
+		_this->done++;
+	}
 }
 
 void Average4k::Chart::Collection::SongGatherer::FindPacks(std::string directory)

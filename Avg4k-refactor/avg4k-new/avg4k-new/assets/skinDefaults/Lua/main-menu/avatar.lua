@@ -3,13 +3,13 @@ Avatar = {}
 function Avatar.createIcon(notDefault)
     -- create the border using usertypes.
 
-    Avatar.border = helper.createSprite("Menu/border", 0,0)
+    Avatar.border = helper.createSprite("Menu/border", 0, 0)
     add(Avatar.border)
     Avatar.border.ratio = true
     Avatar.border.transform.x = 0.01
     Avatar.border.transform.y = -0.8
     Avatar.border.transform.scale = skin["upscale"] * 0.35
-    Avatar.oborder = helper.createSprite("Menu/outerBorder", 0,0)
+    Avatar.oborder = helper.createSprite("Menu/outerBorder", 0, 0)
     add(Avatar.oborder)
     Avatar.oborder.ratio = true
     Avatar.oborder.transform.x = 0.01
@@ -21,14 +21,14 @@ function Avatar.createIcon(notDefault)
 
     tween(Avatar.border, endRect, 1.5, "outcubic")
 
-    Avatar.helloText = text.new(0,0, "ArialBold.fnt", "Not logged in.")
+    Avatar.helloText = text.new(0, 0, "ArialBold.fnt", "Not logged in.")
     create(Avatar.helloText)
     Avatar.helloText.ratio = true
     Avatar.helloText.size = 24.0 * skin["upscale"]
     Avatar.helloText.transform.y = (14 * skin["upscale"]) / 100
     Avatar.helloText.transform.x = 1.2
 
-    Avatar.versionText = text.new(0,0, "ArialBold.fnt", "Avg4k indev-" .. online["version"])
+    Avatar.versionText = text.new(0, 0, "ArialBold.fnt", "Avg4k indev-" .. online["version"])
     create(Avatar.versionText)
     Avatar.versionText.ratio = true
     Avatar.versionText.size = 24.0 * skin["upscale"]
@@ -37,7 +37,7 @@ function Avatar.createIcon(notDefault)
 
     if not notDefault then
         -- if we're not connected to the server, we'll just use the default avatar
-        Avatar.av = helper.createSprite("Menu/genericAvatar", 0,0)
+        Avatar.av = helper.createSprite("Menu/genericAvatar", 0, 0)
         create(Avatar.av)
         Avatar.border:add(Avatar.av)
         Avatar.border:add(Avatar.helloText)
@@ -67,7 +67,7 @@ function Avatar.createIcon(notDefault)
 
     cprint("loaded avatar " .. tostring(avatarTexture.width) .. "x" .. tostring(avatarTexture.height))
 
-    Avatar.av = sprite.new(0,0, avatarTexture)
+    Avatar.av = sprite.new(0, 0, avatarTexture)
     -- a lot of functions are blocked behind actually creating the sprite, so lets do that
     create(Avatar.av)
     Avatar.border:add(Avatar.av)
@@ -81,7 +81,6 @@ function Avatar.createIcon(notDefault)
     Avatar.av.transform.y = 0.5
     Avatar.av.center = true
     Avatar.av.ratio = true
-
 end
 
 function Avatar.Resize()
@@ -89,7 +88,6 @@ function Avatar.Resize()
     Avatar.border.transform.scale = skin["upscale"] * 0.35
     Avatar.helloText.size = 24.0 * skin["upscale"]
     Avatar.versionText.size = 24.0 * skin["upscale"]
-    
 end
 
 function Avatar.create()

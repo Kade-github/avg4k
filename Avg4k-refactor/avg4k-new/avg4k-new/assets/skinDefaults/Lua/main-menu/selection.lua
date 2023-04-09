@@ -5,7 +5,7 @@ Selection.currentContainer = nil
 Selection.lastChange = 0
 
 function Selection.select(container)
-    if container == Selection.currentContainerIndex then 
+    if container == Selection.currentContainerIndex then
         return
     end
 
@@ -21,7 +21,7 @@ function Selection.select(container)
 
     local cRect = copyRect(Selection.currentContainer.transform)
     local nContainer = nil
-    
+
     if container == 1 then
         nContainer = Containers.solo
         Selection.selectionRect.transform.x = Selection.soloText.transform.x
@@ -84,7 +84,7 @@ function Selection.gamepadPress(num)
 end
 
 function Selection.create()
-    Selection.soloText = text.new(0,0, "AndaleMono.fnt", "solo")
+    Selection.soloText = text.new(0, 0, "AndaleMono.fnt", "solo")
     add(Selection.soloText)
     Selection.soloText.ratio = true
     Selection.soloText.center = true
@@ -96,7 +96,7 @@ function Selection.create()
 
     local sTEnd = copyRect(Selection.soloText.transform)
 
-    Selection.multiplayerText = text.new(0,0, "AndaleMono.fnt", "multiplayer")
+    Selection.multiplayerText = text.new(0, 0, "AndaleMono.fnt", "multiplayer")
     add(Selection.multiplayerText)
     Selection.multiplayerText.center = true
     Selection.multiplayerText.ratio = true
@@ -108,7 +108,7 @@ function Selection.create()
 
     local mTEnd = copyRect(Selection.multiplayerText.transform)
 
-    Selection.settingsText = text.new(0,0, "AndaleMono.fnt", "settings")
+    Selection.settingsText = text.new(0, 0, "AndaleMono.fnt", "settings")
     add(Selection.settingsText)
     Selection.settingsText.center = true
     Selection.settingsText.ratio = true
@@ -125,7 +125,7 @@ function Selection.create()
     Selection.settingsText.transform.y = -0.75
 
 
-    Selection.selectionRect = rectangle.new(0,0,0.2,0.004)
+    Selection.selectionRect = rectangle.new(0, 0, 0.2, 0.004)
     add(Selection.selectionRect)
     Selection.selectionRect.ratio = true
     Selection.selectionRect.center = true

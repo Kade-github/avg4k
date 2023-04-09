@@ -1,5 +1,5 @@
 -- helper files
-HelperFiles = {'avatar.lua', 'containers.lua', 'selection.lua', 'packs/packs.lua', 'packs/songWheel.lua'}
+HelperFiles = { 'avatar.lua', 'containers.lua', 'selection.lua', 'packs/packs.lua', 'packs/songWheel.lua' }
 
 function Create()
     -- dofile on all helper files
@@ -10,7 +10,7 @@ function Create()
 
     -- setup background (darkModeBg.png)
 
-    local bg = helper.createSprite("Menu/darkModeBg", 0.0,0.0)
+    local bg = helper.createSprite("Menu/darkModeBg", 0.0, 0.0)
 
     add(bg)
     bg.ratio = true

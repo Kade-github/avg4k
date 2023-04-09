@@ -1,0 +1,43 @@
+[Sun Apr  9 11:58:18 2023] [Main] Logging system initialized.
+[Sun Apr  9 11:58:19 2023] [Main] Initialized GLFW!
+[Sun Apr  9 11:58:19 2023] [Main] Initialized BASS!
+[Sun Apr  9 11:58:19 2023] [AvgEngine] Game created, title: Average4K. Version: b14
+[Sun Apr  9 11:58:19 2023] [Steam] Logged in as Kade:76561198037519280
+[Sun Apr  9 11:58:19 2023] [Settings] Reverting Music Volume due to it not being a number.
+[Sun Apr  9 11:58:19 2023] [Settings] Reverting Hitsound Volume due to it not being a number.
+[Sun Apr  9 11:58:19 2023] [Main] Initialized Display!
+[Sun Apr  9 11:58:19 2023] [Main] Initialized ImGUI!
+[Sun Apr  9 11:58:19 2023] [Main] Starting game...
+[Sun Apr  9 11:58:19 2023] [Fnt] Loaded font Futura-Boldx128
+[Sun Apr  9 11:58:19 2023] [Texture] [Error] Failure to open file assets/skinDefaults/Menu/majorerroricon.png, Unrecognized image format, Format:  (We only support JPEG/PNG's)
+[Sun Apr  9 11:58:19 2023] [Texture] [Error] Failure to open file assets/skinDefaults/Menu/minorerroricon.png, Unrecognized image format, Format:  (We only support JPEG/PNG's)
+[Sun Apr  9 11:58:19 2023] [Display] Resized to 1920x1080
+[Sun Apr  9 11:58:19 2023] [Fnt] Loaded font Arialx128
+[Sun Apr  9 11:58:19 2023] [LoadingPacksMenu] Loading charts with thread count: 24
+[Sun Apr  9 11:58:20 2023] [Server] Connecting...
+[Sun Apr  9 11:58:20 2023] [Server] Connected successfully!
+[Sun Apr  9 11:58:20 2023] [LoadingPacksMenu] Finished loading 423 charts in 1.143337 seconds.
+[Sun Apr  9 11:58:20 2023] [Server] Logging in...
+[Sun Apr  9 11:58:20 2023] [Server] Awaiting auth ticket from steam
+[Sun Apr  9 11:58:21 2023] [Server] Sending auth ticket...
+[Sun Apr  9 11:58:21 2023] [Server] Server agreed to give me the kids on the weekends (you logged in successfully)
+[Sun Apr  9 11:58:21 2023] [Steam] User details: Kade:76561198037519280
+[Sun Apr  9 11:58:23 2023] [MenuLuaFile] Set packs in 0.249142 seconds
+[Sun Apr  9 11:58:23 2023] [Lua] Loaded assets/skinDefaults/Lua/main-menu.lua
+[Sun Apr  9 11:58:23 2023] [Lua] Initial scale: 1.0
+[Sun Apr  9 11:58:23 2023] [Lua] loaded avatar 184x184
+[Sun Apr  9 11:58:23 2023] [Fnt] Loaded font Arialx128
+[Sun Apr  9 11:58:23 2023] [FNT] [Warning] AndaleMono.fnt doesn't have a kernings node.
+[Sun Apr  9 11:58:23 2023] [Lua] menu created!
+[Sun Apr  9 11:59:49 2023] [User] reload
+[Sun Apr  9 11:59:50 2023] [MenuLuaFile] Set packs in 0.251839 seconds
+[Sun Apr  9 11:59:50 2023] [Lua] Loaded assets/skinDefaults/Lua/main-menu.lua
+[Sun Apr  9 11:59:50 2023] [Lua] Initial scale: 1.0
+[Sun Apr  9 11:59:50 2023] [Lua] loaded avatar 184x184
+[Sun Apr  9 11:59:50 2023] [Lua] menu created!
+[Sun Apr  9 12:00:37 2023] [User] reload
+[Sun Apr  9 12:00:38 2023] [MenuLuaFile] Set packs in 0.253708 seconds
+[Sun Apr  9 12:00:38 2023] [Lua] Loaded assets/skinDefaults/Lua/main-menu.lua
+[Sun Apr  9 12:00:38 2023] [Lua] Initial scale: 1.0
+[Sun Apr  9 12:00:38 2023] [Lua] loaded avatar 184x184
+[Sun Apr  9 12:00:38 2023] [Lua] menu created!

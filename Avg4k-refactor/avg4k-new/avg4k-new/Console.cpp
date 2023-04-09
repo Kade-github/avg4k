@@ -103,6 +103,7 @@ void Console::update()
 	ImVec2 s = ImGui::GetContentRegionAvail();
 
 	ImGui::BeginChild("Console", { s.x,s.y - 10 });
+	ImGui::TextWrapped("  ");
 	for(ConsoleLog& log : Logging::consoleLog)
 	{
 		ImGui::PushStyleColor(ImGuiCol_Text, log.color.Value);

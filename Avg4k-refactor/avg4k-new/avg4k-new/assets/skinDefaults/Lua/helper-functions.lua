@@ -90,7 +90,6 @@ end
     A helper function for mouse wheel events on containers
 ]]
 function helper.containerMouseWheel(amount)
-    cprint("mouse wheel " .. tostring(amount))
     for i, t in ipairs(helper.containers) do
         local ind = t[1]
         if ind["hover"] and ind["shouldScroll"] then
@@ -145,7 +144,7 @@ function helper.containerUpdate(time)
 
             local currentScroll = ind["scroll"]
             
-
+            
 
             for i, child in ipairs(container.children) do
                 if child.id == bar.id or child.id == arrow1.id or child.id == arrow2.id then

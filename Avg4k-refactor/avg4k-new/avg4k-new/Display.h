@@ -66,6 +66,12 @@ namespace AvgEngine::Render
 			a = _r.a;
 		}
 
+		bool operator==(const Rect& other) {
+			// == with tolerance
+			return (std::abs(x - other.x) < 0.001f) && (std::abs(y - other.y) < 0.001f) && (std::abs(w - other.w) < 0.001f) && (std::abs(h - other.h) < 0.001f) && (std::abs(r - other.r) < 0.001f) && (std::abs(g - other.g) < 0.001f) && (std::abs(b - other.b) < 0.001f) && (std::abs(a - other.a) < 0.001f);
+
+		}
+
 		std::string toString() {
 			return "XYWH {" + std::to_string(x) + "," + std::to_string(y) + "," + std::to_string(w) + "," + std::to_string(h) + "} RGBA {" + std::to_string(r) + "," + std::to_string(g) + "," + std::to_string(b) + "," + std::to_string(a) + "}";
 		}

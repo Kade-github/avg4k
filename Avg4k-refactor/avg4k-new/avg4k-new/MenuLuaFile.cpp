@@ -113,6 +113,7 @@ void Average4k::Lua::MenuLuaFile::CreateObject(Average4k::Lua::Base::gameObject&
 			ob.transform.scale, ob.transform.deg);
 		ob.transform.base = &o->transform;
 		ob.transformOffset.base = &o->transformOffset;
+		ob.clipRect.base = &o->clipRect;
 		ob.base = o;
 		break;
 	case 1: // sprite
@@ -131,6 +132,7 @@ void Average4k::Lua::MenuLuaFile::CreateObject(Average4k::Lua::Base::gameObject&
 		ob.id = sp->id;
 		ob.transform.base = &sp->transform;
 		ob.transformOffset.base = &sp->transformOffset;
+		ob.clipRect.base = &sp->clipRect;
 		ob.base = sp;
 		break;
 	case 2: // text
@@ -144,6 +146,7 @@ void Average4k::Lua::MenuLuaFile::CreateObject(Average4k::Lua::Base::gameObject&
 		ob.id = te->id;
 		ob.transform.base = &te->transform;
 		ob.transformOffset.base = &te->transformOffset;
+		ob.clipRect.base = &te->clipRect;
 		ob.base = te;
 		break;
 	case 3: // rectangle
@@ -155,6 +158,7 @@ void Average4k::Lua::MenuLuaFile::CreateObject(Average4k::Lua::Base::gameObject&
 		ob.id = re->id;
 		ob.transform.base = &re->transform;
 		ob.transformOffset.base = &re->transformOffset;
+		ob.clipRect.base = &re->clipRect;
 		ob.base = re;
 		break;
 	}
@@ -210,6 +214,7 @@ void Average4k::Lua::MenuLuaFile::Load()
 		"id", &gameObject::id,
 		"transform", &gameObject::transform,
 		"transformOffset", &gameObject::transformOffset,
+		"clip", &gameObject::clipRect,
 		"parent", &gameObject::parent,
 		"children", &gameObject::children,
 		"ratio", sol::property(&gameObject::getRatio, &gameObject::setRatio),

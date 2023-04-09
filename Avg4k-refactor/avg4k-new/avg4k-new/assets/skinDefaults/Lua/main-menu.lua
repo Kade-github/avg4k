@@ -1,5 +1,5 @@
 -- helper files
-HelperFiles = {'avatar.lua', 'containers.lua', 'selection.lua'}
+HelperFiles = {'avatar.lua', 'containers.lua', 'selection.lua', 'packs/packs.lua', 'packs/songWheel.lua'}
 
 function Create()
     -- dofile on all helper files
@@ -60,12 +60,16 @@ Globals = {}
 
 -- last time
 Globals.lt = 0
+Globals.start = 0
 
 function Update(time)
+    if Globals.start == 0 then
+        Globals.start = time
+    end
     local t = tonumber(time)
     local delta = t - Globals.lt
     Globals.lt = t
 
 
-    helper.containerUpdate()
+    helper.containerUpdate(time)
 end

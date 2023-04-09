@@ -14,11 +14,12 @@ namespace AvgEngine::Base
 		std::vector<Render::Vertex> vertices{};
 		OpenGL::Texture* texture = NULL;
 		OpenGL::Shader* shad = NULL;
+		AvgEngine::Render::Rect clip;
 
 		bool operator==(const drawCall& other) {
 			return (zIndex == other.zIndex) &&
 				(texture->id == other.texture->id) &&
-				(shad->program == other.shad->program);
+				(shad->program == other.shad->program) && (clip == other.clip);
 		}
 
 		bool operator()(const drawCall& a, const drawCall& b) {
@@ -70,6 +71,7 @@ namespace AvgEngine::Base
 			call.texture = texture;
 			call.zIndex = zIndex;
 			call.vertices = vertices;
+			call.clip = {};
 			return call;
 		}
 
@@ -131,7 +133,7 @@ namespace AvgEngine::Base
 		 * \param thickness The thickness of the line
 		 * \param rect The transform of the rectangle
 		 */
-		static void DrawOutlinedRectangle(Camera* camera, int zIndex, float thickness, Render::Rect rect)
+		static void DrawOutlinedRectangle(Camera* camera, int zIndex, float thickness, Render::Rect rect, Render::Rect clip = {})
 		{
 			std::vector<Render::Vertex> vertices;
 
@@ -150,6 +152,8 @@ namespace AvgEngine::Base
 				vertices.push_back(v);
 
 			drawCall c = Camera::FormatDrawCall(zIndex, NULL, NULL, vertices);
+			if (clip != Render::Rect{})
+				c.clip = clip;
 			camera->addDrawCall(c);
 		}
 
@@ -159,9 +163,11 @@ namespace AvgEngine::Base
 		 * \param zIndex The zIndex of the call
 		 * \param rect The transform of the rectangle
 		 */
-		static void DrawRectangle(Camera* camera, int zIndex, Render::Rect rect)
+		static void DrawRectangle(Camera* camera, int zIndex, Render::Rect rect, Render::Rect clip = {})
 		{
 			drawCall c = Camera::FormatDrawCall(zIndex, NULL, NULL, Render::DisplayHelper::RectToVertex(rect, { 0,0,1,1 }));
+			if (clip != Render::Rect{})
+				c.clip = clip;
 			camera->addDrawCall(c);
 		}
 	};

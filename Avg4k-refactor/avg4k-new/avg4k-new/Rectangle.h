@@ -44,6 +44,7 @@ namespace AvgEngine::Base
 				return;
 
 			Render::Rect r = transform;
+			Render::Rect cr = clipRect;
 			if (parent)
 			{
 				if (transformRatio)
@@ -53,6 +54,18 @@ namespace AvgEngine::Base
 
 					r.w = (parent->w * (r.w)) + transformOffset.w;
 					r.h = (parent->h * (r.h)) + transformOffset.h;
+
+					if (cr.w != 0 || cr.h != 0)
+					{
+						cr.x = parent->x + (parent->w * (cr.x)) + transformOffset.x;
+						cr.y = parent->y + (parent->h * (cr.y)) + transformOffset.y;
+						cr.w = (parent->w * (cr.w)) + transformOffset.w;
+						cr.h = (parent->h * (cr.h)) + transformOffset.h;
+					}
+					else
+					{
+
+					}
 				}
 				else
 				{

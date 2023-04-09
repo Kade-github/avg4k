@@ -73,11 +73,13 @@ function helper.initContainer(container)
     arrow2.tag = "container_arrow_2"
 end
 
-
 --[[
     A helper function to update containers scroll bar and item positions
 ]]
-function helper.containerUpdate()
+function helper.containerUpdate(time)
+    if Globals.start - time < 2 then
+        return
+    end
     for i, t in ipairs(helper.containers) do
         local ind = t[1]
 
@@ -100,17 +102,19 @@ function helper.containerUpdate()
                 -- do nothing
             else
                 local real = child:getRealRect()
-                if real.y + real.h > rc.h then
+                if real.y + real.h > rc.y + rc.h then
                     overspace = (real.y + real.h) - rc.h
                 end
                 child.transformOffset.y = currentScroll
                 if ind["shouldScroll"] then
-                    child.transformOffset.x = bar.transform.w
+                    child.transformOffset.x = bar.transform.w + 8
+                else
+                    child.transformOffset.x = 0
                 end
             end
         end
 
-        ind["shouldScroll"] = true
+        ind["shouldScroll"] = overspace ~= 0
 
         if ind["shouldScroll"] then
             -- set the bar and arrows to visible
@@ -120,17 +124,17 @@ function helper.containerUpdate()
             arrow2.transform.alpha = 1
 
             -- set the bar and arrows positions
-            bar.transform.x = 0
+            bar.transform.x = 4
             bar.transform.y = currentScroll + 4 + arrow1.transform.h
 
             bar.transform.w = 20 * skin["upscale"]
 
-            arrow1.transform.x = 1
+            arrow1.transform.x = 4
             arrow1.transform.y = 2
             arrow1.transform.w = bar.transform.w
             arrow1.transform.h = 18 * skin["upscale"]
             
-            arrow2.transform.x = 1
+            arrow2.transform.x = 4
             arrow2.transform.w = bar.transform.w
             arrow2.transform.h = 18 * skin["upscale"]
             arrow2.transform.y = rc.h - arrow2.transform.h

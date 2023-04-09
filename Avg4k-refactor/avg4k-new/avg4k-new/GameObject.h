@@ -30,6 +30,9 @@ namespace AvgEngine::Base
 		bool dontDelete = false;
 		Render::Rect iTransform = Render::Rect();
 		Render::Rect transform = Render::Rect();
+		Render::Rect parentClip = Render::Rect();
+		Render::Rect clipRect = Render::Rect();
+
 		Render::Rect transformOffset = Render::Rect();
 		Render::Rect* parent = NULL;
 

@@ -9,6 +9,7 @@ namespace Average4k::Lua::Base
 		AvgEngine::Base::GameObject* base = NULL;
 		rect transform{};
 		rect transformOffset{};
+		rect clipRect{};
 		gameObject* parent = NULL;
 		std::vector<gameObject> children;
 

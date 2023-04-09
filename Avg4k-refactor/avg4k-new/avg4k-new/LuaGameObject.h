@@ -8,13 +8,39 @@ namespace Average4k::Lua::Base
 	public:
 		AvgEngine::Base::GameObject* base = NULL;
 		rect transform{};
+		rect transformOffset{};
 		gameObject* parent = NULL;
 		std::vector<gameObject> children;
+
 
 		int id = 0;
 		int type = 0;
 
 		virtual ~gameObject() {}
+
+		std::string getTag()
+		{
+			if (base)
+				return base->tag;
+			return "object";
+		}
+
+		void setTag(std::string tag)
+		{
+			if (base)
+				base->tag = tag;
+		}
+
+		gameObject& getChildByTag(std::string tag)
+		{
+			for (auto& c : children)
+			{
+				if (c.getTag() == tag)
+					return c;
+			}
+			gameObject o;
+			return o;
+		}
 
 		int getZIndex()
 		{
@@ -40,6 +66,14 @@ namespace Average4k::Lua::Base
 		{
 			if (base)
 				base->setRatio(ratio);
+		}
+
+		rect denormilize()
+		{
+			rect nr{};
+			if (base && getRatio())
+				nr = rect(base->iTransform.x, base->iTransform.y, base->iTransform.w, base->iTransform.h, base->iTransform.r, base->iTransform.g, base->iTransform.b, base->iTransform.a, base->iTransform.scale, base->iTransform.angle);
+			return nr;
 		}
 
 		gameObject() {

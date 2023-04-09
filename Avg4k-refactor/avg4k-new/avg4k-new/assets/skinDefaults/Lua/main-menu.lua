@@ -66,4 +66,6 @@ function Update(time)
     local delta = t - Globals.lt
     Globals.lt = t
 
+
+    helper.containerUpdate()
 end

@@ -77,15 +77,15 @@ namespace AvgEngine::Base
 			GameObject::setRatio(r);
 		}
 
-		void drawChildren(bool zIndex)
+		void drawChildren(bool zIndexx)
 		{
 			Render::Rect prevTrans = transform;
 			if (transformRatio && parent) // reverse the ratio
 			{
-				transform.x = parent->x + (parent->w * (transform.x));
-				transform.y = parent->y + (parent->h * (transform.y));
-				transform.w = parent->w * (transform.w);
-				transform.h = parent->h * (transform.h);
+				transform.x = parent->x + (parent->w * (transform.x)) + transformOffset.x;
+				transform.y = parent->y + (parent->h * (transform.y)) + transformOffset.y;
+				transform.w = (parent->w * (transform.w)) + transformOffset.w;
+				transform.h = (parent->h * (transform.h)) + transformOffset.h;
 				transform.w = transform.w * transform.scale;
 				transform.h = transform.h * transform.scale;
 
@@ -95,7 +95,7 @@ namespace AvgEngine::Base
 					transform.y -= transform.h / 2;
 				}
 			}
-			if (zIndex)
+			if (zIndexx)
 			{
 				GameObject::drawTopZIndex();
 				transform = prevTrans;
@@ -118,16 +118,16 @@ namespace AvgEngine::Base
 			{
 				if (transformRatio)
 				{
-					r.x = parent->x + (parent->w * (r.x));
-					r.y = parent->y + (parent->h * (r.y));
+					r.x = parent->x + (parent->w * (r.x)) + transformOffset.x;
+					r.y = parent->y + (parent->h * (r.y)) + transformOffset.y;
 
-					r.w = parent->w * (r.w);
-					r.h = parent->h * (r.h);
+					r.w = (parent->w * (r.w)) + transformOffset.w;
+					r.h = (parent->h * (r.h)) + transformOffset.h;
 				}
 				else
 				{
-					r.x += parent->x;
-					r.y += parent->y;
+					r.x += parent->x + transformOffset.x;
+					r.y += parent->y + transformOffset.y;
 				}
 			}
 
@@ -136,6 +136,8 @@ namespace AvgEngine::Base
 				r.x -= r.w / 2;
 				r.y -= r.h / 2;
 			}
+
+			iTransform = r;
 
 			drawCall c = Camera::FormatDrawCall(zIndex, texture, shader, Render::DisplayHelper::RectToVertex(r, src, center));
 			camera->addDrawCall(c);

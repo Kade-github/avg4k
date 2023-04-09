@@ -30,7 +30,10 @@ namespace AvgEngine::Base
 		bool dontDelete = false;
 		Render::Rect iTransform = Render::Rect();
 		Render::Rect transform = Render::Rect();
+		Render::Rect transformOffset = Render::Rect();
 		Render::Rect* parent = NULL;
+
+		std::string tag = "object";
 
 		std::vector<GameObject*> Children;
 
@@ -74,11 +77,14 @@ namespace AvgEngine::Base
 			for (GameObject* ob : Children)
 			{
 				// Render objects' draw calls.
-				if (ob->render && ob->zIndex <= zIndex)
+				if (ob->render && zIndex + ob->zIndex <= zIndex)
 				{
 					ob->camera = camera;
 					ob->parent = &transform;
+					int oldZ = ob->zIndex;
+					ob->zIndex += zIndex;
 					ob->draw();
+					ob->zIndex = oldZ;
 				}
 			}
 		};
@@ -88,11 +94,14 @@ namespace AvgEngine::Base
 			for (GameObject* ob : Children)
 			{
 				// Render objects' draw calls.
-				if (ob->render && ob->zIndex > zIndex)
+				if (ob->render && zIndex + ob->zIndex > zIndex)
 				{
 					ob->camera = camera;
 					ob->parent = &transform;
+					int oldZ = ob->zIndex;
+					ob->zIndex += zIndex;
 					ob->draw();
+					ob->zIndex = oldZ;
 				}
 			}
 		};

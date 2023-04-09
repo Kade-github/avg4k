@@ -80,8 +80,8 @@ namespace AvgEngine::Base
 				if (transformRatio)
 				{
 
-					float xRatio = (parent->w * (transform.x));
-					float yRatio = (parent->h * (transform.y));
+					float xRatio = (parent->w * (transform.x)) + transformOffset.x;
+					float yRatio = (parent->h * (transform.y)) + transformOffset.y;
 					dst.x = parent->x + xRatio;
 					dst.y = parent->y + yRatio;
 				}
@@ -204,6 +204,8 @@ namespace AvgEngine::Base
 
 			if (totalW > transform.w)
 				transform.w = totalW;
+
+			iTransform = transform;
 
 			for (Line& line : outlines)
 			{

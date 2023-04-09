@@ -6,7 +6,7 @@ function Containers.soloCreate(c)
     create(Containers.scontainer.packs)
     c:add(Containers.scontainer.packs)
 
-    Containers.scontainer.packs.order = 1
+    Containers.scontainer.packs.order = 2
     Containers.scontainer.packs.ratio = true
     
     Containers.scontainer.packs.transform.y = 0.12
@@ -38,6 +38,8 @@ function Containers.soloCreate(c)
 
     Containers.scontainer.packsInfo.transform.x = 0.02
     Containers.scontainer.packsInfo.transform.y = 0.07
+
+    helper.initContainer(Containers.scontainer.packs)
 end
 
 function Containers.create()
@@ -73,6 +75,11 @@ function Containers.create()
     -- Tweens
 
     tween(Containers.solo, Containers.endRect, 1, "outcubic")
+
+    helper.initContainer(Containers.solo)
+    helper.initContainer(Containers.multiplayer)
+    helper.initContainer(Containers.settings)
+
 end
 
 function Containers.Resize()

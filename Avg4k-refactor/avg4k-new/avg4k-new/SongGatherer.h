@@ -19,6 +19,7 @@ namespace Average4k::Chart::Collection
 		int done = 0;
 		std::vector<Pack> packs = {};
 
+		std::vector< boost::asio::thread_pool> pools;
 
 		void FindPacks(std::string directory, int threads);
 

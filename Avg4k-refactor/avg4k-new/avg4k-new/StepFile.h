@@ -21,6 +21,9 @@ namespace Average4k::Chart
 			if (line.find(':') != std::string::npos) // remove the starting "#STOPS:" if it exists
 				line = line.substr(line.find(':') + 1);
 
+			if (line.empty())
+				return;
+
 			// check if ; exists
 			bool bracket = line.back() == ';';
 
@@ -62,6 +65,9 @@ namespace Average4k::Chart
 			// Clean up the line
 			if (line.find(':') != std::string::npos) // remove the starting "#BPMS:" if it exists
 				line = line.substr(line.find(':') + 1);
+
+			if (line.empty())
+				return;
 
 			// check if ; exists
 			bool bracket = line.back() == ';';

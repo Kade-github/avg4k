@@ -104,6 +104,8 @@ namespace AvgEngine::Base
 			// Viewport width and height
 			glViewport(0, 0, w, h);
 
+			std::sort(drawCalls.begin(), drawCalls.end(), drawCall());
+
 			for(drawCall& call : drawCalls)
 			{
 				// Clear the buffer so we know nothing is there

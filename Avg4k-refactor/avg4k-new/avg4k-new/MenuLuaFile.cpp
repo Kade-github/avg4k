@@ -107,11 +107,12 @@ void Average4k::Lua::MenuLuaFile::CreateObject(Average4k::Lua::Base::gameObject&
 	case 0: // default ass game object
 		o = new GameObject(ob.transform.x, ob.transform.y);
 		ob.id = o->id;
-		ob.transform.base = &o->transform;
 		o->transform = AvgEngine::Render::Rect(ob.transform.x, ob.transform.y,
 			ob.transform.w, ob.transform.h,
 			ob.transform.r, ob.transform.g, ob.transform.b, ob.transform.a,
 			ob.transform.scale, ob.transform.deg);
+		ob.transform.base = &o->transform;
+		ob.transformOffset.base = &o->transformOffset;
 		ob.base = o;
 		break;
 	case 1: // sprite
@@ -129,6 +130,7 @@ void Average4k::Lua::MenuLuaFile::CreateObject(Average4k::Lua::Base::gameObject&
 			ob.transform.scale, ob.transform.deg);
 		ob.id = sp->id;
 		ob.transform.base = &sp->transform;
+		ob.transformOffset.base = &sp->transformOffset;
 		ob.base = sp;
 		break;
 	case 2: // text
@@ -141,6 +143,7 @@ void Average4k::Lua::MenuLuaFile::CreateObject(Average4k::Lua::Base::gameObject&
 			ob.transform.scale, ob.transform.deg);
 		ob.id = te->id;
 		ob.transform.base = &te->transform;
+		ob.transformOffset.base = &te->transformOffset;
 		ob.base = te;
 		break;
 	case 3: // rectangle
@@ -151,6 +154,7 @@ void Average4k::Lua::MenuLuaFile::CreateObject(Average4k::Lua::Base::gameObject&
 			ob.transform.scale, ob.transform.deg);
 		ob.id = re->id;
 		ob.transform.base = &re->transform;
+		ob.transformOffset.base = &re->transformOffset;
 		ob.base = re;
 		break;
 	}
@@ -205,10 +209,14 @@ void Average4k::Lua::MenuLuaFile::Load()
 		sol::constructors<gameObject(double, double), gameObject()>(),
 		"id", &gameObject::id,
 		"transform", &gameObject::transform,
+		"transformOffset", &gameObject::transformOffset,
 		"parent", &gameObject::parent,
 		"children", &gameObject::children,
 		"ratio", sol::property(&gameObject::getRatio, &gameObject::setRatio),
 		"order", sol::property(&gameObject::getZIndex, &gameObject::setZIndex),
+		"tag", sol::property(&gameObject::getTag, &gameObject::setTag),
+		"getChildByTag", &gameObject::getChildByTag,
+		"getRealRect", &gameObject::denormilize,
 		"add", &gameObject::add,
 		"remove", &gameObject::removeObject,
 		"destroy", &gameObject::destroy

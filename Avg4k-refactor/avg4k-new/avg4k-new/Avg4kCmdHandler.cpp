@@ -7,6 +7,20 @@ inline constexpr auto operator ""_sh(const char* str, size_t len) {
 	return AvgEngine::Debug::hash_djb2a(std::string_view{ str, len });
 }
 
+void printTree(AvgEngine::Base::GameObject* tree, int amount = 0)
+{
+	using namespace AvgEngine;
+	std::string tabs = "";
+	for (int i = 0; i < amount; i++)
+		tabs += "	";
+	for (AvgEngine::Base::GameObject* ob : tree->Children)
+	{
+		Logging::writeLog(tabs + "Child -> Object-" + std::to_string(ob->id) + " Tag: " + ob->tag + ", z: " + std::to_string(ob->zIndex + tree->zIndex) + " (original: " + std::to_string(ob->zIndex) + "), " + ob->transform.toString() + ", Ratio: " + (ob->transformRatio ? "yes" : "no") + ", Children : " + std::to_string(ob->Children.size()) + ".");
+		if (ob->Children.size() > 0) // recursive call
+			printTree(ob, amount + 1);
+	}
+}
+
 void Avg4kCmdHandler::Handle(std::string cmd)
 {
 	using namespace AvgEngine;
@@ -49,11 +63,10 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 		{
 			for (AvgEngine::Base::GameObject* o : m->GameObjects)
 			{
-				Logging::writeLog("[Menu] Object-" + std::to_string(o->id) + ", " + o->transform.toString() + ", Ratio: " + (o->transformRatio ? "yes" : "no") + ", Children: " + std::to_string(o->Children.size()));
-				for (AvgEngine::Base::GameObject* ob : o->Children)
-				{
-					Logging::writeLog("		Child -> Object-" + std::to_string(ob->id) + ", " + ob->transform.toString() + ", Ratio: " + (ob->transformRatio ? "yes" : "no") + ", Children: " + std::to_string(ob->Children.size()) + ".");
-				}
+				Logging::writeLog("[Menu] Object-" + std::to_string(o->id) + " Tag: " + o->tag + ", z: " + std::to_string(o->zIndex) + ", " + o->transform.toString() + ", Ratio : " + (o->transformRatio ? "yes" : "no") + ", Children : " + std::to_string(o->Children.size()));
+				AvgEngine::Base::GameObject* tree = o;
+				if (o->Children.size() > 0)
+					printTree(tree, 1);
 			}
 		}
 		else

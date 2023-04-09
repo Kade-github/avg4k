@@ -30,7 +30,7 @@ void ThreadTask(Average4k::Chart::Collection::SongGatherer* _this, std::string c
 
 void Average4k::Chart::Collection::SongGatherer::FindPacks(std::string directory, int threads)
 {
-
+	pools.clear();
 	packs.clear();
 
 	total = 0;

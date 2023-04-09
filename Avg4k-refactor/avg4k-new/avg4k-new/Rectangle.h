@@ -48,16 +48,16 @@ namespace AvgEngine::Base
 			{
 				if (transformRatio)
 				{
-					r.x = parent->x + (parent->w * (r.x));
-					r.y = parent->y + (parent->h * (r.y));
+					r.x = parent->x + (parent->w * (r.x)) + transformOffset.x;
+					r.y = parent->y + (parent->h * (r.y)) + transformOffset.y;
 
-					r.w = parent->w * (r.w);
-					r.h = parent->h * (r.h);
+					r.w = (parent->w * (r.w)) + transformOffset.w;
+					r.h = (parent->h * (r.h)) + transformOffset.h;
 				}
 				else
 				{
-					r.x += parent->x;
-					r.y += parent->y;
+					r.x += parent->x + transformOffset.x;
+					r.y += parent->y + transformOffset.y;
 				}
 			}
 
@@ -66,6 +66,8 @@ namespace AvgEngine::Base
 				r.x -= r.w / 2;
 				r.y -= r.h / 2;
 			}
+
+			iTransform = r;
 
 			if (outlinedThickness == 0)
 				Primitives::DrawRectangle(camera, zIndex, r);

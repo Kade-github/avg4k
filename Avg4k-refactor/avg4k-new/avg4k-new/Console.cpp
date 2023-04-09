@@ -97,7 +97,7 @@ void Console::update()
 	ImVec2 size = { static_cast<float>(Render::Display::width), 150.0f };
 	ImGui::SetNextWindowSizeConstraints(size, {size.x, static_cast<float>(Render::Display::height)});
 	ImGui::SetNextWindowPos({ 0.0f,0.0f });
-	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
 	ImGui::Begin("AvgEngine Console", 0, window_flags);
 
 	ImVec2 s = ImGui::GetContentRegionAvail();

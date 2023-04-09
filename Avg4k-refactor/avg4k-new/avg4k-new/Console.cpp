@@ -75,6 +75,7 @@ void Console::update()
 	{
 		ImGui::SetNextWindowSizeConstraints({ 345,400 }, { static_cast<float>(Render::Display::width),static_cast<float>(Render::Display::height) });
 		ImGui::Begin("Performance Graphs");
+
 		ImGui::Text("Current FPS: %d", Game::Instance->fps);
 		if (ImPlot::BeginPlot("FPS")) {
 			ImPlot::SetupAxes("Report ID", "FPS");
@@ -96,7 +97,8 @@ void Console::update()
 	ImVec2 size = { static_cast<float>(Render::Display::width), 150.0f };
 	ImGui::SetNextWindowSizeConstraints(size, {size.x, static_cast<float>(Render::Display::height)});
 	ImGui::SetNextWindowPos({ 0.0f,0.0f });
-	ImGui::Begin("AvgEngine Console");
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
+	ImGui::Begin("AvgEngine Console", 0, window_flags);
 
 	ImVec2 s = ImGui::GetContentRegionAvail();
 

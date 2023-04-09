@@ -52,6 +52,7 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 		break;
 	case "dontcare"_sh:
 		Average4K::Instance->SwitchMenu(new MainMenu(Average4K::skin->GetLua("main-menu")));
+		Logging::writeLog("[DontCare] This command will be removed in the future. It is only for use when online capabilities aren't avaliable.");
 		break;
 	case "bind"_sh:
 		if (spl.size() < 2)

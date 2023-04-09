@@ -4,17 +4,16 @@ helper.containers = {}
 
 function helper.dump(o)
     if type(o) == 'table' then
-       local s = '{ '
-       for k,v in pairs(o) do
-          if type(k) ~= 'number' then k = '"'..k..'"' end
-          s = s .. '['..k..'] = ' .. helper.dump(v) .. ','
-       end
-       return s .. '} '
+        local s = '{ '
+        for k, v in pairs(o) do
+            if type(k) ~= 'number' then k = '"' .. k .. '"' end
+            s = s .. '[' .. k .. '] = ' .. helper.dump(v) .. ','
+        end
+        return s .. '} '
     else
-       return tostring(o)
+        return tostring(o)
     end
- end
-
+end
 
 --[[
     A helper function to create a sprite
@@ -22,9 +21,8 @@ function helper.dump(o)
 function helper.createSprite(path, x, y)
     local tempTexture = texture.new(path)
     loadTexture(tempTexture)
-    return sprite.new(x,y,tempTexture)
+    return sprite.new(x, y, tempTexture)
 end
-
 
 --[[
     A helper function to create a chart sprite
@@ -32,7 +30,7 @@ end
 function helper.createChartSprite(path, x, y)
     local tempTexture = texture.new(path)
     loadChartTexture(tempTexture)
-    return sprite.new(x,y,tempTexture)
+    return sprite.new(x, y, tempTexture)
 end
 
 --[[
@@ -41,13 +39,13 @@ end
 function helper.createContainer(path, x, y)
     local tempTexture = texture.new("Menu/MainMenu/" .. path)
     loadTexture(tempTexture)
-    return sprite.new(x,y,tempTexture)
+    return sprite.new(x, y, tempTexture)
 end
 
 --[[
     A helper function to initialize a container
 ]]
-function helper.initContainer(container)
+function helper.initContainer(container, allowScroll)
     -- add it to the container list (with some extra variables)
     local c = {}
     c.c = container
@@ -55,12 +53,13 @@ function helper.initContainer(container)
     c.shouldScroll = false
     c.hover = false
     c.overspace = 0
-    table.insert(helper.containers, {c})
+    c.allowScroll = allowScroll
+    table.insert(helper.containers, { c })
 
     -- create a scroll bar
     -- its actually made up of 3 things (technically two), the bar, and the two arrows (one is rotated 180 degrees)
 
-    local bar = rectangle.new(0,0,18 * skin["upscale"],60)
+    local bar = rectangle.new(0, 0, 18 * skin["upscale"], 60)
     create(bar)
     container:add(bar)
     bar.order = 1
@@ -68,7 +67,7 @@ function helper.initContainer(container)
 
     bar.tag = "container_bar"
 
-    local arrow1 = helper.createSprite("Menu/MainMenu/Container/scrollbaruparrow", 0,0)
+    local arrow1 = helper.createSprite("Menu/MainMenu/Container/scrollbaruparrow", 0, 0)
     create(arrow1)
     container:add(arrow1)
     arrow1.order = 1
@@ -76,14 +75,13 @@ function helper.initContainer(container)
 
     arrow1.tag = "container_arrow_1"
 
-    local arrow2 = helper.createSprite("Menu/MainMenu/Container/scrollbaruparrow", 0,0)
+    local arrow2 = helper.createSprite("Menu/MainMenu/Container/scrollbaruparrow", 0, 0)
     create(arrow2)
     container:add(arrow2)
     arrow2.order = 1
     arrow2.transform.alpha = 0
 
     arrow2.tag = "container_arrow_2"
-    
 end
 
 --[[
@@ -94,7 +92,7 @@ function helper.containerMouseWheel(amount)
         local ind = t[1]
         if ind["hover"] and ind["shouldScroll"] then
             ind["scroll"] = ind["scroll"] - (amount * 30)
-            
+
             if ind["scroll"] >= ind["overspace"] then
                 ind["scroll"] = ind["overspace"]
             end
@@ -102,7 +100,6 @@ function helper.containerMouseWheel(amount)
             if ind["scroll"] < 0 then
                 ind["scroll"] = 0
             end
-
         end
     end
 end
@@ -114,7 +111,6 @@ function helper.containerUpdate(time)
     local mouse = getMousePos()
 
     for i, t in ipairs(helper.containers) do
-        
         local ind = t[1]
 
         local container = ind["c"]
@@ -123,28 +119,22 @@ function helper.containerUpdate(time)
         -- check hover using aabb
 
         local mRect = rect.new(mouse[1], mouse[2], 32, 32)
-        ind["hover"] = aabb_rect(mRect,rc, false)
+        ind["hover"] = aabb_rect(mRect, rc, false)
 
         -- set the clip
 
-        container.clip.x = rc.x - 2
-        container.clip.y = rc.y - 2
-        container.clip.w = rc.w + 2
-        container.clip.h = rc.h + 1
+        container.clip.x = rc.x + container.transformOffset.x - 2
+        container.clip.y = rc.y + container.transformOffset.y - 2
+        container.clip.w = rc.w + container.transformOffset.w + 2
+        container.clip.h = rc.h + container.transformOffset.h + 1
 
-        -- dont calculate scroll bars until all the tweens are done (it breaks a little bit otherwise)
-        local tweenStop = time - Globals.start < 2
-            
-        if not tweenStop then
-
+        if ind["allowScroll"] then
             -- get the bar and arrows
             local bar = container:getChildByTag("container_bar")
             local arrow1 = container:getChildByTag("container_arrow_1")
             local arrow2 = container:getChildByTag("container_arrow_2")
 
             local currentScroll = ind["scroll"]
-            
-            
 
             for i, child in ipairs(container.children) do
                 if child.id == bar.id or child.id == arrow1.id or child.id == arrow2.id then
@@ -170,7 +160,7 @@ function helper.containerUpdate(time)
 
             if ind["shouldScroll"] then
                 -- set the bar and arrows to visible
-                
+
                 bar.transform.alpha = 1
                 arrow1.transform.alpha = 1
                 arrow2.transform.alpha = 1
@@ -185,7 +175,7 @@ function helper.containerUpdate(time)
                 arrow1.transform.y = 2
                 arrow1.transform.w = bar.transform.w
                 arrow1.transform.h = 18 * skin["upscale"]
-                
+
                 arrow2.transform.x = 4
                 arrow2.transform.w = bar.transform.w
                 arrow2.transform.h = 18 * skin["upscale"]
@@ -193,7 +183,6 @@ function helper.containerUpdate(time)
                 arrow2.transform.angle = 180
 
                 bar.transform.h = (rc.h - ((arrow2.transform.h * 2) + 14)) - ind["overspace"]
-
             else
                 -- set the bar and arrows to invisible
                 bar.transform.alpha = 0

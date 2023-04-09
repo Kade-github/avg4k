@@ -2,19 +2,19 @@ Containers = {}
 
 function Containers.soloCreate(c)
     Containers.scontainer = {}
-    Containers.scontainer.packs = helper.createSprite("Menu/MainMenu/Solo/packscontainer", 0,0)
+    Containers.scontainer.packs = helper.createSprite("Menu/MainMenu/Solo/packscontainer", 0, 0)
     create(Containers.scontainer.packs)
     c:add(Containers.scontainer.packs)
     Containers.scontainer.packs.tag = "packContainer"
     Containers.scontainer.packs.order = 2
     Containers.scontainer.packs.ratio = true
-    
+
     Containers.scontainer.packs.transform.y = 0.12
 
     Containers.scontainer.packs.transform.h = 0.88
     Containers.scontainer.packs.transform.w = 0.2
 
-    Containers.scontainer.packsText = text.new(0,0, "ArialBold.fnt", "Packs")
+    Containers.scontainer.packsText = text.new(0, 0, "ArialBold.fnt", "Packs")
     create(Containers.scontainer.packsText)
     c:add(Containers.scontainer.packsText)
     Containers.scontainer.packsText.tag = "packsText"
@@ -28,7 +28,7 @@ function Containers.soloCreate(c)
     Containers.scontainer.packsText.transform.x = 0.02
     Containers.scontainer.packsText.transform.y = 0.03
 
-    Containers.scontainer.packsInfo = text.new(0,0, "ArialItalic.fnt", "holy crap lois")
+    Containers.scontainer.packsInfo = text.new(0, 0, "ArialItalic.fnt", "holy crap lois")
     create(Containers.scontainer.packsInfo)
     c:add(Containers.scontainer.packsInfo)
     Containers.scontainer.packsInfo.tag = "packsInfo"
@@ -41,7 +41,7 @@ function Containers.soloCreate(c)
     Containers.scontainer.packsInfo.transform.x = 0.02
     Containers.scontainer.packsInfo.transform.y = 0.07
 
-    helper.initContainer(Containers.scontainer.packs)
+    helper.initContainer(Containers.scontainer.packs, true)
 end
 
 function Containers.create()
@@ -53,7 +53,7 @@ function Containers.create()
     Containers.solo.center = true
     Containers.solo.transform.y = -0.5
     Containers.solo.transform.scale = skin["upscale"]
-    
+
     Containers.endRect = copyRect(Containers.solo.transform)
     Containers.endRect.y = 0.5
 
@@ -67,7 +67,7 @@ function Containers.create()
     Containers.multiplayer.center = true
     Containers.multiplayer.transform.y = 0.5
     Containers.multiplayer.transform.scale = skin["upscale"]
-    
+
     Containers.settings = helper.createContainer("container", 0, 0)
     add(Containers.settings)
     Containers.settings.tag = "settings"
@@ -76,15 +76,14 @@ function Containers.create()
     Containers.settings.center = true
     Containers.settings.transform.y = 0.5
     Containers.settings.transform.scale = skin["upscale"]
-    
+
     -- Tweens
 
     tween(Containers.solo, Containers.endRect, 1, "outcubic")
 
-    helper.initContainer(Containers.solo)
-    helper.initContainer(Containers.multiplayer)
-    helper.initContainer(Containers.settings)
-
+    helper.initContainer(Containers.solo, false)
+    helper.initContainer(Containers.multiplayer, false)
+    helper.initContainer(Containers.settings, true)
 end
 
 function Containers.Resize()

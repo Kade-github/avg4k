@@ -62,6 +62,8 @@
 #pragma comment(lib, "dbghelp.lib")
 #endif
 
+#define SOL_LUAJIT 1
+
 class Average4K;
 using namespace AvgEngine;
 
@@ -261,30 +263,24 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	g->Start();
 
-
-	double lastTime = glfwGetTime();
-	double fTime = glfwGetTime();
 	int frames = 0;
 
 	int reportId = 0;
 
 	glEnable(GL_MULTISAMPLE);
 
-	memset(frametimes, 0, sizeof(frametimes));
-	framecount = 0;
-	frametimelast = 0;
-
 	glfwSwapInterval(0);
-
-	auto next_tick = Clock::now();
-
 	Render::Display::defaultShader->setProject(g->CurrentMenu->camera.projection);
-
+	auto start = std::chrono::steady_clock::now();
 	while (!glfwWindowShouldClose(g->Window))
 	{
-		auto now_tick = Clock::now();
-		if (now_tick < next_tick)
-			continue;
+		++frames;
+		auto now = std::chrono::steady_clock::now();
+		auto diff = now - start;
+		auto end = now + std::chrono::milliseconds(static_cast<int>((1.0f / g->fpsCap) * 1000));
+
+		fpsthink(g);
+
 		glClearColor(0.05f, 0.05f, 0.05f, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
 
@@ -297,28 +293,22 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 		g->CurrentMenu->cameraDraw();
 
-
 		External::ImGuiHelper::RenderEnd(g->Window);
 
 		glfwSwapBuffers(g->Window);
 		glfwPollEvents();
 
-		fpsthink(g);
-
 		if (g->fps < 0)
 			g->fps = 0;
+		if (g->fps > g->fpsCap) // heehee
+			g->fps = g->fpsCap;
 
 		reportId++;
 		if (reportId == 50)
 			reportId = 0;
 
 		g->console.fpsData[reportId] = g->fps;
-
-		auto nano = std::chrono::nanoseconds((int)(1e9 / g->fpsCap));
-
-		next_tick = now_tick + nano;
-
-		preciseSleep(std::chrono::duration_cast<std::chrono::microseconds>(next_tick - Clock::now()).count() / 1e6);
+		std::this_thread::sleep_until(end);
 	}
 
 	// let it rain the color of blood. あか

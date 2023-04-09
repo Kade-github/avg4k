@@ -133,9 +133,6 @@ namespace AvgEngine::Base
 	
 				}
 			}
-
-
-
 	
 			if (center)
 			{

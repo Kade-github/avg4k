@@ -143,16 +143,18 @@ namespace AvgEngine::Base
 			r.y += transformOffset.y;
 			r.w += transformOffset.w;
 			r.h += transformOffset.h;
-			if (transform.a <= 0)
-				return;
-			drawCall c = Camera::FormatDrawCall(zIndex, texture, shader, Render::DisplayHelper::RectToVertex(r, src, center));
 
-			if (cr.w != 0 || cr.h != 0)
-				c.clip = cr;
-			if (cr.w == 0 && cr.h == 0 && parentClip)
-				c.clip = *parentClip;
+			if (transform.a > 0)
+			{
+				drawCall c = Camera::FormatDrawCall(zIndex, texture, shader, Render::DisplayHelper::RectToVertex(r, src, center));
 
-			camera->addDrawCall(c);
+				if (cr.w != 0 || cr.h != 0)
+					c.clip = cr;
+				if (cr.w == 0 && cr.h == 0 && parentClip)
+					c.clip = *parentClip;
+
+				camera->addDrawCall(c);
+			}
 
 			drawChildren(true);
 		}

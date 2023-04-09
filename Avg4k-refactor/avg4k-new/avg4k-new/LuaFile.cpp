@@ -31,12 +31,7 @@ void LuaFile::Launch()
 	
 	lua = std::make_unique<sol::state>();
 
-	lua->open_libraries(sol::lib::base);
-	lua->open_libraries(sol::lib::table);
-	lua->open_libraries(sol::lib::math);
-	lua->open_libraries(sol::lib::string);
-	lua->open_libraries(sol::lib::utf8);
-	lua->open_libraries(sol::lib::debug);
+	lua->open_libraries(sol::lib::base, sol::lib::table, sol::lib::math, sol::lib::string, sol::lib::utf8, sol::lib::debug, sol::lib::jit);
 
 	lua->set_panic(sol::c_call<decltype(&lua_panic), &lua_panic>);
 	lua->set_exception_handler(&lua_exception);

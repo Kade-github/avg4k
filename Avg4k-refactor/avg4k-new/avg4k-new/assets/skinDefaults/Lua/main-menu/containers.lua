@@ -42,6 +42,19 @@ function Containers.soloCreate(c)
     Containers.scontainer.packsInfo.transform.y = 0.07
 
     helper.initContainer(Containers.scontainer.packs, true)
+
+    Containers.scontainer.songWheel = helper.createSprite("Menu/MainMenu/Solo/packscontainer", 0, 0)
+    create(Containers.scontainer.songWheel)
+    c:add(Containers.scontainer.songWheel)
+    Containers.scontainer.songWheel.tag = "songWheel"
+    Containers.scontainer.songWheel.order = 2
+    Containers.scontainer.songWheel.ratio = true
+    Containers.scontainer.songWheel.transform.x = Containers.scontainer.packs.transform.x + Containers.scontainer.packs.transform.w
+    Containers.scontainer.songWheel.transform.y = 0.12
+
+    Containers.scontainer.songWheel.transform.h = 0.88
+    Containers.scontainer.songWheel.transform.w = 0.6
+    Containers.scontainer.songWheel.transform.alpha = 0
 end
 
 function Containers.create()

@@ -6,7 +6,6 @@
 #include "Display.h"
 #include "ImGUIHelper.h"
 
-
 #ifdef STATIC_LINK
 #pragma comment(lib,"x64\\bass.lib")
 #pragma comment(lib,"x64_static\\msgpackc.lib")
@@ -36,7 +35,7 @@
 //brotlidec-static.lib
 #pragma comment(lib,"x64_static\\brotlidec-static.lib")
 #pragma comment(lib,"x64_static\\brotlienc-static.lib")
-#pragma comment(lib,"x64_static\\lua.lib")
+#pragma comment(lib,"x64_static\\lua51.lib")
 #pragma comment(lib,"x64_static\\libpng16.lib")
 #pragma comment(lib, "x64_static\\boost_atomic-vc140-mt.lib")
 #pragma comment(lib, "dbghelp.lib")
@@ -62,7 +61,6 @@
 #pragma comment(lib, "dbghelp.lib")
 #endif
 
-#define SOL_LUAJIT 1
 
 class Average4K;
 using namespace AvgEngine;

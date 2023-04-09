@@ -108,7 +108,6 @@ end
     A helper function to update containers scroll bar and item positions
 ]]
 function helper.containerUpdate(time)
-    local mouse = getMousePos()
 
     for i, t in ipairs(helper.containers) do
         local ind = t[1]
@@ -117,9 +116,7 @@ function helper.containerUpdate(time)
         local rc = container:getRealRect()
 
         -- check hover using aabb
-
-        local mRect = rect.new(mouse[1], mouse[2], 32, 32)
-        ind["hover"] = aabb_rect(mRect, rc, false)
+        ind["hover"] = aabb_rect(Globals.mouseRect, rc, false)
 
         -- set the clip
 
@@ -142,7 +139,7 @@ function helper.containerUpdate(time)
                 else
                     local real = child:getRealRect()
                     if real.y + real.h > rc.y + rc.h then
-                        ind["overspace"] = (real.y + real.h) - rc.h
+                        ind["overspace"] = (real.y + real.h) - (rc.y + rc.h)
                     end
                     child.transformOffset.y = -currentScroll
                     if ind["shouldScroll"] then

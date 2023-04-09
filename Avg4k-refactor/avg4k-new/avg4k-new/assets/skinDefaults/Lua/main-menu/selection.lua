@@ -53,6 +53,22 @@ function Selection.select(container)
     Selection.currentContainer = nContainer
 end
 
+function Selection.mouseDown()
+    local realSolo = Selection.soloHit:getRealRect()
+    local realMulti = Selection.multiplayerHit:getRealRect()
+    local realSettings = Selection.settingsHit:getRealRect()
+
+    if aabb_rect(Globals.mouseRect, realSolo, false) then
+        Selection.select(1)
+    end
+    if aabb_rect(Globals.mouseRect, realMulti, false) then
+        Selection.select(2)
+    end
+    if aabb_rect(Globals.mouseRect, realSettings, false) then
+        Selection.select(3)
+    end
+end
+
 function Selection.keyPress(num)
     if num == 49 then
         Selection.select(1)
@@ -139,7 +155,35 @@ function Selection.create()
 
     Selection.selectionRect.transform.y = -0.75
 
+    -- Hitboxes
+    Selection.soloHit = rectangle.new(0, 0, Selection.selectionRect.transform.w, 0)
+    Selection.soloHit.transform.x = sTEnd.x
+    Selection.soloHit.transform.y = sTEnd.y
+    Selection.soloHit.transform.h = 0.03
+    add(Selection.soloHit)
+    Selection.soloHit.ratio = true
+    Selection.soloHit.center = true
+    Selection.soloHit.transform.alpha = 0
 
+    Selection.multiplayerHit = rectangle.new(0, 0, Selection.selectionRect.transform.w, 0)
+    Selection.multiplayerHit.transform.x = mTEnd.x
+    Selection.multiplayerHit.transform.y = mTEnd.y
+    Selection.multiplayerHit.transform.h = 0.03
+    add(Selection.multiplayerHit)
+    Selection.multiplayerHit.ratio = true
+    Selection.multiplayerHit.center = true
+    Selection.multiplayerHit.transform.alpha = 0
+
+    Selection.settingsHit = rectangle.new(0, 0, Selection.selectionRect.transform.w, 0)
+    Selection.settingsHit.transform.x = seTEnd.x
+    Selection.settingsHit.transform.y = seTEnd.y
+    Selection.settingsHit.transform.h = 0.03
+    add(Selection.settingsHit)
+    Selection.settingsHit.ratio = true
+    Selection.settingsHit.center = true
+    Selection.settingsHit.transform.alpha = 0
+
+    
     tween(Selection.soloText, sTEnd, 1.2, "outcubic")
     tween(Selection.selectionRect, srEnd, 1.2, "outcubic")
     tween(Selection.multiplayerText, mTEnd, 1.2, "outcubic")

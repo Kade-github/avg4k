@@ -33,6 +33,9 @@ function Create()
     packContainer.loadPacks(Containers.scontainer.packs)
 end
 
+function MouseDown(pos)
+    Selection.mouseDown()
+end
 function MouseWheel(data)
     helper.containerMouseWheel(data)
 end
@@ -63,11 +66,16 @@ Globals = {}
 -- last time
 Globals.lt = 0
 Globals.start = 0
+Globals.mouseRect = nil
 
 function Update(time)
     if Globals.start == 0 then
         Globals.start = time
     end
+    local mouse = getMousePos()
+
+    local mRect = rect.new(mouse[1], mouse[2], 32, 32)
+    Globals.mouseRect = mRect
     local t = tonumber(time)
     local delta = t - Globals.lt
     Globals.lt = t

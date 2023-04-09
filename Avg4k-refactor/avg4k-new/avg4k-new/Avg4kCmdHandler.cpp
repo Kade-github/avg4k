@@ -2,6 +2,8 @@
 #include "Game.h"
 #include "Console.h"
 #include "LuaMenu.h"
+#include "MainMenu.h"
+#include "Average4K.h"
 
 inline constexpr auto operator ""_sh(const char* str, size_t len) {
 	return AvgEngine::Debug::hash_djb2a(std::string_view{ str, len });
@@ -47,6 +49,9 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 		}
 		else
 			Logging::writeLog("[Menu] [Error] Sorry, that menu isn't a lua menu and cannot be reloaded!");
+		break;
+	case "dontcare"_sh:
+		Average4K::Instance->SwitchMenu(new MainMenu(Average4K::skin->GetLua("main-menu")));
 		break;
 	case "bind"_sh:
 		if (spl.size() < 2)

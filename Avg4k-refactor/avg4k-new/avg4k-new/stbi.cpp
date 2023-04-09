@@ -26,7 +26,7 @@ AvgEngine::OpenGL::Texture* stbi_h::stbi_load_memory(char* memory, int size)
 	unsigned char* data = stbi_load_from_memory((stbi_uc*)memory, size, &w, &h, NULL, 4);
 
 	if (get_error())
-		AvgEngine::Logging::writeLog("[Image] [Error] failure to load " + std::string(stbi_failure_reason()));
+		AvgEngine::Logging::writeLog("[Image] [Error] [Memory] failure to load " + std::string(stbi_failure_reason()));
 
     return new AvgEngine::OpenGL::Texture(data, w, h);
 }

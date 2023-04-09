@@ -37,13 +37,14 @@ function Avatar.createIcon(notDefault)
 
     if not notDefault then
         -- if we're not connected to the server, we'll just use the default avatar
+        cprint("Loading genericAvatar")
         Avatar.av = helper.createSprite("Menu/genericAvatar", 0, 0)
         create(Avatar.av)
         Avatar.border:add(Avatar.av)
         Avatar.border:add(Avatar.helloText)
         Avatar.border:add(Avatar.versionText)
         Avatar.av.transform.w = 1;
-        Avatar.av.transform.h = 1;
+        Avatar.av.transform.h = 1.1;
         Avatar.av.transform.scale = 0.9
         Avatar.av.transform.x = 0.5
         Avatar.av.transform.y = 0.5
@@ -96,6 +97,7 @@ function Avatar.create()
     -- but lets also first make sure that we're connected to the server
 
     local isConnected = online["connected"]
+    cprint("Steam connection: " .. tostring(isConnected))
 
-    Avatar:createIcon(isConnected)
+    Avatar.createIcon(isConnected)
 end

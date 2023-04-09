@@ -209,7 +209,12 @@ namespace AvgEngine::Base
 			if (totalW > transform.w)
 				transform.w = totalW;
 
-			iTransform = transform;
+			Render::Rect r = start;
+
+			if (centerLines)
+				r.x -= (transform.w / 2);
+
+			iTransform = r;
 
 			for (Line& line : outlines)
 			{

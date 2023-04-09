@@ -40,8 +40,6 @@ namespace AvgEngine::Base
 
 		void draw() override
 		{
-			if (transform.a <= 0)
-				return;
 
 			Render::Rect r = transform;
 			Render::Rect cr = clipRect;
@@ -73,6 +71,9 @@ namespace AvgEngine::Base
 			if (cr.w == 0 && cr.h == 0 && parentClip)
 				cr = *parentClip;
 			
+			if (transform.a <= 0)
+				return;
+
 			if (outlinedThickness == 0)
 				Primitives::DrawRectangle(camera, zIndex, r, cr);
 			else

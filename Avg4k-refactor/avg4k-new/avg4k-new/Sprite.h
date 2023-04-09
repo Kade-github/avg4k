@@ -107,9 +107,6 @@ namespace AvgEngine::Base
 
 		void draw() override
 		{
-			if (transform.a <= 0)
-				return;
-
 
 			drawChildren(false);
 
@@ -146,7 +143,8 @@ namespace AvgEngine::Base
 			r.y += transformOffset.y;
 			r.w += transformOffset.w;
 			r.h += transformOffset.h;
-
+			if (transform.a <= 0)
+				return;
 			drawCall c = Camera::FormatDrawCall(zIndex, texture, shader, Render::DisplayHelper::RectToVertex(r, src, center));
 
 			if (cr.w != 0 || cr.h != 0)

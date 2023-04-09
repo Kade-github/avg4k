@@ -2,6 +2,7 @@
 HelperFiles = { 'avatar.lua', 'containers.lua', 'selection.lua', 'packs/packs.lua', 'packs/songWheel.lua' }
 
 function Create()
+    cprint(jit.version)
     -- dofile on all helper files
     dofile(resource("Lua/helper-functions.lua"))
     for i = 1, #HelperFiles, 1 do

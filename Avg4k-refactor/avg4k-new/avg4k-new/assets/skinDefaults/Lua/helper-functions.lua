@@ -133,7 +133,10 @@ function helper.containerUpdate(time)
 
             local currentScroll = ind["scroll"]
 
-            for i, child in ipairs(container.children) do
+            local table = container.children
+
+            for i = 1, table:size(), 1 do
+                local child = table[i]
                 if child.id == bar.id or child.id == arrow1.id or child.id == arrow2.id then
                     -- do nothing
                 else

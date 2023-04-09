@@ -8,6 +8,7 @@ namespace Average4k::Lua::Menu
 	public:
 		std::string name;
 		std::string banner;
+		std::string path;
 
 		bool showName;
 
@@ -17,6 +18,7 @@ namespace Average4k::Lua::Menu
 		{
 			name = "";
 			banner = "";
+			path = "";
 			showName = true;
 			files = {};
 		}

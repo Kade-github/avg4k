@@ -89,6 +89,7 @@ namespace Average4k::Lua::Menu
 		std::vector<timingPoint> timingPoints;
 		std::vector<stopPoint> stopPoints;
 		std::vector<difficulty> difficulties;
+		std::string path;
 
 		chart()
 		{

@@ -119,27 +119,24 @@ namespace AvgEngine::Base
 			{
 				if (transformRatio)
 				{
-					r.x = parent->x + (parent->w * (r.x)) + transformOffset.x;
-					r.y = parent->y + (parent->h * (r.y)) + transformOffset.y;
+					r.x = parent->x + (parent->w * (r.x));
+					r.y = parent->y + (parent->h * (r.y));
 
-					r.w = (parent->w * (r.w)) + transformOffset.w;
-					r.h = (parent->h * (r.h)) + transformOffset.h;
+					r.w = (parent->w * (r.w));
+					r.h = (parent->h * (r.h));
 
-					if (cr.w != 0 || cr.h != 0)
-					{
-						cr.x = parent->x + (parent->w * (cr.x)) + transformOffset.x;
-						cr.y = parent->y + (parent->h * (cr.y)) + transformOffset.y;
-						cr.w = (parent->w * (cr.w)) + transformOffset.w;
-						cr.h = (parent->h * (cr.h)) + transformOffset.h;
-					}
 				}
 				else
 				{
-					r.x += parent->x + transformOffset.x;
-					r.y += parent->y + transformOffset.y;
+					r.x += parent->x;
+					r.y += parent->y;
+	
 				}
 			}
 
+
+
+	
 			if (center)
 			{
 				r.x -= r.w / 2;
@@ -148,10 +145,17 @@ namespace AvgEngine::Base
 
 			iTransform = r;
 
+			r.x += transformOffset.x;
+			r.y += transformOffset.y;
+			r.w += transformOffset.w;
+			r.h += transformOffset.h;
+
 			drawCall c = Camera::FormatDrawCall(zIndex, texture, shader, Render::DisplayHelper::RectToVertex(r, src, center));
 
 			if (cr.w != 0 || cr.h != 0)
 				c.clip = cr;
+			if (cr.w == 0 && cr.h == 0 && parentClip)
+				c.clip = *parentClip;
 
 			camera->addDrawCall(c);
 

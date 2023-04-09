@@ -14,6 +14,7 @@ namespace AvgEngine::Events
 		Event_GamepadPress = 7,
 		Event_GamepadAxis = 8,
 		Event_Resize = 9,
+		Event_MouseScroll = 10,
 		Event_Null = -1
 	};
 

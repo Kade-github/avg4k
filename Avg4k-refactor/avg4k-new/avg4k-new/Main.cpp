@@ -242,6 +242,14 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			}
 		});
 
+	glfwSetScrollCallback(g->Window, [](GLFWwindow* window, double xoffset, double yoffset)
+		{
+			Events::Event e;
+			e.type = Events::EventType::Event_MouseScroll;
+			e.data = yoffset;
+			Game::Instance->QueueEvent(e);
+		});
+
 	Render::Display::Init();
 	Logging::writeLog("[Main] Initialized Display!");
 

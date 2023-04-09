@@ -42,6 +42,7 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 		m = static_cast<Average4k::Lua::LuaMenu*>(Game::Instance->CurrentMenu);
 		if (m->luaMenu)
 		{
+			Logging::consoleLog.clear();
 			m->Reload();
 		}
 		else

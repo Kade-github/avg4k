@@ -114,8 +114,13 @@ namespace AvgEngine::Base
 				Render::Display::ClearBuffer();
 				// Add our call's vertices
 				Render::Display::AddVertex(call.vertices);
+				// Set our clip rect (if its not the default one)
+				if (call.clip != Render::Rect())
+					Render::Display::Clip(&call.clip);
 				// Draw all of the vertices
 				Render::Display::DrawBuffer(call.texture, call.shad);
+				// Reset the clip
+				Render::Display::Clip(NULL);
 			}
 			
 			// Clear all of the draw calls so we don't draw things twice

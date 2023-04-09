@@ -72,7 +72,7 @@ namespace Average4k::Lua::Base
 		rect denormilize()
 		{
 			rect nr{};
-			if (base && getRatio())
+			if (base)
 				nr = rect(base->iTransform.x, base->iTransform.y, base->iTransform.w, base->iTransform.h, base->iTransform.r, base->iTransform.g, base->iTransform.b, base->iTransform.a, base->iTransform.scale, base->iTransform.angle);
 			return nr;
 		}

@@ -54,18 +54,6 @@ namespace AvgEngine::Base
 
 					r.w = (parent->w * (r.w)) + transformOffset.w;
 					r.h = (parent->h * (r.h)) + transformOffset.h;
-
-					if (cr.w != 0 || cr.h != 0)
-					{
-						cr.x = parent->x + (parent->w * (cr.x)) + transformOffset.x;
-						cr.y = parent->y + (parent->h * (cr.y)) + transformOffset.y;
-						cr.w = (parent->w * (cr.w)) + transformOffset.w;
-						cr.h = (parent->h * (cr.h)) + transformOffset.h;
-					}
-					else
-					{
-
-					}
 				}
 				else
 				{
@@ -82,10 +70,13 @@ namespace AvgEngine::Base
 
 			iTransform = r;
 
+			if (cr.w == 0 && cr.h == 0 && parentClip)
+				cr = *parentClip;
+			
 			if (outlinedThickness == 0)
-				Primitives::DrawRectangle(camera, zIndex, r);
+				Primitives::DrawRectangle(camera, zIndex, r, cr);
 			else
-				Primitives::DrawOutlinedRectangle(camera, zIndex, outlinedThickness, r);
+				Primitives::DrawOutlinedRectangle(camera, zIndex, outlinedThickness, r, cr);
 		}
 	};
 }

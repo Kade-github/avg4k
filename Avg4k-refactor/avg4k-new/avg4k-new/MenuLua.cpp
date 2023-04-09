@@ -29,6 +29,11 @@ namespace Average4k::Lua
 			file->Function("MouseUp", e.vector.toString());
 		});
 
+		eManager->Subscribe(AvgEngine::Events::EventType::Event_MouseScroll, [&](AvgEngine::Events::Event e)
+		{
+			file->Function("MouseWheel", std::to_string(e.data));
+		});
+
 		eManager->Subscribe(AvgEngine::Events::EventType::Event_GamepadPress, [&](AvgEngine::Events::Event e)
 		{
 			file->Function("GamepadPress", std::to_string(e.data));

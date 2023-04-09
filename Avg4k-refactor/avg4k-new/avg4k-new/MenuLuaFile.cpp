@@ -23,6 +23,7 @@ void Average4k::Lua::MenuLuaFile::SetPacks(sol::global_table t)
 		p.banner = pl.bannerPath;
 		p.name = pl.name;
 		p.showName = pl.showName;
+		p.path = pl.path;
 		// Loop over the files 
 		for (int j = 0; j < pl.files.size(); j++)
 		{
@@ -39,6 +40,7 @@ void Average4k::Lua::MenuLuaFile::SetPacks(sol::global_table t)
 			c.songOffset = cf.chartMetadata.Song_Offset;
 			c.songFile = cf.chartMetadata.Song_File;
 			c.chartType = cf.chartMetadata.Chart_Type;
+			c.path = cf.path;
 
 			for (Average4k::Chart::Difficulty d : cf.chartMetadata.Difficulties)
 			{
@@ -261,7 +263,8 @@ void Average4k::Lua::MenuLuaFile::Load()
 		"name", &pack::name,
 		"banner", &pack::banner,
 		"showName", &pack::showName,
-		"files", &pack::files
+		"files", &pack::files,
+		"path", &pack::path
 		);
 	
 	sol::usertype<note> note_type = lua->new_usertype<note>("note",
@@ -312,7 +315,8 @@ void Average4k::Lua::MenuLuaFile::Load()
 		"previewStart", &chart::previewStart,
 		"timingPoints", &chart::timingPoints,
 		"stopPoints", &chart::stopPoints,
-		"difficulties", &chart::difficulties
+		"difficulties", &chart::difficulties,
+		"path", &chart::path
 		);
 
 

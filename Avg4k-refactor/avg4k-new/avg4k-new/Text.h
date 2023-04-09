@@ -75,6 +75,7 @@ namespace AvgEngine::Base
 			if (!fnt)
 				return;
 			Render::Rect dst = transform;
+			Render::Rect cr = clipRect;
 			if (parent)
 			{
 				if (transformRatio)
@@ -91,6 +92,9 @@ namespace AvgEngine::Base
 					dst.y += parent->y;
 				}
 			}
+
+			if (cr.w == 0 && cr.h == 0 && parentClip)
+				cr = *parentClip;
 
 			Render::Rect start = dst;
 
@@ -232,6 +236,7 @@ namespace AvgEngine::Base
 					if (!c.space)
 					{
 						drawCall ca = Camera::FormatDrawCall(zIndex, fnt->texture, NULL, Render::DisplayHelper::RectToVertex(c.dst, c.src));
+						ca.clip = cr;
 						camera->addDrawCall(ca);
 					}
 					currentAdvance += c.advance;
@@ -265,6 +270,7 @@ namespace AvgEngine::Base
 					if (!c.space)
 					{
 						drawCall ca = Camera::FormatDrawCall(zIndex, fnt->texture, NULL, Render::DisplayHelper::RectToVertex(c.dst, c.src));
+						ca.clip = cr;
 						camera->addDrawCall(ca);
 					}
 					if (!c.outline)
@@ -274,7 +280,7 @@ namespace AvgEngine::Base
 
 
 			transform.h = d;
-
+			call.clip = cr;
 			camera->addDrawCall(call);
 
 			GameObject::draw();

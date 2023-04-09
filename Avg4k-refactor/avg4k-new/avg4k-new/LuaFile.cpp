@@ -82,6 +82,15 @@ void LuaFile::Load()
 		tex.id = t->id;
 		});
 
+	lua->set_function("loadChartTexture", [&](texture& tex) {
+		AvgEngine::OpenGL::Texture* t = Average4K::skin->GetChartTexture(tex.path, true);
+		t->dontDelete = true;
+		textures.push_back(t);
+		tex.w = t->width;
+		tex.h = t->height;
+		tex.id = t->id;
+	});
+
 	lua->set_function("loadTextureData", [&](texture& tex) {
 		size_t out;
 		char* data = macaron::Base64::Decode(tex.path.c_str(),tex.path.length(),&out);
@@ -100,13 +109,13 @@ void LuaFile::Load()
 	lua->set_function("getMousePos", [&]() {
 		double x, y;
 		glfwGetCursorPos(Average4K::Instance->Window, &x, &y);
-		return std::make_tuple(x, y);
+		return std::vector<double>({ x, y });
 	});
 
 	lua->set_function("getMousePosRelative", [&]() {
 		double x, y;
 		glfwGetCursorPos(Average4K::Instance->Window, &x, &y);
-		return std::make_tuple(x / AvgEngine::Render::Display::width, y / AvgEngine::Render::Display::height);
+		return std::vector<double>({ x / AvgEngine::Render::Display::width, y / AvgEngine::Render::Display::height });
 	});
 
 

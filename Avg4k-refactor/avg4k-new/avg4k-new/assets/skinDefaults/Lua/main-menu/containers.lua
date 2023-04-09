@@ -5,7 +5,7 @@ function Containers.soloCreate(c)
     Containers.scontainer.packs = helper.createSprite("Menu/MainMenu/Solo/packscontainer", 0,0)
     create(Containers.scontainer.packs)
     c:add(Containers.scontainer.packs)
-
+    Containers.scontainer.packs.tag = "packContainer"
     Containers.scontainer.packs.order = 2
     Containers.scontainer.packs.ratio = true
     
@@ -17,6 +17,7 @@ function Containers.soloCreate(c)
     Containers.scontainer.packsText = text.new(0,0, "ArialBold.fnt", "Packs")
     create(Containers.scontainer.packsText)
     c:add(Containers.scontainer.packsText)
+    Containers.scontainer.packsText.tag = "packsText"
 
     Containers.scontainer.packsText.size = 24 * skin["upscale"]
     Containers.scontainer.packsText.characterSpacing = 3
@@ -30,6 +31,7 @@ function Containers.soloCreate(c)
     Containers.scontainer.packsInfo = text.new(0,0, "ArialItalic.fnt", "holy crap lois")
     create(Containers.scontainer.packsInfo)
     c:add(Containers.scontainer.packsInfo)
+    Containers.scontainer.packsInfo.tag = "packsInfo"
 
     Containers.scontainer.packsInfo.size = 18 * skin["upscale"]
 
@@ -45,6 +47,7 @@ end
 function Containers.create()
     Containers.solo = helper.createContainer("container", 0, 0)
     add(Containers.solo)
+    Containers.solo.tag = "solo"
     Containers.solo.ratio = true
     Containers.solo.transform.x = 0.5
     Containers.solo.center = true
@@ -58,6 +61,7 @@ function Containers.create()
 
     Containers.multiplayer = helper.createContainer("container", 0, 0)
     add(Containers.multiplayer)
+    Containers.multiplayer.tag = "multiplayer"
     Containers.multiplayer.ratio = true
     Containers.multiplayer.transform.x = 1.5
     Containers.multiplayer.center = true
@@ -66,6 +70,7 @@ function Containers.create()
     
     Containers.settings = helper.createContainer("container", 0, 0)
     add(Containers.settings)
+    Containers.settings.tag = "settings"
     Containers.settings.ratio = true
     Containers.settings.transform.x = 1.5
     Containers.settings.center = true

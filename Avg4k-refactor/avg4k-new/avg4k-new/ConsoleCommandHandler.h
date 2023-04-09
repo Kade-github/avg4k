@@ -17,6 +17,7 @@ namespace AvgEngine::Debug
 		ConsoleCommandHandler()
 		{
 			commands.push_back("help");
+			commands.push_back("clear");
 			commands.push_back("performgraph");
 		}
 		virtual void Handle(std::string cmd);

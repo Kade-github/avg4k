@@ -24,6 +24,9 @@ void AvgEngine::Debug::ConsoleCommandHandler::Handle(std::string cmd)
 		}
 		Logging::writeLog("[Help] " + fullString);
 		break;
+	case "clear"_sh:
+		Logging::consoleLog.clear();
+		break;
 	case "game"_sh:
 		Logging::writeLog("[Game] " + Game::Instance->Title + ":" + Game::Instance->Version);
 		break;

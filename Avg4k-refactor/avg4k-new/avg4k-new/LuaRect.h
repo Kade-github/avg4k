@@ -16,16 +16,56 @@ namespace Average4k::Lua::Base
 
 		rect() = default;
 
-		double getX() { return x; };
-		double getY() { return y; };
-		double getW() { return w; };
-		double getH() { return h; };
-		double getR() { return r; };
-		double getG() { return g; };
-		double getB() { return b; };
-		double getA() { return a; };
-		double getS() { return scale; };
-		double getD() { return deg; };
+		double getX() { 
+			if (base)
+				return base->x;
+			return x;
+		};
+		double getY() {
+			if (base)
+				return base->y;
+			return y;
+		};
+		double getW() {
+			if (base)
+				return base->w;
+			return w;
+		};
+		double getH() {
+			if (base)
+				return base->h;
+			return h;
+		};
+		double getR() {
+			if (base)
+				return base->r;
+			return r;
+		};
+		double getG() {
+			if (base)
+				return base->g;
+			return g;
+		};
+		double getB() {
+			if (base)
+				return base->b;
+			return b;
+		};
+		double getA() {
+			if (base)
+				return base->a;
+			return a;
+		};
+		double getS() {
+			if (base)
+				return base->scale;
+			return scale;
+		};
+		double getD() {
+			if (base)
+				return base->angle;
+			return deg;
+		};
 
 		void setX(double _x) { 
 			x = _x; 

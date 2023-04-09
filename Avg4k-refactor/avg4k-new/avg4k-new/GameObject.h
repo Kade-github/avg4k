@@ -30,7 +30,7 @@ namespace AvgEngine::Base
 		bool dontDelete = false;
 		Render::Rect iTransform = Render::Rect();
 		Render::Rect transform = Render::Rect();
-		Render::Rect parentClip = Render::Rect();
+		Render::Rect* parentClip = NULL;
 		Render::Rect clipRect = Render::Rect();
 
 		Render::Rect transformOffset = Render::Rect();
@@ -82,6 +82,13 @@ namespace AvgEngine::Base
 				// Render objects' draw calls.
 				if (ob->render && zIndex + ob->zIndex <= zIndex)
 				{
+					Render::Rect* cr = &clipRect;
+					if (clipRect.w != 0 || clipRect.h != 0 && parentClip)
+						cr = parentClip;
+					if (cr->w != 0 || cr->h != 0)
+						ob->parentClip = cr;
+					else
+						ob->parentClip = NULL;
 					ob->camera = camera;
 					ob->parent = &transform;
 					int oldZ = ob->zIndex;
@@ -99,6 +106,13 @@ namespace AvgEngine::Base
 				// Render objects' draw calls.
 				if (ob->render && zIndex + ob->zIndex > zIndex)
 				{
+					Render::Rect* cr = &clipRect;
+					if (parentClip != NULL && (cr->w == 0 && cr->h == 0))
+						cr = parentClip;
+					if (cr->w != 0 || cr->h != 0)
+						ob->parentClip = cr;
+					else
+						ob->parentClip = NULL;
 					ob->camera = camera;
 					ob->parent = &transform;
 					int oldZ = ob->zIndex;

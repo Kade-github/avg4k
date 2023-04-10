@@ -33,6 +33,12 @@ namespace Average4k::Lua
 			textures = std::vector<AvgEngine::OpenGL::Texture*>();
 		}
 
+		~LuaFile()
+		{
+			for (int i = 0; i < textures.size(); i++)
+				delete textures[i];
+		}
+
 		void Start()
 		{
 			auto result = lua->safe_script_file(_path, &sol::script_pass_on_error);

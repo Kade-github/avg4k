@@ -90,6 +90,7 @@ namespace Average4k::Lua::Menu
 		std::vector<stopPoint> stopPoints;
 		std::vector<difficulty> difficulties;
 		std::string path;
+		std::string folder;
 
 		chart()
 		{

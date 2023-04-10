@@ -41,6 +41,7 @@ void Average4k::Lua::MenuLuaFile::SetPacks(sol::global_table t)
 			c.songFile = cf.chartMetadata.Song_File;
 			c.chartType = cf.chartMetadata.Chart_Type;
 			c.path = cf.path;
+			c.folder = cf.folder;
 
 			for (Average4k::Chart::Difficulty d : cf.chartMetadata.Difficulties)
 			{
@@ -123,7 +124,7 @@ void Average4k::Lua::MenuLuaFile::CreateObject(Average4k::Lua::Base::gameObject&
 		tex = getTexture(s.tex.id);
 		if (tex == NULL)
 		{
-			AvgEngine::Logging::writeLog("[Lua] [Error] Failed to add " + std::to_string(s.id) + ", did you forget a loadTexture?");
+			AvgEngine::Logging::writeLog("[Lua] [Error] Failed to create " + std::to_string(s.id) + ", did you forget a loadTexture?");
 			return;
 		}
 		sp = new Sprite(s.transform.x, s.transform.y, tex);
@@ -226,7 +227,8 @@ void Average4k::Lua::MenuLuaFile::Load()
 		"getRealRect", &gameObject::denormilize,
 		"add", &gameObject::add,
 		"remove", &gameObject::removeObject,
-		"destroy", &gameObject::destroy
+		"destroy", &gameObject::destroy,
+		"removeAll", &gameObject::removeAll
 		);
 
 	sol::usertype<sprite> sprite_type = lua->new_usertype<sprite>("sprite",
@@ -316,7 +318,8 @@ void Average4k::Lua::MenuLuaFile::Load()
 		"timingPoints", &chart::timingPoints,
 		"stopPoints", &chart::stopPoints,
 		"difficulties", &chart::difficulties,
-		"path", &chart::path
+		"path", &chart::path,
+		"folder", &chart::folder
 		);
 
 

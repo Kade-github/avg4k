@@ -176,5 +176,12 @@ namespace AvgEngine::Base
 			Children.erase(std::ranges::remove_if(Children,
 				[&](const GameObject* x) { return x->id == id; }).begin(), Children.end());
 		}
+
+		virtual void removeAll()
+		{
+			for (GameObject* o : Children)
+				delete o;
+			Children.clear();
+		}
 	};
 }

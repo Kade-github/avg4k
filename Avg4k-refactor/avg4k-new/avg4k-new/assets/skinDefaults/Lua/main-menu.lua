@@ -36,6 +36,7 @@ end
 
 function MouseDown(pos)
     Selection.mouseDown()
+    packContainer.mouseDown()
 end
 function MouseWheel(data)
     helper.containerMouseWheel(data)
@@ -75,7 +76,7 @@ function Update(time)
     end
     local mouse = getMousePos()
 
-    local mRect = rect.new(mouse[1], mouse[2], 32, 32)
+    local mRect = rect.new(mouse[1], mouse[2], 16, 16)
     Globals.mouseRect = mRect
     local t = tonumber(time)
     local delta = t - Globals.lt

@@ -1,6 +1,7 @@
 #pragma once
 #include "ChartFile.h"
 #include <boost/lexical_cast.hpp>
+#include <regex>
 namespace Average4k::Chart
 {
 	class StepFile : public ChartFile {
@@ -233,7 +234,7 @@ namespace Average4k::Chart
 		{
 			// load the file (from path), and check if it loaded correctly
 			std::ifstream infile(path);
-
+	
 			if (!infile.good())
 			{
 				AvgEngine::Logging::writeLog("[StepFile] [Error] Couldn't load " + path + "!");

@@ -23,9 +23,9 @@ namespace Average4k::Chart::Collection
 
 		void FindPacks(std::string directory, int threads);
 
-		std::vector<std::string> FindCharts(std::string dir)
+		std::map<std::string, std::string> FindCharts(std::string dir)
 		{
-			std::vector<std::string> charts = {};
+			std::map<std::string, std::string> charts = {};
 			// itterate through the directory
 			for (const auto& entry : std::filesystem::directory_iterator(dir))
 			{
@@ -40,7 +40,7 @@ namespace Average4k::Chart::Collection
 						if (file.is_regular_file() && (ext == ".sm" || ext == ".ssc"))
 						{
 							std::string p = file.path().string();
-							charts.push_back(p);
+							charts[path] = p;
 							break;
 						}
 					}

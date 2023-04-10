@@ -19,8 +19,12 @@ namespace Average4k::Lua
 		~MenuLuaFile()
 		{
 			objects.clear();
-			sol::state* l = lua.release();
-			delete l;
+			if (lua != NULL)
+			{
+				sol::state* l = lua.release();
+				delete l;
+			}
+			LuaFile::~LuaFile();
 		}
 
 		void SetPacks(sol::global_table t);

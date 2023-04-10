@@ -15,6 +15,14 @@ function helper.dump(o)
     end
 end
 
+-- there is aabb_rect but it is slow since it's a cpp call.
+function helper.aabb(r1, r2)
+    return r1.x < r2.x + r2.w and
+            r1.x + r1.w > r2.x and
+            r1.y < r2.y + r2.h and
+            r1.y + r1.h > r2.y
+end
+
 --[[
     A helper function to create a sprite
 ]]
@@ -116,7 +124,7 @@ function helper.containerUpdate(time)
         local rc = container:getRealRect()
 
         -- check hover using aabb
-        ind["hover"] = aabb_rect(Globals.mouseRect, rc, false)
+        ind["hover"] = helper.aabb(Globals.mouseRect, rc)
 
         -- set the clip
 

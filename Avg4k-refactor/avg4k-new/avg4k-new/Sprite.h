@@ -95,6 +95,13 @@ namespace AvgEngine::Base
 					transform.y -= transform.h / 2;
 				}
 			}
+			else if (parent)
+			{
+				transform.x += parent->x + transformOffset.x;
+				transform.y += parent->y + transformOffset.y;
+				transform.w += transformOffset.w;
+				transform.h += transformOffset.h;
+			}
 			if (zIndexx)
 			{
 				GameObject::drawTopZIndex();

@@ -1,5 +1,7 @@
 packContainer = {}
 packContainer.sprites = {}
+packContainer.hitboxes = {}
+packContainer.selectedIndex = -1
 
 function packContainer.loadBanners()
     -- print all the packs
@@ -11,6 +13,21 @@ function packContainer.loadBanners()
         banner.order = 1
 
         table.insert(packContainer.sprites, banner)
+    end
+end
+
+function packContainer.mouseDown()
+    for i = 1, #packContainer.hitboxes, 1 do
+        local hitbox = packContainer.hitboxes[i]
+        local real = hitbox:getRealRect()
+        if aabb_rect(Globals.mouseRect, real, false) then
+            cprint("Selected pack " .. tostring(i))
+            packContainer.selectedIndex = i
+            hitbox.transform.alpha = 0.2
+            songWheel.setSongs(packs[i].files)
+        else
+            hitbox.transform.alpha = 0
+        end
     end
 end
 
@@ -27,5 +44,14 @@ function packContainer.loadPacks(c)
         s.transform.y = (75 * (i - 1)) + 2
         s.transform.w = real.w - 2
         s.transform.h = 73
+
+        local hitbox = rectangle.new(0, 0, real.w, 73)
+        create(hitbox)
+        hitbox.tag = "hitbox"
+        hitbox.order = 2
+        hitbox.transform.alpha = 0
+        s:add(hitbox)
+
+        table.insert(packContainer.hitboxes, hitbox)
     end
 end

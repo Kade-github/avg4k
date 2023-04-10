@@ -1,6 +1,12 @@
 #include "LuaFile.h"
 #include "Average4K.h"
+#include <boost/asio/thread_pool.hpp>
+#include <boost/asio/post.hpp>
+#include <boost/bind.hpp>
+#include "stbi.h"
 using namespace Average4k::Lua;
+
+std::mutex chart_mutex;
 
 inline void lua_panic(sol::optional<std::string> maybe_msg) {
 	if (maybe_msg) {
@@ -37,6 +43,17 @@ void LuaFile::Launch()
 	lua->set_exception_handler(&lua_exception);
 
 	Load();
+}
+
+void LoadChartTexture(LuaFile* _t, std::string path, int index, sol::table* texes)
+{
+	std::string v = path;
+	Average4k::Lua::Base::texture tex = Average4k::Lua::Base::texture("");
+	tex.tempData = AvgEngine::External::stbi_h::stbi_load_file_data(v.c_str(), &tex.w, &tex.h);
+	tex.path = v;
+	chart_mutex.lock();
+	(*texes)[index] = tex;
+	chart_mutex.unlock();
 }
 
 void LuaFile::Load()
@@ -79,6 +96,7 @@ void LuaFile::Load()
 
 	lua->set_function("loadChartTexture", [&](texture& tex) {
 		AvgEngine::OpenGL::Texture* t = Average4K::skin->GetChartTexture(tex.path, true);
+		t->fromSTBI = true;
 		t->dontDelete = true;
 		textures.push_back(t);
 		tex.w = t->width;
@@ -95,6 +113,48 @@ void LuaFile::Load()
 		tex.w = t->width;
 		tex.h = t->height;
 		tex.id = t->id;
+	});
+
+	lua->set_function("deleteTexture", [&](texture& tex) {
+		for (int i = 0; i < textures.size(); i++)
+		{
+			if (textures[i]->id == tex.id)
+			{
+				delete textures[i];
+				textures.erase(textures.begin() + i);
+				break;
+			}
+		}
+	});
+
+	lua->set_function("loadChartTexturesThreaded", [&](std::vector<std::string> t, int threads) {
+		boost::asio::thread_pool pool(threads);
+		sol::table texes = lua->create_table();
+		for(int i = 0; i < t.size(); i++)
+		{
+			try
+			{
+				boost::asio::post(pool, boost::bind(&LoadChartTexture, this, t[i], i + 1, &texes));
+			}
+			catch (...)
+			{
+				AvgEngine::Logging::writeLog("[Lua] [Threaded] [Error] Failed to load chart asset " + t[i]);
+			}
+		}
+
+		pool.join();
+
+		for (int i = 0; i < texes.size(); i++)
+		{
+			texture& tex = texes[i + 1];
+			AvgEngine::OpenGL::Texture* t = AvgEngine::OpenGL::Texture::loadTextureFromData(tex.tempData, tex.w, tex.h);
+			t->fromSTBI = true;
+			t->dontDelete = true;
+			textures.push_back(t);
+			tex.id = t->id;
+		}
+
+		return texes;
 	});
 
 	lua->set_function("getTime", [&]() {

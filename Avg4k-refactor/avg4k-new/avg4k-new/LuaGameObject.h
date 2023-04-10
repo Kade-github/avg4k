@@ -133,6 +133,16 @@ namespace Average4k::Lua::Base
 				[&](const gameObject x) { return x.id == o.id; }).begin(), children.end());
 		}
 
+		void removeAll()
+		{
+			if (!base)
+			{
+				AvgEngine::Logging::writeLog("[Lua] [Error] Failed to remove all, YOU don't exist. (you cant remove something from something that doesn't exist!)");
+				return;
+			}
+			base->removeAll();
+			children.clear();
+		}
 
 	};
 }

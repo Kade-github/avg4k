@@ -9,7 +9,7 @@ inline constexpr auto operator ""_sh(const char* str, size_t len) {
 	return AvgEngine::Debug::hash_djb2a(std::string_view{ str, len });
 }
 
-void printTree(AvgEngine::Base::GameObject* tree, int amount = 0)
+void printTree(AvgEngine::Base::GameObject* tree, bool real, int amount = 0)
 {
 	using namespace AvgEngine;
 	std::string tabs = "";
@@ -17,9 +17,12 @@ void printTree(AvgEngine::Base::GameObject* tree, int amount = 0)
 		tabs += "	";
 	for (AvgEngine::Base::GameObject* ob : tree->Children)
 	{
-		Logging::writeLog(tabs + "Child -> Object-" + std::to_string(ob->id) + " Tag: " + ob->tag + ", z: " + std::to_string(ob->zIndex + tree->zIndex) + " (original: " + std::to_string(ob->zIndex) + "), " + ob->transform.toString() + ", Ratio: " + (ob->transformRatio ? "yes" : "no") + ", Children : " + std::to_string(ob->Children.size()) + ".");
+		auto t = ob->transform;
+		if (real)
+			t = ob->iTransform;
+		Logging::writeLog(tabs + "Child -> Object-" + std::to_string(ob->id) + " Tag: " + ob->tag + ", z: " + std::to_string(ob->zIndex + tree->zIndex) + " (original: " + std::to_string(ob->zIndex) + "), " + t.toString() + ", Ratio: " + (ob->transformRatio ? "yes" : "no") + ", Children : " + std::to_string(ob->Children.size()) + ".");
 		if (ob->Children.size() > 0) // recursive call
-			printTree(ob, amount + 1);
+			printTree(ob, real, amount + 1);
 	}
 }
 
@@ -68,12 +71,16 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 		m = static_cast<Average4k::Lua::LuaMenu*>(Game::Instance->CurrentMenu);
 		if (m->luaMenu)
 		{
+			bool real = AvgEngine::Utils::StringTools::Contains(cmd, " -real");
 			for (AvgEngine::Base::GameObject* o : m->GameObjects)
 			{
-				Logging::writeLog("[Menu] Object-" + std::to_string(o->id) + " Tag: " + o->tag + ", z: " + std::to_string(o->zIndex) + ", " + o->transform.toString() + ", Ratio : " + (o->transformRatio ? "yes" : "no") + ", Children : " + std::to_string(o->Children.size()));
+				auto t = o->transform;
+				if (real)
+					t = o->iTransform;
+				Logging::writeLog("[Menu] Object-" + std::to_string(o->id) + " Tag: " + o->tag + ", z: " + std::to_string(o->zIndex) + ", " + t.toString() + ", Ratio : " + (o->transformRatio ? "yes" : "no") + ", Children : " + std::to_string(o->Children.size()));
 				AvgEngine::Base::GameObject* tree = o;
 				if (o->Children.size() > 0)
-					printTree(tree, 1);
+					printTree(tree, real, 1);
 			}
 		}
 		else

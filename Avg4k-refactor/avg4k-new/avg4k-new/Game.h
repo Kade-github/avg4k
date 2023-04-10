@@ -37,7 +37,7 @@ namespace AvgEngine
 		std::string Version;
 
 		Base::Menu* CurrentMenu = NULL;
-
+		Base::Menu* NextMenu = NULL;
 		Base::Text* fpsText = NULL;
 
 		Base::Text* alphaText = NULL;
@@ -107,6 +107,30 @@ namespace AvgEngine
 				controllerName = "";
 		}
 
+		void Switch()
+		{
+			if (CurrentMenu != NULL)
+			{
+				for (Base::GameObject* obj : CurrentMenu->GameObjects)
+				{
+					if (!obj->dontDelete)
+						delete obj;
+				}
+				CurrentMenu->GameObjects.clear();
+			}
+			AvgEngine::Base::Menu* lastMenu = CurrentMenu;
+			CurrentMenu = NextMenu;
+			CurrentMenu->eManager = &eManager;
+			eManager.Clear();
+			if (lastMenu != NULL)
+			{
+				lastMenu->tween.Clear();
+				delete lastMenu;
+			}
+			CurrentMenu->load();
+			Render::Display::defaultShader->setProject(CurrentMenu->camera.projection);
+		}
+
 		virtual void update()
 		{
 			HandleGamepad();
@@ -116,7 +140,11 @@ namespace AvgEngine
 				if (eventMutex.try_lock())
 				{
 					for (Events::Event& e : queuedEvents)
+					{
 						Event(e);
+						if (e.type == Events::EventType::Event_SwitchMenu)
+							Switch();
+					}
 					queuedEvents.clear();
 					eventMutex.unlock();
 				}
@@ -142,19 +170,10 @@ namespace AvgEngine
 
 		virtual void SwitchMenu(Base::Menu* menu)
 		{
-			if (CurrentMenu)
-			{
-				for(Base::GameObject* obj : CurrentMenu->GameObjects)
-				{
-					if (!obj->dontDelete)
-						delete obj;
-				}
-				CurrentMenu->GameObjects.clear();
-			}
-			CurrentMenu = menu;
-			CurrentMenu->eManager = &eManager;
-			eManager.Clear();
-			CurrentMenu->load();
+			NextMenu = menu;
+			Events::Event e;
+			e.type = Events::EventType::Event_SwitchMenu;
+			QueueEvent(e);
 		}
 	};
 }

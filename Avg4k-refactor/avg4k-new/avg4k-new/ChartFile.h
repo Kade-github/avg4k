@@ -51,6 +51,7 @@ namespace Average4k::Chart
 		std::string Song_Banner;
 		std::string Song_Background;
 		std::string Song_File;
+
 		float Song_Offset;
 
 		int Chart_Type;
@@ -70,6 +71,7 @@ namespace Average4k::Chart
 		bool good = false;
 
 		std::string path;
+		std::string folder;
 
 		ChartFile(std::string _path)
 		{

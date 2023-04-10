@@ -10,6 +10,8 @@ namespace Average4k::Lua::Base
 		int w = 0, h = 0;
 		std::string path = "";
 
+		unsigned char* tempData;
+
 		texture(std::string _p)
 		{
 			path = _p;

@@ -2,11 +2,12 @@
 
 std::mutex songGatherer_mutex;
 
-void ThreadTask(Average4k::Chart::Collection::SongGatherer* _this, std::string cPath, Average4k::Chart::Pack& pack)
+void ThreadTask(Average4k::Chart::Collection::SongGatherer* _this, std::string cPath, std::string folder, Average4k::Chart::Pack& pack)
 {
 	try
 	{
 		Average4k::Chart::StepFile f = Average4k::Chart::StepFile(cPath);
+		f.folder = folder;
 		f.Parse();
 		songGatherer_mutex.lock();
 		if (f.good)
@@ -60,13 +61,14 @@ void Average4k::Chart::Collection::SongGatherer::FindPacks(std::string directory
 
 	for (int i = 0; i < packs.size(); i++)
 	{
-		std::vector<std::string> charts = {};
+		std::map<std::string, std::string> charts = {};
 		Pack& p = packs[i];
 		charts = FindCharts(p.path);
 		total += charts.size();
-		for (int j = 0; j < charts.size(); j++)
+
+		for (auto const& [key, val] : charts)
 		{
-			boost::asio::post(pool, boost::bind(ThreadTask, this, charts[j], std::ref(p)));
+			boost::asio::post(pool, boost::bind(ThreadTask, this, val, key, std::ref(p)));
 			totalC++;
 		}
 	}

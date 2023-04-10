@@ -50,6 +50,12 @@ Texture* Texture::loadTextureFromData(char* data, size_t outLength)
 	return External::stbi_h::stbi_load_memory(data, outLength);
 }
 
+Texture* AvgEngine::OpenGL::Texture::loadTextureFromData(unsigned char* data, int w, int h)
+{
+	Texture* t = new Texture(data, w, h);
+	return t;
+}
+
 texData Texture::getTextureData(std::string filePath)
 {
 	texData data{};

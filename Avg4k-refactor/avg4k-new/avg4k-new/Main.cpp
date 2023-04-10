@@ -268,7 +268,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	glEnable(GL_MULTISAMPLE);
 
 	glfwSwapInterval(0);
-	Render::Display::defaultShader->setProject(g->CurrentMenu->camera.projection);
+	
 	auto start = std::chrono::steady_clock::now();
 	while (!glfwWindowShouldClose(g->Window))
 	{
@@ -286,10 +286,13 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 		g->update();
 
-		g->console.drawData[reportId] = g->CurrentMenu->camera.drawCalls.size();
-		g->console.update();
+		if (g->CurrentMenu != NULL)
+		{
+			g->console.drawData[reportId] = g->CurrentMenu->camera.drawCalls.size();
+			g->console.update();
 
-		g->CurrentMenu->cameraDraw();
+			g->CurrentMenu->cameraDraw();
+		}
 
 		External::ImGuiHelper::RenderEnd(g->Window);
 

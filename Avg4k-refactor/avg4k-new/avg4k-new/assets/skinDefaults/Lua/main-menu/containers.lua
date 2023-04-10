@@ -55,6 +55,9 @@ function Containers.soloCreate(c)
     Containers.scontainer.songWheel.transform.h = 0.88
     Containers.scontainer.songWheel.transform.w = 0.6
     Containers.scontainer.songWheel.transform.alpha = 0
+
+    songWheel.init(Containers.scontainer.songWheel)
+    helper.initContainer(Containers.scontainer.songWheel, false)
 end
 
 function Containers.create()

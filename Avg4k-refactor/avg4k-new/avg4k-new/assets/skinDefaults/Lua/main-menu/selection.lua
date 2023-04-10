@@ -58,13 +58,13 @@ function Selection.mouseDown()
     local realMulti = Selection.multiplayerHit:getRealRect()
     local realSettings = Selection.settingsHit:getRealRect()
 
-    if aabb_rect(Globals.mouseRect, realSolo, false) then
+    
+
+    if helper.aabb(Globals.mouseRect, realSolo) then
         Selection.select(1)
-    end
-    if aabb_rect(Globals.mouseRect, realMulti, false) then
+    elseif helper.aabb(Globals.mouseRect, realMulti) then
         Selection.select(2)
-    end
-    if aabb_rect(Globals.mouseRect, realSettings, false) then
+    elseif helper.aabb(Globals.mouseRect, realSettings) then
         Selection.select(3)
     end
 end

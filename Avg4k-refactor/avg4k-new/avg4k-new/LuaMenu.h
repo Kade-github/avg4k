@@ -30,7 +30,8 @@ namespace Average4k::Lua
 
 		~LuaMenu()
 		{
-			delete file;
+			if (file != NULL)
+				delete file;
 		}
 
 		void draw() override

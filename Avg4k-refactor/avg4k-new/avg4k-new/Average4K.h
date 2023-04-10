@@ -101,10 +101,12 @@ public:
 	void update() override
 	{
 		SteamAPI_RunCallbacks();
+
+		Game::update();
+
 		if (!CurrentMenu)
 			return;
 
-		Game::update();
 
 		// Special text draws'
 

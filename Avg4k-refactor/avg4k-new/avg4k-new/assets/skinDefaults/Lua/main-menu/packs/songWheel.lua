@@ -29,13 +29,15 @@ function songWheel.setSongs(files)
         local t = songWheel.textures[i]
         local sprite = sprite.new(0,0, t)
         create(sprite)
+        sprite.tag = "bBackground"
         sprite.transform.w = wheelTexture.width
         sprite.transform.h = wheelTexture.height
         sprite.order = -1
         local y = (i - 1) * wheelTexture.height
-        cprint(tostring(y))
         local wheelTop = sprite.new(0,0, wheelTexture)
         create(wheelTop)
+
+        wheelTop.tag = "top-" .. tostring(i)
 
         songWheel.main:add(wheelTop)
         wheelTop:add(sprite)

@@ -83,7 +83,7 @@ namespace AvgEngine::Base
 				if (ob->render && zIndex + ob->zIndex <= zIndex)
 				{
 					Render::Rect* cr = &clipRect;
-					if (clipRect.w != 0 || clipRect.h != 0 && parentClip)
+					if (parentClip != NULL && (cr->w == 0 && cr->h == 0))
 						cr = parentClip;
 					if (cr->w != 0 || cr->h != 0)
 						ob->parentClip = cr;

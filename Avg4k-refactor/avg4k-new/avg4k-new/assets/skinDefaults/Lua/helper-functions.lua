@@ -130,8 +130,8 @@ function helper.containerUpdate(time)
 
         container.clip.x = rc.x + container.transformOffset.x - 2
         container.clip.y = rc.y + container.transformOffset.y - 2
-        container.clip.w = rc.w + container.transformOffset.w + 2
-        container.clip.h = rc.h + container.transformOffset.h + 1
+        container.clip.w = rc.w + container.transformOffset.w + 4
+        container.clip.h = rc.h + container.transformOffset.h + 4
 
         if ind["allowScroll"] then
             -- get the bar and arrows

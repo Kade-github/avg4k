@@ -205,5 +205,6 @@ namespace Average4k::Chart
 			}
 			return beat;
 		}
+
 	};
 }

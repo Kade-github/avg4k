@@ -2,6 +2,10 @@
 
 std::mutex songGatherer_mutex;
 
+bool songGather_sort(const Average4k::Chart::ChartFile& a, const Average4k::Chart::ChartFile& b) {
+	return a.chartMetadata.Song_Title < b.chartMetadata.Song_Title;
+}
+
 void ThreadTask(Average4k::Chart::Collection::SongGatherer* _this, std::string cPath, std::string folder, Average4k::Chart::Pack& pack)
 {
 	try
@@ -73,4 +77,10 @@ void Average4k::Chart::Collection::SongGatherer::FindPacks(std::string directory
 		}
 	}
 	pool.wait();
+
+	for (int i = 0; i < packs.size(); i++)
+	{
+		Pack& p = packs[i];
+		std::sort(p.files.begin(), p.files.end(), songGather_sort);
+	}
 }

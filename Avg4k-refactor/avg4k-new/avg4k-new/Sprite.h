@@ -153,6 +153,9 @@ namespace AvgEngine::Base
 
 			if (transform.a > 0)
 			{
+				if (r.x + r.w < 0 || r.x > camera->w || r.y + r.h < 0 || r.y > camera->h)
+					return;
+
 				drawCall c = Camera::FormatDrawCall(zIndex, texture, shader, Render::DisplayHelper::RectToVertex(r, src, center));
 
 				if (cr.w != 0 || cr.h != 0)

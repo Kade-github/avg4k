@@ -70,6 +70,9 @@ namespace AvgEngine::Base
 
 			if (cr.w == 0 && cr.h == 0 && parentClip)
 				cr = *parentClip;
+
+			if (r.x + r.w < 0 || r.x > camera->w || r.y + r.h < 0 || r.y > camera->h)
+				return;
 			
 			if (transform.a <= 0)
 				return;

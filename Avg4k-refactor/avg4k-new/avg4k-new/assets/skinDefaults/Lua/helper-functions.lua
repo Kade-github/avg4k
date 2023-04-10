@@ -23,6 +23,11 @@ function helper.aabb(r1, r2)
             r1.y + r1.h > r2.y
 end
 
+-- there is a lerp function on cpp, but its a cpp call so it's slow
+function helper.lerp(a, b, t)
+	return a + (b - a) * t
+end
+
 --[[
     A helper function to create a sprite
 ]]
@@ -90,6 +95,16 @@ function helper.initContainer(container, allowScroll)
     arrow2.transform.alpha = 0
 
     arrow2.tag = "container_arrow_2"
+end
+
+function helper.findContainer(container)
+    for i, t in ipairs(helper.containers) do
+        local ind = t[1]
+        if ind["c"].tag == container then
+            return ind
+        end
+    end
+    return nil
 end
 
 --[[

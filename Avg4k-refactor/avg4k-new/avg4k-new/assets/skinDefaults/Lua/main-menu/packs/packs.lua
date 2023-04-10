@@ -2,6 +2,7 @@ packContainer = {}
 packContainer.sprites = {}
 packContainer.hitboxes = {}
 packContainer.selectedIndex = -1
+packContainer.last = nil
 
 function packContainer.loadBanners()
     -- print all the packs
@@ -25,8 +26,10 @@ function packContainer.mouseDown()
             packContainer.selectedIndex = i
             hitbox.transform.alpha = 0.2
             songWheel.setSongs(packs[i].files)
-        else
-            hitbox.transform.alpha = 0
+            if last ~= nil then
+                last.transform.alpha = 0
+            end
+            last = hitbox
         end
     end
 end

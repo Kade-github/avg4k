@@ -46,6 +46,7 @@ function KeyPress(key)
     local num = tonumber(key)
     if num ~= nil then
         Selection.keyPress(num)
+        songWheel.keyPress(num)
     end
 end
 
@@ -84,4 +85,5 @@ function Update(time)
 
 
     helper.containerUpdate(time)
+    songWheel.update(time)
 end

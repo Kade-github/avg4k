@@ -111,6 +111,7 @@ namespace Average4k::Lua::Base
 				AvgEngine::Logging::writeLog("[Lua] [Error] Failed to add " + std::to_string(o.id) + ", YOU don't exist. (please call create on the object you want stuff to be added to)");
 				return;
 			}
+			o.parent = this;
 			base->addObject(o.base);
 			o.id = o.base->id;
 			children.push_back(o);

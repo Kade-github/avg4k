@@ -34,6 +34,13 @@ function packContainer.mouseDown()
     end
 end
 
+function packContainer.update(time)
+    for i = 1, #packContainer.sprites, 1 do
+        local s = packContainer.sprites[i]
+        s.transform.scale = skin["upscale"]
+    end
+end
+
 function packContainer.loadPacks(c)
     packContainer.main = c
     Containers.scontainer.packsInfo.text = "Loaded " .. #packs .. " packs!"
@@ -44,7 +51,7 @@ function packContainer.loadPacks(c)
         local s = packContainer.sprites[i]
         c:add(s)
         s.transform.x = 2
-        s.transform.y = (75 * (i - 1)) + 2
+        s.transform.y = ((75 * skin["upscale"]) * (i - 1)) + 2
         s.transform.w = real.w - 2
         s.transform.h = 73
 

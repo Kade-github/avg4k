@@ -84,7 +84,7 @@ function songWheel.update(t)
         if i ~= songWheel.selectedIndex then
             xBasedOnRank = xBasedOnRank * 0.6
         end
-
+        item.transform.scale = skin["upscale"]
         item.transform.x = xBasedOnRank - (item.transform.w / 2)
         item.transform.y = ((real.h / 2) - item.transform.h / 2) + ((item.transform.h + 8) * away)
     end

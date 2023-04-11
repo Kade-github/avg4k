@@ -32,6 +32,8 @@ function Create()
 
     packContainer.loadBanners()
     packContainer.loadPacks(Containers.scontainer.packs)
+
+    setResolution(1280,720)
 end
 
 function MouseDown(pos)
@@ -86,4 +88,5 @@ function Update(time)
 
     helper.containerUpdate(time)
     songWheel.update(time)
+    packContainer.update(time)
 end

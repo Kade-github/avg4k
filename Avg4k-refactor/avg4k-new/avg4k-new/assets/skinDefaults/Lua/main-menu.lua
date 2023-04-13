@@ -32,8 +32,6 @@ function Create()
 
     packContainer.loadBanners()
     packContainer.loadPacks(Containers.scontainer.packs)
-
-    setResolution(1280,720)
 end
 
 function MouseDown(pos)

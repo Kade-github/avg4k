@@ -1,4 +1,5 @@
 songWheel = {}
+songWheel.files = {};
 songWheel.textures = {}
 songWheel.selectedIndex = 1
 songWheel.fakeIndex = 1
@@ -8,6 +9,7 @@ function songWheel.init(container)
 end
 
 function songWheel.setSongs(files)
+    songWheel.files = files
     songWheel.main:removeAll()
 
     for i = 1, #songWheel.textures, 1 do
@@ -52,17 +54,26 @@ function songWheel.setSongs(files)
     table.insert(songWheel.textures, wheelTexture)
 end
 
+function songWheel.Select(amt)
+    songWheel.selectedIndex = songWheel.selectedIndex + amt
+    if songWheel.selectedIndex < 1 then
+        songWheel.selectedIndex = #songWheel.textures - 1
+    elseif songWheel.selectedIndex >= #songWheel.textures then
+        songWheel.selectedIndex = 1
+    end
+
+    Containers.scontainer.songInfo:removeAll()
+
+    local bg = helper.createChartSprite(songWheel.files[songWheel.selectedIndex].folder .. '/' .. songWheel.files[songWheel.selectedIndex].songBackground, 0.0, 0.0)
+    create(bg)
+    Containers.scontainer.songInfo:add(bg)
+end
+
 function songWheel.keyPress(num)
     if num == 265 then
-        songWheel.selectedIndex = songWheel.selectedIndex - 1
-        if songWheel.selectedIndex < 1 then
-            songWheel.selectedIndex = #songWheel.textures - 1
-        end
+        songWheel.Select(-1)
     elseif num == 264 then
-        songWheel.selectedIndex = songWheel.selectedIndex + 1
-        if songWheel.selectedIndex >= #songWheel.textures then
-            songWheel.selectedIndex = 1
-        end
+        songWheel.Select(1)
     end
 end
 

@@ -71,6 +71,30 @@ function Containers.soloCreate(c)
     Containers.scontainer.songInfo.transform.w = 0.26
     helper.initContainer(Containers.scontainer.songInfo, false)
 
+    Containers.scontainer.songInfo_title = text.new(0, 0, "ArialBold.fnt", "Song Title")
+    create(Containers.scontainer.songInfo_title)
+    Containers.scontainer.songInfo_title.size = 28 * skin["upscale"]
+    Containers.scontainer.songInfo_title.characterSpacing = 3
+    Containers.scontainer.songInfo:add(Containers.scontainer.songInfo_title)
+    Containers.scontainer.songInfo_title.ratio = true
+    Containers.scontainer.songInfo_title.transform.x = 0.06
+    Containers.scontainer.songInfo_title.transform.y = 0.04
+    Containers.scontainer.songInfo_title.tag = "songInfo_title"
+    Containers.scontainer.songInfo_title.order = 2
+    Containers.scontainer.songInfo_title.transform.alpha = 0
+
+    Containers.scontainer.songInfo_artist = text.new(0, 0, "Arial.fnt", "Song Artist")
+    create(Containers.scontainer.songInfo_artist)
+    Containers.scontainer.songInfo_artist.size = 20 * skin["upscale"]
+    Containers.scontainer.songInfo_artist.characterSpacing = 2.33
+    Containers.scontainer.songInfo:add(Containers.scontainer.songInfo_artist)
+    Containers.scontainer.songInfo_artist.ratio = true
+    Containers.scontainer.songInfo_artist.transform.x = 0.06
+    Containers.scontainer.songInfo_artist.transform.y = 0.08
+    Containers.scontainer.songInfo_artist.tag = "songInfo_artist"
+    Containers.scontainer.songInfo_artist.order = 2
+    Containers.scontainer.songInfo_artist.transform.alpha = 0
+
 end
 
 function Containers.create()

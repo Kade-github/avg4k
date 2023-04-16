@@ -154,7 +154,8 @@ namespace AvgEngine::Base
 						lines.push_back(currentLine);
 						currentLine = {};
 						currentOutline = {};
-						transform.w = totalW;
+						if (totalW > transform.w)
+							transform.w = totalW;
 						totalW = 0;
 					}
 					if (outlineThickness != 0)

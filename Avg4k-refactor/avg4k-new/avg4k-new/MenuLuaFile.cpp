@@ -42,6 +42,7 @@ void Average4k::Lua::MenuLuaFile::SetPacks(sol::global_table t)
 			c.chartType = cf.chartMetadata.Chart_Type;
 			c.path = cf.path;
 			c.folder = cf.folder;
+			c.isSteam = cf.chartMetadata.isSteam;
 
 			for (Average4k::Chart::Difficulty d : cf.chartMetadata.Difficulties)
 			{

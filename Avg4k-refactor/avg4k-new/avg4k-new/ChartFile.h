@@ -61,6 +61,8 @@ namespace Average4k::Chart
 		std::vector<TimingPoint> TimingPoints;
 		std::vector<StopPoint> Stops;
 		std::vector<Difficulty> Difficulties;
+
+		bool isSteam;
 	};
 
 	class ChartFile

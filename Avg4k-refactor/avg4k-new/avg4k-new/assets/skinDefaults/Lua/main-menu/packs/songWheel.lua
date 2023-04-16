@@ -2,8 +2,10 @@ songWheel = {}
 songWheel.files = {};
 songWheel.textures = {}
 songWheel.selectedIndex = 1
+songWheel.selectedDiff = 1
 songWheel.fakeIndex = 1
 songWheel.bg = nil
+songWheel.selectedFile = nil
 
 function songWheel.init(container)
     songWheel.main = container
@@ -22,7 +24,7 @@ function songWheel.setSongs(files)
 
     local wheelTexture = texture.new("Menu/MainMenu/Solo/wheelTop")
     loadTexture(wheelTexture)
-    
+
 
     -- obtain banners
     local banners = {}
@@ -36,14 +38,14 @@ function songWheel.setSongs(files)
 
     for i = 1, #songWheel.textures, 1 do
         local t = songWheel.textures[i]
-        local sprite = sprite.new(0,0, t)
+        local sprite = sprite.new(0, 0, t)
         create(sprite)
         sprite.tag = "bBackground"
         sprite.transform.w = wheelTexture.width
         sprite.transform.h = wheelTexture.height
         sprite.order = -1
         local y = (i - 1) * wheelTexture.height
-        local wheelTop = sprite.new(0,0, wheelTexture)
+        local wheelTop = sprite.new(0, 0, wheelTexture)
         create(wheelTop)
 
         wheelTop.tag = "top-" .. tostring(i)
@@ -55,6 +57,39 @@ function songWheel.setSongs(files)
     table.insert(songWheel.textures, wheelTexture)
 
     songWheel.Select(0)
+end
+
+function songWheel.SetDiff()
+    local diffName = songWheel.files[songWheel.selectedIndex].difficulties[songWheel.selectedDiff].name
+
+    if diffName == "" then
+        diffName = "Unknown"
+    end
+    if string.len(diffName) > 20 then
+        diffName = string.sub(diffName, 1, 30) .. "..."
+    end
+
+    local diff = tostring(songWheel.files[songWheel.selectedIndex].difficulties[songWheel.selectedDiff].difficultyRating)
+    Containers.scontainer.songInfo_difficulty.text = diff
+    Containers.scontainer.songInfo_difficultyName.text = diffName
+
+    Containers.scontainer.songInfo_difficulty.transform.alpha = 1
+    Containers.scontainer.songInfo_difficultyName.transform.alpha = 1
+
+    -- Check if the file has more than one diff, if it does then set the arrows to visible (otherwise don't) and space the correctly around the diff text
+    if #songWheel.files[songWheel.selectedIndex].difficulties > 1 then
+        local real = Containers.scontainer.songInfo_difficultyName:getRealRect()
+        local p = Containers.scontainer.songInfo_difficultyName.parent:getRealRect()
+        Containers.scontainer.songInfo_difficultyLeftArrow.transform.alpha = 1
+        Containers.scontainer.songInfo_difficultyRightArrow.transform.alpha = 1
+        Containers.scontainer.songInfo_difficultyLeftArrow.transform.x = real.x - ((Containers.scontainer.songInfo_difficultyLeftArrow.transform.w / 2) * Containers.scontainer.songInfo_difficultyLeftArrow.transform.scale) - p.x
+        Containers.scontainer.songInfo_difficultyLeftArrow.transform.y = real.y - p.y - (((Containers.scontainer.songInfo_difficultyLeftArrow.transform.h / 2) * Containers.scontainer.songInfo_difficultyLeftArrow.transform.scale))
+        Containers.scontainer.songInfo_difficultyRightArrow.transform.x = (real.x + real.w - 4) - p.x
+        Containers.scontainer.songInfo_difficultyRightArrow.transform.y = real.y - p.y - (((Containers.scontainer.songInfo_difficultyRightArrow.transform.h / 2) * Containers.scontainer.songInfo_difficultyRightArrow.transform.scale))
+    else
+        Containers.scontainer.songInfo_difficultyLeftArrow.transform.alpha = 0
+        Containers.scontainer.songInfo_difficultyRightArrow.transform.alpha = 0
+    end
 end
 
 function songWheel.Select(amt)
@@ -69,42 +104,76 @@ function songWheel.Select(amt)
         Containers.scontainer.songInfo:remove(songWheel.bg)
     end
 
+    songWheel.selectedDiff = 1
+
+    
+
     if songWheel.files[songWheel.selectedIndex] ~= nil then
-        local title = songWheel.files[songWheel.selectedIndex].songTitle
-        local artist = songWheel.files[songWheel.selectedIndex].songArtist
-        cprint(tostring(string.len(title)) .. " " .. title)
+        songWheel.selectedFile = songWheel.files[songWheel.selectedIndex]
+        local title = songWheel.selectedFile.songTitle
+        local artist = songWheel.selectedFile.songArtist
         if string.len(title) > 22 then
             title = string.sub(title, 1, 22) .. "..."
         end
         if string.len(artist) > 30 then
             artist = string.sub(artist, 1, 30) .. "..."
         end
+
         if title == "" then
             title = "Unknown"
         end
         if artist == "" then
             artist = "Unknown"
         end
+        
         Containers.scontainer.songInfo_title.text = title
         Containers.scontainer.songInfo_artist.text = artist
         Containers.scontainer.songInfo_title.transform.alpha = 1
         Containers.scontainer.songInfo_artist.transform.alpha = 1
-    end
 
-    if songWheel.files[songWheel.selectedIndex].songBackground == "" then
-        songWheel.bg = nil
-        return
+        if songWheel.selectedFile.chartType == 1 then
+            Containers.scontainer.songInfo_chartType.text = "Stepmania"
+        elseif songWheel.selectedFile.chartType == 2 then
+            Containers.scontainer.songInfo_chartType.text = "Quaver"
+        elseif songWheel.selectedFile.chartType == 3 then
+            Containers.scontainer.songInfo_chartType.text = "Osu!"
+        else
+            Containers.scontainer.songInfo_chartType.text = "Unknown"
+        end
+        Containers.scontainer.songInfo_chartType.transform.alpha = 0.7
+
+        if songWheel.selectedFile.isSteam then
+            Containers.scontainer.songInfo_onlineText.text = "Steam Workshop"
+        else
+            Containers.scontainer.songInfo_onlineText.text = "Local File"
+        end
+
+        local p = Containers.scontainer.songInfo_chartType.parent:getRealRect()
+        local real = Containers.scontainer.songInfo_onlineText:getRealRect()
+        Containers.scontainer.songInfo_onlineText.transform.alpha = 0.7
+        Containers.scontainer.songInfo_onlineText.transform.x = p.w - ((Containers.scontainer.songInfo_onlineText:getRealRect().w / 2) + (14 * skin['upscale']))
+        Containers.scontainer.songInfo_onlineText.transform.y = Containers.scontainer.songInfo_chartType:getRealRect().y - p.y
+        cprint(tostring(real.x) .. " " .. tostring(real.y) .. ' ' .. tostring(p.w))
+        
+
+        songWheel.SetDiff()
+
+        if songWheel.selectedFile.songBackground == "" then
+            songWheel.bg = nil
+            return
+        end
+        local bg = helper.createChartSprite(songWheel.selectedFile.folder .. '/' .. songWheel.selectedFile.songBackground, 0.0, 0.0)
+        create(bg)
+        bg.center = true
+        Containers.scontainer.songInfo:add(bg)
+        bg.ratio = true
+        bg.transform.x = 0.5
+        bg.transform.y = 0.5
+        bg.transform.w = 1.0
+        bg.transform.h = 1.0
+        songWheel.bg = bg
+
     end
-    local bg = helper.createChartSprite(songWheel.files[songWheel.selectedIndex].folder .. '/' .. songWheel.files[songWheel.selectedIndex].songBackground, 0.0, 0.0)
-    create(bg)
-    bg.center = true
-    Containers.scontainer.songInfo:add(bg)
-    bg.ratio = true
-    bg.transform.x = 0.5
-    bg.transform.y = 0.5
-    bg.transform.w = 1.0
-    bg.transform.h = 1.0
-    songWheel.bg = bg
 end
 
 function songWheel.keyPress(num)
@@ -112,6 +181,26 @@ function songWheel.keyPress(num)
         songWheel.Select(-1)
     elseif num == 264 then
         songWheel.Select(1)
+    end
+
+    if songWheel.files[songWheel.selectedIndex] == nil then
+        return
+    end
+
+    if num == 263 then
+        songWheel.selectedDiff = songWheel.selectedDiff - 1
+        if songWheel.selectedDiff < 1 then
+            songWheel.selectedDiff = #songWheel.files[songWheel.selectedIndex].difficulties
+        end
+        songWheel.SetDiff()
+    end
+    if num == 262 then
+        songWheel.selectedDiff = songWheel.selectedDiff + 1
+        if songWheel.selectedDiff > #songWheel.files[songWheel.selectedIndex].difficulties then
+            songWheel.selectedDiff = 1
+        end
+
+        songWheel.SetDiff()
     end
 end
 
@@ -125,7 +214,7 @@ function songWheel.update(t)
     for i = 1, ch:size(), 1 do
         -- stagnate x coord of the wheel by selected index
         local item = ch[i]
-        
+
         local away = i - songWheel.fakeIndex
         local rank = away / songWheel.fakeIndex
         local xBasedOnRank = helper.lerp(item.transform.w / 2, 0.0, math.abs(rank));

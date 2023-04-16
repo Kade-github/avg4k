@@ -1,143 +1,67 @@
-[Fri Apr 14 13:58:43 2023] [Main] Logging system initialized.
-[Fri Apr 14 13:58:43 2023] [Main] Initialized GLFW!
-[Fri Apr 14 13:58:43 2023] [Main] Initialized BASS!
-[Fri Apr 14 13:58:43 2023] [AvgEngine] Game created, title: Average4K. Version: b14
-[Fri Apr 14 13:58:44 2023] [Steam] Logged in as Kade:76561198037519280
-[Fri Apr 14 13:58:44 2023] [Settings] Reverting Music Volume due to it not being a number.
-[Fri Apr 14 13:58:44 2023] [Settings] Reverting Hitsound Volume due to it not being a number.
-[Fri Apr 14 13:58:44 2023] [Main] Initialized Display!
-[Fri Apr 14 13:58:44 2023] [Main] Initialized ImGUI!
-[Fri Apr 14 13:58:44 2023] [Main] Starting game...
-[Fri Apr 14 13:58:44 2023] [Fnt] Loaded font Futura-Boldx128
-[Fri Apr 14 13:58:44 2023] [Texture] [Error] Failure to open file assets/skinDefaults/Menu/majorerroricon.png, Unrecognized image format, Format:  (We only support JPEG/PNG's)
-[Fri Apr 14 13:58:44 2023] [Texture] [Error] Failure to open file assets/skinDefaults/Menu/minorerroricon.png, Unrecognized image format, Format:  (We only support JPEG/PNG's)
-[Fri Apr 14 13:58:44 2023] [Display] Resized to 1920x1080
-[Fri Apr 14 13:58:44 2023] [Server] Connecting...
-[Fri Apr 14 13:58:44 2023] [Server] Connected successfully!
-[Fri Apr 14 13:58:44 2023] [Fnt] Loaded font Arialx128
-[Fri Apr 14 13:58:44 2023] [LoadingPacksMenu] Loading charts with thread count: 24
-[Fri Apr 14 13:58:44 2023] [Server] Logging in...
-[Fri Apr 14 13:58:44 2023] [Server] Awaiting auth ticket from steam
-[Fri Apr 14 13:58:47 2023] [LoadingPacksMenu] Finished loading 419 charts in 2.909723 seconds.
-[Fri Apr 14 13:58:47 2023] [Server] Sending auth ticket...
-[Fri Apr 14 13:58:47 2023] [Server] Server agreed to give me the kids on the weekends (you logged in successfully)
-[Fri Apr 14 13:58:47 2023] [Steam] User details: Kade:76561198037519280
-[Fri Apr 14 13:58:52 2023] [MenuLuaFile] Set packs in 0.644005 seconds
-[Fri Apr 14 13:58:52 2023] [Lua] Loaded assets/skinDefaults/Lua/main-menu.lua
-[Fri Apr 14 13:58:52 2023] [Lua] LuaJIT 2.0.5
-[Fri Apr 14 13:58:52 2023] [Lua] Initial scale: 1
-[Fri Apr 14 13:58:52 2023] [Lua] Steam connection: true
-[Fri Apr 14 13:58:52 2023] [Lua] loaded avatar 184x184
-[Fri Apr 14 13:58:52 2023] [Fnt] Loaded font Arialx128
-[Fri Apr 14 13:58:52 2023] [FNT] [Warning] AndaleMono.fnt doesn't have a kernings node.
-[Fri Apr 14 13:58:52 2023] [Lua] menu created!
-[Fri Apr 14 13:58:54 2023] [Lua] Selected pack 4
-[Fri Apr 14 13:58:56 2023] [Lua] Selected pack 3
-[Fri Apr 14 13:58:58 2023] [Lua] Selected pack 6
-[Fri Apr 14 14:01:01 2023] [User] reload
-[Fri Apr 14 14:01:02 2023] [MenuLuaFile] Set packs in 0.262192 seconds
-[Fri Apr 14 14:01:02 2023] [Lua] Loaded assets/skinDefaults/Lua/main-menu.lua
-[Fri Apr 14 14:01:02 2023] [Lua] LuaJIT 2.0.5
-[Fri Apr 14 14:01:02 2023] [Lua] Initial scale: 1
-[Fri Apr 14 14:01:02 2023] [Lua] Steam connection: true
-[Fri Apr 14 14:01:02 2023] [Lua] loaded avatar 184x184
-[Fri Apr 14 14:01:02 2023] [Fnt] Loaded font Arialx128
-[Fri Apr 14 14:01:02 2023] [Lua] menu created!
-[Fri Apr 14 14:01:09 2023] [User] reload
-[Fri Apr 14 14:01:09 2023] [MenuLuaFile] Set packs in 0.261826 seconds
-[Fri Apr 14 14:01:09 2023] [Lua] Loaded assets/skinDefaults/Lua/main-menu.lua
-[Fri Apr 14 14:01:09 2023] [Lua] LuaJIT 2.0.5
-[Fri Apr 14 14:01:09 2023] [Lua] Initial scale: 1
-[Fri Apr 14 14:01:09 2023] [Lua] Steam connection: true
-[Fri Apr 14 14:01:09 2023] [Lua] loaded avatar 184x184
-[Fri Apr 14 14:01:10 2023] [Lua] menu created!
-[Fri Apr 14 14:01:18 2023] [User] reload
-[Fri Apr 14 14:01:18 2023] [MenuLuaFile] Set packs in 0.253525 seconds
-[Fri Apr 14 14:01:18 2023] [Lua] Loaded assets/skinDefaults/Lua/main-menu.lua
-[Fri Apr 14 14:01:18 2023] [Lua] LuaJIT 2.0.5
-[Fri Apr 14 14:01:18 2023] [Lua] Initial scale: 1
-[Fri Apr 14 14:01:18 2023] [Lua] Steam connection: true
-[Fri Apr 14 14:01:18 2023] [Lua] loaded avatar 184x184
-[Fri Apr 14 14:01:18 2023] [Lua] menu created!
-[Fri Apr 14 14:01:34 2023] [User] reload
-[Fri Apr 14 14:01:34 2023] [MenuLuaFile] Set packs in 0.249176 seconds
-[Fri Apr 14 14:01:34 2023] [Lua] Loaded assets/skinDefaults/Lua/main-menu.lua
-[Fri Apr 14 14:01:34 2023] [Lua] LuaJIT 2.0.5
-[Fri Apr 14 14:01:34 2023] [Lua] Initial scale: 1
-[Fri Apr 14 14:01:34 2023] [Lua] Steam connection: true
-[Fri Apr 14 14:01:34 2023] [Lua] loaded avatar 184x184
-[Fri Apr 14 14:01:35 2023] [Lua] menu created!
-[Fri Apr 14 14:03:02 2023] [Server] Connection closed
-[Fri Apr 14 14:03:03 2023] [Server] Connected successfully!
-[Fri Apr 14 14:03:36 2023] [User] reload
-[Fri Apr 14 14:03:36 2023] [MenuLuaFile] Set packs in 0.225006 seconds
-[Fri Apr 14 14:03:36 2023] [Lua] Loaded assets/skinDefaults/Lua/main-menu.lua
-[Fri Apr 14 14:03:36 2023] [Lua] LuaJIT 2.0.5
-[Fri Apr 14 14:03:36 2023] [Lua] Initial scale: 1
-[Fri Apr 14 14:03:36 2023] [Lua] Steam connection: true
-[Fri Apr 14 14:03:36 2023] [Lua] loaded avatar 184x184
-[Fri Apr 14 14:03:36 2023] [Lua] menu created!
-[Fri Apr 14 14:03:38 2023] [Lua] Selected pack 4
-[Fri Apr 14 14:03:40 2023] [Lua] Selected pack 5
-[Fri Apr 14 14:03:41 2023] [Lua] Selected pack 6
-[Fri Apr 14 14:06:37 2023] [User] reload
-[Fri Apr 14 14:06:38 2023] [MenuLuaFile] Set packs in 0.230896 seconds
-[Fri Apr 14 14:06:38 2023] [Lua] Loaded assets/skinDefaults/Lua/main-menu.lua
-[Fri Apr 14 14:06:38 2023] [Lua] LuaJIT 2.0.5
-[Fri Apr 14 14:06:38 2023] [Lua] Initial scale: 1
-[Fri Apr 14 14:06:38 2023] [Lua] Steam connection: true
-[Fri Apr 14 14:06:38 2023] [Lua] loaded avatar 184x184
-[Fri Apr 14 14:06:38 2023] [Lua] menu created!
-[Fri Apr 14 14:06:39 2023] [Lua] Selected pack 6
-[Fri Apr 14 14:06:47 2023] [User] reload
-[Fri Apr 14 14:06:47 2023] [MenuLuaFile] Set packs in 0.195679 seconds
-[Fri Apr 14 14:06:47 2023] [Lua] Loaded assets/skinDefaults/Lua/main-menu.lua
-[Fri Apr 14 14:06:47 2023] [Lua] LuaJIT 2.0.5
-[Fri Apr 14 14:06:47 2023] [Lua] Initial scale: 1
-[Fri Apr 14 14:06:47 2023] [Lua] Steam connection: true
-[Fri Apr 14 14:06:47 2023] [Lua] loaded avatar 184x184
-[Fri Apr 14 14:06:47 2023] [Lua] menu created!
-[Fri Apr 14 14:06:52 2023] [Lua] Selected pack 5
-[Fri Apr 14 14:06:52 2023] [Lua] Selected pack 6
-[Fri Apr 14 14:07:31 2023] [User] reload
-[Fri Apr 14 14:07:31 2023] [MenuLuaFile] Set packs in 0.205872 seconds
-[Fri Apr 14 14:07:31 2023] [Lua] Loaded assets/skinDefaults/Lua/main-menu.lua
-[Fri Apr 14 14:07:31 2023] [Lua] LuaJIT 2.0.5
-[Fri Apr 14 14:07:31 2023] [Lua] Initial scale: 1
-[Fri Apr 14 14:07:31 2023] [Lua] Steam connection: true
-[Fri Apr 14 14:07:31 2023] [Lua] loaded avatar 184x184
-[Fri Apr 14 14:07:31 2023] [Lua] menu created!
-[Fri Apr 14 14:07:34 2023] [Lua] Selected pack 6
-[Fri Apr 14 14:07:34 2023] [Lua] 3
-[Fri Apr 14 14:07:35 2023] [Lua] 9
-[Fri Apr 14 14:07:36 2023] [Lua] 31
-[Fri Apr 14 14:07:36 2023] [Lua] 8
-[Fri Apr 14 14:07:37 2023] [Lua] 26
-[Fri Apr 14 14:07:38 2023] [Lua] 8
-[Fri Apr 14 14:07:39 2023] [Lua] 31
-[Fri Apr 14 14:07:39 2023] [Lua] 8
-[Fri Apr 14 14:07:39 2023] [Lua] 31
-[Fri Apr 14 14:07:54 2023] [User] reload
-[Fri Apr 14 14:07:55 2023] [MenuLuaFile] Set packs in 0.232544 seconds
-[Fri Apr 14 14:07:55 2023] [Lua] Loaded assets/skinDefaults/Lua/main-menu.lua
-[Fri Apr 14 14:07:55 2023] [Lua] LuaJIT 2.0.5
-[Fri Apr 14 14:07:55 2023] [Lua] Initial scale: 1
-[Fri Apr 14 14:07:55 2023] [Lua] Steam connection: true
-[Fri Apr 14 14:07:55 2023] [Lua] loaded avatar 184x184
-[Fri Apr 14 14:07:55 2023] [Lua] menu created!
-[Fri Apr 14 14:07:56 2023] [Lua] Selected pack 5
-[Fri Apr 14 14:07:56 2023] [Lua] 10 Pixel Boss
-[Fri Apr 14 14:07:58 2023] [Lua] Selected pack 6
-[Fri Apr 14 14:07:58 2023] [Lua] 3 (y)
-[Fri Apr 14 14:07:59 2023] [Lua] 9 Affection
-[Fri Apr 14 14:08:00 2023] [Lua] 31 Ahoy!! 我ら宝鐘海賊団☆
-[Fri Apr 14 14:08:10 2023] [Lua] 8 BLISS 2K
-[Fri Apr 14 14:08:14 2023] [Lua] 26 Believe Again (Slax Remix)
-[Fri Apr 14 14:08:17 2023] [Lua] 10 Black Lady
-[Fri Apr 14 14:08:18 2023] [Lua] 17 Blah!! (Extended)
-[Fri Apr 14 14:08:19 2023] [Lua] 20 Break Through Myself
-[Fri Apr 14 14:08:34 2023] [User] reload
-[Fri Apr 14 14:08:34 2023] [MenuLuaFile] Set packs in 0.226501 seconds
-[Fri Apr 14 14:08:34 2023] [Lua] Loaded assets/skinDefaults/Lua/main-menu.lua
-[Fri Apr 14 14:08:34 2023] [Lua] LuaJIT 2.0.5
-[Fri Apr 14 14:08:34 2023] [Lua
+[Fri Apr 14 20:08:31 2023] [Main] Logging system initialized.
+[Fri Apr 14 20:08:31 2023] [Main] Initialized GLFW!
+[Fri Apr 14 20:08:31 2023] [Main] Initialized BASS!
+[Fri Apr 14 20:08:31 2023] [AvgEngine] Game created, title: Average4K. Version: b14
+[Fri Apr 14 20:08:31 2023] [Steam] Logged in as Kade:76561198037519280
+[Fri Apr 14 20:08:31 2023] [Settings] Reverting Music Volume due to it not being a number.
+[Fri Apr 14 20:08:31 2023] [Settings] Reverting Hitsound Volume due to it not being a number.
+[Fri Apr 14 20:08:31 2023] [Main] Initialized Display!
+[Fri Apr 14 20:08:31 2023] [Main] Initialized ImGUI!
+[Fri Apr 14 20:08:31 2023] [Main] Starting game...
+[Fri Apr 14 20:08:31 2023] [Fnt] Loaded font Futura-Boldx128
+[Fri Apr 14 20:08:31 2023] [Texture] [Error] Failure to open file assets/skinDefaults/Menu/majorerroricon.png, Unrecognized image format, Format:  (We only support JPEG/PNG's)
+[Fri Apr 14 20:08:31 2023] [Texture] [Error] Failure to open file assets/skinDefaults/Menu/minorerroricon.png, Unrecognized image format, Format:  (We only support JPEG/PNG's)
+[Fri Apr 14 20:08:31 2023] [Display] Resized to 1920x1080
+[Fri Apr 14 20:08:31 2023] [Server] Connecting...
+[Fri Apr 14 20:08:31 2023] [Server] Connected successfully!
+[Fri Apr 14 20:08:31 2023] [Fnt] Loaded font Arialx128
+[Fri Apr 14 20:08:31 2023] [LoadingPacksMenu] Loading charts with thread count: 24
+[Fri Apr 14 20:08:32 2023] [Server] Logging in...
+[Fri Apr 14 20:08:32 2023] [Server] Awaiting auth ticket from steam
+[Fri Apr 14 20:08:32 2023] [LoadingPacksMenu] Finished loading 419 charts in 1.200941 seconds.
+[Fri Apr 14 20:08:32 2023] [Server] Sending auth ticket...
+[Fri Apr 14 20:08:33 2023] [Server] Server agreed to give me the kids on the weekends (you logged in successfully)
+[Fri Apr 14 20:08:33 2023] [Steam] User details: Kade:76561198037519280
+[Fri Apr 14 20:08:36 2023] [MenuLuaFile] Set packs in 0.261725 seconds
+[Fri Apr 14 20:08:36 2023] [Lua] Loaded assets/skinDefaults/Lua/main-menu.lua
+[Fri Apr 14 20:08:36 2023] [Lua] LuaJIT 2.0.5
+[Fri Apr 14 20:08:36 2023] [Lua] Initial scale: 1
+[Fri Apr 14 20:08:36 2023] [Lua] Steam connection: true
+[Fri Apr 14 20:08:36 2023] [Lua] loaded avatar 184x184
+[Fri Apr 14 20:08:36 2023] [Fnt] Loaded font Arialx128
+[Fri Apr 14 20:08:36 2023] [Fnt] Loaded font Arialx128
+[Fri Apr 14 20:08:36 2023] [FNT] [Warning] AndaleMono.fnt doesn't have a kernings node.
+[Fri Apr 14 20:08:36 2023] [Lua] menu created!
+[Fri Apr 14 20:08:38 2023] [Lua] Selected pack 5
+[Fri Apr 14 20:08:38 2023] [Lua] 1325.0400390625 213.5 395.45999145508
+[Fri Apr 14 20:08:39 2023] [Lua] Selected pack 6
+[Fri Apr 14 20:08:39 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:41 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:41 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:41 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:42 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:42 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:43 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:43 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:43 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:43 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:44 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:44 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:45 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:45 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:46 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:46 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:46 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:46 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:46 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:46 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:47 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:47 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:47 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:47 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:48 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:49 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:50 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:50 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:50 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Fri Apr 14 20:08:50 2023] [Lua] 1614 840.38000488281 395.45999145508

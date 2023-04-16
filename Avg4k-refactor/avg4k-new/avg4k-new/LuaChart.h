@@ -92,6 +92,8 @@ namespace Average4k::Lua::Menu
 		std::string path;
 		std::string folder;
 
+		bool isSteam;
+
 		chart()
 		{
 			songArtist = "";

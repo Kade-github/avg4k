@@ -363,6 +363,7 @@ namespace Average4k::Chart
 				}
 				lineNumber++;
 			}
+			chartMetadata.Chart_Type = 1;
 			good = true;
 		}
 	};

@@ -46,6 +46,7 @@
     <ClCompile Include="Easing.cpp" />
     <ClCompile Include="FntParser.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Gameplay.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="ImGUIHelper.cpp" />
@@ -112,6 +113,7 @@
     <ClInclude Include="EventManager.h" />
     <ClInclude Include="FntParser.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Gameplay.h" />
     <ClInclude Include="imageinfo.hpp" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />

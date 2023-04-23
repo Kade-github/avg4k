@@ -121,6 +121,9 @@
     <Filter Include="Average4K\Avg4k\External\Packs">
       <UniqueIdentifier>{9496398b-c6c6-43eb-8f29-a6718f85f1da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Average4K\Avg4k\External\SpriteSheet">
+      <UniqueIdentifier>{201e0101-bb00-4f7b-8444-271b95e393d0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -242,6 +245,9 @@
     </ClCompile>
     <ClCompile Include="SongGatherer.cpp">
       <Filter>Average4K\Avg4k\External\Packs</Filter>
+    </ClCompile>
+    <ClCompile Include="Gameplay.cpp">
+      <Filter>Average4K\Avg4k\Menus\Gameplay</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -577,6 +583,9 @@
     </ClInclude>
     <ClInclude Include="LuaChart.h">
       <Filter>Average4K\Avg4k\External\LuaInterfaces\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="Gameplay.h">
+      <Filter>Average4K\Avg4k\Menus\Gameplay</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

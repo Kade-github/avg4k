@@ -198,56 +198,56 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	glfwSetKeyCallback(g->Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 		{
 			Events::Event e;
-			switch (action)
-			{
-			case GLFW_PRESS:
-				e.type = Events::EventType::Event_KeyPress;
-				e.data = key;
-				Game::Instance->QueueEvent(e);
-				break;
-			case GLFW_RELEASE:
-				e.type = Events::EventType::Event_KeyRelease;
-				e.data = key;
-				Game::Instance->QueueEvent(e);
-				break;
-			default:
-				break;
-			}
+	switch (action)
+	{
+	case GLFW_PRESS:
+		e.type = Events::EventType::Event_KeyPress;
+		e.data = key;
+		Game::Instance->QueueEvent(e);
+		break;
+	case GLFW_RELEASE:
+		e.type = Events::EventType::Event_KeyRelease;
+		e.data = key;
+		Game::Instance->QueueEvent(e);
+		break;
+	default:
+		break;
+	}
 		});
 
 	glfwSetMouseButtonCallback(g->Window, [](GLFWwindow* window, int button, int action, int mods)
 		{
 			Events::Event e;
-			double xpos, ypos;
-			glfwGetCursorPos(window, &xpos, &ypos);
-			Events::Vec v;
-			v.x = xpos;
-			v.y = ypos;
-			switch (action)
-			{
-			case GLFW_PRESS:
-				e.type = Events::EventType::Event_MouseDown;
-				e.data = button;
-				e.vector = v;
-				Game::Instance->QueueEvent(e);
-				break;
-			case GLFW_RELEASE:
-				e.type = Events::EventType::Event_MouseRelease;
-				e.data = button;
-				e.vector = v;
-				Game::Instance->QueueEvent(e);
-				break;
-			default:
-				break;
-			}
+	double xpos, ypos;
+	glfwGetCursorPos(window, &xpos, &ypos);
+	Events::Vec v;
+	v.x = xpos;
+	v.y = ypos;
+	switch (action)
+	{
+	case GLFW_PRESS:
+		e.type = Events::EventType::Event_MouseDown;
+		e.data = button;
+		e.vector = v;
+		Game::Instance->QueueEvent(e);
+		break;
+	case GLFW_RELEASE:
+		e.type = Events::EventType::Event_MouseRelease;
+		e.data = button;
+		e.vector = v;
+		Game::Instance->QueueEvent(e);
+		break;
+	default:
+		break;
+	}
 		});
 
 	glfwSetScrollCallback(g->Window, [](GLFWwindow* window, double xoffset, double yoffset)
 		{
 			Events::Event e;
-			e.type = Events::EventType::Event_MouseScroll;
-			e.data = yoffset;
-			Game::Instance->QueueEvent(e);
+	e.type = Events::EventType::Event_MouseScroll;
+	e.data = yoffset;
+	Game::Instance->QueueEvent(e);
 		});
 
 	Render::Display::Init();
@@ -268,7 +268,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	glEnable(GL_MULTISAMPLE);
 
 	glfwSwapInterval(0);
-	
+
 	auto start = std::chrono::steady_clock::now();
 	while (!glfwWindowShouldClose(g->Window))
 	{

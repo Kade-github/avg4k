@@ -46,8 +46,8 @@ namespace AvgEngine
 		{
 			Title = _title;
 			Version = ver;
-			Window = glfwCreateWindow(w,h, _title.c_str(), NULL, NULL);
-			
+			Window = glfwCreateWindow(w, h, _title.c_str(), NULL, NULL);
+
 			if (!Window)
 			{
 				Logging::writeLog("[AvgEngine] [Error] Failed to create GLFW window (game will most definitely crash)");
@@ -163,7 +163,7 @@ namespace AvgEngine
 
 		virtual void Event(const Events::Event& e)
 		{
-			for(Events::Listener listen : eManager.Listeners)
+			for (Events::Listener listen : eManager.Listeners)
 				if (listen.type == e.type && (console.open ? listen.console : true))
 					listen.toCall(e);
 		}

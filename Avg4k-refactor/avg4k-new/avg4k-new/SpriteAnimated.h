@@ -3,7 +3,7 @@
 #include "Sprite.h"
 
 namespace Average4k::External::Spritesheet {
-	class AnimatedSprite : public AvgEngine::Base::Sprite{
+	class AnimatedSprite : public AvgEngine::Base::Sprite {
 	public:
 		int frameWidth = 0;
 		int frameHeight = 0;

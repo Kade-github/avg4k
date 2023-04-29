@@ -187,7 +187,7 @@ double easeInOutBounce(double t) {
 
 Easing::easingFunction Easing::getEasingFunction(easing_functions function)
 {
-    static std::map< easing_functions, easingFunction > easingFunctions;
+    static std::unordered_map< easing_functions, easingFunction > easingFunctions;
     if (easingFunctions.empty())
     {
         easingFunctions.insert(std::make_pair(EaseLinear, easeInSine));
@@ -230,7 +230,7 @@ Easing::easingFunction Easing::getEasingFunction(easing_functions function)
 
 Easing::easingFunction Easing::getEasingFunction(std::string function)
 {
-    static std::map<std::string,easingFunction> easingFunctions;
+    static std::unordered_map<std::string,easingFunction> easingFunctions;
     if (easingFunctions.empty())
     {
         easingFunctions.insert(std::make_pair("linear", easeLinear));

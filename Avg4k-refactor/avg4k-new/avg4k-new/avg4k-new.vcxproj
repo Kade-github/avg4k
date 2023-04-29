@@ -179,6 +179,7 @@
     <ClInclude Include="SPacketUpdateLobbyData.h" />
     <ClInclude Include="SPacketWtfAmInReply.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="SpriteAnimated.h" />
     <ClInclude Include="StartScreen.h" />
     <ClInclude Include="stbi.h" />
     <ClInclude Include="SteamIncludes.h" />

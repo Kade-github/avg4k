@@ -24,7 +24,6 @@ namespace Average4k::External::Spritesheet {
 
 			transform.w = frameWidth;
 			transform.h = frameHeight;
-
 		}
 
 		AnimatedSprite(float x, float y, std::string filePath) : AvgEngine::Base::Sprite(x, y, filePath) {}

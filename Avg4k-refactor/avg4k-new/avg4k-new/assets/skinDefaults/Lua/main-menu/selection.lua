@@ -58,7 +58,7 @@ function Selection.mouseDown()
     local realMulti = Selection.multiplayerHit:getRealRect()
     local realSettings = Selection.settingsHit:getRealRect()
 
-    
+
 
     if helper.aabb(Globals.mouseRect, realSolo) then
         Selection.select(1)
@@ -183,7 +183,7 @@ function Selection.create()
     Selection.settingsHit.center = true
     Selection.settingsHit.transform.alpha = 0
 
-    
+
     tween(Selection.soloText, sTEnd, 1.2, "outcubic")
     tween(Selection.selectionRect, srEnd, 1.2, "outcubic")
     tween(Selection.multiplayerText, mTEnd, 1.2, "outcubic")

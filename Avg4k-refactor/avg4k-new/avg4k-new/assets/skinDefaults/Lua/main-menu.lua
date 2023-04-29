@@ -32,14 +32,13 @@ function Create()
 
     packContainer.loadBanners()
     packContainer.loadPacks(Containers.scontainer.packs)
-
-    
 end
 
 function MouseDown(pos)
     Selection.mouseDown()
     packContainer.mouseDown()
 end
+
 function MouseWheel(data)
     helper.containerMouseWheel(data)
 end

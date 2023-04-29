@@ -18,14 +18,14 @@ end
 -- there is aabb_rect but it is slow since it's a cpp call.
 function helper.aabb(r1, r2)
     return r1.x < r2.x + r2.w and
-            r1.x + r1.w > r2.x and
-            r1.y < r2.y + r2.h and
-            r1.y + r1.h > r2.y
+        r1.x + r1.w > r2.x and
+        r1.y < r2.y + r2.h and
+        r1.y + r1.h > r2.y
 end
 
 -- there is a lerp function on cpp, but its a cpp call so it's slow
 function helper.lerp(a, b, t)
-	return a + (b - a) * t
+    return a + (b - a) * t
 end
 
 --[[
@@ -36,7 +36,6 @@ function helper.createSprite(path, x, y)
     loadTexture(tempTexture)
     return sprite.new(x, y, tempTexture)
 end
-
 
 --[[
     A helper function to create an animated sprite
@@ -149,7 +148,6 @@ end
     A helper function to update containers scroll bar and item positions
 ]]
 function helper.containerUpdate(time)
-
     for i, t in ipairs(helper.containers) do
         local ind = t[1]
 

@@ -82,10 +82,14 @@ function songWheel.SetDiff()
         local p = Containers.scontainer.songInfo_difficultyName.parent:getRealRect()
         Containers.scontainer.songInfo_difficultyLeftArrow.transform.alpha = 1
         Containers.scontainer.songInfo_difficultyRightArrow.transform.alpha = 1
-        Containers.scontainer.songInfo_difficultyLeftArrow.transform.x = real.x - ((Containers.scontainer.songInfo_difficultyLeftArrow.transform.w / 2) * Containers.scontainer.songInfo_difficultyLeftArrow.transform.scale) - p.x
-        Containers.scontainer.songInfo_difficultyLeftArrow.transform.y = real.y - p.y - (((Containers.scontainer.songInfo_difficultyLeftArrow.transform.h / 2) * Containers.scontainer.songInfo_difficultyLeftArrow.transform.scale))
+        Containers.scontainer.songInfo_difficultyLeftArrow.transform.x = real.x -
+            ((Containers.scontainer.songInfo_difficultyLeftArrow.transform.w / 2) * Containers.scontainer.songInfo_difficultyLeftArrow.transform.scale) -
+            p.x
+        Containers.scontainer.songInfo_difficultyLeftArrow.transform.y = real.y - p.y -
+            (((Containers.scontainer.songInfo_difficultyLeftArrow.transform.h / 2) * Containers.scontainer.songInfo_difficultyLeftArrow.transform.scale))
         Containers.scontainer.songInfo_difficultyRightArrow.transform.x = (real.x + real.w - 4) - p.x
-        Containers.scontainer.songInfo_difficultyRightArrow.transform.y = real.y - p.y - (((Containers.scontainer.songInfo_difficultyRightArrow.transform.h / 2) * Containers.scontainer.songInfo_difficultyRightArrow.transform.scale))
+        Containers.scontainer.songInfo_difficultyRightArrow.transform.y = real.y - p.y -
+            (((Containers.scontainer.songInfo_difficultyRightArrow.transform.h / 2) * Containers.scontainer.songInfo_difficultyRightArrow.transform.scale))
     else
         Containers.scontainer.songInfo_difficultyLeftArrow.transform.alpha = 0
         Containers.scontainer.songInfo_difficultyRightArrow.transform.alpha = 0
@@ -106,7 +110,7 @@ function songWheel.Select(amt)
 
     songWheel.selectedDiff = 1
 
-    
+
 
     if songWheel.files[songWheel.selectedIndex] ~= nil then
         songWheel.selectedFile = songWheel.files[songWheel.selectedIndex]
@@ -125,7 +129,7 @@ function songWheel.Select(amt)
         if artist == "" then
             artist = "Unknown"
         end
-        
+
         Containers.scontainer.songInfo_title.text = title
         Containers.scontainer.songInfo_artist.text = artist
         Containers.scontainer.songInfo_title.transform.alpha = 1
@@ -151,10 +155,12 @@ function songWheel.Select(amt)
         local p = Containers.scontainer.songInfo_chartType.parent:getRealRect()
         local real = Containers.scontainer.songInfo_onlineText:getRealRect()
         Containers.scontainer.songInfo_onlineText.transform.alpha = 0.7
-        Containers.scontainer.songInfo_onlineText.transform.x = p.w - ((Containers.scontainer.songInfo_onlineText:getRealRect().w / 2) + (14 * skin['upscale']))
-        Containers.scontainer.songInfo_onlineText.transform.y = Containers.scontainer.songInfo_chartType:getRealRect().y - p.y
+        Containers.scontainer.songInfo_onlineText.transform.x = p.w -
+            ((Containers.scontainer.songInfo_onlineText:getRealRect().w / 2) + (14 * skin['upscale']))
+        Containers.scontainer.songInfo_onlineText.transform.y = Containers.scontainer.songInfo_chartType:getRealRect().y -
+            p.y
         cprint(tostring(real.x) .. " " .. tostring(real.y) .. ' ' .. tostring(p.w))
-        
+
 
         songWheel.SetDiff()
 
@@ -162,7 +168,8 @@ function songWheel.Select(amt)
             songWheel.bg = nil
             return
         end
-        local bg = helper.createChartSprite(songWheel.selectedFile.folder .. '/' .. songWheel.selectedFile.songBackground, 0.0, 0.0)
+        local bg = helper.createChartSprite(
+            songWheel.selectedFile.folder .. '/' .. songWheel.selectedFile.songBackground, 0.0, 0.0)
         create(bg)
         bg.center = true
         Containers.scontainer.songInfo:add(bg)
@@ -172,7 +179,6 @@ function songWheel.Select(amt)
         bg.transform.w = 1.0
         bg.transform.h = 1.0
         songWheel.bg = bg
-
     end
 end
 

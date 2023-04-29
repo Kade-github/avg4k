@@ -49,7 +49,8 @@ function Containers.soloCreate(c)
     Containers.scontainer.songWheel.tag = "songWheel"
     Containers.scontainer.songWheel.order = 2
     Containers.scontainer.songWheel.ratio = true
-    Containers.scontainer.songWheel.transform.x = Containers.scontainer.packs.transform.x + Containers.scontainer.packs.transform.w
+    Containers.scontainer.songWheel.transform.x = Containers.scontainer.packs.transform.x +
+        Containers.scontainer.packs.transform.w
     Containers.scontainer.songWheel.transform.y = 0.12
 
     Containers.scontainer.songWheel.transform.h = 0.88
@@ -65,7 +66,8 @@ function Containers.soloCreate(c)
     Containers.scontainer.songInfo.tag = "songInfo"
     Containers.scontainer.songInfo.order = 2
     Containers.scontainer.songInfo.ratio = true
-    Containers.scontainer.songInfo.transform.x = Containers.scontainer.songWheel.transform.x + Containers.scontainer.songWheel.transform.w
+    Containers.scontainer.songInfo.transform.x = Containers.scontainer.songWheel.transform.x +
+        Containers.scontainer.songWheel.transform.w
     Containers.scontainer.songInfo.transform.y = 0
     Containers.scontainer.songInfo.transform.h = 1
     Containers.scontainer.songInfo.transform.w = 0.26
@@ -94,7 +96,7 @@ function Containers.soloCreate(c)
     Containers.scontainer.songInfo_artist.tag = "songInfo_artist"
     Containers.scontainer.songInfo_artist.order = 2
     Containers.scontainer.songInfo_artist.transform.alpha = 0
-    
+
     Containers.scontainer.songInfo_difficulty = text.new(0, 0, "ArialBold.fnt", "Song Diff")
     create(Containers.scontainer.songInfo_difficulty)
     Containers.scontainer.songInfo_difficulty.size = 28 * skin["upscale"]
@@ -122,7 +124,8 @@ function Containers.soloCreate(c)
     Containers.scontainer.songInfo_difficultyName.order = 2
     Containers.scontainer.songInfo_difficultyName.transform.alpha = 0
 
-    Containers.scontainer.songInfo_difficultyLeftArrow = helper.createSprite("Menu/MainMenu/Solo/difficultyselectarrow", 0, 0)
+    Containers.scontainer.songInfo_difficultyLeftArrow = helper.createSprite("Menu/MainMenu/Solo/difficultyselectarrow",
+        0, 0)
     create(Containers.scontainer.songInfo_difficultyLeftArrow)
     Containers.scontainer.songInfo:add(Containers.scontainer.songInfo_difficultyLeftArrow)
     Containers.scontainer.songInfo_difficultyLeftArrow.transform.alpha = 0
@@ -130,7 +133,8 @@ function Containers.soloCreate(c)
     Containers.scontainer.songInfo_difficultyLeftArrow.tag = "songInfo_difficultyLeftArrow"
     Containers.scontainer.songInfo_difficultyLeftArrow.transform.scale = 0.5 * skin["upscale"]
 
-    Containers.scontainer.songInfo_difficultyRightArrow = helper.createSprite("Menu/MainMenu/Solo/difficultyselectarrow", 0, 0)
+    Containers.scontainer.songInfo_difficultyRightArrow = helper.createSprite("Menu/MainMenu/Solo/difficultyselectarrow",
+        0, 0)
     create(Containers.scontainer.songInfo_difficultyRightArrow)
     Containers.scontainer.songInfo:add(Containers.scontainer.songInfo_difficultyRightArrow)
     Containers.scontainer.songInfo_difficultyRightArrow.transform.alpha = 0

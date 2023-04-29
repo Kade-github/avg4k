@@ -156,7 +156,18 @@ namespace AvgEngine::Base
 				if (r.x + r.w < 0 || r.x > camera->w || r.y + r.h < 0 || r.y > camera->h)
 					return;
 
-				drawCall c = Camera::FormatDrawCall(zIndex, texture, shader, Render::DisplayHelper::RectToVertex(r, src, center));
+				Render::Rect srcCopy = src; // normalize the coords for opengl
+
+				if (src.x > 1)
+					srcCopy.x = src.x / texture->width;
+				if (src.y > 1)
+					srcCopy.y = src.y / texture->height;
+				if (src.w > 1)
+					srcCopy.w = src.w / texture->width;
+				if (src.h > 1)
+					srcCopy.h = src.h / texture->height;
+
+				drawCall c = Camera::FormatDrawCall(zIndex, texture, shader, Render::DisplayHelper::RectToVertex(r, srcCopy, center));
 
 				if (cr.w != 0 || cr.h != 0)
 					c.clip = cr;

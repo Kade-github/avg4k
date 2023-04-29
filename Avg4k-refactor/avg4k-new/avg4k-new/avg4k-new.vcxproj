@@ -60,6 +60,7 @@
     <ClCompile Include="implot_items.cpp" />
     <ClCompile Include="LoadingPacksMenu.cpp" />
     <ClCompile Include="Logging.cpp" />
+    <ClCompile Include="LuaAnimatedSprite.cpp" />
     <ClCompile Include="LuaFile.cpp" />
     <ClCompile Include="LuaGameObject.cpp" />
     <ClCompile Include="LuaSprite.cpp" />
@@ -130,6 +131,7 @@
     <ClInclude Include="includes.h" />
     <ClInclude Include="LoadingPacksMenu.h" />
     <ClInclude Include="Logging.h" />
+    <ClInclude Include="LuaAnimatedSprite.h" />
     <ClInclude Include="LuaChart.h" />
     <ClInclude Include="LuaConfig.h" />
     <ClInclude Include="LuaFile.h" />

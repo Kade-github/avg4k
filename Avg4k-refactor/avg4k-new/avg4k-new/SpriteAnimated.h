@@ -21,9 +21,14 @@ namespace Average4k::External::Spritesheet {
 			frameWidth = _w;
 			frameHeight = _h;
 			frames = texture->width / frameWidth;
+
+			transform.w = frameWidth;
+			transform.h = frameHeight;
+
 		}
 
 		AnimatedSprite(float x, float y, std::string filePath) : AvgEngine::Base::Sprite(x, y, filePath) {}
+		AnimatedSprite(float x, float y, AvgEngine::OpenGL::Texture* tex) : AvgEngine::Base::Sprite(x, y, tex) {}
 
 		void draw() override
 		{

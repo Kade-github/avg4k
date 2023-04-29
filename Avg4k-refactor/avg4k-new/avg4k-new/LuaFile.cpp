@@ -94,6 +94,15 @@ void LuaFile::Load()
 		tex.id = t->id;
 		});
 
+	lua->set_function("loadArrowTexture", [&](texture& tex) {
+		AvgEngine::OpenGL::Texture* t = Average4K::skin->GetArrowTexture(tex.path, true);
+		t->dontDelete = true;
+		textures.push_back(t);
+		tex.w = t->width;
+		tex.h = t->height;
+		tex.id = t->id;
+		});
+
 	lua->set_function("loadChartTexture", [&](texture& tex) {
 		AvgEngine::OpenGL::Texture* t = Average4K::skin->GetChartTexture(tex.path, true);
 		t->fromSTBI = true;
@@ -103,6 +112,8 @@ void LuaFile::Load()
 		tex.h = t->height;
 		tex.id = t->id;
 	});
+
+
 
 	lua->set_function("loadTextureData", [&](texture& tex) {
 		size_t out;

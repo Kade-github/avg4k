@@ -112,6 +112,24 @@ namespace Average4k
 			return t;
 		}
 
+		AvgEngine::OpenGL::Texture* GetArrowTexture(std::string asset, bool raw = false)
+		{
+			std::string p = fullPath + "/" +  asset + ".png";
+			if (raw)
+			{
+				AvgEngine::OpenGL::Texture* t = AvgEngine::OpenGL::Texture::createWithImage(p);
+				return t;
+			}
+			const CachedAsset& a = Cache(p);
+			if (a.id != -1)
+				return a.texture;
+			AvgEngine::OpenGL::Texture* t = AvgEngine::OpenGL::Texture::createWithImage(p);
+			t->dontDelete = true;
+			CachedAsset as = { t,p, static_cast<int>(t->id) };
+			_cache.push_back(as);
+			return t;
+		}
+
 		AvgEngine::OpenGL::Texture* GetChartTexture(std::string asset, bool raw = false)
 		{
  			std::string p = asset;
@@ -168,5 +186,7 @@ namespace Average4k
 		}
 
 		
+
+
 	};
 }

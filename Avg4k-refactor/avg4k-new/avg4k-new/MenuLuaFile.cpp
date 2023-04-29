@@ -4,7 +4,8 @@
 #include "LuaPack.h"
 #include "LuaChart.h"
 #include "LoadingPacksMenu.h"
-
+#include "LuaAnimatedSprite.h"
+#include "SpriteAnimated.h"
 void Average4k::Lua::MenuLuaFile::SetPacks(sol::global_table t)
 {
 	using namespace Average4k::Lua::Menu;
@@ -100,12 +101,14 @@ void Average4k::Lua::MenuLuaFile::CreateObject(Average4k::Lua::Base::gameObject&
 	int t = ob.type;
 	GameObject* o = NULL;
 	Sprite* sp = NULL;
+	Average4k::External::Spritesheet::AnimatedSprite* aso = NULL;
 	AvgEngine::OpenGL::Texture* tex = NULL;
 	Text* te = NULL;
 	AvgEngine::Base::Rectangle* re = NULL;
 	Average4k::Lua::Base::sprite s = Average4k::Lua::Base::sprite(0, 0, Average4k::Lua::Base::texture(""));
 	Average4k::Lua::Base::textObject text = Average4k::Lua::Base::textObject(0, 0, "", "");
 	Average4k::Lua::Base::rectangle r = Average4k::Lua::Base::rectangle(0, 0, 0, 0);
+	Average4k::Lua::Base::animatedSprite as = Average4k::Lua::Base::animatedSprite(0, 0, Average4k::Lua::Base::texture(""));
 	switch (t) // creation of that type
 	{
 	case 0: // default ass game object
@@ -125,7 +128,7 @@ void Average4k::Lua::MenuLuaFile::CreateObject(Average4k::Lua::Base::gameObject&
 		tex = getTexture(s.tex.id);
 		if (tex == NULL)
 		{
-			AvgEngine::Logging::writeLog("[Lua] [Error] Failed to create " + std::to_string(s.id) + ", did you forget a loadTexture?");
+			AvgEngine::Logging::writeLog("[Lua] [Error] Failed to create sprite " + std::to_string(s.id) + ", did you forget a loadTexture?");
 			return;
 		}
 		sp = new Sprite(s.transform.x, s.transform.y, tex);
@@ -164,6 +167,25 @@ void Average4k::Lua::MenuLuaFile::CreateObject(Average4k::Lua::Base::gameObject&
 		ob.transformOffset.base = &re->transformOffset;
 		ob.clipRect.base = &re->clipRect;
 		ob.base = re;
+		break;
+	case 4: // animatedSprite
+		as = static_cast<Average4k::Lua::Base::animatedSprite&>(ob);
+		tex = getTexture(as.tex.id);
+		if (tex == NULL)
+		{
+			AvgEngine::Logging::writeLog("[Lua] [Error] Failed to create animated sprite " + std::to_string(as.id) + ", did you forget a loadTexture?");
+			return;
+		}
+		aso = new Average4k::External::Spritesheet::AnimatedSprite(as.transform.x, as.transform.y, tex);
+		aso->transform = AvgEngine::Render::Rect(ob.transform.x, ob.transform.y,
+						ob.transform.w, ob.transform.h,
+						ob.transform.r, ob.transform.g, ob.transform.b, ob.transform.a,
+						ob.transform.scale, ob.transform.deg);
+		ob.id = aso->id;
+		ob.transform.base = &aso->transform;
+		ob.transformOffset.base = &aso->transformOffset;
+		ob.clipRect.base = &aso->clipRect;
+		ob.base = aso;
 		break;
 	}
 }
@@ -258,6 +280,15 @@ void Average4k::Lua::MenuLuaFile::Load()
 		sol::base_classes, sol::bases<gameObject>()
 		);
 
+	sol::usertype<animatedSprite> animatedSprite_type = lua->new_usertype<animatedSprite>("animatedSprite",
+		sol::constructors<animatedSprite(float, float, texture)>(),
+		"tex", &animatedSprite::tex,
+		"center", sol::property(&animatedSprite::getCenter, &animatedSprite::setCenter),
+		"fps", sol::property(&animatedSprite::getFPS, &animatedSprite::setFPS),
+		"frame", sol::property(&animatedSprite::getFrame, &animatedSprite::setFrame),
+		"setFrameSize", &animatedSprite::setFrameSize,
+		sol::base_classes, sol::bases<gameObject>()
+		);
 
 	using namespace Average4k::Lua::Menu;
 

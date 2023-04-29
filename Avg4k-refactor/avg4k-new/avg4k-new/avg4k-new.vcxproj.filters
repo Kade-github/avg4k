@@ -249,6 +249,9 @@
     <ClCompile Include="Gameplay.cpp">
       <Filter>Average4K\Avg4k\Menus\Gameplay</Filter>
     </ClCompile>
+    <ClCompile Include="LuaAnimatedSprite.cpp">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes.h">
@@ -589,6 +592,9 @@
     </ClInclude>
     <ClInclude Include="SpriteAnimated.h">
       <Filter>Average4K\Avg4k\External\SpriteSheet</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaAnimatedSprite.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -33,7 +33,7 @@ function Create()
     packContainer.loadBanners()
     packContainer.loadPacks(Containers.scontainer.packs)
 
-    helper.createAnimatedSprite("Menu/explosion", 0,0,24,64,64,nil)
+    
 end
 
 function MouseDown(pos)

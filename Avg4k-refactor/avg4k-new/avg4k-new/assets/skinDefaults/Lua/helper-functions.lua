@@ -2,6 +2,7 @@ helper = {}
 
 helper.containers = {}
 
+-- dumps lua tables into a string so you can print usertables (like sprite, animatedsprite, etc)
 function helper.dump(o)
     if type(o) == 'table' then
         local s = '{ '

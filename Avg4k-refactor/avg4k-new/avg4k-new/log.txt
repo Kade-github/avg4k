@@ -1,0 +1,58 @@
+[Sat Apr 29 17:22:32 2023] [Main] Logging system initialized.
+[Sat Apr 29 17:22:32 2023] [Main] Initialized GLFW!
+[Sat Apr 29 17:22:32 2023] [Main] Initialized BASS!
+[Sat Apr 29 17:22:33 2023] [AvgEngine] Game created, title: Average4K. Version: b14
+[Sat Apr 29 17:22:33 2023] [Steam] Logged in as Kade:76561198037519280
+[Sat Apr 29 17:22:33 2023] [Settings] Reverting Music Volume due to it not being a number.
+[Sat Apr 29 17:22:33 2023] [Settings] Reverting Hitsound Volume due to it not being a number.
+[Sat Apr 29 17:22:33 2023] [Main] Initialized Display!
+[Sat Apr 29 17:22:33 2023] [Main] Initialized ImGUI!
+[Sat Apr 29 17:22:33 2023] [Main] Starting game...
+[Sat Apr 29 17:22:33 2023] [Fnt] Loaded font Futura-Boldx128
+[Sat Apr 29 17:22:33 2023] [Texture] [Error] Failure to open file assets/skinDefaults/Menu/majorerroricon.png, Unrecognized image format, Format:  (We only support JPEG/PNG's)
+[Sat Apr 29 17:22:33 2023] [Texture] [Error] Failure to open file assets/skinDefaults/Menu/minorerroricon.png, Unrecognized image format, Format:  (We only support JPEG/PNG's)
+[Sat Apr 29 17:22:33 2023] [Display] Resized to 1920x1080
+[Sat Apr 29 17:22:33 2023] [Server] Connecting...
+[Sat Apr 29 17:22:33 2023] [Server] Connected successfully!
+[Sat Apr 29 17:22:33 2023] [Fnt] Loaded font Arialx128
+[Sat Apr 29 17:22:33 2023] [LoadingPacksMenu] Loading charts with thread count: 24
+[Sat Apr 29 17:22:33 2023] [Server] Logging in...
+[Sat Apr 29 17:22:33 2023] [Server] Awaiting auth ticket from steam
+[Sat Apr 29 17:22:34 2023] [LoadingPacksMenu] Finished loading 419 charts in 1.093601 seconds.
+[Sat Apr 29 17:22:34 2023] [Server] Sending auth ticket...
+[Sat Apr 29 17:22:35 2023] [Server] Server agreed to give me the kids on the weekends (you logged in successfully)
+[Sat Apr 29 17:22:35 2023] [Steam] User details: Kade:76561198037519280
+[Sat Apr 29 17:22:49 2023] [MenuLuaFile] Set packs in 0.255665 seconds
+[Sat Apr 29 17:22:49 2023] [Lua] Loaded assets/skinDefaults/Lua/main-menu.lua
+[Sat Apr 29 17:22:49 2023] [Lua] LuaJIT 2.0.5
+[Sat Apr 29 17:22:49 2023] [Lua] Initial scale: 1
+[Sat Apr 29 17:22:49 2023] [Lua] Steam connection: true
+[Sat Apr 29 17:22:49 2023] [Lua] loaded avatar 184x184
+[Sat Apr 29 17:22:49 2023] [Fnt] Loaded font Arialx128
+[Sat Apr 29 17:22:49 2023] [Fnt] Loaded font Arialx128
+[Sat Apr 29 17:22:49 2023] [FNT] [Warning] AndaleMono.fnt doesn't have a kernings node.
+[Sat Apr 29 17:22:49 2023] [Lua] menu created!
+[Sat Apr 29 17:22:56 2023] [Lua] Selected pack 6
+[Sat Apr 29 17:22:56 2023] [Lua] 1325.0400390625 213.5 395.45999145508
+[Sat Apr 29 17:22:57 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Sat Apr 29 17:22:57 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Sat Apr 29 17:22:57 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Sat Apr 29 17:22:58 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Sat Apr 29 17:22:58 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Sat Apr 29 17:22:58 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Sat Apr 29 17:22:58 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Sat Apr 29 17:22:58 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Sat Apr 29 17:22:58 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Sat Apr 29 17:22:59 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Sat Apr 29 17:22:59 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Sat Apr 29 17:22:59 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Sat Apr 29 17:22:59 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Sat Apr 29 17:22:59 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Sat Apr 29 17:22:59 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Sat Apr 29 17:22:59 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Sat Apr 29 17:23:00 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Sat Apr 29 17:23:02 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Sat Apr 29 17:23:02 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Sat Apr 29 17:23:02 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Sat Apr 29 17:23:02 2023] [Lua] 1614 840.38000488281 395.45999145508
+[Sat Apr 29 17:23:02 2023] [Lua] 1614 840.38000488281 395.4599

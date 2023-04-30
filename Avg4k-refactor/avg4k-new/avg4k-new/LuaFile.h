@@ -1,8 +1,7 @@
 #pragma once
 #include "includes.h"
 
-#include "LuaSprite.h"
-
+#include "LuaGameObject.h"
 #define SOL_ALL_SAFETIES_ON 1
 #define SOL_LUAJIT 1
 #include <sol.hpp>
@@ -12,6 +11,7 @@ namespace Average4k::Lua
 	class LuaFile {
 	public:
 		std::unique_ptr<sol::state> lua;
+		std::vector<Average4k::Lua::Base::gameObject> objects{};
 
 		std::string _path;
 
@@ -60,6 +60,12 @@ namespace Average4k::Lua
 		void Launch();
 
 		virtual void Load();
+
+		void CreateObject(Average4k::Lua::Base::gameObject& ob);
+
+		void AddObject(Average4k::Lua::Base::gameObject& ob);
+
+		void RemoveObject(Average4k::Lua::Base::gameObject& ob);
 
 		virtual void Reload()
 		{

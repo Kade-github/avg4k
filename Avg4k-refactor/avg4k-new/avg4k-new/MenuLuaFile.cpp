@@ -7,6 +7,7 @@
 #include "LoadingPacksMenu.h"
 #include "LuaAnimatedSprite.h"
 #include "SpriteAnimated.h"
+#include "LuaChannel.h"
 void Average4k::Lua::MenuLuaFile::SetPacks(sol::global_table t)
 {
 	using namespace Average4k::Lua::Menu;
@@ -166,7 +167,25 @@ void Average4k::Lua::MenuLuaFile::Load()
 		"folder", &chart::folder
 		);
 
+	sol::usertype<LuaChannel> LuaChannel_type = lua->new_usertype<LuaChannel>("LuaChannel",
+		sol::constructors<LuaChannel(std::string, std::string)>(),
+		"path", &LuaChannel::path,
+		"name", &LuaChannel::name,
+		"isFreed", &LuaChannel::isFreed,
+		"Free", &LuaChannel::Free,
+		"Play", &LuaChannel::Play,
+		"Stop", &LuaChannel::Stop,
+		"time", sol::property(&LuaChannel::GetPos, &LuaChannel::SetPos),
+		"volume", sol::property(&LuaChannel::GetVolume, &LuaChannel::SetVolume),
+		"RateChange", &LuaChannel::RateChange,
+		"sampleRate", sol::property(&LuaChannel::GetSampleRate),
+		"ConvertToFX", &LuaChannel::ConvertToFX
+		);
 
+
+	lua->set_function("createChannelAsync", [&](std::string path, std::string name) {
+
+	});
 
 	lua->set_function("setResolution", [&](int w, int h) {
 		if (w <= 0 || h <= 0)
@@ -187,6 +206,8 @@ void Average4k::Lua::MenuLuaFile::Load()
 
 
 	sol::global_table t = lua->globals();
+
+	t["channels"] = lua->create_table();
 
 	SetPacks(t);
 

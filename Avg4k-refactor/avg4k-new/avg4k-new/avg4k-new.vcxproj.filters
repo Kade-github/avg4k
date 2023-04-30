@@ -596,5 +596,8 @@
     <ClInclude Include="LuaAnimatedSprite.h">
       <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
     </ClInclude>
+    <ClInclude Include="LuaChannel.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Menu</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

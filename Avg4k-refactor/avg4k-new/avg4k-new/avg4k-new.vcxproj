@@ -132,6 +132,7 @@
     <ClInclude Include="LoadingPacksMenu.h" />
     <ClInclude Include="Logging.h" />
     <ClInclude Include="LuaAnimatedSprite.h" />
+    <ClInclude Include="LuaChannel.h" />
     <ClInclude Include="LuaChart.h" />
     <ClInclude Include="LuaConfig.h" />
     <ClInclude Include="LuaFile.h" />

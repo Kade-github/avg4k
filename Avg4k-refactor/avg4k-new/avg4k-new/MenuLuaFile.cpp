@@ -182,7 +182,6 @@ void Average4k::Lua::MenuLuaFile::Load()
 		"ConvertToFX", &LuaChannel::ConvertToFX
 		);
 
-
 	lua->set_function("createChannelAsync", [&](std::string path, std::string name) {
 
 	});

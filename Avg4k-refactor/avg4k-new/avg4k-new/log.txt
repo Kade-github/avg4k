@@ -1,0 +1,78 @@
+[Mon May  1 19:37:07 2023] [Main] Logging system initialized.
+[Mon May  1 19:37:08 2023] [Main] Initialized GLFW!
+[Mon May  1 19:37:08 2023] [Main] Initialized BASS!
+[Mon May  1 19:37:08 2023] [AvgEngine] Game created, title: Average4K. Version: b14
+[Mon May  1 19:37:08 2023] [Steam] Logged in as Kade:76561198037519280
+[Mon May  1 19:37:08 2023] [Settings] Reverting Music Volume due to it not being a number.
+[Mon May  1 19:37:08 2023] [Settings] Reverting Hitsound Volume due to it not being a number.
+[Mon May  1 19:37:08 2023] [Main] Initialized Display!
+[Mon May  1 19:37:08 2023] [Main] Initialized ImGUI!
+[Mon May  1 19:37:08 2023] [Main] Starting game...
+[Mon May  1 19:37:08 2023] [Fnt] Loaded font Futura-Boldx128
+[Mon May  1 19:37:08 2023] [Texture] [Error] Failure to open file assets/skinDefaults/Menu/majorerroricon.png, Unrecognized image format, Format:  (We only support JPEG/PNG's)
+[Mon May  1 19:37:08 2023] [Texture] [Error] Failure to open file assets/skinDefaults/Menu/minorerroricon.png, Unrecognized image format, Format:  (We only support JPEG/PNG's)
+[Mon May  1 19:37:08 2023] [Display] Resized to 2560x1440
+[Mon May  1 19:37:08 2023] [Server] Connecting...
+[Mon May  1 19:37:08 2023] [Server] Connected successfully!
+[Mon May  1 19:37:08 2023] [Fnt] Loaded font Arialx128
+[Mon May  1 19:37:08 2023] [LoadingPacksMenu] Loading charts with thread count: 24
+[Mon May  1 19:37:08 2023] [Server] Logging in...
+[Mon May  1 19:37:08 2023] [Server] Awaiting auth ticket from steam
+[Mon May  1 19:37:09 2023] [LoadingPacksMenu] Finished loading 419 charts in 0.911744 seconds.
+[Mon May  1 19:37:09 2023] [Server] Sending auth ticket...
+[Mon May  1 19:37:09 2023] [Server] Server agreed to give me the kids on the weekends (you logged in successfully)
+[Mon May  1 19:37:09 2023] [Steam] User details: Kade:76561198037519280
+[Mon May  1 19:37:24 2023] [MenuLuaFile] Set packs in 0.256472 seconds
+[Mon May  1 19:37:24 2023] [Lua] Loaded assets/skinDefaults/Lua/main-menu.lua
+[Mon May  1 19:37:24 2023] [Lua] LuaJIT 2.0.5
+[Mon May  1 19:37:24 2023] [Lua] Initial scale: 1.3333333730698
+[Mon May  1 19:37:24 2023] [Lua] Steam connection: true
+[Mon May  1 19:37:24 2023] [Lua] loaded avatar 184x184
+[Mon May  1 19:37:24 2023] [Fnt] Loaded font Arialx128
+[Mon May  1 19:37:24 2023] [Fnt] Loaded font Arialx128
+[Mon May  1 19:37:24 2023] [FNT] [Warning] AndaleMono.fnt doesn't have a kernings node.
+[Mon May  1 19:37:24 2023] [Lua] menu created!
+[Mon May  1 19:37:32 2023] [Lua] Selected pack 5
+[Mon May  1 19:37:32 2023] [Lua] 1766.7199707031 284.66665649414 527.27996826172
+[Mon May  1 19:37:33 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:34 2023] [Lua] Selected pack 6
+[Mon May  1 19:37:34 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:35 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:35 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:35 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:35 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:36 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:36 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:36 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:36 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:36 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:37 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:37 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:37 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:38 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:38 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:38 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:38 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:38 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:39 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:39 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:39 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:39 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:40 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:40 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:40 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:40 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:40 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:40 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:40 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:41 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:42 2023] [Lua] Selecting 3
+[Mon May  1 19:37:43 2023] [Lua] Selecting 1
+[Mon May  1 19:37:44 2023] [Lua] Selected pack 1
+[Mon May  1 19:37:44 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:45 2023] [Lua] Selected pack 2
+[Mon May  1 19:37:45 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:46 2023] [Lua] Selected pack 3
+[Mon May  1 19:37:46 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172
+[Mon May  1 19:37:47 2023] [Lua] Selected pack 4
+[Mon May  1 19:37:47 2023] [Lua] 2158.8332519531 1120.5067138672 527.27996826172

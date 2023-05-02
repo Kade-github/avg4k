@@ -27,7 +27,7 @@ public:
 
 	std::vector<QueuedPacket> queuedPackets;
 
-	Average4K(std::string _t, std::string _v) : Game(_t, _v)
+	Average4K(std::string _t, std::string _v, int w = 1920, int h = 1080) : Game(_t, _v, w, h)
 	{
 		steam = new Steam::SteamInterface();
 		workshop = new Steam::SteamWorkshop();
@@ -59,7 +59,7 @@ public:
 
 		QueueEvent({ AvgEngine::Events::EventType::Event_ReloadFont,0, {}, skin->GetFontPath() });
 	
-		SetResolution(settings->Get("Resolution").value);
+		SetResolution("2560x1440");
 		fpsText->transform.scale = skin->upscale;
 		alphaText->transform.scale = skin->upscale;
 
@@ -163,6 +163,7 @@ public:
 
 		if (queuedPackets.size() > 0)
 			queuedPackets.clear();
+
 	}
 
 	void SwitchNoTrans(Menu* menu)

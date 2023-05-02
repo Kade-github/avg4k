@@ -112,16 +112,16 @@
     <Filter Include="Average4K\Avg4k\External\SpriteSheet">
       <UniqueIdentifier>{201e0101-bb00-4f7b-8444-271b95e393d0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Average4K\Avg4k\External\ChartParsers\LuaInterfaces">
+    <Filter Include="Average4K\Avg4k\External\LuaInterfaces">
       <UniqueIdentifier>{6ab7d735-c9dc-4075-952f-20c70bcf02b6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Average4K\Avg4k\External\ChartParsers\LuaInterfaces\Menu">
+    <Filter Include="Average4K\Avg4k\External\LuaInterfaces\Menu">
       <UniqueIdentifier>{ad58060b-1b9a-4813-85c0-94df79fb7913}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Average4K\Avg4k\External\ChartParsers\LuaInterfaces\Game">
+    <Filter Include="Average4K\Avg4k\External\LuaInterfaces\Game">
       <UniqueIdentifier>{387ca5c2-96cd-48c7-9875-713b8264740a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Average4K\Avg4k\External\ChartParsers\LuaInterfaces\Base">
+    <Filter Include="Average4K\Avg4k\External\LuaInterfaces\Base">
       <UniqueIdentifier>{0adde4ec-4e5e-4faa-a1c5-1c2e98d82b34}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -214,7 +214,7 @@
       <Filter>Average4K\Avg4k\Menus\Main</Filter>
     </ClCompile>
     <ClCompile Include="LuaFile.cpp">
-      <Filter>Average4K\Avg4k\External\ChartParsers\LuaInterfaces</Filter>
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
     </ClCompile>
     <ClCompile Include="ConsoleCommandHandler.cpp">
       <Filter>Average4K\Engine\Console</Filter>
@@ -223,22 +223,22 @@
       <Filter>Average4K\Avg4k</Filter>
     </ClCompile>
     <ClCompile Include="MenuLuaFile.cpp">
-      <Filter>Average4K\Avg4k\External\ChartParsers\LuaInterfaces</Filter>
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
     </ClCompile>
     <ClCompile Include="LuaText.cpp">
-      <Filter>Average4K\Avg4k\External\ChartParsers\LuaInterfaces\Base</Filter>
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
     </ClCompile>
     <ClCompile Include="LuaGameObject.cpp">
-      <Filter>Average4K\Avg4k\External\ChartParsers\LuaInterfaces\Base</Filter>
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
     </ClCompile>
     <ClCompile Include="Base64.cpp">
       <Filter>Average4K\Engine\External\Base64</Filter>
     </ClCompile>
     <ClCompile Include="LuaSprite.cpp">
-      <Filter>Average4K\Avg4k\External\ChartParsers\LuaInterfaces\Base</Filter>
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
     </ClCompile>
     <ClCompile Include="MenuLua.cpp">
-      <Filter>Average4K\Avg4k\External\ChartParsers\LuaInterfaces</Filter>
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
     </ClCompile>
     <ClCompile Include="LoadingPacksMenu.cpp">
       <Filter>Average4K\Avg4k\Menus</Filter>
@@ -250,7 +250,7 @@
       <Filter>Average4K\Avg4k\Menus\Gameplay</Filter>
     </ClCompile>
     <ClCompile Include="LuaAnimatedSprite.cpp">
-      <Filter>Average4K\Avg4k\External\ChartParsers\LuaInterfaces\Base</Filter>
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -528,10 +528,10 @@
       <Filter>Average4K\Avg4k\Elements</Filter>
     </ClInclude>
     <ClInclude Include="MenuLuaFile.h">
-      <Filter>Average4K\Avg4k\External\ChartParsers\LuaInterfaces</Filter>
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
     </ClInclude>
     <ClInclude Include="LuaFile.h">
-      <Filter>Average4K\Avg4k\External\ChartParsers\LuaInterfaces</Filter>
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
     </ClInclude>
     <ClInclude Include="ConsoleCommandHandler.h">
       <Filter>Average4K\Engine\Console</Filter>
@@ -540,31 +540,31 @@
       <Filter>Average4K\Avg4k</Filter>
     </ClInclude>
     <ClInclude Include="LuaMenu.h">
-      <Filter>Average4K\Avg4k\External\ChartParsers\LuaInterfaces</Filter>
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
     </ClInclude>
     <ClInclude Include="LuaRect.h">
-      <Filter>Average4K\Avg4k\External\ChartParsers\LuaInterfaces\Base</Filter>
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
     </ClInclude>
     <ClInclude Include="LuaGameObject.h">
-      <Filter>Average4K\Avg4k\External\ChartParsers\LuaInterfaces\Base</Filter>
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
     </ClInclude>
     <ClInclude Include="LuaSprite.h">
-      <Filter>Average4K\Avg4k\External\ChartParsers\LuaInterfaces\Base</Filter>
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
     </ClInclude>
     <ClInclude Include="LuaTexture.h">
-      <Filter>Average4K\Avg4k\External\ChartParsers\LuaInterfaces\Base</Filter>
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
     </ClInclude>
     <ClInclude Include="LuaText.h">
-      <Filter>Average4K\Avg4k\External\ChartParsers\LuaInterfaces\Base</Filter>
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
     </ClInclude>
     <ClInclude Include="LuaConfig.h">
-      <Filter>Average4K\Avg4k\External\ChartParsers\LuaInterfaces\Base</Filter>
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
     </ClInclude>
     <ClInclude Include="Rectangle.h">
       <Filter>Average4K\Engine\Base</Filter>
     </ClInclude>
     <ClInclude Include="LuaRectangle.h">
-      <Filter>Average4K\Avg4k\External\ChartParsers\LuaInterfaces\Base</Filter>
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
     </ClInclude>
     <ClInclude Include="ChartFile.h">
       <Filter>Average4K\Avg4k\External\ChartParsers</Filter>
@@ -582,10 +582,10 @@
       <Filter>Average4K\Avg4k\External\ChartParsers\Stepmania</Filter>
     </ClInclude>
     <ClInclude Include="LuaPack.h">
-      <Filter>Average4K\Avg4k\External\ChartParsers\LuaInterfaces\Menu</Filter>
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Menu</Filter>
     </ClInclude>
     <ClInclude Include="LuaChart.h">
-      <Filter>Average4K\Avg4k\External\ChartParsers\LuaInterfaces\Menu</Filter>
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Menu</Filter>
     </ClInclude>
     <ClInclude Include="Gameplay.h">
       <Filter>Average4K\Avg4k\Menus\Gameplay</Filter>
@@ -594,10 +594,10 @@
       <Filter>Average4K\Avg4k\External\SpriteSheet</Filter>
     </ClInclude>
     <ClInclude Include="LuaAnimatedSprite.h">
-      <Filter>Average4K\Avg4k\External\ChartParsers\LuaInterfaces\Base</Filter>
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
     </ClInclude>
     <ClInclude Include="LuaChannel.h">
-      <Filter>Average4K\Avg4k\External\ChartParsers\LuaInterfaces\Menu</Filter>
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Menu</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -22,6 +22,7 @@ namespace Average4k::Chart::Collection
 		std::vector< boost::asio::thread_pool> pools;
 
 		void FindPacks(std::string directory, int threads);
+		ChartFile* FindSong(std::string path, Pack& pack);
 
 		std::map<std::string, std::string> FindCharts(std::string dir)
 		{

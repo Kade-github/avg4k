@@ -84,3 +84,18 @@ void Average4k::Chart::Collection::SongGatherer::FindPacks(std::string directory
 		std::sort(p.files.begin(), p.files.end(), songGather_sort);
 	}
 }
+
+Average4k::Chart::ChartFile* Average4k::Chart::Collection::SongGatherer::FindSong(std::string path, Pack& pack)
+{
+	for (Pack& p : packs)
+	{
+		for (ChartFile& f : p.files)
+		{
+			if (f.path == path)
+			{
+				return &f;
+			}
+		}
+	}
+	return NULL;
+}

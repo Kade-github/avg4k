@@ -8,6 +8,7 @@
 #include "LuaAnimatedSprite.h"
 #include "SpriteAnimated.h"
 #include "LuaChannel.h"
+#include "Gameplay.h"
 void Average4k::Lua::MenuLuaFile::SetPacks(sol::global_table t)
 {
 	using namespace Average4k::Lua::Menu;
@@ -19,7 +20,7 @@ void Average4k::Lua::MenuLuaFile::SetPacks(sol::global_table t)
 	// loop over all the packs in loadingpacksmenu
 	for (int i = 0; i < LoadingPacksMenu::packs.size(); i++)
 	{
-		auto pl = LoadingPacksMenu::packs[i];
+		auto& pl = LoadingPacksMenu::packs[i];
 
 		// create a table for the pack
 		pack p = pack();
@@ -27,10 +28,11 @@ void Average4k::Lua::MenuLuaFile::SetPacks(sol::global_table t)
 		p.name = pl.name;
 		p.showName = pl.showName;
 		p.path = pl.path;
+		p.base = &pl;
 		// Loop over the files 
 		for (int j = 0; j < pl.files.size(); j++)
 		{
-			Average4k::Chart::ChartFile cf = pl.files[j];
+			Average4k::Chart::ChartFile& cf = pl.files[j];
 			chart c = chart();
 			// Set all the metadata types
 			c.songArtist = cf.chartMetadata.Song_Artist;
@@ -46,7 +48,7 @@ void Average4k::Lua::MenuLuaFile::SetPacks(sol::global_table t)
 			c.path = cf.path;
 			c.folder = cf.folder;
 			c.isSteam = cf.chartMetadata.isSteam;
-
+			c.base = &cf;
 			for (Average4k::Chart::Difficulty d : cf.chartMetadata.Difficulties)
 			{
 				difficulty df;
@@ -197,6 +199,16 @@ void Average4k::Lua::MenuLuaFile::Load()
 		c->SetResolution(std::to_string(w) + "x" + std::to_string(h));
 	});
 
+
+	lua->set_function("setChart", [&](chart& c) {
+		Average4K* s = static_cast<Average4K*>(Average4K::Instance);
+		s->options.currentFile = c.base;
+	});
+
+	lua->set_function("switchToGameplay", [&]() {
+		Average4K* c = static_cast<Average4K*>(Average4K::Instance);
+		c->SwitchMenu(new Gameplay(c->skin->GetLua("gameplay")));
+	});
 	
 	lua->set_function("reloadPacks", [&]() {
 		// TODO: reload packs

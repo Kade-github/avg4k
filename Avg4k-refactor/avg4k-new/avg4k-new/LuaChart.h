@@ -1,5 +1,6 @@
 #pragma once
 #include "includes.h"
+#include "ChartFile.h"
 namespace Average4k::Lua::Menu
 {
 	struct note
@@ -93,6 +94,8 @@ namespace Average4k::Lua::Menu
 		std::string folder;
 
 		bool isSteam;
+
+		Average4k::Chart::ChartFile* base = NULL;
 
 		chart()
 		{

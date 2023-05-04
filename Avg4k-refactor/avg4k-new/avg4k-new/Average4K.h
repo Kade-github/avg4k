@@ -8,6 +8,15 @@
 #include "SteamIncludes.h"
 #include "Avg4kCmdHandler.h"
 #include "Notifications.h"
+#include "SongGatherer.h"
+
+namespace Average4k
+{
+	struct GameOptions {
+		Average4k::Chart::ChartFile* currentFile = NULL;
+	};
+}
+
 class Average4K : public AvgEngine::Game
 {
 	double _startTrans = -1;
@@ -21,6 +30,8 @@ public:
 	static Average4k::Utils::Notifications* notif;
 
 	static bool instant;
+
+	Average4k::GameOptions options{};
 
 	Steam::SteamInterface* steam;
 	Steam::SteamWorkshop* workshop;

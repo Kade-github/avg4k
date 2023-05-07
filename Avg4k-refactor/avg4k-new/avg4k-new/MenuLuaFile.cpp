@@ -207,7 +207,13 @@ void Average4k::Lua::MenuLuaFile::Load()
 	});
 
 	lua->set_function("startChart", [&]() {
+
 		Average4K* c = static_cast<Average4K*>(Average4K::Instance);
+		if (c->options.currentFile == NULL)
+		{
+			AvgEngine::Logging::writeLog("[Lua] [Error] Can't call 'startChart()'; No chart selected!");
+			return;
+		}
 		c->SwitchMenu(new Gameplay(c->skin->GetLua("gameplay")));
 	});
 	

@@ -6,6 +6,7 @@ songWheel.selectedDiff = 1
 songWheel.fakeIndex = 1
 songWheel.bg = nil
 songWheel.selectedFile = nil
+songWheel.moreInfo = false
 
 function songWheel.init(container)
     songWheel.main = container
@@ -159,7 +160,6 @@ function songWheel.Select(amt)
             ((Containers.scontainer.songInfo_onlineText:getRealRect().w / 2) + (14 * skin['upscale']))
         Containers.scontainer.songInfo_onlineText.transform.y = Containers.scontainer.songInfo_chartType:getRealRect().y -
             p.y
-        cprint(tostring(real.x) .. " " .. tostring(real.y) .. ' ' .. tostring(p.w))
 
 
         songWheel.SetDiff()
@@ -189,24 +189,32 @@ function songWheel.keyPress(num)
         songWheel.Select(1)
     end
 
-    if songWheel.files[songWheel.selectedIndex] == nil then
+    if songWheel.selectedFile == nil then
         return
     end
 
     if num == 263 then
         songWheel.selectedDiff = songWheel.selectedDiff - 1
         if songWheel.selectedDiff < 1 then
-            songWheel.selectedDiff = #songWheel.files[songWheel.selectedIndex].difficulties
+            songWheel.selectedDiff = #songWheel.selectedFile.difficulties
         end
         songWheel.SetDiff()
     end
     if num == 262 then
         songWheel.selectedDiff = songWheel.selectedDiff + 1
-        if songWheel.selectedDiff > #songWheel.files[songWheel.selectedIndex].difficulties then
+        if songWheel.selectedDiff > #songWheel.selectedFile.difficulties then
             songWheel.selectedDiff = 1
         end
 
         songWheel.SetDiff()
+    end
+
+    if not songWheel.moreInfo then
+        if num == 257 then
+            cprint("set chart to " .. songWheel.selectedFile.songTitle)
+            setChart(songWheel.selectedFile, songWheel.selectedDiff)
+            startChart()
+        end
     end
 end
 

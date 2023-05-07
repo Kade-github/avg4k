@@ -14,7 +14,9 @@
 using namespace Average4k::Lua;
 
 std::mutex chart_mutex;
+std::string endFunction = "";
 
+sol::state* luaPtr = NULL;
 inline void lua_panic(sol::optional<std::string> maybe_msg) {
 	if (maybe_msg) {
 		const std::string& msg = maybe_msg.value();
@@ -182,9 +184,31 @@ void LoadChartTexture(LuaFile* _t, std::string path, int index, sol::table* texe
 	chart_mutex.unlock();
 }
 
+void TweenEnd()
+{
+	if (endFunction == "")
+		return;
+	if (luaPtr != NULL)
+	{
+		sol::protected_function f = (*luaPtr)[endFunction];
+
+		if (!f.valid())
+			return;
+
+		sol::function_result x = f();
+		if (!x.valid()) {
+			sol::error errorstring = x;
+			AvgEngine::Logging::writeLog("[Lua] [Error] Lua Error while running " + endFunction + "!\n" + std::string(errorstring.what()));
+		}
+	}
+	endFunction = "";
+}
+
 void LuaFile::Load()
 {
 	using namespace Average4k::Lua;
+
+	luaPtr = lua.get();
 
 	lua->set_function("cprint", [&](std::string log) {
 		AvgEngine::Logging::writeLog("[Lua] " + log);
@@ -392,7 +416,7 @@ void LuaFile::Load()
 
 	sol::table ta = lua->create_table_with("version", Average4K::settings->f.settingsVersion);
 	for (Setting& s : Average4K::settings->f.settings)
-		ta.add(&s.name, &s.value);
+		ta[s.name] = s.value;
 
 	t["settings"] = ta;
 
@@ -438,12 +462,14 @@ void LuaFile::Load()
 		return k->skin->GetPath(fileName);
 	});
 
-	lua->set_function("tween", [&](Average4k::Lua::Base::gameObject& ob, Average4k::Lua::Base::rect endRect, double length, std::string easing) {
+	lua->set_function("tween", [&](Average4k::Lua::Base::gameObject& ob, Average4k::Lua::Base::rect endRect, double length, std::string easing, std::string ef) {
 		if (!ob.base)
 		{
 			AvgEngine::Logging::writeLog("[Lua] [Error] Failure to start tween! Object does not have a base. (did you forget to create it?)");
 			return;
 		}
+	if (ef != "")
+		endFunction = ef;
 		Average4K::Instance->CurrentMenu->tween.CreateTween(&ob.base->transform,
 			AvgEngine::Render::Rect(endRect.x, endRect.y, 
 				endRect.w, endRect.h, 
@@ -451,7 +477,7 @@ void LuaFile::Load()
 				endRect.scale, 
 				endRect.deg), 
 			length, AvgEngine::Easing::Easing::getEasingFunction(easing), 
-			NULL);
+			TweenEnd);
 	});
 
 	lua->set_function("aabb_object", [&](Average4k::Lua::Base::gameObject& ob, Average4k::Lua::Base::gameObject& ob2) {

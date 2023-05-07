@@ -252,6 +252,12 @@
     <ClCompile Include="LuaAnimatedSprite.cpp">
       <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
     </ClCompile>
+    <ClCompile Include="GameplayLuaFile.cpp">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="GameplayMenu.cpp">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes.h">
@@ -598,6 +604,12 @@
     </ClInclude>
     <ClInclude Include="LuaChannel.h">
       <Filter>Average4K\Avg4k\External\LuaInterfaces\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayLuaFile.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayMenu.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -57,7 +57,7 @@ namespace Average4k::Lua
 			Function("Create", "");
 		}
 
-		void Launch();
+		virtual void Launch();
 
 		virtual void Load();
 
@@ -85,5 +85,6 @@ namespace Average4k::Lua
 				AvgEngine::Logging::writeLog("[Lua] [Error] Lua Error while running " + func + "!\n" + std::string(errorstring.what()));
 			}
 		}
+
 	};
 }

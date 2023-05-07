@@ -41,7 +41,7 @@ namespace Average4k
 	class Settings
 	{
 		// Average Engine 1
-		std::string _settingsVersion = "Average4KSettingsFile:ver-av.e.1";
+		std::string _settingsVersion = "Average4KSettingsFile:ver-av.e.1-c1";
 		std::string _path;
 	public:
 		File f;
@@ -56,6 +56,7 @@ namespace Average4k
 			nf.settings.push_back({ "Scrollspeed", "800",  "800", S_Int, 200,1800 });
 			nf.settings.push_back({ "Skin", "arrow",  "arrow", S_String, -1,-1 });
 			nf.settings.push_back({ "Note Size", "1",  "1", S_Float, 0,2 });
+			nf.settings.push_back({ "Background Transparency", "0.5",  "0.5", S_Float, 0,1 });
 			nf.settings.push_back({ "Resolution", "1920x1080",  "1920x1080", S_String, -1,-1 });
 			return nf;
 		}

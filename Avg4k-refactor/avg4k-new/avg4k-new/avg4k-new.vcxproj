@@ -47,6 +47,8 @@
     <ClCompile Include="FntParser.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Gameplay.cpp" />
+    <ClCompile Include="GameplayLuaFile.cpp" />
+    <ClCompile Include="GameplayMenu.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="ImGUIHelper.cpp" />
@@ -115,6 +117,8 @@
     <ClInclude Include="FntParser.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Gameplay.h" />
+    <ClInclude Include="GameplayLuaFile.h" />
+    <ClInclude Include="GameplayMenu.h" />
     <ClInclude Include="imageinfo.hpp" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />

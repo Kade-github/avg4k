@@ -200,7 +200,7 @@ function Containers.create()
 
     -- Tweens
 
-    tween(Containers.solo, Containers.endRect, 1, "outcubic")
+    tween(Containers.solo, Containers.endRect, 1, "outcubic", "")
 
     helper.initContainer(Containers.solo, false)
     helper.initContainer(Containers.multiplayer, false)

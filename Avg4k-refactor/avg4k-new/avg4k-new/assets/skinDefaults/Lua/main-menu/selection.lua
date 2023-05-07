@@ -184,10 +184,10 @@ function Selection.create()
     Selection.settingsHit.transform.alpha = 0
 
 
-    tween(Selection.soloText, sTEnd, 1.2, "outcubic")
-    tween(Selection.selectionRect, srEnd, 1.2, "outcubic")
-    tween(Selection.multiplayerText, mTEnd, 1.2, "outcubic")
-    tween(Selection.settingsText, seTEnd, 1.2, "outcubic")
+    tween(Selection.soloText, sTEnd, 1.2, "outcubic", "")
+    tween(Selection.selectionRect, srEnd, 1.2, "outcubic", "")
+    tween(Selection.multiplayerText, mTEnd, 1.2, "outcubic", "")
+    tween(Selection.settingsText, seTEnd, 1.2, "outcubic", "")
 
     Selection.currentContainer = Containers.solo
     Selection.lastChange = getTime() + 1.2

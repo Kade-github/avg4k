@@ -203,7 +203,7 @@ void Average4k::Lua::MenuLuaFile::Load()
 	lua->set_function("setChart", [&](chart& c, int diffIndex) {
 		Average4K* s = static_cast<Average4K*>(Average4K::Instance);
 		s->options.currentFile = c.base;
-		s->options.currentFile_diff = diffIndex;
+		s->options.currentFile_diff = diffIndex - 1;
 	});
 
 	lua->set_function("startChart", [&]() {

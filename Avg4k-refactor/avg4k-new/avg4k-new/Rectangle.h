@@ -7,6 +7,7 @@ namespace AvgEngine::Base
 	public:
 		int outlinedThickness = 0;
 		bool center = false;
+		bool sizeToContents = false;
 		Rectangle(float _x, float _y, float _w, float _h) : GameObject(_x, _y)
 		{
 			transform.w = _w;
@@ -36,6 +37,41 @@ namespace AvgEngine::Base
 				}
 			}
 			GameObject::setRatio(r);
+		}
+
+		void drawChildren(bool zIndexx)
+		{
+			Render::Rect prevTrans = transform;
+			if (transformRatio && parent) // reverse the ratio
+			{
+				transform.x = parent->x + (parent->w * (transform.x)) + transformOffset.x;
+				transform.y = parent->y + (parent->h * (transform.y)) + transformOffset.y;
+				transform.w = (parent->w * (transform.w)) + transformOffset.w;
+				transform.h = (parent->h * (transform.h)) + transformOffset.h;
+				transform.w = transform.w * transform.scale;
+				transform.h = transform.h * transform.scale;
+
+				if (center)
+				{
+					transform.x -= transform.w / 2;
+					transform.y -= transform.h / 2;
+				}
+			}
+			else if (parent)
+			{
+				transform.x += parent->x + transformOffset.x;
+				transform.y += parent->y + transformOffset.y;
+				transform.w += transformOffset.w;
+				transform.h += transformOffset.h;
+			}
+			if (zIndexx)
+			{
+				GameObject::drawTopZIndex();
+				transform = prevTrans;
+				return;
+			}
+			GameObject::draw();
+			transform = prevTrans;
 		}
 
 		void draw() override
@@ -77,10 +113,13 @@ namespace AvgEngine::Base
 			if (transform.a <= 0)
 				return;
 
+			drawChildren(false);
+
 			if (outlinedThickness == 0)
 				Primitives::DrawRectangle(camera, zIndex, r, cr);
 			else
 				Primitives::DrawOutlinedRectangle(camera, zIndex, outlinedThickness, r, cr);
+			drawChildren(true);
 		}
 	};
 }

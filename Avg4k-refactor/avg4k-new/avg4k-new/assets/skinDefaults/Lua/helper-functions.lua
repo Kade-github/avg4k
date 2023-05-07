@@ -74,7 +74,8 @@ function helper.createContainer(path, x, y)
 end
 
 --[[
-    A helper function to initialize a container
+    A helper function to initialize a container.
+    Don't use this in gameplay
 ]]
 function helper.initContainer(container, allowScroll)
     -- add it to the container list (with some extra variables)

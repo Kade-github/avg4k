@@ -3,12 +3,12 @@
 #include "includes.h"
 #include "Menu.h"
 #include "Container.h"
-#include "LuaMenu.h"
+#include "GameplayMenu.h"
 
-class Gameplay : public Average4k::Lua::LuaMenu
+class Gameplay : public Average4k::Lua::GameplayMenu
 {
 public:
-	Gameplay(std::string path) : Average4k::Lua::LuaMenu(path)
+	Gameplay(std::string path) : Average4k::Lua::GameplayMenu(path)
 	{
 	}
 

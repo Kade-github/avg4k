@@ -19,7 +19,7 @@ function Avatar.createIcon(notDefault)
     local endRect = copyRect(Avatar.border.transform)
     endRect.y = 0.02
 
-    tween(Avatar.border, endRect, 1.5, "outcubic")
+    tween(Avatar.border, endRect, 1.5, "outcubic", "")
 
     Avatar.helloText = text.new(0, 0, "ArialBold.fnt", "Not logged in.")
     create(Avatar.helloText)

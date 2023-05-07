@@ -200,12 +200,13 @@ void Average4k::Lua::MenuLuaFile::Load()
 	});
 
 
-	lua->set_function("setChart", [&](chart& c) {
+	lua->set_function("setChart", [&](chart& c, int diffIndex) {
 		Average4K* s = static_cast<Average4K*>(Average4K::Instance);
 		s->options.currentFile = c.base;
+		s->options.currentFile_diff = diffIndex;
 	});
 
-	lua->set_function("switchToGameplay", [&]() {
+	lua->set_function("startChart", [&]() {
 		Average4K* c = static_cast<Average4K*>(Average4K::Instance);
 		c->SwitchMenu(new Gameplay(c->skin->GetLua("gameplay")));
 	});

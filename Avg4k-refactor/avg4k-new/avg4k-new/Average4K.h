@@ -14,6 +14,7 @@ namespace Average4k
 {
 	struct GameOptions {
 		Average4k::Chart::ChartFile* currentFile = NULL;
+		int currentFile_diff;
 	};
 }
 
@@ -70,7 +71,7 @@ public:
 
 		QueueEvent({ AvgEngine::Events::EventType::Event_ReloadFont,0, {}, skin->GetFontPath() });
 	
-		SetResolution("2560x1440");
+		SetResolution(settings->Get("Resolution").value);
 		fpsText->transform.scale = skin->upscale;
 		alphaText->transform.scale = skin->upscale;
 

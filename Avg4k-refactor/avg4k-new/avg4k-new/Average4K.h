@@ -151,7 +151,7 @@ public:
 			float t = std::min(static_cast<float>(std::abs(_startTrans - glfwGetTime())) / 0.20f, 1.0f);
 			r.a = std::lerp(0, 1, t);
 			drawCall c = Camera::FormatDrawCall(0, NULL, NULL, DisplayHelper::RectToVertex(r, { 0,0,1,1 }));
-
+			c.zIndex = 99;
 			CurrentMenu->camera.addDrawCall(c);
 
 			if (t >= 1)
@@ -166,7 +166,7 @@ public:
 			float t = std::min(static_cast<float>(std::abs(_startTrans - glfwGetTime())) / 0.20f, 1.0f);
 			r.a = std::lerp(1, 0, t);
 			drawCall c = Camera::FormatDrawCall(0, NULL, NULL, DisplayHelper::RectToVertex(r, { 0,0,1,1 }));
-
+			c.zIndex = 99;
 			CurrentMenu->camera.addDrawCall(c);
 		}
 		notif->camera = &CurrentMenu->camera;

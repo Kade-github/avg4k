@@ -8,6 +8,8 @@ namespace AvgEngine::Base
 		int outlinedThickness = 0;
 		bool center = false;
 		bool sizeToContents = false;
+
+
 		Rectangle(float _x, float _y, float _w, float _h) : GameObject(_x, _y)
 		{
 			transform.w = _w;

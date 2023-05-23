@@ -125,10 +125,10 @@
       <UniqueIdentifier>{0adde4ec-4e5e-4faa-a1c5-1c2e98d82b34}</UniqueIdentifier>
     </Filter>
     <Filter Include="Average4K\Avg4k\Objects">
-      <UniqueIdentifier>{18757927-7aea-47d6-95df-93ee6a733961}</UniqueIdentifier>
+      <UniqueIdentifier>{e4de254d-2c01-470b-975c-2c4b6756247c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Average4K\Avg4k\Objects\Gameplay">
-      <UniqueIdentifier>{5ab6a693-6d66-40f6-b19a-025202cdbbe0}</UniqueIdentifier>
+      <UniqueIdentifier>{cd048278-0174-4103-93c1-1f897ff57003}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -623,10 +623,10 @@
     <ClInclude Include="Playfield.h">
       <Filter>Average4K\Avg4k\Objects\Gameplay</Filter>
     </ClInclude>
-    <ClInclude Include="Note.h">
+    <ClInclude Include="Receptor.h">
       <Filter>Average4K\Avg4k\Objects\Gameplay</Filter>
     </ClInclude>
-    <ClInclude Include="Receptor.h">
+    <ClInclude Include="Note.h">
       <Filter>Average4K\Avg4k\Objects\Gameplay</Filter>
     </ClInclude>
   </ItemGroup>

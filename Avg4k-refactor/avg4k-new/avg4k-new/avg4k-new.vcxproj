@@ -155,6 +155,7 @@
     <ClInclude Include="MenuLuaFile.h" />
     <ClInclude Include="Multiplayer.h" />
     <ClInclude Include="Note.h" />
+    <ClInclude Include="Receptor.h" />
     <ClInclude Include="Notifications.h" />
     <ClInclude Include="Pack.h" />
     <ClInclude Include="Packet.h" />
@@ -162,7 +163,6 @@
     <ClInclude Include="Playfield.h" />
     <ClInclude Include="pugiconfig.hpp" />
     <ClInclude Include="pugixml.hpp" />
-    <ClInclude Include="Receptor.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="RhythmChannel.h" />
     <ClInclude Include="Settings.h" />

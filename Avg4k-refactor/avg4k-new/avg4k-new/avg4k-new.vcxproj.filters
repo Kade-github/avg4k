@@ -124,6 +124,12 @@
     <Filter Include="Average4K\Avg4k\External\LuaInterfaces\Base">
       <UniqueIdentifier>{0adde4ec-4e5e-4faa-a1c5-1c2e98d82b34}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Average4K\Avg4k\Objects">
+      <UniqueIdentifier>{18757927-7aea-47d6-95df-93ee6a733961}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\Objects\Gameplay">
+      <UniqueIdentifier>{5ab6a693-6d66-40f6-b19a-025202cdbbe0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -257,6 +263,9 @@
     </ClCompile>
     <ClCompile Include="GameplayMenu.cpp">
       <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="Playfield.cpp">
+      <Filter>Average4K\Avg4k\Objects\Gameplay</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -610,6 +619,15 @@
     </ClInclude>
     <ClInclude Include="GameplayMenu.h">
       <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Playfield.h">
+      <Filter>Average4K\Avg4k\Objects\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Note.h">
+      <Filter>Average4K\Avg4k\Objects\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Receptor.h">
+      <Filter>Average4K\Avg4k\Objects\Gameplay</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

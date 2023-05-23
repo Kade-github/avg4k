@@ -13,6 +13,8 @@ namespace Average4k::External::Spritesheet {
 
 		int fps = 24;
 
+		bool loop = true;
+
 		double frameTime = 0;
 		double start = 0;
 
@@ -35,7 +37,7 @@ namespace Average4k::External::Spritesheet {
 			{
 				frameTime = 0;
 				frame++;
-				if (frame >= frames)
+				if (frame >= frames && loop)
 					frame = 0;
 				src.x = frame * frameWidth;
 				src.y = 0;

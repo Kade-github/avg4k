@@ -19,8 +19,8 @@ namespace Average4k
 		std::string defaultSet = "";
 		int type = 0;
 
-		int min = 0;
-		int max = 0;
+		float min = 0;
+		float max = 0;
 
 		bool operator==(const Setting& other) {
 			return name == other.name;
@@ -53,7 +53,7 @@ namespace Average4k
 
 			nf.settings.push_back({ "Music Volume", "0.45", "0.45", S_Float, 0,1 });
 			nf.settings.push_back({ "Hitsound Volume", "0.8",  "0.8", S_Float, 0,1 });
-			nf.settings.push_back({ "Note Size", "1",  "1", S_Float, 0.1,2 });
+			nf.settings.push_back({ "Note Size", "1",  "1", S_Float, 0.1f,2 });
 			nf.settings.push_back({ "Scrollspeed", "800",  "800", S_Int, 200,1800 });
 			nf.settings.push_back({ "Skin", "arrow",  "arrow", S_String, -1,-1 });
 			nf.settings.push_back({ "Note Size", "1",  "1", S_Float, 0,2 });

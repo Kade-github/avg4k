@@ -72,6 +72,7 @@
     <ClCompile Include="MenuLua.cpp" />
     <ClCompile Include="MenuLuaFile.cpp" />
     <ClCompile Include="Multiplayer.cpp" />
+    <ClCompile Include="Playfield.cpp" />
     <ClCompile Include="pugixml.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SkinUtils.cpp" />
@@ -153,12 +154,15 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="MenuLuaFile.h" />
     <ClInclude Include="Multiplayer.h" />
+    <ClInclude Include="Note.h" />
     <ClInclude Include="Notifications.h" />
     <ClInclude Include="Pack.h" />
     <ClInclude Include="Packet.h" />
     <ClInclude Include="Paths.h" />
+    <ClInclude Include="Playfield.h" />
     <ClInclude Include="pugiconfig.hpp" />
     <ClInclude Include="pugixml.hpp" />
+    <ClInclude Include="Receptor.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="RhythmChannel.h" />
     <ClInclude Include="Settings.h" />

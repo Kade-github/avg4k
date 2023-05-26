@@ -1,5 +1,5 @@
 songWheel = {}
-songWheel.files = {};
+songWheel.files = {}
 songWheel.textures = {}
 songWheel.selectedIndex = 1
 songWheel.selectedDiff = 1
@@ -180,6 +180,7 @@ function songWheel.Select(amt)
         bg.transform.y = 0.5
         bg.transform.w = 1.0
         bg.transform.h = 1.0
+        bg.transform.scale = skin["upscale"]
         songWheel.bg = bg
 
         songWheel.started = Globals.lt

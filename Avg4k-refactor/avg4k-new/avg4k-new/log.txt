@@ -1,248 +1,57 @@
-[Fri May 26 15:22:21 2023] [Main] Logging system initialized.
-[Fri May 26 15:22:21 2023] [Main] Initialized GLFW!
-[Fri May 26 15:22:21 2023] [Main] Initialized BASS!
-[Fri May 26 15:22:22 2023] [AvgEngine] Game created, title: Average4K. Version: b14
-[Fri May 26 15:22:22 2023] [Steam] Logged in as Kade:76561198037519280
-[Fri May 26 15:22:22 2023] [Settings] Music Volume is old.
-[Fri May 26 15:22:22 2023] [Settings] Hitsound Volume is old.
-[Fri May 26 15:22:22 2023] [Settings] Note Size is old.
-[Fri May 26 15:22:22 2023] [Settings] Scrollspeed is old.
-[Fri May 26 15:22:22 2023] [Settings] Skin is old.
-[Fri May 26 15:22:22 2023] [Settings] Note Size is old.
-[Fri May 26 15:22:22 2023] [Settings] Background Transparency is old.
-[Fri May 26 15:22:22 2023] [Settings] Resolution is old.
-[Fri May 26 15:22:22 2023] [Main] Initialized Display!
-[Fri May 26 15:22:22 2023] [Main] Initialized ImGUI!
-[Fri May 26 15:22:22 2023] [Main] Starting game...
-[Fri May 26 15:22:22 2023] [Fnt] Loaded font Futura-Boldx128
-[Fri May 26 15:22:22 2023] [Texture] [Error] Failure to open file assets/skinDefaults/Menu/majorerroricon.png, Unrecognized image format, Format:  (We only support JPEG/PNG's)
-[Fri May 26 15:22:22 2023] [Texture] [Error] Failure to open file assets/skinDefaults/Menu/minorerroricon.png, Unrecognized image format, Format:  (We only support JPEG/PNG's)
-[Fri May 26 15:22:22 2023] [Display] Resized to 1920x1080
-[Fri May 26 15:22:22 2023] [Server] Connecting...
-[Fri May 26 15:22:22 2023] [Server] Connected successfully!
-[Fri May 26 15:22:22 2023] [Fnt] Loaded font Arialx128
-[Fri May 26 15:22:22 2023] [LoadingPacksMenu] Loading charts with thread count: 24
-[Fri May 26 15:22:22 2023] [Server] Logging in...
-[Fri May 26 15:22:22 2023] [Server] Awaiting auth ticket from steam
-[Fri May 26 15:22:23 2023] [LoadingPacksMenu] Finished loading 420 charts in 1.200590 seconds.
-[Fri May 26 15:22:23 2023] [Server] Sending auth ticket...
-[Fri May 26 15:22:23 2023] [Server] Server agreed to give me the kids on the weekends (you logged in successfully)
-[Fri May 26 15:22:23 2023] [Steam] User details: Kade:76561198037519280
-[Fri May 26 15:22:26 2023] [MenuLuaFile] Set packs in 0.182191 seconds
-[Fri May 26 15:22:26 2023] [Lua] Loaded assets/skinDefaults/Lua/main-menu.lua
-[Fri May 26 15:22:26 2023] [Lua] LuaJIT 2.0.5
-[Fri May 26 15:22:26 2023] [Lua] Initial scale: 1
-[Fri May 26 15:22:26 2023] [Lua] Steam connection: true
-[Fri May 26 15:22:26 2023] [Lua] loaded avatar 184x184
-[Fri May 26 15:22:26 2023] [Fnt] Loaded font Arialx128
-[Fri May 26 15:22:26 2023] [Fnt] Loaded font Arialx128
-[Fri May 26 15:22:26 2023] [FNT] [Warning] AndaleMono.fnt doesn't have a kernings node.
-[Fri May 26 15:22:26 2023] [Lua] menu created!
-[Fri May 26 15:22:29 2023] [User] objects
-[Fri May 26 15:22:29 2023] [Menu] Object-0 Tag: object, z: 0, XYWH {0.000000,0.000000,1.000000,1.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio : yes, Children : 0
-[Fri May 26 15:22:29 2023] [Menu] Object-1 Tag: object, z: 0, XYWH {0.010000,0.020000,0.122396,0.217593} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio : yes, Children : 3
-[Fri May 26 15:22:29 2023] 	Child -> Object-0 Tag: object, z: 0 (original: 0), XYWH {0.500000,0.500000,1.000000,1.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: yes, Children : 0.
-[Fri May 26 15:22:29 2023] 	Child -> Object-1 Tag: object, z: 0 (original: 0), XYWH {1.200000,0.140000,75.000000,24.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: yes, Children : 0.
-[Fri May 26 15:22:29 2023] 	Child -> Object-2 Tag: object, z: 0 (original: 0), XYWH {1.200000,0.400000,157.000000,24.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: yes, Children : 0.
-[Fri May 26 15:22:29 2023] [Menu] Object-2 Tag: object, z: 0, XYWH {0.010000,-0.800000,0.123958,0.220370} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio : yes, Children : 0
-[Fri May 26 15:22:29 2023] [Menu] Object-3 Tag: solo, z: 0, XYWH {0.500000,0.500000,0.792188,0.604630} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio : yes, Children : 8
-[Fri May 26 15:22:29 2023] 	Child -> Object-0 Tag: packContainer, z: 2 (original: 2), XYWH {0.000000,0.120000,0.200000,0.880000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: yes, Children : 9.
-[Fri May 26 15:22:29 2023] 		Child -> Object-0 Tag: container_bar, z: 3 (original: 1), XYWH {0.000000,0.000000,18.000000,60.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 		Child -> Object-1 Tag: container_arrow_1, z: 3 (original: 1), XYWH {0.000000,0.000000,55.000000,30.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 		Child -> Object-2 Tag: container_arrow_2, z: 3 (original: 1), XYWH {0.000000,0.000000,55.000000,30.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 		Child -> Object-3 Tag: Chiptune Moddo-banner, z: 3 (original: 1), XYWH {2.000000,2.000000,299.000000,73.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:22:29 2023] 			Child -> Object-0 Tag: hitbox, z: 3 (original: 2), XYWH {0.000000,0.000000,301.000000,73.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 		Child -> Object-4 Tag: Average4K Community Pack Vol. 1-banner, z: 3 (original: 1), XYWH {2.000000,77.000000,299.000000,73.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:22:29 2023] 			Child -> Object-0 Tag: hitbox, z: 3 (original: 2), XYWH {0.000000,0.000000,301.000000,73.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 		Child -> Object-5 Tag: Martzi's archive-banner, z: 3 (original: 1), XYWH {2.000000,152.000000,299.000000,73.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:22:29 2023] 			Child -> Object-0 Tag: hitbox, z: 3 (original: 2), XYWH {0.000000,0.000000,301.000000,73.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 		Child -> Object-6 Tag: M.I.L.F Modchart (starcatcher)-banner, z: 3 (original: 1), XYWH {2.000000,227.000000,299.000000,73.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:22:29 2023] 			Child -> Object-0 Tag: hitbox, z: 3 (original: 2), XYWH {0.000000,0.000000,301.000000,73.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 		Child -> Object-7 Tag: Average4K OST Pack Vol. 1-banner, z: 3 (original: 1), XYWH {2.000000,302.000000,299.000000,73.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:22:29 2023] 			Child -> Object-0 Tag: hitbox, z: 3 (original: 2), XYWH {0.000000,0.000000,301.000000,73.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 		Child -> Object-8 Tag: Purple Paradise-banner, z: 3 (original: 1), XYWH {2.000000,377.000000,299.000000,73.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:22:29 2023] 			Child -> Object-0 Tag: hitbox, z: 3 (original: 2), XYWH {0.000000,0.000000,301.000000,73.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 	Child -> Object-1 Tag: packsText, z: 1 (original: 1), XYWH {0.020000,0.030000,72.000000,24.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: yes, Children : 0.
-[Fri May 26 15:22:29 2023] 	Child -> Object-2 Tag: packsInfo, z: 1 (original: 1), XYWH {0.020000,0.070000,118.000000,17.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: yes, Children : 0.
-[Fri May 26 15:22:29 2023] 	Child -> Object-3 Tag: songWheel, z: 2 (original: 2), XYWH {0.200000,0.120000,0.540000,0.880000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: yes, Children : 3.
-[Fri May 26 15:22:29 2023] 		Child -> Object-0 Tag: container_bar, z: 3 (original: 1), XYWH {0.000000,257.320007,18.000000,60.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 		Child -> Object-1 Tag: container_arrow_1, z: 3 (original: 1), XYWH {-27.500000,310.320007,55.000000,30.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 		Child -> Object-2 Tag: container_arrow_2, z: 3 (original: 1), XYWH {-44.000000,348.320007,55.000000,30.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 	Child -> Object-4 Tag: songInfo, z: 2 (original: 2), XYWH {0.740000,0.000000,0.260000,1.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: yes, Children : 11.
-[Fri May 26 15:22:29 2023] 		Child -> Object-0 Tag: container_bar, z: 3 (original: 1), XYWH {0.000000,0.000000,18.000000,60.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 		Child -> Object-1 Tag: container_arrow_1, z: 3 (original: 1), XYWH {0.000000,0.000000,55.000000,30.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 		Child -> Object-2 Tag: container_arrow_2, z: 3 (original: 1), XYWH {0.000000,0.000000,55.000000,30.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 		Child -> Object-3 Tag: songInfo_title, z: 4 (original: 2), XYWH {0.060000,0.040000,142.000000,28.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: yes, Children : 0.
-[Fri May 26 15:22:29 2023] 		Child -> Object-4 Tag: songInfo_artist, z: 4 (original: 2), XYWH {0.060000,0.080000,111.000000,20.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: yes, Children : 0.
-[Fri May 26 15:22:29 2023] 		Child -> Object-5 Tag: songInfo_difficulty, z: 4 (original: 2), XYWH {0.500000,0.550000,128.000000,28.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: yes, Children : 0.
-[Fri May 26 15:22:29 2023] 		Child -> Object-6 Tag: songInfo_difficultyName, z: 4 (original: 2), XYWH {0.500000,0.500000,191.000000,26.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: yes, Children : 0.
-[Fri May 26 15:22:29 2023] 		Child -> Object-7 Tag: songInfo_difficultyLeftArrow, z: 4 (original: 2), XYWH {0.000000,0.000000,25.000000,50.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 		Child -> Object-8 Tag: songInfo_difficultyRightArrow, z: 4 (original: 2), XYWH {0.000000,0.000000,25.000000,50.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 		Child -> Object-9 Tag: songInfo_chartType, z: 4 (original: 2), XYWH {0.020000,0.960000,179.000000,22.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: yes, Children : 0.
-[Fri May 26 15:22:29 2023] 		Child -> Object-10 Tag: songInfo_onlineText, z: 4 (original: 2), XYWH {0.000000,0.000000,185.000000,22.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 	Child -> Object-5 Tag: container_bar, z: 1 (original: 1), XYWH {0.000000,0.000000,18.000000,60.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 	Child -> Object-6 Tag: container_arrow_1, z: 1 (original: 1), XYWH {0.000000,0.000000,55.000000,30.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 	Child -> Object-7 Tag: container_arrow_2, z: 1 (original: 1), XYWH {0.000000,0.000000,55.000000,30.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] [Menu] Object-4 Tag: multiplayer, z: 0, XYWH {1.500000,0.500000,0.792188,0.604630} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio : yes, Children : 3
-[Fri May 26 15:22:29 2023] 	Child -> Object-0 Tag: container_bar, z: 1 (original: 1), XYWH {0.000000,0.000000,18.000000,60.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 	Child -> Object-1 Tag: container_arrow_1, z: 1 (original: 1), XYWH {0.000000,0.000000,55.000000,30.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 	Child -> Object-2 Tag: container_arrow_2, z: 1 (original: 1), XYWH {0.000000,0.000000,55.000000,30.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] [Menu] Object-5 Tag: settings, z: 0, XYWH {1.500000,0.500000,0.792188,0.604630} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio : yes, Children : 3
-[Fri May 26 15:22:29 2023] 	Child -> Object-0 Tag: container_bar, z: 1 (original: 1), XYWH {0.000000,0.000000,18.000000,60.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 	Child -> Object-1 Tag: container_arrow_1, z: 1 (original: 1), XYWH {0.000000,0.000000,55.000000,30.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] 	Child -> Object-2 Tag: container_arrow_2, z: 1 (original: 1), XYWH {0.000000,0.000000,55.000000,30.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:22:29 2023] [Menu] Object-6 Tag: object, z: 0, XYWH {0.250000,0.150000,88.000000,36.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio : yes, Children : 0
-[Fri May 26 15:22:29 2023] [Menu] Object-7 Tag: object, z: 0, XYWH {0.520000,0.150000,242.000000,36.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio : yes, Children : 0
-[Fri May 26 15:22:29 2023] [Menu] Object-8 Tag: object, z: 0, XYWH {0.750000,0.150000,176.000000,36.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio : yes, Children : 0
-[Fri May 26 15:22:29 2023] [Menu] Object-9 Tag: object, z: 0, XYWH {0.250000,0.170000,0.200000,0.004000} RGBA {83.000000,234.000000,209.000000,1.000000}, Ratio : yes, Children : 0
-[Fri May 26 15:22:29 2023] [Menu] Object-10 Tag: object, z: 0, XYWH {0.250000,0.150000,0.200000,0.030000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio : yes, Children : 0
-[Fri May 26 15:22:29 2023] [Menu] Object-11 Tag: object, z: 0, XYWH {0.520000,0.150000,0.200000,0.030000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio : yes, Children : 0
-[Fri May 26 15:22:29 2023] [Menu] Object-12 Tag: object, z: 0, XYWH {0.750000,0.150000,0.200000,0.030000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio : yes, Children : 0
-[Fri May 26 15:23:17 2023] [Lua] Selected pack 6
-[Fri May 26 15:23:19 2023] [User] objects
-[Fri May 26 15:23:19 2023] [Menu] Object-0 Tag: object, z: 0, XYWH {0.000000,0.000000,1.000000,1.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio : yes, Children : 0
-[Fri May 26 15:23:19 2023] [Menu] Object-1 Tag: object, z: 0, XYWH {0.010000,0.020000,0.122396,0.217593} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio : yes, Children : 3
-[Fri May 26 15:23:19 2023] 	Child -> Object-0 Tag: object, z: 0 (original: 0), XYWH {0.500000,0.500000,1.000000,1.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: yes, Children : 0.
-[Fri May 26 15:23:19 2023] 	Child -> Object-1 Tag: object, z: 0 (original: 0), XYWH {1.200000,0.140000,75.000000,24.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: yes, Children : 0.
-[Fri May 26 15:23:19 2023] 	Child -> Object-2 Tag: object, z: 0 (original: 0), XYWH {1.200000,0.400000,157.000000,24.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: yes, Children : 0.
-[Fri May 26 15:23:19 2023] [Menu] Object-2 Tag: object, z: 0, XYWH {0.010000,-0.800000,0.123958,0.220370} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio : yes, Children : 0
-[Fri May 26 15:23:19 2023] [Menu] Object-3 Tag: solo, z: 0, XYWH {0.500000,0.500000,0.792188,0.604630} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio : yes, Children : 8
-[Fri May 26 15:23:19 2023] 	Child -> Object-0 Tag: packContainer, z: 2 (original: 2), XYWH {0.000000,0.120000,0.200000,0.880000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: yes, Children : 9.
-[Fri May 26 15:23:19 2023] 		Child -> Object-0 Tag: container_bar, z: 3 (original: 1), XYWH {0.000000,0.000000,18.000000,60.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-1 Tag: container_arrow_1, z: 3 (original: 1), XYWH {0.000000,0.000000,55.000000,30.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-2 Tag: container_arrow_2, z: 3 (original: 1), XYWH {0.000000,0.000000,55.000000,30.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-3 Tag: Chiptune Moddo-banner, z: 3 (original: 1), XYWH {2.000000,2.000000,299.000000,73.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: hitbox, z: 3 (original: 2), XYWH {0.000000,0.000000,301.000000,73.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-4 Tag: Average4K Community Pack Vol. 1-banner, z: 3 (original: 1), XYWH {2.000000,77.000000,299.000000,73.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: hitbox, z: 3 (original: 2), XYWH {0.000000,0.000000,301.000000,73.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-5 Tag: Martzi's archive-banner, z: 3 (original: 1), XYWH {2.000000,152.000000,299.000000,73.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: hitbox, z: 3 (original: 2), XYWH {0.000000,0.000000,301.000000,73.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-6 Tag: M.I.L.F Modchart (starcatcher)-banner, z: 3 (original: 1), XYWH {2.000000,227.000000,299.000000,73.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: hitbox, z: 3 (original: 2), XYWH {0.000000,0.000000,301.000000,73.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-7 Tag: Average4K OST Pack Vol. 1-banner, z: 3 (original: 1), XYWH {2.000000,302.000000,299.000000,73.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: hitbox, z: 3 (original: 2), XYWH {0.000000,0.000000,301.000000,73.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-8 Tag: Purple Paradise-banner, z: 3 (original: 1), XYWH {2.000000,377.000000,299.000000,73.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: hitbox, z: 3 (original: 2), XYWH {0.000000,0.000000,301.000000,73.000000} RGBA {255.000000,255.000000,255.000000,0.200000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 	Child -> Object-1 Tag: packsText, z: 1 (original: 1), XYWH {0.020000,0.030000,72.000000,24.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: yes, Children : 0.
-[Fri May 26 15:23:19 2023] 	Child -> Object-2 Tag: packsInfo, z: 1 (original: 1), XYWH {0.020000,0.070000,118.000000,17.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: yes, Children : 0.
-[Fri May 26 15:23:19 2023] 	Child -> Object-3 Tag: songWheel, z: 2 (original: 2), XYWH {0.200000,0.120000,0.540000,0.880000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: yes, Children : 46.
-[Fri May 26 15:23:19 2023] 		Child -> Object-3 Tag: top-1, z: 2 (original: 0), XYWH {0.000000,249.320007,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-4 Tag: top-2, z: 2 (original: 0), XYWH {-209.000000,333.320007,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-5 Tag: top-3, z: 2 (original: 0), XYWH {-334.399994,417.320007,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-6 Tag: top-4, z: 2 (original: 0), XYWH {-459.799988,501.320007,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-7 Tag: top-5, z: 2 (original: 0), XYWH {-585.200012,585.320007,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-8 Tag: top-6, z: 2 (original: 0), XYWH {-710.599976,669.320007,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-9 Tag: top-7, z: 2 (original: 0), XYWH {-836.000000,753.320007,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-10 Tag: top-8, z: 2 (original: 0), XYWH {-961.400024,837.320007,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-11 Tag: top-9, z: 2 (original: 0), XYWH {-1086.800049,921.320007,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-12 Tag: top-10, z: 2 (original: 0), XYWH {-1212.199951,1005.320007,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-13 Tag: top-11, z: 2 (original: 0), XYWH {-1337.599976,1089.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-14 Tag: top-12, z: 2 (original: 0), XYWH {-1463.000000,1173.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-15 Tag: top-13, z: 2 (original: 0), XYWH {-1588.400024,1257.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-16 Tag: top-14, z: 2 (original: 0), XYWH {-1713.800049,1341.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-17 Tag: top-15, z: 2 (original: 0), XYWH {-1839.199951,1425.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-18 Tag: top-16, z: 2 (original: 0), XYWH {-1964.599976,1509.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-19 Tag: top-17, z: 2 (original: 0), XYWH {-2090.000000,1593.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-20 Tag: top-18, z: 2 (original: 0), XYWH {-2215.399902,1677.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-21 Tag: top-19, z: 2 (original: 0), XYWH {-2340.800049,1761.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-22 Tag: top-20, z: 2 (original: 0), XYWH {-2466.199951,1845.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-23 Tag: top-21, z: 2 (original: 0), XYWH {-2591.600098,1929.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-24 Tag: top-22, z: 2 (original: 0), XYWH {-2717.000000,2013.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-25 Tag: top-23, z: 2 (original: 0), XYWH {-2842.399902,2097.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-26 Tag: top-24, z: 2 (original: 0), XYWH {-2967.800049,2181.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-27 Tag: top-25, z: 2 (original: 0), XYWH {-3093.199951,2265.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-28 Tag: top-26, z: 2 (original: 0), XYWH {-3218.600098,2349.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-29 Tag: top-27, z: 2 (original: 0), XYWH {-3344.000000,2433.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-30 Tag: top-28, z: 2 (original: 0), XYWH {-3469.399902,2517.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-31 Tag: top-29, z: 2 (original: 0), XYWH {-3594.800049,2601.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-32 Tag: top-30, z: 2 (original: 0), XYWH {-3720.199951,2685.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-33 Tag: top-31, z: 2 (original: 0), XYWH {-3845.600098,2769.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-34 Tag: top-32, z: 2 (original: 0), XYWH {-3971.000000,2853.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-35 Tag: top-33, z: 2 (original: 0), XYWH {-4096.399902,2937.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-36 Tag: top-34, z: 2 (original: 0), XYWH {-4221.799805,3021.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-37 Tag: top-35, z: 2 (original: 0), XYWH {-4347.200195,3105.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-38 Tag: top-36, z: 2 (original: 0), XYWH {-4472.600098,3189.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-39 Tag: top-37, z: 2 (original: 0), XYWH {-4598.000000,3273.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-40 Tag: top-38, z: 2 (original: 0), XYWH {-4723.399902,3357.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-41 Tag: top-39, z: 2 (original: 0), XYWH {-4848.799805,3441.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-42 Tag: top-40, z: 2 (original: 0), XYWH {-4974.200195,3525.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-43 Tag: top-41, z: 2 (original: 0), XYWH {-5099.600098,3609.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-44 Tag: top-42, z: 2 (original: 0), XYWH {-5225.000000,3693.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-45 Tag: top-43, z: 2 (original: 0), XYWH {-5350.399902,3777.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-46 Tag: top-44, z: 2 (original: 0), XYWH {-5475.799805,3861.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-47 Tag: top-45, z: 2 (original: 0), XYWH {-5601.200195,3945.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-48 Tag: top-46, z: 2 (original: 0), XYWH {-5726.600098,4029.320068,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 1.
-[Fri May 26 15:23:19 2023] 			Child -> Object-0 Tag: bBackground, z: -1 (original: -1), XYWH {0.000000,0.000000,418.000000,76.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 	Child -> Object-4 Tag: songInfo, z: 2 (original: 2), XYWH {0.740000,0.000000,0.260000,1.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: yes, Children : 12.
-[Fri May 26 15:23:19 2023] 		Child -> Object-0 Tag: container_bar, z: 3 (original: 1), XYWH {0.000000,0.000000,18.000000,60.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-1 Tag: container_arrow_1, z: 3 (original: 1), XYWH {0.000000,0.000000,55.000000,30.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-2 Tag: container_arrow_2, z: 3 (original: 1), XYWH {0.000000,0.000000,55.000000,30.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-3 Tag: songInfo_title, z: 4 (original: 2), XYWH {0.060000,0.040000,142.000000,28.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: yes, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-4 Tag: songInfo_artist, z: 4 (original: 2), XYWH {0.060000,0.080000,122.000000,20.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: yes, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-5 Tag: songInfo_difficulty, z: 4 (original: 2), XYWH {0.500000,0.550000,128.000000,28.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: yes, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-6 Tag: songInfo_difficultyName, z: 4 (original: 2), XYWH {0.500000,0.500000,191.000000,26.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: yes, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-7 Tag: songInfo_difficultyLeftArrow, z: 4 (original: 2), XYWH {0.000000,0.000000,25.000000,50.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-8 Tag: songInfo_difficultyRightArrow, z: 4 (original: 2), XYWH {0.000000,0.000000,25.000000,50.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-9 Tag: songInfo_chartType, z: 4 (original: 2), XYWH {0.020000,0.960000,179.000000,22.000000} RGBA {255.000000,255.000000,255.000000,0.700000}, Ratio: yes, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-10 Tag: songInfo_onlineText, z: 4 (original: 2), XYWH {288.959991,626.880005,185.000000,22.000000} RGBA {255.000000,255.000000,255.000000,0.700000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 		Child -> Object-12 Tag: object, z: 2 (original: 0), XYWH {0.500000,0.500000,1.000000,1.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio: yes, Children : 0.
-[Fri May 26 15:23:19 2023] 	Child -> Object-5 Tag: container_bar, z: 1 (original: 1), XYWH {0.000000,0.000000,18.000000,60.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 	Child -> Object-6 Tag: container_arrow_1, z: 1 (original: 1), XYWH {0.000000,0.000000,55.000000,30.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 	Child -> Object-7 Tag: container_arrow_2, z: 1 (original: 1), XYWH {0.000000,0.000000,55.000000,30.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] [Menu] Object-4 Tag: multiplayer, z: 0, XYWH {1.500000,0.500000,0.792188,0.604630} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio : yes, Children : 3
-[Fri May 26 15:23:19 2023] 	Child -> Object-0 Tag: container_bar, z: 1 (original: 1), XYWH {0.000000,0.000000,18.000000,60.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 	Child -> Object-1 Tag: container_arrow_1, z: 1 (original: 1), XYWH {0.000000,0.000000,55.000000,30.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 	Child -> Object-2 Tag: container_arrow_2, z: 1 (original: 1), XYWH {0.000000,0.000000,55.000000,30.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] [Menu] Object-5 Tag: settings, z: 0, XYWH {1.500000,0.500000,0.792188,0.604630} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio : yes, Children : 3
-[Fri May 26 15:23:19 2023] 	Child -> Object-0 Tag: container_bar, z: 1 (original: 1), XYWH {0.000000,0.000000,18.000000,60.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 	Child -> Object-1 Tag: container_arrow_1, z: 1 (original: 1), XYWH {0.000000,0.000000,55.000000,30.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] 	Child -> Object-2 Tag: container_arrow_2, z: 1 (original: 1), XYWH {0.000000,0.000000,55.000000,30.000000} RGBA {255.000000,255.000000,255.000000,0.000000}, Ratio: no, Children : 0.
-[Fri May 26 15:23:19 2023] [Menu] Object-6 Tag: object, z: 0, XYWH {0.250000,0.150000,88.000000,36.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio : yes, Children : 0
-[Fri May 26 15:23:19 2023] [Menu] Object-7 Tag: object, z: 0, XYWH {0.520000,0.150000,242.000000,36.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio : yes, Children : 0
-[Fri May 26 15:23:19 2023] [Menu] Object-8 Tag: object, z: 0, XYWH {0.750000,0.150000,176.000000,36.000000} RGBA {255.000000,255.000000,255.000000,1.000000}, Ratio : yes, Children : 0
-[Fri May 26 15:23:19 2023] [Menu] Object-9 Tag: object, z: 0, X
+[Fri May 26 15:41:10 2023] [Main] Logging system initialized.
+[Fri May 26 15:41:10 2023] [Main] Initialized GLFW!
+[Fri May 26 15:41:10 2023] [Main] Initialized BASS!
+[Fri May 26 15:41:10 2023] [AvgEngine] Game created, title: Average4K. Version: b14
+[Fri May 26 15:41:10 2023] [Steam] Logged in as Kade:76561198037519280
+[Fri May 26 15:41:10 2023] [Settings] Music Volume is old.
+[Fri May 26 15:41:10 2023] [Settings] Hitsound Volume is old.
+[Fri May 26 15:41:10 2023] [Settings] Note Size is old.
+[Fri May 26 15:41:10 2023] [Settings] Scrollspeed is old.
+[Fri May 26 15:41:10 2023] [Settings] Skin is old.
+[Fri May 26 15:41:10 2023] [Settings] Note Size is old.
+[Fri May 26 15:41:10 2023] [Settings] Background Transparency is old.
+[Fri May 26 15:41:10 2023] [Settings] Resolution is old.
+[Fri May 26 15:41:10 2023] [Main] Initialized Display!
+[Fri May 26 15:41:10 2023] [Main] Initialized ImGUI!
+[Fri May 26 15:41:10 2023] [Main] Starting game...
+[Fri May 26 15:41:10 2023] [Fnt] Loaded font Futura-Boldx128
+[Fri May 26 15:41:10 2023] [Texture] [Error] Failure to open file assets/skinDefaults/Menu/majorerroricon.png, Unrecognized image format, Format:  (We only support JPEG/PNG's)
+[Fri May 26 15:41:10 2023] [Texture] [Error] Failure to open file assets/skinDefaults/Menu/minorerroricon.png, Unrecognized image format, Format:  (We only support JPEG/PNG's)
+[Fri May 26 15:41:10 2023] [Display] Resized to 1920x1080
+[Fri May 26 15:41:10 2023] [Server] Connecting...
+[Fri May 26 15:41:10 2023] [Server] Connected successfully!
+[Fri May 26 15:41:10 2023] [Fnt] Loaded font Arialx128
+[Fri May 26 15:41:10 2023] [LoadingPacksMenu] Loading charts with thread count: 24
+[Fri May 26 15:41:11 2023] [Server] Logging in...
+[Fri May 26 15:41:11 2023] [Server] Awaiting auth ticket from steam
+[Fri May 26 15:41:11 2023] [LoadingPacksMenu] Finished loading 420 charts in 1.054630 seconds.
+[Fri May 26 15:41:11 2023] [Server] Sending auth ticket...
+[Fri May 26 15:41:12 2023] [Server] Server agreed to give me the kids on the weekends (you logged in successfully)
+[Fri May 26 15:41:12 2023] [Steam] User details: Kade:76561198037519280
+[Fri May 26 15:41:41 2023] [MenuLuaFile] Set packs in 0.184065 seconds
+[Fri May 26 15:41:41 2023] [Lua] Loaded assets/skinDefaults/Lua/main-menu.lua
+[Fri May 26 15:41:41 2023] [Lua] LuaJIT 2.0.5
+[Fri May 26 15:41:41 2023] [Lua] Initial scale: 1
+[Fri May 26 15:41:41 2023] [Lua] Steam connection: true
+[Fri May 26 15:41:41 2023] [Lua] loaded avatar 184x184
+[Fri May 26 15:41:41 2023] [Fnt] Loaded font Arialx128
+[Fri May 26 15:41:41 2023] [Fnt] Loaded font Arialx128
+[Fri May 26 15:41:41 2023] [FNT] [Warning] AndaleMono.fnt doesn't have a kernings node.
+[Fri May 26 15:41:41 2023] [Lua] menu created!
+[Fri May 26 15:41:47 2023] [User] lua fuck_bg.transform.w = 0.5
+[Fri May 26 15:41:54 2023] [User] lua fuck_bg.transform.w = 1.5
+[Fri May 26 15:41:58 2023] [User] lua fuck_bg.transform.w = 1.0
+[Fri May 26 15:42:27 2023] [User] lua pog = copyRect(fuck_bg.transform)
+[Fri May 26 15:42:37 2023] [User] lua pog.transform.x 0.5
+[Fri May 26 15:42:37 2023] [Lua] [Error] Lua error!
+[string "pog.transform.x 0.5"]:1: '=' expected near '0.5'
+[Fri May 26 15:42:42 2023] [User] lua pog.transform.x = 0.5
+[Fri May 26 15:42:42 2023] [Lua] [Error] Lua error!
+[string "pog.transform.x = 0.5"]:1: attempt to index field 'transform' (a nil value)
+stack traceback:
+	[string "pog.transform.x = 0.5"]:1: in main chunk
+[Fri May 26 15:42:48 2023] [User] lua pog.x = 0.5
+[Fri May 26 15:43:13 2023] [User] lua tween(fuck_bg, pog, 1, "outcubic", "")
+[Fri May 26 15:43:25 2023] [User] lua fuck_bg.ratio = false
+[Fri May 26 15:43:34 2023] [User] lua fuck_bg.transform.w = 1920
+[Fri May 26 15:43:42 2023] [User] lua fuck_bg.transform.h = 1080

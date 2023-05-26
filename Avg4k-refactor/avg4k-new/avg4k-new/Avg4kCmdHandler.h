@@ -10,9 +10,7 @@ public:
 		commands.push_back("bind");
 		commands.push_back("objects");
 		commands.push_back("dontcare");
-#ifdef _DEBUG
 		commands.push_back("lua");
-#endif
 	}
 	void Handle(std::string cmd) override;
 };

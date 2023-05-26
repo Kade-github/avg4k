@@ -1,6 +1,8 @@
 -- helper files
 HelperFiles = { 'avatar.lua', 'containers.lua', 'selection.lua', 'packs/packs.lua', 'packs/songWheel.lua' }
 
+fuck_bg = nil
+
 function Create()
     cprint(jit.version)
     -- dofile on all helper files
@@ -11,14 +13,14 @@ function Create()
 
     -- setup background (darkModeBg.png)
 
-    local bg = helper.createSprite("Menu/darkModeBg", 0.0, 0.0)
+    fuck_bg = helper.createSprite("Menu/darkModeBg", 0.0, 0.0)
 
-    add(bg)
-    bg.ratio = true
-    bg.transform.x = 0.0
-    bg.transform.y = 0.0
-    bg.transform.w = 1
-    bg.transform.h = 1
+    add(fuck_bg)
+    fuck_bg.ratio = true
+    fuck_bg.transform.x = 0.0
+    fuck_bg.transform.y = 0.0
+    fuck_bg.transform.w = 1
+    fuck_bg.transform.h = 1
 
     -- helper file calls
 

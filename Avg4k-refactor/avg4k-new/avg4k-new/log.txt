@@ -1,0 +1,63 @@
+[Fri May 26 12:52:34 2023] [Main] Logging system initialized.
+[Fri May 26 12:52:34 2023] [Main] Initialized GLFW!
+[Fri May 26 12:52:34 2023] [Main] Initialized BASS!
+[Fri May 26 12:52:34 2023] [AvgEngine] Game created, title: Average4K. Version: b14
+[Fri May 26 12:52:34 2023] [Steam] Logged in as Kade:76561198037519280
+[Fri May 26 12:52:34 2023] [Settings] Music Volume is old.
+[Fri May 26 12:52:34 2023] [Settings] Hitsound Volume is old.
+[Fri May 26 12:52:34 2023] [Settings] Note Size is old.
+[Fri May 26 12:52:34 2023] [Settings] Scrollspeed is old.
+[Fri May 26 12:52:34 2023] [Settings] Skin is old.
+[Fri May 26 12:52:34 2023] [Settings] Note Size is old.
+[Fri May 26 12:52:34 2023] [Settings] Background Transparency is old.
+[Fri May 26 12:52:34 2023] [Settings] Resolution is old.
+[Fri May 26 12:52:34 2023] [Main] Initialized Display!
+[Fri May 26 12:52:34 2023] [Main] Initialized ImGUI!
+[Fri May 26 12:52:34 2023] [Main] Starting game...
+[Fri May 26 12:52:34 2023] [Fnt] Loaded font Futura-Boldx128
+[Fri May 26 12:52:34 2023] [Texture] [Error] Failure to open file assets/skinDefaults/Menu/majorerroricon.png, Unrecognized image format, Format:  (We only support JPEG/PNG's)
+[Fri May 26 12:52:34 2023] [Texture] [Error] Failure to open file assets/skinDefaults/Menu/minorerroricon.png, Unrecognized image format, Format:  (We only support JPEG/PNG's)
+[Fri May 26 12:52:34 2023] [Display] Resized to 1920x1080
+[Fri May 26 12:52:34 2023] [Server] Connecting...
+[Fri May 26 12:52:34 2023] [Server] Connected successfully!
+[Fri May 26 12:52:34 2023] [Fnt] Loaded font Arialx128
+[Fri May 26 12:52:34 2023] [LoadingPacksMenu] Loading charts with thread count: 24
+[Fri May 26 12:52:35 2023] [Server] Logging in...
+[Fri May 26 12:52:35 2023] [Server] Awaiting auth ticket from steam
+[Fri May 26 12:52:36 2023] [LoadingPacksMenu] Finished loading 419 charts in 1.158921 seconds.
+[Fri May 26 12:52:36 2023] [Server] Sending auth ticket...
+[Fri May 26 12:52:36 2023] [Server] Server agreed to give me the kids on the weekends (you logged in successfully)
+[Fri May 26 12:52:36 2023] [Steam] User details: Kade:76561198037519280
+[Fri May 26 12:52:38 2023] [MenuLuaFile] Set packs in 0.183594 seconds
+[Fri May 26 12:52:38 2023] [Lua] Loaded assets/skinDefaults/Lua/main-menu.lua
+[Fri May 26 12:52:38 2023] [Lua] LuaJIT 2.0.5
+[Fri May 26 12:52:38 2023] [Lua] Initial scale: 1
+[Fri May 26 12:52:38 2023] [Lua] Steam connection: true
+[Fri May 26 12:52:38 2023] [Lua] loaded avatar 184x184
+[Fri May 26 12:52:38 2023] [Fnt] Loaded font Arialx128
+[Fri May 26 12:52:38 2023] [Fnt] Loaded font Arialx128
+[Fri May 26 12:52:38 2023] [FNT] [Warning] AndaleMono.fnt doesn't have a kernings node.
+[Fri May 26 12:52:38 2023] [Lua] menu created!
+[Fri May 26 12:52:39 2023] [Lua] Selected pack 5
+[Fri May 26 12:52:42 2023] [Lua] Selected pack 6
+[Fri May 26 12:52:49 2023] [Lua] Selected pack 5
+[Fri May 26 12:52:52 2023] [Lua] Selected pack 4
+[Fri May 26 12:52:58 2023] [Lua] Selected pack 3
+[Fri May 26 12:53:14 2023] [User] reload
+[Fri May 26 12:53:14 2023] [MenuLuaFile] Set packs in 0.182133 seconds
+[Fri May 26 12:53:14 2023] [Lua] Loaded assets/skinDefaults/Lua/main-menu.lua
+[Fri May 26 12:53:14 2023] [Lua] LuaJIT 2.0.5
+[Fri May 26 12:53:14 2023] [Lua] Initial scale: 1
+[Fri May 26 12:53:14 2023] [Lua] Steam connection: true
+[Fri May 26 12:53:14 2023] [Lua] loaded avatar 184x184
+[Fri May 26 12:53:14 2023] [Lua] menu created!
+[Fri May 26 12:53:16 2023] [Lua] Selected pack 6
+[Fri May 26 12:53:36 2023] [Lua] [Error] Lua Error while running KeyPress!
+assets/skinDefaults/Lua/main-menu/packs/songWheel.lua:66: attempt to index a nil value
+stack traceback:
+	assets/skinDefaults/Lua/main-menu/packs/songWheel.lua:66: in function 'SetDiff'
+	assets/skinDefaults/Lua/main-menu/packs/songWheel.lua:167: in function 'Select'
+	assets/skinDefaults/Lua/main-menu/packs/songWheel.lua:194: in function 'keyPress'
+	assets/skinDefaults/Lua/main-menu.lua:50: in function <assets/skinDefaults/Lua/main-menu.lua:46>
+[Fri May 26 12:54:57 2023] [User] reload
+[Fri May 26 12:54:57 2023] [MenuLuaFile] Set packs in 0.188126 seco

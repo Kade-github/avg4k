@@ -1,13 +1,13 @@
 #pragma once
 #include "includes.h"
-#include "Channel.h"
+#include "RhythmChannel.h"
 namespace Average4k::Lua::Menu
 {
 
 	struct LuaChannel {
 	public:
 
-		AvgEngine::Audio::Channel* base = NULL;
+		Average4k::Audio::RhythmChannel* base = NULL;
 
 		std::string path;
 		std::string name;

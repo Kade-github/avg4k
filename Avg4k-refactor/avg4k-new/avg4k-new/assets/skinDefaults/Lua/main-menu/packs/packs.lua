@@ -29,6 +29,7 @@ function packContainer.mouseDown()
             if last ~= nil then
                 last.transform.alpha = 0
             end
+            songWheel.Select(0)
             last = hitbox
         end
     end

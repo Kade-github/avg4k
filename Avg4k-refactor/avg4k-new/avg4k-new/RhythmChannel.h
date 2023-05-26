@@ -181,6 +181,18 @@ namespace Average4k::Audio
 			const QWORD word = BASS_ChannelGetLength(val, BASS_POS_BYTE);
 			c->length = BASS_ChannelBytes2Seconds(val, word) * 1000;
 
+			RhythmChannel* fc = GetChannel(name);
+
+			if (fc != NULL)
+			{
+				if (fc->isPlaying)
+				{
+					fc->Stop();
+					fc->Free();
+				}
+				RemoveChannel(fc);
+			}
+
 			AvgEngine::External::BASS::Channels.push_back(c);
 
 			return c;

@@ -9,6 +9,10 @@
 #include "SpriteAnimated.h"
 #include "LuaChannel.h"
 #include "Gameplay.h"
+#include "RhythmChannel.h"
+
+std::vector<Average4k::Lua::Menu::LuaChannel> luaChannels_mainmenu_luafile{};
+
 void Average4k::Lua::MenuLuaFile::SetPacks(sol::global_table t)
 {
 	using namespace Average4k::Lua::Menu;
@@ -103,6 +107,7 @@ void Average4k::Lua::MenuLuaFile::SetPacks(sol::global_table t)
 
 void Average4k::Lua::MenuLuaFile::Load()
 {
+	luaChannels_mainmenu_luafile.clear();
 	Average4k::Lua::LuaFile::Load();
 
 	using namespace Average4k::Lua::Menu;
@@ -184,13 +189,41 @@ void Average4k::Lua::MenuLuaFile::Load()
 		"ConvertToFX", &LuaChannel::ConvertToFX
 		);
 
-	lua->set_function("playChannelAsync", [&](std::string path, std::string channelTag, std::string name) {
+	lua->set_function("playChannelAsync", [&](std::string path, std::string channelTag) {
 		// general idea here is that, 
 		// 1. you have a channel tag. 
 		// 2. when ever this completes, and the other channel is still existing. murder it and play the new one on the same tag. 
 		// 3. profit.
+		// (also make this async later)
 
+		Average4k::Audio::RhythmChannel* c = Average4k::Audio::RhythmBASSHelper::CreateChannel(channelTag, path);
+		c->Play();
+		LuaChannel lc = LuaChannel(path, channelTag);
+		lc.base = c;
+		luaChannels_mainmenu_luafile.push_back(lc);
+		return lc;
+	});
 
+	lua->set_function("getChannel", [&](std::string name) {
+		for (LuaChannel& c : luaChannels_mainmenu_luafile)
+			if (c.name == name)
+				return c;
+	});
+
+	lua->set_function("removeChannel", [&](std::string name) {
+		int i = 0;
+		for (LuaChannel& c : luaChannels_mainmenu_luafile)
+		{
+			if (c.name == name)
+			{
+				c.Free();
+				Average4k::Audio::RhythmBASSHelper::RemoveChannel(name);
+				// remove the channel from the vector
+				luaChannels_mainmenu_luafile.erase(luaChannels_mainmenu_luafile.begin() + i);
+				break;
+			}
+			i++;
+		}
 	});
 
 	lua->set_function("setResolution", [&](int w, int h) {

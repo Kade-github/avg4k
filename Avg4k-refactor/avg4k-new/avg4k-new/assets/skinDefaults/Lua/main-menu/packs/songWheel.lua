@@ -7,6 +7,8 @@ songWheel.fakeIndex = 1
 songWheel.bg = nil
 songWheel.selectedFile = nil
 songWheel.moreInfo = false
+songWheel.playedSong = true
+songWheel.started = 0
 
 function songWheel.init(container)
     songWheel.main = container
@@ -179,6 +181,9 @@ function songWheel.Select(amt)
         bg.transform.w = 1.0
         bg.transform.h = 1.0
         songWheel.bg = bg
+
+        songWheel.started = Globals.lt
+        songWheel.playedSong = false
     end
 end
 
@@ -239,5 +244,11 @@ function songWheel.update(t)
         item.transform.scale = skin["upscale"]
         item.transform.x = xBasedOnRank - (item.transform.w / 2)
         item.transform.y = ((real.h / 2) - item.transform.h / 2) + ((item.transform.h + 8) * away)
+    end
+
+    if not songWheel.playedSong and Globals.lt - songWheel.started > 0.25 then
+        local channel = playChannelAsync(songWheel.selectedFile.folder .. '/' .. songWheel.selectedFile.songFile, "menu")
+        channel.time = songWheel.selectedFile.previewStart
+        songWheel.playedSong = true
     end
 end

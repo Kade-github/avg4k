@@ -184,7 +184,12 @@ void Average4k::Lua::MenuLuaFile::Load()
 		"ConvertToFX", &LuaChannel::ConvertToFX
 		);
 
-	lua->set_function("createChannelAsync", [&](std::string path, std::string name) {
+	lua->set_function("playChannelAsync", [&](std::string path, std::string channelTag, std::string name) {
+		// general idea here is that, 
+		// 1. you have a channel tag. 
+		// 2. when ever this completes, and the other channel is still existing. murder it and play the new one on the same tag. 
+		// 3. profit.
+
 
 	});
 

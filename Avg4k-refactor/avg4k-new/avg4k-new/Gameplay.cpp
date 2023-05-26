@@ -20,8 +20,8 @@ void Gameplay::load()
 
 	// Create playfield player #1
 	float noteSize = std::stof(Average4K::settings->Get("Note Size").value);
-	float xPos = Average4K::Instance->CurrentMenu->displayRect.w / 2 - (noteSize * 4);
-	float yPos = (Average4K::Instance->CurrentMenu->displayRect.h / 2) - (140 * Average4K::skin->upscale);
+	float xPos = Average4K::Instance->CurrentMenu->displayRect.w / 2 - (((64 * noteSize) * 4) / 2);
+	float yPos = (64 * noteSize) * 2;
 	Average4k::Objects::Gameplay::Playfield* playfield = new Average4k::Objects::Gameplay::Playfield(xPos, yPos);
 
 	addObject(playfield);

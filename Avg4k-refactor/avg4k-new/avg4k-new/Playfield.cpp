@@ -8,7 +8,13 @@ Average4k::Objects::Gameplay::Playfield::Playfield(int _x, int _y) : AvgEngine::
 	float noteSize = std::stof(Average4K::settings->Get("Note Size").value);
 	for (int i = 0; i < 4; i++)
 	{
-		receptors.push_back(new Receptor((i * (64 * noteSize)), 0, receptorSpritesheet, arrowSpritesheet));
+		Receptor* r = new Receptor((i * (64 * noteSize)), 0, receptorSpritesheet, arrowSpritesheet);
+		r->SetFrameSize(64 * noteSize, 64 * noteSize);
+		receptors.push_back(r);
 		addObject(receptors[i]);
 	}
+	receptors[0]->transform.angle = 90;
+	receptors[1]->transform.angle = 0;
+	receptors[2]->transform.angle = 180;
+	receptors[3]->transform.angle = -90;
 }

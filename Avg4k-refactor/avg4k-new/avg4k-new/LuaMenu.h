@@ -40,7 +40,6 @@ namespace Average4k::Lua
 			Menu::draw();
 		}
 
-#ifdef _DEBUG
 		void RunLua(std::string luaCode)
 		{
 			auto result = file->lua->safe_script(luaCode);
@@ -50,7 +49,6 @@ namespace Average4k::Lua
 				AvgEngine::Logging::writeLog("[Lua] [Error] Lua error!\n" + std::string(error.what()));
 			}
 		}
-#endif
 
 		void load()	override;
 

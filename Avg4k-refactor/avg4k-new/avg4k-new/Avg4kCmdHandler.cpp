@@ -86,7 +86,6 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 		else
 			Logging::writeLog("[Menu] [Error] Sorry, that menu isn't a lua menu and the object list cannot be shown!");
 		break;
-#ifdef _DEBUG
 	case "lua"_sh:
 		m = static_cast<Average4k::Lua::LuaMenu*>(Game::Instance->CurrentMenu);
 		if (m->luaMenu)
@@ -96,7 +95,6 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 		else
 			Logging::writeLog("[Menu] Sorry, the current menu has no lua capabilities!");
 		break;
-#endif
 	default:
 		ConsoleCommandHandler::Handle(cmd);
 		break;

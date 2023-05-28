@@ -95,6 +95,9 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 		else
 			Logging::writeLog("[Menu] Sorry, the current menu has no lua capabilities!");
 		break;
+	case "basserror"_sh:
+		Logging::writeLog("[BASS] Error: " + std::to_string(BASS_ErrorGetCode()));
+		break;
 	default:
 		ConsoleCommandHandler::Handle(cmd);
 		break;

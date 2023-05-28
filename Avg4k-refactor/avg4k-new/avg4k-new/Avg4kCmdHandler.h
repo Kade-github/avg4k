@@ -11,6 +11,7 @@ public:
 		commands.push_back("objects");
 		commands.push_back("dontcare");
 		commands.push_back("lua");
+		commands.push_back("basserror");
 	}
 	void Handle(std::string cmd) override;
 };

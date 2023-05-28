@@ -52,7 +52,8 @@ namespace AvgEngine::Audio
 		{
 			if (id == -1)
 				return;
-			BASS_ChannelPlay(id, false);
+			if (!BASS_ChannelPlay(id, true))
+				Logging::writeLog("[BASS] [Error] Failed to play channel: " + std::to_string(BASS_ErrorGetCode()));
 			isPlaying = true;
 		}
 
@@ -63,7 +64,9 @@ namespace AvgEngine::Audio
 		{
 			if (id == -1)
 				return;
-			BASS_ChannelStop(id);
+			if (!BASS_ChannelPause(id))
+				Logging::writeLog("[BASS] [Error] Failed to pause channel: " + std::to_string(BASS_ErrorGetCode()));
+			isPlaying = false;
 		}
 
 		/// <summary>
@@ -86,7 +89,8 @@ namespace AvgEngine::Audio
 			if (id == -1)
 				return;
 			auto bytes = BASS_ChannelSeconds2Bytes(id, s);
-			BASS_ChannelSetPosition(id, bytes, BASS_POS_BYTE);
+			if (!BASS_ChannelSetPosition(id, bytes, BASS_POS_BYTE))
+				Logging::writeLog("[BASS] [Error] Failed to set channel position: " + std::to_string(BASS_ErrorGetCode()));
 		}
 
 		/// <summary>

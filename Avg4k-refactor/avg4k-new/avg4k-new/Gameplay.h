@@ -5,10 +5,14 @@
 #include "Container.h"
 #include "GameplayMenu.h"
 #include "Playfield.h"
-
+#include "RhythmChannel.h"
 class Gameplay : public Average4k::Lua::GameplayMenu
 {
 public:
+	Average4k::Audio::RhythmChannel* c = NULL;
+	float startTimestamp = 0;
+	float songStart = 0;
+
 
 	std::vector<Average4k::Objects::Gameplay::Playfield*> playfields{};
 

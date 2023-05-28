@@ -2,6 +2,7 @@ Popup = {}
 Popup.backgroundSprite = nil
 Popup.text = nil
 Popup.tinyText = nil
+Popup.half = 0
 
 function Popup.init()
     Popup.backgroundSprite = rectangle.new(0, 0, 18 * skin["upscale"], 60)
@@ -45,6 +46,8 @@ function Popup.init()
     Popup.text.transform.y = 0.35
     Popup.tinyText.transform.x = 0.5
     Popup.tinyText.transform.y = 0.7
+
+    Popup.half = tonumber(settings["Start Offset"]) / 2
 end
 
 function endPopupTween()
@@ -55,9 +58,9 @@ function endPopupTween()
     e2.alpha = 0
     e3.alpha = 0
 
-    tween(Popup.backgroundSprite, e, 2, "inexpo", "")
-    tween(Popup.text, e2, 2, "inexpo", "")
-    tween(Popup.tinyText, e3, 2, "inexpo", "")
+    tween(Popup.backgroundSprite, e, Popup.half, "inexpo", "")
+    tween(Popup.text, e2, Popup.half, "inexpo", "")
+    tween(Popup.tinyText, e3, Popup.half, "inexpo", "")
 end
 
 function Popup.showPopup(title, tiny)
@@ -67,9 +70,9 @@ function Popup.showPopup(title, tiny)
     e.alpha = 0.8
     e2.alpha = 1
     e3.alpha = 1
-    tween(Popup.backgroundSprite, e, 0.6, "outcubic", "endPopupTween")
-    tween(Popup.text, e2, 0.6, "outcubic", "")
-    tween(Popup.tinyText, e3, 0.6, "outcubic", "")
+    tween(Popup.backgroundSprite, e, Popup.half, "outcubic", "endPopupTween")
+    tween(Popup.text, e2, Popup.half, "outcubic", "")
+    tween(Popup.tinyText, e3, Popup.half, "outcubic", "")
     Popup.text.text = title
     Popup.tinyText.text = tiny
 end

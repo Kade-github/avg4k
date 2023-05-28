@@ -1,5 +1,6 @@
 #include "Gameplay.h"
 #include "Average4K.h"
+
 using namespace AvgEngine;
 
 namespace Average4ker
@@ -25,14 +26,42 @@ void Gameplay::load()
 	Average4k::Objects::Gameplay::Playfield* playfield = new Average4k::Objects::Gameplay::Playfield(xPos, yPos);
 
 	addObject(playfield);
+
+	using namespace Average4k::Audio;
+
+	c = RhythmBASSHelper::GetChannel("menu");
+	if (c == NULL)
+	{
+		Logging::writeLog("[Error] Rhythm Channel 'menu' doesn't exist! Did lua create it?");
+		return;
+	}
+	c->Stop();
+
+	startTimestamp = glfwGetTime();
+	songStart = startTimestamp + std::stof(Average4K::settings->Get("Start Offset").value);
 }
 
 
 void Gameplay::draw()
 {
+
 	for (QueuedPacket& p : Average4ker::a4er->queuedPackets)
 	{
 
+	}
+
+
+	if (c == NULL)
+	{
+		Average4k::Lua::GameplayMenu::draw();
+		return;
+	}
+
+	// check for the start offset
+	if (glfwGetTime() >= songStart && !c->isPlaying)
+	{
+		c->Play();
+		Logging::writeLog("[Gameplay] Song started at " + std::to_string(songStart));
 	}
 
 	Average4k::Lua::GameplayMenu::draw();

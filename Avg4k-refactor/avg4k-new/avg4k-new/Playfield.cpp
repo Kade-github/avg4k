@@ -9,7 +9,9 @@ Average4k::Objects::Gameplay::Playfield::Playfield(int _x, int _y) : AvgEngine::
 	for (int i = 0; i < 4; i++)
 	{
 		Receptor* r = new Receptor((i * (64 * noteSize)), 0, receptorSpritesheet, arrowSpritesheet);
-		r->SetFrameSize(64 * noteSize, 64 * noteSize);
+		r->SetFrameSize(64,64);
+		r->transform.w = 64 * noteSize;
+		r->transform.h = 64 * noteSize;
 		receptors.push_back(r);
 		addObject(receptors[i]);
 	}

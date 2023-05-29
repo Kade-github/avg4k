@@ -37,6 +37,7 @@ void Average4k::Objects::Gameplay::Receptor::draw()
 				Note* note = new Note(0, 0, arrowSpritesheet);
 				note->tag = "Note-" + std::to_string(n.Beat);
 				note->transform.angle = transform.angle;
+				note->zIndex = 4;
 				note->time = k->options.currentFile->GetTimeFromBeat(n.Beat);
 				note->beat = n.Beat;
 				note->type = (Chart::NoteType)n.Type;

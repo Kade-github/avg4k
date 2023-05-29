@@ -34,7 +34,8 @@ void Average4k::Objects::Gameplay::Note::calculateJudge(float diff_abs)
 
 void Average4k::Objects::Gameplay::Note::draw()
 {
-	frame = 0;
+
+
 	src.x = frame * frameWidth;
 	src.y = 0;
 	src.w = frameWidth;

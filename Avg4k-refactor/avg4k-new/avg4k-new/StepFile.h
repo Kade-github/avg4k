@@ -160,7 +160,7 @@ namespace Average4k::Chart
 
 					if (measure.size() > 0)
 					{
-						float lengthInRows = static_cast<float>(192) / (measure.size());
+						float lengthInRows = 192.0f / static_cast<float>(measure.size());
 
 						// Storage for the row index (and beat)
 						int rowIndex = 0;
@@ -169,9 +169,9 @@ namespace Average4k::Chart
 						// Read the notes from the measure (for loop over the measure)
 						for (int i = 0; i < measure.size(); i++)
 						{
-							float noteRow = (currentMeasure * 192) + (lengthInRows * rowIndex);
+							float noteRow = (static_cast<float>(currentMeasure) * 192.0f) + (lengthInRows * static_cast<float>(rowIndex));
 
-							beat = noteRow / 48;
+							beat = noteRow / 48.0f;
 
 							for (int n = 0; n < measure[i].size(); n++) {
 								Note note{};

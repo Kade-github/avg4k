@@ -50,6 +50,36 @@ void Average4k::Objects::Gameplay::Receptor::draw()
 				note->cmod = std::stof(k->settings->Get("Scrollspeed").value);
 				addObject(note);
 
+				float beatRow = n.Beat * 48;
+
+				switch (note->type)
+				{
+				case Chart::NoteType::NoteType_Tap:
+					if (fmod(beatRow, (192 / 4)) == 0)
+						note->frame = 4;
+					else if (fmod(beatRow, (192 / 8)) == 0)
+						note->frame = 6;
+					else if (fmod(beatRow, (192 / 12)) == 0)
+						note->frame = 0;
+					else if (fmod(beatRow, (192 / 16)) == 0)
+						note->frame = 1;
+					else if (fmod(beatRow, (192 / 24)) == 0)
+						note->frame = 2;
+					else if (fmod(beatRow, (192 / 32)) == 0)
+						note->frame = 3;
+					else if (fmod(beatRow, (192 / 64)) == 0)
+						note->frame = 5;
+					else
+						note->frame = 9;
+					break;
+				case Chart::NoteType_Fake:
+					note->frame = 8;
+					break;
+				case Chart::NoteType_Mine:
+					note->frame = 7;
+					break;
+				}
+
 				notes.erase(notes.begin());
 			}
 		}

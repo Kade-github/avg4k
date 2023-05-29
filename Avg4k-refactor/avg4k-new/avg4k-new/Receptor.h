@@ -4,30 +4,33 @@ namespace Average4k::Objects::Gameplay {
 	class Receptor : public Average4k::External::Spritesheet::AnimatedSprite
 	{
 	public:
-		std::vector<Note*> notes{};
+		float time;
+		float beat;
+
+		int lane = 0;
+
+		float noteSize = 0;
+
+		std::vector<Chart::Note> notes{};
+
+		AvgEngine::OpenGL::Texture* arrowSpritesheet;
+
+		float hitTimestamp = 0;
 
 		Receptor(int _x, int _y, AvgEngine::OpenGL::Texture* receptor, AvgEngine::OpenGL::Texture* arrow) : Average4k::External::Spritesheet::AnimatedSprite(_x, _y, receptor)
 		{
+			arrowSpritesheet = arrow;
 		}
 
-		void draw() override {
-			frame = 0;
-			fps = 0;
-			src.x = frame * frameWidth;
-			src.y = 0;
-			src.w = frameWidth;
-			src.h = frameHeight;
-
-			if (frame == 1)
-				transform.scale = 0.85f;
-			else
-				transform.scale = 1.0f;
-
-			AvgEngine::Base::Sprite::draw();
-		}
+		void draw() override;
 
 		void hit() {
 			frame = 1;
+			hitTimestamp = glfwGetTime();
+		}
+
+		void release() {
+			frame = 0;
 		}
 	};
 }

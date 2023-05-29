@@ -1,6 +1,6 @@
 #include "Gameplay.h"
 #include "Average4K.h"
-
+#include "TimeUtils.h"
 using namespace AvgEngine;
 
 namespace Average4ker
@@ -8,6 +8,18 @@ namespace Average4ker
 	Average4K* a4er = NULL;
 }
 
+
+void Gameplay::AddPlayfield()
+{
+	float noteSize = std::stof(Average4K::settings->Get("Note Size").value);
+	float xPos = Average4K::Instance->CurrentMenu->displayRect.w / 2 - (((((64 * noteSize)) * 4) - (64 * noteSize)) / 2);
+	float yPos = (64 * noteSize);
+	Average4k::Objects::Gameplay::Playfield* playfield = new Average4k::Objects::Gameplay::Playfield(xPos, yPos, &Average4ker::a4er->options.currentFile->chartMetadata.Difficulties[Average4ker::a4er->options.currentFile_diff]);
+
+	addObject(playfield);
+
+	playfields.push_back(playfield);
+}
 
 void Gameplay::Reload()
 {
@@ -20,12 +32,7 @@ void Gameplay::load()
 	Average4k::Lua::GameplayMenu::load();
 
 	// Create playfield player #1
-	float noteSize = std::stof(Average4K::settings->Get("Note Size").value);
-	float xPos = Average4K::Instance->CurrentMenu->displayRect.w / 2 - (((64 * noteSize) * 4) / 2);
-	float yPos = (64 * noteSize);
-	Average4k::Objects::Gameplay::Playfield* playfield = new Average4k::Objects::Gameplay::Playfield(xPos, yPos);
-
-	addObject(playfield);
+	AddPlayfield();
 
 	using namespace Average4k::Audio;
 
@@ -40,10 +47,16 @@ void Gameplay::load()
 	startTimestamp = glfwGetTime();
 	songStart = startTimestamp + std::stof(Average4K::settings->Get("Start Offset").value);
 
-	// Key press subscribe
+
+	// Key subscribes
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_KeyPress, [&](AvgEngine::Events::Event e) {
 		for (Average4k::Objects::Gameplay::Playfield* p : playfields)
 			p->keyPress(e.data);
+	});
+
+	eManager->Subscribe(AvgEngine::Events::EventType::Event_KeyRelease, [&](AvgEngine::Events::Event e) {
+		for (Average4k::Objects::Gameplay::Playfield* p : playfields)
+			p->keyRelease(e.data);
 	});
 }
 
@@ -68,6 +81,15 @@ void Gameplay::draw()
 	{
 		c->Play();
 		Logging::writeLog("[Gameplay] Song started at " + std::to_string(songStart));
+	}
+
+	float time = c->GetPos();
+	float beat = Average4ker::a4er->options.currentFile->GetBeatFromTime(time);
+
+	for (Average4k::Objects::Gameplay::Playfield* p : playfields)
+	{
+		p->time = time;
+		p->beat = beat;
 	}
 
 	Average4k::Lua::GameplayMenu::draw();

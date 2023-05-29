@@ -15,6 +15,11 @@ namespace Average4k
 	struct GameOptions {
 		Average4k::Chart::ChartFile* currentFile = NULL;
 		int currentFile_diff;
+
+		float drawbeats = 4;
+
+		std::vector<float> judgeWindow = {22.5f, 45.0f, 90.0f, 135.0f, 180.0f };
+
 	};
 }
 

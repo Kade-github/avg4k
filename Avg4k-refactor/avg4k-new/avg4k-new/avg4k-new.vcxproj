@@ -72,8 +72,10 @@
     <ClCompile Include="MenuLua.cpp" />
     <ClCompile Include="MenuLuaFile.cpp" />
     <ClCompile Include="Multiplayer.cpp" />
+    <ClCompile Include="Note.cpp" />
     <ClCompile Include="Playfield.cpp" />
     <ClCompile Include="pugixml.cpp" />
+    <ClCompile Include="Receptor.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SkinUtils.cpp" />
     <ClCompile Include="SongGatherer.cpp" />

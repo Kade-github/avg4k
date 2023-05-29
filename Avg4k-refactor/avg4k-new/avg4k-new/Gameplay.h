@@ -20,6 +20,7 @@ public:
 	{
 	}
 
+	void AddPlayfield();
 
 	void Reload() override;
 

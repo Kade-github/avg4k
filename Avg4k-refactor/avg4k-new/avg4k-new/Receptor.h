@@ -17,7 +17,17 @@ namespace Average4k::Objects::Gameplay {
 			src.y = 0;
 			src.w = frameWidth;
 			src.h = frameHeight;
+
+			if (frame == 1)
+				transform.scale = 0.85f;
+			else
+				transform.scale = 1.0f;
+
 			AvgEngine::Base::Sprite::draw();
+		}
+
+		void hit() {
+			frame = 1;
 		}
 	};
 }

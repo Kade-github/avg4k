@@ -39,6 +39,12 @@ void Gameplay::load()
 
 	startTimestamp = glfwGetTime();
 	songStart = startTimestamp + std::stof(Average4K::settings->Get("Start Offset").value);
+
+	// Key press subscribe
+	eManager->Subscribe(AvgEngine::Events::EventType::Event_KeyPress, [&](AvgEngine::Events::Event e) {
+		for (Average4k::Objects::Gameplay::Playfield* p : playfields)
+			p->keyPress(e.data);
+	});
 }
 
 

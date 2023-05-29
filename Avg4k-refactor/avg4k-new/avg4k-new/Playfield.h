@@ -10,5 +10,13 @@ namespace Average4k::Objects::Gameplay {
 		std::vector<Receptor*> receptors;
 
 		Playfield(int _x, int _y);
+
+		void keyPress(int key)
+		{
+			for (Receptor* r : receptors)
+			{
+
+			}
+		}
 	};
 }

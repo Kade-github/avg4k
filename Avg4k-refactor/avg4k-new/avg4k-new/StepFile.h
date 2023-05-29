@@ -178,6 +178,8 @@ namespace Average4k::Chart
 								note.Row = noteRow;
 								note.Beat = beat;
 								note.Lane = n;
+								if (measure[i][n] == '0')
+									continue;
 								switch (measure[i][n])
 								{
 								case '1':

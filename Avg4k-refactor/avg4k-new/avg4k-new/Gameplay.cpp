@@ -19,6 +19,8 @@ void Gameplay::AddPlayfield()
 	addObject(playfield);
 
 	playfields.push_back(playfield);
+
+	playfield->tag = "playfield-" + std::to_string(playfields.size());
 }
 
 void Gameplay::Reload()
@@ -43,7 +45,7 @@ void Gameplay::load()
 		return;
 	}
 	c->Stop();
-
+	c->SetPos(0);
 	startTimestamp = glfwGetTime();
 	songStart = startTimestamp + std::stof(Average4K::settings->Get("Start Offset").value);
 

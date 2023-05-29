@@ -9,6 +9,8 @@ inline constexpr auto operator ""_sh(const char* str, size_t len) {
 	return AvgEngine::Debug::hash_djb2a(std::string_view{ str, len });
 }
 
+int _totalObjects = 0;
+
 void printTree(AvgEngine::Base::GameObject* tree, bool real, int amount = 0)
 {
 	using namespace AvgEngine;
@@ -17,6 +19,7 @@ void printTree(AvgEngine::Base::GameObject* tree, bool real, int amount = 0)
 		tabs += "	";
 	for (AvgEngine::Base::GameObject* ob : tree->Children)
 	{
+		_totalObjects++;
 		auto t = ob->transform;
 		if (real)
 			t = ob->iTransform;
@@ -71,6 +74,7 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 		m = static_cast<Average4k::Lua::LuaMenu*>(Game::Instance->CurrentMenu);
 		if (m->luaMenu)
 		{
+			_totalObjects = 0;
 			bool real = AvgEngine::Utils::StringTools::Contains(cmd, " -real");
 			for (AvgEngine::Base::GameObject* o : m->GameObjects)
 			{
@@ -81,7 +85,9 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 				AvgEngine::Base::GameObject* tree = o;
 				if (o->Children.size() > 0)
 					printTree(tree, real, 1);
+				_totalObjects++;
 			}
+			Logging::writeLog("[Menu] Total: " + std::to_string(_totalObjects));
 		}
 		else
 			Logging::writeLog("[Menu] [Error] Sorry, that menu isn't a lua menu and the object list cannot be shown!");

@@ -30,10 +30,12 @@ void Average4k::Objects::Gameplay::Receptor::draw()
 		}
 		else
 		{
-			if (n.Beat - beat < k->options.drawbeats && n.Beat - beat < -k->options.drawbeats)
+			float beatDiff = n.Beat - beat;
+			if (beatDiff < k->options.drawbeats && beatDiff > -k->options.drawbeats)
 			{
 
 				Note* note = new Note(0, 0, arrowSpritesheet);
+				note->tag = "Note-" + std::to_string(n.Beat);
 				note->transform.angle = transform.angle;
 				note->time = k->options.currentFile->GetTimeFromBeat(n.Beat);
 				note->beat = n.Beat;

@@ -40,10 +40,10 @@ void Average4k::Objects::Gameplay::Note::draw()
 	src.w = frameWidth;
 	src.h = frameHeight;
 
-	float diff = (time - sTime) * 1000;
+	float diff = time - sTime;
 	transform.y = calculateY(false, diff);
 	Average4K* k = static_cast<Average4K*>(Average4K::Instance);
-	if (!judged && diff < -k->options.judgeWindow[3])
+	if (!judged && (diff * 1000) < -k->options.judgeWindow[3])
 	{
 		judged = true;
 		judge = Judgement_Miss;

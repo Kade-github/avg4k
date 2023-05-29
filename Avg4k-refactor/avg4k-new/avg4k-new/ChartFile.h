@@ -163,9 +163,8 @@ namespace Average4k::Chart
 			{
 				if (tp.StartBeat <= beat && tp.EndBeat > beat)
 				{
-					float _beat = (beat - tp.StartBeat) / (tp.Bpm);
-					time = (tp.StartTimestamp + _beat) - (chartMetadata.Song_Offset);
-					break;
+					const float b = (beat - tp.StartBeat) / (tp.Bpm / 60.0f);
+					return (tp.StartTimestamp + b);
 				}
 			}
 			return time;
@@ -178,9 +177,7 @@ namespace Average4k::Chart
 			{
 				if (tp.StartTimestamp <= time && tp.EndTimestamp > time)
 				{
-					float _time = (time - tp.StartTimestamp) - (chartMetadata.Song_Offset);
-					beat = (tp.StartBeat + _time) * (tp.Bpm / 60);
-					break;
+					return tp.StartBeat + ((time - tp.StartTimestamp) * (tp.Bpm / 60.0f));
 				}
 			}
 			return beat;
@@ -191,8 +188,8 @@ namespace Average4k::Chart
 			float time = 0;
 			if (tp.StartBeat <= beat && tp.EndBeat > beat)
 			{
-				float _beat = (beat - tp.StartBeat) / (tp.Bpm);
-				time = (tp.StartTimestamp + _beat) - (chartMetadata.Song_Offset);
+				const float b = (beat - tp.StartBeat) / (tp.Bpm / 60.0f);
+				return (tp.StartTimestamp + b);
 			}
 			return time;
 		}
@@ -202,8 +199,7 @@ namespace Average4k::Chart
 			float beat = 0;
 			if (tp.StartTimestamp <= time && tp.EndTimestamp > time)
 			{
-				float _time = (time - tp.StartTimestamp) - (chartMetadata.Song_Offset);
-				beat = (tp.StartBeat + _time) * (tp.Bpm / 60);
+				return tp.StartBeat + ((time - tp.StartTimestamp) * (tp.Bpm / 60.0f));
 			}
 			return beat;
 		}

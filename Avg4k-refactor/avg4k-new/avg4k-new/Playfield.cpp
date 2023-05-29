@@ -22,6 +22,7 @@ Average4k::Objects::Gameplay::Playfield::Playfield(int _x, int _y, Average4k::Ch
 	{
 		Receptor* r = new Receptor((i * (64 * noteSize)), 0, receptorSpritesheet, arrowSpritesheet);
 		r->SetFrameSize(64,64);
+		r->tag = "receptor-" + std::to_string(i);
 		r->transform.w = 64 * noteSize;
 		r->transform.h = 64 * noteSize;
 		r->center = true;

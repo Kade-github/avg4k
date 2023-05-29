@@ -40,7 +40,9 @@ namespace Average4k::Objects::Gameplay {
 		{
 			if (!xmod)
 			{
-				return (((cmod / 60)) * (diff / 1000)) * (64 * noteSize);
+				float bps = (cmod / 60);
+
+				return ((bps) * diff) * (64 * noteSize);
 			}
 			else
 			{

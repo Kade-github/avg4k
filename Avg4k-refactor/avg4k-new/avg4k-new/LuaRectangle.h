@@ -46,6 +46,8 @@ namespace Average4k::Lua::Base
 
 		rectangle(float x, float y, float w, float h) : gameObject(x, y)
 		{
+			transform.x = x;
+			transform.y = y;
 			transform.w = w;
 			transform.h = h;
 			type = 3;

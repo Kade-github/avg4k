@@ -41,7 +41,7 @@ namespace Average4k
 	class Settings
 	{
 		// Average Engine 1
-		std::string _settingsVersion = "Average4KSettingsFile:ver-av.e.1-c1";
+		std::string _settingsVersion = "Average4KSettingsFile:design2";
 		std::string _path;
 	public:
 		File f;
@@ -58,6 +58,11 @@ namespace Average4k
 			nf.settings.push_back({ "Keybinds", "DFJK",  "DFJK", S_String, -1,-1 });
 			nf.settings.push_back({ "Note Size", "1.5",  "1.5", S_Float, 1,4 });
 			nf.settings.push_back({ "Background Transparency", "0.5",  "0.5", S_Float, 0,1 });
+			nf.settings.push_back({ "Underlane Transparency", "0.5",  "0.5", S_Float, 0,1 });
+			nf.settings.push_back({ "Underlane R Color", "0",  "0", S_Float, 0,1 });
+			nf.settings.push_back({ "Underlane G Color", "0",  "0", S_Float, 0,1 });
+			nf.settings.push_back({ "Underlane B Color", "0",  "0", S_Float, 0,1 });
+			nf.settings.push_back({ "Underlane Auto Accent", "true",  "true", S_Bool, 0,1 });
 			nf.settings.push_back({ "Resolution", "1920x1080",  "1920x1080", S_String, -1,-1 });
 			nf.settings.push_back({ "Start Offset", "3",  "3", S_Float, 0.1,10 });
 			return nf;

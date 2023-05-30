@@ -59,7 +59,8 @@ void Average4k::Objects::Gameplay::Note::draw()
 	Average4K* k = static_cast<Average4K*>(Average4K::Instance);
 	Average4k::Lua::GameplayMenu* m = static_cast<Average4k::Lua::GameplayMenu*>(k->CurrentMenu);
 	// tap misses
-	if (!judged && (diff * 1000) < -k->options.judgeWindow[4] && type != Chart::NoteType::NoteType_Head && (type != Chart::NoteType_Fake && type != Chart::NoteType_Mine))
+	// make sure this stuff works with downscroll (later)
+	if (!judged && ((diff * 1000) < -k->options.judgeWindow[4] || transform.y + parent->y < 0) && type != Chart::NoteType::NoteType_Head && (type != Chart::NoteType_Fake && type != Chart::NoteType_Mine))
 	{
 		judged = true;
 		judge = Judgement_Miss;
@@ -86,7 +87,7 @@ void Average4k::Objects::Gameplay::Note::draw()
 		AvgEngine::Render::Rect r = transform;
 		
 		r.x = parent->x - (32 * noteSize);
-		r.a = 1;
+	
 		AvgEngine::Render::Rect rSrc = src;
 		r.angle = 0;
 		if (i == amountToDraw - 1) // Hold end
@@ -99,6 +100,10 @@ void Average4k::Objects::Gameplay::Note::draw()
 		// calculate the beat of the hold, via the start beat of the head * a percentage of the length we are already through.
 		float holdBeat = beat + ((end - beat) * (static_cast<float>(i) / amountToDraw));
 		float holdTime = k->options.currentFile->GetTimeFromBeat(holdBeat);
+		if (!holdJudged)
+			r.a = 1;
+		else
+			r.a = 0;
 		r.y = calculateY(false, holdTime - sTime) + (64 * noteSize);
 
 		if (lastRect.a != 0)

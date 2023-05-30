@@ -112,14 +112,8 @@ void Average4k::Objects::Gameplay::Receptor::hit()
 		Note* nn = static_cast<Note*>(o);
 		if (nn->judged || nn->type == Chart::NoteType_Mine || nn->type == Chart::NoteType_Fake)
 			continue;
-		if (n != NULL)
-		{
-			if (std::abs(nn->beat - beat) < std::abs(n->beat - beat)) // if a note has fallen past, and is going to be close to a miss. and another one is closer. hit the closer one.
-				n = nn;
-			break;
-		}
-			
 		n = nn;
+		break;
 	}
 	if (n == NULL)
 		return;
@@ -134,4 +128,21 @@ void Average4k::Objects::Gameplay::Receptor::hit()
 
 		m->UpdateAccuracy(n->judge);
 	}
+}
+
+void Average4k::Objects::Gameplay::Receptor::release()
+{
+	frame = 0;
+	Note* n = NULL;
+	for (GameObject* o : Children)
+	{
+		Note* nn = static_cast<Note*>(o);
+		if (nn->type != Chart::NoteType_Head && !nn->holdJudged)
+			continue;
+		n = nn;
+		break;
+	}
+	if (n == NULL)
+		return;
+	n->release();
 }

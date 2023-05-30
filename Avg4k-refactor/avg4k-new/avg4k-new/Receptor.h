@@ -27,8 +27,6 @@ namespace Average4k::Objects::Gameplay {
 
 		void hit();
 
-		void release() {
-			frame = 0;
-		}
+		void release();
 	};
 }

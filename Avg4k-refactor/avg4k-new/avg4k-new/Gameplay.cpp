@@ -128,9 +128,9 @@ void Gameplay::draw()
 
 			if (accuracy >= 1)
 				t->text = "S";
-			else if (accuracy >= 0.96)
+			else if (accuracy >= 0.95)
 				t->text = "A+";
-			else if (accuracy >= 0.93)
+			else if (accuracy >= 0.90)
 				t->text = "A";
 			else if (accuracy >= 0.80)
 				t->text = "B";

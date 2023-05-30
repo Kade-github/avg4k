@@ -12,7 +12,7 @@ namespace Average4k::Lua
 		float notesHit = 0;
 		float totalNotes = 0;
 
-		float accuracy = 0;
+		float accuracy = 1;
 
 		GameplayLuaFile* file;
 

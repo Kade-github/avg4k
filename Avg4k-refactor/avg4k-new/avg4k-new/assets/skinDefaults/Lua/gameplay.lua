@@ -4,6 +4,15 @@ HelperFiles = { 'popup.lua' }
 initialRect = nil
 judgement = nil
 underlane = nil
+accuracy = nil
+grade = nil
+
+judge_counter_marv = nil
+judge_counter_perf = nil
+judge_counter_great = nil
+judge_counter_good = nil
+judge_counter_bad = nil
+judge_counter_miss = nil
 
 function Create()
     cprint(jit.version)
@@ -26,7 +35,7 @@ function Create()
 
     bg.transform.alpha = tonumber(settings["Background Transparency"])
 
-    setObject(bg, 0)
+    setObject(bg, 0) -- tell avg4k this is the background
 
     judgement = helper.createAnimatedSpriteSkin("judgements/judgements", 0, 0, 0, 210, 85, nil)
 
@@ -46,10 +55,30 @@ function Create()
     underlane.transform.x = underlaneX
     underlane.order = -1
     underlane.transform.alpha = tonumber(settings["Underlane Transparency"])
+    underlane.transform.r = tonumber(settings["Underlane R Color"])
+    underlane.transform.g = tonumber(settings["Underlane G Color"])
+    underlane.transform.b = tonumber(settings["Underlane B Color"])
     add(underlane)
+
+    accuracy = text.new(0, 4, "FuturaBoldOutlined.fnt", "100%")
+    accuracy.size = 46 * skin["upscale"]
+    add(accuracy)
+
+    grade = text.new(0, 0, "FuturaBoldOutlined.fnt", "A+")
+    grade.size = 46 * skin["upscale"]
+    add(grade)
+
+    setObject(accuracy, 1) -- tell avg4k this is the accuracy
+    setObject(grade, 2)    -- tell avg4k this is the grade
 
     Popup.init()
     Popup.showPopup(options["chart"]["title"], options["chart"]["diff"] .. " charted by " .. options["chart"]["charter"])
+end
+
+function Update(time)
+    accuracy.transform.x = display["width"] - (accuracy.transform.w + 8)
+    grade.transform.y = 8 + (accuracy.transform.h)
+    grade.transform.x = accuracy.transform.x + accuracy.transform.w - grade.transform.w;
 end
 
 function ArrowJudged(judge)

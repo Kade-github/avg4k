@@ -8,7 +8,7 @@ namespace Average4k::Lua::Base
 
 		float spacing = 0;
 		float size = 12;
-
+		float outline = 0;
 		bool wrap = false;
 		bool center = false;
 
@@ -22,12 +22,29 @@ namespace Average4k::Lua::Base
 			{
 				AvgEngine::Base::Text* te = static_cast<AvgEngine::Base::Text*>(base);
 				te->SetSize(_size);
+				transform.w = base->transform.w;
+				transform.h = base->transform.h;
 			}
 		}
 
 		float getSize()
 		{
 			return size;
+		}
+
+		void setOutline(float _outline)
+		{
+			outline = _outline;
+			if (base)
+			{
+				AvgEngine::Base::Text* te = static_cast<AvgEngine::Base::Text*>(base);
+				te->outlineThickness = outline;
+			}
+		}
+
+		float getOutline()
+		{
+			return outline;
 		}
 
 		void setSpacing(float _spacing)
@@ -37,6 +54,8 @@ namespace Average4k::Lua::Base
 			{
 				AvgEngine::Base::Text* te = static_cast<AvgEngine::Base::Text*>(base);
 				te->characterSpacing = spacing;
+				transform.w = base->transform.w;
+				transform.h = base->transform.h;
 			}
 		}
 

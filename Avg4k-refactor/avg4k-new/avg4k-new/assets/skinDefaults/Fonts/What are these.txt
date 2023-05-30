@@ -15,3 +15,4 @@ I also added the config I used inside of this folder. If you want to know how to
 
 But if you're having trouble, join our discord and ask for help.
 
+(oh and we have a semi-tutorial: https://www.youtube.com/watch?v=D2E9EYkkxQA)

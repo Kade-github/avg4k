@@ -28,7 +28,7 @@ namespace Average4k::Objects::Gameplay {
 		Chart::NoteType type = Chart::NoteType::NoteType_Tap;
 		float lengthInBeats = 0;
 		int lane = 0;
-
+		float stopHolding = 0;
 		bool holding = false;
 		float holdTimer = 1;
 		bool holdJudged = false;
@@ -66,7 +66,7 @@ namespace Average4k::Objects::Gameplay {
 		void release()
 		{
 			holding = false;
-
+			stopHolding = sTime;
 		}
 
 		void draw() override;

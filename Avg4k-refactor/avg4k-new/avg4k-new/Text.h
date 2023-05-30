@@ -206,9 +206,8 @@ namespace AvgEngine::Base
 
 			if (d == 0)
 				d = highestH;
-
-			if (totalW > transform.w)
-				transform.w = totalW;
+			
+			float highestW = 0;
 
 			Render::Rect r = start;
 
@@ -251,6 +250,8 @@ namespace AvgEngine::Base
 
 			for(Line& line : lines)
 			{
+				if (line.w > highestW)
+					highestW = line.w;
 				int newStartX = start.x;
 				if (centerLines)
 					newStartX = start.x - (line.w / 2);
@@ -284,7 +285,7 @@ namespace AvgEngine::Base
 				}
 			}
 
-
+			transform.w = highestW;
 			transform.h = d;
 			call.clip = cr;
 			camera->addDrawCall(call);

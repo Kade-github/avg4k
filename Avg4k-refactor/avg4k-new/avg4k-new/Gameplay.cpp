@@ -93,6 +93,57 @@ void Gameplay::draw()
 		p->time = time;
 		p->beat = beat;
 	}
+	Text* t = NULL;
+	Sprite* s = NULL;
+	std::string acc = std::to_string(accuracy * 100);
+	for (auto k : file->setObjects)
+	{
+
+		switch (k.first)
+		{
+		case 0: // background
+			s = static_cast<Sprite*>(k.second.base);
+			if (s == NULL)
+			{
+				Logging::writeLog("[Error] Background is null! Id 0");
+				break;
+			}
+			break;
+		case 1: // accuracy
+			t = static_cast<Text*>(k.second.base);
+			if (t == NULL)
+			{
+				Logging::writeLog("[Error] Accuracy text is null! Id 1");
+				break;
+			}
+			t->text = acc.substr(0, std::min(acc.size(), acc.find('.') + 3)) + "%";
+			break;
+		case 2: // grade
+			t = static_cast<Text*>(k.second.base);
+			if (t == NULL)
+			{
+				Logging::writeLog("[Error] Grade text is null! Id 2");
+				break;
+			}
+
+			if (accuracy >= 1)
+				t->text = "S";
+			else if (accuracy >= 0.96)
+				t->text = "A+";
+			else if (accuracy >= 0.93)
+				t->text = "A";
+			else if (accuracy >= 0.80)
+				t->text = "B";
+			else if (accuracy >= 0.70)
+				t->text = "C";
+			else if (accuracy >= 0.60)
+				t->text = "D";
+			else
+				t->text = "F";
+
+			break;
+		}
+	}
 
 	Average4k::Lua::GameplayMenu::draw();
 }

@@ -100,7 +100,7 @@ void Average4k::Objects::Gameplay::Note::draw()
 		// calculate the beat of the hold, via the start beat of the head * a percentage of the length we are already through.
 		float holdBeat = beat + ((end - beat) * (static_cast<float>(i) / amountToDraw));
 		float holdTime = k->options.currentFile->GetTimeFromBeat(holdBeat);
-		if (!holdJudged)
+		if (!holdJudged && holdTime > stopHolding) // if its greater than when we stopped holding, OR the hold isn't judged yet.
 			r.a = 1;
 		else
 			r.a = 0;
@@ -130,7 +130,7 @@ void Average4k::Objects::Gameplay::Note::draw()
 	}
 
 	// hold misses
-	if ((time - sTime) * 1000 < -k->options.judgeWindow[5] && sTime < endTime && !holdJudged)
+	if ((time - sTime) * 1000 < -k->options.judgeWindow[5] && !holdJudged)
 	{
 		if (holdTimer <= 0)
 		{
@@ -140,7 +140,7 @@ void Average4k::Objects::Gameplay::Note::draw()
 			m->UpdateAccuracy(judge);
 		}
 		if (!holding)
-			holdTimer -= 0.05f;
+			holdTimer -= 0.09f;
 		else if (holdTimer < 1)
 			holdTimer += 0.02f;
 	}

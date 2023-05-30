@@ -17,11 +17,13 @@ Average4k::Objects::Gameplay::Playfield::Playfield(int _x, int _y, Average4k::Ch
 	diff = d;
 	arrowSpritesheet = Average4K::skin->GetArrowTexture("arrows");
 	receptorSpritesheet = Average4K::skin->GetArrowTexture("receptors");
+	holdSpritesheet = Average4K::skin->GetArrowTexture("holds");
 	float noteSize = std::stof(Average4K::settings->Get("Note Size").value);
 	for (int i = 0; i < 4; i++)
 	{
 		Receptor* r = new Receptor((i * (64 * noteSize)), 0, receptorSpritesheet, arrowSpritesheet);
 		r->SetFrameSize(64,64);
+		r->holdSpritesheet = holdSpritesheet;
 		r->tag = "receptor-" + std::to_string(i);
 		r->transform.w = 64 * noteSize;
 		r->transform.h = 64 * noteSize;

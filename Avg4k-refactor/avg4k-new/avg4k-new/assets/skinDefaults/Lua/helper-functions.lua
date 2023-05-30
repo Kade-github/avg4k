@@ -56,6 +56,23 @@ function helper.createAnimatedSprite(path, x, y, fps, frameW, frameH, parent)
 end
 
 --[[
+    A helper function to create an animated sprite
+]]
+function helper.createAnimatedSpriteSkin(path, x, y, fps, frameW, frameH, parent)
+    local tempTexture = texture.new(path)
+    loadArrowTexture(tempTexture)
+    local s = animatedSprite.new(x, y, tempTexture)
+    if parent ~= nil then
+        parent:add(s)
+    else
+        add(s)
+    end
+    s.fps = fps
+    s:setFrameSize(frameW, frameH)
+    return s
+end
+
+--[[
     A helper function to create a chart sprite
 ]]
 function helper.createChartSprite(path, x, y)

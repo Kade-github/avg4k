@@ -11,7 +11,7 @@ namespace Average4k::Lua::Base
 		double w = 0, h = 0;
 		double r = 255, g = 255, b = 255;
 		double a = 1;
-		double scale = 1;
+		double scale = 1.0;
 		double deg = 0;
 
 		rect() = default;

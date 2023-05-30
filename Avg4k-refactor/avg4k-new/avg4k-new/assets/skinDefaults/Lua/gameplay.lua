@@ -1,6 +1,9 @@
 -- helper files
 HelperFiles = { 'popup.lua' }
 
+initialRect = nil
+judgement = nil
+
 function Create()
     cprint(jit.version)
     dofile(resource("Lua/helper-functions.lua"))
@@ -20,7 +23,30 @@ function Create()
 
     bg.transform.alpha = tonumber(settings["Background Transparency"])
 
+    setObject(bg, 0)
+
+    judgement = helper.createAnimatedSpriteSkin("judgements/judgements", 0, 0, 0, 210, 85, nil)
+
+    judgement.transform.x = display["width"] / 2
+    judgement.transform.y = display["height"] / 2
+    judgement.transform.alpha = 0
+    judgement.center = true
+
+    initialRect = copyRect(judgement.transform)
+    initialRect.alpha = 1
+
     Popup.init()
-    cprint(helper.dump(options))
     Popup.showPopup(options["chart"]["title"], options["chart"]["diff"] .. " charted by " .. options["chart"]["charter"])
+end
+
+function ArrowJudged(judge)
+    cprint("note judged as " .. judge)
+    judgement.frame = tonumber(judge)
+    judgement.transform.alpha = 1
+
+    local newRect = copyRect(initialRect)
+    newRect.scale = 1.25
+
+    judgement.transform = newRect
+    tween(judgement, initialRect, 0.1, "outcubic", "")
 end

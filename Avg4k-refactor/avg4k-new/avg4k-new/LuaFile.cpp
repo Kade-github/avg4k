@@ -422,6 +422,8 @@ void LuaFile::Load()
 
 	t["skin"] = lua->create_table_with("upscale", Average4K::skin->upscale);
 
+	t["display"] = lua->create_table_with("width", AvgEngine::Render::Display::width, "height", AvgEngine::Render::Display::height);
+
 	
 	lua->set_function("create", [&](gameObject& ob) {
 		if (ob.base)

@@ -14,6 +14,7 @@ namespace Average4k::Objects::Gameplay {
 		std::vector<Chart::Note> notes{};
 
 		AvgEngine::OpenGL::Texture* arrowSpritesheet;
+		AvgEngine::OpenGL::Texture* holdSpritesheet;
 
 		float hitTimestamp = 0;
 
@@ -24,10 +25,7 @@ namespace Average4k::Objects::Gameplay {
 
 		void draw() override;
 
-		void hit() {
-			frame = 1;
-			hitTimestamp = glfwGetTime();
-		}
+		void hit();
 
 		void release() {
 			frame = 0;

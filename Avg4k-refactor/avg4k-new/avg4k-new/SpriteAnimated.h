@@ -33,6 +33,13 @@ namespace Average4k::External::Spritesheet {
 
 		void draw() override
 		{
+			if (fps == 0)
+			{
+				src.x = frame * frameWidth;
+				src.y = 0;
+				src.w = frameWidth;
+				src.h = frameHeight;
+			}
 			if (frameTime >= 1.0 / fps)
 			{
 				frameTime = 0;

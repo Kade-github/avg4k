@@ -73,6 +73,7 @@ namespace AvgEngine
 			tw.toModify->r = std::lerp(tw.start.r, tw.end.r, rT);
 			tw.toModify->g = std::lerp(tw.start.g, tw.end.g, rT);
 			tw.toModify->b = std::lerp(tw.start.b, tw.end.b, rT);
+			tw.toModify->scale = std::lerp(tw.start.scale, tw.end.scale, rT);
 			if (t >= 1)
 			{
 				if (tw.func)

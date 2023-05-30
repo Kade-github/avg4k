@@ -12,10 +12,15 @@ namespace Average4k::Objects::Gameplay {
 		std::vector<int> keybinds = {};
 		AvgEngine::OpenGL::Texture* arrowSpritesheet;
 		AvgEngine::OpenGL::Texture* receptorSpritesheet;
+		AvgEngine::OpenGL::Texture* holdSpritesheet;
 		std::vector<Receptor*> receptors;
 		Average4k::Chart::Difficulty* diff;
 		Playfield(int _x, int _y, Average4k::Chart::Difficulty* d);
-
+		~Playfield() {
+			delete arrowSpritesheet;
+			delete receptorSpritesheet;
+			delete holdSpritesheet;
+		}
 		void draw() {
 			for (Receptor* r : receptors)
 			{

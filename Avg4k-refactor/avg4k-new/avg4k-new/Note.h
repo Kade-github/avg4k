@@ -6,12 +6,14 @@
 namespace Average4k::Objects::Gameplay {
 
 	enum Judgement {
-		Judgement_None,
-		Judgement_Miss,
-		Judgement_Bad,
-		Judgement_Good,
-		Judgement_Great,
-		Judgement_Perfect
+		Judgement_Marvelous = 0,
+		Judgement_Perfect = 1,
+		Judgement_Great = 2,
+		Judgement_Good = 3,
+		Judgement_Bad = 4,
+		Judgement_Miss = 5,
+		Judgement_Botplay = 6,
+		Judgement_None = -1
 	};
 
 	class Note : public Average4k::External::Spritesheet::AnimatedSprite
@@ -21,10 +23,15 @@ namespace Average4k::Objects::Gameplay {
 		float time;
 		float beat;
 		
+		AvgEngine::OpenGL::Texture* holdTexture = NULL;
+
 		Chart::NoteType type = Chart::NoteType::NoteType_Tap;
 		float lengthInBeats = 0;
 		int lane = 0;
 
+		bool holding = false;
+		float holdTimer = 1;
+		bool holdJudged = false;
 		bool judged = false;
 		Judgement judge = Judgement_None;
 
@@ -52,6 +59,13 @@ namespace Average4k::Objects::Gameplay {
 
 		Note(int _x, int _y, AvgEngine::OpenGL::Texture* t) : Average4k::External::Spritesheet::AnimatedSprite(_x, _y, t)
 		{
+
+		}
+
+		void hit();
+		void release()
+		{
+			holding = false;
 
 		}
 

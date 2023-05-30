@@ -1,6 +1,6 @@
 #include "Receptor.h"
 #include "Average4K.h"
-
+#include "GameplayMenu.h"
 
 void Average4k::Objects::Gameplay::Receptor::draw()
 {
@@ -38,6 +38,7 @@ void Average4k::Objects::Gameplay::Receptor::draw()
 				note->tag = "Note-" + std::to_string(n.Beat);
 				note->transform.angle = transform.angle;
 				note->zIndex = 4;
+				note->holdTexture = holdSpritesheet;
 				note->time = k->options.currentFile->GetTimeFromBeat(n.Beat);
 				note->beat = n.Beat;
 				note->type = (Chart::NoteType)n.Type;
@@ -96,4 +97,35 @@ void Average4k::Objects::Gameplay::Receptor::draw()
 		}
 	}
 	AvgEngine::Base::Sprite::draw();
+}
+
+void Average4k::Objects::Gameplay::Receptor::hit()
+{
+	frame = 1;
+	hitTimestamp = glfwGetTime();
+	if (Children.size() == 0)
+		return;
+	Average4K* k = static_cast<Average4K*>(Average4K::Instance);
+	Note* n = NULL;
+	for (GameObject* o : Children)
+	{
+		Note* nn = static_cast<Note*>(o);
+		if (nn->judged)
+			continue;
+		n = nn;
+		break;
+	}
+	if (n == NULL)
+		return;
+	float diff = (n->time - time) * 1000;
+	if (diff < k->options.judgeWindow[4])
+	{
+		n->hit();
+		n->transform.a = 0;
+
+		Average4k::Lua::GameplayMenu* m = static_cast<Average4k::Lua::GameplayMenu*>(k->CurrentMenu);
+		m->file->Function("ArrowJudged", std::to_string(n->judge));
+
+		m->UpdateAccuracy(n->judge);
+	}
 }

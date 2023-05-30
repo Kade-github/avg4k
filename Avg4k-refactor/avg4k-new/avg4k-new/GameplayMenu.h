@@ -9,8 +9,36 @@ namespace Average4k::Lua
 	public:
 		bool luaMenu = true;
 
+		float notesHit = 0;
+		float totalNotes = 0;
+
+		float accuracy = 0;
+
 		GameplayLuaFile* file;
 
+		void UpdateAccuracy(int judge)
+		{
+			switch (judge)
+			{
+			case 0:
+				notesHit += 1;
+				break;
+			case 1:
+				notesHit += 0.925f;
+				break;
+			case 2:
+				notesHit += 0.7f;
+				break;
+			case 3:
+				notesHit += 0.35f;
+				break;
+			case 4:
+				notesHit += 0.1f;
+				break;
+			}
+			totalNotes++;
+			accuracy = notesHit / totalNotes;
+		}
 
 		GameplayMenu() : AvgEngine::Base::Menu()
 		{

@@ -48,5 +48,9 @@ function ArrowJudged(judge)
     newRect.scale = 1.25
 
     judgement.transform = newRect
+
+    cprint("judgement scale: " .. judgement.transform.scale)
+
     tween(judgement, initialRect, 0.1, "outcubic", "")
+    cprint("judgement scale: " .. judgement.transform.scale)
 end

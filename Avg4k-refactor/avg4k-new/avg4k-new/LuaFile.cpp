@@ -473,7 +473,7 @@ void LuaFile::Load()
 	if (ef != "")
 		endFunction = ef;
 		Average4K::Instance->CurrentMenu->tween.CreateTween(&ob.base->transform,
-			AvgEngine::Render::Rect(endRect.x, endRect.y, 
+			AvgEngine::Render::Rect(endRect.x, endRect.y,
 				endRect.w, endRect.h, 
 				endRect.r, endRect.g, endRect.b, endRect.a, 
 				endRect.scale, 

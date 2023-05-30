@@ -68,6 +68,15 @@ void Average4k::Objects::Gameplay::Note::draw()
 		m->UpdateAccuracy(judge);
 	}
 
+	if (m->botplay && !judged && (diff * 1000) < 1)
+	{
+		judge = Judgement_Botplay;
+		m->file->Function("ArrowJudged", std::to_string((int)judge));
+		m->UpdateAccuracy(judge);
+		transform.a = 0;
+		judged = true;
+	}
+
 	AvgEngine::Base::Sprite::draw();
 	if (type != Chart::NoteType::NoteType_Head)
 		return;
@@ -119,7 +128,7 @@ void Average4k::Objects::Gameplay::Note::draw()
 		rSrc.h = rSrc.h / holdTexture->height;
 
 		drawCall c = Camera::FormatDrawCall(zIndex - 1, holdTexture, shader, AvgEngine::Render::DisplayHelper::RectToVertex(r, rSrc, center));
-		if (holding)
+		if (holding || m->botplay)
 		{
 			AvgEngine::Render::Rect rClip = r;
 			rClip.y = parent->y;
@@ -130,7 +139,7 @@ void Average4k::Objects::Gameplay::Note::draw()
 	}
 
 	// hold misses
-	if ((time - sTime) * 1000 < -k->options.judgeWindow[5] && !holdJudged)
+	if ((time - sTime) * 1000 < -k->options.judgeWindow[5] && !holdJudged && !m->botplay)
 	{
 		if (holdTimer <= 0)
 		{

@@ -14,6 +14,9 @@ namespace Average4k::Lua
 
 		float accuracy = 1;
 
+		bool botplay = false;
+		bool scoreSubmittable = true;
+
 		GameplayLuaFile* file;
 
 		void UpdateAccuracy(int judge)

@@ -52,13 +52,21 @@ void Gameplay::load()
 
 	// Key subscribes
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_KeyPress, [&](AvgEngine::Events::Event e) {
-		for (Average4k::Objects::Gameplay::Playfield* p : playfields)
-			p->keyPress(e.data);
+		if (!botplay)
+			for (Average4k::Objects::Gameplay::Playfield* p : playfields)
+				p->keyPress(e.data);
+
+		if (e.data == GLFW_KEY_F1)
+		{
+			botplay = !botplay;
+			scoreSubmittable = false;
+		}
 	});
 
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_KeyRelease, [&](AvgEngine::Events::Event e) {
-		for (Average4k::Objects::Gameplay::Playfield* p : playfields)
-			p->keyRelease(e.data);
+		if (!botplay)
+			for (Average4k::Objects::Gameplay::Playfield* p : playfields)
+				p->keyRelease(e.data);
 	});
 }
 

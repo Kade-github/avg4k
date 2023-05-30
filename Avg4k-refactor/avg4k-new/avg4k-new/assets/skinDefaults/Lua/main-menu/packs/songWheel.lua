@@ -86,11 +86,13 @@ function songWheel.SetDiff()
         Containers.scontainer.songInfo_difficultyLeftArrow.transform.alpha = 1
         Containers.scontainer.songInfo_difficultyRightArrow.transform.alpha = 1
         Containers.scontainer.songInfo_difficultyLeftArrow.transform.x = real.x -
-            ((Containers.scontainer.songInfo_difficultyLeftArrow.transform.w / 2) * Containers.scontainer.songInfo_difficultyLeftArrow.transform.scale) -
+            (Containers.scontainer.songInfo_difficultyLeftArrow.transform.w * Containers.scontainer.songInfo_difficultyLeftArrow.transform.scale) -
             p.x
         Containers.scontainer.songInfo_difficultyLeftArrow.transform.y = real.y - p.y -
             (((Containers.scontainer.songInfo_difficultyLeftArrow.transform.h / 2) * Containers.scontainer.songInfo_difficultyLeftArrow.transform.scale))
-        Containers.scontainer.songInfo_difficultyRightArrow.transform.x = (real.x + real.w - 4) - p.x
+        Containers.scontainer.songInfo_difficultyRightArrow.transform.x = (real.x + real.w - 4) +
+            (Containers.scontainer.songInfo_difficultyLeftArrow.transform.w * Containers.scontainer.songInfo_difficultyLeftArrow.transform.scale) -
+            p.x
         Containers.scontainer.songInfo_difficultyRightArrow.transform.y = real.y - p.y -
             (((Containers.scontainer.songInfo_difficultyRightArrow.transform.h / 2) * Containers.scontainer.songInfo_difficultyRightArrow.transform.scale))
     else

@@ -355,7 +355,7 @@ void LuaFile::Load()
 	sol::usertype<gameObject> object_type = lua->new_usertype<gameObject>("gameObject",
 		sol::constructors<gameObject(double, double), gameObject()>(),
 		"id", &gameObject::id,
-		"transform", &gameObject::transform,
+		"transform", sol::property(&gameObject::getTransform, &gameObject::setTransform),
 		"transformOffset", &gameObject::transformOffset,
 		"clip", &gameObject::clipRect,
 		"parent", &gameObject::parent,

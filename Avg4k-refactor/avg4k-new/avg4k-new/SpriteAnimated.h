@@ -23,9 +23,6 @@ namespace Average4k::External::Spritesheet {
 			frameWidth = _w;
 			frameHeight = _h;
 			frames = texture->width / frameWidth;
-
-			transform.w = frameWidth;
-			transform.h = frameHeight;
 		}
 
 		AnimatedSprite(float x, float y, std::string filePath) : AvgEngine::Base::Sprite(x, y, filePath) {}
@@ -33,6 +30,8 @@ namespace Average4k::External::Spritesheet {
 
 		void draw() override
 		{
+			transform.w = frameWidth;
+			transform.h = frameHeight;
 			if (fps == 0)
 			{
 				src.x = frame * frameWidth;

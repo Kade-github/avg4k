@@ -59,7 +59,7 @@ void Average4k::Objects::Gameplay::Note::draw()
 	Average4K* k = static_cast<Average4K*>(Average4K::Instance);
 	Average4k::Lua::GameplayMenu* m = static_cast<Average4k::Lua::GameplayMenu*>(k->CurrentMenu);
 	// tap misses
-	if (!judged && (diff * 1000) < -k->options.judgeWindow[4] && type != Chart::NoteType::NoteType_Head)
+	if (!judged && (diff * 1000) < -k->options.judgeWindow[4] && type != Chart::NoteType::NoteType_Head && (type != Chart::NoteType_Fake && type != Chart::NoteType_Mine))
 	{
 		judged = true;
 		judge = Judgement_Miss;
@@ -129,6 +129,7 @@ void Average4k::Objects::Gameplay::Note::draw()
 	{
 		if (holdTimer <= 0)
 		{
+			holdJudged = true;
 			judge = Judgement_Miss;
 			m->file->Function("ArrowJudged", std::to_string(judge));
 			m->UpdateAccuracy(judge);

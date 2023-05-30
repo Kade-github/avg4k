@@ -8,6 +8,28 @@ namespace Average4k::Lua::Base
 	public:
 		AvgEngine::Base::GameObject* base = NULL;
 		rect transform{};
+		void setTransform(rect t)
+		{
+			transform = t;
+			if (base)
+			{
+				transform.base = &base->transform;
+				transform.base->x = t.x;
+				transform.base->y = t.y;
+				transform.base->w = t.w;
+				transform.base->h = t.h;
+				transform.base->r = t.r;
+				transform.base->g = t.g;
+				transform.base->b = t.b;
+				transform.base->a = t.a;
+				transform.base->scale = t.scale;
+				transform.base->angle = t.deg;
+			}
+		}
+		rect& getTransform()
+		{
+			return transform;
+		}
 		rect transformOffset{};
 		rect clipRect{};
 		gameObject* parent = NULL;

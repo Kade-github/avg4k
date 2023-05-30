@@ -83,7 +83,11 @@ namespace Average4k::Lua::Base
 		void setG(float _x) { g = _x; if (base) base->g = _x; };
 		void setB(float _x) { b = _x; if (base) base->b = _x; };
 		void setA(float _x) { a = _x; if (base) base->a = _x; };
-		void setS(float _x) { scale = _x; if (base) base->scale = _x; };
+		void setS(float _x) { 
+			scale = _x; 
+			if (base) 
+				base->scale = _x; 
+		};
 		void setD(float _x) { deg = _x; if (base) base->angle = _x; };
 
 		rect(float _x, float _y)

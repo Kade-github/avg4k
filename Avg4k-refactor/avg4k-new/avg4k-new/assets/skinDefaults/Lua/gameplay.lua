@@ -40,17 +40,13 @@ function Create()
 end
 
 function ArrowJudged(judge)
-    cprint("note judged as " .. judge)
     judgement.frame = tonumber(judge)
     judgement.transform.alpha = 1
 
     local newRect = copyRect(initialRect)
-    newRect.scale = 1.25
+    newRect.scale = 1.1
 
     judgement.transform = newRect
 
-    cprint("judgement scale: " .. judgement.transform.scale)
-
-    tween(judgement, initialRect, 0.1, "outcubic", "")
-    cprint("judgement scale: " .. judgement.transform.scale)
+    tween(judgement, initialRect, 0.2, "outcubic", "")
 end

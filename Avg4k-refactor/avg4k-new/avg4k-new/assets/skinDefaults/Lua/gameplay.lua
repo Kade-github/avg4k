@@ -50,9 +50,9 @@ function Create()
     combo = text.new(0, 0, "FuturaBoldOutlined.fnt", "0")
     combo.size = 24 * skin["upscale"]
     combo.transform.x = display["width"] / 2
-    combo.transform.y = (display["height"] / 2) + judgement.transform.h + 6
+    combo.transform.y = (display["height"] / 2) + (judgement.transform.h / 2)
     combo.transform.alpha = 0
-    combo.order = 6
+    combo.order = 5
     combo.center = true
 
     add(combo)

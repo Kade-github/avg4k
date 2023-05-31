@@ -4,7 +4,7 @@
 #include "LuaMenu.h"
 #include "MainMenu.h"
 #include "Average4K.h"
-
+#include "GameplayMenu.h"
 inline constexpr auto operator ""_sh(const char* str, size_t len) {
 	return AvgEngine::Debug::hash_djb2a(std::string_view{ str, len });
 }
@@ -34,7 +34,7 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 	using namespace AvgEngine;
 	Debug::Console* c = Debug::Console::instance;
 	Average4k::Lua::LuaMenu* m = NULL;
-
+	Average4k::Lua::GameplayMenu* gm = NULL;
 	std::vector<std::string> spl = Utils::StringTools::Split(cmd, " ");
 
 	std::string s = "";
@@ -93,6 +93,17 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 			Logging::writeLog("[Menu] [Error] Sorry, that menu isn't a lua menu and the object list cannot be shown!");
 		break;
 	case "lua"_sh:
+		if (static_cast<Average4K*>(Average4K::Instance)->options.inGameplay)
+		{
+			gm = static_cast<Average4k::Lua::GameplayMenu*>(Game::Instance->CurrentMenu);
+			if (gm->luaMenu)
+			{
+				gm->RunLua(cmd.substr(cmd.find_first_of(' ') + 1, cmd.size()));
+			}
+			else
+				Logging::writeLog("[Menu] Sorry, the current menu has no lua capabilities!");
+			return;
+		}
 		m = static_cast<Average4k::Lua::LuaMenu*>(Game::Instance->CurrentMenu);
 		if (m->luaMenu)
 		{

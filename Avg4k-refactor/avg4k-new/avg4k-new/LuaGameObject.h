@@ -35,6 +35,7 @@ namespace Average4k::Lua::Base
 		gameObject* parent = NULL;
 		std::vector<gameObject> children;
 
+		int zIndex = 0;
 
 		int id = 0;
 		int type = 0;
@@ -67,13 +68,12 @@ namespace Average4k::Lua::Base
 
 		int getZIndex()
 		{
-			if (base)
-				return base->transformRatio;
-			return false;
+			return zIndex;
 		}
 
 		void setZIndex(int z)
 		{
+			zIndex = z;
 			if (base)
 				base->zIndex = z;
 		}

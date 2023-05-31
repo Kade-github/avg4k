@@ -90,7 +90,7 @@ void Average4k::Objects::Gameplay::Receptor::draw()
 	{
 		Note* n = static_cast<Note*>(ob);
 		n->sTime = time;
-		if (n->beat - beat < -k->options.drawbeats && n->judged)
+		if (n->beat - beat < -k->options.drawbeats && n->judged && (n->type == Chart::NoteType_Head ? n->holdJudged : true))
 		{
 			removeObject(n);
 			delete n;

@@ -109,6 +109,7 @@ void Average4k::Lua::LuaFile::CreateObject(Average4k::Lua::Base::gameObject& ob)
 			ob.transform.r, ob.transform.g, ob.transform.b, ob.transform.a,
 			ob.transform.scale, ob.transform.deg);
 		te->outlineThickness = text.outline;
+		te->centerLines = text.center;
 		ob.id = te->id;
 		ob.transform.base = &te->transform;
 		ob.transformOffset.base = &te->transformOffset;
@@ -147,6 +148,8 @@ void Average4k::Lua::LuaFile::CreateObject(Average4k::Lua::Base::gameObject& ob)
 		ob.base = aso;
 		break;
 	}
+	if (ob.base)
+		ob.base->zIndex = ob.getZIndex();
 }
 
 void Average4k::Lua::LuaFile::AddObject(Average4k::Lua::Base::gameObject& ob)
@@ -392,10 +395,10 @@ void LuaFile::Load()
 		"font", sol::property(&textObject::getFont, &textObject::setFont),
 		"text", sol::property(&textObject::getText, &textObject::setText),
 		"wrap", sol::property(&textObject::getWrapped, &textObject::setWrapped),
-		"center", sol::property(&textObject::getCentered, &textObject::setCenter),
 		"size", sol::property(&textObject::getSize, &textObject::setSize),
 		"characterSpacing", sol::property(&textObject::getSpacing, &textObject::setSpacing),
 		"outline", sol::property(&textObject::getOutline, &textObject::setOutline),
+		"center", sol::property(&textObject::getCentered, &textObject::setCenter),
 		sol::base_classes, sol::bases<gameObject>()
 		);
 

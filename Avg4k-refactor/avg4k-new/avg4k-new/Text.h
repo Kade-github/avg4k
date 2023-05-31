@@ -242,6 +242,7 @@ namespace AvgEngine::Base
 					{
 						drawCall ca = Camera::FormatDrawCall(zIndex, fnt->texture, NULL, Render::DisplayHelper::RectToVertex(c.dst, c.src));
 						ca.clip = cr;
+						ca.zIndex = zIndex;
 						camera->addDrawCall(ca);
 					}
 					currentAdvance += c.advance;
@@ -278,6 +279,7 @@ namespace AvgEngine::Base
 					{
 						drawCall ca = Camera::FormatDrawCall(zIndex, fnt->texture, NULL, Render::DisplayHelper::RectToVertex(c.dst, c.src));
 						ca.clip = cr;
+						ca.zIndex = zIndex;
 						camera->addDrawCall(ca);
 					}
 					if (!c.outline)
@@ -288,6 +290,7 @@ namespace AvgEngine::Base
 			transform.w = highestW;
 			transform.h = d;
 			call.clip = cr;
+			call.zIndex = zIndex;
 			camera->addDrawCall(call);
 
 			GameObject::draw();

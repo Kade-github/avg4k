@@ -13,6 +13,7 @@ void MainMenu::Reload()
 void MainMenu::load()
 {
 	a4er = static_cast<Average4K*>(Average4K::Instance);
+	a4er->options.inGameplay = false;
 	Average4k::Lua::LuaMenu::load();
 }
 

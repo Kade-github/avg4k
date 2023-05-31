@@ -32,7 +32,7 @@ void Gameplay::load()
 {
 	Average4ker::a4er = static_cast<Average4K*>(Average4K::Instance);
 	Average4k::Lua::GameplayMenu::load();
-
+	Average4ker::a4er->options.inGameplay = true;
 	// Create playfield player #1
 	AddPlayfield();
 

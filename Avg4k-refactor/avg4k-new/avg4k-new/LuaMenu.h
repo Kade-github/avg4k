@@ -8,7 +8,7 @@ namespace Average4k::Lua
 	{
 	public:
 		bool luaMenu = false;
-
+		bool gameplay = false;
 		MenuLuaFile* file;
 
 

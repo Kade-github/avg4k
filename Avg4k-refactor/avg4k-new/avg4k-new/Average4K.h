@@ -19,7 +19,7 @@ namespace Average4k
 		float drawbeats = 4;
 
 		std::vector<float> judgeWindow = {22.5f, 45.0f, 90.0f, 135.0f, 180.0f, 250.0f, 75.0f};
-
+		bool inGameplay = false;
 	};
 }
 

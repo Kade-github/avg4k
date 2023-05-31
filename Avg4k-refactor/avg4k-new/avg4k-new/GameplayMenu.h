@@ -14,6 +14,9 @@ namespace Average4k::Lua
 
 		float accuracy = 1;
 
+		int combo = 0;
+		int highestCombo = 0;
+
 		bool botplay = false;
 		bool scoreSubmittable = true;
 
@@ -23,6 +26,7 @@ namespace Average4k::Lua
 		{
 			switch (judge)
 			{
+			case 6:
 			case 0:
 				notesHit += 1;
 				break;
@@ -39,6 +43,14 @@ namespace Average4k::Lua
 				notesHit += 0.1f;
 				break;
 			}
+			if (judge != 5)
+				combo++;
+			else
+				combo = 0;
+
+			if (combo > highestCombo)
+				highestCombo = combo;
+
 			totalNotes++;
 			accuracy = notesHit / totalNotes;
 		}

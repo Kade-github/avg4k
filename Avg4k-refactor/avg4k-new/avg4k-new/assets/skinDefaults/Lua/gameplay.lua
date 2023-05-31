@@ -2,10 +2,12 @@
 HelperFiles = { 'popup.lua' }
 
 initialRect = nil
+comboInitialRect = nil
 judgement = nil
 underlane = nil
 accuracy = nil
 grade = nil
+combo = nil
 
 judge_counter_marv = nil
 judge_counter_perf = nil
@@ -35,7 +37,7 @@ function Create()
 
     bg.transform.alpha = tonumber(settings["Background Transparency"])
 
-    setObject(bg, 0) -- tell avg4k this is the background
+    setObject(bg, 0) -- tell avg4k that this is the background
 
     judgement = helper.createAnimatedSpriteSkin("judgements/judgements", 0, 0, 0, 210, 85, nil)
 
@@ -45,8 +47,23 @@ function Create()
     judgement.order = 5
     judgement.center = true
 
+    combo = text.new(0, 0, "FuturaBoldOutlined.fnt", "0")
+    combo.size = 24 * skin["upscale"]
+    combo.transform.x = display["width"] / 2
+    combo.transform.y = (display["height"] / 2) + judgement.transform.h + 6
+    combo.transform.alpha = 0
+    combo.order = 6
+    combo.center = true
+
+    add(combo)
+
+    setObject(combo, 3) -- tell avg4k that this is the combo
+
     initialRect = copyRect(judgement.transform)
     initialRect.alpha = 1
+
+    comboInitialRect = copyRect(combo.transform)
+    comboInitialRect.alpha = 1
 
     local noteSize = tonumber(settings["Note Size"])
 
@@ -68,8 +85,8 @@ function Create()
     grade.size = 46 * skin["upscale"]
     add(grade)
 
-    setObject(accuracy, 1) -- tell avg4k this is the accuracy
-    setObject(grade, 2)    -- tell avg4k this is the grade
+    setObject(accuracy, 1) -- tell avg4k that this is the accuracy
+    setObject(grade, 2)    -- tell avg4k that this is the grade
 
     Popup.init()
     Popup.showPopup(options["chart"]["title"], options["chart"]["diff"] .. " charted by " .. options["chart"]["charter"])
@@ -84,6 +101,7 @@ end
 function ArrowJudged(judge)
     judgement.frame = tonumber(judge)
     judgement.transform.alpha = 1
+    combo.transform.alpha = 1
 
     local newRect = copyRect(initialRect)
     newRect.scale = 1.1
@@ -91,4 +109,11 @@ function ArrowJudged(judge)
     judgement.transform = newRect
 
     tween(judgement, initialRect, 0.2, "outcubic", "")
+
+    local newComboRect = copyRect(comboInitialRect)
+    newComboRect.scale = 1.1
+
+    combo.transform = newComboRect
+
+    tween(combo, comboInitialRect, 0.2, "outcubic", "")
 end

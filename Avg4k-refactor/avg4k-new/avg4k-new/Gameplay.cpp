@@ -150,6 +150,15 @@ void Gameplay::draw()
 				t->text = "F";
 
 			break;
+		case 3: // combo
+			t = static_cast<Text*>(k.second.base);
+			if (t == NULL)
+			{
+				Logging::writeLog("[Error] Combo text is null! Id 3");
+				break;
+			}
+			t->text = std::to_string(combo) + "x";
+			break;
 		}
 	}
 

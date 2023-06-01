@@ -9,6 +9,9 @@ namespace Average4k::Objects::Gameplay {
 		float time;
 		float beat;
 
+		float stops = 0;
+		float stopEnd = 0;
+
 		std::vector<int> keybinds = {};
 		AvgEngine::OpenGL::Texture* arrowSpritesheet;
 		AvgEngine::OpenGL::Texture* receptorSpritesheet;
@@ -21,15 +24,7 @@ namespace Average4k::Objects::Gameplay {
 			delete receptorSpritesheet;
 			delete holdSpritesheet;
 		}
-		void draw() {
-			for (Receptor* r : receptors)
-			{
-				r->time = time;
-				r->beat = beat;
-			}
-
-			AvgEngine::Base::GameObject::draw();
-		}
+		void draw();
 
 		void keyPress(int key)
 		{

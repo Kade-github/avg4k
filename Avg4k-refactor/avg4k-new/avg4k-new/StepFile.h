@@ -46,12 +46,6 @@ namespace Average4k::Chart
 				p.StartBeat = std::stof(split2[0]);
 				p.Length = std::stof(split2[1]);
 
-				TimingPoint tp = GetTimingPoint(p.StartBeat);
-
-				p.StartTimestamp = GetTimeFromBeat(p.StartBeat, tp);
-				p.EndTimestamp = p.StartTimestamp + p.Length;
-				p.EndBeat = GetBeatFromTime(p.EndTimestamp, tp);
-
 				chartMetadata.Stops.push_back(p);
 			}
 
@@ -71,7 +65,7 @@ namespace Average4k::Chart
 				return;
 
 			// check if ; exists
-			bool bracket = line.back() == ';';
+			bool bracket = line.front() == ';';
 
 			// also formatted line, without a ";" at the end (IF IT EXISTS!)
 			std::string fLine = line;
@@ -90,20 +84,13 @@ namespace Average4k::Chart
 				TimingPoint p;
 				p.StartBeat = std::stof(split2[0]);
 				p.Bpm = std::stof(split2[1]);
-				p.EndBeat = INT_MAX;
-				p.EndTimestamp = INT_MAX;
-				p.LengthTimestamp = INT_MAX;
-				p.StartTimestamp = -chartMetadata.Song_Offset;
-
-				// Check if we are the first timing point
-				if (chartMetadata.TimingPoints.size() != 0)
+				p.EndBeat = 0;
+				p.EndTimestamp = 0;
+				p.LengthTimestamp = 0;
+				if (chartMetadata.TimingPoints.size() == 0)
 				{
-					// Get the last timing point pushed
-					TimingPoint& last = chartMetadata.TimingPoints.back();
-					last.EndBeat = p.StartBeat;
-					last.LengthTimestamp = (last.EndBeat - last.StartBeat) / (last.Bpm / 60);
-					p.StartTimestamp = last.StartTimestamp + last.LengthTimestamp;
-					last.EndTimestamp = p.StartTimestamp;
+					p.StartTimestamp = -chartMetadata.Song_Offset;
+					p.EndTimestamp = -chartMetadata.Song_Offset;
 				}
 
 				chartMetadata.TimingPoints.push_back(p);
@@ -153,8 +140,9 @@ namespace Average4k::Chart
 			}
 			else
 			{
+				
 				// We are in the notes section
-				if (line.back() == ';' || line.back() == ',')
+				if (line.front() == ';' || line.front() == ',')
 				{
 					// Time for big brain music theory math
 
@@ -212,11 +200,14 @@ namespace Average4k::Chart
 					currentMeasure++;
 				}
 				else
-					measure.push_back(line);
+				{
+					if (line.find("//") == std::string::npos)
+						measure.push_back(line);
+				}
 			}
 
-			// if line ends with ";", set state to 0
-			if (line.back() == ';')
+			// if line starts with ";", set state to 0
+			if (line.front() == ';')
 			{
 				if (workingDiff.Notes.size() > 0)
 					chartMetadata.Difficulties.push_back(workingDiff);
@@ -366,6 +357,96 @@ namespace Average4k::Chart
 				lineNumber++;
 			}
 			chartMetadata.Chart_Type = 1;
+
+			// Construct timing
+
+
+			int tpIndex = 1;
+			int spIndex = 0;
+			if (chartMetadata.TimingPoints.size() > 1)
+			{
+				if (chartMetadata.Stops.size() > 1)
+				{
+					while (tpIndex < chartMetadata.TimingPoints.size() || spIndex < chartMetadata.Stops.size())
+					{
+						TimingPoint& prevTp = chartMetadata.TimingPoints[tpIndex - 1];
+
+						if (tpIndex == chartMetadata.TimingPoints.size())
+						{
+							float cts = 0;
+							while (spIndex < chartMetadata.Stops.size())
+							{
+								StopPoint& sp = chartMetadata.Stops[spIndex];
+								sp.StartTimestamp = (prevTp.StartTimestamp + (sp.StartBeat - prevTp.StartBeat) / (prevTp.Bpm / 60)) + cts;
+								cts += sp.Length;
+								spIndex++;
+							}
+							continue;
+						}
+
+						if (spIndex == chartMetadata.Stops.size())
+						{
+							while (tpIndex < chartMetadata.TimingPoints.size())
+							{
+								TimingPoint& tp = chartMetadata.TimingPoints[tpIndex];
+								prevTp.EndTimestamp += (prevTp.EndBeat - prevTp.StartBeat) / (prevTp.Bpm / 60);
+								tp.StartTimestamp = prevTp.EndTimestamp;
+								tp.EndTimestamp = tp.StartTimestamp;
+								tpIndex++;
+								if (tpIndex == chartMetadata.TimingPoints.size())
+									tp.EndTimestamp = INT_MAX;
+							}
+							continue;
+						}
+
+						TimingPoint& tp = chartMetadata.TimingPoints[tpIndex];
+						StopPoint& sp = chartMetadata.Stops[spIndex];
+
+						prevTp.EndBeat = tp.StartBeat;
+
+						if (sp.StartBeat < prevTp.EndBeat)
+						{
+							sp.StartTimestamp = prevTp.EndTimestamp + (sp.StartBeat - prevTp.StartBeat) / (prevTp.Bpm / 60);
+							prevTp.EndTimestamp += sp.Length;
+							spIndex++;
+						}
+						else
+						{
+							prevTp.EndTimestamp += (prevTp.EndBeat - prevTp.StartBeat) / (prevTp.Bpm / 60);
+							tp.StartTimestamp = prevTp.EndTimestamp;
+							tp.EndTimestamp = tp.StartTimestamp;
+							tpIndex++;
+						}
+
+					}
+				}
+				else
+				{
+					while (tpIndex < chartMetadata.TimingPoints.size())
+					{
+						TimingPoint& prevTp = chartMetadata.TimingPoints[tpIndex - 1];
+						TimingPoint& tp = chartMetadata.TimingPoints[tpIndex];
+						prevTp.EndTimestamp += (prevTp.EndBeat - prevTp.StartBeat) / (prevTp.Bpm / 60);
+						tp.StartTimestamp = prevTp.EndTimestamp;
+						tp.EndTimestamp = tp.StartTimestamp;
+						tpIndex++;
+						if (tpIndex == chartMetadata.TimingPoints.size())
+							tp.EndTimestamp = INT_MAX;
+					}
+				}
+			}
+			else
+			{
+				TimingPoint& prevTp = chartMetadata.TimingPoints[0];
+				float cts = 0;
+				while (spIndex < chartMetadata.Stops.size())
+				{
+					StopPoint& sp = chartMetadata.Stops[spIndex];
+					sp.StartTimestamp = (prevTp.StartTimestamp + (sp.StartBeat - prevTp.StartBeat) / (prevTp.Bpm / 60)) + cts;
+					cts += sp.Length;
+					spIndex++;
+				}
+			}
 			good = true;
 		}
 	};

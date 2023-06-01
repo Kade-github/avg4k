@@ -28,9 +28,7 @@ namespace Average4k::Chart
 
 	struct StopPoint {
 		float StartBeat = -1;
-		float EndBeat = -1;
 		float StartTimestamp = -1;
-		float EndTimestamp = -1;
 		float Length = -1;
 
 	};
@@ -129,32 +127,28 @@ namespace Average4k::Chart
 			StopPoint sp{};
 			for (StopPoint& _sp : chartMetadata.Stops)
 			{
-				if (_sp.StartBeat <= beat && _sp.EndBeat > beat)
+				if (_sp.StartBeat <= beat)
 				{
 					sp = _sp;
-					break;
 				}
 			}
 			return sp;
 		}
 
-		StopPoint GetStopPointAfter(StopPoint p, float beat)
+		StopPoint GetStopPointTime(float time)
 		{
-			if (p.EndBeat > beat)
-				return p;
 			StopPoint sp{};
 			for (StopPoint& _sp : chartMetadata.Stops)
 			{
-				if (_sp.EndBeat < p.EndBeat)
-					continue;
-				if (_sp.StartBeat <= beat && _sp.EndBeat > beat)
+				if (_sp.StartTimestamp <= time)
 				{
 					sp = _sp;
-					break;
 				}
 			}
 			return sp;
 		}
+
+
 
 		float GetTimeFromBeat(float beat)
 		{
@@ -163,8 +157,17 @@ namespace Average4k::Chart
 			{
 				if (tp.StartBeat <= beat && tp.EndBeat > beat)
 				{
-					const float b = (beat - tp.StartBeat) / (tp.Bpm / 60.0f);
-					return (tp.StartTimestamp + b);
+					Chart::StopPoint sp = GetStopPoint(beat);
+					float bigBeat = tp.StartBeat;
+					float yo = tp.StartTimestamp;
+					if (sp.StartBeat > tp.StartBeat)
+					{
+						bigBeat = sp.StartBeat;
+						yo = sp.StartTimestamp + sp.Length;
+					}
+
+					const float b = (beat - bigBeat) / (tp.Bpm / 60.0f);
+					return (yo + b);
 				}
 			}
 			return time;
@@ -177,7 +180,16 @@ namespace Average4k::Chart
 			{
 				if (tp.StartTimestamp <= time && tp.EndTimestamp > time)
 				{
-					return tp.StartBeat + ((time - tp.StartTimestamp) * (tp.Bpm / 60.0f));
+					Chart::StopPoint sp = GetStopPointTime(time);
+					float stopEndTime = sp.StartTimestamp + sp.Length;
+					if (time > sp.StartTimestamp && time < stopEndTime)
+						return sp.StartBeat;
+					float larger = std::max(stopEndTime, tp.StartTimestamp);
+					float beast = tp.StartBeat;
+					if (tp.StartTimestamp < stopEndTime)
+						beast = sp.StartBeat;
+					float cb = beast + ((time - larger) * (tp.Bpm / 60.0f));
+					return cb;
 				}
 			}
 			return beat;

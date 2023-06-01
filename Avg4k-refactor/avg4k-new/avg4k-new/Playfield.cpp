@@ -45,3 +45,16 @@ Average4k::Objects::Gameplay::Playfield::Playfield(int _x, int _y, Average4k::Ch
 
 	keybinds = H_Keybinds(Average4K::settings->Get("Keybinds").value);
 }
+
+void Average4k::Objects::Gameplay::Playfield::draw()
+{
+	Average4K* k = static_cast<Average4K*>(Average4K::Instance);
+
+	for (Receptor* r : receptors)
+	{
+		r->time = time;
+		r->beat = beat;
+	}
+
+	AvgEngine::Base::GameObject::draw();
+}

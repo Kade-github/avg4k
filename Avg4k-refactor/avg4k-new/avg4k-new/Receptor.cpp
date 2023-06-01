@@ -31,7 +31,7 @@ void Average4k::Objects::Gameplay::Receptor::draw()
 		else
 		{
 			float beatDiff = n.Beat - beat;
-			if (beatDiff < k->options.drawbeats && beatDiff > -k->options.drawbeats)
+			if (beatDiff < k->options.drawbeats)
 			{
 
 				Note* note = new Note(0, 0, arrowSpritesheet);
@@ -49,7 +49,7 @@ void Average4k::Objects::Gameplay::Receptor::draw()
 				note->transform.h = transform.h;
 				note->noteSize = noteSize;
 				note->cmod = std::stof(k->settings->Get("Scrollspeed").value);
-				note->xmod = 4;
+				note->xmod = 7;
 				addObject(note);
 
 				float beatRow = n.Beat * 48;

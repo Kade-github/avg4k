@@ -73,8 +73,6 @@ void Average4k::Lua::MenuLuaFile::SetPacks(sol::global_table t)
 			for (Average4k::Chart::StopPoint s : cf.chartMetadata.Stops)
 			{
 				stopPoint sp;
-				sp.endBeat = s.EndBeat;
-				sp.endTime = s.EndTimestamp;
 				sp.length = s.Length;
 				sp.startBeat = s.StartBeat;
 				sp.startTime = s.StartTimestamp;

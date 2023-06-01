@@ -69,7 +69,7 @@ void Average4k::Objects::Gameplay::Note::draw()
 		m->UpdateAccuracy(judge);
 	}
 
-	if (m->botplay && !judged && (diff * 1000) < 1)
+	if (m->botplay && !judged && (diff * 1000) < 1 && (type != Chart::NoteType_Fake && type != Chart::NoteType_Mine))
 	{
 		judge = Judgement_Botplay;
 		m->file->Function("ArrowJudged", std::to_string((int)judge));

@@ -7,6 +7,8 @@ namespace Average4k::Objects::Gameplay {
 		float time;
 		float beat;
 
+
+
 		int lane = 0;
 
 		float noteSize = 0;

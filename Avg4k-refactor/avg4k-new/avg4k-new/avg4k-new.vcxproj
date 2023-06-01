@@ -81,6 +81,7 @@
     <ClCompile Include="SongGatherer.cpp" />
     <ClCompile Include="StartScreen.cpp" />
     <ClCompile Include="stbi.cpp" />
+    <ClCompile Include="StepFile.cpp" />
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>

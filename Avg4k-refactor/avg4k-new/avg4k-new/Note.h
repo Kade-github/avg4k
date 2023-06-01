@@ -20,6 +20,7 @@ namespace Average4k::Objects::Gameplay {
 	{
 	public:
 		float sTime;
+		float sBeat;
 		float time;
 		float beat;
 		
@@ -34,18 +35,18 @@ namespace Average4k::Objects::Gameplay {
 		bool holdJudged = false;
 		bool judged = false;
 		Judgement judge = Judgement_None;
-
+		bool useXmod = true;
 		float cmod = 0;
-		float xmod = 0;
+		float xmod = 1;
 		float rate = 1;
 
 		float noteSize = 0;
 
 		void calculateJudge(float diff);
 
-		float calculateY(bool xmod, float diff)
+		float calculateY(bool xmodd, float diff)
 		{
-			if (!xmod)
+			if (!xmodd)
 			{
 				float bps = (cmod / 60);
 
@@ -53,7 +54,7 @@ namespace Average4k::Objects::Gameplay {
 			}
 			else
 			{
-				return 0; // TODO
+				return (diff * ((64 * noteSize) * xmod));
 			}
 		}
 

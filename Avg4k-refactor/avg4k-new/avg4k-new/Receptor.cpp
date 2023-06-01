@@ -49,6 +49,7 @@ void Average4k::Objects::Gameplay::Receptor::draw()
 				note->transform.h = transform.h;
 				note->noteSize = noteSize;
 				note->cmod = std::stof(k->settings->Get("Scrollspeed").value);
+				note->xmod = 4;
 				addObject(note);
 
 				float beatRow = n.Beat * 48;
@@ -86,16 +87,26 @@ void Average4k::Objects::Gameplay::Receptor::draw()
 		}
 	}
 
+	std::vector<GameObject*> toRemove;
+
 	for (GameObject* ob : Children)
 	{
 		Note* n = static_cast<Note*>(ob);
 		n->sTime = time;
+		n->sBeat = beat;
 		if (n->beat - beat < -k->options.drawbeats && n->judged && (n->type == Chart::NoteType_Head ? n->holdJudged : true))
 		{
-			removeObject(n);
-			delete n;
+			toRemove.push_back(n);
+			continue;
 		}
 	}
+
+	for (GameObject* ob : toRemove)
+	{
+		removeObject(ob);
+		delete ob;
+	}
+
 	AvgEngine::Base::Sprite::draw();
 }
 

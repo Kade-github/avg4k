@@ -55,7 +55,8 @@ void Average4k::Objects::Gameplay::Note::draw()
 	src.h = frameHeight;
 
 	float diff = time - sTime;
-	transform.y = calculateY(false, diff);
+	float xmodDiff = beat - sBeat;
+	transform.y = calculateY(useXmod, xmodDiff);
 	Average4K* k = static_cast<Average4K*>(Average4K::Instance);
 	Average4k::Lua::GameplayMenu* m = static_cast<Average4k::Lua::GameplayMenu*>(k->CurrentMenu);
 	// tap misses
@@ -86,7 +87,10 @@ void Average4k::Objects::Gameplay::Note::draw()
 	float end = beat + lengthInBeats;
 	float endTime = k->options.currentFile->GetTimeFromBeat(end);
 	float diffPos = endTime - time;
-	int amountToDraw = 1 + ((calculateY(false, diffPos) - (64 * noteSize)) / (64 * noteSize));
+	float endPosition = calculateY(useXmod, diffPos);
+	int amountToDraw = 1 + ((endPosition - (64 * noteSize)) / (64 * noteSize));
+	if (useXmod)
+		amountToDraw = 1 + ((lengthInBeats * ((64 * noteSize) * xmod)) / (64 * noteSize));
 
 	AvgEngine::Render::Rect lastRect = {};
 	lastRect.a = 0;
@@ -113,7 +117,9 @@ void Average4k::Objects::Gameplay::Note::draw()
 			r.a = 1;
 		else
 			r.a = 0;
-		r.y = calculateY(false, holdTime - sTime) + (64 * noteSize);
+		// xmod
+		float xmodDiff = holdBeat - sBeat;
+		r.y = calculateY(useXmod, xmodDiff) + (64 * noteSize);
 
 		if (lastRect.a != 0)
 			r.y = lastRect.y + lastRect.h;

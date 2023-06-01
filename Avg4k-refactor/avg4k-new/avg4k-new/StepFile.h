@@ -65,7 +65,7 @@ namespace Average4k::Chart
 				return;
 
 			// check if ; exists
-			bool bracket = line.front() == ';';
+			bool bracket = line.back() == ';';
 
 			// also formatted line, without a ";" at the end (IF IT EXISTS!)
 			std::string fLine = line;

@@ -168,6 +168,9 @@ function songWheel.Select(amt)
 
         songWheel.SetDiff()
 
+        songWheel.started = Globals.lt
+        songWheel.playedSong = false
+
         if songWheel.selectedFile.songBackground == "" then
             songWheel.bg = nil
             return
@@ -184,9 +187,6 @@ function songWheel.Select(amt)
         bg.transform.h = 1.0
         bg.transform.scale = skin["upscale"]
         songWheel.bg = bg
-
-        songWheel.started = Globals.lt
-        songWheel.playedSong = false
     end
 end
 

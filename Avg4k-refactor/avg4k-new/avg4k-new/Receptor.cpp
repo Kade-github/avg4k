@@ -56,7 +56,8 @@ void Average4k::Objects::Gameplay::Receptor::draw()
 
 				switch (note->type)
 				{
-				case Chart::NoteType::NoteType_Tap:
+				case Chart::NoteType_Head:	
+				case Chart::NoteType_Tap:
 					if (fmod(beatRow, (192 / 4)) == 0)
 						note->frame = 4;
 					else if (fmod(beatRow, (192 / 8)) == 0)

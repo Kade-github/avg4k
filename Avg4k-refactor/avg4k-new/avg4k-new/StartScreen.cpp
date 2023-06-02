@@ -44,14 +44,14 @@ void StartScreen::load()
 			}
 	});
 
-	logo = new Sprite(.5, .5, Average4K::skin->GetTexture("Start/KadeDevTeam"));
+	logo = new Sprite(.5, .5, Average4K::skin->GetTexture("Start/DeveloperLogo"));
 	logo->center = true;
 	logo->transform.a = 0;
 	logo->transform.scale = Average4K::skin->upscale;
 	addObject(logo);
 	logo->setRatio(true);
 
-	whs = new Sprite(.5, .5, Average4K::skin->GetTexture("Start/MiscLogo"));
+	whs = new Sprite(.5, .5, Average4K::skin->GetTexture("Start/PublisherLogo"));
 	whs->center = true;
 	whs->transform.a = 0;
 	whs->transform.scale = Average4K::skin->upscale;

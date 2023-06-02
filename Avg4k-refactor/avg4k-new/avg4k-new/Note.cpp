@@ -56,7 +56,9 @@ void Average4k::Objects::Gameplay::Note::draw()
 
 	float diff = time - sTime;
 	float xmodDiff = beat - sBeat;
-	transform.y = calculateY(useXmod, xmodDiff);
+	transform.y = calculateY(useXmod, diff);
+	if (useXmod)
+		transform.y = calculateY(useXmod, xmodDiff);
 	Average4K* k = static_cast<Average4K*>(Average4K::Instance);
 	Average4k::Lua::GameplayMenu* m = static_cast<Average4k::Lua::GameplayMenu*>(k->CurrentMenu);
 	// tap misses
@@ -119,7 +121,9 @@ void Average4k::Objects::Gameplay::Note::draw()
 			r.a = 0;
 		// xmod
 		float xmodDiff = holdBeat - sBeat;
-		r.y = calculateY(useXmod, xmodDiff) + (64 * noteSize);
+		r.y = calculateY(useXmod, holdTime - sTime) + (64 * noteSize);
+		if (useXmod)
+			r.y = calculateY(useXmod, xmodDiff) + (64 * noteSize);
 
 		if (lastRect.a != 0)
 			r.y = lastRect.y + lastRect.h;

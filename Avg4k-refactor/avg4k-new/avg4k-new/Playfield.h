@@ -23,6 +23,7 @@ namespace Average4k::Objects::Gameplay {
 			delete arrowSpritesheet;
 			delete receptorSpritesheet;
 			delete holdSpritesheet;
+			AvgEngine::Base::GameObject::~GameObject();
 		}
 		void draw();
 

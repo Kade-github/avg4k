@@ -15,9 +15,14 @@ static std::vector<int> H_Keybinds(std::string keybinds)
 Average4k::Objects::Gameplay::Playfield::Playfield(int _x, int _y, Average4k::Chart::Difficulty* d) : AvgEngine::Base::GameObject(_x, _y)
 {
 	diff = d;
-	arrowSpritesheet = Average4K::skin->GetArrowTexture("arrows");
-	receptorSpritesheet = Average4K::skin->GetArrowTexture("receptors");
-	holdSpritesheet = Average4K::skin->GetArrowTexture("holds");
+	arrowSpritesheet = Average4K::skin->GetArrowTexture("arrows", true);
+	receptorSpritesheet = Average4K::skin->GetArrowTexture("receptors", true);
+	holdSpritesheet = Average4K::skin->GetArrowTexture("holds", true);
+
+	arrowSpritesheet->dontDelete = true;
+	receptorSpritesheet->dontDelete = true;
+	holdSpritesheet->dontDelete = true;
+
 	float noteSize = std::stof(Average4K::settings->Get("Note Size").value);
 	for (int i = 0; i < 4; i++)
 	{

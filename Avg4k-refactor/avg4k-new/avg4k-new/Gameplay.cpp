@@ -1,6 +1,7 @@
 #include "Gameplay.h"
 #include "Average4K.h"
 #include "TimeUtils.h"
+#include "MainMenu.h"
 using namespace AvgEngine;
 
 namespace Average4ker
@@ -55,6 +56,12 @@ void Gameplay::load()
 		if (!botplay)
 			for (Average4k::Objects::Gameplay::Playfield* p : playfields)
 				p->keyPress(e.data);
+
+		if (e.data == GLFW_KEY_ESCAPE)
+		{
+			c->Stop();
+			Average4ker::a4er->SwitchMenu(new MainMenu(Average4K::skin->GetLua("main-menu")));
+		}
 
 		if (e.data == GLFW_KEY_F1)
 		{

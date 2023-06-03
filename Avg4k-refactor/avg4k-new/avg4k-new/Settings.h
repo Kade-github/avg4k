@@ -150,6 +150,7 @@ namespace Average4k
 
 		Setting& Get(std::string name)
 		{
+
 			for (Setting& ns : f.settings)
 				if (ns.name == name)
 					return ns;

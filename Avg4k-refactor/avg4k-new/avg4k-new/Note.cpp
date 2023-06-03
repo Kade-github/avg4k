@@ -63,7 +63,7 @@ void Average4k::Objects::Gameplay::Note::draw()
 	Average4k::Lua::GameplayMenu* m = static_cast<Average4k::Lua::GameplayMenu*>(k->CurrentMenu);
 	// tap misses
 	// make sure this stuff works with downscroll (later)
-	if (!judged && ((diff * 1000) < -k->options.judgeWindow[4] || transform.y + parent->y < 0) && type != Chart::NoteType::NoteType_Head && (type != Chart::NoteType_Fake && type != Chart::NoteType_Mine))
+	if (!judged && ((diff * 1000) < -k->options.judgeWindow[4]) && type != Chart::NoteType::NoteType_Head && (type != Chart::NoteType_Fake && type != Chart::NoteType_Mine))
 	{
 		judged = true;
 		judge = Judgement_Miss;

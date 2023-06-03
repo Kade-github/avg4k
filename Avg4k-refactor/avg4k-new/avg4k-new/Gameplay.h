@@ -13,7 +13,7 @@ public:
 	float startTimestamp = 0;
 	float songStart = 0;
 
-
+	float menuStartimestamp = 0;
 
 	std::vector<Average4k::Objects::Gameplay::Playfield*> playfields{};
 

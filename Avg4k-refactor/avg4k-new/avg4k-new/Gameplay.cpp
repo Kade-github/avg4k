@@ -68,6 +68,7 @@ void Gameplay::load()
 			for (Average4k::Objects::Gameplay::Playfield* p : playfields)
 				p->keyRelease(e.data);
 	});
+	menuStartimestamp = glfwGetTime();
 }
 
 
@@ -94,6 +95,8 @@ void Gameplay::draw()
 	}
 
 	float time = c->GetPos();
+	if (!c->isPlaying)
+		time = -std::abs(songStart - glfwGetTime());
 	float beat = Average4ker::a4er->options.currentFile->GetBeatFromTime(time);
 
 	for (Average4k::Objects::Gameplay::Playfield* p : playfields)

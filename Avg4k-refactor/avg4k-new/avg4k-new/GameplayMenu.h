@@ -20,6 +20,13 @@ namespace Average4k::Lua
 		bool botplay = false;
 		bool scoreSubmittable = true;
 
+		int marv = 0;
+		int perf = 0;
+		int great = 0;
+		int good = 0;
+		int bad = 0;
+		int miss = 0;
+
 		GameplayLuaFile* file;
 
 		void UpdateAccuracy(int judge)
@@ -29,24 +36,31 @@ namespace Average4k::Lua
 			case 6:
 			case 0:
 				notesHit += 1;
+				marv++;
 				break;
 			case 1:
 				notesHit += 0.925f;
+				perf++;
 				break;
 			case 2:
 				notesHit += 0.7f;
+				great++;
 				break;
 			case 3:
 				notesHit += 0.35f;
+				good++;
 				break;
 			case 4:
 				notesHit += 0.1f;
+				bad++;
+				break;
+			default:
+				miss++;
+				combo = 0;
 				break;
 			}
 			if (judge != 5)
 				combo++;
-			else
-				combo = 0;
 
 			if (combo > highestCombo)
 				highestCombo = combo;

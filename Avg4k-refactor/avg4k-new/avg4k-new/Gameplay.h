@@ -17,6 +17,7 @@ public:
 
 	bool ended = false;
 	bool isStarted = false;
+	bool failedCheck = false;
 
 	std::vector<Average4k::Objects::Gameplay::Playfield*> playfields{};
 

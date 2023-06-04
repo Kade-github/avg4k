@@ -18,6 +18,11 @@ namespace AvgEngine::Fnt
 		int id = -1;
 		int xAdvance = 0;
 		std::vector<Kerning> kernings;
+
+		bool operator<(const FntChar& a) const
+		{
+			return id < a.id;
+		}
 	};
 
 	class Fnt
@@ -75,10 +80,11 @@ namespace AvgEngine::Fnt
 		{
 			unsigned int u = c;
 
-			for (FntChar cc : chars)
-				if (cc.id == u)
-					return cc;
+			auto it = std::find_if(chars.begin(), chars.end(), [&u](const FntChar& obj) {return obj.id == u; });
 
+			if (it != chars.end())
+				return *it;
+			
 			FntChar cc;
 			cc.id = -1;
 
@@ -153,15 +159,16 @@ namespace AvgEngine::Fnt
 					ch.src = { x / texture->width, y / texture->height,w / texture->width, h / texture->height };
 					chars.push_back(ch);
 				}
-				#ifdef _DEBUG
+#ifdef _DEBUG
 				Logging::writeLog("[Fnt] [Debug] Loaded " + std::to_string(chars.size()) + " characters.");
-				#endif
+#endif
 			}
 			else
 			{
 				Logging::writeLog("[FNT] [Warning] " + file + " doesn't have a chars node.");
 				return;
 			}
+			std::sort(chars.begin(), chars.end());
 
 			n = doc.child("font").child("kernings");
 			if (n != NULL)

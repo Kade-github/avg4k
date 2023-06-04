@@ -153,61 +153,133 @@ void Gameplay::draw()
 	Text* t = NULL;
 	Sprite* s = NULL;
 	std::string acc = std::to_string(accuracy * 100);
-	for (auto k : file->setObjects)
+	if (!failedCheck)
 	{
-
-		switch (k.first)
+		for (auto k : file->setObjects)
 		{
-		case 0: // background
-			s = static_cast<Sprite*>(k.second.base);
-			if (s == NULL)
-			{
-				Logging::writeLog("[Error] Background is null! Id 0");
-				break;
-			}
-			break;
-		case 1: // accuracy
-			t = static_cast<Text*>(k.second.base);
-			if (t == NULL)
-			{
-				Logging::writeLog("[Error] Accuracy text is null! Id 1");
-				break;
-			}
-			t->text = acc.substr(0, std::min(acc.size(), acc.find('.') + 3)) + "%";
-			break;
-		case 2: // grade
-			t = static_cast<Text*>(k.second.base);
-			if (t == NULL)
-			{
-				Logging::writeLog("[Error] Grade text is null! Id 2");
-				break;
-			}
 
-			if (accuracy >= 1)
-				t->text = "S";
-			else if (accuracy >= 0.95)
-				t->text = "A+";
-			else if (accuracy >= 0.90)
-				t->text = "A";
-			else if (accuracy >= 0.80)
-				t->text = "B";
-			else if (accuracy >= 0.70)
-				t->text = "C";
-			else if (accuracy >= 0.60)
-				t->text = "D";
-			else
-				t->text = "F";
-
-			break;
-		case 3: // combo
-			t = static_cast<Text*>(k.second.base);
-			if (t == NULL)
+			switch (k.first)
 			{
-				Logging::writeLog("[Error] Combo text is null! Id 3");
+			case 0: // background
+				s = static_cast<Sprite*>(k.second.base);
+				if (s == NULL)
+				{
+					Logging::writeLog("[Error] [Lua] Background is null! Id 0");
+					failedCheck = true;
+					break;
+				}
+				break;
+			case 1: // accuracy
+				t = static_cast<Text*>(k.second.base);
+				if (t == NULL)
+				{
+					Logging::writeLog("[Error] [Lua] Accuracy text is null! Id 1");
+					failedCheck = true;
+					break;
+				}
+				t->text = acc.substr(0, std::min(acc.size(), acc.find('.') + 3)) + "%";
+				break;
+			case 2: // grade
+				t = static_cast<Text*>(k.second.base);
+				if (t == NULL)
+				{
+					Logging::writeLog("[Error] [Lua] Grade text is null! Id 2");
+					failedCheck = true;
+					break;
+				}
+
+				if (accuracy >= 1)
+					t->text = "S";
+				else if (accuracy >= 0.95)
+					t->text = "A+";
+				else if (accuracy >= 0.90)
+					t->text = "A";
+				else if (accuracy >= 0.80)
+					t->text = "B";
+				else if (accuracy >= 0.70)
+					t->text = "C";
+				else if (accuracy >= 0.60)
+					t->text = "D";
+				else
+					t->text = "F";
+
+				break;
+			case 3: // combo
+				t = static_cast<Text*>(k.second.base);
+				if (t == NULL)
+				{
+					Logging::writeLog("[Error] [Lua] Combo text is null! Id 3");
+					failedCheck = true;
+					break;
+				}
+				t->text = std::to_string(combo) + "x";
+				break;
+			case 4: // marv combo counter
+				t = static_cast<Text*>(k.second.base);
+				if (t == NULL)
+				{
+					Logging::writeLog("[Error] [Lua] Marv combo counter text is null! Id 4");
+					failedCheck = true;
+					break;
+				}
+				t->text = "Marvelous: " + std::to_string(marv);
+				break;
+			case 5: // perf combo counter
+				t = static_cast<Text*>(k.second.base);
+				if (t == NULL)
+				{
+					Logging::writeLog("[Error] [Lua] Perfect combo counter text is null! Id 5");
+					failedCheck = true;
+					break;
+				}
+				t->text = "Perfect: " + std::to_string(perf);
+				break;
+			case 6: // great combo counter
+				t = static_cast<Text*>(k.second.base);
+				if (t == NULL)
+				{
+					Logging::writeLog("[Error] [Lua] Great combo counter text is null! Id 6");
+					failedCheck = true;
+					break;
+				}
+				t->text = "Great: " + std::to_string(great);
+				break;
+			case 7: // good combo counter
+				t = static_cast<Text*>(k.second.base);
+				if (t == NULL)
+				{
+					Logging::writeLog("[Error] [Lua] Good combo counter text is null! Id 7");
+					failedCheck = true;
+					break;
+				}
+				t->text = "Good: " + std::to_string(good);
+				break;
+			case 8: // bad combo counter
+				t = static_cast<Text*>(k.second.base);
+				if (t == NULL)
+				{
+					Logging::writeLog("[Error] [Lua] Bad combo counter text is null! Id 8");
+					failedCheck = true;
+					break;
+				}
+				t->text = "Bad: " + std::to_string(bad);
+				break;
+			case 9: // miss combo counter
+				t = static_cast<Text*>(k.second.base);
+				if (t == NULL)
+				{
+					Logging::writeLog("[Error] [Lua] Miss combo counter text is null! Id 9");
+					failedCheck = true;
+					break;
+				}
+				t->text = "Miss: " + std::to_string(miss);
 				break;
 			}
-			t->text = std::to_string(combo) + "x";
-			break;
+		}
+		if (failedCheck)
+		{
+			Logging::writeLog("[Error] [Lua] Not every object was set. The game will no longer update lua objects. Please fix these ^^^");
+			return;
 		}
 	}
 

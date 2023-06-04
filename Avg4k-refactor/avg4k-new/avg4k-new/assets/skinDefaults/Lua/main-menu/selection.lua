@@ -46,8 +46,8 @@ function Selection.select(container)
         cRect.x = -1.5
     end
 
-    tween(Selection.currentContainer, cRect, 0.75, "outCubic")
-    tween(nContainer, nRect, 0.75, "outCubic")
+    tween(Selection.currentContainer, cRect, 0.75, "outCubic", "")
+    tween(nContainer, nRect, 0.75, "outCubic", "")
 
     Selection.currentContainerIndex = container
     Selection.currentContainer = nContainer

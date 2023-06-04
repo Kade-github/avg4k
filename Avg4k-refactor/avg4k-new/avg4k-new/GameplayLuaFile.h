@@ -12,6 +12,8 @@ namespace Average4k::Lua
 		GameplayLuaFile(std::string path) : LuaFile(path)
 		{
 			objects = {};
+			for (int i = 0; i < 10; i++)
+				setObjects.insert(std::make_pair(i, Base::gameObject()));
 		}
 
 

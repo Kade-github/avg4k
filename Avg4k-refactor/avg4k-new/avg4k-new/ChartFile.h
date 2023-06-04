@@ -176,9 +176,12 @@ namespace Average4k::Chart
 		float GetBeatFromTime(float time)
 		{
 			float beat = 0;
+			float lol = time;
+			if (lol < 0)
+				lol = chartMetadata.TimingPoints[0].StartTimestamp;
 			for (TimingPoint& tp : chartMetadata.TimingPoints)
 			{
-				if (tp.StartTimestamp <= time && tp.EndTimestamp > time)
+				if (tp.StartTimestamp <= lol && tp.EndTimestamp > lol)
 				{
 					Chart::StopPoint sp = GetStopPointTime(time);
 					float stopEndTime = sp.StartTimestamp + sp.Length;

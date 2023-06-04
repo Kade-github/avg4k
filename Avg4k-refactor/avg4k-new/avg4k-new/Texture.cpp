@@ -27,10 +27,12 @@ bool validImage(std::string path)
 
 Texture* Texture::createWithImage(std::string filePath)
 {
-	if (!validImage(filePath))
+	if (!validImage(filePath) || filePath.find('.') == std::string::npos)
 	{
 		unsigned char c[] = { 0, 0, 0, 255 };
-		return new Texture(c, 1, 1);
+		Texture* tt = new Texture(c, 1, 1);
+		tt->fromSTBI = false;
+		return tt;
 	}
 	Texture* t = External::stbi_h::stbi_load_file(filePath);
 	t->fromSTBI = true;
@@ -39,7 +41,9 @@ Texture* Texture::createWithImage(std::string filePath)
 	{
 		unsigned char c[] = { 0, 0, 0, 255 };
 		delete t;
-		return new Texture(c, 1, 1);
+		Texture* tt = new Texture(c, 1, 1);
+		tt->fromSTBI = false;
+		return tt;
 	}
 
 	return t;

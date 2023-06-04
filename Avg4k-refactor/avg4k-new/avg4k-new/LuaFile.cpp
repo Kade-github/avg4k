@@ -259,7 +259,6 @@ void LuaFile::Load()
 
 	lua->set_function("loadChartTexture", [&](texture& tex) {
 		AvgEngine::OpenGL::Texture* t = Average4K::skin->GetChartTexture(tex.path, true);
-		t->fromSTBI = true;
 		t->dontDelete = true;
 		textures.push_back(t);
 		tex.w = t->width;
@@ -313,7 +312,6 @@ void LuaFile::Load()
 		{
 			texture& tex = texes[i + 1];
 			AvgEngine::OpenGL::Texture* t = AvgEngine::OpenGL::Texture::loadTextureFromData(tex.tempData, tex.w, tex.h);
-			t->fromSTBI = true;
 			t->dontDelete = true;
 			textures.push_back(t);
 			tex.id = t->id;

@@ -15,11 +15,16 @@ public:
 
 	float menuStartimestamp = 0;
 
+	bool ended = false;
+	bool isStarted = false;
+
 	std::vector<Average4k::Objects::Gameplay::Playfield*> playfields{};
 
 	Gameplay(std::string path) : Average4k::Lua::GameplayMenu(path)
 	{
 	}
+
+	void End();
 
 	void AddPlayfield();
 

@@ -10,6 +10,13 @@ namespace Average4ker
 }
 
 
+void Gameplay::End()
+{
+	c->Stop();
+	Average4ker::a4er->SwitchMenu(new MainMenu(Average4K::skin->GetLua("main-menu")));
+	ended = true;
+}
+
 void Gameplay::AddPlayfield()
 {
 	float noteSize = std::stof(Average4K::settings->Get("Note Size").value);
@@ -59,8 +66,7 @@ void Gameplay::load()
 
 		if (e.data == GLFW_KEY_ESCAPE)
 		{
-			c->Stop();
-			Average4ker::a4er->SwitchMenu(new MainMenu(Average4K::skin->GetLua("main-menu")));
+			End();
 		}
 
 		if (e.data == GLFW_KEY_F1)
@@ -81,7 +87,11 @@ void Gameplay::load()
 
 void Gameplay::draw()
 {
-
+	if (ended)
+	{
+		Average4k::Lua::GameplayMenu::draw();
+		return;
+	}
 	for (QueuedPacket& p : Average4ker::a4er->queuedPackets)
 	{
 
@@ -99,6 +109,7 @@ void Gameplay::draw()
 	{
 		c->Play();
 		Logging::writeLog("[Gameplay] Song started at " + std::to_string(songStart));
+		isStarted = true;
 	}
 
 	float time = c->GetPos();
@@ -106,11 +117,39 @@ void Gameplay::draw()
 		time = -std::abs(songStart - glfwGetTime());
 	float beat = Average4ker::a4er->options.currentFile->GetBeatFromTime(time);
 
-	for (Average4k::Objects::Gameplay::Playfield* p : playfields)
+	bool shouldEnd = true;
+
+	if (isStarted)
 	{
-		p->time = time;
-		p->beat = beat;
+		if (!c->isPlaying) // the end
+			time = INT_MAX;
+		for (Average4k::Objects::Gameplay::Playfield* p : playfields)
+		{
+			p->time = time;
+			p->beat = beat;
+			bool b = false;
+			for (auto r : p->receptors)
+			{
+				if (r->notes.size() != 0 || r->Children.size() != 0)
+				{
+					shouldEnd = false;
+					b = true;
+					break;
+				}
+			}
+			if (b)
+				break;
+		}
 	}
+	else
+		shouldEnd = false;
+
+	if (shouldEnd && !ended)
+	{
+		End();
+		return;
+	}
+
 	Text* t = NULL;
 	Sprite* s = NULL;
 	std::string acc = std::to_string(accuracy * 100);

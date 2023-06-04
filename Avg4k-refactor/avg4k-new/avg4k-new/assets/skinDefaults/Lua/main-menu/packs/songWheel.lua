@@ -81,20 +81,8 @@ function songWheel.SetDiff()
 
     -- Check if the file has more than one diff, if it does then set the arrows to visible (otherwise don't) and space the correctly around the diff text
     if #songWheel.files[songWheel.selectedIndex].difficulties > 1 then
-        local real = Containers.scontainer.songInfo_difficultyName:getRealRect()
-        local p = Containers.scontainer.songInfo_difficultyName.parent:getRealRect()
         Containers.scontainer.songInfo_difficultyLeftArrow.transform.alpha = 1
         Containers.scontainer.songInfo_difficultyRightArrow.transform.alpha = 1
-        Containers.scontainer.songInfo_difficultyLeftArrow.transform.x = real.x -
-            (Containers.scontainer.songInfo_difficultyLeftArrow.transform.w * Containers.scontainer.songInfo_difficultyLeftArrow.transform.scale) -
-            p.x
-        Containers.scontainer.songInfo_difficultyLeftArrow.transform.y = real.y - p.y -
-            (((Containers.scontainer.songInfo_difficultyLeftArrow.transform.h / 2) * Containers.scontainer.songInfo_difficultyLeftArrow.transform.scale))
-        Containers.scontainer.songInfo_difficultyRightArrow.transform.x = (real.x + real.w - 4) +
-            (Containers.scontainer.songInfo_difficultyLeftArrow.transform.w * Containers.scontainer.songInfo_difficultyLeftArrow.transform.scale) -
-            p.x
-        Containers.scontainer.songInfo_difficultyRightArrow.transform.y = real.y - p.y -
-            (((Containers.scontainer.songInfo_difficultyRightArrow.transform.h / 2) * Containers.scontainer.songInfo_difficultyRightArrow.transform.scale))
     else
         Containers.scontainer.songInfo_difficultyLeftArrow.transform.alpha = 0
         Containers.scontainer.songInfo_difficultyRightArrow.transform.alpha = 0
@@ -157,14 +145,15 @@ function songWheel.Select(amt)
             Containers.scontainer.songInfo_onlineText.text = "Local File"
         end
 
-        local p = Containers.scontainer.songInfo_chartType.parent:getRealRect()
-        local real = Containers.scontainer.songInfo_onlineText:getRealRect()
         Containers.scontainer.songInfo_onlineText.transform.alpha = 0.7
-        Containers.scontainer.songInfo_onlineText.transform.x = p.w -
-            ((Containers.scontainer.songInfo_onlineText:getRealRect().w / 2) + (14 * skin['upscale']))
-        Containers.scontainer.songInfo_onlineText.transform.y = Containers.scontainer.songInfo_chartType:getRealRect().y -
-            p.y
 
+        if #songWheel.files[songWheel.selectedIndex].difficulties > 1 then
+            Containers.scontainer.songInfo_difficultyLeftArrow.transform.alpha = 1
+            Containers.scontainer.songInfo_difficultyRightArrow.transform.alpha = 1
+        else
+            Containers.scontainer.songInfo_difficultyLeftArrow.transform.alpha = 0
+            Containers.scontainer.songInfo_difficultyRightArrow.transform.alpha = 0
+        end
 
         songWheel.SetDiff()
 
@@ -248,6 +237,24 @@ function songWheel.update(t)
         item.transform.x = xBasedOnRank - (item.transform.w / 2)
         item.transform.y = ((real.h / 2) - item.transform.h / 2) + ((item.transform.h + 8) * away)
     end
+
+    Containers.scontainer.songInfo_onlineText.transform.x = 1 -
+        (Containers.scontainer.songInfo_onlineText.transform.w + (Containers.scontainer.songInfo_onlineText.transform.w / 12))
+    Containers.scontainer.songInfo_onlineText.transform.y = Containers.scontainer.songInfo_chartType.transform.y
+
+    Containers.scontainer.songInfo_difficultyLeftArrow.transform.x = Containers.scontainer.songInfo_difficultyName
+        .transform.x -
+        (Containers.scontainer.songInfo_difficultyLeftArrow.transform.w + Containers.scontainer.songInfo_difficultyName
+            .transform.w / 2)
+    Containers.scontainer.songInfo_difficultyLeftArrow.transform.y = Containers.scontainer.songInfo_difficultyName
+        .transform.y - (Containers.scontainer.songInfo_difficultyName.transform.h / 2)
+
+    Containers.scontainer.songInfo_difficultyRightArrow.transform.x = Containers.scontainer.songInfo_difficultyName
+        .transform.x +
+        ((Containers.scontainer.songInfo_difficultyName.transform.w / 2) + (Containers.scontainer.songInfo_difficultyRightArrow.transform.w / 2))
+
+    Containers.scontainer.songInfo_difficultyRightArrow.transform.y = Containers.scontainer.songInfo_difficultyName
+        .transform.y - (Containers.scontainer.songInfo_difficultyName.transform.h / 2)
 
     if not songWheel.playedSong and Globals.lt - songWheel.started > 0.25 then
         local channel = playChannelAsync(songWheel.selectedFile.folder .. '/' .. songWheel.selectedFile.songFile, "menu")

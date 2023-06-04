@@ -129,6 +129,7 @@ function Containers.soloCreate(c)
     create(Containers.scontainer.songInfo_difficultyLeftArrow)
     Containers.scontainer.songInfo:add(Containers.scontainer.songInfo_difficultyLeftArrow)
     Containers.scontainer.songInfo_difficultyLeftArrow.transform.alpha = 0
+    Containers.scontainer.songInfo_difficultyLeftArrow.ratio = true
     Containers.scontainer.songInfo_difficultyLeftArrow.order = 2
     Containers.scontainer.songInfo_difficultyLeftArrow.tag = "songInfo_difficultyLeftArrow"
     Containers.scontainer.songInfo_difficultyLeftArrow.transform.scale = 0.5 * skin["upscale"]
@@ -138,6 +139,7 @@ function Containers.soloCreate(c)
     create(Containers.scontainer.songInfo_difficultyRightArrow)
     Containers.scontainer.songInfo:add(Containers.scontainer.songInfo_difficultyRightArrow)
     Containers.scontainer.songInfo_difficultyRightArrow.transform.alpha = 0
+    Containers.scontainer.songInfo_difficultyRightArrow.ratio = true
     Containers.scontainer.songInfo_difficultyRightArrow.transform.angle = 180
     Containers.scontainer.songInfo_difficultyRightArrow.order = 2
     Containers.scontainer.songInfo_difficultyRightArrow.tag = "songInfo_difficultyRightArrow"
@@ -158,6 +160,7 @@ function Containers.soloCreate(c)
     Containers.scontainer.songInfo_onlineText = text.new(0, 0, "Arial.fnt", "Song Online Text")
     create(Containers.scontainer.songInfo_onlineText)
     Containers.scontainer.songInfo_onlineText.size = 22 * skin["upscale"]
+    Containers.scontainer.songInfo_onlineText.ratio = true
     Containers.scontainer.songInfo_onlineText.characterSpacing = 2.33
     Containers.scontainer.songInfo:add(Containers.scontainer.songInfo_onlineText)
     Containers.scontainer.songInfo_onlineText.tag = "songInfo_onlineText"

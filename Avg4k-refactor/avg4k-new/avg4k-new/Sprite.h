@@ -126,6 +126,11 @@ namespace AvgEngine::Base
 					r.x = parent->x + (parent->w * (r.x));
 					r.y = parent->y + (parent->h * (r.y));
 
+					if (transform.w > 1)
+						transform.w = texture->width / parent->w;
+					if (transform.h > 1)
+						transform.h = texture->height / parent->h;
+
 					r.w = (parent->w * (r.w));
 					r.h = (parent->h * (r.h));
 

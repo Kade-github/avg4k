@@ -289,6 +289,11 @@ namespace AvgEngine::Base
 
 			transform.w = highestW;
 			transform.h = d;
+			if (transformRatio)
+			{
+				transform.w = highestW / parent->w;
+				transform.h = d / parent->h;
+			}
 			call.clip = cr;
 			call.zIndex = zIndex;
 			camera->addDrawCall(call);

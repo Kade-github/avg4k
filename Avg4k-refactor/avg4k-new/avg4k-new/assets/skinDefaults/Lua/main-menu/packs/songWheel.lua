@@ -174,6 +174,7 @@ function songWheel.Select(amt)
         bg.transform.y = 0.5
         bg.transform.w = 1.0
         bg.transform.h = 1.0
+        bg.order = -1
         bg.transform.scale = skin["upscale"]
         songWheel.bg = bg
     end

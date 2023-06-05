@@ -84,13 +84,6 @@ function Avatar.createIcon(notDefault)
     Avatar.av.ratio = true
 end
 
-function Avatar.Resize()
-    Avatar.oborder.transform.scale = skin["upscale"] * 0.35
-    Avatar.border.transform.scale = skin["upscale"] * 0.35
-    Avatar.helloText.size = 24.0 * skin["upscale"]
-    Avatar.versionText.size = 24.0 * skin["upscale"]
-end
-
 function Avatar.create()
     -- ok lets go ahead and fetch the avatar data
     -- we can index the "online" table, which is given by average4k

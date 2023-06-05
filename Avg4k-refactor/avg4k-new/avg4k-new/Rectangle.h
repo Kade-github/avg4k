@@ -105,6 +105,8 @@ namespace AvgEngine::Base
 			}
 
 			iTransform = r;
+			iTransform.w *= transform.scale;
+			iTransform.h *= transform.scale;
 
 			if (cr.w == 0 && cr.h == 0 && parentClip)
 				cr = *parentClip;

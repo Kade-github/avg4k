@@ -243,7 +243,8 @@ function songWheel.update(t)
         end
         item.transform.scale = skin["upscale"]
         item.transform.x = xBasedOnRank - (item.transform.w / 2)
-        item.transform.y = (((real.h * skin["upscale"]) / 2) - item.transform.h / 2) + ((item.transform.h + 8) * away)
+        item.transform.y = (((real.h) / 2) - (item.transform.h * skin["upscale"]) / 2) +
+        (((item.transform.h * skin["upscale"]) + 8) * away)
     end
 
     Containers.scontainer.onlineText.transform.x = 1 -

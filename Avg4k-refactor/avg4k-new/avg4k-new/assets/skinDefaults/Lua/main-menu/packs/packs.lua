@@ -36,9 +36,14 @@ function packContainer.mouseDown()
 end
 
 function packContainer.update(time)
+    local c = packContainer.main
+    local real = c:getRealRect()
     for i = 1, #packContainer.sprites, 1 do
         local s = packContainer.sprites[i]
-        s.transform.scale = skin["upscale"]
+        s.transform.x = 2
+        s.transform.y = ((75 * skin["upscale"]) * (i - 1)) + 2
+        s.transform.w = real.w
+        s.transform.h = 75 * skin["upscale"]
     end
 end
 
@@ -53,14 +58,15 @@ function packContainer.loadPacks(c)
         c:add(s)
         s.transform.x = 2
         s.transform.y = ((75 * skin["upscale"]) * (i - 1)) + 2
-        s.transform.w = real.w - 2
-        s.transform.h = 73
+        s.transform.w = real.w
+        s.transform.h = 75
 
         local hitbox = rectangle.new(0, 0, real.w, 73)
         create(hitbox)
         hitbox.tag = "hitbox"
         hitbox.order = 2
         hitbox.transform.alpha = 0
+        hitbox.transform.scale = skin["upscale"]
         s:add(hitbox)
 
         table.insert(packContainer.hitboxes, hitbox)

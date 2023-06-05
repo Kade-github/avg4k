@@ -171,6 +171,17 @@ namespace AvgEngine::Base
 
 			iTransform = r;
 
+			if (center)
+			{
+				float mpx = (iTransform.w * (1 - iTransform.scale)) / 2;
+				float mpy = (iTransform.h * (1 - iTransform.scale)) / 2;
+				iTransform.x += mpx;
+				iTransform.y += mpy;
+			}
+
+			iTransform.w *= transform.scale;
+			iTransform.h *= transform.scale;
+
 			r.x += transformOffset.x;
 			r.y += transformOffset.y;
 			r.w += transformOffset.w;

@@ -19,3 +19,14 @@ bool Average4k::Lua::Base::sprite::getCenter()
 	}
 	return false;
 }
+
+void Average4k::Lua::Base::sprite::recalculateRatio()
+{
+	if (!base)
+	{
+		AvgEngine::Logging::writeLog("[Error] You cannot calculate a ratio of a sprite without a base object!");
+		return;
+	}
+	AvgEngine::Base::Sprite* s = static_cast<AvgEngine::Base::Sprite*>(base);
+	s->recalculateRatio();
+}

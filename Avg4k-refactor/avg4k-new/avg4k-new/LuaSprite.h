@@ -11,6 +11,8 @@ namespace Average4k::Lua::Base
 
 		bool getCenter();
 
+		void recalculateRatio();
+
 		sprite(float x, float y, texture _tex) : gameObject(x, y)
 		{
 			type = 1;

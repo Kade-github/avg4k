@@ -192,9 +192,3 @@ function Selection.create()
     Selection.currentContainer = Containers.solo
     Selection.lastChange = getTime() + 1.2
 end
-
-function Selection.Resize()
-    Selection.soloText.size = 36 * (skin["upscale"])
-    Selection.multiplayerText.size = 36 * (skin["upscale"])
-    Selection.settingsText.size = 36 * (skin["upscale"])
-end

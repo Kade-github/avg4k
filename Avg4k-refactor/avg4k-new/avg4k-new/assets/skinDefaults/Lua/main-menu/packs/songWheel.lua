@@ -10,6 +10,9 @@ songWheel.moreInfo = false
 songWheel.playedSong = true
 songWheel.started = 0
 
+songWheel.tops = {}
+songWheel.banners = {}
+
 function songWheel.init(container)
     songWheel.main = container
 end
@@ -46,10 +49,15 @@ function songWheel.setSongs(files)
         sprite.tag = "bBackground"
         sprite.transform.w = wheelTexture.width
         sprite.transform.h = wheelTexture.height
+        sprite.transform.scale = skin["upscale"]
         sprite.order = -1
         local y = (i - 1) * wheelTexture.height
         local wheelTop = sprite.new(0, 0, wheelTexture)
+        wheelTop.transform.scale = skin["upscale"]
         create(wheelTop)
+
+        songWheel.tops[i] = wheelTop
+        songWheel.banners[i] = sprite
 
         wheelTop.tag = "top-" .. tostring(i)
 
@@ -73,19 +81,19 @@ function songWheel.SetDiff()
     end
 
     local diff = tostring(songWheel.files[songWheel.selectedIndex].difficulties[songWheel.selectedDiff].difficultyRating)
-    Containers.scontainer.songInfo_difficulty.text = diff
-    Containers.scontainer.songInfo_difficultyName.text = diffName
+    Containers.scontainer.diffValue.text = diff
+    Containers.scontainer.diffName.text = diffName
 
-    Containers.scontainer.songInfo_difficulty.transform.alpha = 1
-    Containers.scontainer.songInfo_difficultyName.transform.alpha = 1
+    Containers.scontainer.diffValue.transform.alpha = 1
+    Containers.scontainer.diffName.transform.alpha = 1
 
     -- Check if the file has more than one diff, if it does then set the arrows to visible (otherwise don't) and space the correctly around the diff text
     if #songWheel.files[songWheel.selectedIndex].difficulties > 1 then
-        Containers.scontainer.songInfo_difficultyLeftArrow.transform.alpha = 1
-        Containers.scontainer.songInfo_difficultyRightArrow.transform.alpha = 1
+        Containers.scontainer.diffLeftArrow.transform.alpha = 1
+        Containers.scontainer.diffRightArrow.transform.alpha = 1
     else
-        Containers.scontainer.songInfo_difficultyLeftArrow.transform.alpha = 0
-        Containers.scontainer.songInfo_difficultyRightArrow.transform.alpha = 0
+        Containers.scontainer.diffLeftArrow.transform.alpha = 0
+        Containers.scontainer.diffRightArrow.transform.alpha = 0
     end
 end
 
@@ -123,36 +131,36 @@ function songWheel.Select(amt)
             artist = "Unknown"
         end
 
-        Containers.scontainer.songInfo_title.text = title
-        Containers.scontainer.songInfo_artist.text = artist
-        Containers.scontainer.songInfo_title.transform.alpha = 1
-        Containers.scontainer.songInfo_artist.transform.alpha = 1
+        Containers.scontainer.title.text = title
+        Containers.scontainer.artist.text = artist
+        Containers.scontainer.title.transform.alpha = 1
+        Containers.scontainer.artist.transform.alpha = 1
 
         if songWheel.selectedFile.chartType == 1 then
-            Containers.scontainer.songInfo_chartType.text = "Stepmania"
+            Containers.scontainer.chartType.text = "Stepmania"
         elseif songWheel.selectedFile.chartType == 2 then
-            Containers.scontainer.songInfo_chartType.text = "Quaver"
+            Containers.scontainer.chartType.text = "Quaver"
         elseif songWheel.selectedFile.chartType == 3 then
-            Containers.scontainer.songInfo_chartType.text = "Osu!"
+            Containers.scontainer.chartType.text = "Osu!"
         else
-            Containers.scontainer.songInfo_chartType.text = "Unknown"
+            Containers.scontainer.chartType.text = "Unknown"
         end
-        Containers.scontainer.songInfo_chartType.transform.alpha = 0.7
+        Containers.scontainer.chartType.transform.alpha = 0.7
 
         if songWheel.selectedFile.isSteam then
-            Containers.scontainer.songInfo_onlineText.text = "Steam Workshop"
+            Containers.scontainer.onlineText.text = "Steam Workshop"
         else
-            Containers.scontainer.songInfo_onlineText.text = "Local File"
+            Containers.scontainer.onlineText.text = "Local File"
         end
 
-        Containers.scontainer.songInfo_onlineText.transform.alpha = 0.7
+        Containers.scontainer.onlineText.transform.alpha = 0.7
 
         if #songWheel.files[songWheel.selectedIndex].difficulties > 1 then
-            Containers.scontainer.songInfo_difficultyLeftArrow.transform.alpha = 1
-            Containers.scontainer.songInfo_difficultyRightArrow.transform.alpha = 1
+            Containers.scontainer.diffLeftArrow.transform.alpha = 1
+            Containers.scontainer.diffRightArrow.transform.alpha = 1
         else
-            Containers.scontainer.songInfo_difficultyLeftArrow.transform.alpha = 0
-            Containers.scontainer.songInfo_difficultyRightArrow.transform.alpha = 0
+            Containers.scontainer.diffLeftArrow.transform.alpha = 0
+            Containers.scontainer.diffRightArrow.transform.alpha = 0
         end
 
         songWheel.SetDiff()
@@ -164,19 +172,18 @@ function songWheel.Select(amt)
             songWheel.bg = nil
             return
         end
-        local bg = helper.createChartSprite(
+        Containers.scontainer.bg = helper.createChartSprite(
             songWheel.selectedFile.folder .. '/' .. songWheel.selectedFile.songBackground, 0.0, 0.0)
-        create(bg)
-        bg.center = true
-        Containers.scontainer.songInfo:add(bg)
-        bg.ratio = true
-        bg.transform.x = 0.5
-        bg.transform.y = 0.5
-        bg.transform.w = 1.0
-        bg.transform.h = 1.0
-        bg.order = -1
-        bg.transform.scale = skin["upscale"]
-        songWheel.bg = bg
+        create(Containers.scontainer.bg)
+        Containers.scontainer.bg.center = true
+        Containers.scontainer.songInfo:add(Containers.scontainer.bg)
+        Containers.scontainer.bg.ratio = true
+        Containers.scontainer.bg.transform.x = 0.5
+        Containers.scontainer.bg.transform.y = 0.5
+        Containers.scontainer.bg.transform.w = 1.0
+        Containers.scontainer.bg.transform.h = 1.0
+        Containers.scontainer.bg.order = -1
+        songWheel.bg = Containers.scontainer.bg
     end
 end
 
@@ -236,26 +243,26 @@ function songWheel.update(t)
         end
         item.transform.scale = skin["upscale"]
         item.transform.x = xBasedOnRank - (item.transform.w / 2)
-        item.transform.y = ((real.h / 2) - item.transform.h / 2) + ((item.transform.h + 8) * away)
+        item.transform.y = (((real.h * skin["upscale"]) / 2) - item.transform.h / 2) + ((item.transform.h + 8) * away)
     end
 
-    Containers.scontainer.songInfo_onlineText.transform.x = 1 -
-        (Containers.scontainer.songInfo_onlineText.transform.w + (Containers.scontainer.songInfo_onlineText.transform.w / 12))
-    Containers.scontainer.songInfo_onlineText.transform.y = Containers.scontainer.songInfo_chartType.transform.y
+    Containers.scontainer.onlineText.transform.x = 1 -
+        (Containers.scontainer.onlineText.transform.w + (Containers.scontainer.onlineText.transform.w / 12))
+    Containers.scontainer.onlineText.transform.y = Containers.scontainer.chartType.transform.y
 
-    Containers.scontainer.songInfo_difficultyLeftArrow.transform.x = Containers.scontainer.songInfo_difficultyName
+    Containers.scontainer.diffLeftArrow.transform.x = Containers.scontainer.diffName
         .transform.x -
-        (Containers.scontainer.songInfo_difficultyLeftArrow.transform.w + Containers.scontainer.songInfo_difficultyName
+        (Containers.scontainer.diffLeftArrow.transform.w + Containers.scontainer.diffName
             .transform.w / 2)
-    Containers.scontainer.songInfo_difficultyLeftArrow.transform.y = Containers.scontainer.songInfo_difficultyName
-        .transform.y - (Containers.scontainer.songInfo_difficultyName.transform.h / 2)
+    Containers.scontainer.diffLeftArrow.transform.y = Containers.scontainer.diffName
+        .transform.y - (Containers.scontainer.diffName.transform.h / 2)
 
-    Containers.scontainer.songInfo_difficultyRightArrow.transform.x = Containers.scontainer.songInfo_difficultyName
+    Containers.scontainer.diffRightArrow.transform.x = Containers.scontainer.diffName
         .transform.x +
-        ((Containers.scontainer.songInfo_difficultyName.transform.w / 2) + (Containers.scontainer.songInfo_difficultyRightArrow.transform.w / 2))
+        ((Containers.scontainer.diffName.transform.w / 2) + (Containers.scontainer.diffRightArrow.transform.w / 2))
 
-    Containers.scontainer.songInfo_difficultyRightArrow.transform.y = Containers.scontainer.songInfo_difficultyName
-        .transform.y - (Containers.scontainer.songInfo_difficultyName.transform.h / 2)
+    Containers.scontainer.diffRightArrow.transform.y = Containers.scontainer.diffName
+        .transform.y - (Containers.scontainer.diffName.transform.h / 2)
 
     if not songWheel.playedSong and Globals.lt - songWheel.started > 0.25 then
         local channel = playChannelAsync(songWheel.selectedFile.folder .. '/' .. songWheel.selectedFile.songFile, "menu")

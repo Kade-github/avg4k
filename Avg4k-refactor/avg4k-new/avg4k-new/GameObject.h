@@ -35,6 +35,7 @@ namespace AvgEngine::Base
 
 		Render::Rect transformOffset = Render::Rect();
 		Render::Rect* parent = NULL;
+		Render::Rect* parentI = NULL;
 
 		std::string tag = "object";
 
@@ -152,6 +153,7 @@ namespace AvgEngine::Base
 			object->eManager = eManager;
 			object->camera = camera;
 			object->parent = &transform;
+			object->parentI = &iTransform;
 			object->Added();
 			Children.push_back(object);
 			lastObjectId++;

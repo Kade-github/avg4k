@@ -71,6 +71,7 @@ namespace AvgEngine::Base
 			object->eManager = eManager;
 			object->camera = &camera;
 			object->parent = &displayRect;
+			object->parentI = &displayRect;
 			object->Added();
 			GameObjects.push_back(object);
 			lastObjectId++;

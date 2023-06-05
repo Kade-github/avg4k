@@ -233,6 +233,7 @@ void Average4k::Lua::MenuLuaFile::Load()
 		Average4K* c = static_cast<Average4K*>(Average4K::Instance);
 
 		c->SetResolution(std::to_string(w) + "x" + std::to_string(h));
+
 	});
 
 

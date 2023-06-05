@@ -39,11 +39,5 @@ namespace Average4k::Lua
 			file->Function("GamepadPress", std::to_string(e.data));
 		});
 
-		eManager->Subscribe(AvgEngine::Events::EventType::Event_Resize, [&](AvgEngine::Events::Event e)
-		{
-			sol::global_table& t = file->lua->globals();
-			t["skin"]["upscale"] = Average4K::skin->upscale;
-			file->Function("Resize", e.vector.toString());
-		}, true, true);
 	}
 }

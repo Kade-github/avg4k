@@ -61,10 +61,11 @@ function GamepadPress(key)
 end
 
 function Resize()
-    cprint("Resize scale: " .. tostring(skin["upscale"]))
+    cprint("[RESIZE!] Resize scale: " .. tostring(skin["upscale"]))
     Avatar.Resize()
     Containers.Resize()
     Selection.Resize()
+    helper.resize()
 end
 
 Globals = {}

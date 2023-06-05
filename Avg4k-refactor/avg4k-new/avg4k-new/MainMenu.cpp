@@ -15,6 +15,10 @@ void MainMenu::load()
 	a4er = static_cast<Average4K*>(Average4K::Instance);
 	a4er->options.inGameplay = false;
 	Average4k::Lua::LuaMenu::load();
+
+	eManager->Subscribe(AvgEngine::Events::EventType::Event_Resize, [&](AvgEngine::Events::Event e) {
+		Reload();
+	}, true, true);
 }
 
 void MainMenu::draw()

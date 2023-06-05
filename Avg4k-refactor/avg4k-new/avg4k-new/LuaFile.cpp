@@ -377,6 +377,7 @@ void LuaFile::Load()
 		sol::constructors<sprite(double, double, texture)>(),
 		"texture", &sprite::tex,
 		"center", sol::property(&sprite::getCenter, &sprite::setCenter),
+		"recalculateRatio", &sprite::recalculateRatio,
 		sol::base_classes, sol::bases<gameObject>()
 		);
 

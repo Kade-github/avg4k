@@ -54,6 +54,34 @@ namespace AvgEngine::Base
 				delete texture;
 		}
 
+		void recalculateRatio()
+		{
+			if (transformRatio)
+			{
+				if (parentI)
+				{
+					transform.w = (static_cast<float>(texture->width) / parentI->w);
+					transform.h = (static_cast<float>(texture->height) / parentI->h);
+					iTransform.w = (transform.w * parentI->w);
+					iTransform.h = (transform.h * parentI->h);
+				}
+				else
+				{
+					transform.w = (static_cast<float>(texture->width) / parent->w);
+					transform.h = (static_cast<float>(texture->height) / parent->h);
+					iTransform.w = (transform.w * parent->w);
+					iTransform.h = (transform.h * parent->h);
+				}
+			}
+			else
+			{
+				transform.w = texture->width;
+				transform.h = texture->height;
+				iTransform.w = transform.w;
+				iTransform.h = transform.h;
+			}
+		}
+
 		void setRatio(bool r) override
 		{
 			if (!parent)
@@ -61,18 +89,10 @@ namespace AvgEngine::Base
 				AvgEngine::Logging::writeLog("[Sprite] [Error] You cannot set the ratio when the parent is null!");
 				return;
 			}
+
 			if (transform.w > 1)
 			{
-				if (r)
-				{
-					transform.w = (static_cast<float>(texture->width) / parent->w);
-					transform.h = (static_cast<float>(texture->height) / parent->h);
-				}
-				else
-				{
-					transform.w = texture->width;
-					transform.h = texture->height;
-				}
+				recalculateRatio();
 			}
 			GameObject::setRatio(r);
 		}

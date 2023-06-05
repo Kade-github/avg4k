@@ -73,99 +73,101 @@ function Containers.soloCreate(c)
     Containers.scontainer.songInfo.transform.w = 0.26
     helper.initContainer(Containers.scontainer.songInfo, false)
 
-    Containers.scontainer.songInfo_title = text.new(0, 0, "ArialBold.fnt", "Song Title")
-    create(Containers.scontainer.songInfo_title)
-    Containers.scontainer.songInfo_title.size = 28 * skin["upscale"]
-    Containers.scontainer.songInfo_title.characterSpacing = 3
-    Containers.scontainer.songInfo:add(Containers.scontainer.songInfo_title)
-    Containers.scontainer.songInfo_title.ratio = true
-    Containers.scontainer.songInfo_title.transform.x = 0.06
-    Containers.scontainer.songInfo_title.transform.y = 0.04
-    Containers.scontainer.songInfo_title.tag = "songInfo_title"
-    Containers.scontainer.songInfo_title.order = 2
-    Containers.scontainer.songInfo_title.transform.alpha = 0
+    Containers.scontainer.title = text.new(0, 0, "ArialBold.fnt", "Song Title")
+    create(Containers.scontainer.title)
+    Containers.scontainer.title.size = 28 * skin["upscale"]
+    Containers.scontainer.title.characterSpacing = 3
+    Containers.scontainer.songInfo:add(Containers.scontainer.title)
+    Containers.scontainer.title.ratio = true
+    Containers.scontainer.title.transform.x = 0.06
+    Containers.scontainer.title.transform.y = 0.04
+    Containers.scontainer.title.tag = "songInfo_title"
+    Containers.scontainer.title.order = 2
+    Containers.scontainer.title.transform.alpha = 0
 
-    Containers.scontainer.songInfo_artist = text.new(0, 0, "Arial.fnt", "Song Artist")
-    create(Containers.scontainer.songInfo_artist)
-    Containers.scontainer.songInfo_artist.size = 20 * skin["upscale"]
-    Containers.scontainer.songInfo_artist.characterSpacing = 2.33
-    Containers.scontainer.songInfo:add(Containers.scontainer.songInfo_artist)
-    Containers.scontainer.songInfo_artist.ratio = true
-    Containers.scontainer.songInfo_artist.transform.x = 0.06
-    Containers.scontainer.songInfo_artist.transform.y = 0.08
-    Containers.scontainer.songInfo_artist.tag = "songInfo_artist"
-    Containers.scontainer.songInfo_artist.order = 2
-    Containers.scontainer.songInfo_artist.transform.alpha = 0
+    Containers.scontainer.artist = text.new(0, 0, "Arial.fnt", "Song Artist")
+    create(Containers.scontainer.artist)
+    Containers.scontainer.artist.size = 20 * skin["upscale"]
+    Containers.scontainer.artist.characterSpacing = 2.33
+    Containers.scontainer.songInfo:add(Containers.scontainer.artist)
+    Containers.scontainer.artist.ratio = true
+    Containers.scontainer.artist.transform.x = 0.06
+    Containers.scontainer.artist.transform.y = 0.08
+    Containers.scontainer.artist.tag = "songInfo_artist"
+    Containers.scontainer.artist.order = 2
+    Containers.scontainer.artist.transform.alpha = 0
 
-    Containers.scontainer.songInfo_difficulty = text.new(0, 0, "ArialBold.fnt", "Song Diff")
-    create(Containers.scontainer.songInfo_difficulty)
-    Containers.scontainer.songInfo_difficulty.size = 28 * skin["upscale"]
-    Containers.scontainer.songInfo_difficulty.characterSpacing = 2.33
-    Containers.scontainer.songInfo:add(Containers.scontainer.songInfo_difficulty)
-    Containers.scontainer.songInfo_difficulty.ratio = true
-    Containers.scontainer.songInfo_difficulty.ratio = true
-    Containers.scontainer.songInfo_difficulty.center = true
-    Containers.scontainer.songInfo_difficulty.transform.x = 0.5
-    Containers.scontainer.songInfo_difficulty.transform.y = 0.55
-    Containers.scontainer.songInfo_difficulty.tag = "songInfo_difficulty"
-    Containers.scontainer.songInfo_difficulty.order = 2
-    Containers.scontainer.songInfo_difficulty.transform.alpha = 0
+    Containers.scontainer.diffValue = text.new(0, 0, "ArialBold.fnt", "Song Diff")
+    create(Containers.scontainer.diffValue)
+    Containers.scontainer.diffValue.size = 28 * skin["upscale"]
+    Containers.scontainer.diffValue.characterSpacing = 2.33
+    Containers.scontainer.songInfo:add(Containers.scontainer.diffValue)
+    Containers.scontainer.diffValue.ratio = true
+    Containers.scontainer.diffValue.ratio = true
+    Containers.scontainer.diffValue.center = true
+    Containers.scontainer.diffValue.transform.x = 0.5
+    Containers.scontainer.diffValue.transform.y = 0.55
+    Containers.scontainer.diffValue.tag = "songInfo_difficulty"
+    Containers.scontainer.diffValue.order = 2
+    Containers.scontainer.diffValue.transform.alpha = 0
 
-    Containers.scontainer.songInfo_difficultyName = text.new(0, 0, "Arial.fnt", "Song Diff Name")
-    create(Containers.scontainer.songInfo_difficultyName)
-    Containers.scontainer.songInfo_difficultyName.size = 26 * skin["upscale"]
-    Containers.scontainer.songInfo_difficultyName.characterSpacing = 2.33
-    Containers.scontainer.songInfo:add(Containers.scontainer.songInfo_difficultyName)
-    Containers.scontainer.songInfo_difficultyName.ratio = true
-    Containers.scontainer.songInfo_difficultyName.center = true
-    Containers.scontainer.songInfo_difficultyName.transform.x = 0.5
-    Containers.scontainer.songInfo_difficultyName.transform.y = 0.5
-    Containers.scontainer.songInfo_difficultyName.tag = "songInfo_difficultyName"
-    Containers.scontainer.songInfo_difficultyName.order = 2
-    Containers.scontainer.songInfo_difficultyName.transform.alpha = 0
+    Containers.scontainer.diffName = text.new(0, 0, "Arial.fnt", "Song Diff Name")
+    create(Containers.scontainer.diffName)
+    Containers.scontainer.diffName.size = 26 * skin["upscale"]
+    Containers.scontainer.diffName.characterSpacing = 2.33
+    Containers.scontainer.songInfo:add(Containers.scontainer.diffName)
+    Containers.scontainer.diffName.ratio = true
+    Containers.scontainer.diffName.center = true
+    Containers.scontainer.diffName.transform.x = 0.5
+    Containers.scontainer.diffName.transform.y = 0.5
+    Containers.scontainer.diffName.tag = "songInfo_difficultyName"
+    Containers.scontainer.diffName.order = 2
+    Containers.scontainer.diffName.transform.alpha = 0
 
-    Containers.scontainer.songInfo_difficultyLeftArrow = helper.createSprite("Menu/MainMenu/Solo/difficultyselectarrow",
+    Containers.scontainer.diffLeftArrow = helper.createSprite("Menu/MainMenu/Solo/difficultyselectarrow",
         0, 0)
-    create(Containers.scontainer.songInfo_difficultyLeftArrow)
-    Containers.scontainer.songInfo:add(Containers.scontainer.songInfo_difficultyLeftArrow)
-    Containers.scontainer.songInfo_difficultyLeftArrow.transform.alpha = 0
-    Containers.scontainer.songInfo_difficultyLeftArrow.ratio = true
-    Containers.scontainer.songInfo_difficultyLeftArrow.order = 2
-    Containers.scontainer.songInfo_difficultyLeftArrow.tag = "songInfo_difficultyLeftArrow"
-    Containers.scontainer.songInfo_difficultyLeftArrow.transform.scale = 0.5 * skin["upscale"]
+    create(Containers.scontainer.diffLeftArrow)
+    Containers.scontainer.songInfo:add(Containers.scontainer.diffLeftArrow)
+    Containers.scontainer.diffLeftArrow.transform.alpha = 0
+    Containers.scontainer.diffLeftArrow.ratio = true
+    Containers.scontainer.diffLeftArrow.order = 2
+    Containers.scontainer.diffLeftArrow.tag = "songInfo_difficultyLeftArrow"
+    Containers.scontainer.diffLeftArrow.transform.scale = 0.5 * skin["upscale"]
 
-    Containers.scontainer.songInfo_difficultyRightArrow = helper.createSprite("Menu/MainMenu/Solo/difficultyselectarrow",
+    Containers.scontainer.diffRightArrow = helper.createSprite("Menu/MainMenu/Solo/difficultyselectarrow",
         0, 0)
-    create(Containers.scontainer.songInfo_difficultyRightArrow)
-    Containers.scontainer.songInfo:add(Containers.scontainer.songInfo_difficultyRightArrow)
-    Containers.scontainer.songInfo_difficultyRightArrow.transform.alpha = 0
-    Containers.scontainer.songInfo_difficultyRightArrow.ratio = true
-    Containers.scontainer.songInfo_difficultyRightArrow.transform.angle = 180
-    Containers.scontainer.songInfo_difficultyRightArrow.order = 2
-    Containers.scontainer.songInfo_difficultyRightArrow.tag = "songInfo_difficultyRightArrow"
-    Containers.scontainer.songInfo_difficultyRightArrow.transform.scale = 0.5 * skin["upscale"]
+    create(Containers.scontainer.diffRightArrow)
+    Containers.scontainer.songInfo:add(Containers.scontainer.diffRightArrow)
+    Containers.scontainer.diffRightArrow.transform.alpha = 0
+    Containers.scontainer.diffRightArrow.ratio = true
+    Containers.scontainer.diffRightArrow.transform.angle = 180
+    Containers.scontainer.diffRightArrow.order = 2
+    Containers.scontainer.diffRightArrow.tag = "songInfo_difficultyRightArrow"
+    Containers.scontainer.diffRightArrow.transform.scale = 0.5 * skin["upscale"]
 
-    Containers.scontainer.songInfo_chartType = text.new(0, 0, "Arial.fnt", "Song Chart Type")
-    create(Containers.scontainer.songInfo_chartType)
-    Containers.scontainer.songInfo_chartType.size = 22 * skin["upscale"]
-    Containers.scontainer.songInfo_chartType.characterSpacing = 2.33
-    Containers.scontainer.songInfo:add(Containers.scontainer.songInfo_chartType)
-    Containers.scontainer.songInfo_chartType.ratio = true
-    Containers.scontainer.songInfo_chartType.transform.x = 0.02
-    Containers.scontainer.songInfo_chartType.transform.y = 0.96
-    Containers.scontainer.songInfo_chartType.tag = "songInfo_chartType"
-    Containers.scontainer.songInfo_chartType.order = 2
-    Containers.scontainer.songInfo_chartType.transform.alpha = 0
+    Containers.scontainer.chartType = text.new(0, 0, "Arial.fnt", "Song Chart Type")
+    create(Containers.scontainer.chartType)
+    Containers.scontainer.chartType.size = 22 * skin["upscale"]
+    Containers.scontainer.chartType.characterSpacing = 2.33
+    Containers.scontainer.songInfo:add(Containers.scontainer.chartType)
+    Containers.scontainer.chartType.ratio = true
+    Containers.scontainer.chartType.transform.x = 0.02
+    Containers.scontainer.chartType.transform.y = 0.96
+    Containers.scontainer.chartType.tag = "songInfo_chartType"
+    Containers.scontainer.chartType.order = 2
+    Containers.scontainer.chartType.transform.alpha = 0
 
-    Containers.scontainer.songInfo_onlineText = text.new(0, 0, "Arial.fnt", "Song Online Text")
-    create(Containers.scontainer.songInfo_onlineText)
-    Containers.scontainer.songInfo_onlineText.size = 22 * skin["upscale"]
-    Containers.scontainer.songInfo_onlineText.ratio = true
-    Containers.scontainer.songInfo_onlineText.characterSpacing = 2.33
-    Containers.scontainer.songInfo:add(Containers.scontainer.songInfo_onlineText)
-    Containers.scontainer.songInfo_onlineText.tag = "songInfo_onlineText"
-    Containers.scontainer.songInfo_onlineText.order = 2
-    Containers.scontainer.songInfo_onlineText.transform.alpha = 0
+    Containers.scontainer.onlineText = text.new(0, 0, "Arial.fnt", "Song Online Text")
+    create(Containers.scontainer.onlineText)
+    Containers.scontainer.onlineText.size = 22 * skin["upscale"]
+    Containers.scontainer.onlineText.ratio = true
+    Containers.scontainer.onlineText.characterSpacing = 2.33
+    Containers.scontainer.songInfo:add(Containers.scontainer.onlineText)
+    Containers.scontainer.onlineText.tag = "songInfo_onlineText"
+    Containers.scontainer.onlineText.order = 2
+    Containers.scontainer.onlineText.transform.alpha = 0
+
+    Containers.scontainer.bg = nil
 end
 
 function Containers.create()
@@ -211,4 +213,17 @@ function Containers.create()
 end
 
 function Containers.Resize()
+    cprint("resizing containers to " .. tostring(skin["upscale"]))
+    Containers.scontainer.title.size = 28 * skin["upscale"]
+    Containers.scontainer.artist.size = 28 * skin["upscale"]
+    Containers.scontainer.diffValue.size = 28 * skin["upscale"]
+    Containers.scontainer.diffName.size = 26 * skin["upscale"]
+    Containers.scontainer.chartType.size = 22 * skin["upscale"]
+    Containers.scontainer.onlineText.size = 22 * skin["upscale"]
+    Containers.scontainer.diffLeftArrow.transform.scale = 0.5 * skin["upscale"]
+    Containers.scontainer.diffRightArrow.transform.scale = 0.5 * skin["upscale"]
+
+    Containers.scontainer.packsText.size = 24 * skin["upscale"]
+    Containers.scontainer.packsInfo.size = 24 * skin["upscale"]
+    songWheel.resize()
 end

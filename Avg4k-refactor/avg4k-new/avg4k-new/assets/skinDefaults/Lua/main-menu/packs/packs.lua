@@ -42,7 +42,7 @@ function packContainer.update(time)
         local s = packContainer.sprites[i]
         s.transform.x = 2
         s.transform.y = ((75 * skin["upscale"]) * (i - 1)) + 2
-        s.transform.w = real.w
+        s.transform.w = real.w - 4
         s.transform.h = 75 * skin["upscale"]
     end
 end

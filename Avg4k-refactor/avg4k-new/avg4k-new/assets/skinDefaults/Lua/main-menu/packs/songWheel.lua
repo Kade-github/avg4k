@@ -214,7 +214,7 @@ function songWheel.keyPress(num)
         songWheel.SetDiff()
     end
 
-    if not songWheel.moreInfo then
+    if not songWheel.moreInfo and songWheel.playedSong then
         if num == 257 then
             cprint("set chart to " .. songWheel.selectedFile.songTitle)
             setChart(songWheel.selectedFile, songWheel.selectedDiff)
@@ -244,7 +244,7 @@ function songWheel.update(t)
         item.transform.scale = skin["upscale"]
         item.transform.x = xBasedOnRank - (item.transform.w / 2)
         item.transform.y = (((real.h) / 2) - (item.transform.h * skin["upscale"]) / 2) +
-        (((item.transform.h * skin["upscale"]) + 8) * away)
+            (((item.transform.h * skin["upscale"]) + 8) * away)
     end
 
     Containers.scontainer.onlineText.transform.x = 1 -

@@ -119,6 +119,13 @@ void Gameplay::draw()
 
 	bool shouldEnd = true;
 
+	if(!isStarted) // we still wanna do this, but w/o the checks. (for before the stuff starts)
+		for (Average4k::Objects::Gameplay::Playfield* p : playfields)
+		{
+			p->time = time;
+			p->beat = beat;
+		}
+
 	if (isStarted)
 	{
 		if (!c->isPlaying) // the end

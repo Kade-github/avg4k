@@ -170,6 +170,10 @@ function Containers.soloCreate(c)
     Containers.scontainer.bg = nil
 end
 
+function Containers.settingsCreate()
+
+end
+
 function Containers.create()
     Containers.solo = helper.createContainer("container", 0, 0)
     add(Containers.solo)
@@ -210,20 +214,4 @@ function Containers.create()
     helper.initContainer(Containers.solo, false)
     helper.initContainer(Containers.multiplayer, false)
     helper.initContainer(Containers.settings, true)
-end
-
-function Containers.Resize()
-    cprint("resizing containers to " .. tostring(skin["upscale"]))
-    Containers.scontainer.title.size = 28 * skin["upscale"]
-    Containers.scontainer.artist.size = 28 * skin["upscale"]
-    Containers.scontainer.diffValue.size = 28 * skin["upscale"]
-    Containers.scontainer.diffName.size = 26 * skin["upscale"]
-    Containers.scontainer.chartType.size = 22 * skin["upscale"]
-    Containers.scontainer.onlineText.size = 22 * skin["upscale"]
-    Containers.scontainer.diffLeftArrow.transform.scale = 0.5 * skin["upscale"]
-    Containers.scontainer.diffRightArrow.transform.scale = 0.5 * skin["upscale"]
-
-    Containers.scontainer.packsText.size = 24 * skin["upscale"]
-    Containers.scontainer.packsInfo.size = 24 * skin["upscale"]
-    songWheel.resize()
 end

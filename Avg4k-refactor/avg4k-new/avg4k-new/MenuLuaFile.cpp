@@ -262,6 +262,7 @@ void Average4k::Lua::MenuLuaFile::Load()
 	lua->set_function("setSetting", [&](std::string name, std::string value) {
 		Average4K* c = static_cast<Average4K*>(Average4K::Instance);
 		c->settings->Set(name, value);
+		c->settings->Save();
 		loadSettings();
 	});
 

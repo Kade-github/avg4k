@@ -1,5 +1,6 @@
 -- helper files
-HelperFiles = { 'avatar.lua', 'containers.lua', 'selection.lua', 'packs/packs.lua', 'packs/songWheel.lua' }
+HelperFiles = { 'avatar.lua', 'containers.lua', 'selection.lua', 'packs/packs.lua', 'packs/songWheel.lua',
+    'ui-elements/checkbox.lua' }
 
 fuck_bg = nil
 
@@ -37,8 +38,12 @@ function Create()
 end
 
 function MouseDown(pos)
+    local mouseRect = vec2torect(pos)
+    mouseRect.w = 32
+    mouseRect.h = 32
     Selection.mouseDown()
     packContainer.mouseDown()
+    checkbox.mouseDown(mouseRect)
 end
 
 function MouseWheel(data)
@@ -58,14 +63,6 @@ function GamepadPress(key)
     if num ~= nil then
         Selection.gamepadPress(num)
     end
-end
-
-function Resize()
-    cprint("[RESIZE!] Resize scale: " .. tostring(skin["upscale"]))
-    Avatar.Resize()
-    Containers.Resize()
-    Selection.Resize()
-    helper.resize()
 end
 
 Globals = {}
@@ -91,4 +88,5 @@ function Update(time)
     helper.containerUpdate(time)
     songWheel.update(time)
     packContainer.update(time)
+    checkbox.update(time)
 end

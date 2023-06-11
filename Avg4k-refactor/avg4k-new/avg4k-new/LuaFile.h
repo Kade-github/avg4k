@@ -39,6 +39,8 @@ namespace Average4k::Lua
 				delete textures[i];
 		}
 
+		void loadSettings();
+
 		void Start()
 		{
 			auto result = lua->safe_script_file(_path, &sol::script_pass_on_error);

@@ -151,6 +151,9 @@ namespace AvgEngine::Base
 					if (transform.h > 1)
 						transform.h = texture->height / parent->h;
 
+					r.w = transform.w;
+					r.h = transform.h;
+
 					r.w = (parent->w * (r.w));
 					r.h = (parent->h * (r.h));
 

@@ -38,6 +38,17 @@ int lua_exception(lua_State* L, sol::optional<const std::exception&> maybe_excep
 	return sol::stack::push(L, description);
 }
 
+void Average4k::Lua::LuaFile::loadSettings()
+{
+	sol::global_table t = lua->globals();
+
+	sol::table ta = lua->create_table_with("version", Average4K::settings->f.settingsVersion);
+	for (Setting& s : Average4K::settings->f.settings)
+		ta[s.name] = s.value;
+
+	t["settings"] = ta;
+}
+
 void LuaFile::Launch()
 {
 	for (AvgEngine::OpenGL::Texture* t : textures)
@@ -418,16 +429,11 @@ void LuaFile::Load()
 
 	t["online"] = lua->create_table_with("version", Average4K::Instance->Version, "connected",Multiplayer::loggedIn,"username",Multiplayer::username, "avatarData", Multiplayer::currentUserAvatar);
 
-	sol::table ta = lua->create_table_with("version", Average4K::settings->f.settingsVersion);
-	for (Setting& s : Average4K::settings->f.settings)
-		ta[s.name] = s.value;
-
-	t["settings"] = ta;
+	loadSettings();
 
 	t["skin"] = lua->create_table_with("upscale", Average4K::skin->upscale);
 
 	t["display"] = lua->create_table_with("width", AvgEngine::Render::Display::width, "height", AvgEngine::Render::Display::height);
-
 	
 	lua->set_function("create", [&](gameObject& ob) {
 		if (ob.base)

@@ -170,8 +170,13 @@ function Containers.soloCreate(c)
     Containers.scontainer.bg = nil
 end
 
-function Containers.settingsCreate()
+function containers_settingChanged(setting, newValue)
+    setSetting(setting, tostring(newValue))
+end
 
+function Containers.settingsCreate(c)
+    checkbox.CreateCheckbox(c, "Use CMOD", "settings_useCMOD", { 0.25, 0.25 },
+        containers_settingChanged)
 end
 
 function Containers.create()
@@ -206,6 +211,8 @@ function Containers.create()
     Containers.settings.center = true
     Containers.settings.transform.y = 0.5
     Containers.settings.transform.scale = skin["upscale"]
+
+    Containers.settingsCreate(Containers.settings)
 
     -- Tweens
 

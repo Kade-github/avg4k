@@ -41,7 +41,7 @@ namespace Average4k
 	class Settings
 	{
 		// Average Engine 1
-		std::string _settingsVersion = "Average4KSettingsFile:design2";
+		std::string _settingsVersion = "Average4KSettingsFile:design3";
 		std::string _path;
 	public:
 		File f;
@@ -54,6 +54,8 @@ namespace Average4k
 			nf.settings.push_back({ "Music Volume", "0.45", "0.45", S_Float, 0,1 });
 			nf.settings.push_back({ "Hitsound Volume", "0.8",  "0.8", S_Float, 0,1 });
 			nf.settings.push_back({ "Scrollspeed", "800",  "800", S_Int, 200,1800 });
+			nf.settings.push_back({ "Use CMOD", "true",  "true", S_Bool, 0,1 });
+			nf.settings.push_back({ "Use XMOD", "false",  "false", S_Bool, 0,1 });
 			nf.settings.push_back({ "Skin", "arrow",  "arrow", S_String, -1,-1 });
 			nf.settings.push_back({ "Keybinds", "DFJK",  "DFJK", S_String, -1,-1 });
 			nf.settings.push_back({ "Note Size", "1.5",  "1.5", S_Float, 1,4 });

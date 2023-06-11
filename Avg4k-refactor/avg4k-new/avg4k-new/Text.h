@@ -289,6 +289,8 @@ namespace AvgEngine::Base
 
 			transform.w = highestW;
 			transform.h = d;
+			iTransform.w = highestW;
+			iTransform.h = d;
 			if (transformRatio)
 			{
 				transform.w = highestW / parent->w;

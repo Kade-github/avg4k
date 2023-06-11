@@ -171,12 +171,15 @@ function Containers.soloCreate(c)
 end
 
 function containers_settingChanged(setting, newValue)
+    if setting == "Use CMOD" then -- toggle xmod to the opposite
+        setSetting("Use XMOD", tostring(not newValue))
+    end
     setSetting(setting, tostring(newValue))
 end
 
 function Containers.settingsCreate(c)
-    checkbox.CreateCheckbox(c, "Use CMOD", "settings_useCMOD", { 0.25, 0.25 },
-        containers_settingChanged)
+    checkbox.CreateCheckbox(c, "Use CMOD", "settings_useCMOD", { 0.1, 0.15 },
+        containers_settingChanged, "Toggle between time based scrolling, and beat based scrolling.")
 end
 
 function Containers.create()

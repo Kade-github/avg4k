@@ -29,6 +29,11 @@ function helper.lerp(a, b, t)
     return a + (b - a) * t
 end
 
+function helper.outCubic(t)
+    t = t - 1
+    return t * t * t + 1
+end
+
 --[[
     A helper function to create a sprite
 ]]

@@ -63,7 +63,7 @@ function checkbox.CreateCheckbox(container, _setting, _tag, tinyPos, _changeFunc
     text.ratio = true
     text.order = 1
     text.transform.x = -1
-    text.transform.y = 0.15
+    text.transform.y = 0.18
     text.tag = "CHECKBOX_TEXT_" .. _tag
 
     local oText = text.new(0, 0, "ArialBold.fnt", "off")
@@ -142,12 +142,11 @@ function checkbox.update(time)
             cb.position.w = cb.objects[1].transform.w / cb.objects[1].parent.transform.w
             cb.position.h = cb.objects[1].transform.h / cb.objects[1].parent.transform.h
             cb.setRect = true
-            cprint(tostring(cb.position.x) ..
-                " " .. tostring(cb.position.y) .. " " .. tostring(cb.position.w) .. " " .. tostring(cb.position.h))
         end
         cb.objects[1].transform = cb.position
         local widthReal = cb.objects[3]:getRealRect().w / cb.objects[1].parent:getRealRect().w
-        cb.objects[1].transform.x = cb.position.x + widthReal / 2
+        cb.objects[1].transform.x = ((cb.position.x * skin["upscale"]) + widthReal)
+
         -- simple tweening
         local tweenTime = math.min((time - cb.startTime) / 0.1, 1)
         if not cb.currentValue then
@@ -161,7 +160,7 @@ function checkbox.update(time)
         end
         cb.objects[4].transform.y = 0.5
 
-        cb.objects[3].transform.x = -1 - (cb.objects[3].transform.w / 2)
+        cb.objects[3].transform.x = -1 - (cb.objects[3].transform.w) + cb.objects[1].transform.w
 
         -- information text, animation as well
         if cb.objects[5] ~= nil then

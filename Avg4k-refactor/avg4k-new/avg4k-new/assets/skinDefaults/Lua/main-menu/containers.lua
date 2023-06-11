@@ -200,10 +200,6 @@ function Containers.settingsCreate(c)
 
     Containers.settings_createCheckbox(c, "Use CMOD", "settings_useCMOD", { gameplay_header.transform.x, amount },
         containers_settingChanged, "Toggle between time based scrolling, and beat based scrolling.")
-
-    Containers.settings_createCheckbox(c, "Test Super Long Name lol ol ol olol", "test_setting",
-        { gameplay_header.transform.x, amount },
-        containers_settingChanged, "This is a test")
 end
 
 function Containers.create()

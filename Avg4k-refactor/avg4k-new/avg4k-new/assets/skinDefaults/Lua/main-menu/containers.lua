@@ -177,9 +177,32 @@ function containers_settingChanged(setting, newValue)
     setSetting(setting, tostring(newValue))
 end
 
+function Containers.settings_createCheckbox(c, setting, tag, tinyPos, endFunc, infoText)
+    Containers.settings_amount = Containers.settings_amount + 0.09
+    checkbox.CreateCheckbox(c, setting, tag, { tinyPos[1], Containers.settings_amount },
+        endFunc, infoText)
+end
+
 function Containers.settingsCreate(c)
-    checkbox.CreateCheckbox(c, "Use CMOD", "settings_useCMOD", { 0.1, 0.15 },
+    local gameplay_header = text.new(0, 0, "ArialBold.fnt", "Gameplay")
+    create(gameplay_header)
+    c:add(gameplay_header)
+    gameplay_header.size = 28 * skin["upscale"]
+    gameplay_header.ratio = true
+    gameplay_header.center = true
+    gameplay_header.transform.x = 0.065
+    gameplay_header.transform.y = 0.09
+    gameplay_header.tag = "settings_gameplayHeader"
+    gameplay_header.order = 2
+
+    -- basically a y value lol
+    Containers.settings_amount = 0.045
+
+    Containers.settings_createCheckbox(c, "Use CMOD", "settings_useCMOD", { gameplay_header.transform.x, amount },
         containers_settingChanged, "Toggle between time based scrolling, and beat based scrolling.")
+
+    Containers.settings_createCheckbox(c, "Test", "test_setting", { gameplay_header.transform.x, amount },
+        containers_settingChanged, "This is a test")
 end
 
 function Containers.create()
@@ -214,6 +237,8 @@ function Containers.create()
     Containers.settings.center = true
     Containers.settings.transform.y = 0.5
     Containers.settings.transform.scale = skin["upscale"]
+
+    Containers.settings_amount = 0
 
     Containers.settingsCreate(Containers.settings)
 

@@ -25,11 +25,12 @@ function checkbox.CreateCheckbox(container, _setting, _tag, tinyPos, _changeFunc
         setting = _setting,
         objects = {},
         changeFunction = _changeFunction,
-        position = rect.new(0, 0),
+        position = rect.new(tinyPos[1], tinyPos[2]),
         startTime = 0,
         startPos = 0,
         hoverTime = -1,
-        lastHover = -1
+        lastHover = -1,
+        setRect = false
     }
 
     local background = helper.createSprite("Menu/MainMenu/Settings/toggle_bg", 0.0, 0.0)
@@ -43,10 +44,6 @@ function checkbox.CreateCheckbox(container, _setting, _tag, tinyPos, _changeFunc
     background.ratio = true
     background.order = 1
     background.transform.scale = skin["upscale"]
-
-    bTable.position = copyRect(background.transform)
-    bTable.position.x = tinyPos[1]
-    bTable.position.y = tinyPos[2]
 
 
     local toggle = helper.createSprite("Menu/MainMenu/Settings/toggle", 0.0, 0.0)
@@ -67,6 +64,7 @@ function checkbox.CreateCheckbox(container, _setting, _tag, tinyPos, _changeFunc
     text.order = 1
     text.transform.x = -1
     text.transform.y = 0.15
+    text.tag = "CHECKBOX_TEXT_" .. _tag
 
     local oText = text.new(0, 0, "ArialBold.fnt", "off")
     create(oText)
@@ -75,6 +73,7 @@ function checkbox.CreateCheckbox(container, _setting, _tag, tinyPos, _changeFunc
     oText.characterSpacing = 1.67
     oText.ratio = true
     oText.order = 1
+    oText.tag = "CHECKBOX_STATUS_" .. _tag
 
     if bTable.currentValue then
         oText.text = "on"
@@ -102,6 +101,7 @@ function checkbox.CreateCheckbox(container, _setting, _tag, tinyPos, _changeFunc
         infoText.characterSpacing = 1
         infoText.ratio = true
         infoText.order = 1
+        infoText.tag = "CHECKBOX_INFO_" .. _tag
         table.insert(bTable.objects, infoText)
     end
 
@@ -134,7 +134,20 @@ end
 
 function checkbox.update(time)
     for i, cb in ipairs(checkbox.checkboxes) do
+        if not cb.setRect then
+            local x, y = cb.position.x, cb.position.y
+            cb.position = copyRect(cb.objects[1].transform)
+            cb.position.x = x
+            cb.position.y = y
+            cb.position.w = cb.objects[1].transform.w / cb.objects[1].parent.transform.w
+            cb.position.h = cb.objects[1].transform.h / cb.objects[1].parent.transform.h
+            cb.setRect = true
+            cprint(tostring(cb.position.x) ..
+                " " .. tostring(cb.position.y) .. " " .. tostring(cb.position.w) .. " " .. tostring(cb.position.h))
+        end
         cb.objects[1].transform = cb.position
+        local widthReal = cb.objects[3]:getRealRect().w / cb.objects[1].parent:getRealRect().w
+        cb.objects[1].transform.x = cb.position.x + widthReal / 2
         -- simple tweening
         local tweenTime = math.min((time - cb.startTime) / 0.1, 1)
         if not cb.currentValue then
@@ -148,7 +161,7 @@ function checkbox.update(time)
         end
         cb.objects[4].transform.y = 0.5
 
-        cb.objects[3].transform.x = (-1 - ((cb.objects[3].transform.w / 2)))
+        cb.objects[3].transform.x = -1 - (cb.objects[3].transform.w / 2)
 
         -- information text, animation as well
         if cb.objects[5] ~= nil then
@@ -161,7 +174,6 @@ function checkbox.update(time)
             local bigRect = cb.objects[5]:getRealRect()
             bigRect.y = endPosReal
             bigRect.w = bigRect.w + 15
-            bigRect.h = bigRect.h + 15
             local endPos = cb.objects[3].transform.y + cb.objects[3].transform.h +
                 cb.objects[5].transform
                 .h

@@ -89,4 +89,5 @@ function Update(time)
     songWheel.update(time)
     packContainer.update(time)
     checkbox.update(time)
+    textbox.update(time)
 end

@@ -25,14 +25,14 @@ function Avatar.createIcon(notDefault)
     create(Avatar.helloText)
     Avatar.helloText.ratio = true
     Avatar.helloText.size = 24.0 * skin["upscale"]
-    Avatar.helloText.transform.y = (14 * skin["upscale"]) / 100
+    Avatar.helloText.transform.y = 0.14
     Avatar.helloText.transform.x = 1.2
 
     Avatar.versionText = text.new(0, 0, "ArialBold.fnt", "Avg4k indev-" .. online["version"])
     create(Avatar.versionText)
     Avatar.versionText.ratio = true
     Avatar.versionText.size = 24.0 * skin["upscale"]
-    Avatar.versionText.transform.y = (40 * skin["upscale"]) / 100
+    Avatar.versionText.transform.y = 0.40
     Avatar.versionText.transform.x = 1.2
 
     if not notDefault then

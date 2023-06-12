@@ -107,7 +107,7 @@ function Selection.create()
     Selection.soloText.size = 36 * (skin["upscale"])
     Selection.soloText.characterSpacing = 3
 
-    Selection.soloText.transform.y = 0.15
+    Selection.soloText.transform.y = 0.12
     Selection.soloText.transform.x = Containers.endRect.x - 0.25
 
     local sTEnd = copyRect(Selection.soloText.transform)
@@ -119,7 +119,7 @@ function Selection.create()
     Selection.multiplayerText.size = 36 * (skin["upscale"])
     Selection.multiplayerText.characterSpacing = 3
 
-    Selection.multiplayerText.transform.y = 0.15
+    Selection.multiplayerText.transform.y = 0.12
     Selection.multiplayerText.transform.x = Containers.endRect.x + 0.02
 
     local mTEnd = copyRect(Selection.multiplayerText.transform)
@@ -131,7 +131,7 @@ function Selection.create()
     Selection.settingsText.size = 36 * (skin["upscale"])
     Selection.settingsText.characterSpacing = 3
 
-    Selection.settingsText.transform.y = 0.15
+    Selection.settingsText.transform.y = 0.12
     Selection.settingsText.transform.x = Containers.endRect.x + 0.25
 
     local seTEnd = copyRect(Selection.settingsText.transform)
@@ -150,7 +150,7 @@ function Selection.create()
     Selection.selectionRect.transform.b = 209
 
     Selection.selectionRect.transform.x = Selection.soloText.transform.x
-    Selection.selectionRect.transform.y = 0.17
+    Selection.selectionRect.transform.y = 0.15
     local srEnd = copyRect(Selection.selectionRect.transform)
 
     Selection.selectionRect.transform.y = -0.75

@@ -183,23 +183,32 @@ function Containers.settings_createCheckbox(c, setting, tag, tinyPos, endFunc, i
         endFunc, infoText)
 end
 
+function Containers.settings_createTextbox(c, setting, max, tag, tinyPos, endFunc, infoText)
+    Containers.settings_amount = Containers.settings_amount + 0.09
+    textbox.CreateTextbox(c, setting, max, tag, { tinyPos[1], Containers.settings_amount }, endFunc, infoText)
+end
+
 function Containers.settingsCreate(c)
     local gameplay_header = text.new(0, 0, "ArialBold.fnt", "Gameplay")
     create(gameplay_header)
     c:add(gameplay_header)
     gameplay_header.size = 28 * skin["upscale"]
     gameplay_header.ratio = true
-    gameplay_header.center = true
-    gameplay_header.transform.x = 0.065
-    gameplay_header.transform.y = 0.09
+    gameplay_header.transform.x = 0.02
+    gameplay_header.transform.y = 0.06
     gameplay_header.tag = "settings_gameplayHeader"
     gameplay_header.order = 2
 
     -- basically a y value lol
     Containers.settings_amount = 0.045
 
-    Containers.settings_createCheckbox(c, "Use CMOD", "settings_useCMOD", { gameplay_header.transform.x, amount },
+    Containers.settings_createCheckbox(c, "Use CMOD", "settings_useCMOD",
+        { gameplay_header.transform.x, 0 },
         containers_settingChanged, "Toggle between time based scrolling, and beat based scrolling.")
+
+    Containers.settings_createTextbox(c, "Scroll Speed", 4, "settings_scrollSpeed",
+        { gameplay_header.transform.x, 0 },
+        containers_settingChanged, "The time based scroll speed. In BPM.")
 end
 
 function Containers.create()

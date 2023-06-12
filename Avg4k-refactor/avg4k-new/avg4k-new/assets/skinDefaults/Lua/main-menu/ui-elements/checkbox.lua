@@ -56,8 +56,12 @@ function checkbox.CreateCheckbox(container, _setting, _tag, tinyPos, _changeFunc
     toggle.transform.h = 1
 
     local text = text.new(0, 0, "Arial.fnt", bTable.setting)
-    create(text)
-    background:add(text)
+    if container ~= nil then
+        create(text)
+        container:add(text)
+    else
+        add(text)
+    end
     text.size = 18 * skin["upscale"]
     text.characterSpacing = 2.33
     text.ratio = true
@@ -95,8 +99,12 @@ function checkbox.CreateCheckbox(container, _setting, _tag, tinyPos, _changeFunc
 
     if informationText ~= "" then
         local infoText = text.new(0, 0, "ArialBold.fnt", informationText)
-        create(infoText)
-        background:add(infoText)
+        if container ~= nil then
+            create(infoText)
+            container:add(infoText)
+        else
+            add(infoText)
+        end
         infoText.size = 15 * skin["upscale"]
         infoText.characterSpacing = 1
         infoText.ratio = true
@@ -144,8 +152,8 @@ function checkbox.update(time)
             cb.setRect = true
         end
         cb.objects[1].transform = cb.position
-        local widthReal = cb.objects[3]:getRealRect().w / cb.objects[1].parent:getRealRect().w
-        cb.objects[1].transform.x = ((cb.position.x * skin["upscale"]) + widthReal)
+        cb.objects[1].transform.x = cb.position.x + 0.01 + cb.objects[3].transform.w
+        cb.objects[1].transform.y = cb.position.y
 
         -- simple tweening
         local tweenTime = math.min((time - cb.startTime) / 0.1, 1)
@@ -160,8 +168,9 @@ function checkbox.update(time)
         end
         cb.objects[4].transform.y = 0.5
 
-        cb.objects[3].transform.x = -1 - (cb.objects[3].transform.w) + cb.objects[1].transform.w
-
+        cb.objects[3].transform.y = cb.position.y + ((cb.objects[1].transform.h * skin["upscale"]) / 2) -
+            ((cb.objects[3].transform.h * skin["upscale"]) / 2)
+        cb.objects[3].transform.x = cb.position.x
         -- information text, animation as well
         if cb.objects[5] ~= nil then
             local ht = time - cb.hoverTime

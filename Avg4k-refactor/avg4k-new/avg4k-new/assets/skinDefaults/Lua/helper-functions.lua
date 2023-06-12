@@ -2,6 +2,12 @@ helper = {}
 
 helper.containers = {}
 
+-- round helper
+function helper.round(num, numDecimalPlaces)
+    local mult = 10 ^ (numDecimalPlaces or 0)
+    return math.floor(num * mult + 0.5) / mult
+end
+
 -- dumps lua tables into a string so you can print usertables (like sprite, animatedsprite, etc)
 function helper.dump(o)
     if type(o) == 'table' then
@@ -197,15 +203,18 @@ function helper.containerUpdate(time)
             local currentScroll = ind["scroll"]
 
             local table = container.children
-
+            local shouldOverspace = false
             for i = 1, table:size(), 1 do
                 local child = table[i]
                 if child.id == bar.id or child.id == arrow1.id or child.id == arrow2.id then
                     -- do nothing
                 else
                     local real = child:getRealRect()
-                    if real.y + real.h > rc.y + rc.h then
-                        ind["overspace"] = (real.y + real.h) - (rc.y + rc.h)
+                    local h = ((real.y * skin["upscale"]) + (real.h * skin["upscale"]))
+                    local rch = ((rc.y * skin["upscale"]) + (rc.h * skin["upscale"]))
+                    if h > rch then
+                        ind["overspace"] = h - rch
+                        shouldOverspace = true
                     end
                     child.transformOffset.y = -currentScroll
                     if ind["shouldScroll"] then
@@ -218,6 +227,9 @@ function helper.containerUpdate(time)
                         child.transformOffset.w = 0
                     end
                 end
+            end
+            if not shouldOverspace then
+                ind["overspace"] = 0
             end
             ind["shouldScroll"] = ind["overspace"] ~= 0
 

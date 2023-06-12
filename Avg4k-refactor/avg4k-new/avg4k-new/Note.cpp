@@ -54,12 +54,16 @@ void Average4k::Objects::Gameplay::Note::draw()
 	src.w = frameWidth;
 	src.h = frameHeight;
 
+
+
 	float diff = time - sTime;
 	float xmodDiff = beat - sBeat;
 	transform.y = calculateY(useXmod, diff);
 	if (useXmod)
 		transform.y = calculateY(useXmod, xmodDiff);
 	Average4K* k = static_cast<Average4K*>(Average4K::Instance);
+	if (type == Chart::NoteType_Mine && k->skin->rotateMine)
+		transform.angle += 1;
 	Average4k::Lua::GameplayMenu* m = static_cast<Average4k::Lua::GameplayMenu*>(k->CurrentMenu);
 	// tap misses
 	// make sure this stuff works with downscroll (later)

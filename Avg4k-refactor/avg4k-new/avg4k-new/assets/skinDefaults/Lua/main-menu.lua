@@ -1,6 +1,6 @@
 -- helper files
 HelperFiles = { 'avatar.lua', 'containers.lua', 'selection.lua', 'packs/packs.lua', 'packs/songWheel.lua',
-    'ui-elements/checkbox.lua' }
+    'ui-elements/checkbox.lua', 'ui-elements/textbox.lua', 'ui-elements/dropdown.lua' }
 
 fuck_bg = nil
 

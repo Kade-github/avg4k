@@ -43,10 +43,13 @@ Average4k::Objects::Gameplay::Playfield::Playfield(int _x, int _y, Average4k::Ch
 		receptors.push_back(r);
 		addObject(receptors[i]);
 	}
-	receptors[0]->transform.angle = 90;
-	receptors[1]->transform.angle = 0;
-	receptors[2]->transform.angle = 180;
-	receptors[3]->transform.angle = -90;
+	if (Average4K::skin->rotate)
+	{
+		receptors[0]->transform.angle = 90;
+		receptors[1]->transform.angle = 0;
+		receptors[2]->transform.angle = 180;
+		receptors[3]->transform.angle = -90;
+	}
 
 	keybinds = H_Keybinds(Average4K::settings->Get("Keybinds").value);
 }

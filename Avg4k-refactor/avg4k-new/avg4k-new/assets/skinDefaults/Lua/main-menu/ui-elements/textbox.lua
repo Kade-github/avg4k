@@ -1,8 +1,11 @@
 textbox = {}
 
+textbox.inTextbox = false
+
 textbox.textboxes = {}
 
-function textbox.CreateTextbox(c, _setting, _maxCharacters, _tag, tinyPos, _changeFunction, _infoText)
+function textbox.CreateTextbox(c, _setting, _maxCharacters, _tag, tinyPos, _changeFunction, inc, _keyInput, blacklisted,
+                               _infoText)
     local bTable = {
         currentValue = settings[_setting],
         tag = _tag,
@@ -13,6 +16,10 @@ function textbox.CreateTextbox(c, _setting, _maxCharacters, _tag, tinyPos, _chan
         hoverTime = -1,
         lastHover = -1,
         maxCharacters = _maxCharacters,
+        increment = inc,
+        selected = false,
+        keyInput = _keyInput, -- if it should convert the key presses into the name of the key.
+        blacklistedKeys = blacklisted,
         setRect = false
     }
 
@@ -53,9 +60,8 @@ function textbox.CreateTextbox(c, _setting, _maxCharacters, _tag, tinyPos, _chan
     oText.transform.r = 13
     oText.transform.g = 28
     oText.transform.b = 64
-    oText.transform.x = 0.125
-    oText.transform.y = 0.5
-    oText.center = true
+    oText.transform.x = 0.05
+    oText.transform.y = 0.25
 
     table.insert(bTable.objects, background)
     table.insert(bTable.objects, text)
@@ -78,6 +84,62 @@ function textbox.CreateTextbox(c, _setting, _maxCharacters, _tag, tinyPos, _chan
     table.insert(textbox.textboxes, bTable)
 end
 
+function textbox.mouseDown(pos)
+    local isOut = true
+    for i, tb in ipairs(textbox.textboxes) do
+        if helper.aabb(pos, tb.objects[1]:getRealRect()) then
+            for i, tb in ipairs(textbox.textboxes) do -- make sure all the other textboxes are not selected
+                tb.selected = false
+            end
+            tb.selected = true
+            textbox.inTextbox = true
+            isOut = false
+        end
+    end
+    if isOut then
+        for i, tb in ipairs(textbox.textboxes) do
+            if tb.selected then
+                tb.changeFunction(tb.setting, tb.currentValue)
+            end
+            tb.selected = false
+            textbox.inTextbox = false
+        end
+    end
+end
+
+function textbox.keyDown(key)
+    for i, tb in ipairs(textbox.textboxes) do
+        if tb.selected then
+            if tb.keyInput then
+                for i, v in ipairs(tb.blacklistedKeys) do
+                    if string.lower(v) == string.lower(string.char(key)) then
+                        return
+                    end
+                end
+                tb.currentValue = getKeyName(key)
+                tb.selected = false
+                textbox.inTextbox = false
+                tb.changeFunction(tb.setting, tb.currentValue)
+            else
+                if key == 259 and string.len(tb.currentValue) > 0 then
+                    tb.currentValue = tb.currentValue:sub(1, -2)
+                    return
+                end
+                if string.len(tb.currentValue) >= tb.maxCharacters then
+                    return
+                end
+                for i, v in ipairs(tb.blacklistedKeys) do
+                    if string.lower(v) == string.lower(string.char(key)) then
+                        return
+                    end
+                end
+                tb.currentValue = tb.currentValue .. string.char(key)
+            end
+            return
+        end
+    end
+end
+
 function textbox.update(time)
     for i, tb in ipairs(textbox.textboxes) do
         if not tb.setRect then
@@ -95,6 +157,13 @@ function textbox.update(time)
         tb.objects[2].transform.y = tb.position.y + ((tb.objects[1].transform.h * skin["upscale"]) / 2) -
             ((tb.objects[2].transform.h * skin["upscale"]) / 2)
         tb.objects[2].transform.x = tb.position.x
+
+        -- display text
+        tb.objects[3].text = tb.currentValue
+        if tb.selected then
+            tb.objects[3].text = tb.objects[3].text .. "_"
+        end
+
         -- information text, animation as well
         if tb.objects[4] ~= nil then
             local ht = time - tb.hoverTime

@@ -445,6 +445,9 @@ void LuaFile::Load()
 		CreateObject(ob);
 	});
 
+	lua->set_function("getKeyName", [&](int key) {
+		return glfwGetKeyName(key, 0);
+	});
 
 	lua->set_function("add", [&](gameObject& ob) {
 		if (ob.base)

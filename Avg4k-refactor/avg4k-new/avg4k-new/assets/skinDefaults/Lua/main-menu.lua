@@ -44,6 +44,7 @@ function MouseDown(pos)
     Selection.mouseDown()
     packContainer.mouseDown()
     checkbox.mouseDown(mouseRect)
+    textbox.mouseDown(mouseRect)
 end
 
 function MouseWheel(data)
@@ -55,6 +56,7 @@ function KeyPress(key)
     if num ~= nil then
         Selection.keyPress(num)
         songWheel.keyPress(num)
+        textbox.keyDown(num)
     end
 end
 

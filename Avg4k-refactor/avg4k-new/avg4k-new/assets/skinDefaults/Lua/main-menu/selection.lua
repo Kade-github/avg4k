@@ -70,14 +70,16 @@ function Selection.mouseDown()
 end
 
 function Selection.keyPress(num)
-    if num == 49 then
-        Selection.select(1)
-    end
-    if num == 50 then
-        Selection.select(2)
-    end
-    if num == 51 then
-        Selection.select(3)
+    if not textbox.inTextbox then
+        if num == 49 then
+            Selection.select(1)
+        end
+        if num == 50 then
+            Selection.select(2)
+        end
+        if num == 51 then
+            Selection.select(3)
+        end
     end
 end
 

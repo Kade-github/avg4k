@@ -175,17 +175,27 @@ function containers_settingChanged(setting, newValue)
         setSetting("Use XMOD", tostring(not newValue))
     end
     setSetting(setting, tostring(newValue))
+
+    if setting == "Resolution" then
+        local res = helper.split(newValue, "x")
+        if #res == 2 then
+            local w = tonumber(res[1])
+            local h = tonumber(res[2])
+            setResolution(w, h)
+        end
+    end
 end
 
-function Containers.settings_createCheckbox(c, setting, tag, tinyPos, endFunc, infoText)
+function Containers.settings_createCheckbox(c, setting, tag, x, endFunc, infoText)
     Containers.settings_amount = Containers.settings_amount + 0.09
-    checkbox.CreateCheckbox(c, setting, tag, { tinyPos[1], Containers.settings_amount },
+    checkbox.CreateCheckbox(c, setting, tag, { x, Containers.settings_amount },
         endFunc, infoText)
 end
 
-function Containers.settings_createTextbox(c, setting, max, tag, tinyPos, endFunc, infoText)
+function Containers.settings_createTextbox(c, setting, max, tag, x, endFunc, inc, _keyInput, blacklisted, infoText)
     Containers.settings_amount = Containers.settings_amount + 0.09
-    textbox.CreateTextbox(c, setting, max, tag, { tinyPos[1], Containers.settings_amount }, endFunc, infoText)
+    textbox.CreateTextbox(c, setting, max, tag, { x, Containers.settings_amount }, endFunc, inc, _keyInput, blacklisted,
+        infoText)
 end
 
 function Containers.settingsCreate(c)
@@ -203,12 +213,18 @@ function Containers.settingsCreate(c)
     Containers.settings_amount = 0.045
 
     Containers.settings_createCheckbox(c, "Use CMOD", "settings_useCMOD",
-        { gameplay_header.transform.x, 0 },
+        gameplay_header.transform.x,
         containers_settingChanged, "Toggle between time based scrolling, and beat based scrolling.")
 
+    -- an array of the alphabet
+    local alphabet = {}
+    for i = 65, 90 do
+        table.insert(alphabet, string.char(i))
+    end
+
     Containers.settings_createTextbox(c, "Scroll Speed", 4, "settings_scrollSpeed",
-        { gameplay_header.transform.x, 0 },
-        containers_settingChanged, "The time based scroll speed. In BPM.")
+        gameplay_header.transform.x,
+        containers_settingChanged, 15, false, alphabet, "The time based scroll speed. In BPM.")
 end
 
 function Containers.create()

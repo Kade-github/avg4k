@@ -82,6 +82,7 @@
     <ClCompile Include="StartScreen.cpp" />
     <ClCompile Include="stbi.cpp" />
     <ClCompile Include="StepFile.cpp" />
+    <ClCompile Include="StringTools.cpp" />
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>

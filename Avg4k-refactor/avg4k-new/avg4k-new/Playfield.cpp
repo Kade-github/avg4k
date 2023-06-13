@@ -1,16 +1,6 @@
 #include "Playfield.h"
 #include "Average4K.h"
-
-static std::vector<int> H_Keybinds(std::string keybinds)
-{
-	std::vector<int> keybindsVector;
-
-	for (int i = 0; i < keybinds.length(); i++)
-	{
-		keybindsVector.push_back(static_cast<int>(keybinds[i]));
-	}
-	return keybindsVector;
-}
+#include "StringTools.h"
 
 Average4k::Objects::Gameplay::Playfield::Playfield(int _x, int _y, Average4k::Chart::Difficulty* d) : AvgEngine::Base::GameObject(_x, _y)
 {
@@ -51,7 +41,12 @@ Average4k::Objects::Gameplay::Playfield::Playfield(int _x, int _y, Average4k::Ch
 		receptors[3]->transform.angle = -90;
 	}
 
-	keybinds = H_Keybinds(Average4K::settings->Get("Keybinds").value);
+	keybinds = { 
+		AvgEngine::Utils::StringTools::convertKeyNameToKeyCode(Average4K::settings->Get("Left Keybind").value),
+		AvgEngine::Utils::StringTools::convertKeyNameToKeyCode(Average4K::settings->Get("Down Keybind").value),
+		AvgEngine::Utils::StringTools::convertKeyNameToKeyCode(Average4K::settings->Get("Up Keybind").value),
+		AvgEngine::Utils::StringTools::convertKeyNameToKeyCode(Average4K::settings->Get("Right Keybind").value) 
+	};
 }
 
 void Average4k::Objects::Gameplay::Playfield::draw()

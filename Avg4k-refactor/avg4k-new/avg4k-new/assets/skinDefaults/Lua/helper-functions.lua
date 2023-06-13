@@ -8,6 +8,11 @@ function helper.round(num, numDecimalPlaces)
     return math.floor(num * mult + 0.5) / mult
 end
 
+function helper.isNumber(input)
+    local num = tonumber(input)
+    return num ~= nil and type(num) == "number" and tostring(num) == input
+end
+
 function helper.asciiConvert(...)
     local ar = { ... }
     local con = {}

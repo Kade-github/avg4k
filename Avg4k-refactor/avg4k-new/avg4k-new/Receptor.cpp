@@ -48,9 +48,9 @@ void Average4k::Objects::Gameplay::Receptor::draw()
 				note->transform.w = transform.w;
 				note->transform.h = transform.h;
 				note->noteSize = noteSize;
-				note->cmod = std::stof(k->settings->Get("Scrollspeed").value);
-				note->xmod = 5;
-				note->useXmod = true;
+				note->cmod = std::stof(k->settings->Get("Scroll Speed").value);
+				note->xmod = std::stof(k->settings->Get("XMOD Multiplier").value);
+				note->useXmod = k->settings->Get("Use CMOD").value != "true";
 				addObject(note);
 
 				float beatRow = n.Beat * 48;

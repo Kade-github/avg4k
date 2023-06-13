@@ -100,6 +100,7 @@ function textbox.mouseDown(pos)
         for i, tb in ipairs(textbox.textboxes) do
             if tb.selected then
                 tb.changeFunction(tb.setting, tb.currentValue)
+                tb.currentValue = settings[tb.setting]
             end
             tb.selected = false
             textbox.inTextbox = false
@@ -120,14 +121,23 @@ function textbox.keyDown(key)
                 tb.selected = false
                 textbox.inTextbox = false
                 tb.changeFunction(tb.setting, tb.currentValue)
+                tb.currentValue = settings[tb.setting]
             else
                 if key == 259 and string.len(tb.currentValue) > 0 then
                     tb.currentValue = tb.currentValue:sub(1, -2)
                     return
                 end
+                if key == 257 then
+                    tb.selected = false
+                    textbox.inTextbox = false
+                    tb.changeFunction(tb.setting, tb.currentValue)
+                    tb.currentValue = settings[tb.setting]
+                    return
+                end
                 if string.len(tb.currentValue) >= tb.maxCharacters then
                     return
                 end
+                cprint(tostring(key))
                 for i, v in ipairs(tb.blacklistedKeys) do
                     if string.lower(v) == string.lower(string.char(key)) then
                         return

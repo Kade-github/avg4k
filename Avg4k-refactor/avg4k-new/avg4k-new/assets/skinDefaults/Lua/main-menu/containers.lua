@@ -174,6 +174,18 @@ function containers_settingChanged(setting, newValue)
     if setting == "Use CMOD" then -- toggle xmod to the opposite
         setSetting("Use XMOD", tostring(not newValue))
     end
+    if setting == "Scroll Speed" or setting == "XMOD Multiplier" then
+        if helper.isNumber(newValue) then
+            local num = tonumber(newValue)
+            if num < 1 then
+                return
+            end
+            setSetting(setting, tostring(newValue))
+        else
+            cprint("[Textbox] Can't set " .. newValue .. ", because it isn't a number!")
+        end
+        return
+    end
     setSetting(setting, tostring(newValue))
 
     if setting == "Resolution" then
@@ -216,15 +228,33 @@ function Containers.settingsCreate(c)
         gameplay_header.transform.x,
         containers_settingChanged, "Toggle between time based scrolling, and beat based scrolling.")
 
-    -- an array of the alphabet
-    local alphabet = {}
+    -- all blacklisted characters for numbersOnly
+    local numbersOnly = {}
     for i = 65, 90 do
-        table.insert(alphabet, string.char(i))
+        table.insert(numbersOnly, string.char(i))
     end
+    -- add special characters (`,space,etc)
+    table.insert(numbersOnly, "`")
+    table.insert(numbersOnly, " ")
+    table.insert(numbersOnly, "-")
+    table.insert(numbersOnly, "=")
+    table.insert(numbersOnly, "[")
+    table.insert(numbersOnly, "]")
+    table.insert(numbersOnly, "\\")
+    table.insert(numbersOnly, ";")
+    table.insert(numbersOnly, "'")
+    table.insert(numbersOnly, ",")
+    table.insert(numbersOnly, "/")
+
 
     Containers.settings_createTextbox(c, "Scroll Speed", 4, "settings_scrollSpeed",
         gameplay_header.transform.x,
-        containers_settingChanged, 15, false, alphabet, "The time based scroll speed. In BPM.")
+        containers_settingChanged, 15, false, numbersOnly, "The time based scroll speed. In BPM.")
+
+    Containers.settings_createTextbox(c, "XMOD Multiplier", 3, "settings_xmodMultiplier",
+        gameplay_header.transform.x,
+        containers_settingChanged, 0.1, false, numbersOnly,
+        "The multiplier to be used when scaling how big beats are in XMOD.")
 end
 
 function Containers.create()

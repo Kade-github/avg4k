@@ -174,10 +174,10 @@ function containers_settingChanged(setting, newValue)
     if setting == "Use CMOD" then -- toggle xmod to the opposite
         setSetting("Use XMOD", tostring(not newValue))
     end
-    if setting == "Scroll Speed" or setting == "XMOD Multiplier" then
+    if setting == "Scroll Speed" or setting == "XMOD Multiplier" or setting == "Note Offset" or setting == "Start Offset" then
         if helper.isNumber(newValue) then
             local num = tonumber(newValue)
-            if num < 1 then
+            if num < 1 and setting ~= "Note Offset" then
                 return
             end
             setSetting(setting, tostring(newValue))
@@ -202,6 +202,10 @@ function Containers.settings_createCheckbox(c, setting, tag, x, endFunc, infoTex
     Containers.settings_amount = Containers.settings_amount + 0.09
     checkbox.CreateCheckbox(c, setting, tag, { x, Containers.settings_amount },
         endFunc, infoText)
+end
+
+function Containers.settings_sameLine()
+    Containers.settings_amount = Containers.settings_amount - 0.09
 end
 
 function Containers.settings_createTextbox(c, setting, max, tag, x, endFunc, inc, _keyInput, blacklisted, infoText)
@@ -236,7 +240,6 @@ function Containers.settingsCreate(c)
     -- add special characters (`,space,etc)
     table.insert(numbersOnly, "`")
     table.insert(numbersOnly, " ")
-    table.insert(numbersOnly, "-")
     table.insert(numbersOnly, "=")
     table.insert(numbersOnly, "[")
     table.insert(numbersOnly, "]")
@@ -251,10 +254,20 @@ function Containers.settingsCreate(c)
         gameplay_header.transform.x,
         containers_settingChanged, 15, false, numbersOnly, "The time based scroll speed. In BPM.")
 
+
     Containers.settings_createTextbox(c, "XMOD Multiplier", 3, "settings_xmodMultiplier",
         gameplay_header.transform.x,
         containers_settingChanged, 0.1, false, numbersOnly,
         "The multiplier to be used when scaling how big beats are in XMOD.")
+
+    Containers.settings_createTextbox(c, "Note Offset", 5, "settings_noteOffset",
+        gameplay_header.transform.x,
+        containers_settingChanged, 15, false, numbersOnly, "The offset of the notes. In seconds, negative is later.")
+
+    Containers.settings_createTextbox(c, "Start Offset", 5, "settings_noteOffset",
+        gameplay_header.transform.x,
+        containers_settingChanged, 15, false, numbersOnly,
+        "How long the game should wait before starting the song. In seconds")
 end
 
 function Containers.create()

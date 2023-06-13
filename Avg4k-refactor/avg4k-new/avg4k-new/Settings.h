@@ -41,7 +41,7 @@ namespace Average4k
 	class Settings
 	{
 		// Average Engine 1
-		std::string _settingsVersion = "Average4KSettingsFile:design7";
+		std::string _settingsVersion = "Average4KSettingsFile:design8";
 		std::string _path;
 	public:
 		File f;
@@ -77,8 +77,8 @@ namespace Average4k
 
 			nf.settings.push_back({ "Resolution", "1920x1080",  "1920x1080", S_String, -1,-1 });
 
-			nf.settings.push_back({ "Note Offset", "0",  "0", S_Float, 0.1f,10 });
-			nf.settings.push_back({ "Start Offset", "3",  "3", S_Float, 0.1f,10 });
+			nf.settings.push_back({ "Note Offset", "0.0",  "0.0", S_Float, 0.1f,10 });
+			nf.settings.push_back({ "Start Offset", "3.0",  "3.0", S_Float, 0.1f,10 });
 			return nf;
 		}
 

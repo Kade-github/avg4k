@@ -174,10 +174,16 @@ function containers_settingChanged(setting, newValue)
     if setting == "Use CMOD" then -- toggle xmod to the opposite
         setSetting("Use XMOD", tostring(not newValue))
     end
-    if setting == "Scroll Speed" or setting == "XMOD Multiplier" or setting == "Note Offset" or setting == "Start Offset" then
+    if setting == "Scroll Speed" or setting == "XMOD XMOD" or setting == "Note Offset" or setting == "Start Offset" then
         if helper.isNumber(newValue) then
             local num = tonumber(newValue)
-            if num < 1 and setting ~= "Note Offset" then
+            if setting == "Scroll Speed" and num < 200 then
+                return
+            end
+            if setting == "XMOD XMOD" and num < 0.1 then
+                return
+            end
+            if num < 0 and setting ~= "Note Offset" then
                 return
             end
             setSetting(setting, tostring(newValue))
@@ -254,7 +260,6 @@ function Containers.settingsCreate(c)
         gameplay_header.transform.x,
         containers_settingChanged, 15, false, numbersOnly, "The time based scroll speed. In BPM.")
 
-
     Containers.settings_createTextbox(c, "XMOD Multiplier", 3, "settings_xmodMultiplier",
         gameplay_header.transform.x,
         containers_settingChanged, 0.1, false, numbersOnly,
@@ -267,7 +272,7 @@ function Containers.settingsCreate(c)
     Containers.settings_createTextbox(c, "Start Offset", 5, "settings_noteOffset",
         gameplay_header.transform.x,
         containers_settingChanged, 15, false, numbersOnly,
-        "How long the game should wait before starting the song. In seconds")
+        "How long the game should wait before starting the song. In seconds.")
 end
 
 function Containers.create()

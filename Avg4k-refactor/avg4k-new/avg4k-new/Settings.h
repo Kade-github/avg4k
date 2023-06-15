@@ -78,7 +78,7 @@ namespace Average4k
 			nf.settings.push_back({ "Resolution", "1920x1080",  "1920x1080", S_String, -1,-1 });
 
 			nf.settings.push_back({ "Note Offset", "0.0",  "0.0", S_Float, 0.1f,10 });
-			nf.settings.push_back({ "Start Offset", "3.0",  "3.0", S_Float, 0.1f,10 });
+			nf.settings.push_back({ "Start Offset", "3.0",  "3.0", S_Float, -10,10 });
 			return nf;
 		}
 

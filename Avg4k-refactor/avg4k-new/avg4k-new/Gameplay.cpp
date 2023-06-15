@@ -112,7 +112,9 @@ void Gameplay::draw()
 		isStarted = true;
 	}
 
-	float time = c->GetPos() + std::stof(Average4K::settings->Get("Note Offset").value);
+	float offset = std::stof(Average4K::settings->Get("Note Offset").value);
+
+	float time = -offset + c->GetPos() + offset;
 	if (!c->isPlaying)
 		time = -std::abs(songStart - glfwGetTime());
 	float beat = Average4ker::a4er->options.currentFile->GetBeatFromTime(time);

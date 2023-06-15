@@ -70,6 +70,18 @@ function songWheel.setSongs(files)
     songWheel.Select(0)
 end
 
+function songWheel.mouseWheel(amt)
+    if Selection.currentContainerIndex ~= 1 then
+        return
+    end
+
+    if tonumber(amt) > 0 then
+        songWheel.Select(-1)
+    else
+        songWheel.Select(1)
+    end
+end
+
 function songWheel.SetDiff()
     local diffName = songWheel.files[songWheel.selectedIndex].difficulties[songWheel.selectedDiff].name
 
@@ -188,6 +200,10 @@ function songWheel.Select(amt)
 end
 
 function songWheel.keyPress(num)
+    if Selection.currentContainerIndex ~= 1 then
+        return
+    end
+
     if num == 265 then
         songWheel.Select(-1)
     elseif num == 264 then

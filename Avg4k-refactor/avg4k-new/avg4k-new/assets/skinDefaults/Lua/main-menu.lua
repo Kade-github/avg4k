@@ -49,6 +49,7 @@ end
 
 function MouseWheel(data)
     helper.containerMouseWheel(data)
+    songWheel.mouseWheel(data)
 end
 
 function KeyPress(key)

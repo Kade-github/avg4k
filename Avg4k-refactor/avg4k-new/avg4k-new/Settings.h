@@ -40,8 +40,8 @@ namespace Average4k
 
 	class Settings
 	{
-		// Average Engine 1
-		std::string _settingsVersion = "Average4KSettingsFile:design8";
+		// header
+		std::string _settingsVersion = "##HEADER## settings_steambeta:design8";
 		std::string _path;
 	public:
 		File f;
@@ -52,14 +52,19 @@ namespace Average4k
 			nf.settingsVersion = _settingsVersion;
 
 			nf.settings.push_back({ "Music Volume", "0.45", "0.45", S_Float, 0,1 });
+
+			nf.settings.push_back({ "Play Hitsounds", "false",  "false", S_Bool, 0,1 });
 			nf.settings.push_back({ "Hitsound Volume", "0.8",  "0.8", S_Float, 0,1 });
 
 			nf.settings.push_back({ "Scroll Speed", "800",  "800", S_Int, 200,1800 });
+			nf.settings.push_back({ "Upscroll", "true",  "true", S_Bool, 0,1 });
 			nf.settings.push_back({ "XMOD Multiplier", "1.0",  "1.0", S_Float, 0.1f,15 });
 			nf.settings.push_back({ "Use CMOD", "true",  "true", S_Bool, 0,1 });
 			nf.settings.push_back({ "Use XMOD", "false",  "false", S_Bool, 0,1 });
 
 			nf.settings.push_back({ "Skin", "arrow",  "arrow", S_String, -1,-1 });
+			nf.settings.push_back({ "Show judgement counter", "true",  "true", S_Bool, 0,1 });
+			nf.settings.push_back({ "Show song position", "false",  "false", S_Bool, 0,1 });
 
 			nf.settings.push_back({ "Left Keybind", "D",  "D", S_String, -1,-1 });
 			nf.settings.push_back({ "Down Keybind", "F",  "F", S_String, -1,-1 });
@@ -76,9 +81,13 @@ namespace Average4k
 			nf.settings.push_back({ "Underlane Auto Accent", "true",  "true", S_Bool, 0,1 });
 
 			nf.settings.push_back({ "Resolution", "1920x1080",  "1920x1080", S_String, -1,-1 });
+			nf.settings.push_back({ "Fullscreen", "true",  "true", S_Bool, 0,-1  });
 
 			nf.settings.push_back({ "Note Offset", "0.0",  "0.0", S_Float, 0.1f,10 });
 			nf.settings.push_back({ "Start Offset", "3.0",  "3.0", S_Float, -10,10 });
+
+			nf.settings.push_back({ "Ignore Modcharts", "false",  "false", S_Bool, 0,1 });
+			nf.settings.push_back({ "Ignore Modchart Skin's", "false",  "false", S_Bool, 0,1 });
 			return nf;
 		}
 

@@ -220,22 +220,29 @@ function Containers.settings_createTextbox(c, setting, max, tag, x, endFunc, inc
         infoText)
 end
 
-function Containers.settingsCreate(c)
-    local gameplay_header = text.new(0, 0, "ArialBold.fnt", "Gameplay")
-    create(gameplay_header)
-    c:add(gameplay_header)
-    gameplay_header.size = 28 * skin["upscale"]
-    gameplay_header.ratio = true
-    gameplay_header.transform.x = 0.02
-    gameplay_header.transform.y = 0.06
-    gameplay_header.tag = "settings_gameplayHeader"
-    gameplay_header.order = 2
+function Containers.settings_createHeader(c, x, tag, headerText)
+    Containers.settings_amount = Containers.settings_amount + 0.09
+    local header = text.new(0, 0, "ArialBold.fnt", headerText)
+    create(header)
+    c:add(header)
+    header.size = 28 * skin["upscale"]
+    header.ratio = true
+    header.transform.x = x
+    header.transform.y = Containers.settings_amount
+    header.tag = "settings_" .. tag .. "_header"
+    header.order = 2
+end
 
+function Containers.settingsCreate(c)
     -- basically a y value lol
-    Containers.settings_amount = 0.045
+    Containers.settings_amount = -0.045
+
+    local x = 0.02
+
+    Containers.settings_createHeader(c, x, "gameplay", "Gameplay")
 
     Containers.settings_createCheckbox(c, "Use CMOD", "settings_useCMOD",
-        gameplay_header.transform.x,
+        x,
         containers_settingChanged, "Toggle between time based scrolling, and beat based scrolling.")
 
     -- all blacklisted characters for numbersOnly
@@ -257,22 +264,57 @@ function Containers.settingsCreate(c)
 
 
     Containers.settings_createTextbox(c, "Scroll Speed", 4, "settings_scrollSpeed",
-        gameplay_header.transform.x,
+        x,
         containers_settingChanged, 15, false, numbersOnly, "The time based scroll speed. In BPM.")
 
     Containers.settings_createTextbox(c, "XMOD Multiplier", 3, "settings_xmodMultiplier",
-        gameplay_header.transform.x,
+        x,
         containers_settingChanged, 0.1, false, numbersOnly,
         "The multiplier to be used when scaling how big beats are in XMOD.")
 
     Containers.settings_createTextbox(c, "Note Offset", 5, "settings_noteOffset",
-        gameplay_header.transform.x,
+        x,
         containers_settingChanged, 15, false, numbersOnly, "The offset of the notes. In seconds, negative is later.")
 
     Containers.settings_createTextbox(c, "Start Offset", 5, "settings_noteOffset",
-        gameplay_header.transform.x,
+        x,
         containers_settingChanged, 15, false, numbersOnly,
         "How long the game should wait before starting the song. In seconds.")
+
+    Containers.settings_createTextbox(c, "Underlane Transparency", 5, "settings_underlaneTransparency",
+        x,
+        containers_settingChanged, 15, false, numbersOnly,
+        "How transparent the under background of the note should be. 1 is fully transparent, 0 is fully opaque.")
+
+    Containers.settings_createTextbox(c, "Left Keybind", 1, "settings_leftKeybind",
+        x,
+        containers_settingChanged, 15, true, {},
+        "")
+
+    Containers.settings_createTextbox(c, "Down Keybind", 1, "settings_downKeybind", x,
+        containers_settingChanged, 15, true, {}, "")
+
+    Containers.settings_createTextbox(c, "Up Keybind", 1, "settings_upKeybind", x,
+        containers_settingChanged, 15, true, {}, "")
+
+    Containers.settings_createTextbox(c, "Right Keybind", 1, "settings_rightKeybind", x,
+        containers_settingChanged, 15, true, {}, "")
+
+    Containers.settings_createHeader(c, x, "audio", "Audio")
+
+    Containers.settings_createTextbox(c, "Music Volume", 5, "settings_musicVolume",
+        x,
+        containers_settingChanged, 15, false, numbersOnly, "The volume of the music. 1 is the maximum.")
+
+    Containers.settings_createTextbox(c, "Hitsound Volume", 5, "settings_hitsoundVolume",
+        x,
+        containers_settingChanged, 15, false, numbersOnly, "The volume of the hitsounds. 1 is the maximum.")
+
+    Containers.settings_createHeader(c, x, "graphics", "Graphics")
+
+
+
+    Containers.settings_createHeader(c, x, "misc", "Misc")
 end
 
 function Containers.create()

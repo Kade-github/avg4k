@@ -117,7 +117,7 @@ function textbox.keyDown(key)
                         return
                     end
                 end
-                tb.currentValue = getKeyName(key)
+                tb.currentValue = getKeyName(tonumber(key))
                 tb.selected = false
                 textbox.inTextbox = false
                 tb.changeFunction(tb.setting, tb.currentValue)

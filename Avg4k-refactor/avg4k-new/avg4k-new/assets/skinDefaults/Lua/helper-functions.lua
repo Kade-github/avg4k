@@ -13,15 +13,6 @@ function helper.isNumber(input)
     return num ~= nil and type(num) == "number" and tostring(num) == input
 end
 
-function helper.asciiConvert(...)
-    local ar = { ... }
-    local con = {}
-    for i, v in pairs(ar) do
-        table.insert(con, ("").char(v + 96))
-    end
-    return con;
-end
-
 -- dumps lua tables into a string so you can print usertables (like sprite, animatedsprite, etc)
 function helper.dump(o)
     if type(o) == 'table' then
@@ -147,6 +138,9 @@ function helper.initContainer(container, allowScroll)
     c.hover = false
     c.overspace = 0
     c.allowScroll = allowScroll
+    c.tweenRect = nil
+    c.startTween = 0
+    c.endTween = 0
     table.insert(helper.containers, { c })
 
     -- create a scroll bar
@@ -207,6 +201,15 @@ function helper.containerMouseWheel(amount)
     end
 end
 
+function helper.setTween(container_name, length, rect)
+    local ind = helper.findContainer(container_name)
+    if ind ~= nil then
+        ind["tweenRect"] = rect
+        ind["startTween"] = length
+        ind["endTween"] = length
+    end
+end
+
 --[[
     A helper function to update containers scroll bar and item positions
 ]]
@@ -215,6 +218,19 @@ function helper.containerUpdate(time)
         local ind = t[1]
 
         local container = ind["c"]
+
+        if ind["tweenRect"] ~= nil then
+            if container.transform.x ~= ind["tweenRect"].x then
+                container.transform.x = helper.lerp(container.transform.x, ind["tweenRect"].x,
+                    helper.outCubic(ind["endTween"] / (time - ind["startTween"])))
+            end
+
+            if container.transform.y ~= ind["tweenRect"].y then
+                container.transform.y = helper.lerp(container.transform.y, ind["tweenRect"].y,
+                    helper.outCubic(ind["endTween"] / (time - ind["startTween"])))
+            end
+        end
+
         local rc = container:getRealRect()
 
         -- check hover using aabb
@@ -237,17 +253,25 @@ function helper.containerUpdate(time)
 
             local table = container.children
             local shouldOverspace = false
+            ind["overspace"] = 0
+            local lastOverspace = 0
+            local lastY = 0
             for i = 1, table:size(), 1 do
                 local child = table[i]
                 if child.id == bar.id or child.id == arrow1.id or child.id == arrow2.id then
                     -- do nothing
                 else
                     local real = child:getRealRect()
-                    local h = ((real.y * skin["upscale"]) + (real.h * skin["upscale"]))
-                    local rch = ((rc.y * skin["upscale"]) + (rc.h * skin["upscale"]))
-                    if h > rch then
-                        ind["overspace"] = h - rch
-                        shouldOverspace = true
+
+                    if child.ratio then
+                        if child.transform.y + child.transform.h > 1 then
+                            ind["overspace"] = (rc.h * (child.transform.y + child.transform.h)) - rc.h +
+                                (8 * skin["upscale"])
+                        end
+                    else
+                        if child.transform.y + child.transform.h > rc.y + rc.h then
+                            ind["overspace"] = (real.y + real.h) - (rc.y - rc.h) + (8 * skin["upscale"])
+                        end
                     end
                     child.transformOffset.y = -currentScroll
                     if ind["shouldScroll"] then
@@ -260,9 +284,6 @@ function helper.containerUpdate(time)
                         child.transformOffset.w = 0
                     end
                 end
-            end
-            if not shouldOverspace then
-                ind["overspace"] = 0
             end
             ind["shouldScroll"] = ind["overspace"] ~= 0
 

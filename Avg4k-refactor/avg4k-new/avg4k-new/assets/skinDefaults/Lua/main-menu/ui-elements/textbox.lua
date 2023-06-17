@@ -1,11 +1,12 @@
 textbox = {}
 
 textbox.inTextbox = false
-
+textbox.container = nil
 textbox.textboxes = {}
 
 function textbox.CreateTextbox(c, _setting, _maxCharacters, _tag, tinyPos, _changeFunction, inc, _keyInput, blacklisted,
                                _infoText)
+    textbox.container = c
     local bTable = {
         currentValue = settings[_setting],
         tag = _tag,
@@ -76,7 +77,6 @@ function textbox.CreateTextbox(c, _setting, _maxCharacters, _tag, tinyPos, _chan
         end
         infoText.size = 15 * skin["upscale"]
         infoText.characterSpacing = 1
-        infoText.ratio = true
         infoText.order = 1
         infoText.tag = "TEXTBOX_INFO_" .. _tag
         table.insert(bTable.objects, infoText)
@@ -180,26 +180,27 @@ function textbox.update(time)
             -- create a bigger hitbox for text
             local endPosReal = tb.objects[2]:getRealRect().y + tb.objects[2]:getRealRect().h +
                 tb.objects[4]:getRealRect()
-                .h
+                .h - textbox.container:getRealRect().y
+            tb.objects[4].transform.x = tb.objects[2]:getRealRect().x - textbox.container:getRealRect().x
 
-            local bigRect = tb.objects[4]:getRealRect()
+            local bigRect = copyRect(tb.objects[4].transform)
             bigRect.y = endPosReal
             bigRect.w = bigRect.w + 15
-            local endPos = tb.objects[2].transform.y + tb.objects[2].transform.h +
-                tb.objects[4].transform
-                .h
+
+            local realYPos = tb.objects[2]:getRealRect().y - textbox.container:getRealRect().y
+
 
             -- check all of these hit boxes because we need it to be ux friendly
             if helper.aabb(Globals.mouseRect, tb.objects[1]:getRealRect()) or helper.aabb(Globals.mouseRect, bigRect) or helper.aabb(Globals.mouseRect, tb.objects[2]:getRealRect()) then
                 local a = helper.lerp(0, 1, math.min(ht / 0.5, 1))
-                local y = helper.lerp(tb.objects[2].transform.y, endPos, helper.outCubic(a))
-                tb.objects[4].transform.x = tb.objects[2].transform.x
+                local y = helper.lerp(realYPos, endPosReal, helper.outCubic(a))
                 tb.objects[4].transform.y = y
                 tb.objects[4].transform.alpha = a
                 tb.lastHover = time
             else
                 local a = helper.lerp(1, 0, math.min((time - tb.lastHover) / 0.5, 1))
-                local y = helper.lerp(tb.objects[2].transform.y, endPos, helper.outCubic(a))
+                local y = helper.lerp(realYPos,
+                    endPosReal, helper.outCubic(a))
                 tb.hoverTime = time
                 tb.objects[4].transform.y = y
                 tb.objects[4].transform.alpha = a

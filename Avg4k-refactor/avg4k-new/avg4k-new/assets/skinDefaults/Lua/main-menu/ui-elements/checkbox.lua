@@ -107,7 +107,6 @@ function checkbox.CreateCheckbox(container, _setting, _tag, tinyPos, _changeFunc
         end
         infoText.size = 15 * skin["upscale"]
         infoText.characterSpacing = 1
-        infoText.ratio = true
         infoText.order = 1
         infoText.tag = "CHECKBOX_INFO_" .. _tag
         table.insert(bTable.objects, infoText)
@@ -177,26 +176,27 @@ function checkbox.update(time)
             -- create a bigger hitbox for text
             local endPosReal = cb.objects[3]:getRealRect().y + cb.objects[3]:getRealRect().h +
                 cb.objects[5]:getRealRect()
-                .h
+                .h - textbox.container:getRealRect().y
+            cb.objects[5].transform.x = cb.objects[3]:getRealRect().x - textbox.container:getRealRect().x
 
-            local bigRect = cb.objects[5]:getRealRect()
+            local bigRect = copyRect(cb.objects[4].transform)
             bigRect.y = endPosReal
             bigRect.w = bigRect.w + 15
-            local endPos = cb.objects[3].transform.y + cb.objects[3].transform.h +
-                cb.objects[5].transform
-                .h
+
+            local realYPos = cb.objects[3]:getRealRect().y - textbox.container:getRealRect().y
+
 
             -- check all of these hit boxes because we need it to be ux friendly
-            if helper.aabb(Globals.mouseRect, cb.objects[1]:getRealRect()) or helper.aabb(Globals.mouseRect, bigRect) or helper.aabb(Globals.mouseRect, cb.objects[3]:getRealRect()) then
+            if helper.aabb(Globals.mouseRect, cb.objects[1]:getRealRect()) or helper.aabb(Globals.mouseRect, bigRect) or helper.aabb(Globals.mouseRect, cb.objects[2]:getRealRect()) then
                 local a = helper.lerp(0, 1, math.min(ht / 0.5, 1))
-                local y = helper.lerp(cb.objects[3].transform.y, endPos, helper.outCubic(a))
-                cb.objects[5].transform.x = cb.objects[3].transform.x
+                local y = helper.lerp(realYPos, endPosReal, helper.outCubic(a))
                 cb.objects[5].transform.y = y
                 cb.objects[5].transform.alpha = a
                 cb.lastHover = time
             else
                 local a = helper.lerp(1, 0, math.min((time - cb.lastHover) / 0.5, 1))
-                local y = helper.lerp(cb.objects[3].transform.y, endPos, helper.outCubic(a))
+                local y = helper.lerp(realYPos,
+                    endPosReal, helper.outCubic(a))
                 cb.hoverTime = time
                 cb.objects[5].transform.y = y
                 cb.objects[5].transform.alpha = a

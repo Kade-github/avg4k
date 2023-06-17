@@ -77,6 +77,9 @@ namespace AvgEngine
 			}
 			consoleLog.push_back(cLog);
 
+			if (consoleLog.size() > 500)
+				consoleLog.erase(consoleLog.begin());
+
 		}
 
 		/**

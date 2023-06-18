@@ -87,7 +87,9 @@ end
 function textbox.mouseDown(pos)
     local isOut = true
     for i, tb in ipairs(textbox.textboxes) do
-        if helper.aabb(pos, tb.objects[1]:getRealRect()) then
+        local realerRect = copyRect(tb.objects[1]:getRealRect())
+        realerRect.y = realerRect.y + tb.objects[1].transformOffset.y
+        if helper.aabb(pos, realerRect) then
             for i, tb in ipairs(textbox.textboxes) do -- make sure all the other textboxes are not selected
                 tb.selected = false
             end

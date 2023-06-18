@@ -132,7 +132,9 @@ end
 
 function checkbox.mouseDown(pos)
     for i, cb in ipairs(checkbox.checkboxes) do
-        if helper.aabb(pos, cb.objects[1]:getRealRect()) then
+        local realerRect = copyRect(cb.objects[1]:getRealRect())
+        realerRect.y = realerRect.y + cb.objects[1].transformOffset.y
+        if helper.aabb(pos, realerRect) then
             checkbox.checked(cb)
             return
         end

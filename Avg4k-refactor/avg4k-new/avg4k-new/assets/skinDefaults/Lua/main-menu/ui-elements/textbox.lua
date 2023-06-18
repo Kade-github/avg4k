@@ -181,14 +181,20 @@ function textbox.update(time)
             local endPosReal = tb.objects[2]:getRealRect().y + tb.objects[2]:getRealRect().h +
                 tb.objects[4]:getRealRect()
                 .h - textbox.container:getRealRect().y
-            tb.objects[4].transform.x = tb.objects[2]:getRealRect().x
+            tb.objects[4].transform.x = tb.objects[2]:getRealRect().x - textbox.container:getRealRect().x
 
 
-            local realYPos = tb.objects[2]:getRealRect().y
+            local realYPos = tb.objects[2]:getRealRect().y - textbox.container:getRealRect().y
 
+
+            local thingRect = copyRect(tb.objects[1]:getRealRect())
+
+            thingRect.y = thingRect.y + tb.objects[1].transformOffset.y
+
+            local oRect = copyRect(tb.objects[2]:getRealRect())
 
             -- check all of these hit boxes because we need it to be ux friendly
-            if helper.aabb(Globals.mouseRect, tb.objects[1]:getRealRect()) or helper.aabb(Globals.mouseRect, tb.objects[2]:getRealRect()) then
+            if helper.aabb(Globals.mouseRect, thingRect) or helper.aabb(Globals.mouseRect, oRect) then
                 local a = helper.lerp(0, 1, math.min(ht / 0.5, 1))
                 local y = helper.lerp(realYPos, endPosReal, helper.outCubic(a))
                 tb.objects[4].transform.y = y

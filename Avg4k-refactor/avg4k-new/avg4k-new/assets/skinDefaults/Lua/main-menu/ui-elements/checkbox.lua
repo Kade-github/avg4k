@@ -186,8 +186,14 @@ function checkbox.update(time)
             local realYPos = cb.objects[3]:getRealRect().y - textbox.container:getRealRect().y
 
 
+            local thingRect = copyRect(cb.objects[1]:getRealRect())
+
+            thingRect.y = thingRect.y + cb.objects[1].transformOffset.y
+
+            local oRect = copyRect(cb.objects[3]:getRealRect())
+
             -- check all of these hit boxes because we need it to be ux friendly
-            if helper.aabb(Globals.mouseRect, cb.objects[1]:getRealRect()) or helper.aabb(Globals.mouseRect, bigRect) or helper.aabb(Globals.mouseRect, cb.objects[2]:getRealRect()) then
+            if helper.aabb(Globals.mouseRect, thingRect) or helper.aabb(Globals.mouseRect, oRect) then
                 local a = helper.lerp(0, 1, math.min(ht / 0.5, 1))
                 local y = helper.lerp(realYPos, endPosReal, helper.outCubic(a))
                 cb.objects[5].transform.y = y

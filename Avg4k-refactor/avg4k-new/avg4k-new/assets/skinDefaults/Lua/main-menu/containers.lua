@@ -204,24 +204,33 @@ function containers_settingChanged(setting, newValue)
     end
 end
 
-function Containers.settings_createCheckbox(c, setting, tag, x, endFunc, infoText)
+function Containers.settings_addLine()
     Containers.settings_amount = Containers.settings_amount + 0.09
-    checkbox.CreateCheckbox(c, setting, tag, { x, Containers.settings_amount },
-        endFunc, infoText)
 end
 
 function Containers.settings_sameLine()
     Containers.settings_amount = Containers.settings_amount - 0.09
 end
 
+function Containers.settings_createCheckbox(c, setting, tag, x, endFunc, infoText)
+    Containers.settings_addLine()
+    checkbox.CreateCheckbox(c, setting, tag, { x, Containers.settings_amount },
+        endFunc, infoText)
+end
+
 function Containers.settings_createTextbox(c, setting, max, tag, x, endFunc, inc, _keyInput, blacklisted, infoText)
-    Containers.settings_amount = Containers.settings_amount + 0.09
+    Containers.settings_addLine()
     textbox.CreateTextbox(c, setting, max, tag, { x, Containers.settings_amount }, endFunc, inc, _keyInput, blacklisted,
         infoText)
 end
 
+function Containers.settings_createDropdown(c, setting, items, tag, x, endFunc, infoText)
+    Containers.settings_addLine()
+    dropdown.CreateDrowndown(c, setting, tag, items, { x, Containers.settings_amount }, endFunc, infoText)
+end
+
 function Containers.settings_createHeader(c, x, tag, headerText)
-    Containers.settings_amount = Containers.settings_amount + 0.09
+    Containers.settings_addLine()
     local header = text.new(0, 0, "ArialBold.fnt", headerText)
     create(header)
     c:add(header)
@@ -281,11 +290,6 @@ function Containers.settingsCreate(c)
         containers_settingChanged, 15, false, numbersOnly,
         "How long the game should wait before starting the song. In seconds.")
 
-    Containers.settings_createTextbox(c, "Underlane Transparency", 5, "settings_underlaneTransparency",
-        x,
-        containers_settingChanged, 15, false, numbersOnly,
-        "How transparent the under background of the note should be. 1 is fully transparent, 0 is fully opaque.")
-
     Containers.settings_createTextbox(c, "Left Keybind", 1, "settings_leftKeybind",
         x,
         containers_settingChanged, 15, true, {},
@@ -310,11 +314,55 @@ function Containers.settingsCreate(c)
         x,
         containers_settingChanged, 15, false, numbersOnly, "The volume of the hitsounds. 1 is the maximum.")
 
-    Containers.settings_createHeader(c, x, "graphics", "Graphics")
+    Containers.settings_createHeader(c, x, "video", "Video")
 
+    Containers.settings_createDropdown(c, "Resolution", { "Test", "Test2", "EndTest" }, "settings_resolution",
+        x, containers_settingChanged, "")
 
+    Containers.settings_createCheckbox(c, "Fullscreen", "settings_fullscreen", x,
+        containers_settingChanged, "")
+
+    Containers.settings_createHeader(c, x, "skin", "Skin")
+
+    Containers.settings_createDropdown(c, "Skin", { "Test", "Test2", "EndTest" }, "settings_skin",
+        x, containers_settingChanged, "")
+
+    Containers.settings_createTextbox(c, "Underlane Transparency", 5, "settings_underlaneTransparency",
+        x,
+        containers_settingChanged, 15, false, numbersOnly,
+        "How transparent the under background of the note should be. 1 is fully transparent, 0 is fully opaque.")
+
+    Containers.settings_createTextbox(c, "Underlane R Color", 5, "settings_underlaneRColor",
+        x,
+        containers_settingChanged, 3, false, numbersOnly,
+        "The red value of the under background of the note.")
+
+    Containers.settings_createTextbox(c, "Underlane G Color", 5, "settings_underlaneGColor",
+        x,
+        containers_settingChanged, 3, false, numbersOnly,
+        "The green value of the under background of the note.")
+
+    Containers.settings_createTextbox(c, "Underlane B Color", 5, "settings_underlaneBColor",
+        x,
+        containers_settingChanged, 3, false, numbersOnly,
+        "The blue value of the under background of the note.")
+
+    Containers.settings_createCheckbox(c, "Underlane Auto Accent", "settings_autoAccent", x,
+        containers_settingChanged, "Automatically set the colors to accents grabbed from the background.")
+
+    Containers.settings_createCheckbox(c, "Show judgement counter", "settings_judgementCounter", x,
+        containers_settingChanged, "Shows a list of judgements gained during the song.")
+
+    Containers.settings_createCheckbox(c, "Show song position", "settings_songPosition", x,
+        containers_settingChanged, "Shows the current progress of the song.")
 
     Containers.settings_createHeader(c, x, "misc", "Misc")
+
+    Containers.settings_createCheckbox(c, "Ignore Modcharts", "settings_ignoreModcharts", x,
+        containers_settingChanged, "")
+
+    Containers.settings_createCheckbox(c, "Ignore Modchart Skin's", "settings_ignoreModchartSkins", x,
+        containers_settingChanged, "")
 end
 
 function Containers.create()

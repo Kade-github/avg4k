@@ -41,7 +41,7 @@ namespace Average4k
 	class Settings
 	{
 		// header
-		std::string _settingsVersion = "##HEADER## settings_steambeta:design8";
+		std::string _settingsVersion = "##HEADER## settings_steambeta:design9";
 		std::string _path;
 	public:
 		File f;
@@ -62,10 +62,6 @@ namespace Average4k
 			nf.settings.push_back({ "Use CMOD", "true",  "true", S_Bool, 0,1 });
 			nf.settings.push_back({ "Use XMOD", "false",  "false", S_Bool, 0,1 });
 
-			nf.settings.push_back({ "Skin", "arrow",  "arrow", S_String, -1,-1 });
-			nf.settings.push_back({ "Show judgement counter", "true",  "true", S_Bool, 0,1 });
-			nf.settings.push_back({ "Show song position", "false",  "false", S_Bool, 0,1 });
-
 			nf.settings.push_back({ "Left Keybind", "D",  "D", S_String, -1,-1 });
 			nf.settings.push_back({ "Down Keybind", "F",  "F", S_String, -1,-1 });
 			nf.settings.push_back({ "Up Keybind", "J",  "J", S_String, -1,-1 });
@@ -74,6 +70,9 @@ namespace Average4k
 			nf.settings.push_back({ "Note Size", "1.5",  "1.5", S_Float, 1,4 });
 			nf.settings.push_back({ "Background Transparency", "0.5",  "0.5", S_Float, 0,1 });
 
+			nf.settings.push_back({ "Skin", "arrow",  "arrow", S_String, -1,-1 });
+			nf.settings.push_back({ "Show judgement counter", "true",  "true", S_Bool, 0,1 });
+			nf.settings.push_back({ "Show song position", "false",  "false", S_Bool, 0,1 });
 			nf.settings.push_back({ "Underlane Transparency", "0.5",  "0.5", S_Float, 0,1 });
 			nf.settings.push_back({ "Underlane R Color", "0",  "0", S_Float, 0,1 });
 			nf.settings.push_back({ "Underlane G Color", "0",  "0", S_Float, 0,1 });

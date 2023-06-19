@@ -252,10 +252,7 @@ function helper.containerUpdate(time)
             local currentScroll = ind["scroll"]
 
             local table = container.children
-            local shouldOverspace = false
             ind["overspace"] = 0
-            local lastOverspace = 0
-            local lastY = 0
             for i = 1, table:size(), 1 do
                 local child = table[i]
                 if child.id == bar.id or child.id == arrow1.id or child.id == arrow2.id then
@@ -296,7 +293,10 @@ function helper.containerUpdate(time)
 
                 -- set the bar and arrows positions
                 bar.transform.x = 4
-                bar.transform.y = currentScroll + 8 + arrow1.transform.h
+                bar.transform.y = (8 + arrow1.transform.h) +
+                    (rc.h - (16 + (arrow1.transform.h * 2) + bar.transform.h)) * (currentScroll / ind["overspace"])
+
+                --cprint(tostring(bar.transform.y))
 
                 bar.transform.w = 20 * skin["upscale"]
 
@@ -311,7 +311,7 @@ function helper.containerUpdate(time)
                 arrow2.transform.y = rc.h - arrow2.transform.h
                 arrow2.transform.angle = 180
 
-                bar.transform.h = (rc.h - ((arrow2.transform.h * 2) + 14)) - ind["overspace"]
+                bar.transform.h = rc.h / 4
             else
                 -- set the bar and arrows to invisible
                 bar.transform.alpha = 0

@@ -123,7 +123,7 @@ function checkbox.checked(cb)
     else
         cb.objects[4].text = "off"
     end
-    cprint("[Settings] " .. cb.tag .. " = " .. tostring(cb.currentValue))
+    cprint("[Settings] " .. cb.setting .. " = " .. tostring(cb.currentValue))
     cb.startTime = Globals.lt
     if cb.changeFunction ~= nil then
         cb.changeFunction(cb.setting, cb.currentValue)

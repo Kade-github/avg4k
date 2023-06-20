@@ -20,7 +20,7 @@ function checkbox.CreateCheckbox(container, _setting, _tag, tinyPos, _changeFunc
     -- it's pretty simple.
 
     local bTable = {
-        currentValue = settings[_setting],
+        currentValue = false,
         tag = _tag,
         setting = _setting,
         objects = {},
@@ -32,6 +32,12 @@ function checkbox.CreateCheckbox(container, _setting, _tag, tinyPos, _changeFunc
         lastHover = -1,
         setRect = false
     }
+
+    if settings[_setting] == "true" then
+        bTable.currentValue = true
+    else
+        bTable.currentValue = false
+    end
 
     local background = helper.createSprite("Menu/MainMenu/Settings/toggle_bg", 0.0, 0.0)
     if container ~= nil then
@@ -96,6 +102,15 @@ function checkbox.CreateCheckbox(container, _setting, _tag, tinyPos, _changeFunc
     table.insert(bTable.objects, toggle)
     table.insert(bTable.objects, text)
     table.insert(bTable.objects, oText)
+
+    if not bTable.currentValue then
+        bTable.objects[2].transform.x = 0
+        bTable.objects[4].transform.x = 0.95 - (bTable.objects[4].transform.w / 2)
+    else
+        local endPos = 1 - bTable.objects[2].transform.w
+        bTable.objects[2].transform.x = endPos
+        bTable.objects[4].transform.x = (bTable.objects[4].transform.w / 2) + 0.1
+    end
 
     if informationText ~= "" then
         local infoText = text.new(0, 0, "ArialBold.fnt", informationText)

@@ -446,7 +446,11 @@ void LuaFile::Load()
 	});
 
 	lua->set_function("getKeyName", [&](int key) {
-		return glfwGetKeyName(key, 0);
+		return AvgEngine::Utils::StringTools::convertKeyCodeToKeyName(key);
+	});
+
+	lua->set_function("getKeyCode", [&](std::string keyName) {
+		return AvgEngine::Utils::StringTools::convertKeyNameToKeyCode(keyName);
 	});
 
 	lua->set_function("add", [&](gameObject& ob) {

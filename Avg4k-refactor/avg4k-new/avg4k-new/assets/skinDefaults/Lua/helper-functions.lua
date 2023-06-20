@@ -46,6 +46,12 @@ function helper.split(pString, pPattern)
     return Table
 end
 
+function helper.table_copy(t)
+    local u = {}
+    for k, v in pairs(t) do u[k] = v end
+    return setmetatable(u, getmetatable(t))
+end
+
 -- there is aabb_rect but it is slow since it's a cpp call.
 function helper.aabb(r1, r2)
     return r1.x < r2.x + r2.w and
@@ -76,7 +82,7 @@ end
 --[[
     A helper function to create a sprite with a texture
 ]]
-function helper.createSprite(path, x, y, texture)
+function helper.createSpriteTex(x, y, texture)
     return sprite.new(x, y, texture)
 end
 

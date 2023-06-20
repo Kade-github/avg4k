@@ -15,6 +15,7 @@ namespace Average4k::Lua::Base
 
 		sprite(float x, float y, texture _tex) : gameObject(x, y)
 		{
+			
 			type = 1;
 			tex = _tex;
 			transform.w = tex.w;

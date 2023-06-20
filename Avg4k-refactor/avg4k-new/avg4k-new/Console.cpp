@@ -14,7 +14,7 @@ static char* Strdup(const char* s) { size_t len = strlen(s) + 1; void* buf = mal
 
 static void keyPress(AvgEngine::Events::Event e)
 {
-	if (e.data == GLFW_KEY_GRAVE_ACCENT)
+	if (e.data == GLFW_KEY_F3)
 	{
 		Console::instance->open = !Console::instance->open;
 		shouldFocus = Console::instance->open;

@@ -28,6 +28,7 @@ function Create()
     cprint("Initial scale: " .. tostring(skin["upscale"]))
 
     Avatar.create()
+    dropdown.InitDropdown()
     Containers.create()
     Selection.create()
 
@@ -35,8 +36,6 @@ function Create()
 
     packContainer.loadBanners()
     packContainer.loadPacks(Containers.scontainer.packs)
-
-    dropdown.InitDropdown()
 end
 
 function MouseDown(pos)

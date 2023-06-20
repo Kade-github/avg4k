@@ -194,7 +194,7 @@ function containers_settingChanged(setting, newValue)
     end
     setSetting(setting, tostring(newValue))
 
-    if setting == "Resolution" then
+    if setting == "Resolution" and newValue ~= setting["Resolution"] then
         local res = helper.split(newValue, "x")
         if #res == 2 then
             local w = tonumber(res[1])
@@ -271,6 +271,11 @@ function Containers.settingsCreate(c)
     table.insert(numbersOnly, ",")
     table.insert(numbersOnly, "/")
 
+    local keys = {}
+    table.insert(keys, "escape")
+    table.insert(keys, "grave_accent")
+    table.insert(keys, "f1")
+    table.insert(keys, "f3")
 
     Containers.settings_createTextbox(c, "Scroll Speed", 4, "settings_scrollSpeed",
         x,
@@ -292,17 +297,17 @@ function Containers.settingsCreate(c)
 
     Containers.settings_createTextbox(c, "Left Keybind", 1, "settings_leftKeybind",
         x,
-        containers_settingChanged, 15, true, {},
+        containers_settingChanged, 15, true, keys,
         "")
 
     Containers.settings_createTextbox(c, "Down Keybind", 1, "settings_downKeybind", x,
-        containers_settingChanged, 15, true, {}, "")
+        containers_settingChanged, 15, true, keys, "")
 
     Containers.settings_createTextbox(c, "Up Keybind", 1, "settings_upKeybind", x,
-        containers_settingChanged, 15, true, {}, "")
+        containers_settingChanged, 15, true, keys, "")
 
     Containers.settings_createTextbox(c, "Right Keybind", 1, "settings_rightKeybind", x,
-        containers_settingChanged, 15, true, {}, "")
+        containers_settingChanged, 15, true, keys, "")
 
     Containers.settings_createHeader(c, x, "audio", "Audio")
 

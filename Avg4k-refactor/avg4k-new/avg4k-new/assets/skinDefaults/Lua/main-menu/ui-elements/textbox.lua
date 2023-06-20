@@ -118,11 +118,12 @@ function textbox.keyDown(key)
         if tb.selected then
             if tb.keyInput then
                 for i, v in ipairs(tb.blacklistedKeys) do
-                    if string.lower(v) == string.lower(string.char(key)) then
+                    if v == string.lower(getKeyName(key)) then
                         return
                     end
                 end
-                tb.currentValue = getKeyName(tonumber(key))
+                local keyy = getKeyName(tonumber(key))
+                tb.currentValue = string.upper(keyy)
                 tb.selected = false
                 textbox.inTextbox = false
                 tb.changeFunction(tb.setting, tb.currentValue)
@@ -142,7 +143,6 @@ function textbox.keyDown(key)
                 if string.len(tb.currentValue) >= tb.maxCharacters then
                     return
                 end
-                cprint(tostring(key))
                 for i, v in ipairs(tb.blacklistedKeys) do
                     if string.lower(v) == string.lower(string.char(key)) then
                         return

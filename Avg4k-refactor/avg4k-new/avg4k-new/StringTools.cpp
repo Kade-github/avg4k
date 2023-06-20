@@ -1,129 +1,150 @@
 #include "StringTools.h"
 #include "GLFW/glfw3.h"
 
+static const std::unordered_map<int, std::string> stringTools_keyCodeToName = {
+        {GLFW_KEY_A, "A"},
+        {GLFW_KEY_B, "B"},
+        {GLFW_KEY_C, "C"},
+        {GLFW_KEY_D, "D"},
+        {GLFW_KEY_E, "E"},
+        {GLFW_KEY_F, "F"},
+        {GLFW_KEY_G, "G"},
+        {GLFW_KEY_H, "H"},
+        {GLFW_KEY_I, "I"},
+        {GLFW_KEY_J, "J"},
+        {GLFW_KEY_K, "K"},
+        {GLFW_KEY_L, "L"},
+        {GLFW_KEY_M, "M"},
+        {GLFW_KEY_N, "N"},
+        {GLFW_KEY_O, "O"},
+        {GLFW_KEY_P, "P"},
+        {GLFW_KEY_Q, "Q"},
+        {GLFW_KEY_R, "R"},
+        {GLFW_KEY_S, "S"},
+        {GLFW_KEY_T, "T"},
+        {GLFW_KEY_U, "U"},
+        {GLFW_KEY_V, "V"},
+        {GLFW_KEY_W, "W"},
+        {GLFW_KEY_X, "X"},
+        {GLFW_KEY_Y, "Y"},
+        {GLFW_KEY_Z, "Z"},
+        {GLFW_KEY_0, "0"},
+        {GLFW_KEY_1, "1"},
+        {GLFW_KEY_2, "2"},
+        {GLFW_KEY_3, "3"},
+        {GLFW_KEY_4, "4"},
+        {GLFW_KEY_5, "5"},
+        {GLFW_KEY_6, "6"},
+        {GLFW_KEY_7, "7"},
+        {GLFW_KEY_8, "8"},
+        {GLFW_KEY_9, "9"},
+        {GLFW_KEY_SPACE, "SPACE"},
+        {GLFW_KEY_APOSTROPHE, "APOSTROPHE"},
+        {GLFW_KEY_COMMA, "COMMA"},
+        {GLFW_KEY_MINUS, "MINUS"},
+        {GLFW_KEY_PERIOD, "PERIOD"},
+        {GLFW_KEY_SLASH, "SLASH"},
+        {GLFW_KEY_SEMICOLON, "SEMICOLON"},
+        {GLFW_KEY_EQUAL, "EQUAL"},
+        {GLFW_KEY_LEFT_BRACKET, "LEFT_BRACKET"},
+        {GLFW_KEY_BACKSLASH, "BACKSLASH"},
+        {GLFW_KEY_RIGHT_BRACKET, "RIGHT_BRACKET"},
+        {GLFW_KEY_GRAVE_ACCENT, "GRAVE_ACCENT"},
+        {GLFW_KEY_WORLD_1, "WORLD_1"},
+        {GLFW_KEY_WORLD_2, "WORLD_2"},
+        {GLFW_KEY_ESCAPE, "ESCAPE"},
+        {GLFW_KEY_ENTER, "ENTER"},
+        {GLFW_KEY_TAB, "TAB"},
+        {GLFW_KEY_BACKSPACE, "BACKSPACE"},
+        {GLFW_KEY_INSERT, "INSERT"},
+        {GLFW_KEY_DELETE, "DELETE"},
+        {GLFW_KEY_RIGHT, "RIGHT"},
+        {GLFW_KEY_LEFT, "LEFT"},
+        {GLFW_KEY_DOWN, "DOWN"},
+        {GLFW_KEY_UP, "UP"},
+        {GLFW_KEY_PAGE_UP, "PAGE_UP"},
+        {GLFW_KEY_PAGE_DOWN, "PAGE_DOWN"},
+        {GLFW_KEY_HOME, "HOME"},
+        {GLFW_KEY_END, "END"},
+        {GLFW_KEY_CAPS_LOCK, "CAPS_LOCK"},
+        {GLFW_KEY_SCROLL_LOCK, "SCROLL_LOCK"},
+        {GLFW_KEY_NUM_LOCK, "NUM_LOCK"},
+        {GLFW_KEY_PRINT_SCREEN, "PRINT_SCREEN"},
+        {GLFW_KEY_PAUSE, "PAUSE"},
+        {GLFW_KEY_F1, "F1"},
+        {GLFW_KEY_F2, "F2"},
+        {GLFW_KEY_F3, "F3"},
+        {GLFW_KEY_F4, "F4"},
+        {GLFW_KEY_F5, "F5"},
+        {GLFW_KEY_F6, "F6"},
+        {GLFW_KEY_F7, "F7"},
+        {GLFW_KEY_F8, "F8"},
+        {GLFW_KEY_F9, "F9"},
+        {GLFW_KEY_F10, "F10"},
+        {GLFW_KEY_F11, "F11"},
+        {GLFW_KEY_F12, "F12"},
+        {GLFW_KEY_F13, "F13"},
+        {GLFW_KEY_F14, "F14"},
+        {GLFW_KEY_F15, "F15"},
+        {GLFW_KEY_F16, "F16"},
+        {GLFW_KEY_F17, "F17"},
+        {GLFW_KEY_F18, "F18"},
+        {GLFW_KEY_F19, "F19"},
+        {GLFW_KEY_F20, "F20"},
+        {GLFW_KEY_F21, "F21"},
+        {GLFW_KEY_F22, "F22"},
+        {GLFW_KEY_F23, "F23"},
+        {GLFW_KEY_F24, "F24"},
+        {GLFW_KEY_F25, "F25"},
+        {GLFW_KEY_KP_0, "KP_0"},
+        {GLFW_KEY_KP_1, "KP_1"},
+        {GLFW_KEY_KP_2, "KP_2"},
+        {GLFW_KEY_KP_3, "KP_3"},
+        {GLFW_KEY_KP_4, "KP_4"},
+        {GLFW_KEY_KP_5, "KP_5"},
+        {GLFW_KEY_KP_6, "KP_6"},
+        {GLFW_KEY_KP_7, "KP_7"},
+        {GLFW_KEY_KP_8, "KP_8"},
+        {GLFW_KEY_KP_9, "KP_9"},
+        {GLFW_KEY_KP_DECIMAL, "KP_DECIMAL"},
+        {GLFW_KEY_KP_DIVIDE, "KP_DIVIDE"},
+        {GLFW_KEY_KP_MULTIPLY, "KP_MULTIPLY"},
+        {GLFW_KEY_KP_SUBTRACT, "KP_SUBTRACT"},
+        {GLFW_KEY_KP_ADD, "KP_ADD"},
+        {GLFW_KEY_KP_ENTER, "KP_ENTER"},
+        {GLFW_KEY_KP_EQUAL, "KP_EQUAL"},
+        {GLFW_KEY_LEFT_SHIFT, "LEFT_SHIFT"},
+        {GLFW_KEY_LEFT_CONTROL, "LEFT_CONTROL"},
+        {GLFW_KEY_LEFT_ALT, "LEFT_ALT"},
+        {GLFW_KEY_LEFT_SUPER, "LEFT_SUPER"},
+        {GLFW_KEY_RIGHT_SHIFT, "RIGHT_SHIFT"},
+        {GLFW_KEY_RIGHT_CONTROL, "RIGHT_CONTROL"},
+        {GLFW_KEY_RIGHT_ALT, "RIGHT_ALT"},
+        {GLFW_KEY_RIGHT_SUPER, "RIGHT_SUPER"},
+        {GLFW_KEY_MENU, "MENU"}
+};
+
+
 int AvgEngine::Utils::StringTools::convertKeyNameToKeyCode(const std::string& keyName)
 {
-    // Convert key name to GLFW key code enum
-    if (keyName == "A") return GLFW_KEY_A;
-    if (keyName == "B") return GLFW_KEY_B;
-    if (keyName == "C") return GLFW_KEY_C;
-    if (keyName == "D") return GLFW_KEY_D;
-    if (keyName == "E") return GLFW_KEY_E;
-    if (keyName == "F") return GLFW_KEY_F;
-    if (keyName == "G") return GLFW_KEY_G;
-    if (keyName == "H") return GLFW_KEY_H;
-    if (keyName == "I") return GLFW_KEY_I;
-    if (keyName == "J") return GLFW_KEY_J;
-    if (keyName == "K") return GLFW_KEY_K;
-    if (keyName == "L") return GLFW_KEY_L;
-    if (keyName == "M") return GLFW_KEY_M;
-    if (keyName == "N") return GLFW_KEY_N;
-    if (keyName == "O") return GLFW_KEY_O;
-    if (keyName == "P") return GLFW_KEY_P;
-    if (keyName == "Q") return GLFW_KEY_Q;
-    if (keyName == "R") return GLFW_KEY_R;
-    if (keyName == "S") return GLFW_KEY_S;
-    if (keyName == "T") return GLFW_KEY_T;
-    if (keyName == "U") return GLFW_KEY_U;
-    if (keyName == "V") return GLFW_KEY_V;
-    if (keyName == "W") return GLFW_KEY_W;
-    if (keyName == "X") return GLFW_KEY_X;
-    if (keyName == "Y") return GLFW_KEY_Y;
-    if (keyName == "Z") return GLFW_KEY_Z;
-    if (keyName == "0") return GLFW_KEY_0;
-    if (keyName == "1") return GLFW_KEY_1;
-    if (keyName == "2") return GLFW_KEY_2;
-    if (keyName == "3") return GLFW_KEY_3;
-    if (keyName == "4") return GLFW_KEY_4;
-    if (keyName == "5") return GLFW_KEY_5;
-    if (keyName == "6") return GLFW_KEY_6;
-    if (keyName == "7") return GLFW_KEY_7;
-    if (keyName == "8") return GLFW_KEY_8;
-    if (keyName == "9") return GLFW_KEY_9;
-    if (keyName == "SPACE") return GLFW_KEY_SPACE;
-    if (keyName == "APOSTROPHE") return GLFW_KEY_APOSTROPHE;
-    if (keyName == "COMMA") return GLFW_KEY_COMMA;
-    if (keyName == "MINUS") return GLFW_KEY_MINUS;
-    if (keyName == "PERIOD") return GLFW_KEY_PERIOD;
-    if (keyName == "SLASH") return GLFW_KEY_SLASH;
-    if (keyName == "SEMICOLON") return GLFW_KEY_SEMICOLON;
-    if (keyName == "EQUAL") return GLFW_KEY_EQUAL;
-    if (keyName == "LEFT_BRACKET") return GLFW_KEY_LEFT_BRACKET;
-    if (keyName == "BACKSLASH") return GLFW_KEY_BACKSLASH;
-    if (keyName == "RIGHT_BRACKET") return GLFW_KEY_RIGHT_BRACKET;
-    if (keyName == "GRAVE_ACCENT") return GLFW_KEY_GRAVE_ACCENT;
-    if (keyName == "WORLD_1") return GLFW_KEY_WORLD_1;
-    if (keyName == "WORLD_2") return GLFW_KEY_WORLD_2;
-    if (keyName == "ESCAPE") return GLFW_KEY_ESCAPE;
-    if (keyName == "ENTER") return GLFW_KEY_ENTER;
-    if (keyName == "TAB") return GLFW_KEY_TAB;
-    if (keyName == "BACKSPACE") return GLFW_KEY_BACKSPACE;
-    if (keyName == "INSERT") return GLFW_KEY_INSERT;
-    if (keyName == "DELETE") return GLFW_KEY_DELETE;
-    if (keyName == "RIGHT") return GLFW_KEY_RIGHT;
-    if (keyName == "LEFT") return GLFW_KEY_LEFT;
-    if (keyName == "DOWN") return GLFW_KEY_DOWN;
-    if (keyName == "UP") return GLFW_KEY_UP;
-    if (keyName == "PAGE_UP") return GLFW_KEY_PAGE_UP;
-    if (keyName == "PAGE_DOWN") return GLFW_KEY_PAGE_DOWN;
-    if (keyName == "HOME") return GLFW_KEY_HOME;
-    if (keyName == "END") return GLFW_KEY_END;
-    if (keyName == "CAPS_LOCK") return GLFW_KEY_CAPS_LOCK;
-    if (keyName == "SCROLL_LOCK") return GLFW_KEY_SCROLL_LOCK;
-    if (keyName == "NUM_LOCK") return GLFW_KEY_NUM_LOCK;
-    if (keyName == "PRINT_SCREEN") return GLFW_KEY_PRINT_SCREEN;
-    if (keyName == "PAUSE") return GLFW_KEY_PAUSE;
-    if (keyName == "F1") return GLFW_KEY_F1;
-    if (keyName == "F2") return GLFW_KEY_F2;
-    if (keyName == "F3") return GLFW_KEY_F3;
-    if (keyName == "F4") return GLFW_KEY_F4;
-    if (keyName == "F5") return GLFW_KEY_F5;
-    if (keyName == "F6") return GLFW_KEY_F6;
-    if (keyName == "F7") return GLFW_KEY_F7;
-    if (keyName == "F8") return GLFW_KEY_F8;
-    if (keyName == "F9") return GLFW_KEY_F9;
-    if (keyName == "F10") return GLFW_KEY_F10;
-    if (keyName == "F11") return GLFW_KEY_F11;
-    if (keyName == "F12") return GLFW_KEY_F12;
-    if (keyName == "F13") return GLFW_KEY_F13;
-    if (keyName == "F14") return GLFW_KEY_F14;
-    if (keyName == "F15") return GLFW_KEY_F15;
-    if (keyName == "F16") return GLFW_KEY_F16;
-    if (keyName == "F17") return GLFW_KEY_F17;
-    if (keyName == "F18") return GLFW_KEY_F18;
-    if (keyName == "F19") return GLFW_KEY_F19;
-    if (keyName == "F20") return GLFW_KEY_F20;
-    if (keyName == "F21") return GLFW_KEY_F21;
-    if (keyName == "F22") return GLFW_KEY_F22;
-    if (keyName == "F23") return GLFW_KEY_F23;
-    if (keyName == "F24") return GLFW_KEY_F24;
-    if (keyName == "F25") return GLFW_KEY_F25;
-    if (keyName == "KP_0") return GLFW_KEY_KP_0;
-    if (keyName == "KP_1") return GLFW_KEY_KP_1;
-    if (keyName == "KP_2") return GLFW_KEY_KP_2;
-    if (keyName == "KP_3") return GLFW_KEY_KP_3;
-    if (keyName == "KP_4") return GLFW_KEY_KP_4;
-    if (keyName == "KP_5") return GLFW_KEY_KP_5;
-    if (keyName == "KP_6") return GLFW_KEY_KP_6;
-    if (keyName == "KP_7") return GLFW_KEY_KP_7;
-    if (keyName == "KP_8") return GLFW_KEY_KP_8;
-    if (keyName == "KP_9") return GLFW_KEY_KP_9;
-    if (keyName == "KP_DECIMAL") return GLFW_KEY_KP_DECIMAL;
-    if (keyName == "KP_DIVIDE") return GLFW_KEY_KP_DIVIDE;
-    if (keyName == "KP_MULTIPLY") return GLFW_KEY_KP_MULTIPLY;
-    if (keyName == "KP_SUBTRACT") return GLFW_KEY_KP_SUBTRACT;
-    if (keyName == "KP_ADD") return GLFW_KEY_KP_ADD;
-    if (keyName == "KP_ENTER") return GLFW_KEY_KP_ENTER;
-    if (keyName == "KP_EQUAL") return GLFW_KEY_KP_EQUAL;
-    if (keyName == "LEFT_SHIFT") return GLFW_KEY_LEFT_SHIFT;
-    if (keyName == "LEFT_CONTROL") return GLFW_KEY_LEFT_CONTROL;
-    if (keyName == "LEFT_ALT") return GLFW_KEY_LEFT_ALT;
-    if (keyName == "LEFT_SUPER") return GLFW_KEY_LEFT_SUPER;
-    if (keyName == "RIGHT_SHIFT") return GLFW_KEY_RIGHT_SHIFT;
-    if (keyName == "RIGHT_CONTROL") return GLFW_KEY_RIGHT_CONTROL;
-    if (keyName == "RIGHT_ALT") return GLFW_KEY_RIGHT_ALT;
-    if (keyName == "RIGHT_SUPER") return GLFW_KEY_RIGHT_SUPER;
-    if (keyName == "MENU") return GLFW_KEY_MENU;
+    auto iter = std::find_if(std::begin(stringTools_keyCodeToName), std::end(stringTools_keyCodeToName),
+        [&keyName](auto&& pair) {
+            return pair.second == keyName;
+        });
+    if (iter == std::end(stringTools_keyCodeToName))
+        return -1;
+    return iter->first;
+}
 
-    return GLFW_KEY_UNKNOWN;
+std::string AvgEngine::Utils::StringTools::convertKeyCodeToKeyName(const int& keyCode)
+{
+
+    auto it = stringTools_keyCodeToName.find(keyCode);
+    if (it != stringTools_keyCodeToName.end())
+    {
+        return it->second;
+    }
+
+    return "UNKNOWN";
+    
 }

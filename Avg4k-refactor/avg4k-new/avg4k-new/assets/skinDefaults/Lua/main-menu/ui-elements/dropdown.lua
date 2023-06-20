@@ -1,6 +1,6 @@
 dropdown = {}
 
-dropdown.drowndowns = {}
+dropdown.dropdowns = {}
 dropdown.inDropdown = false
 dropdown.itemTexture = nil
 dropdown.itemTextureEnd = nil
@@ -22,7 +22,7 @@ function dropdown.CreateDrowndown(c, _setting, _tag, _items, _tinyPos, _changeFu
         position = rect.new(_tinyPos[1], _tinyPos[2]),
         hoverTime = -1,
         lastHover = -1,
-        items = _items,
+        items = {},
         infoText = _infoText
     }
 
@@ -83,18 +83,83 @@ function dropdown.CreateDrowndown(c, _setting, _tag, _items, _tinyPos, _changeFu
         infoText.tag = "TEXTBOX_INFO_" .. _tag
         table.insert(bTable.objects, infoText)
     end
-    table.insert(textbox.textboxes, bTable)
 
     local size = #_items
     -- create items for the dropdown
     for i, it in ipairs(_items) do
+        local itemBg = nil
+        if i ~= size then
+            itemBg = helper.createSpriteTex(0, 0, dropdown.itemTexture)
+        else
+            itemBg = helper.createSpriteTex(0, 0, dropdown.itemTextureEnd)
+        end
 
+        create(itemBg)
+        background:add(itemBg)
+        itemBg.ratio = true
+        itemBg.order = 1
+        itemBg.transform.scale = skin["upscale"]
+        itemBg.transform.alpha = 0
+        itemBg.tag = "DROPDOWN_BG_" .. _tag .. "_" .. i
+
+        local itemText = text.new(0, 0, "ArialBold.fnt", it)
+        create(itemText)
+        itemBg:add(itemText)
+        itemText.size = 16 * skin["upscale"]
+        itemText.characterSpacing = 1.67
+        itemText.ratio = true
+        itemText.order = 1
+        itemText.tag = "DROPDOWN_ITEM_" .. _tag .. "_" .. i
+        itemText.transform.r = 13
+        itemText.transform.g = 28
+        itemText.transform.b = 64
+        itemText.transform.alpha = 0
+        itemText.transform.x = 0.5
+        itemText.transform.y = 0.5
+        itemText.center = true
+
+        table.insert(bTable.items, itemBg)
     end
+    cprint("size: " .. tostring(#bTable.items))
+    table.insert(dropdown.dropdowns, bTable)
 end
 
 function dropdown.mouseDown(pos)
     if textbox.inTextbox then
         return
+    end
+    local isOut = true
+    for i, dd in ipairs(dropdown.dropdowns) do
+        local realerRect = copyRect(dd.objects[1]:getRealRect())
+        realerRect.y = realerRect.y + dd.objects[1].transformOffset.y
+        if helper.aabb(pos, realerRect) then
+            for i, dd2 in ipairs(dropdown.dropdowns) do -- make sure all the other dropdowns are not selected
+                dd2.selected = false
+            end
+            cprint("YES!!")
+            dd.selected = true
+            dropdown.inDropdown = true
+            isOut = false
+        end
+    end
+    if isOut then
+        for i, dd in ipairs(dropdown.dropdowns) do
+            local itemm = false
+            for i, item in ipairs(dd.items) do -- check if you clicked on an item
+                local realerRect = copyRect(item:getRealRect())
+                realerRect.y = realerRect.y + dd.objects[1].transformOffset.y
+                if helper.aabb(pos, realerRect) then
+                    dd.currentValue = dd.items[i].text
+                    itemm = true
+                end
+            end
+            if dd.selected and not itemm then
+                dd.changeFunction(dd.setting, dd.currentValue)
+                dd.currentValue = settings[dd.setting]
+            end
+            dd.selected = false
+            dropdown.inDropdown = false
+        end
     end
 end
 
@@ -118,6 +183,7 @@ function dropdown.update(time)
 
         -- display text
         dd.objects[3].text = dd.currentValue
+
 
         -- information text, animation as well
         if dd.objects[4] ~= nil then

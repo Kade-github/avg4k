@@ -43,13 +43,13 @@ function Avatar.createIcon(notDefault)
         Avatar.border:add(Avatar.av)
         Avatar.border:add(Avatar.helloText)
         Avatar.border:add(Avatar.versionText)
-        Avatar.av.transform.w = 1;
-        Avatar.av.transform.h = 1.1;
         Avatar.av.transform.scale = 0.9
         Avatar.av.transform.x = 0.5
         Avatar.av.transform.y = 0.5
         Avatar.av.center = true
         Avatar.av.ratio = true
+        Avatar.av.transform.w = 1;
+        Avatar.av.transform.h = 1;
         return
     end
 

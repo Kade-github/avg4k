@@ -35,6 +35,8 @@ function Create()
 
     packContainer.loadBanners()
     packContainer.loadPacks(Containers.scontainer.packs)
+
+    dropdown.InitDropdown()
 end
 
 function MouseDown(pos)
@@ -45,6 +47,7 @@ function MouseDown(pos)
     packContainer.mouseDown()
     checkbox.mouseDown(mouseRect)
     textbox.mouseDown(mouseRect)
+    dropdown.mouseDown(mouseRect)
 end
 
 function MouseWheel(data)
@@ -93,4 +96,5 @@ function Update(time)
     packContainer.update(time)
     checkbox.update(time)
     textbox.update(time)
+    dropdown.update(time)
 end

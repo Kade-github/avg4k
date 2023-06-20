@@ -1,6 +1,16 @@
 dropdown = {}
 
 dropdown.drowndowns = {}
+dropdown.inDropdown = false
+dropdown.itemTexture = nil
+dropdown.itemTextureEnd = nil
+
+function dropdown.InitDropdown()
+    dropdown.itemTexture = texture.new("Menu/MainMenu/Settings/dropdownItem")
+    loadTexture(dropdown.itemTexture)
+    dropdown.itemTextureEnd = texture.new("Menu/MainMenu/Settings/endOfDropdown")
+    loadTexture(dropdown.itemTextureEnd)
+end
 
 function dropdown.CreateDrowndown(c, _setting, _tag, _items, _tinyPos, _changeFunction, _infoText)
     local bTable = {
@@ -74,10 +84,18 @@ function dropdown.CreateDrowndown(c, _setting, _tag, _items, _tinyPos, _changeFu
         table.insert(bTable.objects, infoText)
     end
     table.insert(textbox.textboxes, bTable)
+
+    local size = #_items
+    -- create items for the dropdown
+    for i, it in ipairs(_items) do
+
+    end
 end
 
 function dropdown.mouseDown(pos)
-
+    if textbox.inTextbox then
+        return
+    end
 end
 
 function dropdown.update(time)

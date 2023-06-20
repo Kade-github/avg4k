@@ -85,6 +85,9 @@ function textbox.CreateTextbox(c, _setting, _maxCharacters, _tag, tinyPos, _chan
 end
 
 function textbox.mouseDown(pos)
+    if dropdown.inDropdown then
+        return
+    end
     local isOut = true
     for i, tb in ipairs(textbox.textboxes) do
         local realerRect = copyRect(tb.objects[1]:getRealRect())

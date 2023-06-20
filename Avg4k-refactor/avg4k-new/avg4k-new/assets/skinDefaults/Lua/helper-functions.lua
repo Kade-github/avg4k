@@ -74,6 +74,13 @@ function helper.createSprite(path, x, y)
 end
 
 --[[
+    A helper function to create a sprite with a texture
+]]
+function helper.createSprite(path, x, y, texture)
+    return sprite.new(x, y, texture)
+end
+
+--[[
     A helper function to create an animated sprite
 ]]
 function helper.createAnimatedSprite(path, x, y, fps, frameW, frameH, parent)

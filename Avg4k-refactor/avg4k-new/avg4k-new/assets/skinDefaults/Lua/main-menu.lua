@@ -40,8 +40,8 @@ end
 
 function MouseDown(pos)
     local mouseRect = vec2torect(pos)
-    mouseRect.w = 32
-    mouseRect.h = 32
+    mouseRect.w = 16 * skin["upscale"]
+    mouseRect.h = 16 * skin["upscale"]
     Selection.mouseDown()
     packContainer.mouseDown()
     checkbox.mouseDown(mouseRect)
@@ -83,7 +83,7 @@ function Update(time)
     end
     local mouse = getMousePos()
 
-    local mRect = rect.new(mouse[1], mouse[2], 16, 16)
+    local mRect = rect.new(mouse[1], mouse[2], 16 * skin["upscale"], 16 * skin["upscale"])
     Globals.mouseRect = mRect
     local t = tonumber(time)
     local delta = t - Globals.lt

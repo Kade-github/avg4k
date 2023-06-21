@@ -331,6 +331,15 @@ void LuaFile::Load()
 		return texes;
 	});
 
+	lua->set_function("getMonitorResolution", [&]() {
+		int* res = AvgEngine::Render::DisplayHelper::getMonitorResolution();
+		auto table = lua->create_table();
+		table.add(res[0]);
+		table.add(res[1]);
+		return table;
+	});
+
+
 	lua->set_function("getTime", [&]() {
 		return glfwGetTime();
 	});

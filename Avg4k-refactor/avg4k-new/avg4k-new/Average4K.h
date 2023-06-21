@@ -72,18 +72,35 @@ public:
 		fpsText->SetFont(skin->GetFontPath(), "FuturaBold.fnt");
 		alphaText->SetFont(skin->GetFontPath(), "FuturaBold.fnt");
 
-		notif->InitNotifications(skin);
-
 		QueueEvent({ AvgEngine::Events::EventType::Event_ReloadFont,0, {}, skin->GetFontPath() });
 	
+		notif->InitNotifications(skin);
+
+
 		SetResolution(settings->Get("Resolution").value);
-		fpsText->transform.scale = skin->upscale;
-		alphaText->transform.scale = skin->upscale;
+		SetFullscreen(settings->Get("Display").value);
+		settings->Set("Resolution", std::to_string(AvgEngine::Render::Display::width) + "x" + std::to_string(AvgEngine::Render::Display::height));
 
 		SwitchNoTrans(new LoadingPacksMenu());
 	}
 
-	void SetResolution(std::string res)
+	void SetFullscreen(std::string type)
+	{
+		if (type == "Windowed")
+			AvgEngine::Render::Display::Fullscreen(Window, 0);
+		else if (type == "Fullscreen")
+			AvgEngine::Render::Display::Fullscreen(Window, 1);
+		else if (type == "Borderless")
+		{
+			AvgEngine::Render::Display::Fullscreen(Window, 2);
+		}
+		else
+			AvgEngine::Render::Display::Fullscreen(Window, -1);
+		fpsText->transform.scale = skin->upscale;
+		alphaText->transform.scale = skin->upscale;
+	}
+
+	void SetResolution(std::string res, bool windowed = true)
 	{
 		std::vector<std::string> s = AvgEngine::Utils::StringTools::Split(res, "x");
 		int w = std::stoi(s[0]);
@@ -91,7 +108,19 @@ public:
 
 		skin->upscale = static_cast<float>(w) / 1920.0f;
 
-		Game::Resize(w, h);
+		if (windowed)
+			Game::Resize(w, h);
+		else
+		{
+			if (CurrentMenu)
+			{
+				CurrentMenu->camera.resize(AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
+				AvgEngine::Render::Display::defaultShader->setProject(CurrentMenu->camera.projection);
+			}
+			Event(AvgEngine::Events::Event(AvgEngine::Events::EventType::Event_Resize));
+		}
+		fpsText->transform.scale = skin->upscale;
+		alphaText->transform.scale = skin->upscale;
 	}
 
 	void Start()

@@ -192,16 +192,35 @@ function containers_settingChanged(setting, newValue)
         end
         return
     end
-    setSetting(setting, tostring(newValue))
-
-    if setting == "Resolution" and newValue ~= setting["Resolution"] then
+    if setting == "Resolution" and newValue ~= settings["Resolution"] then
         local res = helper.split(newValue, "x")
         if #res == 2 then
             local w = tonumber(res[1])
             local h = tonumber(res[2])
-            setResolution(w, h)
+            if settings["Display"] == "Windowed" then
+                cprint("Setting windowed res to " .. newValue)
+                setResolution(w, h)
+            elseif settings["Display"] == "Fullscreen" then
+                cprint("Setting fullscreen res to " .. newValue)
+                setFullscreenResolution(w, h)
+            end
         end
     end
+    if setting == "Display" then
+        cprint("Setting display mode " .. newValue)
+        setFullscreen(newValue)
+        local res = helper.split(settings["Resolution"], "x")
+        if #res == 2 then
+            local w = tonumber(res[1])
+            local h = tonumber(res[2])
+            if setting == "Windowed" then
+                setResolution(w, h)
+            elseif setting == "Fullscreen" then
+                setFullscreenResolution(w, h)
+            end
+        end
+    end
+    setSetting(setting, tostring(newValue))
 end
 
 function Containers.settings_addLine()
@@ -321,15 +340,26 @@ function Containers.settingsCreate(c)
 
     Containers.settings_createHeader(c, x, "video", "Video")
 
-    Containers.settings_createDropdown(c, "Resolution", { "Test", "Test2", "EndTest" }, "settings_resolution",
+    local monitorRes = getMonitorResolution()
+    local stringMonitorRes = tostring(monitorRes[1]) .. "x" .. tostring(monitorRes[2])
+
+    local res = helper.truncateArrayByResolution(
+        { "1280x720", "1366x768", "1680x1050", "1920x1080", "2560x1440", "3840x2160", "5120x2880" },
+        stringMonitorRes)
+
+    table.insert(res, stringMonitorRes)
+
+    Containers.settings_createDropdown(c, "Resolution",
+        res, "settings_resolution",
         x, containers_settingChanged, "")
 
-    Containers.settings_createCheckbox(c, "Fullscreen", "settings_fullscreen", x,
-        containers_settingChanged, "")
+    Containers.settings_createDropdown(c, "Display",
+        { "Windowed", "Fullscreen", "Borderless" }, "settings_display",
+        x, containers_settingChanged, "")
 
     Containers.settings_createHeader(c, x, "skin", "Skin")
 
-    Containers.settings_createDropdown(c, "Skin", { "Test", "Test2", "EndTest" }, "settings_skin",
+    Containers.settings_createDropdown(c, "Skin", {}, "settings_skin",
         x, containers_settingChanged, "")
 
     Containers.settings_createTextbox(c, "Underlane Transparency", 5, "settings_underlaneTransparency",

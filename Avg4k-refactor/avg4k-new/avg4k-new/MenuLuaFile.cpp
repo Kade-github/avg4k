@@ -236,6 +236,35 @@ void Average4k::Lua::MenuLuaFile::Load()
 
 	});
 
+	lua->set_function("setFullscreenResolution", [&](int w, int h) {
+		if (w <= 0 || h <= 0)
+		{
+			AvgEngine::Logging::writeLog("[Lua] [Error] Cannot set the fullscreen resolution to a negative value (or 0)!");
+			return;
+		}
+		Average4K* c = static_cast<Average4K*>(Average4K::Instance);
+		if (c->settings->Get("Display").value != "Fullscreen")
+		{
+			AvgEngine::Logging::writeLog("[Lua] [Error] Cannot set the fullscreen resolution when you aren't in fullscreen!");
+			return;
+		}
+
+		AvgEngine::Render::Display::width = w;
+		AvgEngine::Render::Display::height = h;
+
+		c->SetFullscreen("Fullscreen");
+		c->SetResolution(std::to_string(w) + "x" + std::to_string(h), false);
+
+	});
+
+
+	lua->set_function("setFullscreen", [&](std::string type) {
+		Average4K* c = static_cast<Average4K*>(Average4K::Instance);
+
+		c->SetFullscreen(type);
+
+	});
+
 
 	lua->set_function("setChart", [&](chart& c, int diffIndex) {
 		Average4K* s = static_cast<Average4K*>(Average4K::Instance);

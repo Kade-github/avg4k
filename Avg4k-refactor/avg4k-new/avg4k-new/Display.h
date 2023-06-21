@@ -176,6 +176,17 @@ namespace AvgEngine::Render
 			verts.push_back(br);
 			return verts;
 		}
+
+		static int* getMonitorResolution()
+		{
+			static int* stored = nullptr;
+
+			if (stored != nullptr)
+				return stored;
+			const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+			stored = new int[2] {mode->width, mode->height};
+			return stored;
+		}
 	};
 
 
@@ -199,16 +210,23 @@ namespace AvgEngine::Render
 		 */
 		static void Fullscreen(GLFWwindow* window, int type)
 		{
+			const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+			int* max_res = DisplayHelper::getMonitorResolution();
 			switch (type)
 			{
 			case 0: // windowed
-				
+				glfwSetWindowAttrib(window, GLFW_DECORATED, 1);
+				glfwSetWindowMonitor(window, NULL, 0, 0, width, height, GLFW_DONT_CARE);
 				break;
 			case 1: // fullscreen
-
+				glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, width, height, GLFW_DONT_CARE);
 				break;
 			case 2: // borderless
-				
+				int left, top, right, bottom;
+				glfwGetWindowFrameSize(window, &left, &top, &right, &bottom);
+				glfwSetWindowAttrib(window, GLFW_DECORATED, 0);
+				glfwSetWindowMonitor(window, NULL, 0, 0, max_res[0], max_res[1], GLFW_DONT_CARE);
 				break;
 			default:
 				Logging::writeLog("[Display] [Error] Failed to set fullscreen variable. Type not correct");
@@ -224,16 +242,20 @@ namespace AvgEngine::Render
 		 */
 		static void Resize(GLFWwindow* window, int newWidth, int newHeight)
 		{
+
+			int* max_res = DisplayHelper::getMonitorResolution();
+
 			width = newWidth;
 			height = newHeight;
 
+			if (width >= max_res[0])
+				width = max_res[0];
+			if (height >= max_res[1])
+				height = max_res[1];
 
-			int max_width = GetSystemMetrics(SM_CXSCREEN);
-			int max_hieght = GetSystemMetrics(SM_CYSCREEN);
+			glfwSetWindowMonitor(window, NULL, (max_res[0] / 2) - (width / 2), (max_res[1] / 2) - (height / 2), width, height, GLFW_DONT_CARE);
 
-			glfwSetWindowMonitor(window, NULL, (max_width / 2) - (width / 2), (max_hieght / 2) - (height / 2), width, height, GLFW_DONT_CARE);
-
-			Logging::writeLog("[Display] Resized to " + std::to_string(newWidth) + "x" + std::to_string(newHeight));
+			Logging::writeLog("[Display] Resized to " + std::to_string(width) + "x" + std::to_string(height));
 		}
 
 		/**

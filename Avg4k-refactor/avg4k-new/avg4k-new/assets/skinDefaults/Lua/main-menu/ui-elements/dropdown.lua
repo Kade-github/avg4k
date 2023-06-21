@@ -23,6 +23,7 @@ function dropdown.CreateDrowndown(c, _setting, _tag, _items, _tinyPos, _changeFu
         hoverTime = -1,
         lastHover = -1,
         items = {},
+        itemValues = {},
         infoText = _infoText
     }
 
@@ -35,7 +36,7 @@ function dropdown.CreateDrowndown(c, _setting, _tag, _items, _tinyPos, _changeFu
     end
     background.tag = "DROPDOWN_BG_" .. _tag
     background.ratio = true
-    background.order = 1
+    background.order = 5
     background.transform.scale = skin["upscale"]
 
     local text = text.new(0, 0, "Arial.fnt", bTable.setting)
@@ -58,7 +59,7 @@ function dropdown.CreateDrowndown(c, _setting, _tag, _items, _tinyPos, _changeFu
     oText.size = 16 * skin["upscale"]
     oText.characterSpacing = 1.67
     oText.ratio = true
-    oText.order = 1
+    oText.order = 5
     oText.tag = "DROPDOWN_DATA_" .. _tag
     oText.transform.r = 13
     oText.transform.g = 28
@@ -69,6 +70,22 @@ function dropdown.CreateDrowndown(c, _setting, _tag, _items, _tinyPos, _changeFu
     table.insert(bTable.objects, background)
     table.insert(bTable.objects, text)
     table.insert(bTable.objects, oText)
+
+    local connector = helper.createSpriteTex(0, 0, dropdown.itemTexture)
+
+    if c ~= nil then
+        create(connector)
+        c:add(connector)
+    else
+        add(connector)
+    end
+    connector.ratio = true
+    connector.order = 2
+    connector.transform.scale = skin["upscale"]
+    connector.transform.alpha = 0
+    connector.tag = "DROPDOWN_CONNECTOR_" .. _tag
+    table.insert(bTable.objects, connector)
+
     if _infoText ~= "" then
         local infoText = text.new(0, 0, "ArialBold.fnt", _infoText)
         if c ~= nil then
@@ -97,7 +114,7 @@ function dropdown.CreateDrowndown(c, _setting, _tag, _items, _tinyPos, _changeFu
         create(itemBg)
         background:add(itemBg)
         itemBg.ratio = true
-        itemBg.order = 1
+        itemBg.order = 18
         itemBg.transform.scale = skin["upscale"]
         itemBg.transform.alpha = 0
         itemBg.tag = "DROPDOWN_BG_" .. _tag .. "_" .. i
@@ -108,19 +125,25 @@ function dropdown.CreateDrowndown(c, _setting, _tag, _items, _tinyPos, _changeFu
         itemText.size = 16 * skin["upscale"]
         itemText.characterSpacing = 1.67
         itemText.ratio = true
-        itemText.order = 1
+        itemText.order = 18
         itemText.tag = "DROPDOWN_ITEM_" .. _tag .. "_" .. i
         itemText.transform.r = 13
         itemText.transform.g = 28
         itemText.transform.b = 64
         itemText.transform.alpha = 0
-        itemText.transform.x = 0.5
-        itemText.transform.y = 0.5
-        itemText.center = true
+        itemText.transform.x = 0.05
+
+        itemText.transform.y = 0.25
+
+        if i == size then
+            itemText.transform.y = 0.15
+        end
 
         table.insert(bTable.items, itemBg)
+        table.insert(bTable.itemValues, it)
     end
-    cprint("size: " .. tostring(#bTable.items))
+
+
     table.insert(dropdown.dropdowns, bTable)
 end
 
@@ -130,35 +153,60 @@ function dropdown.mouseDown(pos)
     end
     local isOut = true
     for i, dd in ipairs(dropdown.dropdowns) do
-        local realerRect = copyRect(dd.objects[1]:getRealRect())
-        realerRect.y = realerRect.y + dd.objects[1].transformOffset.y
-        if helper.aabb(pos, realerRect) then
-            for i, dd2 in ipairs(dropdown.dropdowns) do -- make sure all the other dropdowns are not selected
-                dd2.selected = false
+        if not dropdown.inDropdown then
+            local realerRect = copyRect(dd.objects[1]:getRealRect())
+            local connector = dd.objects[4]
+            realerRect.y = realerRect.y + dd.objects[1].transformOffset.y
+            if helper.aabb(pos, realerRect) then
+                for i, dd2 in ipairs(dropdown.dropdowns) do -- make sure all the other dropdowns are not selected
+                    dd2.selected = false
+                end
+                connector.transform.alpha = 1
+                for i, it in ipairs(dd.items) do
+                    it.children[1].transform.alpha = 1
+                    it.transform.alpha = 1
+                    it.transform.y = 1 + ((it.transform.h * (i - 1)) * skin["upscale"])
+                    if i == #dd.items then
+                        it.transform.y = it.transform.y - 0.05
+                    end
+                end
+                dd.selected = true
+                dropdown.inDropdown = true
+                isOut = false
             end
-            cprint("YES!!")
-            dd.selected = true
-            dropdown.inDropdown = true
-            isOut = false
         end
     end
     if isOut then
         for i, dd in ipairs(dropdown.dropdowns) do
+            local oText = dd.objects[3]
+            local connector = dd.objects[4]
             local itemm = false
-            for i, item in ipairs(dd.items) do -- check if you clicked on an item
-                local realerRect = copyRect(item:getRealRect())
-                realerRect.y = realerRect.y + dd.objects[1].transformOffset.y
-                if helper.aabb(pos, realerRect) then
-                    dd.currentValue = dd.items[i].text
-                    itemm = true
+            if dd.selected then
+                for i, item in ipairs(dd.items) do -- check if you clicked on an item
+                    if not itemm then
+                        local realerRect = copyRect(item:getRealRect())
+                        realerRect.h = realerRect.h - 0.1
+                        if helper.aabb(Globals.mouseRect, realerRect) then
+                            dd.currentValue = dd.itemValues[i]
+                            dd.changeFunction(dd.setting, dd.currentValue)
+                            oText.text = dd.currentValue
+                            itemm = true
+                        end
+                    end
                 end
+                if not itemm then
+                    dd.currentValue = settings[dd.setting]
+                    dd.changeFunction(dd.setting, dd.currentValue)
+                    oText.text = dd.currentValue
+                end
+                connector.transform.alpha = 0
+                for i, it in ipairs(dd.items) do
+                    it.children[1].transform.alpha = 0
+                    it.transform.alpha = 0
+                end
+                dd.selected = false
+                dropdown.inDropdown = false
             end
-            if dd.selected and not itemm then
-                dd.changeFunction(dd.setting, dd.currentValue)
-                dd.currentValue = settings[dd.setting]
-            end
-            dd.selected = false
-            dropdown.inDropdown = false
         end
     end
 end
@@ -168,7 +216,8 @@ function dropdown.update(time)
         local bg = dd.objects[1]
         local text = dd.objects[2]
         local oText = dd.objects[3]
-        local infoText = dd.objects[4]
+        local connector = dd.objects[4]
+        local infoText = dd.objects[5]
 
         if not dd.setRect and text.transform.w ~= 0 and oText.transform.w ~= 0 then
             local x, y = dd.position.x, dd.position.y
@@ -184,9 +233,29 @@ function dropdown.update(time)
             oText.transform.y = 0.25
             text.transform.y = dd.position.y + ((bg.transform.h * skin["upscale"]) / 2) -
                 ((text.transform.h * skin["upscale"]) / 2)
+            connector.transform.x = bg.transform.x
+            connector.transform.y = bg.transform.y + (connector.transform.h / 2)
         end
 
         if dd.setRect then
+            if dd.selected then
+                local stop = false
+                for id, it in ipairs(dd.items) do
+                    if not stop then
+                        local realerRect = copyRect(it:getRealRect())
+                        realerRect.h = realerRect.h - 0.1
+                        if helper.aabb(Globals.mouseRect, realerRect) then
+                            stop = true
+                            it.children[1].transform.alpha = 0.7
+                        else
+                            it.children[1].transform.alpha = 1
+                        end
+                    else
+                        it.children[1].transform.alpha = 1
+                    end
+                end
+            end
+
             -- information text, animation as well
             if infoText ~= nil then
                 local ht = time - dd.hoverTime

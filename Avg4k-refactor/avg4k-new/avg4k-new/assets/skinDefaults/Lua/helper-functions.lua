@@ -184,6 +184,21 @@ function helper.initContainer(container, allowScroll)
     arrow2.tag = "container_arrow_2"
 end
 
+function helper.truncateArrayByResolution(resolutions, storedResolution)
+    local storedWidth, storedHeight = storedResolution:match("(%d+)x(%d+)")
+    local truncatedArray = {}
+
+    for _, resolution in ipairs(resolutions) do
+        local givenWidth, givenHeight = resolution:match("(%d+)x(%d+)")
+
+        if tonumber(givenWidth) < tonumber(storedWidth) and tonumber(givenHeight) < tonumber(storedHeight) then
+            table.insert(truncatedArray, resolution)
+        end
+    end
+
+    return truncatedArray
+end
+
 function helper.findContainer(container)
     for i, t in ipairs(helper.containers) do
         local ind = t[1]

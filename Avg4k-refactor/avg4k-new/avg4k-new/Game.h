@@ -47,7 +47,7 @@ namespace AvgEngine
 			Title = _title;
 			Version = ver;
 			Window = glfwCreateWindow(w, h, _title.c_str(), NULL, NULL);
-
+			Render::DisplayHelper::getMonitorResolution(); // set a store state for the monitor resolution (since on fullscreen it returns the fullscreen res)
 			if (!Window)
 			{
 				Logging::writeLog("[AvgEngine] [Error] Failed to create GLFW window (game will most definitely crash)");
@@ -68,12 +68,12 @@ namespace AvgEngine
 
 		virtual void Resize(int w, int h)
 		{
+			Render::Display::Resize(Window, w, h);
 			if (CurrentMenu)
 			{
-				CurrentMenu->camera.resize(w, h);
+				CurrentMenu->camera.resize(Render::Display::width, Render::Display::height);
 				Render::Display::defaultShader->setProject(CurrentMenu->camera.projection);
 			}
-			Render::Display::Resize(Window, w, h);
 			Event(Events::Event(Events::EventType::Event_Resize));
 		}
 

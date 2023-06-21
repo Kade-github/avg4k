@@ -90,31 +90,36 @@ function textbox.mouseDown(pos)
     end
     local isOut = true
     for i, tb in ipairs(textbox.textboxes) do
+        local text = tb.objects[3]
         local realerRect = copyRect(tb.objects[1]:getRealRect())
         realerRect.y = realerRect.y + tb.objects[1].transformOffset.y
         if helper.aabb(pos, realerRect) then
-            for i, tb in ipairs(textbox.textboxes) do -- make sure all the other textboxes are not selected
-                tb.selected = false
+            for i, tbb in ipairs(textbox.textboxes) do -- make sure all the other textboxes are not selected
+                tbb.selected = false
             end
             tb.selected = true
             textbox.inTextbox = true
+            text.text = tb.currentValue .. "_"
             isOut = false
         end
     end
     if isOut then
         for i, tb in ipairs(textbox.textboxes) do
+            local text = tb.objects[3]
             if tb.selected then
                 tb.changeFunction(tb.setting, tb.currentValue)
                 tb.currentValue = settings[tb.setting]
             end
             tb.selected = false
             textbox.inTextbox = false
+            text.text = tb.currentValue
         end
     end
 end
 
 function textbox.keyDown(key)
     for i, tb in ipairs(textbox.textboxes) do
+        local text = tb.objects[3]
         if tb.selected then
             if tb.keyInput then
                 for i, v in ipairs(tb.blacklistedKeys) do
@@ -128,9 +133,11 @@ function textbox.keyDown(key)
                 textbox.inTextbox = false
                 tb.changeFunction(tb.setting, tb.currentValue)
                 tb.currentValue = settings[tb.setting]
+                text.text = tb.currentValue
             else
                 if key == 259 and string.len(tb.currentValue) > 0 then
                     tb.currentValue = tb.currentValue:sub(1, -2)
+                    text.text = tb.currentValue .. "_"
                     return
                 end
                 if key == 257 then
@@ -138,6 +145,7 @@ function textbox.keyDown(key)
                     textbox.inTextbox = false
                     tb.changeFunction(tb.setting, tb.currentValue)
                     tb.currentValue = settings[tb.setting]
+                    text.text = tb.currentValue
                     return
                 end
                 if string.len(tb.currentValue) >= tb.maxCharacters then
@@ -149,6 +157,7 @@ function textbox.keyDown(key)
                     end
                 end
                 tb.currentValue = tb.currentValue .. string.char(key)
+                text.text = tb.currentValue .. "_"
             end
             return
         end
@@ -157,61 +166,64 @@ end
 
 function textbox.update(time)
     for i, tb in ipairs(textbox.textboxes) do
-        if not tb.setRect then
+        local bg = tb.objects[1]
+        local text = tb.objects[2]
+        local oText = tb.objects[3]
+        local infoText = tb.objects[4]
+        if not tb.setRect and text.transform.w ~= 0 and oText.transform.w ~= 0 then
             local x, y = tb.position.x, tb.position.y
-            tb.position = copyRect(tb.objects[1].transform)
+            tb.position = copyRect(bg.transform)
             tb.position.x = x
             tb.position.y = y
-            tb.position.w = tb.objects[1].transform.w / tb.objects[1].parent.transform.w
-            tb.position.h = tb.objects[1].transform.h / tb.objects[1].parent.transform.h
+            tb.position.w = bg.transform.w / bg.parent.transform.w
+            tb.position.h = bg.transform.h / bg.parent.transform.h
             tb.setRect = true
-        end
-        tb.objects[1].transform = tb.position
-        tb.objects[1].transform.x = tb.position.x + 0.01 + tb.objects[2].transform.w
-
-        tb.objects[2].transform.y = tb.position.y + ((tb.objects[1].transform.h * skin["upscale"]) / 2) -
-            ((tb.objects[2].transform.h * skin["upscale"]) / 2)
-        tb.objects[2].transform.x = tb.position.x
-
-        -- display text
-        tb.objects[3].text = tb.currentValue
-        if tb.selected then
-            tb.objects[3].text = tb.objects[3].text .. "_"
+            bg.transform.x = tb.position.x + 0.01 + text.transform.w
+            bg.transform.y = tb.position.y
+            text.transform.x = tb.position.x
+            oText.transform.y = 0.25
+            text.transform.y = tb.position.y + ((bg.transform.h * skin["upscale"]) / 2) -
+                ((text.transform.h * skin["upscale"]) / 2)
         end
 
-        -- information text, animation as well
-        if tb.objects[4] ~= nil then
-            local ht = time - tb.hoverTime
-            -- create a bigger hitbox for text
-            local endPosReal = tb.objects[2]:getRealRect().y + tb.objects[2]:getRealRect().h +
-                tb.objects[4]:getRealRect()
-                .h - textbox.container:getRealRect().y
-            tb.objects[4].transform.x = tb.objects[2]:getRealRect().x - textbox.container:getRealRect().x
+        if tb.setRect then
+            -- information text, animation as well
+            if infoText ~= nil then
+                local ht = time - tb.hoverTime
+
+                infoText.transform.x = text:getRealRect().x - textbox.container:getRealRect().x
 
 
-            local realYPos = tb.objects[2]:getRealRect().y - textbox.container:getRealRect().y
 
+                local thingRect = copyRect(bg:getRealRect())
 
-            local thingRect = copyRect(tb.objects[1]:getRealRect())
+                thingRect.y = thingRect.y + bg.transformOffset.y
 
-            thingRect.y = thingRect.y + tb.objects[1].transformOffset.y
+                local oRect = copyRect(text:getRealRect())
 
-            local oRect = copyRect(tb.objects[2]:getRealRect())
-
-            -- check all of these hit boxes because we need it to be ux friendly
-            if helper.aabb(Globals.mouseRect, thingRect) or helper.aabb(Globals.mouseRect, oRect) then
-                local a = helper.lerp(0, 1, math.min(ht / 0.5, 1))
-                local y = helper.lerp(realYPos, endPosReal, helper.outCubic(a))
-                tb.objects[4].transform.y = y
-                tb.objects[4].transform.alpha = a
-                tb.lastHover = time
-            else
-                local a = helper.lerp(1, 0, math.min((time - tb.lastHover) / 0.5, 1))
-                local y = helper.lerp(realYPos,
-                    endPosReal, helper.outCubic(a))
-                tb.hoverTime = time
-                tb.objects[4].transform.y = y
-                tb.objects[4].transform.alpha = a
+                -- check all of these hit boxes because we need it to be ux friendly
+                if helper.aabb(Globals.mouseRect, thingRect) or helper.aabb(Globals.mouseRect, oRect) then
+                    local endPosReal = text:getRealRect().y + text:getRealRect().h +
+                        infoText:getRealRect()
+                        .h - textbox.container:getRealRect().y
+                    local realYPos = text:getRealRect().y - textbox.container:getRealRect().y
+                    local a = helper.lerp(0, 1, math.min(ht / 0.5, 1))
+                    local y = helper.lerp(realYPos, endPosReal, helper.outCubic(a))
+                    infoText.transform.y = y
+                    infoText.transform.alpha = a
+                    tb.lastHover = time
+                else
+                    local endPosReal = text:getRealRect().y + text:getRealRect().h +
+                        infoText:getRealRect()
+                        .h - textbox.container:getRealRect().y
+                    local realYPos = text:getRealRect().y - textbox.container:getRealRect().y
+                    local a = helper.lerp(1, 0, math.min((time - tb.lastHover) / 0.5, 1))
+                    local y = helper.lerp(realYPos,
+                        endPosReal, helper.outCubic(a))
+                    tb.hoverTime = time
+                    infoText.transform.y = y
+                    infoText.transform.alpha = a
+                end
             end
         end
     end

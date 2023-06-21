@@ -158,71 +158,86 @@ end
 
 function checkbox.update(time)
     for i, cb in ipairs(checkbox.checkboxes) do
-        if not cb.setRect then
+        local bg = cb.objects[1]
+        local toggle = cb.objects[2]
+        local text = cb.objects[3]
+        local status = cb.objects[4]
+        local info = cb.objects[5]
+        local realProg = (time - cb.startTime) / 0.1
+        local tweenTime = math.min(realProg, 1)
+        if not cb.setRect and text.transform.w ~= 0 and status.transform.w ~= 0 then
             local x, y = cb.position.x, cb.position.y
-            cb.position = copyRect(cb.objects[1].transform)
+            cb.position = copyRect(bg.transform)
             cb.position.x = x
             cb.position.y = y
-            cb.position.w = cb.objects[1].transform.w / cb.objects[1].parent.transform.w
-            cb.position.h = cb.objects[1].transform.h / cb.objects[1].parent.transform.h
+            cb.position.w = bg.transform.w / bg.parent.transform.w
+            cb.position.h = bg.transform.h / bg.parent.transform.h
             cb.setRect = true
-        end
-        cb.objects[1].transform = cb.position
-        cb.objects[1].transform.x = cb.position.x + 0.01 + cb.objects[3].transform.w
-        cb.objects[1].transform.y = cb.position.y
+            bg.transform.x = cb.position.x + 0.01 + text.transform.w
+            bg.transform.y = cb.position.y
+            text.transform.x = cb.position.x
+            status.transform.y = 0.5
+            text.transform.y = cb.position.y + ((bg.transform.h * skin["upscale"]) / 2) -
+                ((text.transform.h * skin["upscale"]) / 2)
 
-        -- simple tweening
-        local tweenTime = math.min((time - cb.startTime) / 0.1, 1)
-        if not cb.currentValue then
-            cb.objects[2].transform.x = helper.lerp(cb.startPos, 0, tweenTime)
-            cb.objects[4].transform.x = 0.95 - (cb.objects[4].transform.w / 2)
-        else
-            local endPos = 1 - cb.objects[2].transform.w
-            cb.objects[2].transform.x = helper.lerp(cb.startPos, endPos,
-                tweenTime)
-            cb.objects[4].transform.x = (cb.objects[4].transform.w / 2) + 0.1
-        end
-        cb.objects[4].transform.y = 0.5
-
-        cb.objects[3].transform.y = cb.position.y + ((cb.objects[1].transform.h * skin["upscale"]) / 2) -
-            ((cb.objects[3].transform.h * skin["upscale"]) / 2)
-        cb.objects[3].transform.x = cb.position.x
-        -- information text, animation as well
-        if cb.objects[5] ~= nil then
-            local ht = time - cb.hoverTime
-            -- create a bigger hitbox for text
-            local endPosReal = cb.objects[3]:getRealRect().y + cb.objects[3]:getRealRect().h +
-                cb.objects[5]:getRealRect()
-                .h - textbox.container:getRealRect().y
-            cb.objects[5].transform.x = cb.objects[3]:getRealRect().x - textbox.container:getRealRect().x
-
-            local bigRect = copyRect(cb.objects[4].transform)
-            bigRect.y = endPosReal
-            bigRect.w = bigRect.w + 15
-
-            local realYPos = cb.objects[3]:getRealRect().y - textbox.container:getRealRect().y
-
-
-            local thingRect = copyRect(cb.objects[1]:getRealRect())
-
-            thingRect.y = thingRect.y + cb.objects[1].transformOffset.y
-
-            local oRect = copyRect(cb.objects[3]:getRealRect())
-
-            -- check all of these hit boxes because we need it to be ux friendly
-            if helper.aabb(Globals.mouseRect, thingRect) or helper.aabb(Globals.mouseRect, oRect) then
-                local a = helper.lerp(0, 1, math.min(ht / 0.5, 1))
-                local y = helper.lerp(realYPos, endPosReal, helper.outCubic(a))
-                cb.objects[5].transform.y = y
-                cb.objects[5].transform.alpha = a
-                cb.lastHover = time
+            if not cb.currentValue then
+                toggle.transform.x = 0
+                status.transform.x = 0.95 - (status.transform.w / 2)
             else
-                local a = helper.lerp(1, 0, math.min((time - cb.lastHover) / 0.5, 1))
-                local y = helper.lerp(realYPos,
-                    endPosReal, helper.outCubic(a))
-                cb.hoverTime = time
-                cb.objects[5].transform.y = y
-                cb.objects[5].transform.alpha = a
+                toggle.transform.x = 1 - toggle.transform.w
+                status.transform.x = (status.transform.w / 2) + 0.1
+            end
+            realProg = 2
+        end
+        if cb.setRect then
+            -- simple tweening
+            if realProg < 1.1 then
+                if not cb.currentValue then
+                    toggle.transform.x = helper.lerp(cb.startPos, 0, tweenTime)
+                    status.transform.x = 0.95 - (status.transform.w / 2)
+                else
+                    local endPos = 1 - toggle.transform.w
+                    toggle.transform.x = helper.lerp(cb.startPos, endPos,
+                        tweenTime)
+                    status.transform.x = (status.transform.w / 2) + 0.1
+                end
+            end
+
+            -- information text, animation as well
+            if info ~= nil then
+                local ht = time - cb.hoverTime
+
+                info.transform.x = text:getRealRect().x - textbox.container:getRealRect().x
+
+                local thingRect = copyRect(bg:getRealRect())
+
+                thingRect.y = thingRect.y + bg.transformOffset.y
+
+                local oRect = copyRect(text:getRealRect())
+
+                -- check all of these hit boxes because we need it to be ux friendly
+                if helper.aabb(Globals.mouseRect, thingRect) or helper.aabb(Globals.mouseRect, oRect) then
+                    local endPosReal = text:getRealRect().y + text:getRealRect().h +
+                        info:getRealRect()
+                        .h - textbox.container:getRealRect().y
+                    local realYPos = text:getRealRect().y - textbox.container:getRealRect().y
+                    local a = helper.lerp(0, 1, math.min(ht / 0.5, 1))
+                    local y = helper.lerp(realYPos, endPosReal, helper.outCubic(a))
+                    info.transform.y = y
+                    info.transform.alpha = a
+                    cb.lastHover = time
+                else
+                    local endPosReal = text:getRealRect().y + text:getRealRect().h +
+                        info:getRealRect()
+                        .h - textbox.container:getRealRect().y
+                    local realYPos = text:getRealRect().y - textbox.container:getRealRect().y
+                    local a = helper.lerp(1, 0, math.min((time - cb.lastHover) / 0.5, 1))
+                    local y = helper.lerp(realYPos,
+                        endPosReal, helper.outCubic(a))
+                    cb.hoverTime = time
+                    info.transform.y = y
+                    info.transform.alpha = a
+                end
             end
         end
     end

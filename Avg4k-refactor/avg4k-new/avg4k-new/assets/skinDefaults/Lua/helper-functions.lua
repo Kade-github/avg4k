@@ -201,7 +201,10 @@ function helper.containerMouseWheel(amount)
     for i, t in ipairs(helper.containers) do
         local ind = t[1]
         local container = ind["c"]
+        -- get the bar and arrows
         local bar = container:getChildByTag("container_bar")
+        local arrow1 = container:getChildByTag("container_arrow_1")
+        local arrow2 = container:getChildByTag("container_arrow_2")
         local rc = container:getRealRect()
         if ind["hover"] and ind["shouldScroll"] then
             ind["scroll"] = ind["scroll"] - (amount * 30)
@@ -216,16 +219,20 @@ function helper.containerMouseWheel(amount)
 
             for i = 1, container.children:size(), 1 do
                 local child = container.children[i]
-                local real = child:getRealRect()
-                child.transformOffset.y = -ind["scroll"]
-                if ind["shouldScroll"] then
-                    child.transformOffset.x = bar.transform.w + 4
-                    if real.x + real.w + child.transformOffset.x > rc.x + rc.w then
-                        child.transformOffset.w = -child.transformOffset.x
-                    end
+                if child.id == bar.id or child.id == arrow1.id or child.id == arrow2.id then
+                    -- do nothing
                 else
-                    child.transformOffset.x = 0
-                    child.transformOffset.w = 0
+                    local real = child:getRealRect()
+                    child.transformOffset.y = -ind["scroll"]
+                    if ind["shouldScroll"] then
+                        child.transformOffset.x = bar.transform.w + 4
+                        if real.x + real.w + child.transformOffset.x > rc.x + rc.w then
+                            child.transformOffset.w = -child.transformOffset.x
+                        end
+                    else
+                        child.transformOffset.x = 0
+                        child.transformOffset.w = 0
+                    end
                 end
             end
         end
@@ -300,16 +307,6 @@ function helper.containerUpdate(time)
                         if child.transform.y + child.transform.h > rc.y + rc.h then
                             ind["overspace"] = (real.y + real.h) - (rc.y - rc.h) + (8 * skin["upscale"])
                         end
-                    end
-                    child.transformOffset.y = -currentScroll
-                    if ind["shouldScroll"] then
-                        child.transformOffset.x = bar.transform.w + 4
-                        if real.x + real.w + child.transformOffset.x > rc.x + rc.w then
-                            child.transformOffset.w = -child.transformOffset.x
-                        end
-                    else
-                        child.transformOffset.x = 0
-                        child.transformOffset.w = 0
                     end
                 end
             end

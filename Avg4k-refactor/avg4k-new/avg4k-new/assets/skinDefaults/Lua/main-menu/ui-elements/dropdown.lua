@@ -184,8 +184,8 @@ function dropdown.mouseDown(pos)
             if dd.selected then
                 for i, item in ipairs(dd.items) do -- check if you clicked on an item
                     if not itemm then
-                        local realerRect = copyRect(item:getRealRect())
-                        realerRect.h = realerRect.h - 0.1
+                        local realerRect = copyRect(item.children[1]:getRealRect())
+                        realerRect.w = item:getRealRect().w
                         if helper.aabb(Globals.mouseRect, realerRect) then
                             dd.currentValue = dd.itemValues[i]
                             dd.changeFunction(dd.setting, dd.currentValue)
@@ -242,8 +242,8 @@ function dropdown.update(time)
                 local stop = false
                 for id, it in ipairs(dd.items) do
                     if not stop then
-                        local realerRect = copyRect(it:getRealRect())
-                        realerRect.h = realerRect.h - 0.1
+                        local realerRect = copyRect(it.children[1]:getRealRect())
+                        realerRect.w = it:getRealRect().w
                         if helper.aabb(Globals.mouseRect, realerRect) then
                             stop = true
                             it.children[1].transform.alpha = 0.7

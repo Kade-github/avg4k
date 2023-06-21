@@ -239,15 +239,6 @@ function helper.containerMouseWheel(amount)
                 else
                     local real = child:getRealRect()
                     child.transformOffset.y = -ind["scroll"]
-                    if ind["shouldScroll"] then
-                        child.transformOffset.x = bar.transform.w + 4
-                        if real.x + real.w + child.transformOffset.x > rc.x + rc.w then
-                            child.transformOffset.w = -child.transformOffset.x
-                        end
-                    else
-                        child.transformOffset.x = 0
-                        child.transformOffset.w = 0
-                    end
                 end
             end
         end
@@ -291,10 +282,10 @@ function helper.containerUpdate(time)
 
         -- set the clip
 
-        container.clip.x = rc.x + container.transformOffset.x - 2
-        container.clip.y = rc.y + container.transformOffset.y - 2
-        container.clip.w = rc.w + container.transformOffset.w + 4
-        container.clip.h = rc.h + container.transformOffset.h + 4
+        container.clip.x = rc.x + container.transformOffset.x
+        container.clip.y = rc.y + container.transformOffset.y
+        container.clip.w = rc.w + container.transformOffset.w
+        container.clip.h = rc.h + container.transformOffset.h
 
         if ind["allowScroll"] then
             -- get the bar and arrows
@@ -322,6 +313,15 @@ function helper.containerUpdate(time)
                         if child.transform.y + child.transform.h > rc.y + rc.h then
                             ind["overspace"] = (real.y + real.h) - (rc.y - rc.h) + (8 * skin["upscale"])
                         end
+                    end
+                    if ind["shouldScroll"] then
+                        child.transformOffset.x = bar.transform.w + 4
+                        if real.x + real.w + child.transformOffset.x > rc.x + rc.w then
+                            child.transformOffset.w = -child.transformOffset.x
+                        end
+                    else
+                        child.transformOffset.x = 0
+                        child.transformOffset.w = 0
                     end
                 end
             end

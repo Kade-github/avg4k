@@ -218,13 +218,12 @@ namespace AvgEngine::Render
 			case 0: // windowed
 				glfwSetWindowAttrib(window, GLFW_DECORATED, 1);
 				glfwSetWindowAttrib(window, GLFW_FLOATING, 0);
-				glfwSetWindowMonitor(window, NULL, 0, 0, width, height, GLFW_DONT_CARE);
+				glfwSetWindowMonitor(window, NULL, (max_res[0] / 2) - width / 2, (max_res[1] / 2) - height / 2, width, height, GLFW_DONT_CARE);
 				break;
 			case 1: // fullscreen
 				glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, width, height, GLFW_DONT_CARE);
 				break;
 			case 2: // borderless
-				int left, top, right, bottom;
 				glfwSetWindowAttrib(window, GLFW_DECORATED, 0);
 				glfwSetWindowAttrib(window, GLFW_FLOATING, 1);
 				glfwSetWindowMonitor(window, NULL, 0, 0, max_res[0], max_res[1], GLFW_DONT_CARE);

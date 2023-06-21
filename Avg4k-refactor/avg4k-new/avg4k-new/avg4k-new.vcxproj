@@ -168,6 +168,7 @@
     <ClInclude Include="pugiconfig.hpp" />
     <ClInclude Include="pugixml.hpp" />
     <ClInclude Include="Rectangle.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="RhythmChannel.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="Shader.h" />
@@ -206,6 +207,13 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TimeUtils.h" />
     <ClInclude Include="TweenManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="avg4k-new.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include=".ico" />
+    <Image Include="icon.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

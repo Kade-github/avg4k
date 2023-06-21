@@ -641,5 +641,13 @@
     <ClInclude Include="Note.h">
       <Filter>Average4K\Avg4k\Objects\Gameplay</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="avg4k-new.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include=".ico" />
+    <Image Include="icon.ico" />
   </ItemGroup>
 </Project>

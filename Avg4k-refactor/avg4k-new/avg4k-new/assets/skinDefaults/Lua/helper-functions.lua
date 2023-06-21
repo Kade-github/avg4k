@@ -200,6 +200,9 @@ end
 function helper.containerMouseWheel(amount)
     for i, t in ipairs(helper.containers) do
         local ind = t[1]
+        local container = ind["c"]
+        local bar = container:getChildByTag("container_bar")
+        local rc = container:getRealRect()
         if ind["hover"] and ind["shouldScroll"] then
             ind["scroll"] = ind["scroll"] - (amount * 30)
 
@@ -209,6 +212,21 @@ function helper.containerMouseWheel(amount)
 
             if ind["scroll"] < 0 then
                 ind["scroll"] = 0
+            end
+
+            for i = 1, container.children:size(), 1 do
+                local child = container.children[i]
+                local real = child:getRealRect()
+                child.transformOffset.y = -ind["scroll"]
+                if ind["shouldScroll"] then
+                    child.transformOffset.x = bar.transform.w + 4
+                    if real.x + real.w + child.transformOffset.x > rc.x + rc.w then
+                        child.transformOffset.w = -child.transformOffset.x
+                    end
+                else
+                    child.transformOffset.x = 0
+                    child.transformOffset.w = 0
+                end
             end
         end
     end

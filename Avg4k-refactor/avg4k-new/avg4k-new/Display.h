@@ -226,6 +226,8 @@ namespace AvgEngine::Render
 			case 2: // borderless
 				glfwSetWindowAttrib(window, GLFW_DECORATED, 0);
 				glfwSetWindowAttrib(window, GLFW_FLOATING, 1);
+				width = max_res[0];
+				height = max_res[1];
 				glfwSetWindowMonitor(window, NULL, 0, 0, max_res[0], max_res[1], GLFW_DONT_CARE);
 				break;
 			default:

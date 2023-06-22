@@ -140,6 +140,12 @@ public:
 		else if (type == "Borderless")
 		{
 			AvgEngine::Render::Display::Fullscreen(Window, 2);
+			if (CurrentMenu)
+			{
+				CurrentMenu->camera.resize(AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
+				AvgEngine::Render::Display::defaultShader->setProject(CurrentMenu->camera.projection);
+			}
+			Event(AvgEngine::Events::Event(AvgEngine::Events::EventType::Event_Resize));
 		}
 		else
 			AvgEngine::Render::Display::Fullscreen(Window, -1);

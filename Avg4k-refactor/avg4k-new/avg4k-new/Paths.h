@@ -1,7 +1,7 @@
 #pragma once
 #include "includes.h"
 #include <shlobj.h>
-
+#include <sys/stat.h>
 namespace AvgEngine::Utils
 {
 	class Paths
@@ -32,5 +32,11 @@ namespace AvgEngine::Utils
 
             return bangerPath;
 		}
+
+        static bool pathExists(std::string path)
+        {
+            struct stat sb;
+            return stat(path.c_str(), &sb) == 0;
+        }
 	};
 }

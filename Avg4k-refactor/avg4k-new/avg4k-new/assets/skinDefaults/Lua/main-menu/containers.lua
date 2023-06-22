@@ -220,6 +220,12 @@ function containers_settingChanged(setting, newValue)
             end
         end
     end
+
+    if setting == "Skin" and newValue ~= settings["Skin"] then
+        cprint("Setting skin to " .. newValue)
+        setSkin(newValue)
+    end
+
     setSetting(setting, tostring(newValue))
 end
 
@@ -359,7 +365,9 @@ function Containers.settingsCreate(c)
 
     Containers.settings_createHeader(c, x, "skin", "Skin")
 
-    Containers.settings_createDropdown(c, "Skin", {}, "settings_skin",
+    local skins = getSkins()
+
+    Containers.settings_createDropdown(c, "Skin", skins, "settings_skin",
         x, containers_settingChanged, "")
 
     Containers.settings_createTextbox(c, "Underlane Transparency", 5, "settings_underlaneTransparency",

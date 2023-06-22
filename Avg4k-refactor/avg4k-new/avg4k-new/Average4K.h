@@ -5,6 +5,7 @@
 #include "Paths.h"
 #include "Settings.h"
 #include "LoadingPacksMenu.h"
+#include "StartScreen.h"
 #include "SteamIncludes.h"
 #include "Avg4kCmdHandler.h"
 #include "Notifications.h"
@@ -37,6 +38,8 @@ public:
 
 	static bool instant;
 
+	bool skinInitOnLoad = false;
+
 	Average4k::GameOptions options{};
 
 	Steam::SteamInterface* steam;
@@ -53,16 +56,9 @@ public:
 		queuedPackets = {};
 	}
 
-	void SetSkin(std::string skinName, bool setValue = true)
+	void SkinInit()
 	{
-		const std::string n = skinName;
-		if (setValue)
-		{
-			Average4k::Setting& s = settings->Get("Skin");
-			s.value = n;
-
-		}
-
+		skinInitOnLoad = false;
 		if (skin)
 			skin->EmptyCache();
 		skin = new Average4k::Skin(settings->Get("Skin").value, "assets/noteskin/");
@@ -73,15 +69,55 @@ public:
 		alphaText->SetFont(skin->GetFontPath(), "FuturaBold.fnt");
 
 		QueueEvent({ AvgEngine::Events::EventType::Event_ReloadFont,0, {}, skin->GetFontPath() });
-	
+
 		notif->InitNotifications(skin);
 
 
 		SetResolution(settings->Get("Resolution").value);
 		SetFullscreen(settings->Get("Display").value);
 		settings->Set("Resolution", std::to_string(AvgEngine::Render::Display::width) + "x" + std::to_string(AvgEngine::Render::Display::height));
+	}
 
-		SwitchNoTrans(new LoadingPacksMenu());
+	void SetSkin(std::string skinName, bool setValue = true, bool startScreen = true)
+	{
+		if (!AvgEngine::Utils::Paths::pathExists("assets/noteskin/" + skinName))
+		{
+			AvgEngine::Logging::writeLog("[Error] Skin " + skinName + " is invalid! (Not located at assets/noteskins/" + skinName + ")");
+			return;
+		}
+		const std::string n = skinName;
+		if (setValue)
+		{
+			Average4k::Setting& s = settings->Get("Skin");
+			s.value = n;
+		}
+
+
+		if (startScreen)
+		{
+			SwitchMenu(new StartScreen());
+			skinInitOnLoad = true;
+		}
+		else
+		{
+			SkinInit();
+			SwitchNoTrans(new LoadingPacksMenu());
+		}
+	}
+
+	std::vector<std::string> GetSkins()
+	{
+		std::vector<std::string> skins = {};
+		for (const auto& entry : std::filesystem::directory_iterator("assets/noteskin/"))
+		{
+			if (entry.is_directory())
+			{
+				std::string name = entry.path().filename().string();
+				if (AvgEngine::Utils::Paths::pathExists("assets/noteskin/" + name + "/config.skin"))
+					skins.push_back(name);
+			}
+		}
+		return skins;
 	}
 
 	void SetFullscreen(std::string type)
@@ -131,7 +167,7 @@ public:
 		alphaText = new Text(4, 4, "", "", "- " + Title + " ALPHA " + Version + " - EVERYTHING IS SUBJECT TO CHANGE -", 14);
 		alphaText->transform.a = 0.6f;
 
-		SetSkin(settings->Get("Skin").value, false);
+		SetSkin(settings->Get("Skin").value, false, false);
 		if (!steam->good)
 			return;
 
@@ -179,6 +215,10 @@ public:
 			0.0f,0.0f, Display::width, Display::height,
 			0.0f,0.0f,0.0f,1.0f);
 
+		notif->camera = &CurrentMenu->camera;
+		notif->parent = &CurrentMenu->displayRect;
+		notif->draw();
+
 		// 0.2 second trans time
 		if (!_out && _startTrans > 0)
 		{
@@ -191,6 +231,7 @@ public:
 			if (t >= 1)
 			{
 				_startTrans = glfwGetTime();
+				SkinInit();
 				SwitchNoTrans(_toSwitch);
 				_out = true;
 			}
@@ -203,9 +244,6 @@ public:
 			c.zIndex = 99;
 			CurrentMenu->camera.addDrawCall(c);
 		}
-		notif->camera = &CurrentMenu->camera;
-		notif->parent = &CurrentMenu->displayRect;
-		notif->draw();
 
 		if (queuedPackets.size() > 0)
 			queuedPackets.clear();

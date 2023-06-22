@@ -237,7 +237,6 @@ function helper.containerMouseWheel(amount)
                 if child.id == bar.id or child.id == arrow1.id or child.id == arrow2.id then
                     -- do nothing
                 else
-                    local real = child:getRealRect()
                     child.transformOffset.y = -ind["scroll"]
                 end
             end

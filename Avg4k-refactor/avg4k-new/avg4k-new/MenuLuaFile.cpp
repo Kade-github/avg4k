@@ -266,6 +266,26 @@ void Average4k::Lua::MenuLuaFile::Load()
 	});
 
 
+	lua->set_function("getSkins", [&]() {
+		Average4K* c = static_cast<Average4K*>(Average4K::Instance);
+
+		std::vector<std::string> skins = c->GetSkins();
+
+		sol::table t = lua->create_table();
+		for (int i = 0; i < skins.size(); i++)
+		{
+			t.add(skins[i]);
+		}
+
+		return t;
+
+		});
+
+	lua->set_function("setSkin", [&](std::string skin) {
+		Average4K* c = static_cast<Average4K*>(Average4K::Instance);
+		c->SetSkin(skin,false);
+	});
+
 	lua->set_function("setChart", [&](chart& c, int diffIndex) {
 		Average4K* s = static_cast<Average4K*>(Average4K::Instance);
 		s->options.currentFile = c.base;

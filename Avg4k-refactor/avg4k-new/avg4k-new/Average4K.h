@@ -82,7 +82,18 @@ public:
 	{
 		if (!AvgEngine::Utils::Paths::pathExists("assets/noteskin/" + skinName))
 		{
-			AvgEngine::Logging::writeLog("[Error] Skin " + skinName + " is invalid! (Not located at assets/noteskins/" + skinName + ")");
+			if (skinName == "arrow")
+			{
+				AvgEngine::Logging::writeLog("[Fatal Error] Skin " + skinName + " is invalid! (Not located at assets/noteskins/" + skinName + "). This will cause the game to crash!");
+				glfwSetWindowShouldClose(Window, GLFW_TRUE);
+				return;
+			}
+			AvgEngine::Logging::writeLog("[Error] Skin " + skinName + " is invalid! (Not located at assets/noteskins/" + skinName + ").");
+			if (!startScreen)
+			{
+				AvgEngine::Logging::writeLog("[Error] Trying to reset to default skin.");
+				SetSkin("arrow", true, false);
+			}
 			return;
 		}
 		const std::string n = skinName;

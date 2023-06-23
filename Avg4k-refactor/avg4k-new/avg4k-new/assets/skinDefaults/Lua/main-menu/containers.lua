@@ -200,9 +200,11 @@ function containers_settingChanged(setting, newValue)
             if settings["Display"] == "Windowed" then
                 cprint("Setting windowed res to " .. newValue)
                 setResolution(w, h)
+                reload()
             elseif settings["Display"] == "Fullscreen" then
                 cprint("Setting fullscreen res to " .. newValue)
                 setFullscreenResolution(w, h)
+                reload()
             end
         end
     end
@@ -219,6 +221,7 @@ function containers_settingChanged(setting, newValue)
                 setFullscreenResolution(w, h)
             end
         end
+        reload()
     end
 
     if setting == "Skin" and newValue ~= settings["Skin"] then
@@ -369,6 +372,16 @@ function Containers.settingsCreate(c)
 
     Containers.settings_createDropdown(c, "Skin", skins, "settings_skin",
         x, containers_settingChanged, "")
+
+    Containers.settings_createTextbox(c, "Note Size", 5, "settings_noteSize",
+        x,
+        containers_settingChanged, 15, false, numbersOnly,
+        "The multiplier to scale the notes. 1.5 is the default size (64 * 1.5).")
+
+    Containers.settings_createTextbox(c, "Background Transparency", 5, "settings_backgroundTransparency",
+        x,
+        containers_settingChanged, 15, false, numbersOnly,
+        "How transparent the background should be, 0 is fully opaque.")
 
     Containers.settings_createTextbox(c, "Underlane Transparency", 5, "settings_underlaneTransparency",
         x,

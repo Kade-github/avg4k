@@ -37,7 +37,8 @@ namespace Average4k::Lua
 		void draw() override
 		{
 			Menu::draw();
-			file->Function("Update", std::to_string(glfwGetTime()));
+			if ((int)(glfwGetTime() * 1000) % 2 == 0)
+				file->Function("Update", std::to_string(glfwGetTime()));
 		}
 
 		void RunLua(std::string luaCode)

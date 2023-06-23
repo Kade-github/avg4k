@@ -119,10 +119,12 @@ void Average4k::Objects::Gameplay::Note::draw()
 		// calculate the beat of the hold, via the start beat of the head * a percentage of the length we are already through.
 		float holdBeat = beat + ((end - beat) * (static_cast<float>(i) / amountToDraw));
 		float holdTime = k->options.currentFile->GetTimeFromBeat(holdBeat);
-		if (!holdJudged && holdTime > stopHolding) // if its greater than when we stopped holding, OR the hold isn't judged yet.
+		if (holdTime > stopHolding) // if its greater than when we stopped holding, OR the hold isn't judged yet.
 			r.a = 1;
-		else
+		else 
+		{
 			r.a = 0;
+		}
 		// xmod
 		float xmodDiff = holdBeat - sBeat;
 		r.y = calculateY(useXmod, holdTime - sTime) + (64 * noteSize);
@@ -142,7 +144,7 @@ void Average4k::Objects::Gameplay::Note::draw()
 		rSrc.h = rSrc.h / holdTexture->height;
 
 		drawCall c = Camera::FormatDrawCall(zIndex - 1, holdTexture, shader, AvgEngine::Render::DisplayHelper::RectToVertex(r, rSrc, center));
-		if (holding || m->botplay)
+		if (holding || m->botplay || holdTime < stopHolding)
 		{
 			AvgEngine::Render::Rect rClip = r;
 			rClip.y = parent->y;
@@ -163,9 +165,13 @@ void Average4k::Objects::Gameplay::Note::draw()
 			m->UpdateAccuracy(judge);
 		}
 		if (!holding)
+		{
 			holdTimer -= 0.09f;
+		}
 		else if (holdTimer < 1)
+		{
 			holdTimer += 0.02f;
+		}
 	}
 
 	// set the judged flag for holds

@@ -279,6 +279,9 @@
     <ClCompile Include="StringTools.cpp">
       <Filter>Average4K\Engine\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Channel.cpp">
+      <Filter>Average4K\Engine\Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes.h">

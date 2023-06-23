@@ -69,7 +69,7 @@ void StartScreen::load()
 	addObject(bump);
 	bump->setRatio(true);
 
-	c = Average4k::Audio::RhythmBASSHelper::CreateChannel("menu", Average4K::skin->GetPath("Music/MenuTheme.ogg"));
+	c = Average4k::Audio::RhythmBASSHelper::CreateChannel("menu", Average4K::skin->GetPath("Music/MenuTheme.ogg"), false);
 	Average4k::External::ConfigReader cf = Average4k::External::ConfigReader(Average4K::skin->GetPath("Music/MenuTheme.meta"));
 	bpm = cf.Float("bpm");
 	c->SetSegments({ Average4k::Utils::SkinUtils::GetMenuThemeTiming(bpm) });
@@ -77,6 +77,7 @@ void StartScreen::load()
 	beatOffset = cf.Float("startOffset");
 	_tBeat = (_eBeat - beatOffset) / 2;
 	c->Play();
+	c->Repeat(false);
 
 	if (beatOffset < 0)
 		beatOffset = 0;

@@ -88,6 +88,7 @@ namespace AvgEngine::External
 		{
 			auto flags = BASS_STREAM_PRESCAN | BASS_SAMPLE_FLOAT;
 
+
 			if (autoFree)
 				flags |= BASS_STREAM_AUTOFREE;
 
@@ -120,6 +121,7 @@ namespace AvgEngine::External
 			const QWORD word = BASS_ChannelGetLength(val, BASS_POS_BYTE);
 			c->length = BASS_ChannelBytes2Seconds(val, word) * 1000;
 
+			c->autoFree = autoFree;
 			Channels.push_back(c);
 
 			return c;

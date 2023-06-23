@@ -41,7 +41,7 @@ namespace Average4k::Objects::Gameplay {
 		float rate = 1;
 
 		float noteSize = 0;
-
+		bool holdDropped = false;
 		void calculateJudge(float diff);
 
 		float calculateY(bool xmodd, float diff)
@@ -68,6 +68,13 @@ namespace Average4k::Objects::Gameplay {
 		{
 			holding = false;
 			stopHolding = sTime;
+
+			float end = beat + lengthInBeats;
+
+			if (std::abs(end - sBeat) < 0.15f)
+			{
+				holdJudged = true;
+			}
 		}
 
 		void draw() override;

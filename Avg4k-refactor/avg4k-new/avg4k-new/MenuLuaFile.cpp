@@ -194,8 +194,9 @@ void Average4k::Lua::MenuLuaFile::Load()
 		// 3. profit.
 		// (also make this async later)
 
-		Average4k::Audio::RhythmChannel* c = Average4k::Audio::RhythmBASSHelper::CreateChannel(channelTag, path);
+		Average4k::Audio::RhythmChannel* c = Average4k::Audio::RhythmBASSHelper::CreateChannel(channelTag, path, false);
 		c->Play();
+		c->Repeat(false);
 		LuaChannel lc = LuaChannel(path, channelTag);
 		lc.base = c;
 		luaChannels_mainmenu_luafile.push_back(lc);

@@ -8,6 +8,7 @@ namespace AvgEngine::Audio
 	public:
 		unsigned long id = -1;
 		unsigned long decode = -1;
+		bool autoFree = false;
 		char* data;
 		bool isPlaying;
 		std::string name;
@@ -22,6 +23,8 @@ namespace AvgEngine::Audio
 		Channel(unsigned long _id)
 		{
 			id = _id;
+			data = NULL;
+			isPlaying = false;
 		}
 
 		~Channel()
@@ -30,6 +33,8 @@ namespace AvgEngine::Audio
 				return;
 			Free();
 		}
+
+		void Repeat(bool once);
 
 		/// <summary>
 		/// Free up the channel

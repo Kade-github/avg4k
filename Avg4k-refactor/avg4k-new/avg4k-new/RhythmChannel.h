@@ -192,6 +192,7 @@ namespace Average4k::Audio
 				}
 				RemoveChannel(fc);
 			}
+			c->autoFree = autoFree;
 
 			AvgEngine::External::BASS::Channels.push_back(c);
 

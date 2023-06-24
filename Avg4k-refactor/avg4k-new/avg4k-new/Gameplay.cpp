@@ -60,6 +60,8 @@ void Gameplay::load()
 
 	// Key subscribes
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_KeyPress, [&](AvgEngine::Events::Event e) {
+		if (ended)
+			return;
 		if (!botplay)
 			for (Average4k::Objects::Gameplay::Playfield* p : playfields)
 				p->keyPress(e.data);
@@ -67,6 +69,13 @@ void Gameplay::load()
 		if (e.data == GLFW_KEY_ESCAPE)
 		{
 			End();
+		}
+
+		if (e.data == GLFW_KEY_GRAVE_ACCENT)
+		{
+			Average4ker::a4er->SwitchMenu(new Gameplay(Average4ker::a4er->skin->GetLua("gameplay")));
+			c->Stop();
+			ended = true;
 		}
 
 		if (e.data == GLFW_KEY_F1)

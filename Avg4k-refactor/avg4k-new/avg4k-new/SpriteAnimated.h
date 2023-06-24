@@ -14,6 +14,7 @@ namespace Average4k::External::Spritesheet {
 		int fps = 24;
 
 		bool loop = true;
+		bool finished = false;
 
 		double frameTime = 0;
 		double start = 0;
@@ -24,7 +25,6 @@ namespace Average4k::External::Spritesheet {
 			frameHeight = _h;
 			frames = texture->width / frameWidth;
 		}
-
 		AnimatedSprite(float x, float y, std::string filePath) : AvgEngine::Base::Sprite(x, y, filePath) {}
 		AnimatedSprite(float x, float y, AvgEngine::OpenGL::Texture* tex) : AvgEngine::Base::Sprite(x, y, tex) {}
 
@@ -39,18 +39,23 @@ namespace Average4k::External::Spritesheet {
 				src.w = frameWidth;
 				src.h = frameHeight;
 			}
-			if (frameTime >= 1.0 / fps)
+			if (frameTime >= 1.0 / fps && !finished)
 			{
 				frameTime = 0;
 				frame++;
-				if (frame >= frames && loop)
-					frame = 0;
+				if (frame >= frames)
+				{
+					if (loop)
+						frame = 0;
+					else
+						finished = true;
+				}
 				src.x = frame * frameWidth;
 				src.y = 0;
 				src.w = frameWidth;
 				src.h = frameHeight;
 			}
-			else
+			if (!finished)
 				frameTime += glfwGetTime() - start;
 
 			AvgEngine::Base::Sprite::draw();

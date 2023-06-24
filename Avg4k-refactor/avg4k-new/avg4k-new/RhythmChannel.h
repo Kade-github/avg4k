@@ -165,7 +165,7 @@ namespace Average4k::Audio
 
 			if (val == 0) {
 				if (BASS_ErrorGetCode() != 0) {
-					AvgEngine::Logging::writeLog("[BASS] [Error] Error " + std::to_string(BASS_ErrorGetCode()));
+					AvgEngine::Logging::writeLog("[BASS] [Error] Failed to create channel " + name + " at " + path + ", Error " + std::to_string(BASS_ErrorGetCode()));
 				}
 				std::free(buff);
 				return new RhythmChannel(-1);

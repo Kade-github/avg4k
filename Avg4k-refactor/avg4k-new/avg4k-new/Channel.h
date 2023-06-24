@@ -116,7 +116,7 @@ namespace AvgEngine::Audio
 			*sampleLength = leng;
 
 			if (BASS_ErrorGetCode() != 0) {
-				Logging::writeLog("[BASS] [Error] Error " + std::to_string(BASS_ErrorGetCode()));
+				Logging::writeLog("[BASS] [Error] Failed to get Song Samples, Error " + std::to_string(BASS_ErrorGetCode()));
 			}
 			BASS_ChannelSetPosition(decode, BASS_ChannelSeconds2Bytes(decode, 0), NULL);
 
@@ -143,7 +143,7 @@ namespace AvgEngine::Audio
 				BASS_ChannelGetData(decode, samples, BASS_DATA_FFT_COMPLEX);
 
 			if (BASS_ErrorGetCode() != 0) {
-				Logging::writeLog("[BASS] [Error] Error " + std::to_string(BASS_ErrorGetCode()));
+				Logging::writeLog("[BASS] [Error] Failed to return samples, Error " + std::to_string(BASS_ErrorGetCode()));
 			}
 
 			return samples;
@@ -170,7 +170,8 @@ namespace AvgEngine::Audio
 				return;
 			rate = _rate;
 			float bassRate = (rate * 100) - 100;
-			BASS_ChannelSetAttribute(id, BASS_ATTRIB_TEMPO, bassRate);
+			if (!BASS_ChannelSetAttribute(id, BASS_ATTRIB_TEMPO, bassRate))
+				Logging::writeLog("[BASS] [Error] Failed to set channel rate: " + std::to_string(BASS_ErrorGetCode()));
 		}
 
 		/// <summary>
@@ -193,7 +194,8 @@ namespace AvgEngine::Audio
 			if (id == -1)
 				return;
 			volume = vol;
-			BASS_ChannelSetAttribute(id, BASS_ATTRIB_VOL, vol);
+			if (!BASS_ChannelSetAttribute(id, BASS_ATTRIB_VOL, vol))
+				Logging::writeLog("[BASS] [Error] Failed to set channel volume: " + std::to_string(BASS_ErrorGetCode()));
 		}
 
 		bool operator==(const Channel& other) {

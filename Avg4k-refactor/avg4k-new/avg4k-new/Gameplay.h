@@ -10,13 +10,12 @@ class Gameplay : public Average4k::Lua::GameplayMenu
 {
 public:
 	Average4k::Audio::RhythmChannel* c = NULL;
+	Average4k::Audio::RhythmChannel* boom = NULL;
 	float startTimestamp = 0;
 	float songStart = 0;
 
 	float menuStartimestamp = 0;
 
-	bool ended = false;
-	bool isStarted = false;
 	bool failedCheck = false;
 
 	std::vector<Average4k::Objects::Gameplay::Playfield*> playfields{};
@@ -25,6 +24,11 @@ public:
 	{
 	}
 
+	~Gameplay()
+	{
+
+		Average4k::Lua::GameplayMenu::~GameplayMenu();
+	}
 	void End();
 
 	void AddPlayfield();

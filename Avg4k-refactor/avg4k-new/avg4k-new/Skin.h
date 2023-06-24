@@ -174,6 +174,11 @@ namespace Average4k
 			return _assetPath + "Lua/" + asset + ".lua";
 		}
 
+		std::string GetSound(std::string asset)
+		{
+			return _assetPath + "Sounds/" + asset + ".ogg";
+		}
+
 
 		std::string GetPath(std::string asset)
 		{

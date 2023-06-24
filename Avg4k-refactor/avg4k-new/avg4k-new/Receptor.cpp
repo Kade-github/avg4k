@@ -2,6 +2,45 @@
 #include "Average4K.h"
 #include "GameplayMenu.h"
 
+void Average4k::Objects::Gameplay::Receptor::Create(int _x, int _y, AvgEngine::OpenGL::Texture* arrow, AvgEngine::OpenGL::Texture* exp)
+{
+	arrowSpritesheet = arrow;
+
+	explosion = new Average4k::External::Spritesheet::AnimatedSprite(0, 0, exp);
+	explosion->tag = "receptor_explosion";
+	explosion->SetFrameSize(64, 64);
+	explosion->center = true;
+	explosion->fps = 24;
+	explosion->zIndex = 1;
+	explosion->loop = false;
+	addObject(explosion);
+}
+
+void Average4k::Objects::Gameplay::Receptor::blowUp()
+{
+	explosion->transform.a = 1;
+	explosion->frame = 0;
+	explosion->start = glfwGetTime();
+	explosion->frameTime = 0;
+	explosion->finished = false;
+	Average4K* k = static_cast<Average4K*>(Average4K::Instance);
+	Average4k::Lua::GameplayMenu* m = static_cast<Average4k::Lua::GameplayMenu*>(k->CurrentMenu);
+	m->UpdateAccuracy(0);
+	m->combo = 0;
+	m->file->Function("ArrowJudged", std::to_string(Judgement_Miss));
+
+	Average4k::Audio::RhythmChannel* c = Average4k::Audio::RhythmBASSHelper::GetChannel("boom");
+	if (c != NULL)
+	{
+		if (c->isPlaying)
+		{
+			c->Stop();
+			c->SetPos(0);
+		}
+		c->Play();
+	}
+}
+
 void Average4k::Objects::Gameplay::Receptor::draw()
 {
 	fps = 0;
@@ -93,6 +132,9 @@ void Average4k::Objects::Gameplay::Receptor::draw()
 
 	for (GameObject* ob : Children)
 	{
+		if (ob->tag == "receptor_explosion")
+			continue;
+
 		Note* n = static_cast<Note*>(ob);
 		n->sTime = time;
 		n->sBeat = beat;
@@ -119,11 +161,28 @@ void Average4k::Objects::Gameplay::Receptor::hit()
 	if (Children.size() == 0)
 		return;
 	Average4K* k = static_cast<Average4K*>(Average4K::Instance);
+	Average4k::Lua::GameplayMenu* m = static_cast<Average4k::Lua::GameplayMenu*>(k->CurrentMenu);
+	if (!m->isStarted)
+		return;
 	Note* n = NULL;
 	for (GameObject* o : Children)
 	{
+		if (o->tag == "receptor_explosion")
+			continue;
 		Note* nn = static_cast<Note*>(o);
-		if (nn->judged || nn->type == Chart::NoteType_Mine || nn->type == Chart::NoteType_Fake)
+		if (nn->type == Chart::NoteType_Mine && !nn->judged)
+		{
+			float diff = (nn->time - time) * 1000;
+			if (nn->type == Chart::NoteType_Mine && diff <= k->options.judgeWindow[6] && diff > -k->options.judgeWindow[6])
+			{
+				nn->hit();
+				nn->judged = true;
+				nn->transform.a = 0;
+				blowUp();
+			}
+			continue;
+		}
+		if (nn->judged || nn->type == Chart::NoteType_Fake)
 			continue;
 		n = nn;
 		break;
@@ -131,12 +190,12 @@ void Average4k::Objects::Gameplay::Receptor::hit()
 	if (n == NULL)
 		return;
 	float diff = (n->time - time) * 1000;
-	if (diff < k->options.judgeWindow[4])
+	if (diff <= k->options.judgeWindow[4])
 	{
 		n->hit();
 		n->transform.a = 0;
 
-		Average4k::Lua::GameplayMenu* m = static_cast<Average4k::Lua::GameplayMenu*>(k->CurrentMenu);
+
 		m->file->Function("ArrowJudged", std::to_string(n->judge));
 
 		m->UpdateAccuracy(n->judge);

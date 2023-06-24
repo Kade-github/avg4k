@@ -14,6 +14,9 @@ namespace Average4k::Lua
 
 		float accuracy = 1;
 
+		bool ended = false;
+		bool isStarted = false;
+
 		int combo = 0;
 		int highestCombo = 0;
 

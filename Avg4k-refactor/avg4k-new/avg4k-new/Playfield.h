@@ -16,6 +16,7 @@ namespace Average4k::Objects::Gameplay {
 		AvgEngine::OpenGL::Texture* arrowSpritesheet;
 		AvgEngine::OpenGL::Texture* receptorSpritesheet;
 		AvgEngine::OpenGL::Texture* holdSpritesheet;
+		AvgEngine::OpenGL::Texture* expSpritesheet;
 		std::vector<Receptor*> receptors;
 		Average4k::Chart::Difficulty* diff;
 		Playfield(int _x, int _y, Average4k::Chart::Difficulty* d);
@@ -23,6 +24,7 @@ namespace Average4k::Objects::Gameplay {
 			delete arrowSpritesheet;
 			delete receptorSpritesheet;
 			delete holdSpritesheet;
+			delete expSpritesheet;
 			AvgEngine::Base::GameObject::~GameObject();
 		}
 		void draw();

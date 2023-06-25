@@ -66,7 +66,7 @@ void Gameplay::load()
 			for (Average4k::Objects::Gameplay::Playfield* p : playfields)
 				p->keyPress(e.data);
 
-		if (e.data == GLFW_KEY_ESCAPE)
+		if (e.data == GLFW_KEY_ESCAPE && isStarted)
 		{
 			End();
 		}

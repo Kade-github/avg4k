@@ -140,6 +140,9 @@ public:
 		else if (type == "Borderless")
 		{
 			AvgEngine::Render::Display::Fullscreen(Window, 2);
+			skin->upscale = static_cast<float>(AvgEngine::Render::Display::width) / 1920.0f;
+			fpsText->transform.scale = skin->upscale;
+			alphaText->transform.scale = skin->upscale;
 			if (CurrentMenu)
 			{
 				CurrentMenu->camera.resize(AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
@@ -155,6 +158,24 @@ public:
 
 	void SetResolution(std::string res, bool windowed = true)
 	{
+		if (res == "max")
+		{
+			int* maxRes = AvgEngine::Render::DisplayHelper::getMonitorResolution();
+			skin->upscale = static_cast<float>(maxRes[0]) / 1920.0f;
+			fpsText->transform.scale = skin->upscale;
+			alphaText->transform.scale = skin->upscale;
+			AvgEngine::Render::Display::width = maxRes[0];
+			AvgEngine::Render::Display::height = maxRes[1];
+			if (CurrentMenu)
+			{
+				CurrentMenu->camera.resize(AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
+				AvgEngine::Render::Display::defaultShader->setProject(CurrentMenu->camera.projection);
+			}
+			Event(AvgEngine::Events::Event(AvgEngine::Events::EventType::Event_Resize));
+
+			settings->Set("Resolution", std::to_string(maxRes[0]) + "x" + std::to_string(maxRes[1]));
+			return;
+		}
 		std::vector<std::string> s = AvgEngine::Utils::StringTools::Split(res, "x");
 		int w = std::stoi(s[0]);
 		int h = std::stoi(s[1]);
@@ -170,6 +191,7 @@ public:
 				CurrentMenu->camera.resize(AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
 				AvgEngine::Render::Display::defaultShader->setProject(CurrentMenu->camera.projection);
 			}
+
 			Event(AvgEngine::Events::Event(AvgEngine::Events::EventType::Event_Resize));
 		}
 		fpsText->transform.scale = skin->upscale;

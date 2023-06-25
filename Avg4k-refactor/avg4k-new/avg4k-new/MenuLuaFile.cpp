@@ -255,6 +255,8 @@ void Average4k::Lua::MenuLuaFile::Load()
 
 		c->SetFullscreen("Fullscreen");
 		c->SetResolution(std::to_string(w) + "x" + std::to_string(h), false);
+		c->CurrentMenu->camera.resize(AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
+		AvgEngine::Render::Display::defaultShader->setProject(c->CurrentMenu->camera.projection);
 
 	});
 

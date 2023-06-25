@@ -192,11 +192,14 @@ function containers_settingChanged(setting, newValue)
         end
         return
     end
-    if setting == "Resolution" and newValue ~= settings["Resolution"] then
+    if setting == "Resolution" and newValue ~= settings["Resolution"] and settings["Display"] ~= "Borderless" then
         local res = helper.split(newValue, "x")
+        
+        setSetting(setting, tostring(newValue))
         if #res == 2 then
             local w = tonumber(res[1])
             local h = tonumber(res[2])
+            
             if settings["Display"] == "Windowed" then
                 cprint("Setting windowed res to " .. newValue)
                 setResolution(w, h)
@@ -207,21 +210,24 @@ function containers_settingChanged(setting, newValue)
                 reload()
             end
         end
+        return
     end
     if setting == "Display" then
         cprint("Setting display mode " .. newValue)
+        setSetting(setting, tostring(newValue))
         setFullscreen(newValue)
         local res = helper.split(settings["Resolution"], "x")
         if #res == 2 then
             local w = tonumber(res[1])
             local h = tonumber(res[2])
-            if setting == "Windowed" then
+            if newValue == "Windowed" then
                 setResolution(w, h)
-            elseif setting == "Fullscreen" then
+            elseif newValue == "Fullscreen" then
                 setFullscreenResolution(w, h)
             end
         end
         reload()
+        return
     end
 
     if setting == "Skin" and newValue ~= settings["Skin"] then

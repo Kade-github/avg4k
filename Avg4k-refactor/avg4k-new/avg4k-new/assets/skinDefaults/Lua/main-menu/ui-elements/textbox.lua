@@ -193,8 +193,6 @@ function textbox.update(time)
 
                 infoText.transform.x = text:getRealRect().x - textbox.container:getRealRect().x
 
-
-
                 local thingRect = copyRect(bg:getRealRect())
 
                 thingRect.y = thingRect.y + bg.transformOffset.y

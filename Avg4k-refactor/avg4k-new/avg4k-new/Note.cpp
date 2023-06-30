@@ -150,6 +150,7 @@ void Average4k::Objects::Gameplay::Note::draw()
 			rClip.y = parent->y;
 			rClip.h = AvgEngine::Render::Display::height;
 			c.clip = rClip;
+			c.zIndex -= 1;
 		}
 		camera->addDrawCall(c);
 	}

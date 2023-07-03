@@ -161,9 +161,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			Logging::writeLog("[GLFW] [Error] " + std::string(description) + " - Code: " + std::to_string(error));
 		});
 
-	External::BASS::Initialize();
-	Logging::writeLog("[Main] Initialized BASS!");
-	curl_global_init(CURL_GLOBAL_ALL);
 
 	// Wine check
 	const char* (CDECL * pwine_get_version)(void);
@@ -194,6 +191,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	glfwMakeContextCurrent(g->Window);
 
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+	glfwMakeContextCurrent(NULL);
 
 	glfwSetKeyCallback(g->Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 		{
@@ -250,11 +248,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	Game::Instance->QueueEvent(e);
 		});
 
-	Render::Display::Init();
-	Logging::writeLog("[Main] Initialized Display!");
-
-	External::ImGuiHelper::Init(g->Window);
-	Logging::writeLog("[Main] Initialized ImGUI!");
 
 
 	Logging::writeLog("[Main] Starting game...");
@@ -265,58 +258,79 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	int reportId = 0;
 
-	glEnable(GL_MULTISAMPLE);
 
-	glfwSwapInterval(0);
 
 	auto start = std::chrono::steady_clock::now();
-	while (!glfwWindowShouldClose(g->Window))
-	{
-		++frames;
-		auto now = std::chrono::steady_clock::now();
-		auto diff = now - start;
-		auto end = now + std::chrono::milliseconds(static_cast<int>((1.0f / g->fpsCap) * 1000));
+	bool shouldQuit = false;
+	std::thread t = std::thread([&] {
+		glfwMakeContextCurrent(g->Window);
+		glfwSwapInterval(0);
 
-		fpsthink(g);
+		External::BASS::Initialize();
+		Logging::writeLog("[Main] Initialized BASS!");
+		curl_global_init(CURL_GLOBAL_ALL);
 
-		glClearColor(0.05f, 0.05f, 0.05f, 1);
-		glClear(GL_COLOR_BUFFER_BIT);
+		Render::Display::Init();
+		Logging::writeLog("[Main] Initialized Display!");
 
-		External::ImGuiHelper::RenderStart();
-
-		g->update();
-
-		if (g->CurrentMenu != NULL)
+		External::ImGuiHelper::Init(g->Window);
+		Logging::writeLog("[Main] Initialized ImGUI!");
+		while (!shouldQuit)
 		{
-			g->console.drawData[reportId] = g->CurrentMenu->camera.drawCalls.size();
-			g->console.update();
+			++frames;
+			auto now = std::chrono::steady_clock::now();
+			auto diff = now - start;
+			auto end = now + std::chrono::milliseconds(static_cast<int>((1.0f / g->fpsCap) * 1000));
 
-			g->CurrentMenu->cameraDraw();
+			fpsthink(g);
+
+			glClearColor(0.05f, 0.05f, 0.05f, 1);
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			External::ImGuiHelper::RenderStart();
+
+			g->update();
+
+			if (g->CurrentMenu != NULL)
+			{
+				g->console.drawData[reportId] = g->CurrentMenu->camera.drawCalls.size();
+				g->console.update();
+
+				g->CurrentMenu->cameraDraw();
+			}
+
+			External::ImGuiHelper::RenderEnd(g->Window);
+
+			glfwSwapBuffers(g->Window);
+
+			if (g->fps < 0)
+				g->fps = 0;
+			if (g->fps > g->fpsCap) // heehee
+				g->fps = g->fpsCap;
+
+			reportId++;
+			if (reportId == 50)
+				reportId = 0;
+
+			g->console.fpsData[reportId] = g->fps;
+			std::this_thread::sleep_until(end);
 		}
 
-		External::ImGuiHelper::RenderEnd(g->Window);
 
-		glfwSwapBuffers(g->Window);
-		glfwPollEvents();
+		External::ImGuiHelper::Destroy();
+	});
 
-		if (g->fps < 0)
-			g->fps = 0;
-		if (g->fps > g->fpsCap) // heehee
-			g->fps = g->fpsCap;
-
-		reportId++;
-		if (reportId == 50)
-			reportId = 0;
-
-		g->console.fpsData[reportId] = g->fps;
-		std::this_thread::sleep_until(end);
+	while (!glfwWindowShouldClose(g->Window))
+	{
+		glfwWaitEvents();
 	}
 
 	// let it rain the color of blood. あか
 
 	g->Destroy();
 
-	External::ImGuiHelper::Destroy();
+	shouldQuit = true;
+
 
 	glfwDestroyWindow(g->Window);
 

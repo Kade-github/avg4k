@@ -14,6 +14,7 @@ void Average4k::Objects::Gameplay::Receptor::Create(int _x, int _y, AvgEngine::O
 	explosion->zIndex = 1;
 	explosion->loop = false;
 	addObject(explosion);
+	explosion->frame = explosion->frames;
 }
 
 void Average4k::Objects::Gameplay::Receptor::blowUp()

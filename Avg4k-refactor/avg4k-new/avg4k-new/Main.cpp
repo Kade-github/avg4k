@@ -169,7 +169,7 @@ LONG PvectoredExceptionHandler(
 	_EXCEPTION_POINTERS* ExceptionInfo
 )
 {
-	if (ExceptionInfo->ExceptionRecord->ExceptionCode == 0x40010006 || ExceptionInfo->ExceptionRecord->ExceptionCode == 0x80000003)
+	if (ExceptionInfo->ExceptionRecord->ExceptionCode == 0x40010006 || ExceptionInfo->ExceptionRecord->ExceptionCode == 0xE24C4A02 || ExceptionInfo->ExceptionRecord->ExceptionCode == 0x80000003)
 		return EXCEPTION_CONTINUE_SEARCH;
 
 
@@ -179,7 +179,7 @@ LONG PvectoredExceptionHandler(
 
 long WINAPI UnhandledExceptionFilterHandler(LPEXCEPTION_POINTERS ex) {
 
-	if (ex->ExceptionRecord->ExceptionCode == 0x40010006 || ex->ExceptionRecord->ExceptionCode == 0x80000003)
+	if (ex->ExceptionRecord->ExceptionCode == 0x40010006 || ex->ExceptionRecord->ExceptionCode == 0xE24C4A02 || ex->ExceptionRecord->ExceptionCode == 0x80000003)
 		return EXCEPTION_CONTINUE_SEARCH;
 
 	CrashDmp(ex);

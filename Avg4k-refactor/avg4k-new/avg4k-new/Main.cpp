@@ -6,6 +6,8 @@
 #include "Display.h"
 #include "ImGUIHelper.h"
 
+#include <DbgHelp.h>
+
 #ifdef STATIC_LINK
 #pragma comment(lib,"x64\\bass.lib")
 #pragma comment(lib,"x64_static\\msgpackc.lib")
@@ -77,6 +79,32 @@ std::chrono::steady_clock::time_point startTime;
 
 uint32_t framecount;
 
+void CrashDmp(_EXCEPTION_POINTERS* ExceptionInfo) {
+
+#ifdef _DEBUG
+	return;
+#endif
+
+	if (!ExceptionInfo)
+	{
+		Logging::writeLog("no crash :)");
+		return;
+	}
+	OFSTRUCT data;
+	HANDLE file = CreateFile(L"crash.dmp", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
+
+	MINIDUMP_EXCEPTION_INFORMATION info;
+	info.ClientPointers = false;
+	info.ExceptionPointers = ExceptionInfo;
+	info.ThreadId = GetCurrentThreadId();
+
+	MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), file, MiniDumpWithFullMemory, &info, NULL, NULL);
+	CloseHandle(file);
+	Logging::writeLog("Dumped crashlog");
+	Logging::closeLog();
+}
+
 void preciseSleep(double seconds) {
 	using namespace std;
 	using namespace std::chrono;
@@ -136,9 +164,32 @@ void fpsthink(Game* g) {
 }
 
 
+
+LONG PvectoredExceptionHandler(
+	_EXCEPTION_POINTERS* ExceptionInfo
+)
+{
+	if (ExceptionInfo->ExceptionRecord->ExceptionCode == 0x40010006 || ExceptionInfo->ExceptionRecord->ExceptionCode == 0x80000003)
+		return EXCEPTION_CONTINUE_SEARCH;
+
+
+	CrashDmp(ExceptionInfo);
+	return EXCEPTION_CONTINUE_SEARCH;
+}
+
+long WINAPI UnhandledExceptionFilterHandler(LPEXCEPTION_POINTERS ex) {
+
+	if (ex->ExceptionRecord->ExceptionCode == 0x40010006 || ex->ExceptionRecord->ExceptionCode == 0x80000003)
+		return EXCEPTION_CONTINUE_SEARCH;
+
+	CrashDmp(ex);
+	return EXCEPTION_CONTINUE_SEARCH;
+}
+
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	PSTR lpCmdLine, INT nCmdShow)
 {
+
 #ifdef  _DEBUG
 	AllocConsole();
 	freopen("conout$", "w", stdout);
@@ -146,6 +197,10 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	Logging::openLog();
 #endif
 	Logging::writeLog("[Main] Logging system initialized.");
+
+	SetUnhandledExceptionFilter(UnhandledExceptionFilterHandler);
+
+	AddVectoredExceptionHandler(1, &PvectoredExceptionHandler);
 
 	startTime = Clock::now();
 

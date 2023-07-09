@@ -137,15 +137,33 @@ namespace AvgEngine
 
 			if (queuedEvents.size() != 0)
 			{
+				int toDelete = 0;
+				for (Events::Event& e : queuedEvents)
+				{
+					Event(e);
+					if (e.type == Events::EventType::Event_SwitchMenu)
+					{
+						if (eventMutex.try_lock())
+						{
+							queuedEvents.clear();
+							eventMutex.unlock();
+						}
+						Switch();
+						return;
+					}
+					toDelete = e.id;
+				}
 				if (eventMutex.try_lock())
 				{
+					int index = 0;
 					for (Events::Event& e : queuedEvents)
 					{
-						Event(e);
-						if (e.type == Events::EventType::Event_SwitchMenu)
-							Switch();
+						if (e.id == toDelete)
+						{
+							queuedEvents.erase(queuedEvents.begin() + index);
+							break;
+						}
 					}
-					queuedEvents.clear();
 					eventMutex.unlock();
 				}
 			}
@@ -154,11 +172,14 @@ namespace AvgEngine
 
 		virtual void QueueEvent(Events::Event e)
 		{
+			static int lastId = 0;
 			if (eventMutex.try_lock())
 			{
+				e.id += lastId;
 				queuedEvents.push_back(e);
 				eventMutex.unlock();
 			}
+			lastId++;
 		}
 
 		virtual void Event(const Events::Event& e)

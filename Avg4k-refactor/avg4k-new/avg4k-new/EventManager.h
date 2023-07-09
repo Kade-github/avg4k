@@ -33,6 +33,7 @@ namespace AvgEngine::Events
 	{
 		EventType type = EventType::Event_Null;
 		int data = 0;
+		int id = 0;
 		Vec vector = {};
 		std::string sData = "";
 	};

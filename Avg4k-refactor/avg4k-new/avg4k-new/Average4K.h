@@ -68,7 +68,7 @@ public:
 		fpsText->SetFont(skin->GetFontPath(), "FuturaBold.fnt");
 		alphaText->SetFont(skin->GetFontPath(), "FuturaBold.fnt");
 
-		QueueEvent({ AvgEngine::Events::EventType::Event_ReloadFont,0, {}, skin->GetFontPath() });
+		QueueEvent({ AvgEngine::Events::EventType::Event_ReloadFont,0,0, {}, skin->GetFontPath() });
 
 		notif->InitNotifications(skin);
 

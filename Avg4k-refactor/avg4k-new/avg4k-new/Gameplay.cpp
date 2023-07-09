@@ -159,9 +159,10 @@ void Gameplay::draw()
 			bool b = false;
 			for (auto r : p->receptors)
 			{
-				if (r->notes.size() != 0 || r->Children.size() != 0)
+				if (r->notes.size() != 0 || (r->Children.size() - 1) != 0)
 				{
 					shouldEnd = false;
+					b = true;
 					break;
 				}
 			}

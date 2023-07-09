@@ -137,7 +137,7 @@ namespace AvgEngine
 
 			if (queuedEvents.size() != 0)
 			{
-				int toDelete = 0;
+				std::vector<int> listtoDelete = {};
 				for (Events::Event& e : queuedEvents)
 				{
 					Event(e);
@@ -151,17 +151,20 @@ namespace AvgEngine
 						Switch();
 						return;
 					}
-					toDelete = e.id;
+					listtoDelete.push_back(e.id);
 				}
 				if (eventMutex.try_lock())
 				{
 					int index = 0;
-					for (Events::Event& e : queuedEvents)
+					for (int toDelete : listtoDelete)
 					{
-						if (e.id == toDelete)
+						for (Events::Event& e : queuedEvents)
 						{
-							queuedEvents.erase(queuedEvents.begin() + index);
-							break;
+							if (e.id == toDelete)
+							{
+								queuedEvents.erase(queuedEvents.begin() + index);
+								break;
+							}
 						}
 					}
 					eventMutex.unlock();

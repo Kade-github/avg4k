@@ -270,7 +270,8 @@ public:
 			if (t >= 1)
 			{
 				_startTrans = glfwGetTime();
-				SkinInit();
+				if (skinInitOnLoad)
+					SkinInit();
 				SwitchNoTrans(_toSwitch);
 				_out = true;
 			}

@@ -159,6 +159,7 @@ void Gameplay::draw()
 			bool b = false;
 			for (auto r : p->receptors)
 			{
+				// - 1 on receptor children because the explosion sprite is added to it.
 				if (r->notes.size() != 0 || (r->Children.size() - 1) != 0)
 				{
 					shouldEnd = false;

@@ -159,10 +159,16 @@ void Gameplay::draw()
 			bool b = false;
 			for (auto r : p->receptors)
 			{
-				if (r->notes.size() != 0 || r->Children.size() != 0)
+				if (r->notes.size() != 0)
 				{
-					shouldEnd = false;
-					b = true;
+					if (endTime == -1)
+						endTime = glfwGetTime();
+					// TODO: make this a setting
+					if (endTime + 2 > glfwGetTime())
+					{
+						shouldEnd = false;
+						b = true;
+					}
 					break;
 				}
 			}

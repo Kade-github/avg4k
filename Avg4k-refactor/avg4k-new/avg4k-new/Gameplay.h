@@ -14,6 +14,7 @@ public:
 	float startTimestamp = 0;
 	float songStart = 0;
 	float songOffset = 0;
+	float endTime = -1;
 
 	float menuStartimestamp = 0;
 

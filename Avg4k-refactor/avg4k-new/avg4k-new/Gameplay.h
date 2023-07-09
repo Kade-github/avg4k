@@ -13,6 +13,7 @@ public:
 	Average4k::Audio::RhythmChannel* boom = NULL;
 	float startTimestamp = 0;
 	float songStart = 0;
+	float songOffset = 0;
 
 	float menuStartimestamp = 0;
 

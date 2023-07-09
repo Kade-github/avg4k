@@ -91,6 +91,18 @@ void Gameplay::load()
 				p->keyRelease(e.data);
 	});
 	menuStartimestamp = glfwGetTime();
+
+	std::string offsetValue = Average4K::settings->Get("Note Offset").value;
+	if (offsetValue.size() != 0)
+	{
+		try
+		{
+			songOffset = std::stof(offsetValue);
+		}
+		catch (...) {
+			AvgEngine::Logging::writeLog("[Warning] [Game] Failed to parse " + offsetValue + ". It probably wasn't set correctly.");
+		}
+	}
 }
 
 
@@ -121,9 +133,8 @@ void Gameplay::draw()
 		isStarted = true;
 	}
 
-	float offset = std::stof(Average4K::settings->Get("Note Offset").value);
 
-	float time = -offset + c->GetPos() + offset;
+	float time = -songOffset + c->GetPos();
 	if (!c->isPlaying)
 		time = -std::abs(songStart - glfwGetTime());
 	float beat = Average4ker::a4er->options.currentFile->GetBeatFromTime(time);

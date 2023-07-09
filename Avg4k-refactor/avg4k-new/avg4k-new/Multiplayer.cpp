@@ -823,6 +823,8 @@ context_ptr on_tls_init(const char* hostname, websocketpp::connection_hdl) {
 
 bool firstConnection = false;
 
+// if its a debug build or not
+#define PRODUCTION 1
 
 void Multiplayer::connect(AvgEngine::Game* g)
 {
@@ -830,10 +832,13 @@ void Multiplayer::connect(AvgEngine::Game* g)
 		MInstance = new Multiplayer();
     std::string build = g->Version;
     bool debug = false;
-    UNPROTECTED_START
+#if PRODUCTION == 0
+    AvgEngine::Logging::writeLog("-- DEBUG MODE --");
     build = "(DEBUG) " + build;
     debug = true;
-    UNPROTECTED_END
+#else
+    AvgEngine::Logging::writeLog("-- PRODUCTION MODE --");
+#endif
 
     VM_START
     connectedToServer = false;

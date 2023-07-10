@@ -1,7 +1,6 @@
 #include "Average4K.h"
 #include "StartScreen.h"
 
-std::vector <Average4k::Chart::Pack> LoadingPacksMenu::packs = {};
 
 bool isLoadingInto = false;
 
@@ -33,7 +32,7 @@ void LoadingPacksMenu::draw()
 	{
 		if (!isLoadingInto)
 		{
-			packs = gather.packs;
+			Average4K::packs = gather.packs;
 			gather.packs.clear();
 			AvgEngine::Logging::writeLog("[LoadingPacksMenu] Finished loading " + std::to_string(gather.total) + " charts in " + std::to_string(glfwGetTime() - loadingPacks_startTime) + " seconds.");
 			isLoadingInto = true;

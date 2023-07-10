@@ -22,9 +22,9 @@ void Average4k::Lua::MenuLuaFile::SetPacks(sol::global_table t)
 	t["packs"] = lua->create_table();
 
 	// loop over all the packs in loadingpacksmenu
-	for (int i = 0; i < LoadingPacksMenu::packs.size(); i++)
+	for (int i = 0; i < Average4K::packs.size(); i++)
 	{
-		auto& pl = LoadingPacksMenu::packs[i];
+		auto& pl = Average4K::packs[i];
 
 		// create a table for the pack
 		pack p = pack();

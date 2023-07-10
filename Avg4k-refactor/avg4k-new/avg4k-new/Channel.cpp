@@ -2,11 +2,11 @@
 
 void CALLBACK Sync(HSYNC handle, DWORD channel, DWORD data, void* user)
 {
+	AvgEngine::Audio::Channel* c = AvgEngine::External::BASS::GetChannel(channel);
 	AvgEngine::Logging::writeLog("[Channel] [Info] Sync callback called, repeating song.");
-	if (!BASS_ChannelStop(channel))
-		AvgEngine::Logging::writeLog("[Channel] [Error] Failed to stop channel: " + std::to_string(BASS_ErrorGetCode()));
-	if (!BASS_ChannelPlay(channel, true))
-		AvgEngine::Logging::writeLog("[Channel] [Error] Failed to play channel: " + std::to_string(BASS_ErrorGetCode()));
+	c->hasEnded = true;
+	c->Stop();
+	c->Play();
 		
 }
 

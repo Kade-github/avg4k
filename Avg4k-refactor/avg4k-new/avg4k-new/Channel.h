@@ -6,6 +6,7 @@ namespace AvgEngine::Audio
 	class Channel
 	{
 	public:
+		bool hasEnded = false;
 		unsigned long id = -1;
 		unsigned long decode = -1;
 		bool autoFree = false;

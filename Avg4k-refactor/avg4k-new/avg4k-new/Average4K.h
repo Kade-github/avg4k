@@ -31,6 +31,7 @@ class Average4K : public AvgEngine::Game
 	Menu* _toSwitch;
 
 public:
+	static std::vector <Average4k::Chart::Pack> packs;
 	static Average4k::Settings* settings;
 	static Average4k::Skin* skin;
 

@@ -139,6 +139,11 @@ void Average4k::Objects::Gameplay::Receptor::draw()
 		Note* n = static_cast<Note*>(ob);
 		n->sTime = time;
 		n->sBeat = beat;
+		if (n->beat < 0)
+		{
+			toRemove.push_back(n);
+			continue;
+		}
 		if (n->beat - beat < -k->options.drawbeats && ((n->judged && (n->type == Chart::NoteType_Head ? n->holdJudged : true)) || (n->type == Chart::NoteType_Fake || n->type == Chart::NoteType_Mine)))
 		{
 			toRemove.push_back(n);

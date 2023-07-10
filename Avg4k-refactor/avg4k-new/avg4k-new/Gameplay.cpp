@@ -159,8 +159,7 @@ void Gameplay::draw()
 			bool b = false;
 			for (auto r : p->receptors)
 			{
-				// - 1 on receptor children because the explosion sprite is added to it.
-				if (r->notes.size() != 0 || (r->Children.size() - 1) != 0)
+				if (r->notes.size() != 0)
 				{
 					shouldEnd = false;
 					b = true;
@@ -174,11 +173,11 @@ void Gameplay::draw()
 	else
 		shouldEnd = false;
 
-	if (shouldEnd && !ended)
+	if (shouldEnd && !ended && c->hasEnded)
 	{
 		if (endTime == -1)
 			endTime = glfwGetTime();
-		if (endTime + 2 > glfwGetTime())
+		if (endTime + 8 > glfwGetTime())
 		{
 			End();
 		}

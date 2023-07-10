@@ -170,7 +170,8 @@ namespace AvgEngine
 					eventMutex.unlock();
 				}
 			}
-			CurrentMenu->draw();
+			if (CurrentMenu != NULL)
+				CurrentMenu->draw();
 		}
 
 		virtual void QueueEvent(Events::Event e)

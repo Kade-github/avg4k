@@ -38,7 +38,7 @@ public:
 
 	static bool instant;
 
-	bool skinInitOnLoad = false;
+	bool skinInitOnLoad = true;
 
 	Average4k::GameOptions options{};
 
@@ -65,17 +65,18 @@ public:
 
 		AvgEngine::Fnt::Fnt::ClearCache();
 
+		std::string displayV = settings->Get("Display").value;
+
+		SetResolution(settings->Get("Resolution").value);
+		SetFullscreen(displayV);
+		settings->Set("Resolution", std::to_string(AvgEngine::Render::Display::width) + "x" + std::to_string(AvgEngine::Render::Display::height));
+
 		fpsText->SetFont(skin->GetFontPath(), "FuturaBold.fnt");
 		alphaText->SetFont(skin->GetFontPath(), "FuturaBold.fnt");
 
 		QueueEvent({ AvgEngine::Events::EventType::Event_ReloadFont,0,0, {}, skin->GetFontPath() });
 
 		notif->InitNotifications(skin);
-
-
-		SetResolution(settings->Get("Resolution").value);
-		SetFullscreen(settings->Get("Display").value);
-		settings->Set("Resolution", std::to_string(AvgEngine::Render::Display::width) + "x" + std::to_string(AvgEngine::Render::Display::height));
 	}
 
 	void SetSkin(std::string skinName, bool setValue = true, bool startScreen = true)
@@ -143,15 +144,17 @@ public:
 			skin->upscale = static_cast<float>(AvgEngine::Render::Display::width) / 1920.0f;
 			fpsText->transform.scale = skin->upscale;
 			alphaText->transform.scale = skin->upscale;
-			if (CurrentMenu)
-			{
-				CurrentMenu->camera.resize(AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
-				AvgEngine::Render::Display::defaultShader->setProject(CurrentMenu->camera.projection);
-			}
-			Event(AvgEngine::Events::Event(AvgEngine::Events::EventType::Event_Resize));
 		}
 		else
 			AvgEngine::Render::Display::Fullscreen(Window, -1);
+
+		if (CurrentMenu)
+		{
+			CurrentMenu->camera.resize(AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
+			AvgEngine::Render::Display::defaultShader->setProject(CurrentMenu->camera.projection);
+		}
+		Event(AvgEngine::Events::Event(AvgEngine::Events::EventType::Event_Resize));
+
 		fpsText->transform.scale = skin->upscale;
 		alphaText->transform.scale = skin->upscale;
 	}
@@ -184,16 +187,13 @@ public:
 
 		if (windowed)
 			Game::Resize(w, h);
-		else
+		if (CurrentMenu)
 		{
-			if (CurrentMenu)
-			{
-				CurrentMenu->camera.resize(AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
-				AvgEngine::Render::Display::defaultShader->setProject(CurrentMenu->camera.projection);
-			}
-
-			Event(AvgEngine::Events::Event(AvgEngine::Events::EventType::Event_Resize));
+			CurrentMenu->camera.resize(AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
+			AvgEngine::Render::Display::defaultShader->setProject(CurrentMenu->camera.projection);
 		}
+
+		Event(AvgEngine::Events::Event(AvgEngine::Events::EventType::Event_Resize));
 		fpsText->transform.scale = skin->upscale;
 		alphaText->transform.scale = skin->upscale;
 	}
@@ -206,7 +206,7 @@ public:
 		alphaText = new Text(4, 4, "", "", "- " + Title + " ALPHA " + Version + " - EVERYTHING IS SUBJECT TO CHANGE -", 14);
 		alphaText->transform.a = 0.6f;
 
-		SetSkin(settings->Get("Skin").value, false, false);
+		console.handler = new Avg4kCmdHandler();
 		if (!steam->good)
 			return;
 
@@ -216,7 +216,7 @@ public:
 		steam->SetPresence(Version + " Alpha | Testing");
 		InitMultiplayer();
 
-		console.handler = new Avg4kCmdHandler();
+		SwitchNoTrans(new LoadingPacksMenu());
 	}
 
 	void update() override
@@ -273,6 +273,10 @@ public:
 				if (skinInitOnLoad)
 					SkinInit();
 				SwitchNoTrans(_toSwitch);
+
+				_toSwitch->camera.resize(AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
+				AvgEngine::Render::Display::defaultShader->setProject(_toSwitch->camera.projection);
+				Event(AvgEngine::Events::Event(AvgEngine::Events::EventType::Event_Resize));
 				_out = true;
 			}
 		}

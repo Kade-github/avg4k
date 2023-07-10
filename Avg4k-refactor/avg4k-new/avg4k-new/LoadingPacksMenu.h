@@ -9,7 +9,6 @@ public:
 	static std::vector <Average4k::Chart::Pack> packs;
 	Average4k::Chart::Collection::SongGatherer gather{};
 
-	Text* progress = NULL;
 	LoadingPacksMenu()
 	{
 

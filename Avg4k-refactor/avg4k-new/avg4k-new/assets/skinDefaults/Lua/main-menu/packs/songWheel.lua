@@ -110,6 +110,7 @@ function songWheel.SetDiff()
 end
 
 function songWheel.Select(amt)
+    local lastIndex = songWheel.selectedIndex
     songWheel.selectedIndex = songWheel.selectedIndex + amt
     if songWheel.selectedIndex < 1 then
         songWheel.selectedIndex = #songWheel.textures - 1
@@ -123,6 +124,31 @@ function songWheel.Select(amt)
 
     songWheel.selectedDiff = 1
 
+    local difference = math.abs(songWheel.selectedIndex - lastIndex)
+
+    if difference > 10 then
+        local ch = songWheel.main.children
+        local min = lastIndex - 10
+        local max = lastIndex + 10
+    
+        if min < 1 then
+            min = 1
+        end
+        if max > ch:size() then
+            max = ch:size()
+        end
+    
+    
+        for i = min, max, 1 do
+
+            local item = ch[i]
+    
+            -- hide the item
+            item.transform.scale = skin["upscale"]
+            item.transform.x = -1000
+            item.transform.y = -1000
+        end
+    end
 
 
     if songWheel.files[songWheel.selectedIndex] ~= nil then
@@ -214,6 +240,7 @@ function songWheel.keyPress(num)
         return
     end
 
+
     if num == 263 then
         songWheel.selectedDiff = songWheel.selectedDiff - 1
         if songWheel.selectedDiff < 1 then
@@ -230,6 +257,7 @@ function songWheel.keyPress(num)
         songWheel.SetDiff()
     end
 
+
     if not songWheel.moreInfo and songWheel.playedSong then
         if num == 257 then
             cprint("set chart to " .. songWheel.selectedFile.songTitle)
@@ -242,11 +270,22 @@ end
 function songWheel.update(t)
     local ch = songWheel.main.children
 
-    songWheel.fakeIndex = helper.lerp(songWheel.fakeIndex, songWheel.selectedIndex, 0.1);
+    songWheel.fakeIndex = helper.lerp(songWheel.fakeIndex, songWheel.selectedIndex, 0.2)
 
     local real = songWheel.main:getRealRect()
 
-    for i = 1, ch:size(), 1 do
+    local min = songWheel.selectedIndex - 10
+    local max = songWheel.selectedIndex + 10
+
+    if min < 1 then
+        min = 1
+    end
+    if max > ch:size() then
+        max = ch:size()
+    end
+
+
+    for i = min, max, 1 do
         -- stagnate x coord of the wheel by selected index
         local item = ch[i]
 
@@ -281,7 +320,7 @@ function songWheel.update(t)
     Containers.scontainer.diffRightArrow.transform.y = Containers.scontainer.diffName
         .transform.y - (Containers.scontainer.diffName.transform.h / 2)
 
-    if not songWheel.playedSong and Globals.lt - songWheel.started > 0.25 then
+    if not songWheel.playedSong and Globals.lt - songWheel.started > 0.5 then
         local channel = playChannelAsync(songWheel.selectedFile.folder .. '/' .. songWheel.selectedFile.songFile, "menu")
         channel.time = songWheel.selectedFile.previewStart
         songWheel.playedSong = true

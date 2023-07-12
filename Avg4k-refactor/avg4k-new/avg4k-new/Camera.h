@@ -10,7 +10,9 @@ namespace AvgEngine::Base
 {
 	struct drawCall
 	{
+		std::string tag = "object";
 		int zIndex = 0;
+		Render::Rect original;
 		std::vector<Render::Vertex> vertices{};
 		OpenGL::Texture* texture = NULL;
 		OpenGL::Shader* shad = NULL;
@@ -65,26 +67,40 @@ namespace AvgEngine::Base
 		 * \param vertices The vertices of the draw call
 		 * \return The formatted draw call struct
 		 */
-		static drawCall FormatDrawCall(int zIndex, OpenGL::Texture* texture, OpenGL::Shader* shader, std::vector<Render::Vertex> vertices)
+		static drawCall FormatDrawCall(int zIndex, OpenGL::Texture* texture, OpenGL::Shader* shader, std::vector<Render::Vertex> vertices, Render::Rect original)
 		{
 			drawCall call;
 			call.texture = texture;
 			call.zIndex = zIndex;
 			call.vertices = vertices;
 			call.clip = {};
+			call.original = original;
 			return call;
+		}
+
+		bool checkIfInsideClip(Render::Rect r, Render::Rect clip)
+		{
+			bool checkClipGreater = clip.x > r.x + r.w;
+			bool checkClipLess = clip.x + clip.w < r.x;
+			bool checkClipYGreater = clip.y > r.y + r.h;
+			bool checkClipYLess = clip.y + clip.h < r.y;
+			return !(checkClipGreater
+				|| checkClipLess
+				|| checkClipYGreater
+				|| checkClipYLess);
 		}
 
 		/**
 		 * \brief Add a draw call (or if it already exists, add on to it)
 		 * \param call The draw call struct to add
 		 */
-		void addDrawCall(drawCall& call)
+		bool addDrawCall(drawCall& call)
 		{
 			if (call.texture == NULL)
 				call.texture = OpenGL::Texture::returnWhiteTexture();
 			if (call.shad == NULL)
 				call.shad = Render::Display::defaultShader;
+
 			// See if we can find a draw call already with the same shader, texture, and zIndex
 			auto it = std::find(drawCalls.begin(), drawCalls.end(), call);
 			if (it != drawCalls.end()) {
@@ -96,6 +112,7 @@ namespace AvgEngine::Base
 			}
 			else // We didn't find it, so we can just push the draw call directly onto the vector
 				drawCalls.push_back(call);
+			return true;
 		}
 
 		/**
@@ -112,11 +129,13 @@ namespace AvgEngine::Base
 			{
 				// Clear the buffer so we know nothing is there
 				Render::Display::ClearBuffer();
-				// Add our call's vertices
-				Render::Display::AddVertex(call.vertices);
 				// Set our clip rect (if its not the default one)
 				if (call.clip != Render::Rect())
+				{
 					Render::Display::Clip(&call.clip);
+				}
+				// Add our call's vertices
+				Render::Display::AddVertex(call.vertices);
 				// Draw all of the vertices
 				Render::Display::DrawBuffer(call.texture, call.shad);
 				// Reset the clip
@@ -156,7 +175,7 @@ namespace AvgEngine::Base
 			for (Render::Vertex v : Render::DisplayHelper::RectToVertex(rightLine, { 0,0,1,1 }))
 				vertices.push_back(v);
 
-			drawCall c = Camera::FormatDrawCall(zIndex, NULL, NULL, vertices);
+			drawCall c = Camera::FormatDrawCall(zIndex, NULL, NULL, vertices, topLine);
 			if (clip != Render::Rect{})
 				c.clip = clip;
 			camera->addDrawCall(c);
@@ -170,7 +189,7 @@ namespace AvgEngine::Base
 		 */
 		static void DrawRectangle(Camera* camera, int zIndex, Render::Rect rect, Render::Rect clip = {})
 		{
-			drawCall c = Camera::FormatDrawCall(zIndex, NULL, NULL, Render::DisplayHelper::RectToVertex(rect, { 0,0,1,1 }));
+			drawCall c = Camera::FormatDrawCall(zIndex, NULL, NULL, Render::DisplayHelper::RectToVertex(rect, { 0,0,1,1 }), rect);
 			if (clip != Render::Rect{})
 				c.clip = clip;
 			camera->addDrawCall(c);

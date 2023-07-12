@@ -19,6 +19,8 @@ void printTree(AvgEngine::Base::GameObject* tree, bool real, int amount = 0)
 		tabs += "	";
 	for (AvgEngine::Base::GameObject* ob : tree->Children)
 	{
+		if (!ob->drawn)
+			continue;
 		_totalObjects++;
 		auto t = ob->transform;
 		if (real)
@@ -78,6 +80,8 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 			bool real = AvgEngine::Utils::StringTools::Contains(cmd, " -real");
 			for (AvgEngine::Base::GameObject* o : m->GameObjects)
 			{
+				if (!o->drawn)
+					continue;
 				auto t = o->transform;
 				if (real)
 					t = o->iTransform;

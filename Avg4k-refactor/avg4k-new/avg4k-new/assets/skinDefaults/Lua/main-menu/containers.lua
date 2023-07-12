@@ -174,13 +174,13 @@ function containers_settingChanged(setting, newValue)
     if setting == "Use CMOD" then -- toggle xmod to the opposite
         setSetting("Use XMOD", tostring(not newValue))
     end
-    if setting == "Scroll Speed" or setting == "XMOD XMOD" or setting == "Note Offset" or setting == "Start Offset" then
+    if setting == "Scroll Speed" or setting == "XMOD Multiplier" or setting == "Note Offset" or setting == "Start Offset" then
         if helper.isNumber(newValue) then
             local num = tonumber(newValue)
             if setting == "Scroll Speed" and num < 200 then
                 return
             end
-            if setting == "XMOD XMOD" and num < 0.1 then
+            if setting == "XMOD Multiplier" and num < 0.1 then
                 return
             end
             if num < 0 and setting ~= "Note Offset" then
@@ -315,6 +315,11 @@ function Containers.settingsCreate(c)
         x,
         containers_settingChanged, 15, false, numbersOnly, "The time based scroll speed. In BPM.")
 
+    Containers.settings_createCheckbox(c, "Upscroll", "settings_upscroll",
+        x,
+        containers_settingChanged, "Toggle if the arrows should scroll up or down.")
+
+        
     Containers.settings_createTextbox(c, "XMOD Multiplier", 3, "settings_xmodMultiplier",
         x,
         containers_settingChanged, 0.1, false, numbersOnly,

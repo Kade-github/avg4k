@@ -193,7 +193,10 @@ namespace AvgEngine::Base
 			if (transform.a > 0)
 			{
 				if (r.x + r.w < 0 || r.x > camera->w || r.y + r.h < 0 || r.y > camera->h)
+				{
+					drawn = false;
 					return;
+				}
 
 				Render::Rect srcCopy = src; // normalize the coords for opengl
 
@@ -206,14 +209,17 @@ namespace AvgEngine::Base
 				if (src.h > 1)
 					srcCopy.h = src.h / texture->height;
 
-				drawCall c = Camera::FormatDrawCall(zIndex, texture, shader, Render::DisplayHelper::RectToVertex(r, srcCopy, center));
-
+				drawCall c = Camera::FormatDrawCall(zIndex, texture, shader, Render::DisplayHelper::RectToVertex(r, srcCopy, center), iTransform);
+				c.tag = tag;
 				if (cr.w != 0 || cr.h != 0)
 					c.clip = cr;
 				if (cr.w == 0 && cr.h == 0 && parentClip)
 					c.clip = *parentClip;
 
-				camera->addDrawCall(c);
+				if (camera->addDrawCall(c))
+					drawn = true;
+				else
+					drawn = false;
 			}
 
 			drawChildren(true);

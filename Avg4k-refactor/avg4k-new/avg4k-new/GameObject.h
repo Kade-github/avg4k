@@ -22,6 +22,8 @@ namespace AvgEngine::Base
 
 		Camera* camera{};
 
+		bool drawn = true;
+
 		/**
 		 * \brief If the transform should base itself on percentages of the display's width/height
 		 */
@@ -80,7 +82,7 @@ namespace AvgEngine::Base
 		{
 			for (GameObject* ob : Children)
 			{
-				// Render objects' draw calls.
+				// Render object's draw calls.
 				if (ob->render && zIndex + ob->zIndex <= zIndex)
 				{
 					Render::Rect* cr = &clipRect;

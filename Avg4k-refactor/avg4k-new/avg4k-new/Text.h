@@ -96,6 +96,13 @@ namespace AvgEngine::Base
 			if (cr.w == 0 && cr.h == 0 && parentClip)
 				cr = *parentClip;
 
+			if (transform.a == 0 || text == "" || text.size() == 0)
+			{
+				drawn = false;
+				return;
+			}
+			drawn = true;
+
 			Render::Rect start = dst;
 
 			drawCall call;
@@ -240,7 +247,7 @@ namespace AvgEngine::Base
 					c.dst.h *= outlineScale;
 					if (!c.space)
 					{
-						drawCall ca = Camera::FormatDrawCall(zIndex, fnt->texture, NULL, Render::DisplayHelper::RectToVertex(c.dst, c.src));
+						drawCall ca = Camera::FormatDrawCall(zIndex, fnt->texture, NULL, Render::DisplayHelper::RectToVertex(c.dst, c.src), iTransform);
 						ca.clip = cr;
 						ca.zIndex = zIndex;
 						camera->addDrawCall(ca);
@@ -277,7 +284,7 @@ namespace AvgEngine::Base
 					}
 					if (!c.space)
 					{
-						drawCall ca = Camera::FormatDrawCall(zIndex, fnt->texture, NULL, Render::DisplayHelper::RectToVertex(c.dst, c.src));
+						drawCall ca = Camera::FormatDrawCall(zIndex, fnt->texture, NULL, Render::DisplayHelper::RectToVertex(c.dst, c.src), iTransform);
 						ca.clip = cr;
 						ca.zIndex = zIndex;
 						camera->addDrawCall(ca);

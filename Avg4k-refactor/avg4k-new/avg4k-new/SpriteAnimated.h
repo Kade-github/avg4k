@@ -59,7 +59,7 @@ namespace Average4k::External::Spritesheet {
 				frameTime += glfwGetTime() - start;
 
 			AvgEngine::Base::Sprite::draw();
-			start = glfwGetTime(); // very funny way of getting our own delta time teehee (instead of giving it to us via a call... lol)
+			start = glfwGetTime(); // very funny way of getting our own delta time teehee (instead of giving it to us via a variable/argument/whatever... lol)
 		}
 	};
 }

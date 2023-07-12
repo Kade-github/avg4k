@@ -21,9 +21,11 @@ void Gameplay::AddPlayfield()
 {
 	float noteSize = std::stof(Average4K::settings->Get("Note Size").value);
 	float xPos = Average4K::Instance->CurrentMenu->displayRect.w / 2 - (((((64 * noteSize)) * 4) - (64 * noteSize)) / 2);
+	
 	float yPos = (64 * noteSize);
-	Average4k::Objects::Gameplay::Playfield* playfield = new Average4k::Objects::Gameplay::Playfield(xPos, yPos, &Average4ker::a4er->options.currentFile->chartMetadata.Difficulties[Average4ker::a4er->options.currentFile_diff]);
-
+	if (downscroll)
+		yPos = displayRect.h - (64 * noteSize);
+	Average4k::Objects::Gameplay::Playfield* playfield = new Average4k::Objects::Gameplay::Playfield(xPos, yPos, &Average4ker::a4er->options.currentFile->chartMetadata.Difficulties[Average4ker::a4er->options.currentFile_diff], downscroll);
 	addObject(playfield);
 
 	playfields.push_back(playfield);
@@ -41,6 +43,7 @@ void Gameplay::load()
 	Average4ker::a4er = static_cast<Average4K*>(Average4K::Instance);
 	Average4k::Lua::GameplayMenu::load();
 	Average4ker::a4er->options.inGameplay = true;
+	downscroll = Average4K::settings->Get("Upscroll").value == "false";
 	// Create playfield player #1
 	AddPlayfield();
 

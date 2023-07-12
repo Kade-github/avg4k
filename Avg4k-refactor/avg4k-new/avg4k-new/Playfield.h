@@ -11,7 +11,7 @@ namespace Average4k::Objects::Gameplay {
 
 		float stops = 0;
 		float stopEnd = 0;
-
+		bool downscroll = false;
 		std::vector<int> keybinds = {};
 		AvgEngine::OpenGL::Texture* arrowSpritesheet;
 		AvgEngine::OpenGL::Texture* receptorSpritesheet;
@@ -19,7 +19,7 @@ namespace Average4k::Objects::Gameplay {
 		AvgEngine::OpenGL::Texture* expSpritesheet;
 		std::vector<Receptor*> receptors;
 		Average4k::Chart::Difficulty* diff;
-		Playfield(int _x, int _y, Average4k::Chart::Difficulty* d);
+		Playfield(int _x, int _y, Average4k::Chart::Difficulty* d, bool _downscroll);
 		~Playfield() {
 			delete arrowSpritesheet;
 			delete receptorSpritesheet;

@@ -23,6 +23,8 @@ namespace Average4k::Objects::Gameplay {
 		float sBeat;
 		float time;
 		float beat;
+
+		bool downscroll = false;
 		
 		AvgEngine::OpenGL::Texture* holdTexture = NULL;
 
@@ -49,11 +51,17 @@ namespace Average4k::Objects::Gameplay {
 			if (!xmodd)
 			{
 				float bps = (cmod / 60);
-
+				if (downscroll)
+				{
+					bps = (-cmod / 60);
+					return ((-bps) *diff) * (64 * noteSize);
+				}
 				return ((bps) * diff) * (64 * noteSize);
 			}
 			else
 			{
+				if (downscroll)
+					return (diff * ((64 * noteSize) * -xmod));
 				return (diff * ((64 * noteSize) * xmod));
 			}
 		}

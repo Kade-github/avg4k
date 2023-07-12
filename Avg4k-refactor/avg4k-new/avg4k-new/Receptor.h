@@ -7,6 +7,8 @@ namespace Average4k::Objects::Gameplay {
 		float time;
 		float beat;
 
+		bool downscroll = false;
+
 		Average4k::External::Spritesheet::AnimatedSprite* explosion = NULL;
 
 		int lane = 0;

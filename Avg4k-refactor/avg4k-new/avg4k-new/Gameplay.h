@@ -15,7 +15,7 @@ public:
 	float songStart = 0;
 	float songOffset = 0;
 	float endTime = -1;
-
+	bool downscroll = false;
 	float menuStartimestamp = 0;
 
 	bool failedCheck = false;

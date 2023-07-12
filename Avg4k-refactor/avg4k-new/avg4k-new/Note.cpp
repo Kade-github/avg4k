@@ -143,7 +143,7 @@ void Average4k::Objects::Gameplay::Note::draw()
 		rSrc.w = rSrc.w / holdTexture->width;
 		rSrc.h = rSrc.h / holdTexture->height;
 
-		drawCall c = Camera::FormatDrawCall(zIndex - 1, holdTexture, shader, AvgEngine::Render::DisplayHelper::RectToVertex(r, rSrc, center));
+		drawCall c = Camera::FormatDrawCall(zIndex - 1, holdTexture, shader, AvgEngine::Render::DisplayHelper::RectToVertex(r, rSrc, center), r);
 		if (holding || m->botplay || holdTime < stopHolding)
 		{
 			AvgEngine::Render::Rect rClip = r;

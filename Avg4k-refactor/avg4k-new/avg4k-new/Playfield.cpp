@@ -2,7 +2,7 @@
 #include "Average4K.h"
 #include "StringTools.h"
 
-Average4k::Objects::Gameplay::Playfield::Playfield(int _x, int _y, Average4k::Chart::Difficulty* d) : AvgEngine::Base::GameObject(_x, _y)
+Average4k::Objects::Gameplay::Playfield::Playfield(int _x, int _y, Average4k::Chart::Difficulty* d, bool _downscroll) : AvgEngine::Base::GameObject(_x, _y)
 {
 	diff = d;
 	arrowSpritesheet = Average4K::skin->GetArrowTexture("arrows", true);
@@ -13,6 +13,7 @@ Average4k::Objects::Gameplay::Playfield::Playfield(int _x, int _y, Average4k::Ch
 	receptorSpritesheet->dontDelete = true;
 	holdSpritesheet->dontDelete = true;
 	expSpritesheet->dontDelete = true;
+	downscroll = _downscroll;
 
 	float noteSize = std::stof(Average4K::settings->Get("Note Size").value);
 	for (int i = 0; i < 4; i++)
@@ -28,6 +29,7 @@ Average4k::Objects::Gameplay::Playfield::Playfield(int _x, int _y, Average4k::Ch
 		r->noteSize = noteSize;
 		r->explosion->transform.w = (64 * noteSize) * 2;
 		r->explosion->transform.h = (64 * noteSize) * 2;
+		r->downscroll = downscroll;
 		for (Chart::Note& n : diff->Notes)
 		{
 			if (n.Lane == i)

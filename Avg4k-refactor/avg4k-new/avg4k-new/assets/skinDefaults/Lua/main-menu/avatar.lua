@@ -5,11 +5,13 @@ function Avatar.createIcon(notDefault)
 
     Avatar.border = helper.createSprite("Menu/border", 0, 0)
     add(Avatar.border)
+    Avatar.border.tag = "avatar_border"
     Avatar.border.ratio = true
     Avatar.border.transform.x = 0.01
     Avatar.border.transform.y = -0.8
     Avatar.border.transform.scale = skin["upscale"] * 0.35
     Avatar.oborder = helper.createSprite("Menu/outerBorder", 0, 0)
+    Avatar.oborder.tag = "avatar_outerBorder"
     add(Avatar.oborder)
     Avatar.oborder.ratio = true
     Avatar.oborder.transform.x = 0.01
@@ -23,6 +25,7 @@ function Avatar.createIcon(notDefault)
 
     Avatar.helloText = text.new(0, 0, "ArialBold.fnt", "Not logged in.")
     create(Avatar.helloText)
+    Avatar.helloText.tag = "avatar_helloText"
     Avatar.helloText.ratio = true
     Avatar.helloText.size = 24.0 * skin["upscale"]
     Avatar.helloText.transform.y = 0.14
@@ -30,6 +33,7 @@ function Avatar.createIcon(notDefault)
 
     Avatar.versionText = text.new(0, 0, "ArialBold.fnt", "Avg4k indev-" .. online["version"])
     create(Avatar.versionText)
+    Avatar.versionText.tag = "avatar_versionText"
     Avatar.versionText.ratio = true
     Avatar.versionText.size = 24.0 * skin["upscale"]
     Avatar.versionText.transform.y = 0.40
@@ -39,6 +43,7 @@ function Avatar.createIcon(notDefault)
         -- if we're not connected to the server, we'll just use the default avatar
         cprint("Loading genericAvatar")
         Avatar.av = helper.createSprite("Menu/genericAvatar", 0, 0)
+        Avatar.av.tag = "avatar_genericAvatar"
         create(Avatar.av)
         Avatar.border:add(Avatar.av)
         Avatar.border:add(Avatar.helloText)
@@ -71,6 +76,7 @@ function Avatar.createIcon(notDefault)
     Avatar.av = sprite.new(0, 0, avatarTexture)
     -- a lot of functions are blocked behind actually creating the sprite, so lets do that
     create(Avatar.av)
+    Avatar.av.tag = "avatar_avatar"
     Avatar.border:add(Avatar.av)
     Avatar.border:add(Avatar.helloText)
     Avatar.border:add(Avatar.versionText)

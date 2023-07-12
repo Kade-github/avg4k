@@ -17,6 +17,7 @@ function Create()
     fuck_bg = helper.createSprite("Menu/darkModeBg", 0.0, 0.0)
 
     add(fuck_bg)
+    fuck_bg.tag = "background_main"
     fuck_bg.ratio = true
     fuck_bg.transform.x = 0.0
     fuck_bg.transform.y = 0.0

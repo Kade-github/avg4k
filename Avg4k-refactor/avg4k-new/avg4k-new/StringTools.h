@@ -36,8 +36,20 @@ namespace AvgEngine::Utils
 
         static bool isNumber(const std::string& s)
         {
-            return !s.empty() && std::find_if(s.begin(),
-                s.end(), [](unsigned char c) { return !(std::isdigit(c) || c == '.'); }) == s.end();
+            if (s.empty()) {
+                return false;
+            }
+
+            // Check if the string starts with a minus sign
+            auto it = s.begin();
+            if (*it == '-') {
+                ++it;
+            }
+
+            // Check if the remaining characters are digits or a decimal point
+            return it != s.end() && std::all_of(it, s.end(), [](unsigned char c) {
+                return std::isdigit(c) || c == '.';
+                });
         }
 
         static std::wstring S2ws(const std::string& s, bool isUtf8 = true)

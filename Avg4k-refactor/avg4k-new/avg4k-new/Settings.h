@@ -14,9 +14,9 @@ namespace Average4k
 	};
 
 	struct Setting {
-		std::string name = "";
+		std::string name;
 		std::string value;
-		std::string defaultSet = "";
+		std::string defaultSet;
 		int type = 0;
 
 		float min = 0;
@@ -183,8 +183,14 @@ namespace Average4k
 		void Set(std::string name, std::string value)
 		{
 			for (Setting& ns : f.settings)
+			{
 				if (ns.name == name)
+				{
 					ns.value = value;
+					break;
+				}
+			}
+			Save();
 		}
 
 		Settings()

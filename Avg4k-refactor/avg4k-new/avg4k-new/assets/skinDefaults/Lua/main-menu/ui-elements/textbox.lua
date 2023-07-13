@@ -82,6 +82,8 @@ function textbox.CreateTextbox(c, _setting, _maxCharacters, _tag, tinyPos, _chan
         table.insert(bTable.objects, infoText)
     end
     table.insert(textbox.textboxes, bTable)
+
+    cprint("Creating textbox " .. _tag .. " with value of " .. bTable.currentValue)
 end
 
 function textbox.mouseDown(pos)

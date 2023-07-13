@@ -186,6 +186,7 @@ function containers_settingChanged(setting, newValue)
             if num < 0 and setting ~= "Note Offset" then
                 return
             end
+            cprint("Setting " .. setting .. " to " .. newValue)
             setSetting(setting, tostring(newValue))
         else
             cprint("[Textbox] Can't set " .. newValue .. ", because it isn't a number!")
@@ -234,7 +235,7 @@ function containers_settingChanged(setting, newValue)
         cprint("Setting skin to " .. newValue)
         setSkin(newValue)
     end
-
+    cprint("Setting " .. setting .. " to " .. newValue)
     setSetting(setting, tostring(newValue))
 end
 

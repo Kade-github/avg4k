@@ -52,10 +52,7 @@ namespace Average4k::Objects::Gameplay {
 			{
 				float bps = (cmod / 60);
 				if (downscroll)
-				{
 					bps = (-cmod / 60);
-					return ((-bps) *diff) * (64 * noteSize);
-				}
 				return ((bps) * diff) * (64 * noteSize);
 			}
 			else

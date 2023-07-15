@@ -371,7 +371,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			std::this_thread::sleep_until(end);
 		}
 
-
 		External::ImGuiHelper::Destroy();
 	});
 

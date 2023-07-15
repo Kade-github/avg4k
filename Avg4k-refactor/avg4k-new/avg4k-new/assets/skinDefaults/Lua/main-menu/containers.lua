@@ -235,7 +235,7 @@ function containers_settingChanged(setting, newValue)
         cprint("Setting skin to " .. newValue)
         setSkin(newValue)
     end
-    cprint("Setting " .. setting .. " to " .. newValue)
+    cprint("Setting " .. setting .. " to " .. tostring(newValue))
     setSetting(setting, tostring(newValue))
 end
 

@@ -86,6 +86,20 @@ void Gameplay::load()
 			botplay = !botplay;
 			scoreSubmittable = false;
 		}
+
+		if (e.data == GLFW_KEY_F2 && botplay)
+		{
+			if (c->isPlaying)
+			{
+				paused = false;
+				c->Stop();
+			}
+			else
+			{
+				paused = true;
+				c->Play(false);
+			}
+		}
 	});
 
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_KeyRelease, [&](AvgEngine::Events::Event e) {
@@ -138,7 +152,7 @@ void Gameplay::draw()
 
 
 	float time = -songOffset + c->GetPos();
-	if (!c->isPlaying)
+	if (!c->isPlaying && !paused)
 		time = -std::abs(songStart - glfwGetTime());
 	float beat = Average4ker::a4er->options.currentFile->GetBeatFromTime(time);
 

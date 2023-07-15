@@ -54,11 +54,11 @@ namespace AvgEngine::Audio
 		/// <summary>
 		/// Set the channel in a playing state
 		/// </summary>
-		void Play()
+		void Play(bool restart = true)
 		{
 			if (id == -1)
 				return;
-			if (!BASS_ChannelPlay(id, true))
+			if (!BASS_ChannelPlay(id, restart))
 				Logging::writeLog("[BASS] [Error] Failed to play channel: " + std::to_string(BASS_ErrorGetCode()));
 			isPlaying = true;
 		}

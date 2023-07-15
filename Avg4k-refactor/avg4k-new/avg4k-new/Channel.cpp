@@ -3,10 +3,13 @@
 void CALLBACK Sync(HSYNC handle, DWORD channel, DWORD data, void* user)
 {
 	AvgEngine::Audio::Channel* c = AvgEngine::External::BASS::GetChannel(channel);
-	AvgEngine::Logging::writeLog("[Channel] [Info] Sync callback called, repeating song.");
-	c->hasEnded = true;
-	c->Stop();
-	c->Play();
+	if (c->isPlaying)
+	{
+		AvgEngine::Logging::writeLog("[Channel] [Info] Sync callback called, repeating song.");
+		c->hasEnded = true;
+		c->Stop();
+		c->Play();
+	}
 		
 }
 

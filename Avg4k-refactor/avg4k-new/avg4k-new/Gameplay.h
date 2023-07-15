@@ -18,6 +18,8 @@ public:
 	bool downscroll = false;
 	float menuStartimestamp = 0;
 
+	bool paused = false;
+
 	bool failedCheck = false;
 
 	std::vector<Average4k::Objects::Gameplay::Playfield*> playfields{};

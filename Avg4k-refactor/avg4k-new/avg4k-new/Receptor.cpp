@@ -177,9 +177,12 @@ void Average4k::Objects::Gameplay::Receptor::hit()
 		if (o->tag == "receptor_explosion")
 			continue;
 		Note* nn = static_cast<Note*>(o);
+		float diff = (nn->time - time) * 1000;
+		if (diff > k->options.judgeWindow[4])
+			continue;
 		if (nn->type == Chart::NoteType_Mine && !nn->judged)
 		{
-			float diff = (nn->time - time) * 1000;
+
 			if (nn->type == Chart::NoteType_Mine && diff <= k->options.judgeWindow[6] && diff > -k->options.judgeWindow[6])
 			{
 				nn->hit();
@@ -191,8 +194,14 @@ void Average4k::Objects::Gameplay::Receptor::hit()
 		}
 		if (nn->judged || nn->type == Chart::NoteType_Fake)
 			continue;
-		n = nn;
-		break;
+		if (n != NULL)
+		{
+			float diff2 = (n->time - time) * 1000;
+			if (abs(diff) < abs(diff2))
+				n = nn;
+		}
+		else
+			n = nn;
 	}
 	if (n == NULL)
 		return;

@@ -1,7 +1,7 @@
 # Rotate the sprites orientation depending on direction
 rotate: false
 # Shrink the receptor's depending on if they're being held or not
-shrink: true
+shrink: false
 # Make the combo and judgement text bounce when a note is played
 bounce: true
 # You can make this any path thats inside the skin folder, just make a folder with the name you want;

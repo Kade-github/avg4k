@@ -95,6 +95,11 @@ void Average4k::Objects::Gameplay::Note::draw()
 	float diffPos = endTime - time;
 	float endPosition = calculateY(useXmod, diffPos);
 	int amountToDraw = 1 + ((endPosition - (64 * noteSize)) / (64 * noteSize));
+	if (downscroll)
+	{
+		endPosition = -endPosition;
+		amountToDraw = 1 + ((endPosition + (64 * noteSize)) / (64 * noteSize));
+	}
 	if (useXmod)
 		amountToDraw = 1 + ((lengthInBeats * ((64 * noteSize) * xmod)) / (64 * noteSize));
 
@@ -127,12 +132,20 @@ void Average4k::Objects::Gameplay::Note::draw()
 		}
 		// xmod
 		float xmodDiff = holdBeat - sBeat;
-		r.y = calculateY(useXmod, holdTime - sTime) + (64 * noteSize);
-		if (useXmod)
-			r.y = calculateY(useXmod, xmodDiff) + (64 * noteSize);
 
 		if (lastRect.a != 0)
+		{
 			r.y = lastRect.y + lastRect.h;
+			if (downscroll)
+				r.y = lastRect.y - lastRect.h;
+		}
+		else
+		{
+			r.y = calculateY(useXmod, holdTime - sTime) + (64 * noteSize);
+			if (useXmod)
+				r.y = calculateY(useXmod, xmodDiff) + (64 * noteSize);
+		}
+
 		lastRect = r;
 
 		// later we will make our own little vertice hell for mods, but for now, this will do just fine.
@@ -149,6 +162,11 @@ void Average4k::Objects::Gameplay::Note::draw()
 			AvgEngine::Render::Rect rClip = r;
 			rClip.y = parent->y;
 			rClip.h = AvgEngine::Render::Display::height;
+			if (downscroll)
+			{
+				rClip.y = 0;
+				rClip.h = parent->y + (parent->h / 2);
+			}
 			c.clip = rClip;
 			c.zIndex -= 1;
 		}

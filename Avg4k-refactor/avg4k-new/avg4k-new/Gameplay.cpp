@@ -91,12 +91,12 @@ void Gameplay::load()
 		{
 			if (c->isPlaying)
 			{
-				paused = false;
+				paused = true;
 				c->Stop();
 			}
 			else
 			{
-				paused = true;
+				paused = false;
 				c->Play(false);
 			}
 		}
@@ -167,7 +167,7 @@ void Gameplay::draw()
 
 	if (isStarted)
 	{
-		if (!c->isPlaying) // the end
+		if (!c->isPlaying && !paused) // the end
 			time = INT_MAX;
 		for (Average4k::Objects::Gameplay::Playfield* p : playfields)
 		{

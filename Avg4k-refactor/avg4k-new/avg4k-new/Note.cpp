@@ -104,6 +104,7 @@ void Average4k::Objects::Gameplay::Note::draw()
 		amountToDraw = 1 + ((lengthInBeats * ((64 * noteSize) * xmod)) / (64 * noteSize));
 
 	AvgEngine::Render::Rect lastRect = {};
+	lastRect = transform;
 	lastRect.a = 0;
 
 	for (int i = 0; i < amountToDraw; i++)
@@ -117,7 +118,8 @@ void Average4k::Objects::Gameplay::Note::draw()
 		if (i == amountToDraw - 1) // Hold end
 		{
 			rSrc.x = frameWidth - 1;
-			r.angle = 180;
+			if (!downscroll)
+				r.angle = 180;
 		}
 		else
 			rSrc.x = 0;
@@ -133,18 +135,9 @@ void Average4k::Objects::Gameplay::Note::draw()
 		// xmod
 		float xmodDiff = holdBeat - sBeat;
 
-		if (lastRect.a != 0)
-		{
-			r.y = lastRect.y + lastRect.h;
-			if (downscroll)
-				r.y = lastRect.y - lastRect.h;
-		}
-		else
-		{
-			r.y = calculateY(useXmod, holdTime - sTime) + (64 * noteSize);
-			if (useXmod)
-				r.y = calculateY(useXmod, xmodDiff) + (64 * noteSize);
-		}
+		r.y = lastRect.y + lastRect.h;
+		if (downscroll)
+			r.y = lastRect.y - lastRect.h;
 
 		lastRect = r;
 

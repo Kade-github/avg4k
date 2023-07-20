@@ -10,6 +10,15 @@ namespace Average4ker
 }
 
 
+void Gameplay::Pause()
+{
+	if (!paused)
+		c->Stop();
+	else
+		c->Play(false);
+	paused = !paused;
+}
+
 void Gameplay::End()
 {
 	c->Stop();
@@ -87,18 +96,9 @@ void Gameplay::load()
 			scoreSubmittable = false;
 		}
 
-		if (e.data == GLFW_KEY_F2 && botplay)
+		if (e.data == GLFW_KEY_F2 && !scoreSubmittable)
 		{
-			if (c->isPlaying)
-			{
-				paused = true;
-				c->Stop();
-			}
-			else
-			{
-				paused = false;
-				c->Play(false);
-			}
+			Pause();
 		}
 	});
 
@@ -143,7 +143,7 @@ void Gameplay::draw()
 	}
 
 	// check for the start offset
-	if (glfwGetTime() >= songStart && !c->isPlaying)
+	if (glfwGetTime() >= songStart && !c->isPlaying && !isStarted)
 	{
 		c->Play();
 		Logging::writeLog("[Gameplay] Song started at " + std::to_string(songStart));

@@ -54,7 +54,7 @@ void Average4k::Objects::Gameplay::Note::draw()
 	src.w = frameWidth;
 	src.h = frameHeight;
 
-
+	float realSize = 64 * noteSize;
 
 	float diff = time - sTime;
 	float xmodDiff = beat - sBeat;
@@ -84,6 +84,9 @@ void Average4k::Objects::Gameplay::Note::draw()
 		judged = true;
 	}
 
+	AvgEngine::Render::Rect lastRect = {};
+	lastRect = transform;
+
 	AvgEngine::Base::Sprite::draw();
 	if (type != Chart::NoteType::NoteType_Head)
 		return;
@@ -94,17 +97,15 @@ void Average4k::Objects::Gameplay::Note::draw()
 	float endTime = k->options.currentFile->GetTimeFromBeat(end);
 	float diffPos = endTime - time;
 	float endPosition = calculateY(useXmod, diffPos);
-	int amountToDraw = 1 + ((endPosition - (64 * noteSize)) / (64 * noteSize));
+	int amountToDraw = 1 + ((endPosition - (realSize)) / (realSize));
 	if (downscroll)
 	{
 		endPosition = -endPosition;
-		amountToDraw = 1 + ((endPosition + (64 * noteSize)) / (64 * noteSize));
+		amountToDraw = 1 + ((endPosition + (realSize)) / (realSize));
 	}
 	if (useXmod)
-		amountToDraw = 1 + ((lengthInBeats * ((64 * noteSize) * xmod)) / (64 * noteSize));
+		amountToDraw = 1 + ((lengthInBeats * ((realSize) * xmod)) / (realSize));
 
-	AvgEngine::Render::Rect lastRect = {};
-	lastRect = transform;
 	lastRect.a = 0;
 
 	for (int i = 0; i < amountToDraw; i++)
@@ -135,9 +136,14 @@ void Average4k::Objects::Gameplay::Note::draw()
 		// xmod
 		float xmodDiff = holdBeat - sBeat;
 
-		r.y = lastRect.y + lastRect.h;
+		r.y = lastRect.y + realSize;
 		if (downscroll)
-			r.y = lastRect.y - lastRect.h;
+		{
+			if (i == 0)
+				r.y = lastRect.y;
+			else
+				r.y = lastRect.y - realSize;
+		}
 
 		lastRect = r;
 

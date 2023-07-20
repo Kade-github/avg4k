@@ -27,6 +27,9 @@ public:
 	Gameplay(std::string path) : Average4k::Lua::GameplayMenu(path)
 	{
 	}
+
+	void Pause();
+
 	void End();
 
 	void AddPlayfield();

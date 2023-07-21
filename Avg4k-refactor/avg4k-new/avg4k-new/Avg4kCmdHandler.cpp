@@ -36,6 +36,7 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 	using namespace AvgEngine;
 	Debug::Console* c = Debug::Console::instance;
 	Average4k::Lua::LuaMenu* m = NULL;
+	Average4K* a = NULL;
 	Average4k::Lua::GameplayMenu* gm = NULL;
 	std::vector<std::string> spl = Utils::StringTools::Split(cmd, " ");
 
@@ -118,6 +119,10 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 		break;
 	case "basserror"_sh:
 		Logging::writeLog("[BASS] Error: " + std::to_string(BASS_ErrorGetCode()));
+		break;
+	case "hitboxes"_sh:
+		a = static_cast<Average4K*>(Average4K::Instance);
+		a->hitboxes = !a->hitboxes;
 		break;
 	default:
 		ConsoleCommandHandler::Handle(cmd);

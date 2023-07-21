@@ -12,6 +12,7 @@ public:
 		commands.push_back("dontcare");
 		commands.push_back("lua");
 		commands.push_back("basserror");
+		commands.push_back("hitboxes");
 	}
 	void Handle(std::string cmd) override;
 };

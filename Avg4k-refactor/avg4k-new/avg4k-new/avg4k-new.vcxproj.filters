@@ -282,6 +282,12 @@
     <ClCompile Include="Channel.cpp">
       <Filter>Average4K\Engine\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Average4K\Engine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Average4K\Engine\Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes.h">

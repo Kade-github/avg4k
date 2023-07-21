@@ -39,6 +39,7 @@
     <ClCompile Include="Avg4kCmdHandler.cpp" />
     <ClCompile Include="Base64.cpp" />
     <ClCompile Include="BASS.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Channel.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="ConsoleCommandHandler.cpp" />
@@ -47,6 +48,7 @@
     <ClCompile Include="Easing.cpp" />
     <ClCompile Include="FntParser.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Gameplay.cpp" />
     <ClCompile Include="GameplayLuaFile.cpp" />
     <ClCompile Include="GameplayMenu.cpp" />

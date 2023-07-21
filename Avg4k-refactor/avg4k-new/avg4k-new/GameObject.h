@@ -24,6 +24,10 @@ namespace AvgEngine::Base
 
 		bool drawn = true;
 
+		bool hitbox = false;
+
+		bool center = false;
+
 		/**
 		 * \brief If the transform should base itself on percentages of the display's width/height
 		 */
@@ -78,29 +82,7 @@ namespace AvgEngine::Base
 
 		GameObject() = default;
 
-		virtual void draw()
-		{
-			for (GameObject* ob : Children)
-			{
-				// Render object's draw calls.
-				if (ob->render && zIndex + ob->zIndex <= zIndex)
-				{
-					Render::Rect* cr = &clipRect;
-					if (parentClip != NULL && (cr->w == 0 && cr->h == 0))
-						cr = parentClip;
-					if (cr->w != 0 || cr->h != 0)
-						ob->parentClip = cr;
-					else
-						ob->parentClip = NULL;
-					ob->camera = camera;
-					ob->parent = &transform;
-					int oldZ = ob->zIndex;
-					ob->zIndex += zIndex;
-					ob->draw();
-					ob->zIndex = oldZ;
-				}
-			}
-		};
+		virtual void draw();
 
 		virtual void drawTopZIndex()
 		{

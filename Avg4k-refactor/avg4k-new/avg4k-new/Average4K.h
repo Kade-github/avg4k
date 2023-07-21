@@ -39,6 +39,8 @@ public:
 
 	static bool instant;
 
+	bool hitboxes = false;
+
 	bool skinInitOnLoad = true;
 
 	Average4k::GameOptions options{};

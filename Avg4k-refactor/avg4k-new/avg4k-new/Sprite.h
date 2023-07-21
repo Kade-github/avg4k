@@ -19,8 +19,6 @@ namespace AvgEngine::Base
 
 		Render::Rect src;
 
-		bool center = false;
-
 		Sprite(float x, float y, char* data, size_t size) : GameObject(x, y)
 		{
 			src = { 0,0,1,1 };
@@ -197,6 +195,7 @@ namespace AvgEngine::Base
 					drawn = false;
 					return;
 				}
+
 
 				Render::Rect srcCopy = src; // normalize the coords for opengl
 

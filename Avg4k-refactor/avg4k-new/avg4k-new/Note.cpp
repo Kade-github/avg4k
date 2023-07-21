@@ -85,9 +85,9 @@ void Average4k::Objects::Gameplay::Note::draw()
 	}
 
 	AvgEngine::Render::Rect lastRect = {};
-	lastRect = transform;
 
 	AvgEngine::Base::Sprite::draw();
+	lastRect = iTransform;
 	if (type != Chart::NoteType::NoteType_Head)
 		return;
 
@@ -110,7 +110,7 @@ void Average4k::Objects::Gameplay::Note::draw()
 
 	for (int i = 0; i < amountToDraw; i++)
 	{
-		AvgEngine::Render::Rect r = transform;
+		AvgEngine::Render::Rect r = iTransform;
 		
 		r.x = parent->x - (32 * noteSize);
 	
@@ -136,14 +136,9 @@ void Average4k::Objects::Gameplay::Note::draw()
 		// xmod
 		float xmodDiff = holdBeat - sBeat;
 
-		r.y = lastRect.y + realSize;
+		r.y = lastRect.y + (realSize / 2);
 		if (downscroll)
-		{
-			if (i == 0)
-				r.y = lastRect.y;
-			else
-				r.y = lastRect.y - realSize;
-		}
+			r.y = lastRect.y - (realSize / 2);
 
 		lastRect = r;
 

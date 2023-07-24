@@ -39,8 +39,8 @@ function songWheel.setSongs(files)
         table.insert(banners, file.folder .. '/' .. file.songBanner)
     end
 
-    -- load them (with 10 threads)
-    songWheel.textures = loadChartTexturesThreaded(banners, 10)
+    -- load them (with 20 threads)
+    songWheel.textures = loadChartTexturesThreaded(banners, 20)
 
     for i = 1, #songWheel.textures, 1 do
         local t = songWheel.textures[i]
@@ -55,6 +55,8 @@ function songWheel.setSongs(files)
         local wheelTop = sprite.new(0, 0, wheelTexture)
         wheelTop.transform.scale = skin["upscale"]
         create(wheelTop)
+
+
 
         songWheel.tops[i] = wheelTop
         songWheel.banners[i] = sprite

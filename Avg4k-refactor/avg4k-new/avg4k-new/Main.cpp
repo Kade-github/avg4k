@@ -240,7 +240,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	glfwWindowHint(GLFW_SAMPLES, 4);
 
 
-	Average4K* g = new Average4K("Average4K", "b14-steambeta2");
+	Average4K* g = new Average4K("Average4K", "b14-steambeta3");
 	g->alpha = true;
 
 	glfwMakeContextCurrent(g->Window);

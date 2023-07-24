@@ -159,7 +159,7 @@ void Average4k::Objects::Gameplay::Note::draw()
 			if (downscroll)
 			{
 				rClip.y = 0;
-				rClip.h = parent->y + (parent->h / 2);
+				rClip.h = parent->y;
 			}
 			c.clip = rClip;
 			c.zIndex -= 1;

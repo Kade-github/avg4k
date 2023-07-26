@@ -37,6 +37,7 @@ namespace AvgEngine::Base
 		Render::Rect iTransform = Render::Rect();
 		Render::Rect transform = Render::Rect();
 		Render::Rect* parentClip = NULL;
+		bool clipAll = true;
 		Render::Rect clipRect = Render::Rect();
 
 		Render::Rect transformOffset = Render::Rect();

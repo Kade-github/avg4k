@@ -210,7 +210,7 @@ namespace AvgEngine::Base
 
 				drawCall c = Camera::FormatDrawCall(zIndex, texture, shader, Render::DisplayHelper::RectToVertex(r, srcCopy, center), iTransform);
 				c.tag = tag;
-				if (cr.w != 0 || cr.h != 0)
+				if ((cr.w != 0 || cr.h != 0) && clipAll)
 					c.clip = cr;
 				if (cr.w == 0 && cr.h == 0 && parentClip)
 					c.clip = *parentClip;

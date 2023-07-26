@@ -169,60 +169,63 @@ end
 function textbox.update(time)
     for i, tb in ipairs(textbox.textboxes) do
         local bg = tb.objects[1]
-        local text = tb.objects[2]
-        local oText = tb.objects[3]
-        local infoText = tb.objects[4]
-        if not tb.setRect and text.transform.w ~= 0 and oText.transform.w ~= 0 then
-            local x, y = tb.position.x, tb.position.y
-            tb.position = copyRect(bg.transform)
-            tb.position.x = x
-            tb.position.y = y
-            tb.position.w = bg.transform.w / bg.parent.transform.w
-            tb.position.h = bg.transform.h / bg.parent.transform.h
-            tb.setRect = true
-            bg.transform.x = tb.position.x + 0.01 + text.transform.w
-            bg.transform.y = tb.position.y
-            text.transform.x = tb.position.x
-            oText.transform.y = 0.25
-            text.transform.y = tb.position.y + ((bg.transform.h * skin["upscale"]) / 2) -
-                ((text.transform.h * skin["upscale"]) / 2)
-        end
+        if bg.visible then
+            local bg = tb.objects[1]
+            local text = tb.objects[2]
+            local oText = tb.objects[3]
+            local infoText = tb.objects[4]
+            if not tb.setRect and text.transform.w ~= 0 and oText.transform.w ~= 0 then
+                local x, y = tb.position.x, tb.position.y
+                tb.position = copyRect(bg.transform)
+                tb.position.x = x
+                tb.position.y = y
+                tb.position.w = bg.transform.w / bg.parent.transform.w
+                tb.position.h = bg.transform.h / bg.parent.transform.h
+                tb.setRect = true
+                bg.transform.x = tb.position.x + 0.01 + text.transform.w
+                bg.transform.y = tb.position.y
+                text.transform.x = tb.position.x
+                oText.transform.y = 0.25
+                text.transform.y = tb.position.y + ((bg.transform.h * skin["upscale"]) / 2) -
+                    ((text.transform.h * skin["upscale"]) / 2)
+            end
 
-        if tb.setRect then
-            -- information text, animation as well
-            if infoText ~= nil then
-                local ht = time - tb.hoverTime
+            if tb.setRect then
+                -- information text, animation as well
+                if infoText ~= nil then
+                    local ht = time - tb.hoverTime
 
-                infoText.transform.x = text:getRealRect().x - textbox.container:getRealRect().x
+                    infoText.transform.x = text:getRealRect().x - textbox.container:getRealRect().x
 
-                local thingRect = copyRect(bg:getRealRect())
+                    local thingRect = copyRect(bg:getRealRect())
 
-                thingRect.y = thingRect.y + bg.transformOffset.y
+                    thingRect.y = thingRect.y + bg.transformOffset.y
 
-                local oRect = copyRect(text:getRealRect())
+                    local oRect = copyRect(text:getRealRect())
 
-                -- check all of these hit boxes because we need it to be ux friendly
-                if helper.aabb(Globals.mouseRect, thingRect) or helper.aabb(Globals.mouseRect, oRect) then
-                    local endPosReal = text:getRealRect().y + text:getRealRect().h +
-                        infoText:getRealRect()
-                        .h - textbox.container:getRealRect().y
-                    local realYPos = text:getRealRect().y - textbox.container:getRealRect().y
-                    local a = helper.lerp(0, 1, math.min(ht / 0.5, 1))
-                    local y = helper.lerp(realYPos, endPosReal, helper.outCubic(a))
-                    infoText.transform.y = y
-                    infoText.transform.alpha = a
-                    tb.lastHover = time
-                else
-                    local endPosReal = text:getRealRect().y + text:getRealRect().h +
-                        infoText:getRealRect()
-                        .h - textbox.container:getRealRect().y
-                    local realYPos = text:getRealRect().y - textbox.container:getRealRect().y
-                    local a = helper.lerp(1, 0, math.min((time - tb.lastHover) / 0.5, 1))
-                    local y = helper.lerp(realYPos,
-                        endPosReal, helper.outCubic(a))
-                    tb.hoverTime = time
-                    infoText.transform.y = y
-                    infoText.transform.alpha = a
+                    -- check all of these hit boxes because we need it to be ux friendly
+                    if helper.aabb(Globals.mouseRect, thingRect) or helper.aabb(Globals.mouseRect, oRect) then
+                        local endPosReal = text:getRealRect().y + text:getRealRect().h +
+                            infoText:getRealRect()
+                            .h - textbox.container:getRealRect().y
+                        local realYPos = text:getRealRect().y - textbox.container:getRealRect().y
+                        local a = helper.lerp(0, 1, math.min(ht / 0.5, 1))
+                        local y = helper.lerp(realYPos, endPosReal, helper.outCubic(a))
+                        infoText.transform.y = y
+                        infoText.transform.alpha = a
+                        tb.lastHover = time
+                    else
+                        local endPosReal = text:getRealRect().y + text:getRealRect().h +
+                            infoText:getRealRect()
+                            .h - textbox.container:getRealRect().y
+                        local realYPos = text:getRealRect().y - textbox.container:getRealRect().y
+                        local a = helper.lerp(1, 0, math.min((time - tb.lastHover) / 0.5, 1))
+                        local y = helper.lerp(realYPos,
+                            endPosReal, helper.outCubic(a))
+                        tb.hoverTime = time
+                        infoText.transform.y = y
+                        infoText.transform.alpha = a
+                    end
                 end
             end
         end

@@ -13,6 +13,19 @@ namespace Average4k::Lua::Base
 
 		void recalculateRatio();
 
+		bool getClipAll()
+		{
+			if (base)
+				return base->clipAll;
+			return true;
+		}
+
+		void setClipAll(bool clip)
+		{
+			if (base)
+				base->clipAll = clip;
+		}
+
 		sprite(float x, float y, texture _tex) : gameObject(x, y)
 		{
 			

@@ -78,6 +78,13 @@ namespace Average4k::Lua::Base
 				base->zIndex = z;
 		}
 
+		bool getVisible()
+		{
+			if (base)
+				return base->drawn;
+			return true;
+		}
+
 		bool getRatio()
 		{
 			if (base)

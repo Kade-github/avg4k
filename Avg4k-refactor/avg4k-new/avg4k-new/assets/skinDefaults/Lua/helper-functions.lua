@@ -146,6 +146,7 @@ function helper.initContainer(container, allowScroll)
     -- add it to the container list (with some extra variables)
     local c = {}
     c.c = container
+    container.clipAll = false
     c.scroll = 0
     c.shouldScroll = false
     c.hover = false

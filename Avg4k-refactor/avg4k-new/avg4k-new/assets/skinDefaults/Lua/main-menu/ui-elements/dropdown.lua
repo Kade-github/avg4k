@@ -214,79 +214,81 @@ end
 function dropdown.update(time)
     for i, dd in ipairs(dropdown.dropdowns) do
         local bg = dd.objects[1]
-        local text = dd.objects[2]
-        local oText = dd.objects[3]
-        local connector = dd.objects[4]
-        local infoText = dd.objects[5]
+        if bg.visible then
+            local text = dd.objects[2]
+            local oText = dd.objects[3]
+            local connector = dd.objects[4]
+            local infoText = dd.objects[5]
 
-        if not dd.setRect and text.transform.w ~= 0 and oText.transform.w ~= 0 then
-            local x, y = dd.position.x, dd.position.y
-            dd.position = copyRect(bg.transform)
-            dd.position.x = x
-            dd.position.y = y
-            dd.position.w = bg.transform.w / bg.parent.transform.w
-            dd.position.h = bg.transform.h / bg.parent.transform.h
-            dd.setRect = true
-            bg.transform.x = dd.position.x + 0.01 + text.transform.w
-            bg.transform.y = dd.position.y
-            text.transform.x = dd.position.x
-            oText.transform.y = 0.25
-            text.transform.y = dd.position.y + ((bg.transform.h * skin["upscale"]) / 2) -
-                ((text.transform.h * skin["upscale"]) / 2)
-            connector.transform.x = bg.transform.x
-            connector.transform.y = bg.transform.y + (connector.transform.h / 2)
-        end
+            if not dd.setRect and text.transform.w ~= 0 and oText.transform.w ~= 0 then
+                local x, y = dd.position.x, dd.position.y
+                dd.position = copyRect(bg.transform)
+                dd.position.x = x
+                dd.position.y = y
+                dd.position.w = bg.transform.w / bg.parent.transform.w
+                dd.position.h = bg.transform.h / bg.parent.transform.h
+                dd.setRect = true
+                bg.transform.x = dd.position.x + 0.01 + text.transform.w
+                bg.transform.y = dd.position.y
+                text.transform.x = dd.position.x
+                oText.transform.y = 0.25
+                text.transform.y = dd.position.y + ((bg.transform.h * skin["upscale"]) / 2) -
+                    ((text.transform.h * skin["upscale"]) / 2)
+                connector.transform.x = bg.transform.x
+                connector.transform.y = bg.transform.y + (connector.transform.h / 2)
+            end
 
-        if dd.setRect then
-            if dd.selected then
-                local stop = false
-                for id, it in ipairs(dd.items) do
-                    if not stop then
-                        local realerRect = copyRect(it.children[1]:getRealRect())
-                        realerRect.w = it:getRealRect().w
-                        if helper.aabb(Globals.mouseRect, realerRect) then
-                            stop = true
-                            it.children[1].transform.alpha = 0.7
+            if dd.setRect then
+                if dd.selected then
+                    local stop = false
+                    for id, it in ipairs(dd.items) do
+                        if not stop then
+                            local realerRect = copyRect(it.children[1]:getRealRect())
+                            realerRect.w = it:getRealRect().w
+                            if helper.aabb(Globals.mouseRect, realerRect) then
+                                stop = true
+                                it.children[1].transform.alpha = 0.7
+                            else
+                                it.children[1].transform.alpha = 1
+                            end
                         else
                             it.children[1].transform.alpha = 1
                         end
-                    else
-                        it.children[1].transform.alpha = 1
                     end
                 end
-            end
 
-            -- information text, animation as well
-            if infoText ~= nil then
-                local ht = time - dd.hoverTime
+                -- information text, animation as well
+                if infoText ~= nil then
+                    local ht = time - dd.hoverTime
 
-                infoText.transform.x = text:getRealRect().x - textbox.container:getRealRect().x
+                    infoText.transform.x = text:getRealRect().x - textbox.container:getRealRect().x
 
-                local thingRect = copyRect(bg:getRealRect())
-                thingRect.y = thingRect.y + bg.transformOffset.y
-                local oRect = copyRect(text:getRealRect())
-                -- check all of these hit boxes because we need it to be ux friendly
-                if helper.aabb(Globals.mouseRect, thingRect) or helper.aabb(Globals.mouseRect, oRect) then
-                    local endPosReal = text:getRealRect().y + text:getRealRect().h +
-                        infoText:getRealRect()
-                        .h - textbox.container:getRealRect().y
-                    local realYPos = text:getRealRect().y - textbox.container:getRealRect().y
-                    local a = helper.lerp(0, 1, math.min(ht / 0.5, 1))
-                    local y = helper.lerp(realYPos, endPosReal, helper.outCubic(a))
-                    infoText.transform.y = y
-                    infoText.transform.alpha = a
-                    dd.lastHover = time
-                else
-                    local endPosReal = text:getRealRect().y + text:getRealRect().h +
-                        infoText:getRealRect()
-                        .h - textbox.container:getRealRect().y
-                    local realYPos = text:getRealRect().y - textbox.container:getRealRect().y
-                    local a = helper.lerp(1, 0, math.min((time - dd.lastHover) / 0.5, 1))
-                    local y = helper.lerp(realYPos,
-                        endPosReal, helper.outCubic(a))
-                    dd.hoverTime = time
-                    infoText.transform.y = y
-                    infoText.transform.alpha = a
+                    local thingRect = copyRect(bg:getRealRect())
+                    thingRect.y = thingRect.y + bg.transformOffset.y
+                    local oRect = copyRect(text:getRealRect())
+                    -- check all of these hit boxes because we need it to be ux friendly
+                    if helper.aabb(Globals.mouseRect, thingRect) or helper.aabb(Globals.mouseRect, oRect) then
+                        local endPosReal = text:getRealRect().y + text:getRealRect().h +
+                            infoText:getRealRect()
+                            .h - textbox.container:getRealRect().y
+                        local realYPos = text:getRealRect().y - textbox.container:getRealRect().y
+                        local a = helper.lerp(0, 1, math.min(ht / 0.5, 1))
+                        local y = helper.lerp(realYPos, endPosReal, helper.outCubic(a))
+                        infoText.transform.y = y
+                        infoText.transform.alpha = a
+                        dd.lastHover = time
+                    else
+                        local endPosReal = text:getRealRect().y + text:getRealRect().h +
+                            infoText:getRealRect()
+                            .h - textbox.container:getRealRect().y
+                        local realYPos = text:getRealRect().y - textbox.container:getRealRect().y
+                        local a = helper.lerp(1, 0, math.min((time - dd.lastHover) / 0.5, 1))
+                        local y = helper.lerp(realYPos,
+                            endPosReal, helper.outCubic(a))
+                        dd.hoverTime = time
+                        infoText.transform.y = y
+                        infoText.transform.alpha = a
+                    end
                 end
             end
         end

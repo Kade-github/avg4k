@@ -390,7 +390,8 @@ void LuaFile::Load()
 		"add", &gameObject::add,
 		"remove", &gameObject::removeObject,
 		"destroy", &gameObject::destroy,
-		"removeAll", &gameObject::removeAll
+		"removeAll", &gameObject::removeAll,
+		"visible", &gameObject::getVisible
 		);
 
 	sol::usertype<sprite> sprite_type = lua->new_usertype<sprite>("sprite",
@@ -398,6 +399,7 @@ void LuaFile::Load()
 		"texture", &sprite::tex,
 		"center", sol::property(&sprite::getCenter, &sprite::setCenter),
 		"recalculateRatio", &sprite::recalculateRatio,
+		"clipAll", sol::property(&sprite::getClipAll, &sprite::setClipAll),
 		sol::base_classes, sol::bases<gameObject>()
 		);
 

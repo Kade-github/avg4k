@@ -69,7 +69,8 @@ function songWheel.setSongs(files)
     end
     table.insert(songWheel.textures, wheelTexture)
 
-    songWheel.Select(0)
+    songWheel.selectedIndex = 3
+    songWheel.Select(-1)
 end
 
 function songWheel.mouseWheel(amt)
@@ -276,8 +277,8 @@ function songWheel.update(t)
 
     local real = songWheel.main:getRealRect()
 
-    local min = songWheel.selectedIndex - 10
-    local max = songWheel.selectedIndex + 10
+    local min = songWheel.selectedIndex - 6
+    local max = songWheel.selectedIndex + 6
 
     if min < 1 then
         min = 1

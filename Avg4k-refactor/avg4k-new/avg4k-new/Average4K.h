@@ -10,7 +10,7 @@
 #include "Avg4kCmdHandler.h"
 #include "Notifications.h"
 #include "SongGatherer.h"
-
+#include "MiscConfigHandler.h"
 namespace Average4k
 {
 	struct GameOptions {
@@ -39,6 +39,8 @@ public:
 
 	static bool instant;
 
+	static Average4k::MiscConfigHandler* cfg;
+
 	bool hitboxes = false;
 
 	bool skinInitOnLoad = true;
@@ -57,6 +59,13 @@ public:
 		settings = new Average4k::Settings(AvgEngine::Utils::Paths::getAppData("Average4K") + "settings.ave");
 		notif = new Average4k::Utils::Notifications(0,0);
 		queuedPackets = {};
+
+		std::string miscConfigPath = AvgEngine::Utils::Paths::getAppData("Average4K") + "misc.config";
+
+		Average4k::External::ConfigReader* baseConfig = new Average4k::External::ConfigReader(miscConfigPath);
+		baseConfig->comment = "Misc values used in the Editor and Console.";
+		baseConfig->WriteToFile(miscConfigPath);
+		cfg = new Average4k::MiscConfigHandler(baseConfig, miscConfigPath);
 	}
 
 	void SkinInit()

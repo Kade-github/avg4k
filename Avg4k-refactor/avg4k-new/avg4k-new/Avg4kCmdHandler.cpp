@@ -40,6 +40,8 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 	Average4k::Lua::GameplayMenu* gm = NULL;
 	std::vector<std::string> spl = Utils::StringTools::Split(cmd, " ");
 
+	a = static_cast<Average4K*>(Average4K::Instance);
+
 	std::string s = "";
 
 	if (spl.size() == 0)
@@ -66,7 +68,9 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 	case "bind"_sh:
 		if (spl.size() < 2)
 		{
-			Logging::writeLog("[Bind] Syntax: bind <key> <command>");
+			Logging::writeLog("[Bind] Syntax: bind <key> <command> - Create a bind");
+			Logging::writeLog("[Bind] Syntax: bind remove <key> - Remove a bind");
+			Logging::writeLog("[Bind] Syntax: bind list - List all binds");
 			return;
 		}
 
@@ -121,7 +125,6 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 		Logging::writeLog("[BASS] Error: " + std::to_string(BASS_ErrorGetCode()));
 		break;
 	case "hitboxes"_sh:
-		a = static_cast<Average4K*>(Average4K::Instance);
 		a->hitboxes = !a->hitboxes;
 		break;
 	default:

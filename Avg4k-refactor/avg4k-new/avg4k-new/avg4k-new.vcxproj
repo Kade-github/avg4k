@@ -46,6 +46,7 @@
     <ClCompile Include="CPacketHostUpdateLobby.cpp" />
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="Easing.cpp" />
+    <ClCompile Include="Editor.cpp" />
     <ClCompile Include="FntParser.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -100,7 +101,6 @@
     <ClInclude Include="ConfigReader.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="ConsoleCommandHandler.h" />
-    <ClInclude Include="Container.h" />
     <ClInclude Include="CPacketChartAcquired.h" />
     <ClInclude Include="CPacketHello.h" />
     <ClInclude Include="CPacketHostChangeChart.h" />
@@ -121,6 +121,7 @@
     <ClInclude Include="CPacketWtfAmIn.h" />
     <ClInclude Include="Display.h" />
     <ClInclude Include="Easing.h" />
+    <ClInclude Include="Editor.h" />
     <ClInclude Include="EventManager.h" />
     <ClInclude Include="FntParser.h" />
     <ClInclude Include="Game.h" />
@@ -160,6 +161,7 @@
     <ClInclude Include="Menu.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="MenuLuaFile.h" />
+    <ClInclude Include="MiscConfigHandler.h" />
     <ClInclude Include="Multiplayer.h" />
     <ClInclude Include="Note.h" />
     <ClInclude Include="Receptor.h" />

@@ -65,6 +65,9 @@ void Average4k::Objects::Gameplay::Note::draw()
 	if (type == Chart::NoteType_Mine && k->skin->rotateMine)
 		transform.angle += 1;
 	Average4k::Lua::GameplayMenu* m = static_cast<Average4k::Lua::GameplayMenu*>(k->CurrentMenu);
+	bool botplay = false;
+	if (m != NULL)
+		botplay = m->botplay;
 	// tap misses
 	// make sure this stuff works with downscroll (later)
 	if (!judged && ((diff * 1000) < -k->options.judgeWindow[4]) && type != Chart::NoteType::NoteType_Head && (type != Chart::NoteType_Fake && type != Chart::NoteType_Mine))
@@ -75,7 +78,7 @@ void Average4k::Objects::Gameplay::Note::draw()
 		m->UpdateAccuracy(judge);
 	}
 
-	if (m->botplay && !judged && (diff * 1000) < 1 && (type != Chart::NoteType_Fake && type != Chart::NoteType_Mine))
+	if (botplay && !judged && (diff * 1000) < 1 && (type != Chart::NoteType_Fake && type != Chart::NoteType_Mine))
 	{
 		judge = Judgement_Botplay;
 		m->file->Function("ArrowJudged", std::to_string((int)judge));
@@ -151,7 +154,7 @@ void Average4k::Objects::Gameplay::Note::draw()
 		rSrc.h = rSrc.h / holdTexture->height;
 
 		drawCall c = Camera::FormatDrawCall(zIndex - 1, holdTexture, shader, AvgEngine::Render::DisplayHelper::RectToVertex(r, rSrc, center), r);
-		if (holding || m->botplay || holdTime < stopHolding)
+		if (holding || botplay || holdTime < stopHolding)
 		{
 			AvgEngine::Render::Rect rClip = r;
 			rClip.y = parent->y;
@@ -168,7 +171,7 @@ void Average4k::Objects::Gameplay::Note::draw()
 	}
 
 	// hold misses
-	if ((time - sTime) * 1000 < -k->options.judgeWindow[5] && !holdJudged && !m->botplay)
+	if ((time - sTime) * 1000 < -k->options.judgeWindow[5] && !holdJudged && !botplay)
 	{
 		if (holdTimer <= 0)
 		{

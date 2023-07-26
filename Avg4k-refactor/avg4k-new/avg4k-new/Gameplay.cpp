@@ -36,6 +36,7 @@ void Gameplay::AddPlayfield()
 		yPos = displayRect.h - (64 * noteSize);
 	Average4k::Objects::Gameplay::Playfield* playfield = new Average4k::Objects::Gameplay::Playfield(xPos, yPos, &Average4ker::a4er->options.currentFile->chartMetadata.Difficulties[Average4ker::a4er->options.currentFile_diff], downscroll);
 	addObject(playfield);
+	playfield->createNotes();
 
 	playfields.push_back(playfield);
 

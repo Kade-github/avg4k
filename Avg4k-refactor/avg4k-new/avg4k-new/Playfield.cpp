@@ -15,11 +15,21 @@ Average4k::Objects::Gameplay::Playfield::Playfield(int _x, int _y, Average4k::Ch
 	expSpritesheet->dontDelete = true;
 	downscroll = _downscroll;
 
+	keybinds = { 
+		AvgEngine::Utils::StringTools::convertKeyNameToKeyCode(Average4K::settings->Get("Left Keybind").value),
+		AvgEngine::Utils::StringTools::convertKeyNameToKeyCode(Average4K::settings->Get("Down Keybind").value),
+		AvgEngine::Utils::StringTools::convertKeyNameToKeyCode(Average4K::settings->Get("Up Keybind").value),
+		AvgEngine::Utils::StringTools::convertKeyNameToKeyCode(Average4K::settings->Get("Right Keybind").value) 
+	};
+}
+
+void Average4k::Objects::Gameplay::Playfield::createNotes()
+{
 	float noteSize = std::stof(Average4K::settings->Get("Note Size").value);
 	for (int i = 0; i < 4; i++)
 	{
 		Receptor* r = new Receptor((i * (64 * noteSize)), 0, receptorSpritesheet, arrowSpritesheet, expSpritesheet);
-		r->SetFrameSize(64,64);
+		r->SetFrameSize(64, 64);
 		r->holdSpritesheet = holdSpritesheet;
 		r->tag = "receptor-" + std::to_string(i);
 		r->transform.w = 64 * noteSize;
@@ -45,13 +55,6 @@ Average4k::Objects::Gameplay::Playfield::Playfield(int _x, int _y, Average4k::Ch
 		receptors[2]->transform.angle = 180;
 		receptors[3]->transform.angle = -90;
 	}
-
-	keybinds = { 
-		AvgEngine::Utils::StringTools::convertKeyNameToKeyCode(Average4K::settings->Get("Left Keybind").value),
-		AvgEngine::Utils::StringTools::convertKeyNameToKeyCode(Average4K::settings->Get("Down Keybind").value),
-		AvgEngine::Utils::StringTools::convertKeyNameToKeyCode(Average4K::settings->Get("Up Keybind").value),
-		AvgEngine::Utils::StringTools::convertKeyNameToKeyCode(Average4K::settings->Get("Right Keybind").value) 
-	};
 }
 
 void Average4k::Objects::Gameplay::Playfield::draw()

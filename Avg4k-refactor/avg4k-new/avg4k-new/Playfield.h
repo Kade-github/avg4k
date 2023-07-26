@@ -9,6 +9,8 @@ namespace Average4k::Objects::Gameplay {
 		float time;
 		float beat;
 
+		bool judgeable = true;
+
 		float stops = 0;
 		float stopEnd = 0;
 		bool downscroll = false;
@@ -27,6 +29,9 @@ namespace Average4k::Objects::Gameplay {
 			delete expSpritesheet;
 			AvgEngine::Base::GameObject::~GameObject();
 		}
+
+		void createNotes();
+
 		void draw();
 
 		void keyPress(int key)

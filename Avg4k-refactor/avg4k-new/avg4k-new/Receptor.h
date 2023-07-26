@@ -13,6 +13,8 @@ namespace Average4k::Objects::Gameplay {
 
 		int lane = 0;
 
+		bool judgeable = true;
+
 		float noteSize = 0;
 
 		std::vector<Chart::Note> notes{};

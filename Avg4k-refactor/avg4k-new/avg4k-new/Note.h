@@ -42,6 +42,8 @@ namespace Average4k::Objects::Gameplay {
 		float xmod = 1;
 		float rate = 1;
 
+		bool judgeable = true;
+
 		float noteSize = 0;
 		bool holdDropped = false;
 		void calculateJudge(float diff);

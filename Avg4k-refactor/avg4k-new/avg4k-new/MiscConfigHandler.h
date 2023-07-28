@@ -19,10 +19,25 @@ namespace Average4k {
 				{
 					v.value = value;
 					reader->WriteToFile(_savePath);
-					break;
+					return;
+				}
+			}
+			reader->values.push_back(External::ConfigValue(key, value));
+			reader->WriteToFile(_savePath);
+		}
+
+		void removeValue(std::string key)
+		{
+			for (External::ConfigValue& v : reader->values)
+			{
+				if (v.name == key)
+				{
+					reader->values.erase(std::remove(reader->values.begin(), reader->values.end(), v), reader->values.end());
+					return;
 				}
 			}
 		}
+
 
 		MiscConfigHandler(External::ConfigReader* c, std::string savePath)
 		{
@@ -30,4 +45,4 @@ namespace Average4k {
 			_savePath = savePath;
 		}
 	};
-}
+};

@@ -57,10 +57,25 @@ namespace AvgEngine::Events
 		int lastId = 0;
 		std::vector<Listener> Listeners{};
 
-		void Subscribe(EventType t, std::function<void(Event)> f, bool autoClear = true, bool ignoreConsole = false)
+		int Subscribe(EventType t, std::function<void(Event)> f, bool autoClear = true, bool ignoreConsole = false)
 		{
+			int o = lastId;
 			Listeners.push_back({ t, f , ignoreConsole, autoClear, lastId});
 			lastId++;
+			return o;
+		}
+
+		void RemoveById(int id)
+		{
+			for (Listener& l : Listeners)
+			{
+				if (l.eId == id)
+				{
+					Listeners.erase(std::ranges::remove_if(Listeners,
+						[&](const Listener x) { return x == l; }).begin(), Listeners.end());
+					return;
+				}
+			}
 		}
 
 		void Clear()

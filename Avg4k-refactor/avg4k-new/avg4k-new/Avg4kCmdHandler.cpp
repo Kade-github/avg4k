@@ -162,7 +162,7 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 					// remove the bind
 					binds.erase(binds.begin() + i);
 					Average4K::cfg->removeValue(b.bind_name);
-					Logging::writeLog("[Bind] Removed bind '" + b.bind_name + "'!");
+					Logging::writeLog("[Bind] Removed bind '" + key + "'!");
 					return;
 				}
 				i++;

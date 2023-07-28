@@ -152,7 +152,7 @@ void Avg4kCmdHandler::Handle(std::string cmd)
 				Logging::writeLog("[Bind] Unknown key '" + key + "'!");
 				return;
 			}
-			for (Bind& b : binds)
+			for (Bind b : binds)
 			{
 				if (b.key == keyy)
 				{

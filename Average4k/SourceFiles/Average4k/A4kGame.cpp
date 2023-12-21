@@ -1,0 +1,30 @@
+/*
+	Avg Dev Team
+	2021-2024 Average4k
+*/
+
+#include "A4kGame.h"
+#include <AvgEngine/External/Image/stbi.h>
+
+Average4k::A4kGame* Average4k::A4kGame::gameInstance = nullptr;
+
+Average4k::A4kGame::A4kGame(std::string _t, std::string _v, int w, int h) : Game(_t, _v, w, h)
+{
+	fpsCap = 144;
+	gameInstance = this;
+}
+
+void Average4k::A4kGame::Start()
+{
+	// Set window icon
+
+	GLFWimage images[4];
+
+	images[0].pixels = AvgEngine::External::stbi_h::stbi_load_file_data("Assets/Icon/A4kIcon32.png", &images[0].width, &images[0].height);
+	images[1].pixels = AvgEngine::External::stbi_h::stbi_load_file_data("Assets/Icon/A4kIcon64.png", &images[3].width, &images[3].height);
+	images[2].pixels = AvgEngine::External::stbi_h::stbi_load_file_data("Assets/Icon/A4kIcon128.png", &images[2].width, &images[2].height);
+	images[3].pixels = AvgEngine::External::stbi_h::stbi_load_file_data("Assets/Icon/A4kIcon256.png", &images[1].width, &images[1].height);
+	glfwSetWindowIcon(Window, 1, images);
+
+	AvgEngine::Logging::writeLog("[Sodalite] Set window icon!");
+}

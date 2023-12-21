@@ -1,0 +1,677 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Average4K">
+      <UniqueIdentifier>{c4f048c9-6989-4c36-9493-6a9df7e52902}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k">
+      <UniqueIdentifier>{c77fcc55-86f2-4b46-9ae5-0775dc92628e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine">
+      <UniqueIdentifier>{c5fc04b5-7176-4eac-9da8-2e2f34bf8100}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\Audio">
+      <UniqueIdentifier>{04c3157a-517b-43d3-9521-0fb33da85ece}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\Utils">
+      <UniqueIdentifier>{11e060cb-d6f1-4e42-877d-e6f8a4aee535}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\Base">
+      <UniqueIdentifier>{4ecc1a83-c821-43b2-8673-e060c5d4028a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\Render">
+      <UniqueIdentifier>{5f1d20a4-c084-435f-8b20-955bd38de830}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\Render\OpenGL">
+      <UniqueIdentifier>{7ff9514b-f424-450a-a94d-95408414fe81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\External">
+      <UniqueIdentifier>{9b4de7d7-8a24-4155-85cd-09f8417ada20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\Menus">
+      <UniqueIdentifier>{24656bc5-c351-4b47-9414-43a85e60522e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\External\ImGUI">
+      <UniqueIdentifier>{74d03ee1-197e-4881-9b05-e961897533bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\Console">
+      <UniqueIdentifier>{27369a98-1c5d-47dd-8ef2-de3625b14de1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\External\BASS">
+      <UniqueIdentifier>{bc486ad6-34e9-4548-9fa5-bb4eb4ae7cba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\External\Glad">
+      <UniqueIdentifier>{d237c3cf-7033-4c73-b751-9649bfa5876e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\External\Image">
+      <UniqueIdentifier>{a7a07912-a757-4ba8-882a-9114b4eb6be5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\External\XML">
+      <UniqueIdentifier>{46f730c2-bec4-4b0c-b467-fbe046c07daa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\External\SpriteFont">
+      <UniqueIdentifier>{cc847dc0-5386-4caf-9dfb-46a6d9c32530}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External">
+      <UniqueIdentifier>{92c8287c-1e5f-465a-9338-93e8eea32cf6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\Steam">
+      <UniqueIdentifier>{c8efbc42-39aa-4891-b199-f4e1180373ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\Multiplayer">
+      <UniqueIdentifier>{a62062cd-d902-477e-b733-6bf3b9f76ede}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Engine\External\Base64">
+      <UniqueIdentifier>{4b2be164-2539-4a67-b070-ea6332126d75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\Multiplayer\Packet">
+      <UniqueIdentifier>{b92edd08-24fc-4ba4-a752-be22b788ef74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\Multiplayer\Packet\Client">
+      <UniqueIdentifier>{500aab8a-c236-4cef-a7b5-8e8c338f9bcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\Multiplayer\Packet\Server">
+      <UniqueIdentifier>{6470ce38-91f4-4fb0-8d20-e8ed7e69a16d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\Settings">
+      <UniqueIdentifier>{a2b1ae56-70e0-4228-b2c8-8c10187a44ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\Skin">
+      <UniqueIdentifier>{607997ea-051a-44d0-b1f7-ad1d7590ba21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\CfgReader">
+      <UniqueIdentifier>{ac4aa50e-d2ee-477e-9d18-4121cd7f87bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\Audio">
+      <UniqueIdentifier>{f318e679-af56-493a-85e5-46fa8787b8b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\Utils">
+      <UniqueIdentifier>{8dd899ff-d80e-422a-a935-ccefe98144f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\Menus\Main">
+      <UniqueIdentifier>{c51b3f83-8c57-4580-8f95-e051924f7fae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\Menus\Gameplay">
+      <UniqueIdentifier>{0d355aef-e03a-42f7-bb0f-3c3920a25a38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\Menus\Editor">
+      <UniqueIdentifier>{0ac290b2-cc89-4591-b836-acfb87a13280}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\ChartParsers">
+      <UniqueIdentifier>{ff6df699-2656-4151-8400-24d04cb59a9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\ChartParsers\Stepmania">
+      <UniqueIdentifier>{187ea919-c5fa-46c8-b071-65250a3fd659}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\Packs">
+      <UniqueIdentifier>{9496398b-c6c6-43eb-8f29-a6718f85f1da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\SpriteSheet">
+      <UniqueIdentifier>{201e0101-bb00-4f7b-8444-271b95e393d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\LuaInterfaces">
+      <UniqueIdentifier>{6ab7d735-c9dc-4075-952f-20c70bcf02b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\LuaInterfaces\Menu">
+      <UniqueIdentifier>{ad58060b-1b9a-4813-85c0-94df79fb7913}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\LuaInterfaces\Game">
+      <UniqueIdentifier>{387ca5c2-96cd-48c7-9875-713b8264740a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\LuaInterfaces\Base">
+      <UniqueIdentifier>{0adde4ec-4e5e-4faa-a1c5-1c2e98d82b34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\Objects">
+      <UniqueIdentifier>{e4de254d-2c01-470b-975c-2c4b6756247c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\Objects\Gameplay">
+      <UniqueIdentifier>{cd048278-0174-4103-93c1-1f897ff57003}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\MiscConfigHandler">
+      <UniqueIdentifier>{6d636fa7-e4a8-4cbb-94d0-74a2c36c058f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Average4K\Avg4k\External\ChartParsers\Quaver">
+      <UniqueIdentifier>{95e450fa-e3ef-4873-8f7d-658213c93287}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>Average4K</Filter>
+    </ClCompile>
+    <ClCompile Include="Logging.cpp">
+      <Filter>Average4K\Engine\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Average4K\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Average4K\Engine\Render\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Average4K\Engine\Render\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="StartScreen.cpp">
+      <Filter>Average4K\Avg4k\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="Display.cpp">
+      <Filter>Average4K\Engine\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_glfw.cpp">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_opengl3.cpp">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui.cpp">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_demo.cpp">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_draw.cpp">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_tables.cpp">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_widgets.cpp">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Console.cpp">
+      <Filter>Average4K\Engine\Console</Filter>
+    </ClCompile>
+    <ClCompile Include="implot.cpp">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="implot_items.cpp">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Easing.cpp">
+      <Filter>Average4K\Engine\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="BASS.cpp">
+      <Filter>Average4K\Engine\External\BASS</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
+      <Filter>Average4K\Engine\External\Glad</Filter>
+    </ClCompile>
+    <ClCompile Include="stbi.cpp">
+      <Filter>Average4K\Engine\External\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUIHelper.cpp">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="pugixml.cpp">
+      <Filter>Average4K\Engine\External\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="Multiplayer.cpp">
+      <Filter>Average4K\Avg4k\External\Multiplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="CPacketHostUpdateLobby.cpp">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Average4K.cpp">
+      <Filter>Average4K\Avg4k</Filter>
+    </ClCompile>
+    <ClCompile Include="FntParser.cpp">
+      <Filter>Average4K\Engine\External\SpriteFont</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinUtils.cpp">
+      <Filter>Average4K\Avg4k\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenu.cpp">
+      <Filter>Average4K\Avg4k\Menus\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaFile.cpp">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="ConsoleCommandHandler.cpp">
+      <Filter>Average4K\Engine\Console</Filter>
+    </ClCompile>
+    <ClCompile Include="Avg4kCmdHandler.cpp">
+      <Filter>Average4K\Avg4k</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuLuaFile.cpp">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaText.cpp">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaGameObject.cpp">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Base64.cpp">
+      <Filter>Average4K\Engine\External\Base64</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaSprite.cpp">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuLua.cpp">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadingPacksMenu.cpp">
+      <Filter>Average4K\Avg4k\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="SongGatherer.cpp">
+      <Filter>Average4K\Avg4k\External\Packs</Filter>
+    </ClCompile>
+    <ClCompile Include="Gameplay.cpp">
+      <Filter>Average4K\Avg4k\Menus\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaAnimatedSprite.cpp">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="GameplayLuaFile.cpp">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="GameplayMenu.cpp">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="Playfield.cpp">
+      <Filter>Average4K\Avg4k\Objects\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Receptor.cpp">
+      <Filter>Average4K\Avg4k\Objects\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Note.cpp">
+      <Filter>Average4K\Avg4k\Objects\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="StepFile.cpp">
+      <Filter>Average4K\Avg4k\External\ChartParsers\Stepmania</Filter>
+    </ClCompile>
+    <ClCompile Include="StringTools.cpp">
+      <Filter>Average4K\Engine\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Channel.cpp">
+      <Filter>Average4K\Engine\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Average4K\Engine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Average4K\Engine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor.cpp">
+      <Filter>Average4K\Avg4k\Menus\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="QuaverFile.cpp">
+      <Filter>Average4K\Avg4k\External\ChartParsers\Quaver</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="includes.h">
+      <Filter>Average4K</Filter>
+    </ClInclude>
+    <ClInclude Include="Logging.h">
+      <Filter>Average4K\Engine\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Average4K\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Channel.h">
+      <Filter>Average4K\Engine\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>Average4K\Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Average4K\Engine\Render\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Average4K\Engine\Render\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Display.h">
+      <Filter>Average4K\Engine\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Average4K\Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Average4K\Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="TweenManager.h">
+      <Filter>Average4K\Engine\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>Average4K\Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="EventManager.h">
+      <Filter>Average4K\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="StartScreen.h">
+      <Filter>Average4K\Avg4k\Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_glfw.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_opengl3.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_opengl3_loader.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imconfig.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_internal.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_rectpack.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_textedit.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_truetype.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Console.h">
+      <Filter>Average4K\Engine\Console</Filter>
+    </ClInclude>
+    <ClInclude Include="StringTools.h">
+      <Filter>Average4K\Engine\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="implot.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="implot_internal.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Easing.h">
+      <Filter>Average4K\Engine\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Text.h">
+      <Filter>Average4K\Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="BASS.h">
+      <Filter>Average4K\Engine\External\BASS</Filter>
+    </ClInclude>
+    <ClInclude Include="imageinfo.hpp">
+      <Filter>Average4K\Engine\External\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="stbi.h">
+      <Filter>Average4K\Engine\External\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUIHelper.h">
+      <Filter>Average4K\Engine\External\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="pugiconfig.hpp">
+      <Filter>Average4K\Engine\External\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="pugixml.hpp">
+      <Filter>Average4K\Engine\External\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="FntParser.h">
+      <Filter>Average4K\Engine\External\SpriteFont</Filter>
+    </ClInclude>
+    <ClInclude Include="SteamInterface.h">
+      <Filter>Average4K\Avg4k\External\Steam</Filter>
+    </ClInclude>
+    <ClInclude Include="SteamWorkshop.h">
+      <Filter>Average4K\Avg4k\External\Steam</Filter>
+    </ClInclude>
+    <ClInclude Include="SteamIncludes.h">
+      <Filter>Average4K\Avg4k\External\Steam</Filter>
+    </ClInclude>
+    <ClInclude Include="Average4K.h">
+      <Filter>Average4K\Avg4k</Filter>
+    </ClInclude>
+    <ClInclude Include="Multiplayer.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Base64.h">
+      <Filter>Average4K\Engine\External\Base64</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketChartAcquired.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketHello.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketHostChangeChart.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketHostEndChart.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketHostServer.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketHostStartGame.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketHostUpdateLobby.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketJoinServer.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketLeaderboardRequest.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketLeave.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketNoteHit.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketRequestAvatar.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketSendMessage.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketServerList.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketSongFinished.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketStatus.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketSubmitScore.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="CPacketWtfAmIn.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketJoinServerReply.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketLeaderboardResponse.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketOnChat.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketPlayerSongFinished.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketScoreResult.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketServerListReply.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketStartLobbyGame.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketStatus.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketUpdateEncryptionParameters.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketUpdateLeaderboard.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketUpdateLobbyChart.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketUpdateLobbyData.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketWtfAmInReply.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketAvatarRequestResponse.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketFinalizeChart.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketFuckYou.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketHello.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketHostServerReply.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPacketInvalidPacket.h">
+      <Filter>Average4K\Avg4k\External\Multiplayer\Packet\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings.h">
+      <Filter>Average4K\Avg4k\External\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Paths.h">
+      <Filter>Average4K\Engine\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Skin.h">
+      <Filter>Average4K\Avg4k\External\Skin</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigReader.h">
+      <Filter>Average4K\Avg4k\External\CfgReader</Filter>
+    </ClInclude>
+    <ClInclude Include="RhythmChannel.h">
+      <Filter>Average4K\Avg4k\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeUtils.h">
+      <Filter>Average4K\Avg4k\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinUtils.h">
+      <Filter>Average4K\Avg4k\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenu.h">
+      <Filter>Average4K\Avg4k\Menus\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Notifications.h">
+      <Filter>Average4K\Avg4k\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>Average4K\Engine\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuLuaFile.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaFile.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsoleCommandHandler.h">
+      <Filter>Average4K\Engine\Console</Filter>
+    </ClInclude>
+    <ClInclude Include="Avg4kCmdHandler.h">
+      <Filter>Average4K\Avg4k</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaMenu.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaRect.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaGameObject.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaSprite.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaTexture.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaText.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaConfig.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Rectangle.h">
+      <Filter>Average4K\Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaRectangle.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="ChartFile.h">
+      <Filter>Average4K\Avg4k\External\ChartParsers</Filter>
+    </ClInclude>
+    <ClInclude Include="SongGatherer.h">
+      <Filter>Average4K\Avg4k\External\Packs</Filter>
+    </ClInclude>
+    <ClInclude Include="Pack.h">
+      <Filter>Average4K\Avg4k\External\Packs</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingPacksMenu.h">
+      <Filter>Average4K\Avg4k\Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="StepFile.h">
+      <Filter>Average4K\Avg4k\External\ChartParsers\Stepmania</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaPack.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaChart.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="Gameplay.h">
+      <Filter>Average4K\Avg4k\Menus\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteAnimated.h">
+      <Filter>Average4K\Avg4k\External\SpriteSheet</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaAnimatedSprite.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaChannel.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayLuaFile.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayMenu.h">
+      <Filter>Average4K\Avg4k\External\LuaInterfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Playfield.h">
+      <Filter>Average4K\Avg4k\Objects\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Receptor.h">
+      <Filter>Average4K\Avg4k\Objects\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Note.h">
+      <Filter>Average4K\Avg4k\Objects\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Editor.h">
+      <Filter>Average4K\Avg4k\Menus\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="MiscConfigHandler.h">
+      <Filter>Average4K\Avg4k\MiscConfigHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="QuaverFile.h">
+      <Filter>Average4K\Avg4k\External\ChartParsers\Quaver</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="avg4k-new.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include=".ico" />
+    <Image Include="icon.ico" />
+  </ItemGroup>
+</Project>

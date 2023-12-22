@@ -16,6 +16,7 @@
 #pragma comment(lib,"x64_static\\Release\\AvgEngine.lib")
 #endif
 
+#include "Average4k/Data/SaveData.h"
 #include "Average4k/A4kGame.h"
 #include "Average4k/Screens/Menu/MainMenu.h"
 
@@ -105,7 +106,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	using namespace Average4k;
 
-	A4kGame* game = new A4kGame("Average4k", "a1");
+	A4kGame* game = new A4kGame("Average4k", A_VERSION);
 
 	glfwMakeContextCurrent(game->Window);
 

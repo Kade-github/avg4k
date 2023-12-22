@@ -11,11 +11,14 @@
 #include <AvgEngine/Game.h>
 #include <AvgEngine/Base/Text.h>
 
+#include "Data/SaveData.h"
+
 namespace Average4k
 {
 	class A4kGame : public AvgEngine::Game
 	{
 	public:
+		static Data::SaveData saveData;
 		static A4kGame* gameInstance;
 
 		static float ScaleFactorX;

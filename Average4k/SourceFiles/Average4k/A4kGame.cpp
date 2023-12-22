@@ -27,4 +27,10 @@ void Average4k::A4kGame::Start()
 	glfwSetWindowIcon(Window, 1, images);
 
 	AvgEngine::Logging::writeLog("[Sodalite] Set window icon!");
+
+	// Get save file
+
+	
+
+
 }

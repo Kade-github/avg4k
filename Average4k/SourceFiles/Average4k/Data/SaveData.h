@@ -9,6 +9,7 @@
 #pragma once
 
 #include <fstream>
+#include <filesystem>
 
 #include "Types/SkinData.h"
 #include "Types/GameplayData.h"
@@ -35,6 +36,9 @@ namespace Average4k::Data
 
 		static SaveData Load(std::string file)
 		{
+			if (!std::filesystem::exists(file))
+				return SaveData();
+
 			std::ifstream ifs(file, std::ifstream::in | std::ios::binary);
 			std::stringstream buffer;
 			buffer << ifs.rdbuf();

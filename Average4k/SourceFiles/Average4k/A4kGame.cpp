@@ -30,7 +30,6 @@ void Average4k::A4kGame::Start()
 
 	// Get save file
 
-	
-
+	saveData = Data::SaveData::Load("Assets/Save/Save.avg");
 
 }

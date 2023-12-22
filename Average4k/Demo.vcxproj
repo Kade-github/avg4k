@@ -42,6 +42,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceFiles\Average4k\A4kGame.h" />
+    <ClInclude Include="SourceFiles\Average4k\Data\Types\GameplayData.h" />
+    <ClInclude Include="SourceFiles\Average4k\Data\SaveData.h" />
+    <ClInclude Include="SourceFiles\Average4k\Data\Types\SkinData.h" />
+    <ClInclude Include="SourceFiles\Average4k\Defines.h" />
+    <ClInclude Include="SourceFiles\Average4k\Helpers\FileDiag.h" />
+    <ClInclude Include="SourceFiles\Average4k\Helpers\QuickAdd.h" />
+    <ClInclude Include="SourceFiles\Average4k\Helpers\StringTools.h" />
+    <ClInclude Include="SourceFiles\Average4k\Helpers\TimeToScreen.h" />
+    <ClInclude Include="SourceFiles\Average4k\Helpers\WaveformData.h" />
     <ClInclude Include="SourceFiles\Average4k\Screens\Menu\MainMenu.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

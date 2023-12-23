@@ -21,7 +21,7 @@ namespace Average4k::Data
 	class SaveData {
 	public:
 		SaveData() = default;
-		const char* header = A_SHEADER;
+		std::string header = A_SHEADER;
 
 		Types::SkinData skinData;
 		Types::GameplayData gameplayData;

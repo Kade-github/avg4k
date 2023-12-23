@@ -15,8 +15,11 @@ namespace Average4k::Data::Types
 	class SkinData {
 	public:
 		SkinData() = default;
-		const char* name = "DefaultArrow";
-		const char* script = "Default.lua";
+		std::string name = "DefaultArrow";
+		std::string script = "Default.lua";
+
+		bool relativePath = true;
+		std::string path = "Assets/Skins/DefaultArrow";
 
 		MSGPACK_DEFINE_ARRAY(name, script);
 	};

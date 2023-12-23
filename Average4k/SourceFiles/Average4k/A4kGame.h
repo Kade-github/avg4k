@@ -12,17 +12,16 @@
 #include <AvgEngine/Base/Text.h>
 
 #include "Data/SaveData.h"
+#include "Skin/Skin.h"
 
 namespace Average4k
 {
 	class A4kGame : public AvgEngine::Game
 	{
 	public:
-		static Data::SaveData saveData;
+		Data::SaveData saveData;
+		Skin skin;
 		static A4kGame* gameInstance;
-
-		static float ScaleFactorX;
-		static float ScaleFactorY;
 
 		AvgEngine::Base::Text* debugText;
 		AvgEngine::Base::Text* debugTextOutlined;
@@ -40,8 +39,8 @@ namespace Average4k
 			Game::Switch();
 			if (!debugText)
 			{
-				debugText = new AvgEngine::Base::Text(0, -20, "Assets/Fonts/", "Arial.fnt", "", 32);
-				debugTextOutlined = new AvgEngine::Base::Text(0, -20, "Assets/Fonts/", "ArialOutlined.fnt", "", 32);
+				debugText = skin.CreateText("Arial.fnt", 32);
+				debugTextOutlined = skin.CreateText("ArialOutlined.fnt", 32);
 			}
 			debugText->tween = &CurrentMenu->tween;
 			debugText->eManager = CurrentMenu->eManager;

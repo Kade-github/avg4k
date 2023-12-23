@@ -8,6 +8,8 @@
 
 Average4k::A4kGame* Average4k::A4kGame::gameInstance = nullptr;
 
+
+
 Average4k::A4kGame::A4kGame(std::string _t, std::string _v, int w, int h) : Game(_t, _v, w, h)
 {
 	fpsCap = 144;
@@ -31,5 +33,8 @@ void Average4k::A4kGame::Start()
 	// Get save file
 
 	saveData = Data::SaveData::Load("Assets/Save/Save.avg");
+
+	skin = Skin::Skin(saveData.skinData);
+
 
 }

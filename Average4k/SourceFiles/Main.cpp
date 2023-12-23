@@ -251,8 +251,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	shouldQuit = true;
 
-	std::ofstream out("config.ini");
-
 	game->Destroy();
 	glfwDestroyWindow(game->Window);
 	glfwTerminate();

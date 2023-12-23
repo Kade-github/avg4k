@@ -31,6 +31,7 @@
     <ClCompile Include="Include\ImGui\implot_items.cpp" />
     <ClCompile Include="SourceFiles\Average4k\A4kGame.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Screens\Menu\MainMenu.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Skin\Skin.cpp" />
     <ClCompile Include="SourceFiles\External\ImGui\imgui.cpp" />
     <ClCompile Include="SourceFiles\External\ImGui\imgui_demo.cpp" />
     <ClCompile Include="SourceFiles\External\ImGui\imgui_draw.cpp" />
@@ -41,6 +42,7 @@
     <ClCompile Include="SourceFiles\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="SourceFiles\Average4k\A4kGame.h" />
     <ClInclude Include="SourceFiles\Average4k\Data\Types\GameplayData.h" />
     <ClInclude Include="SourceFiles\Average4k\Data\SaveData.h" />
@@ -52,6 +54,15 @@
     <ClInclude Include="SourceFiles\Average4k\Helpers\TimeToScreen.h" />
     <ClInclude Include="SourceFiles\Average4k\Helpers\WaveformData.h" />
     <ClInclude Include="SourceFiles\Average4k\Screens\Menu\MainMenu.h" />
+    <ClInclude Include="SourceFiles\Average4k\Skin\Skin.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Average4k.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="A4kIcon128.ico" />
+    <Image Include="C:\Users\kadep\Downloads\A4kIcon128.ico" />
+    <Image Include="icon1.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

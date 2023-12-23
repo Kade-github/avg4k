@@ -27,10 +27,7 @@ namespace Average4k
 		AvgEngine::Base::Text* debugTextOutlined;
 		A4kGame(std::string _t, std::string _v, int w = 1920, int h = 1080);
 
-		void Destroy()
-		{
-
-		}
+		void Destroy();
 
 		void Start();
 

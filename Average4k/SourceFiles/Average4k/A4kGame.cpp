@@ -4,16 +4,20 @@
 */
 
 #include "A4kGame.h"
+
 #include <AvgEngine/External/Image/stbi.h>
 
 Average4k::A4kGame* Average4k::A4kGame::gameInstance = nullptr;
-
-
 
 Average4k::A4kGame::A4kGame(std::string _t, std::string _v, int w, int h) : Game(_t, _v, w, h)
 {
 	fpsCap = 144;
 	gameInstance = this;
+}
+
+void Average4k::A4kGame::Destroy()
+{
+	saveData.Save("Assets/Save/Save.avg");
 }
 
 void Average4k::A4kGame::Start()
@@ -28,7 +32,7 @@ void Average4k::A4kGame::Start()
 	images[3].pixels = AvgEngine::External::stbi_h::stbi_load_file_data("Assets/Icon/A4kIcon256.png", &images[1].width, &images[1].height);
 	glfwSetWindowIcon(Window, 1, images);
 
-	AvgEngine::Logging::writeLog("[Sodalite] Set window icon!");
+	AvgEngine::Logging::writeLog("[Average4k] Set window icon!");
 
 	// Get save file
 

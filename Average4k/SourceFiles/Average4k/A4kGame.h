@@ -36,8 +36,8 @@ namespace Average4k
 			Game::Switch();
 			if (!debugText)
 			{
-				debugText = skin.CreateText("Arial.fnt", 32);
-				debugTextOutlined = skin.CreateText("ArialOutlined.fnt", 32);
+				debugText = skin.CreateText("ArialUnicode.fnt", 32);
+				debugTextOutlined = skin.CreateText("ArialUnicodeOutlined.fnt", 32);
 			}
 			debugText->tween = &CurrentMenu->tween;
 			debugText->eManager = CurrentMenu->eManager;

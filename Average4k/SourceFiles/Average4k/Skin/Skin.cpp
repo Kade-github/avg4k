@@ -24,7 +24,7 @@ void Average4k::Skin::ClearTextures()
 
 std::string Average4k::Skin::GetPath(std::string p)
 {
-	return std::string(data.path + p + "/");
+	return std::string(data.path + "/" + p);
 }
 
 AvgEngine::Base::Sprite* Average4k::Skin::CreateSprite(std::string texture, bool unique)
@@ -54,6 +54,6 @@ AvgEngine::Base::Sprite* Average4k::Skin::CreateSprite(std::string texture, bool
 
 AvgEngine::Base::Text* Average4k::Skin::CreateText(std::string font, int size)
 {
-	AvgEngine::Base::Text* t = new AvgEngine::Base::Text(0,0, GetPath("/Fonts"), font, "", size);
+	AvgEngine::Base::Text* t = new AvgEngine::Base::Text(0,0, GetPath("/Fonts/"), font, "", size);
 	return t;
 }

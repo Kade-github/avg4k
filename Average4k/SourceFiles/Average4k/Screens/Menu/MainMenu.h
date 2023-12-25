@@ -9,6 +9,7 @@
 #pragma once
 #include <AvgEngine/Base/Menu.h>
 
+
 namespace Average4k::Screens::Menu
 {
 	class MainMenu : public AvgEngine::Base::Menu

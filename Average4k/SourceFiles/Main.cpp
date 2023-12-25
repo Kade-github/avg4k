@@ -9,6 +9,7 @@
 #pragma comment(lib,"x64_static\\basswasapi.lib")
 #pragma comment(lib,"x64_static\\msgpackc.lib")
 #pragma comment(lib,"x64_static\\glfw3_mt.lib")
+#pragma comment(lib,"x64_static\\lua51.lib")
 
 #ifdef _DEBUG
 #pragma comment(lib,"x64_static\\Debug\\AvgEngine.lib")

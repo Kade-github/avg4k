@@ -78,6 +78,9 @@
     <ClCompile Include="SourceFiles\Average4k\Skin\Skin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SourceFiles\Average4k\Api\AvgLuaFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceFiles\Average4k\A4kGame.h">
@@ -117,6 +120,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceFiles\Average4k\Api\AvgLuaFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaAvgSprite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaAvgRect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaAvgTexture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

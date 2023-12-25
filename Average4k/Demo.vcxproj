@@ -30,6 +30,7 @@
     <ClCompile Include="Include\ImGui\implot_demo.cpp" />
     <ClCompile Include="Include\ImGui\implot_items.cpp" />
     <ClCompile Include="SourceFiles\Average4k\A4kGame.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Api\AvgLuaFile.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Screens\Menu\MainMenu.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Skin\Skin.cpp" />
     <ClCompile Include="SourceFiles\External\ImGui\imgui.cpp" />
@@ -44,6 +45,10 @@
   <ItemGroup>
     <ClInclude Include="resource.h" />
     <ClInclude Include="SourceFiles\Average4k\A4kGame.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\AvgLuaFile.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaAvgRect.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaAvgSprite.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaAvgTexture.h" />
     <ClInclude Include="SourceFiles\Average4k\Data\Types\GameplayData.h" />
     <ClInclude Include="SourceFiles\Average4k\Data\SaveData.h" />
     <ClInclude Include="SourceFiles\Average4k\Data\Types\SkinData.h" />

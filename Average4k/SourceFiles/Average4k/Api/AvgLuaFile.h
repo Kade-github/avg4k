@@ -10,6 +10,8 @@
 
 #define SOL_USE_LUA_HPP
 
+#include <AvgEngine/Base/GameObject.h>
+
 #include <sol/sol.hpp>
 
 namespace Average4k::Api
@@ -17,12 +19,16 @@ namespace Average4k::Api
 	class AvgLuaFile
 	{
 	public:
+		static std::vector<AvgEngine::Base::GameObject*> objects;
+
 		AvgLuaFile() = default;
 		AvgLuaFile(const std::string& path);
 		~AvgLuaFile();
 
 		void load(const std::string& path);
 		void reload();
+
+		void create();
 
 		sol::state& getState();
 

@@ -28,9 +28,9 @@ namespace Average4k::Api
 		static void registerLua(sol::state& state)
 		{
 			state.new_usertype<LuaAvgTexture>("Texture", sol::constructors<LuaAvgTexture(int, int, std::string)>(), 
-				"width", &LuaAvgTexture::width,
-											"height", &LuaAvgTexture::height,
-											"path", &LuaAvgTexture::path
+				"w", &LuaAvgTexture::width,
+				"h", &LuaAvgTexture::height,
+				"path", &LuaAvgTexture::path
 			);
 		}
 

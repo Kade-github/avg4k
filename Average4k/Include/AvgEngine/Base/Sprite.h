@@ -51,6 +51,12 @@ namespace AvgEngine::Base
 			iTransform = transform;
 		}
 
+		Sprite(float x, float y) : GameObject(x, y)
+		{
+			src = { 0,0,1,1 };
+			iTransform = transform;
+		}
+
 		~Sprite()
 		{
 			if (!texture->dontDelete)

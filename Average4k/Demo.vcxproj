@@ -46,6 +46,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="SourceFiles\Average4k\A4kGame.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\AvgLuaFile.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaAvgMenu.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaAvgRect.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaAvgSprite.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaAvgTexture.h" />

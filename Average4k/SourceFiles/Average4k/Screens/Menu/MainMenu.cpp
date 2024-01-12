@@ -5,16 +5,12 @@
 
 #include "../../A4kGame.h"
 #include "MainMenu.h"
-#include "../../Api/Stubs/LuaAvgMenu.h"
+#include "../../Api/AvgLuaFile.h"
 using namespace Average4k::Api;
 
 void Average4k::Screens::Menu::MainMenu::load()
 {
 	AvgLuaFile lua(Average4k::A4kGame::gameInstance->skin.GetPath("Scripts/MainMenu.lua"));
-
-	Average4k::Api::LuaAvgMenu::registerLua(lua.getState());
-
-	lua.getState()["menu"] = new LuaAvgMenu(this);
 
 	lua.create();
 }

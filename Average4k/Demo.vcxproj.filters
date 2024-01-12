@@ -125,18 +125,6 @@
     <ClInclude Include="SourceFiles\Average4k\Api\AvgLuaFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaAvgSprite.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaAvgRect.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaAvgTexture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaAvgMenu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Average4k.rc">

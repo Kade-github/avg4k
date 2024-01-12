@@ -3,9 +3,7 @@
 	2021-2024 Average4k
 */
 
-#include "Stubs/LuaAvgRect.h"
-#include "Stubs/LuaAvgTexture.h"
-#include "Stubs/LuaAvgSprite.h"
+#include "AvgLuaFile.h"
 
 std::vector<AvgEngine::Base::GameObject*> Average4k::Api::AvgLuaFile::objects = std::vector<AvgEngine::Base::GameObject*>();
 
@@ -15,9 +13,6 @@ Average4k::Api::AvgLuaFile::AvgLuaFile(const std::string& path)
 
 	state->open_libraries(sol::lib::base, sol::lib::table, sol::lib::math, sol::lib::string, sol::lib::utf8, sol::lib::debug, sol::lib::jit);
 
-	LuaAvgRect::registerLua(*state);
-	LuaAvgTexture::registerLua(*state);
-	LuaAvgSprite::registerLua(*state);
 
 	this->path = path;
 	reload();

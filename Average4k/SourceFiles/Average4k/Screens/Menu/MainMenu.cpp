@@ -62,10 +62,12 @@ void Average4k::Screens::Menu::MainMenu::draw()
 
 	AvgEngine::Game::Instance->GetMousePos(&mx, &my);
 
-	int mouse[2] = {mx, my};
+	int mouse[2] = {(int)mx, (int)my};
 
-	lua->getState().set("mouse", mouse);
+	sol::table m = lua->getState().create_named_table("mouse");
+
+	m.set("x", mouse[0]);
+	m.set("y", mouse[1]);
 	
-	if (lua->getState().get("draw") != sol::nil)
-		lua->getState()["draw"]();
+	lua->getState()["draw"]();
 }

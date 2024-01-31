@@ -30,6 +30,9 @@ namespace Average4k::Api
 
 		void create();
 
+		void reset();
+		void registerTypes();
+
 		sol::state& getState();
 
 	private:

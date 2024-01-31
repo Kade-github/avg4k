@@ -11,22 +11,23 @@ Average4k::Api::AvgLuaFile::AvgLuaFile(const std::string& path)
 {
 	state = std::make_unique<sol::state>();
 
-	state->open_libraries(sol::lib::base, sol::lib::table, sol::lib::math, sol::lib::string, sol::lib::utf8, sol::lib::debug, sol::lib::jit);
-
-	Average4k::Api::Stubs::LuaSprite::Register(*state);
-
 	this->path = path;
 	reload();
 }
 
 Average4k::Api::AvgLuaFile::~AvgLuaFile()
 {
-	state->collect_garbage();
-	state.reset();
+	reset();
 }
 
 void Average4k::Api::AvgLuaFile::load(const std::string& path)
 {
+	if (state)
+	{
+		reset();
+		registerTypes();
+	}
+
 	this->path = path;
 	state->safe_script_file(path);
 
@@ -69,6 +70,19 @@ void Average4k::Api::AvgLuaFile::create()
 	{
 		AvgEngine::Logging::writeLog("[Lua] No 'create' function in file: " + path);
 	}
+}
+
+void Average4k::Api::AvgLuaFile::reset()
+{
+	state->collect_garbage();
+	state.reset();
+}
+
+void Average4k::Api::AvgLuaFile::registerTypes()
+{
+	state->open_libraries(sol::lib::base, sol::lib::table, sol::lib::math, sol::lib::string, sol::lib::utf8, sol::lib::debug, sol::lib::jit);
+
+	Average4k::Api::Stubs::LuaSprite::Register(*state);
 }
 
 sol::state& Average4k::Api::AvgLuaFile::getState()

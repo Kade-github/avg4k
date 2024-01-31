@@ -33,6 +33,28 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 void Average4k::Screens::Menu::MainMenu::load()
 {
 	createFile("Scripts/MainMenu.lua", false);
+
+	// setup event listeners
+
+	eManager->Subscribe(AvgEngine::Events::EventType::Event_KeyPress, [&](AvgEngine::Events::Event e) {
+		lua->getState()["keyPress"](e.data);
+	});
+
+	eManager->Subscribe(AvgEngine::Events::EventType::Event_KeyRelease, [&](AvgEngine::Events::Event e) {
+		lua->getState()["keyRelease"](e.data);
+	});
+
+	eManager->Subscribe(AvgEngine::Events::EventType::Event_MouseDown, [&](AvgEngine::Events::Event e) {
+		lua->getState()["mousePress"](e.data);
+	});
+
+	eManager->Subscribe(AvgEngine::Events::EventType::Event_MouseRelease, [&](AvgEngine::Events::Event e) {
+		lua->getState()["mouseRelease"](e.data);
+	});
+
+	eManager->Subscribe(AvgEngine::Events::EventType::Event_MouseScroll, [&](AvgEngine::Events::Event e) {
+		lua->getState()["mouseScroll"](e.data);
+	});
 }
 
 void Average4k::Screens::Menu::MainMenu::draw()

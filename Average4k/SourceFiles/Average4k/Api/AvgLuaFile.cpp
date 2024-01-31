@@ -84,6 +84,9 @@ void Average4k::Api::AvgLuaFile::registerTypes()
 	state->open_libraries(sol::lib::base, sol::lib::table, sol::lib::math, sol::lib::string, sol::lib::utf8, sol::lib::debug, sol::lib::jit);
 
 	Average4k::Api::Stubs::LuaSprite::Register(*state);
+
+	// TODO:
+	// Register Text, and other types.
 }
 
 sol::state& Average4k::Api::AvgLuaFile::getState()

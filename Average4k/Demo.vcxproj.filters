@@ -81,6 +81,15 @@
     <ClCompile Include="SourceFiles\Average4k\Api\AvgLuaFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SourceFiles\External\ImGui\implot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceFiles\External\ImGui\implot_demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceFiles\External\ImGui\implot_items.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceFiles\Average4k\A4kGame.h">
@@ -123,6 +132,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SourceFiles\Average4k\Api\AvgLuaFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaSprite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

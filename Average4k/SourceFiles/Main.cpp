@@ -3,20 +3,20 @@
 	2021-2024 Average4k
 */
 
-#pragma comment(lib,"x64_static\\opengl.lib")
-#pragma comment(lib,"x64_static\\bass.lib")
-#pragma comment(lib,"x64_static\\bass_fx.lib")
-#pragma comment(lib,"x64_static\\basswasapi.lib")
-#pragma comment(lib,"x64_static\\msgpackc.lib")
-#pragma comment(lib,"x64_static\\glfw3_mt.lib")
-#pragma comment(lib,"x64_static\\lua51.lib")
+#pragma comment(lib,"Library\\x64_static\\opengl.lib")
+#pragma comment(lib,"Library\\x64_static\\bass.lib")
+#pragma comment(lib,"Library\\x64_static\\bass_fx.lib")
+#pragma comment(lib,"Library\\x64_static\\basswasapi.lib")
+#pragma comment(lib,"Library\\x64_static\\msgpackc.lib")
+#pragma comment(lib,"Library\\x64_static\\glfw3_mt.lib")
+#pragma comment(lib,"Library\\x64_static\\lua51.lib")
 
 #ifdef _DEBUG
-#pragma comment(lib,"x64_static\\Debug\\AvgEngine.lib")
+#pragma comment(lib,"Library\\x64_static\\Debug\\AvgEngine.lib")
 #else
-#pragma comment(lib,"x64_static\\Release\\AvgEngine.lib")
+#pragma comment(lib,"Library\\x64_static\\Release\\AvgEngine.lib")
 #endif
-
+#include <thread>
 #include "Average4k/Data/SaveData.h"
 #include "Average4k/A4kGame.h"
 #include "Average4k/Screens/Menu/MainMenu.h"

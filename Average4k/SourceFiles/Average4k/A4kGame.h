@@ -7,7 +7,7 @@
 #define AVG4K_GAME_H
 
 #pragma once
-
+#include <mutex>
 #include <AvgEngine/Game.h>
 #include <AvgEngine/Base/Text.h>
 
@@ -33,7 +33,26 @@ namespace Average4k
 
 		void Switch() override
 		{
-			Game::Switch();
+			if (CurrentMenu != NULL)
+			{
+				for (AvgEngine::Base::GameObject* obj : CurrentMenu->GameObjects)
+				{
+					if (!obj->dontDelete)
+						delete obj;
+				}
+				CurrentMenu->GameObjects.clear();
+			}
+			AvgEngine::Base::Menu* lastMenu = CurrentMenu;
+			CurrentMenu = NextMenu;
+			CurrentMenu->eManager = &eManager;
+			eManager.Clear();
+			if (lastMenu != NULL)
+			{
+				lastMenu->tween.Clear();
+				delete lastMenu;
+			}
+			CurrentMenu->load();
+			AvgEngine::Render::Display::defaultShader->setProject(CurrentMenu->camera.projection);
 			if (!debugText)
 			{
 				debugText = skin.CreateText("ArialUnicode.fnt", 32);

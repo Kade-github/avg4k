@@ -4,7 +4,7 @@
 */
 
 #include "AvgLuaFile.h"
-
+#include "Stubs/LuaSprite.h"
 std::vector<AvgEngine::Base::GameObject*> Average4k::Api::AvgLuaFile::objects = std::vector<AvgEngine::Base::GameObject*>();
 
 Average4k::Api::AvgLuaFile::AvgLuaFile(const std::string& path)
@@ -13,6 +13,7 @@ Average4k::Api::AvgLuaFile::AvgLuaFile(const std::string& path)
 
 	state->open_libraries(sol::lib::base, sol::lib::table, sol::lib::math, sol::lib::string, sol::lib::utf8, sol::lib::debug, sol::lib::jit);
 
+	Average4k::Api::Stubs::LuaSprite::Register(*state);
 
 	this->path = path;
 	reload();
@@ -40,6 +41,8 @@ void Average4k::Api::AvgLuaFile::load(const std::string& path)
 	AvgEngine::Logging::writeLog("[Lua] Loaded file: " + path);
 
 	state->set_function("print", AvgEngine::Logging::writeLog);
+
+
 
 }
 

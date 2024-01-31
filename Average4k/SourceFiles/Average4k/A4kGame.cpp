@@ -38,7 +38,7 @@ void Average4k::A4kGame::Start()
 
 	saveData = Data::SaveData::Load("Assets/Save/Save.avg");
 
-	skin = Skin::Skin(saveData.skinData);
+	skin = Skin(saveData.skinData);
 
 
 }

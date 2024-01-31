@@ -1,13 +1,7 @@
 function create()
     print('hello world')
 
-    local s = Sprite.new(25,25, "Images/Logo.png")
+    local s = Sprite.new(20,20, "Images/Logo.png")
 
-    print("created sprite")
-
-    print(s.transform.w .. " " .. s.transform.h .. " " .. s.texture.path)
-
-    menu:addObject(s)
-
-    print('hello world 2')
+    currentMenu:addObject(s)
 end

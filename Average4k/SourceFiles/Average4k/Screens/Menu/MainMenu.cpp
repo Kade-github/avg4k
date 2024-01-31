@@ -10,10 +10,7 @@ using namespace Average4k::Api;
 void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset)
 {
 	if (reset)
-	{
-		lua->reset();
 		lua->load(Average4k::A4kGame::gameInstance->skin.GetPath(path));
-	}
 	else
 		lua = new AvgLuaFile(Average4k::A4kGame::gameInstance->skin.GetPath(path));
 
@@ -60,5 +57,15 @@ void Average4k::Screens::Menu::MainMenu::load()
 void Average4k::Screens::Menu::MainMenu::draw()
 {
 	AvgEngine::Base::Menu::draw();
+
+	double mx, my;
+
+	AvgEngine::Game::Instance->GetMousePos(&mx, &my);
+
+	int mouse[2] = {mx, my};
+
+	lua->getState().set("mouse", mouse);
 	
+	if (lua->getState().get("draw") != sol::nil)
+		lua->getState()["draw"]();
 }

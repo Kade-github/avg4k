@@ -27,10 +27,10 @@ namespace AvgEngine::External
 			IMGUI_CHECKVERSION();
 			ImGui::CreateContext();
 			ImPlot::CreateContext();
-			io = ImGui::GetIO(); (void)io;
-			ImGui::GetIO().IniFilename = NULL;
+			io = ImGui::GetIO();
+			io.IniFilename = NULL;
 			
-			ImGui::GetIO().ConfigWindowsResizeFromEdges = false;
+			io.ConfigWindowsResizeFromEdges = false;
 			ImGui::StyleColorsDark();
 			ImGui_ImplGlfw_InitForOpenGL(window, true);
 			ImGui_ImplOpenGL3_Init("#version 150");

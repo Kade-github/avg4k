@@ -36,9 +36,9 @@ Index of this file:
 #define IMGUI_DEFINE_MATH_OPERATORS
 #endif
 
-#include <ImGui/imgui.h>
+#include "imgui.h"
 #ifndef IMGUI_DISABLE
-#include <ImGui/imgui_internal.h>
+#include "imgui_internal.h"
 
 // System includes
 #include <stdint.h>     // intptr_t
@@ -3814,7 +3814,7 @@ static bool STB_TEXTEDIT_INSERTCHARS(ImGuiInputTextState* obj, int pos, const Im
 
 #define STB_TEXTEDIT_IMPLEMENTATION
 #define STB_TEXTEDIT_memmove memmove
-#include <ImGui/imstb_textedit.h>
+#include "imstb_textedit.h"
 
 // stb_textedit internally allows for a single undo record to do addition and deletion, but somehow, calling
 // the stb_textedit_paste() function creates two separate records, so we perform it manually. (FIXME: Report to nothings/stb?)

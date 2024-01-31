@@ -25,6 +25,7 @@ void Average4k::Api::AvgLuaFile::load(const std::string& path)
 	if (state)
 	{
 		reset();
+		state = std::make_unique<sol::state>();
 		registerTypes();
 	}
 

@@ -7,7 +7,6 @@
 #define AVG4K_MAINMENU_H
 
 #pragma once
-#include <AvgEngine/Base/Menu.h>
 #include "../../Api/AvgLuaFile.h"
 #include "../../Api/Stubs/LuaMenu.h"
 
@@ -16,7 +15,7 @@ namespace Average4k::Screens::Menu
 	class MainMenu : public AvgEngine::Base::Menu
 	{
 	public:
-		AvgLuaFile* lua;
+		Average4k::Api::AvgLuaFile* lua;
 		void createFile(std::string path, bool reset = true);
 		void load() override;
 		void draw() override;

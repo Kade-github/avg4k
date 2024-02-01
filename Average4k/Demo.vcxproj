@@ -52,6 +52,7 @@
     <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaMenu.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaObject.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaSprite.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaText.h" />
     <ClInclude Include="SourceFiles\Average4k\Data\Types\GameplayData.h" />
     <ClInclude Include="SourceFiles\Average4k\Data\SaveData.h" />
     <ClInclude Include="SourceFiles\Average4k\Data\Types\SkinData.h" />

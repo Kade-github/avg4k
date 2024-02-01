@@ -5,6 +5,7 @@
 
 #include "AvgLuaFile.h"
 #include "Stubs/LuaSprite.h"
+#include "Stubs/LuaText.h"
 std::vector<AvgEngine::Base::GameObject*> Average4k::Api::AvgLuaFile::objects = std::vector<AvgEngine::Base::GameObject*>();
 
 Average4k::Api::AvgLuaFile::AvgLuaFile(const std::string& path)
@@ -84,9 +85,7 @@ void Average4k::Api::AvgLuaFile::registerTypes()
 	state->open_libraries(sol::lib::base, sol::lib::table, sol::lib::math, sol::lib::string, sol::lib::utf8, sol::lib::debug, sol::lib::jit);
 
 	Average4k::Api::Stubs::LuaSprite::Register(*state);
-
-	// TODO:
-	// Register Text, and other types.
+	Average4k::Api::Stubs::LuaText::Register(*state);
 }
 
 sol::state& Average4k::Api::AvgLuaFile::getState()

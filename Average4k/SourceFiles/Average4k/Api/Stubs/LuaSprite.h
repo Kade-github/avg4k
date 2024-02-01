@@ -75,6 +75,14 @@ namespace Average4k::Api::Stubs
 			return _base->transform.angle;
 		}
 
+		void setColor(int r, int g, int b, int a)
+		{
+			_base->transform.r = r;
+			_base->transform.g = g;
+			_base->transform.b = b;
+			_base->transform.a = a;
+		}
+
 		static void Register(sol::state& state)
 		{
 			state.new_usertype<LuaSprite>("Sprite",
@@ -84,6 +92,7 @@ namespace Average4k::Api::Stubs
 				"width", sol::property(&LuaSprite::getWidth, &LuaSprite::setWidth),
 				"height", sol::property(&LuaSprite::getHeight, &LuaSprite::setHeight),
 				"angle", sol::property(&LuaSprite::getAngle, &LuaSprite::setAngle),
+				"color", &LuaSprite::setColor,
 				sol::base_classes, sol::bases<LuaObject>()
 			);
 		}

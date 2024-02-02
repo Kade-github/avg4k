@@ -107,6 +107,19 @@ namespace AvgEngine::Base
 		}
 
 		/**
+		 * \brief Removes every object, and deletes them from the stack.
+		 */
+		virtual void removeAll()
+		{
+			for (GameObject* g : GameObjects)
+			{
+				delete g;
+			}
+
+			GameObjects.clear();
+		}
+
+		/**
 		 * \brief Removes an object
 		 * \param id The id of the object to remove
 		 */

@@ -8,6 +8,7 @@
 #define GAME_H
 
 #pragma once
+#include <mutex>
 #include <AvgEngine/Base/Menu.h>
 #include <AvgEngine/Debug/Console.h>
 #include <AvgEngine/EventManager.h>

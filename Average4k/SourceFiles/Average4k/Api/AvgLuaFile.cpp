@@ -8,11 +8,11 @@
 #include "Stubs/LuaText.h"
 std::vector<AvgEngine::Base::GameObject*> Average4k::Api::AvgLuaFile::objects = std::vector<AvgEngine::Base::GameObject*>();
 
-Average4k::Api::AvgLuaFile::AvgLuaFile(const std::string& path)
+Average4k::Api::AvgLuaFile::AvgLuaFile(const std::string& ppath)
 {
-	state = std::make_unique<sol::state>();
+	state = std::make_unique<sol::state>(sol::c_call<decltype(&Average4k::Api::AvgLuaFile::luaPanic), &Average4k::Api::AvgLuaFile::luaPanic>);
 
-	this->path = path;
+	this->_path = ppath;
 	reload();
 }
 
@@ -21,27 +21,31 @@ Average4k::Api::AvgLuaFile::~AvgLuaFile()
 	reset();
 }
 
-void Average4k::Api::AvgLuaFile::load(const std::string& path)
+void Average4k::Api::AvgLuaFile::load(const std::string& ppath)
 {
-	if (state)
+	if (loaded)
 	{
 		reset();
-		state = std::make_unique<sol::state>();
-		registerTypes();
 	}
+	else
+	{
+		loaded = true;
+		state = std::make_unique<sol::state>(sol::c_call<decltype(&Average4k::Api::AvgLuaFile::luaPanic), &Average4k::Api::AvgLuaFile::luaPanic>);
+	}
+	registerTypes();
 
-	this->path = path;
-	state->safe_script_file(path);
+	this->_path = ppath;
+	state->safe_script_file(_path);
 
 	auto result = state->get<sol::optional<std::string>>("error");
 
 	if (result.has_value())
 	{
-		AvgEngine::Logging::writeLog("[Lua] Error in file: " + path + "\n" + result.value());
+		AvgEngine::Logging::writeLog("[Lua] Error in file: " + _path + "\n" + result.value());
 		return;
 	}
 
-	AvgEngine::Logging::writeLog("[Lua] Loaded file: " + path);
+	AvgEngine::Logging::writeLog("[Lua] Loaded file: " + _path);
 
 	state->set_function("print", AvgEngine::Logging::writeLog);
 
@@ -51,7 +55,7 @@ void Average4k::Api::AvgLuaFile::load(const std::string& path)
 
 void Average4k::Api::AvgLuaFile::reload()
 {
-	load(path);
+	load(_path);
 }
 
 void Average4k::Api::AvgLuaFile::create()
@@ -77,7 +81,6 @@ void Average4k::Api::AvgLuaFile::create()
 void Average4k::Api::AvgLuaFile::reset()
 {
 	state->collect_garbage();
-	state.reset();
 }
 
 void Average4k::Api::AvgLuaFile::registerTypes()
@@ -91,4 +94,12 @@ void Average4k::Api::AvgLuaFile::registerTypes()
 sol::state& Average4k::Api::AvgLuaFile::getState()
 {
 	return *state;
+}
+
+void Average4k::Api::AvgLuaFile::luaPanic(sol::optional<std::string> maybe_msg)
+{
+	std::string msg = maybe_msg.value_or("No message provided");
+	AvgEngine::Logging::writeLog("[Lua] PANIC: " + msg);
+
+	throw std::runtime_error(msg);
 }

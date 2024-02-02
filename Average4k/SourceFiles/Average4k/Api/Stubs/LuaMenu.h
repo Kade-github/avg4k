@@ -9,6 +9,8 @@
 #pragma once
 #include "LuaObject.h"
 #include "AvgEngine/Base/Menu.h"
+
+#define SOL_NO_EXCEPTIONS 1
 #define SOL_USE_LUA_HPP
 #include <sol/sol.hpp>
 
@@ -26,11 +28,14 @@ namespace Average4k::Api::Stubs
 		void addObject(LuaObject obj)
 		{
 			_base->addObject(obj._baseObject);
+
+			AvgLuaFile::objects.push_back(obj._baseObject);
 		}
 
 		void removeObject(LuaObject obj)
 		{
 			_base->removeObject(obj._baseObject);
+			AvgLuaFile::objects.push_back(obj._baseObject);
 		}
 
 		static void Register(sol::state& state)

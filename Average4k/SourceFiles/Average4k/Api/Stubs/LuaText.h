@@ -10,6 +10,8 @@
 #include "../../A4kGame.h"
 #include "LuaObject.h"
 #include <AvgEngine/Base/Text.h>
+
+#define SOL_NO_EXCEPTIONS 1
 #define SOL_USE_LUA_HPP
 #include <sol/sol.hpp>
 
@@ -111,8 +113,8 @@ namespace Average4k::Api::Stubs
 				sol::constructors<LuaText(int, int, const std::string&, const std::string&, int)>(),
 				"x", sol::property(&LuaText::getX, &LuaText::setX),
 				"y", sol::property(&LuaText::getY, &LuaText::setY),
-				"width", &LuaText::getWidth,
-				"height", &LuaText::getHeight,
+				"width", sol::readonly_property(&LuaText::getWidth),
+				"height", sol::readonly_property(&LuaText::getHeight),
 				"text", sol::property(&LuaText::getText, &LuaText::setText),
 				"font", sol::property(&LuaText::getFont, &LuaText::setFont),
 				"size", sol::property(&LuaText::getSize, &LuaText::setSize),

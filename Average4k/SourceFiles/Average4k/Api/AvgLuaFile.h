@@ -8,6 +8,8 @@
 
 #pragma once
 
+#define SOL_NO_EXCEPTIONS 1
+
 #define SOL_USE_LUA_HPP
 
 #include <AvgEngine/Base/GameObject.h>
@@ -35,9 +37,13 @@ namespace Average4k::Api
 
 		sol::state& getState();
 
-	private:
-		std::unique_ptr<sol::state> state;
 		std::string path;
+		void luaPanic(sol::optional<std::string> maybe_msg);
+
+	private:
+		bool loaded = false;
+		std::unique_ptr<sol::state> state;
+		std::string _path;
 	};
 }
 

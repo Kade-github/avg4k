@@ -7,12 +7,23 @@
 #include "MainMenu.h"
 using namespace Average4k::Api;
 
+bool Average4k::Screens::Menu::MainMenu::loaded = false;
+
 void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset)
 {
+	eManager->Clear();
 	if (reset)
+	{
+		lua->objects.clear();
+		removeAll();
+		lua->path = path;
 		lua->load(Average4k::A4kGame::gameInstance->skin.GetPath(path));
+	}
 	else
+	{
 		lua = new AvgLuaFile(Average4k::A4kGame::gameInstance->skin.GetPath(path));
+		lua->path = path;
+	}
 
 	Average4k::Api::Stubs::LuaMenu::Register(lua->getState());
 
@@ -25,33 +36,51 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 	});
 
 	lua->create();
-}
-
-void Average4k::Screens::Menu::MainMenu::load()
-{
-	createFile("Scripts/MainMenu.lua", false);
 
 	// setup event listeners
 
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_KeyPress, [&](AvgEngine::Events::Event e) {
-		lua->getState()["keyPress"](e.data);
+		auto f = lua->getState().get<sol::optional<sol::function>>("keyPress");
+		
+		if (f.has_value())
+			f.value()(e.data);
 	});
 
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_KeyRelease, [&](AvgEngine::Events::Event e) {
-		lua->getState()["keyRelease"](e.data);
+		auto f = lua->getState().get<sol::optional<sol::function>>("keyRelease");
+
+		if (f.has_value())
+			f.value()(e.data);
 	});
 
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_MouseDown, [&](AvgEngine::Events::Event e) {
-		lua->getState()["mousePress"](e.data);
+		auto f = lua->getState().get<sol::optional<sol::function>>("mouseDown");
+
+		if (f.has_value())
+			f.value()(e.data);
 	});
 
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_MouseRelease, [&](AvgEngine::Events::Event e) {
-		lua->getState()["mouseRelease"](e.data);
+		auto f = lua->getState().get<sol::optional<sol::function>>("mouseRelease");
+
+		if (f.has_value())
+			f.value()(e.data);
 	});
 
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_MouseScroll, [&](AvgEngine::Events::Event e) {
-		lua->getState()["mouseScroll"](e.data);
+		auto f = lua->getState().get<sol::optional<sol::function>>("mouseScroll");
+
+		if (f.has_value())
+			f.value()(e.data);
 	});
+}
+
+void Average4k::Screens::Menu::MainMenu::load()
+{
+	loaded = true;
+	createFile("Scripts/MainMenu.lua", false);
+
+	
 }
 
 void Average4k::Screens::Menu::MainMenu::draw()
@@ -68,6 +97,16 @@ void Average4k::Screens::Menu::MainMenu::draw()
 
 	m.set("x", mouse[0]);
 	m.set("y", mouse[1]);
-	
-	lua->getState()["draw"]();
+
+	auto f = lua->getState().get<sol::optional<sol::function>>("draw");
+	if (f.has_value())
+	{
+		sol::function_result result = f.value()();
+
+		if (!result.valid())
+		{
+			sol::error err = result;
+			AvgEngine::Logging::writeLog("[Lua] Error in function draw.\n" + std::string(err.what()));
+		}
+	}
 }

@@ -15,6 +15,7 @@ namespace Average4k::Screens::Menu
 	class MainMenu : public AvgEngine::Base::Menu
 	{
 	public:
+		static bool loaded;
 		Average4k::Api::AvgLuaFile* lua;
 		void createFile(std::string path, bool reset = true);
 		void load() override;
@@ -22,6 +23,7 @@ namespace Average4k::Screens::Menu
 
 		~MainMenu()
 		{
+			loaded = false;
 			delete lua;
 		}
 	};

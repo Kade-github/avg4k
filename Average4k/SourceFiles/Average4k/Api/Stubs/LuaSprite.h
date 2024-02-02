@@ -10,6 +10,8 @@
 #include "../../A4kGame.h"
 #include "LuaObject.h"
 #include "AvgEngine/Base/Sprite.h"
+
+#define SOL_NO_EXCEPTIONS 1
 #define SOL_USE_LUA_HPP
 #include <sol/sol.hpp>
 

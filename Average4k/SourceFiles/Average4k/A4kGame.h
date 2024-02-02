@@ -7,7 +7,6 @@
 #define AVG4K_GAME_H
 
 #pragma once
-#include <mutex>
 #include <AvgEngine/Game.h>
 #include <AvgEngine/Base/Text.h>
 

@@ -93,6 +93,9 @@
     <ClCompile Include="SourceFiles\Average4k\Console\CmdHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SourceFiles\Average4k\Data\Chart\Providers\StepFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceFiles\Average4k\A4kGame.h">
@@ -152,7 +155,22 @@
     <ClInclude Include="SourceFiles\Average4k\Console\CmdHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SourceFiles\Average4k\Data\Chart\StepFile.h">
+    <ClInclude Include="SourceFiles\Average4k\Data\Chart\Providers\StepFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceFiles\Average4k\Data\Chart\ChartFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceFiles\Average4k\Data\Chart\TimingPoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceFiles\Average4k\Data\Chart\StopPoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceFiles\Average4k\Data\Chart\Metadata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceFiles\Average4k\Data\Chart\Difficulty.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

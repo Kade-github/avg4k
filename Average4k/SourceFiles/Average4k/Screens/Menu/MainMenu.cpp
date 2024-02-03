@@ -43,35 +43,75 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 		auto f = lua->getState().get<sol::optional<sol::function>>("keyPress");
 		
 		if (f.has_value())
-			f.value()(e.data);
+		{
+			sol::function_result result = f.value()(e.data);
+
+			if (!result.valid())
+			{
+				sol::error err = result;
+				AvgEngine::Logging::writeLog("[Lua] Error in function.\n" + std::string(err.what()));
+			}
+		}
 	});
 
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_KeyRelease, [&](AvgEngine::Events::Event e) {
 		auto f = lua->getState().get<sol::optional<sol::function>>("keyRelease");
 
 		if (f.has_value())
-			f.value()(e.data);
+		{
+			sol::function_result result = f.value()(e.data);
+
+			if (!result.valid())
+			{
+				sol::error err = result;
+				AvgEngine::Logging::writeLog("[Lua] Error in function.\n" + std::string(err.what()));
+			}
+		}
 	});
 
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_MouseDown, [&](AvgEngine::Events::Event e) {
 		auto f = lua->getState().get<sol::optional<sol::function>>("mouseDown");
 
 		if (f.has_value())
-			f.value()(e.data);
+		{
+			sol::function_result result = f.value()(e.data);
+
+			if (!result.valid())
+			{
+				sol::error err = result;
+				AvgEngine::Logging::writeLog("[Lua] Error in function.\n" + std::string(err.what()));
+			}
+		}
 	});
 
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_MouseRelease, [&](AvgEngine::Events::Event e) {
 		auto f = lua->getState().get<sol::optional<sol::function>>("mouseRelease");
 
 		if (f.has_value())
-			f.value()(e.data);
+		{
+			sol::function_result result = f.value()(e.data);
+
+			if (!result.valid())
+			{
+				sol::error err = result;
+				AvgEngine::Logging::writeLog("[Lua] Error in function.\n" + std::string(err.what()));
+			}
+		}
 	});
 
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_MouseScroll, [&](AvgEngine::Events::Event e) {
 		auto f = lua->getState().get<sol::optional<sol::function>>("mouseScroll");
 
 		if (f.has_value())
-			f.value()(e.data);
+		{
+			sol::function_result result = f.value()(e.data);
+
+			if (!result.valid())
+			{
+				sol::error err = result;
+				AvgEngine::Logging::writeLog("[Lua] Error in function.\n" + std::string(err.what()));
+			}
+		}
 	});
 }
 

@@ -152,6 +152,9 @@
     <ClInclude Include="SourceFiles\Average4k\Console\CmdHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SourceFiles\Average4k\Data\Chart\StepFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Average4k.rc">

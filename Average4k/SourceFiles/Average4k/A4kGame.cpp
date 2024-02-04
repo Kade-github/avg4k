@@ -6,6 +6,7 @@
 #include "A4kGame.h"
 
 #include <AvgEngine/External/Image/stbi.h>
+#include "Data/Chart/ChartFinder.h"
 #include "Console/CmdHandler.h"
 
 Average4k::A4kGame* Average4k::A4kGame::gameInstance = nullptr;
@@ -42,5 +43,9 @@ void Average4k::A4kGame::Start()
 	skin = Skin(saveData.skinData);
 
 	console.handler = new Average4k::Console::CmdHandler();
+
+	// Load charts
+
+	Data::ChartFinder::FindCharts("Charts");
 
 }

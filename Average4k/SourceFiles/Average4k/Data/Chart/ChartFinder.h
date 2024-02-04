@@ -7,16 +7,24 @@
 
 #ifndef _AVG4K_CHART_FINDER_H
 #define _AVG4K_CHART_FINDER_H
-
+#include <map>
 #include "Providers/StepFile.h"
 
 namespace Average4k::Data
 {
+	struct Pack {
+		std::wstring name;
+		std::wstring path;
+		std::wstring banner;
+
+		std::vector<Chart::Providers::StepFile> charts;
+	};
+
 	class ChartFinder
 	{
 	public:
 		static std::mutex m_lock;
-		static std::vector<ChartFile> Charts;
+		static std::vector<Pack> Packs;
 
 		/// <summary>
 		/// Asyncronously find all charts in the given path

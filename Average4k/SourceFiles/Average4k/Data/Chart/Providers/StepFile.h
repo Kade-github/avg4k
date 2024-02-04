@@ -14,28 +14,28 @@ namespace Average4k::Data::Chart::Providers
 {
 	class StepFile : public ChartFile
 	{
-		// Storage variables for measures
-		int currentMeasure = 0;
-		std::vector<std::wstring> measure;
-		std::wifstream stream;
-
-		// Storage for difficulty
-		Difficulty workingDiff;
-		bool skipDiff = false;
-
-		void ParseMetadata(bool only);
-		void ParseBPMS(std::wstring line);
-		void ParseStops(std::wstring line);
-		void ParseNotes(std::wstring line, int& lineNumber);
 	public:
-		void Parse(std::wstring path, bool metadataOnly) override;
-
-		StepFile() {}
+		StepFile();
 
 		StepFile(std::wstring path, bool metadataOnly = false)
 		{
 			Parse(path, metadataOnly);
 		}
+
+		// Storage variables for measures
+		int currentMeasure = 0;
+		std::vector<std::wstring> measure = {};
+
+		// Storage for difficulty
+		Difficulty workingDiff;
+		bool skipDiff = false;
+
+		void ParseMetadata(bool only, std::wifstream* stream);
+		void ParseBPMS(std::wstring line);
+		void ParseStops(std::wstring line);
+		void ParseNotes(std::wstring line, int& lineNumber);
+
+		void Parse(std::wstring path, bool metadataOnly) override;
 	};
 }
 

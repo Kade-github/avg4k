@@ -22,6 +22,7 @@ namespace Average4k::Console
 			instance = this;
 
 			commands.push_back("reload");
+			commands.push_back("packs");
 		}
 
 		void Handle(std::string cmd) override;

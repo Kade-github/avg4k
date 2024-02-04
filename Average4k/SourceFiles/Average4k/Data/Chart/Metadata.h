@@ -28,8 +28,11 @@ namespace Average4k::Data::Chart
 	{
 	public:
 		std::wstring artist = L"";
+		std::wstring artistTranslit = L"";
 		std::wstring title = L"";
+		std::wstring titleTranslit = L"";
 		std::wstring subtitle = L"";
+		std::wstring subtitleTranslit = L"";
 		std::wstring genre = L"";
 		std::wstring credit = L"";
 		std::wstring banner = L"";

@@ -10,11 +10,11 @@ using namespace Average4k::Data::Chart::Providers;
 
 void StepFile::Parse(std::wstring _path, bool metadataOnly)
 {
-	stream = std::wifstream(_path);
+	std::wifstream* stream = new std::wifstream(_path);
 
 	std::string converted_str = AvgEngine::Utils::StringTools::Ws2s(_path);
 
-	if (!stream.good())
+	if (!stream->good())
 	{
 		AvgEngine::Logging::writeLog("[Error] Couldn't load chart " + converted_str + "!");
 		return;
@@ -22,12 +22,16 @@ void StepFile::Parse(std::wstring _path, bool metadataOnly)
 
 	path = _path;
 
-	ParseMetadata(metadataOnly);
+	ParseMetadata(metadataOnly, stream);
 
 	isValid = true;
+
+	stream->close();
+
+	delete stream;
 }
 
-void StepFile::ParseMetadata(bool only)
+void StepFile::ParseMetadata(bool only, std::wifstream* stream)
 {
 	int state = 0;
 
@@ -35,7 +39,7 @@ void StepFile::ParseMetadata(bool only)
 
 	int lineNumber = 0;
 
-	while (std::getline(stream, line))
+	while (std::getline(*stream, line))
 	{
 		if (line.empty())
 			continue;
@@ -84,10 +88,16 @@ void StepFile::ParseMetadata(bool only)
 
 			if (isTitle)
 				metadata.title = value;
+			if (key == L"TITLETRANSLIT")
+				metadata.titleTranslit = value;
 			if (key == L"SUBTITLE")
 				metadata.subtitle = value;
+			if (key == L"SUBTITLETRANSLIT")
+				metadata.subtitleTranslit = value;
 			if (key == L"ARTIST")
 				metadata.artist = value;
+			if (key == L"ARTISTTRANSLIT")
+				metadata.artistTranslit = value;
 			if (key == L"GENRE")
 				metadata.artist = value;
 			if (key == L"CREDIT")
@@ -129,6 +139,11 @@ void StepFile::ParseMetadata(bool only)
 			break;
 		}
 	}
+}
+
+StepFile::StepFile()
+{
+
 }
 
 void StepFile::ParseBPMS(std::wstring line)

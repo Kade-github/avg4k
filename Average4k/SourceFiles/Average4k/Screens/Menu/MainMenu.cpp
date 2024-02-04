@@ -33,7 +33,67 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 		Average4k::Data::ChartFinder::FindCharts("Charts");
 	});
 
+	lua->getState().set_function("getPacks", [this]() {
+		lua->getState().collect_garbage();
+		sol::table t = lua->getState().create_table();
 
+		for (int i = 0; i < Average4k::Data::ChartFinder::Packs.size(); i++)
+		{
+			Average4k::Data::Pack& p = Average4k::Data::ChartFinder::Packs[i];
+
+			sol::table pack = lua->getState().create_table();
+
+			pack["name"] = p.name;
+			pack["path"] = p.path;
+			pack["banner"] = p.banner;
+		}
+
+		return t;
+	});
+
+	lua->getState().set_function("getCharts", [this](std::string packName) {
+		lua->getState().collect_garbage();
+		for (int i = 0; i < Average4k::Data::ChartFinder::Packs.size(); i++)
+		{
+			Average4k::Data::Pack& p = Average4k::Data::ChartFinder::Packs[i];
+
+			if (p.name == packName)
+			{
+				sol::table charts = lua->getState().create_table();
+
+				for (int j = 0; j < p.charts.size(); j++)
+				{
+					Average4k::Data::Chart::Providers::StepFile& c = p.charts[j];
+
+					sol::table chart = lua->getState().create_table();
+
+					chart["title"] = c.metadata.title;
+					chart["titleTranslit"] = c.metadata.titleTranslit;
+					chart["subtitle"] = c.metadata.subtitle;
+					chart["subtitleTranslit"] = c.metadata.subtitleTranslit;
+					chart["artist"] = c.metadata.artist;
+					chart["artistTranslit"] = c.metadata.artistTranslit;
+					chart["genre"] = c.metadata.genre;
+					chart["credit"] = c.metadata.credit;
+					chart["banner"] = c.metadata.banner;
+					chart["background"] = c.metadata.background;
+					chart["file"] = c.metadata.file;
+					chart["offset"] = c.metadata.offset;
+					chart["previewStart"] = c.metadata.previewStart;
+
+					chart["type"] = c.metadata.type;
+
+					chart["workshop"] = c.metadata.workshop;
+
+					charts[j + 1] = chart;
+				}
+
+				return charts;
+			}
+		}
+
+		return NULL;
+	});
 
 	lua->create();
 
@@ -128,69 +188,7 @@ void Average4k::Screens::Menu::MainMenu::load()
 
 void Average4k::Screens::Menu::MainMenu::draw()
 {
-	static std::chrono::steady_clock::time_point last = std::chrono::steady_clock::now();
-
 	AvgEngine::Base::Menu::draw();
-
-	static bool other = false;
-
-
-	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-
-	// diff
-
-	std::chrono::duration<double> diff = now - last;
-
-	// 1 milisecond
-
-	if (diff.count() > 0.01)
-	{
-		last = now;
-		if (Average4k::Data::ChartFinder::Charts.size() > 0)
-		{
-			std::lock_guard<std::mutex> lock(Average4k::Data::ChartFinder::m_lock);
-			for(Average4k::Data::ChartFile& c : Average4k::Data::ChartFinder::Charts)
-			{
-				std::wstring folder = c.path.substr(0, c.path.find_last_of(L"/\\"));
-				std::wstring_convert<std::codecvt_utf8<char8_t>, char8_t> convert;
-				std::u8string titleConvert = convert.from_bytes(AvgEngine::Utils::StringTools::Ws2s(c.metadata.title));
-				std::u8string artistConvert = convert.from_bytes(AvgEngine::Utils::StringTools::Ws2s(c.metadata.artist));
-				std::u8string subtitleConvert = convert.from_bytes(AvgEngine::Utils::StringTools::Ws2s(c.metadata.subtitle));
-
-				sol::table l_c = lua->getState().create_table_with("path", c.path, 
-					"title", titleConvert,
-					"artist", artistConvert,
-					"subtitle", subtitleConvert,
-					"genre", c.metadata.genre,
-					"background", c.metadata.background,
-					"banner", c.metadata.banner,
-					"audio", c.metadata.file,
-					"previewStart", c.metadata.previewStart,
-					"credit", c.metadata.credit,
-					"offset", c.metadata.offset,
-					"type", c.metadata.type,
-					"folder", folder);
-
-				auto f = lua->getState().get<sol::optional<sol::function>>("chartFound");
-
-				if (f.has_value())
-				{
-					sol::function_result result = f.value()(l_c);
-
-					if (!result.valid())
-					{
-						sol::error err = result;
-						AvgEngine::Logging::writeLog("[Lua] Error in function.\n" + std::string(err.what()));
-					}
-				}
-
-			}
-
-			Average4k::Data::ChartFinder::Charts.clear();
-		}
-
-	}
-
 
 	double mx, my;
 

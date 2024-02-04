@@ -7,6 +7,7 @@
 #include "AvgEngine/Utils/StringTools.h"
 #include "../Screens/Menu/MainMenu.h"
 #include <AvgEngine/Game.h>
+#include "../Data/Chart/ChartFinder.h"
 
 Average4k::Console::CmdHandler* Average4k::Console::CmdHandler::instance = NULL;
 
@@ -26,7 +27,7 @@ void Average4k::Console::CmdHandler::Handle(std::string cmd)
 
 	Average4k::Screens::Menu::MainMenu* m = NULL;
 
-
+	int total = 0;
 	AvgEngine::Utils::StringTools::ToLower(s);
 	switch (AvgEngine::Debug::hash_djb2a(s))
 	{
@@ -39,6 +40,17 @@ void Average4k::Console::CmdHandler::Handle(std::string cmd)
 		}
 		else
 			AvgEngine::Logging::writeLog("[Debug] [CmdHandler] [reload] MainMenu not loaded");
+		break;
+	case "packs"_sh:
+		for (auto& p : Average4k::Data::ChartFinder::Packs)
+		{
+			AvgEngine::Logging::writeLog(AvgEngine::Utils::StringTools::Ws2s(p.name) + " - Charts: " + std::to_string(p.charts.size()));
+
+			total += p.charts.size();
+		}
+
+		AvgEngine::Logging::writeLog("Total packs: " + std::to_string(Average4k::Data::ChartFinder::Packs.size()) + " Total charts: " + std::to_string(total));
+
 		break;
 	default:
 

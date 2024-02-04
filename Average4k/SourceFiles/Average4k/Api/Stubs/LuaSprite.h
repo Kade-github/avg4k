@@ -10,6 +10,7 @@
 #include "../../A4kGame.h"
 #include "LuaObject.h"
 #include "AvgEngine/Base/Sprite.h"
+#include <AvgEngine/Utils/StringTools.h>
 
 #define SOL_NO_EXCEPTIONS 1
 #define SOL_USE_LUA_HPP
@@ -21,28 +22,34 @@ namespace Average4k::Api::Stubs
 	class LuaSprite : public LuaObject {
 		AvgEngine::Base::Sprite* _base;
 	public:
-		LuaSprite(int x, int y, const std::string& path)
+		LuaSprite(float x, float y, const std::string& path)
 		{
-			_base = new AvgEngine::Base::Sprite(x, y, A4kGame::gameInstance->skin.GetPath(path));
+			std::string formatted = path;
+			AvgEngine::Utils::StringTools::ToLower(formatted);
+			if (formatted.contains("charts"))
+				_base = new AvgEngine::Base::Sprite(x, y, path);
+			else
+				_base = new AvgEngine::Base::Sprite(x, y, A4kGame::gameInstance->skin.GetPath(path));
 			_baseObject = _base;
 		}
 
-		void setX(int x)
+
+		void setX(float x)
 		{
 			_base->transform.x = x;
 		}
 
-		int getX()
+		float getX()
 		{
 			return _base->transform.x;
 		}
 
-		void setY(int y)
+		void setY(float y)
 		{
 			_base->transform.y = y;
 		}
 
-		int getY()
+		float getY()
 		{
 			return _base->transform.y;
 		}
@@ -77,7 +84,7 @@ namespace Average4k::Api::Stubs
 			return _base->transform.angle;
 		}
 
-		void setColor(int r, int g, int b, int a)
+		void setColor(float r, float g, float b, float a)
 		{
 			_base->transform.r = r;
 			_base->transform.g = g;
@@ -88,7 +95,7 @@ namespace Average4k::Api::Stubs
 		static void Register(sol::state& state)
 		{
 			state.new_usertype<LuaSprite>("Sprite",
-				sol::constructors<LuaSprite(int, int, const std::string&)>(),
+				sol::constructors<LuaSprite(float, float, const std::string&)>(),
 				"x", sol::property(&LuaSprite::getX, &LuaSprite::setX),
 				"y", sol::property(&LuaSprite::getY, &LuaSprite::setY),
 				"width", sol::property(&LuaSprite::getWidth, &LuaSprite::setWidth),

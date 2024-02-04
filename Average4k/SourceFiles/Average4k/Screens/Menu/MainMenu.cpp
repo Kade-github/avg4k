@@ -33,6 +33,8 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 		Average4k::Data::ChartFinder::FindCharts("Charts");
 	});
 
+
+
 	lua->create();
 
 	// setup event listeners
@@ -149,6 +151,8 @@ void Average4k::Screens::Menu::MainMenu::draw()
 			std::lock_guard<std::mutex> lock(Average4k::Data::ChartFinder::m_lock);
 			for(Average4k::Data::ChartFile& c : Average4k::Data::ChartFinder::Charts)
 			{
+				std::string folder = c.path.substr(0, c.path.find_last_of("/\\"));
+
 				sol::table l_c = lua->getState().create_table_with("path", c.path, 
 					"title", c.metadata.title, 
 					"artist", c.metadata.artist, 
@@ -160,7 +164,8 @@ void Average4k::Screens::Menu::MainMenu::draw()
 					"previewStart", c.metadata.previewStart,
 					"credit", c.metadata.credit,
 					"offset", c.metadata.offset,
-					"type", c.metadata.type);
+					"type", c.metadata.type,
+					"folder", folder);
 
 				auto f = lua->getState().get<sol::optional<sol::function>>("chartFound");
 

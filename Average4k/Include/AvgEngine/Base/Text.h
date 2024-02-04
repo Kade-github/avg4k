@@ -51,7 +51,10 @@ namespace AvgEngine::Base
 				SetFont(folder, font);
 			SetSize(_size);
 			SetText(_text);
+			transform.w = _text.size() * size;
+			transform.h = size;
 			iTransform = transform;
+			
 		}
 
 		~Text()

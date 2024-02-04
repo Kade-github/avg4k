@@ -189,7 +189,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	bool shouldQuit = false;
 
-	Screens::Menu::MainMenu* cm = new Screens::Menu::MainMenu();
+	Screens::Menu::MainMenu* cm = new Screens::Menu::MainMenu("Scripts/MainMenu.lua");
 
 	std::thread t = std::thread([&] {
 		glfwMakeContextCurrent(game->Window);

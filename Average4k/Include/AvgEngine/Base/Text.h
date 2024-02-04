@@ -101,7 +101,7 @@ namespace AvgEngine::Base
 			if (cr.w == 0 && cr.h == 0 && parentClip)
 				cr = *parentClip;
 
-			if (transform.a == 0 || text == "" || text.size() == 0)
+			if (transform.a == 0 || text == "" || text.size() == 0 || dst.x + dst.w < 0 || dst.x > parent->w || dst.y + dst.h < 0 || dst.y > parent->h)
 			{
 				drawn = false;
 				return;

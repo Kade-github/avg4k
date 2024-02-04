@@ -16,23 +16,15 @@ Average4k::Api::AvgLuaFile::AvgLuaFile(const std::string& ppath)
 	reload();
 }
 
-Average4k::Api::AvgLuaFile::~AvgLuaFile()
-{
-	reset();
-}
 
 void Average4k::Api::AvgLuaFile::load(const std::string& ppath)
 {
-	if (loaded)
-	{
-		reset();
-	}
-	else
+	if (!loaded)
 	{
 		loaded = true;
 		state = std::make_unique<sol::state>(sol::c_call<decltype(&Average4k::Api::AvgLuaFile::luaPanic), &Average4k::Api::AvgLuaFile::luaPanic>);
+		registerTypes();
 	}
-	registerTypes();
 
 	this->_path = ppath;
 	state->safe_script_file(_path);
@@ -80,7 +72,7 @@ void Average4k::Api::AvgLuaFile::create()
 
 void Average4k::Api::AvgLuaFile::reset()
 {
-	state->collect_garbage();
+	state.reset();
 }
 
 void Average4k::Api::AvgLuaFile::registerTypes()

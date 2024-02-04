@@ -8,17 +8,21 @@
 
 using namespace Average4k::Data::Chart::Providers;
 
-void StepFile::Parse(std::string path, bool metadataOnly)
+void StepFile::Parse(std::string _path, bool metadataOnly)
 {
-	stream = std::ifstream(path);
+	stream = std::ifstream(_path);
 
 	if (!stream.good())
 	{
-		AvgEngine::Logging::writeLog("[Error] Couldn't load chart " + path + "!");
+		AvgEngine::Logging::writeLog("[Error] Couldn't load chart " + _path + "!");
 		return;
 	}
 
+	path = _path;
+
 	ParseMetadata(metadataOnly);
+
+	isValid = true;
 }
 
 void StepFile::ParseMetadata(bool only)
@@ -26,8 +30,6 @@ void StepFile::ParseMetadata(bool only)
 	int state = 0;
 
 	std::string line;
-
-	Metadata m;
 
 	int lineNumber = 0;
 
@@ -76,27 +78,27 @@ void StepFile::ParseMetadata(bool only)
 			value = value.substr(0, value.length() - 1);
 
 			if (key == "TITLE")
-				m.title = value;
+				metadata.title = value;
 			if (key == "SUBTITLE")
-				m.subtitle = value;
+				metadata.subtitle = value;
 			if (key == "ARTIST")
-				m.artist = value;
+				metadata.artist = value;
 			if (key == "GENRE")
-				m.artist = value;
+				metadata.artist = value;
 			if (key == "CREDIT")
-				m.credit = value;
+				metadata.credit = value;
 			if (key == "BANNER")
-				m.banner = value;
+				metadata.banner = value;
 			if (key == "BACKGROUND")
-				m.background = value;
+				metadata.background = value;
 			if (key == "MUSIC")
-				m.file = value;
+				metadata.file = value;
 
 			if (key == "OFFSET")
-				m.offset = std::stof(value);
+				metadata.offset = std::stof(value);
 
 			if (key == "SAMPLESTART")
-				m.previewStart = std::stof(value);
+				metadata.previewStart = std::stof(value);
 			break;
 		case 1:
 			ParseBPMS(line);

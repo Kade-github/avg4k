@@ -32,6 +32,7 @@
     <ClCompile Include="SourceFiles\Average4k\A4kGame.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Api\AvgLuaFile.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Console\CmdHandler.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Data\Chart\ChartFinder.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Data\Chart\Providers\StepFile.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Screens\Menu\MainMenu.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Skin\Skin.cpp" />
@@ -57,6 +58,7 @@
     <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaText.h" />
     <ClInclude Include="SourceFiles\Average4k\Console\CmdHandler.h" />
     <ClInclude Include="SourceFiles\Average4k\Data\Chart\ChartFile.h" />
+    <ClInclude Include="SourceFiles\Average4k\Data\Chart\ChartFinder.h" />
     <ClInclude Include="SourceFiles\Average4k\Data\Chart\Difficulty.h" />
     <ClInclude Include="SourceFiles\Average4k\Data\Chart\Metadata.h" />
     <ClInclude Include="SourceFiles\Average4k\Data\Chart\Providers\StepFile.h" />

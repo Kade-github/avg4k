@@ -29,6 +29,13 @@ namespace Average4k::Data::Chart::Providers
 		void ParseNotes(std::string line, int& lineNumber);
 	public:
 		void Parse(std::string path, bool metadataOnly) override;
+
+		StepFile() {}
+
+		StepFile(std::string path, bool metadataOnly = false)
+		{
+			Parse(path, metadataOnly);
+		}
 	};
 }
 

@@ -96,6 +96,9 @@
     <ClCompile Include="SourceFiles\Average4k\Data\Chart\Providers\StepFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SourceFiles\Average4k\Data\Chart\ChartFinder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceFiles\Average4k\A4kGame.h">
@@ -171,6 +174,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SourceFiles\Average4k\Data\Chart\Difficulty.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceFiles\Average4k\Data\Chart\ChartFinder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

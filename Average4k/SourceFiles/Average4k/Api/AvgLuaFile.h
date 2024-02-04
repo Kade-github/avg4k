@@ -25,7 +25,6 @@ namespace Average4k::Api
 
 		AvgLuaFile() = default;
 		AvgLuaFile(const std::string& path);
-		~AvgLuaFile();
 
 		void load(const std::string& path);
 		void reload();

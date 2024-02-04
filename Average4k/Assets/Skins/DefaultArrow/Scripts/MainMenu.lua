@@ -37,30 +37,30 @@ function keyPress(data)
         if selection == 1 then -- songs
             switchTo("Scripts/SongSelect.lua")
         end
-    end
+    else
+        texts[selection].text = string.sub(texts[selection].text, 3, string.len(texts[selection].text));
 
-    texts[selection].text = string.sub(texts[selection].text, 3, string.len(texts[selection].text));
+        if data == 265 then -- up
 
-    if data == 265 then -- up
+            selection = selection - 1
 
-        selection = selection - 1
+            if selection < 1 then
+                selection = 4
+            end
 
-        if selection < 1 then
-            selection = 4
+            
         end
 
-        
-    end
+        if data == 264 then -- down
+            selection = selection + 1
 
-    if data == 264 then -- down
-        selection = selection + 1
-
-        if selection > 4 then
-            selection = 1
+            if selection > 4 then
+                selection = 1
+            end
         end
-    end
 
-    texts[selection].text = "> " .. texts[selection].text;
+        texts[selection].text = "> " .. texts[selection].text;
+    end
 end
 
 function draw()

@@ -12,18 +12,23 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include <math.h>
+#include <algorithm>
 
 #include "Metadata.h"
 #include "StopPoint.h"
 #include "TimingPoint.h"
 #include "Difficulty.h"
 
+#define MAX(a,b) (((a)>(b))?(a):(b)) // for some reason std::max is being defined by another definition of max so we just do our own fuck you.
+
 namespace Average4k::Data
 {
 	class ChartFile
 	{
 	public:
+		bool isValid = false;
+
+		std::string path = "";
 		Chart::Metadata metadata = {};
 
 		std::vector<Chart::TimingPoint> timingPoints = {};
@@ -31,7 +36,9 @@ namespace Average4k::Data
 
 		std::vector<Chart::Difficulty> difficulties = {};
 
-		virtual void Parse(std::string path, bool metadataOnly) = 0;
+		ChartFile() = default;
+
+		virtual void Parse(std::string path, bool metadataOnly) {};
 		virtual void Write(std::string path) {
 			AvgEngine::Logging::writeLog("[Error] ChartFile::Write() is not implemented for chart type: " + std::to_string(metadata.type));
 		};
@@ -134,7 +141,7 @@ namespace Average4k::Data
 					float stopEndTime = sp.startTimestamp + sp.length;
 					if (time > sp.startTimestamp && time < stopEndTime)
 						return sp.startBeat;
-					float larger = max(stopEndTime, tp.startTimestamp);
+					float larger = MAX(stopEndTime, tp.startTimestamp);
 					float beast = tp.startBeat;
 					if (tp.startTimestamp < stopEndTime)
 						beast = sp.startBeat;

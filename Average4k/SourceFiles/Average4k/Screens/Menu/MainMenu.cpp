@@ -92,7 +92,7 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 			}
 		}
 
-		return NULL;
+		return lua->getState().create_table();
 	});
 
 	lua->create();

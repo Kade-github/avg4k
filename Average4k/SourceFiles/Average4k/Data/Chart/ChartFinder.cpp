@@ -48,7 +48,6 @@ void ChartFinder::FindCharts(const std::string _path)
 					p.name = name;
 					p.path = path;
 
-
 					std::vector<std::wstring> paths;
 					std::vector<std::wstring> folders;
 					// get banner

@@ -28,7 +28,7 @@ namespace Average4k::Data
 	public:
 		bool isValid = false;
 
-		std::string path = "";
+		std::wstring path = L"";
 		Chart::Metadata metadata = {};
 
 		std::vector<Chart::TimingPoint> timingPoints = {};
@@ -38,8 +38,8 @@ namespace Average4k::Data
 
 		ChartFile() = default;
 
-		virtual void Parse(std::string path, bool metadataOnly) {};
-		virtual void Write(std::string path) {
+		virtual void Parse(std::wstring path, bool metadataOnly) {};
+		virtual void Write(std::wstring path) {
 			AvgEngine::Logging::writeLog("[Error] ChartFile::Write() is not implemented for chart type: " + std::to_string(metadata.type));
 		};
 

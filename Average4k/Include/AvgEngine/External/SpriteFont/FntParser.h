@@ -89,6 +89,21 @@ namespace AvgEngine::Fnt
 					return f;
 		}
 
+		FntChar GetWChar(wchar_t c)
+		{
+			unsigned int u = c;
+
+			auto it = std::find_if(chars.begin(), chars.end(), [&u](const AvgEngine::Fnt::FntChar& obj) {return obj.id == u; });
+
+			if (it != chars.end())
+				return *it;
+
+			AvgEngine::Fnt::FntChar cc;
+			cc.id = -1;
+
+			return cc;
+		}
+
 		FntChar GetChar(char c)
 		{
 			unsigned int u = c;

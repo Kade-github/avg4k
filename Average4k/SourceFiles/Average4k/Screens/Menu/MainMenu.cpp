@@ -151,12 +151,16 @@ void Average4k::Screens::Menu::MainMenu::draw()
 			std::lock_guard<std::mutex> lock(Average4k::Data::ChartFinder::m_lock);
 			for(Average4k::Data::ChartFile& c : Average4k::Data::ChartFinder::Charts)
 			{
-				std::string folder = c.path.substr(0, c.path.find_last_of("/\\"));
+				std::wstring folder = c.path.substr(0, c.path.find_last_of(L"/\\"));
+				std::wstring_convert<std::codecvt_utf8<char8_t>, char8_t> convert;
+				std::u8string titleConvert = convert.from_bytes(AvgEngine::Utils::StringTools::Ws2s(c.metadata.title));
+				std::u8string artistConvert = convert.from_bytes(AvgEngine::Utils::StringTools::Ws2s(c.metadata.artist));
+				std::u8string subtitleConvert = convert.from_bytes(AvgEngine::Utils::StringTools::Ws2s(c.metadata.subtitle));
 
 				sol::table l_c = lua->getState().create_table_with("path", c.path, 
-					"title", c.metadata.title, 
-					"artist", c.metadata.artist, 
-					"subtitle", c.metadata.subtitle,
+					"title", titleConvert,
+					"artist", artistConvert,
+					"subtitle", subtitleConvert,
 					"genre", c.metadata.genre,
 					"background", c.metadata.background,
 					"banner", c.metadata.banner,

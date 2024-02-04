@@ -119,7 +119,6 @@ end
 
 function chartFound(c)
     local text = c["title"] .. " by " .. c["artist"]
-
     if c["artist"] == "" then
         text = c["title"]
     end
@@ -128,18 +127,9 @@ function chartFound(c)
         text = text .. " (" .. c["subtitle"] .. ")"
     end
 
-    local t = Text.new(-100, -100, "Arial.fnt", text, 42)
+    local t = Text.new(-100, -100, "ArialUnicode.fnt", text, 42)
     currentMenu:addObject(t)
     local banner = nil
-    if c["banner"] ~= "" then
-        local b = c["folder"] .. "/" .. c["banner"]
-        
-        banner = Sprite.new(-100, -100, b)
-        currentMenu:addObject(banner)
-
-        banner.width = 200
-        banner.height = 50
-    end
 
     
 

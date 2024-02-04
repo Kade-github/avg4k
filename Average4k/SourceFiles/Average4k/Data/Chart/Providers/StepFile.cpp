@@ -8,13 +8,15 @@
 
 using namespace Average4k::Data::Chart::Providers;
 
-void StepFile::Parse(std::string _path, bool metadataOnly)
+void StepFile::Parse(std::wstring _path, bool metadataOnly)
 {
-	stream = std::ifstream(_path);
+	stream = std::wifstream(_path);
+
+	std::string converted_str = AvgEngine::Utils::StringTools::Ws2s(_path);
 
 	if (!stream.good())
 	{
-		AvgEngine::Logging::writeLog("[Error] Couldn't load chart " + _path + "!");
+		AvgEngine::Logging::writeLog("[Error] Couldn't load chart " + converted_str + "!");
 		return;
 	}
 
@@ -29,7 +31,7 @@ void StepFile::ParseMetadata(bool only)
 {
 	int state = 0;
 
-	std::string line;
+	std::wstring line;
 
 	int lineNumber = 0;
 
@@ -38,15 +40,16 @@ void StepFile::ParseMetadata(bool only)
 		if (line.empty())
 			continue;
 
-		std::string key;
-		std::string value;
+		std::wstring key;
+		std::wstring value;
+		bool isTitle;
 
 		switch (state)
 		{
 		case 0:
 			if (!only)
 			{
-				if (line.starts_with("#NOTES"))
+				if (line.starts_with(L"#NOTES"))
 				{
 					lineNumber = 0;
 					workingDiff = {};
@@ -55,12 +58,12 @@ void StepFile::ParseMetadata(bool only)
 					state = 3;
 					break;
 				}
-				else if (line.starts_with("#BPMS"))
+				else if (line.starts_with(L"#BPMS"))
 				{
 					state = 1;
 					break;
 				}
-				else if (line.starts_with("#STOPS"))
+				else if (line.starts_with(L"#STOPS"))
 				{
 					state = 2;
 					break;
@@ -68,36 +71,38 @@ void StepFile::ParseMetadata(bool only)
 			}
 			else
 			{
-				if (line.starts_with("#NOTES"))
+				if (line.starts_with(L"#NOTES"))
 					return;
 			}
 
-			key = line.substr(1, line.find_first_of(":") - 1);
-			value = line.substr(line.find_first_of(":") + 1, line.length());
+			key = line.substr(line.find_first_of(L"#") + 1, line.find_first_of(L":") - 1);
+			value = line.substr(line.find_first_of(L":") + 1, line.length());
 
 			value = value.substr(0, value.length() - 1);
 
-			if (key == "TITLE")
+			isTitle = key.contains(L"TITLE") && !key.contains(L"SUBTITLE") && !key.contains(L"CDTITLE") && !key.contains(L"TITLETRANSLIT");
+
+			if (isTitle)
 				metadata.title = value;
-			if (key == "SUBTITLE")
+			if (key == L"SUBTITLE")
 				metadata.subtitle = value;
-			if (key == "ARTIST")
+			if (key == L"ARTIST")
 				metadata.artist = value;
-			if (key == "GENRE")
+			if (key == L"GENRE")
 				metadata.artist = value;
-			if (key == "CREDIT")
+			if (key == L"CREDIT")
 				metadata.credit = value;
-			if (key == "BANNER")
+			if (key == L"BANNER")
 				metadata.banner = value;
-			if (key == "BACKGROUND")
+			if (key == L"BACKGROUND")
 				metadata.background = value;
-			if (key == "MUSIC")
+			if (key == L"MUSIC")
 				metadata.file = value;
 
-			if (key == "OFFSET")
+			if (key == L"OFFSET")
 				metadata.offset = std::stof(value);
 
-			if (key == "SAMPLESTART")
+			if (key == L"SAMPLESTART")
 				metadata.previewStart = std::stof(value);
 			break;
 		case 1:
@@ -126,23 +131,23 @@ void StepFile::ParseMetadata(bool only)
 	}
 }
 
-void StepFile::ParseBPMS(std::string line)
+void StepFile::ParseBPMS(std::wstring line)
 {
-	std::string l = line;
+	std::wstring l = line;
 
 	// Clean up the line
-	if (l.find(':') != std::string::npos) // remove the starting "#BPMS:" if it exists
-		l = l.substr(l.find(':') + 1);
+	if (l.find(L':') != std::string::npos) // remove the starting "#BPMS:" if it exists
+		l = l.substr(l.find(L':') + 1);
 
-	if (l.find(';') != std::string::npos) // remove the trailing semicolon if it exists
-		l = l.substr(0, l.find(';'));
+	if (l.find(L';') != std::string::npos) // remove the trailing semicolon if it exists
+		l = l.substr(0, l.find(L';'));
 
 	// Split the line into individual BPMs
-	std::vector<std::string> split = AvgEngine::Utils::StringTools::Split(l, ",");
+	std::vector<std::wstring> split = AvgEngine::Utils::StringTools::Split(l, L",");
 
-	for (std::string s : split)
+	for (std::wstring s : split)
 	{
-		std::vector<std::string> bpm = AvgEngine::Utils::StringTools::Split(s, "=");
+		std::vector<std::wstring> bpm = AvgEngine::Utils::StringTools::Split(s, L"=");
 
 		if (bpm.size() != 2)
 			continue;
@@ -159,9 +164,9 @@ void StepFile::ParseBPMS(std::string line)
 
 }
 
-void StepFile::ParseStops(std::string line)
+void StepFile::ParseStops(std::wstring line)
 {
-	std::string l = line;
+	std::wstring l = line;
 
 	// Clean up the line
 	if (l.find(':') != std::string::npos) // remove the starting "#STOPS:" if it exists
@@ -171,11 +176,11 @@ void StepFile::ParseStops(std::string line)
 		l = l.substr(0, l.find(';'));
 
 	// Split the line into individual BPMs
-	std::vector<std::string> split = AvgEngine::Utils::StringTools::Split(l, ",");
+	std::vector<std::wstring> split = AvgEngine::Utils::StringTools::Split(l, L",");
 
-	for (std::string s : split)
+	for (std::wstring s : split)
 	{
-		std::vector<std::string> stop = AvgEngine::Utils::StringTools::Split(s, "=");
+		std::vector<std::wstring> stop = AvgEngine::Utils::StringTools::Split(s, L"=");
 
 		if (stop.size() != 2)
 			continue;
@@ -188,17 +193,17 @@ void StepFile::ParseStops(std::string line)
 	}
 }
 
-void StepFile::ParseNotes(std::string line, int& lineNumber)
+void StepFile::ParseNotes(std::wstring line, int& lineNumber)
 {
 	// if it contains a ":" we are in a metadata section of the notes
 	if (line.find(':') != std::string::npos)
 	{
-		std::string trim = AvgEngine::Utils::StringTools::Trim(line);
+		std::wstring trim = AvgEngine::Utils::StringTools::Trim(line);
 		switch (lineNumber)
 		{
 		case 1: // chart style
 			// if its not a dance single, we dont fuck wit it.
-			if (!AvgEngine::Utils::StringTools::Contains(line, "dance-single"))
+			if (!AvgEngine::Utils::StringTools::Contains(line, L"dance-single"))
 				skipDiff = true;
 			break;
 		case 2: // diff author (most of the time... or its in the CREDIT tag if theres no diff author)
@@ -211,14 +216,13 @@ void StepFile::ParseNotes(std::string line, int& lineNumber)
 			break;
 		case 4:
 			// diff rating
-			std::string endTrim = trim.substr(0, trim.length() - 1);
+			std::wstring endTrim = trim.substr(0, trim.length() - 1);
 			try
 			{
 				workingDiff.rating = std::stoi(endTrim);
 			}
 			catch (std::exception e)
 			{
-				AvgEngine::Logging::writeLog("[StepFile] [Warning] " + metadata.title + " by " + metadata.artist + ", diff " + workingDiff.name + " charted by " + workingDiff.charter + " has a bad rating.");
 				workingDiff.rating = 0;
 			}
 			break;
@@ -287,7 +291,7 @@ void StepFile::ParseNotes(std::string line, int& lineNumber)
 			}
 			else
 			{
-				if (line.find("//") == std::string::npos)
+				if (line.find(L"//") == std::wstring::npos)
 					measure.push_back(line);
 			}
 		}

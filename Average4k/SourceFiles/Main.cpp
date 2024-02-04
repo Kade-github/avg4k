@@ -17,6 +17,11 @@
 #pragma comment(lib,"Library\\x64_static\\Release\\AvgEngine.lib")
 #endif
 #include <thread>
+
+#include <stdio.h>
+#include <io.h>
+#include <fcntl.h>
+
 #include "Average4k/Data/SaveData.h"
 #include "Average4k/A4kGame.h"
 #include "Average4k/Screens/Menu/MainMenu.h"

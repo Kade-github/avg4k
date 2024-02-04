@@ -9,7 +9,7 @@
 #pragma once
 #include "../../A4kGame.h"
 #include "LuaObject.h"
-#include <AvgEngine/Base/Text.h>
+#include "../../Objects/UnicodeText.h"
 
 #define SOL_NO_EXCEPTIONS 1
 #define SOL_USE_LUA_HPP
@@ -18,13 +18,13 @@
 namespace Average4k::Api::Stubs
 {
 	class LuaText : public LuaObject {
-		AvgEngine::Base::Text* _base;
+		Average4k::Objects::UnicodeText* _base;
 		std::string _font;
 	public:
-		LuaText(int x, int y, const std::string& font, const std::string& text, int size)
+		LuaText(int x, int y, const std::string& font, const std::wstring& text, int size)
 		{
 			_font = _font;
-			_base = new AvgEngine::Base::Text(x, y, A4kGame::gameInstance->skin.GetPath("Fonts/"), font, text, size);
+			_base = new Average4k::Objects::UnicodeText(x, y, A4kGame::gameInstance->skin.GetPath("Fonts/"), font, text, size);
 			_baseObject = _base;
 		}
 
@@ -48,12 +48,12 @@ namespace Average4k::Api::Stubs
 			return _base->transform.y;
 		}
 
-		void setText(const std::string& text)
+		void setText(const std::wstring& text)
 		{
 			_base->text = text;
 		}
 
-		std::string getText()
+		std::wstring getText()
 		{
 			return _base->text;
 		}
@@ -110,7 +110,7 @@ namespace Average4k::Api::Stubs
 		static void Register(sol::state& state)
 		{
 			state.new_usertype<LuaText>("Text",
-				sol::constructors<LuaText(int, int, const std::string&, const std::string&, int)>(),
+				sol::constructors<LuaText(int, int, const std::string&, const std::wstring&, int)>(),
 				"x", sol::property(&LuaText::getX, &LuaText::setX),
 				"y", sol::property(&LuaText::getY, &LuaText::setY),
 				"width", sol::readonly_property(&LuaText::getWidth),

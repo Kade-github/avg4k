@@ -31,8 +31,8 @@ namespace Average4k::Data::Chart
 	class Difficulty
 	{
 	public:
-		std::string name;
-		std::string charter;
+		std::wstring name;
+		std::wstring charter;
 
 		std::vector<Note> notes;
 

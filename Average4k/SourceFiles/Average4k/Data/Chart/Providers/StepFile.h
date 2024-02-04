@@ -16,23 +16,23 @@ namespace Average4k::Data::Chart::Providers
 	{
 		// Storage variables for measures
 		int currentMeasure = 0;
-		std::vector<std::string> measure;
-		std::ifstream stream;
+		std::vector<std::wstring> measure;
+		std::wifstream stream;
 
 		// Storage for difficulty
 		Difficulty workingDiff;
 		bool skipDiff = false;
 
 		void ParseMetadata(bool only);
-		void ParseBPMS(std::string line);
-		void ParseStops(std::string line);
-		void ParseNotes(std::string line, int& lineNumber);
+		void ParseBPMS(std::wstring line);
+		void ParseStops(std::wstring line);
+		void ParseNotes(std::wstring line, int& lineNumber);
 	public:
-		void Parse(std::string path, bool metadataOnly) override;
+		void Parse(std::wstring path, bool metadataOnly) override;
 
 		StepFile() {}
 
-		StepFile(std::string path, bool metadataOnly = false)
+		StepFile(std::wstring path, bool metadataOnly = false)
 		{
 			Parse(path, metadataOnly);
 		}

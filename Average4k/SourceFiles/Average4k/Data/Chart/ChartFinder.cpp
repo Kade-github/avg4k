@@ -18,8 +18,8 @@ std::vector<ChartFile> ChartFinder::Charts = {};
 
 void ChartFinder::FindCharts(const std::string _path)
 {
-	static BS::thread_pool pool; // creates a thread pool with the maximum number of threads available on the system
-	static std::vector<std::string> paths;
+	static BS::thread_pool pool(std::thread::hardware_concurrency() * 3.334f); // MAGIC NUMBER
+	static std::vector<std::wstring> paths;
 	static std::chrono::steady_clock::time_point start;
 
 	if (pool.get_tasks_running() != 0)
@@ -33,19 +33,31 @@ void ChartFinder::FindCharts(const std::string _path)
 	// start timestamp
 	start = std::chrono::high_resolution_clock::now();
 
+	std::vector<std::wstring> folders = {};
+
 	for (const auto& entry : std::filesystem::recursive_directory_iterator(_path))
 	{
 		if (entry.path().empty())
 			continue;
-		if (entry.path().extension() == ".sm" || entry.path().extension() == ".ssc")
-			paths.push_back(entry.path().string());
+
+		std::wstring path = entry.path().wstring();
+
+		// check if we already found one in this folder, if so skip
+		if (std::find(folders.begin(), folders.end(), entry.path().parent_path().wstring()) != folders.end())
+			continue;
+
+		if (path.ends_with(L".sm") || path.ends_with(L".ssc"))
+		{
+			folders.push_back(entry.path().parent_path().wstring());
+			paths.push_back(entry.path().wstring());
+		}
 	}
 
 	pool.detach_loop<unsigned int>(0, paths.size(),
 	[&](const unsigned int i)
 	{
-		std::string path = paths[i];
-		if (path.ends_with(".sm") || path.ends_with(".ssc"))
+		std::wstring path = paths[i];
+		if (path.ends_with(L".sm") || path.ends_with(L".ssc"))
 		{
 			Chart::Providers::StepFile stepfile = Chart::Providers::StepFile(path, true); // only metadata
 

@@ -27,14 +27,14 @@ namespace Average4k::Data::Chart
 	class Metadata
 	{
 	public:
-		std::string artist = "";
-		std::string title = "";
-		std::string subtitle = "";
-		std::string genre = "";
-		std::string credit = "";
-		std::string banner = "";
-		std::string background = "";
-		std::string file = "";
+		std::wstring artist = L"";
+		std::wstring title = L"";
+		std::wstring subtitle = L"";
+		std::wstring genre = L"";
+		std::wstring credit = L"";
+		std::wstring banner = L"";
+		std::wstring background = L"";
+		std::wstring file = L"";
 
 		float offset = 0;
 		float previewStart = 0;

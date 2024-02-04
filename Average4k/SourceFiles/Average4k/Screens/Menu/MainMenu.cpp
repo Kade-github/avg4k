@@ -51,7 +51,7 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 		return t;
 	});
 
-	lua->getState().set_function("getCharts", [this](std::string packName) {
+	lua->getState().set_function("getCharts", [this](std::wstring packName) {
 		lua->getState().collect_garbage();
 		for (int i = 0; i < Average4k::Data::ChartFinder::Packs.size(); i++)
 		{

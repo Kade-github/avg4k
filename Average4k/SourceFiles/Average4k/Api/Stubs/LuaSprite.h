@@ -30,12 +30,14 @@ namespace Average4k::Api::Stubs
 				_base = new AvgEngine::Base::Sprite(x, y, path);
 			else
 				_base = new AvgEngine::Base::Sprite(x, y, A4kGame::gameInstance->skin.GetPath(path));
+			_base->texture->dontDelete = false;
 			_baseObject = _base;
 		}
 
 		LuaSprite(AvgEngine::Base::Sprite* sprite)
 		{
 			_base = sprite;
+			_base->texture->dontDelete = false;
 			_baseObject = _base;
 		}
 

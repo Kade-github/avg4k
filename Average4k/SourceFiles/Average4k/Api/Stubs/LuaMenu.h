@@ -27,6 +27,11 @@ namespace Average4k::Api::Stubs
 
 		void addObject(LuaObject obj)
 		{
+			if (obj._baseObject == nullptr)
+			{
+				AvgEngine::Logging::writeLog("[LuaMenu] You cannot add an object that has already been destroyed.");
+				return;
+			}
 			_base->addObject(obj._baseObject);
 
 			AvgLuaFile::objects.push_back(obj._baseObject);
@@ -35,11 +40,15 @@ namespace Average4k::Api::Stubs
 		void removeObject(LuaObject obj)
 		{
 			_base->removeObject(obj._baseObject);
-			AvgLuaFile::objects.push_back(obj._baseObject);
+
+			AvgLuaFile::objects.erase(std::remove(AvgLuaFile::objects.begin(), AvgLuaFile::objects.end(), obj._baseObject), AvgLuaFile::objects.end());
+
+			delete obj._baseObject;
 		}
 
 		void removeAll()
 		{
+			AvgLuaFile::objects.clear();
 			_base->removeAll();
 		}
 

@@ -25,6 +25,14 @@ selection = 1
 packObjects = {}
 chartObjects = {}
 
+function sortPack(a,b)
+  return a["name"] < b["name"]
+end
+
+function sortChart(a,b)
+    return a["title"] < b["title"]
+end
+
 function createPacks()
     currentMenu:removeAll()
     clearAsync()
@@ -83,6 +91,7 @@ end
 
 function create()
     packs = getPacks()
+    table.sort(packs, sortPack)
 
     createPacks()
 end
@@ -134,10 +143,12 @@ function keyPress(data)
         if currentView == 0 then
             currentView = 1
             currentCharts = getCharts(packs[selection]["name"])
+            table.sort(currentCharts, sortChart)
             createCharts()
             selection = 1
         else
-            -- load chart
+            currentView = 2
+            createChart()
         end
     end
 end
@@ -282,11 +293,17 @@ function view_charts()
     end
 end
 
+function view_chart()
+
+end
+
 function draw()
     if currentView == 0 then
         view_packs()
-    else
+    elseif currentView == 1 then
         view_charts()
+    else
+        view_chart()
     end
 
     for i = 1, #packObjects do

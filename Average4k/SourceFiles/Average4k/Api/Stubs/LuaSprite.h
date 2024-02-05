@@ -191,7 +191,6 @@ namespace Average4k::Api::Stubs
 		static void Register(sol::state& state)
 		{
 			state.new_usertype<LuaSprite>("Sprite",
-				sol::meta_function::garbage_collect,
 				sol::constructors<LuaSprite(float, float, const std::string&)>(),
 				"x", sol::property(&LuaSprite::getX, &LuaSprite::setX),
 				"y", sol::property(&LuaSprite::getY, &LuaSprite::setY),

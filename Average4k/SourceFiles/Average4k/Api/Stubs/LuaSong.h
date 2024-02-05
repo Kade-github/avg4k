@@ -90,15 +90,14 @@ namespace Average4k::Api::Stubs
 		static void Register(sol::state& state)
 		{
 			state.new_usertype<LuaSong>("Song",
-				sol::meta_function::garbage_collect,
+				sol::constructors<LuaSong(std::string, std::string)>(),
 				"Play", &LuaSong::Play,
 				"Stop", &LuaSong::Stop,
 				"SetVolume", &LuaSong::SetVolume,
 				"GetVolume", &LuaSong::GetVolume,
 				"SetSpeed", &LuaSong::SetSpeed,
 				"GetSpeed", &LuaSong::GetSpeed,
-				"isValid", &LuaSong::isValid,
-				sol::destructor(&LuaSong::Destruct)
+				"isValid", &LuaSong::isValid
 			);
 		}
 

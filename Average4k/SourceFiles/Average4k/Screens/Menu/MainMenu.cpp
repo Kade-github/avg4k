@@ -9,6 +9,7 @@
 #include "../../Data/Chart/ChartFinder.h"
 #include "../../Data/Chart/AsyncChartLoader.h"
 #include "../../Api/Stubs/LuaSprite.h"
+#include "../../Api/Stubs/LuaSong.h"
 
 using namespace Average4k::Api;
 
@@ -115,6 +116,23 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 
 	lua->getState().set_function("loadAsyncTexture", [this](std::wstring path) {
 		return Average4k::Data::AsyncChartLoader::AsyncLoadTexture(path);
+	});
+
+	lua->getState().set_function("loadSong", [this](std::string name, std::wstring path) {
+		Average4k::Data::AsyncChartLoader::AsyncLoadAudio(path, name);
+	});
+
+	lua->getState().set_function("getAsyncSong", [this](std::string name) {
+		AvgEngine::Audio::Channel* audio = Average4k::Data::AsyncChartLoader::CheckAudio();
+
+		if (audio == nullptr)
+			return Average4k::Api::Stubs::LuaSong();
+
+		lua->getState().collect_garbage();
+
+		Average4k::Api::Stubs::LuaSong song = Average4k::Api::Stubs::LuaSong(audio);
+
+		return song;
 	});
 
 	lua->getState().set_function("getAsyncTexture", [this](int id) {

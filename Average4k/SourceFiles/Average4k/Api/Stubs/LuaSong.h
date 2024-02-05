@@ -9,6 +9,7 @@
 #pragma once
 
 #include <AvgEngine/External/Bass/BASS.h>
+#include "../../A4kGame.h"
 
 #define SOL_NO_EXCEPTIONS 1
 #define SOL_USE_LUA_HPP
@@ -31,7 +32,12 @@ namespace Average4k::Api::Stubs
 
 		LuaSong(std::string name, std::string audioPath)
 		{
-			_base = AvgEngine::External::BASS::CreateChannel(name, audioPath);
+			_base = AvgEngine::External::BASS::CreateChannel(name, A4kGame::gameInstance->skin.GetPath(audioPath));
+		}
+
+		bool isValid()
+		{
+			return _base != NULL;
 		}
 
 		void Play(bool restart = false)
@@ -91,6 +97,7 @@ namespace Average4k::Api::Stubs
 				"GetVolume", &LuaSong::GetVolume,
 				"SetSpeed", &LuaSong::SetSpeed,
 				"GetSpeed", &LuaSong::GetSpeed,
+				"isValid", &LuaSong::isValid,
 				sol::destructor(&LuaSong::Destruct)
 			);
 		}

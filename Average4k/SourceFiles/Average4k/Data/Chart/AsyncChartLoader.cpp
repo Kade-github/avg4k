@@ -13,9 +13,15 @@ Average4k::Data::ChartFile Average4k::Data::AsyncChartLoader::chart = {};
 std::unordered_map<int, Average4k::Data::asyncImage> Average4k::Data::AsyncChartLoader::textures = {};
 int Average4k::Data::AsyncChartLoader::currentId = 0;
 std::mutex Average4k::Data::AsyncChartLoader::m_lock;
+std::mutex Average4k::Data::AsyncChartLoader::s_lock;
+AvgEngine::Audio::Channel* Average4k::Data::AsyncChartLoader::channel = nullptr;
 
-BS::thread_pool Average4k::Data::AsyncChartLoader::pool = BS::thread_pool();
-BS::thread_pool Average4k::Data::AsyncChartLoader::chartPool = BS::thread_pool();
+std::string Average4k::Data::AsyncChartLoader::latestAudioPath = "";
+
+
+BS::thread_pool Average4k::Data::AsyncChartLoader::pool = BS::thread_pool(); // default thread pool for bgs/banners
+BS::thread_pool Average4k::Data::AsyncChartLoader::chartPool = BS::thread_pool(1); // only one thread for chart
+BS::thread_pool Average4k::Data::AsyncChartLoader::audioPool = BS::thread_pool(1); // only one thread for audio
 
 int Average4k::Data::AsyncChartLoader::AsyncLoadTexture(std::wstring path)
 {
@@ -53,6 +59,15 @@ void Average4k::Data::AsyncChartLoader::AsyncLoadChart(std::wstring path)
 	});
 }
 
+void Average4k::Data::AsyncChartLoader::AsyncLoadAudio(std::wstring path, std::string name)
+{
+	std::string p = AvgEngine::Utils::StringTools::Ws2s(path);
+	latestAudioPath = p;
+	audioPool.detach_task([p, name]() {
+		LoadAudio(p, name);
+	});
+}
+
 void Average4k::Data::AsyncChartLoader::ClearAll()
 {
 	pool.purge();
@@ -69,4 +84,16 @@ void Average4k::Data::AsyncChartLoader::ClearAll()
 	chart = ChartFile();
 
 
+}
+
+void Average4k::Data::AsyncChartLoader::LoadAudio(std::string path, std::string name)
+{
+	std::lock_guard<std::mutex> lock(s_lock);
+	if (channel != nullptr)
+	{
+		channel->Stop();
+		AvgEngine::External::BASS::RemoveChannel(channel->id);
+		delete channel;
+	}
+	channel = AvgEngine::External::BASS::CreateChannel(name, path);
 }

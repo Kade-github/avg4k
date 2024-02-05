@@ -19,6 +19,7 @@
 #include "TimingPoint.h"
 #include "Difficulty.h"
 
+
 #define MAX(a,b) (((a)>(b))?(a):(b)) // for some reason std::max is being defined by another definition of max so we just do our own fuck you.
 
 namespace Average4k::Data

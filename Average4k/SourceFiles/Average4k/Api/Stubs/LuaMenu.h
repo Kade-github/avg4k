@@ -20,6 +20,10 @@ namespace Average4k::Api::Stubs
 	class LuaMenu {
 		AvgEngine::Base::Menu* _base;
 	public:
+		LuaMenu()
+		{
+			_base = NULL;
+		}
 		LuaMenu(AvgEngine::Base::Menu* base)
 		{
 			_base = base;

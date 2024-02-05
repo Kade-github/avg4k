@@ -23,13 +23,14 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 
 	Average4k::Api::Stubs::LuaMenu::Register(lua->getState());
 
-	Average4k::Api::Stubs::LuaMenu cm(this);
+	cm = Average4k::Api::Stubs::LuaMenu(this);
 
 	lua->getState().set("currentMenu", cm);
 
 	m = lua->getState().create_named_table("mouse");
 
 	lua->getState().set_function("switchTo", [this](std::string path) {
+		cm.removeAll();
 		AvgEngine::Game::Instance->SwitchMenu(new MainMenu(path));
 	});
 
@@ -92,6 +93,7 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 					chart["previewStart"] = c.metadata.previewStart;
 
 					chart["type"] = c.metadata.type;
+					chart["path"] = c.path;
 
 					chart["workshop"] = c.metadata.workshop;
 					// get folder from path
@@ -159,6 +161,7 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 		t["type"] = chart.metadata.type;
 
 		t["workshop"] = chart.metadata.workshop;
+		t["path"] = chart.path;
 
 		t["timingPoints"] = lua->getState().create_table();
 

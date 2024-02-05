@@ -47,6 +47,7 @@ void StepFile::ParseMetadata(bool only, std::wifstream* stream)
 			continue;
 
 		std::wstring key;
+		std::wstring keyUnicode;
 		std::wstring value;
 		bool isTitle;
 
@@ -79,45 +80,46 @@ void StepFile::ParseMetadata(bool only, std::wifstream* stream)
 			{
 				if (line.starts_with(L"#NOTES"))
 				{
-					skip = true;
-					continue;
+					return;
 				}
 			}
 
-			key = line.substr(line.find_first_of(L"#") + 1, line.find_first_of(L":") - 1);
-			value = line.substr(line.find_first_of(L":") + 1, line.length());
+			key = line.substr(line.find_first_of(L'#') + 1, line.find_first_of(L":"));
+
+			if (key.find(L':') != std::string::npos)
+				key = key.substr(0, key.find(L':'));
+
+			value = line.substr(line.find_first_of(L':') + 1, line.length());
 
 			value = value.substr(0, value.length() - 1);
 
-			isTitle = key.contains(L"TITLE") && !key.contains(L"SUBTITLE") && !key.contains(L"CDTITLE") && !key.contains(L"TITLETRANSLIT");
-
-			if (isTitle)
+			if (key == L"TITLE")
 				metadata.title = value;
-			if (key.contains(L"TITLETRANSLIT"))
+			if (key == L"TITLETRANSLIT")
 				metadata.titleTranslit = value;
-			if (key.contains(L"SUBTITLE") && !key.contains(L"SUBTITLETRANSLIT"))
+			if (key == L"SUBTITLE")
 				metadata.subtitle = value;
-			if (key.contains(L"SUBTITLETRANSLIT"))
+			if (key == L"SUBTITLETRANSLIT")
 				metadata.subtitleTranslit = value;
-			if (key.contains(L"ARTIST") && !key.contains(L"ARTISTTRANSLIT"))
+			if (key == L"ARTIST")
 				metadata.artist = value;
-			if (key.contains(L"ARTISTTRANSLIT"))
+			if (key == L"ARTISTTRANSLIT")
 				metadata.artistTranslit = value;
-			if (key.contains(L"GENRE"))
+			if (key == L"GENRE")
 				metadata.genre = value;
-			if (key.contains(L"CREDIT"))
+			if (key == L"CREDIT")
 				metadata.credit = value;
-			if (key.contains(L"BANNER"))
+			if (key == L"BANNER")
 				metadata.banner = value;
-			if (key.contains(L"BACKGROUND"))
+			if (key == L"BACKGROUND")
 				metadata.background = value;
-			if (key.contains(L"MUSIC"))
+			if (key == L"MUSIC")
 				metadata.file = value;
 
-			if (key.contains(L"OFFSET"))
+			if (key == L"OFFSET")
 				metadata.offset = std::stof(value);
 
-			if (key.contains(L"SAMPLESTART"))
+			if (key == L"SAMPLESTART")
 				metadata.previewStart = std::stof(value);
 			break;
 		case 1:
@@ -221,20 +223,20 @@ void StepFile::ParseNotes(std::wstring line, int& lineNumber)
 		std::wstring trim = AvgEngine::Utils::StringTools::Trim(line);
 		switch (lineNumber)
 		{
-		case 1: // chart style
+		case 0: // chart style
 			// if its not a dance single, we dont fuck wit it.
 			if (!AvgEngine::Utils::StringTools::Contains(line, L"dance-single"))
 				skipDiff = true;
 			break;
-		case 2: // diff author (most of the time... or its in the CREDIT tag if theres no diff author)
+		case 1: // diff author (most of the time... or its in the CREDIT tag if theres no diff author)
 			// remove the last character
 			workingDiff.charter = trim.substr(0, trim.length() - 1);
 			break;
-		case 3:
+		case 2:
 			// diff name
 			workingDiff.name = trim.substr(0, trim.length() - 1);
 			break;
-		case 4:
+		case 3:
 			// diff rating
 			std::wstring endTrim = trim.substr(0, trim.length() - 1);
 			try

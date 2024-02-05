@@ -25,6 +25,10 @@ selection = 1
 packObjects = {}
 chartObjects = {}
 
+selectedChart = {}
+selectedDiff = 1
+chartObject = {}
+
 function sortPack(a,b)
   return a["name"] < b["name"]
 end
@@ -38,6 +42,7 @@ function createPacks()
     clearAsync()
     packObjects = {}
     chartObjects = {}
+    chartObject = {}
 
     logo = Sprite.new(20, 20, "Images/Logo.png")
 
@@ -68,6 +73,7 @@ function createCharts()
     clearAsync()
     packObjects = {}
     chartObjects = {}
+    chartObject = {}
 
     logo = Sprite.new(20, 20, "Images/Logo.png")
 
@@ -89,6 +95,57 @@ function createCharts()
     end
 end
 
+function createChart()
+    currentMenu:removeAll()
+    clearAsync()
+    packObjects = {}
+    chartObjects = {}
+    chartObject = {}
+
+    selectedDiff = 1
+
+    logo = Sprite.new(20, 20, "Images/Logo.png")
+
+    currentMenu:addObject(logo)
+
+    local goBack = Text.new(20, logo.y + logo.height + 20, "ArialUnicode.fnt", "Press escape to go back", 42)
+
+    currentMenu:addObject(goBack)
+
+    local rp = selectedChart
+
+    local t = rp["title"]
+    if rp["titleTranslit"] ~= "" then
+        t = rp["titleTranslit"]
+    end
+    if rp["artistTranslit"] ~= "" then
+        t = t .. " by " .. rp["artist"]
+    elseif rp["artist"] ~= "" then
+        t = t .. " by " .. rp["artist"]
+    end
+    if rp["subtitleTranslit"] ~= "" then
+        t = t .. " (" .. rp["subtitleTranslit"] .. ")"
+    elseif rp["subtitle"] ~= "" then
+        t = t .. " (" .. rp["subtitle"] .. ")"
+    end
+
+    local chart = Text.new(20, logo.y + logo.height + 62, "ArialUnicode.fnt", t, 42)
+
+    currentMenu:addObject(chart)
+
+    local bId = -1
+
+    if rp["background"] ~= "" then
+        bId = loadAsyncTexture(rp["folder"] .. "/" .. rp["background"])
+    end
+
+    selectedChart["loaded"] = false
+
+    loadChart(selectedChart["path"]) -- load diffs and stuff
+
+    chartObject = { text = chart, name = t, id = 1, background = nil, backgroundId = bId, diffObjects = {}}
+end
+
 function create()
     packs = getPacks()
     table.sort(packs, sortPack)
@@ -98,29 +155,41 @@ end
 
 function keyPress(data)
     if data == 265 then -- up
-        selection = selection - 1
 
         if currentView == 0 then
+            selection = selection - 1
             if selection < 1 then
                 selection = #packObjects
             end
-        else
+        elseif currentView == 1 then
+            selection = selection - 1
             if selection < 1 then
                 selection = #chartObjects
+            end
+        else
+            selectedDiff = selectedDiff - 1
+            if selectedDiff < 1 then
+                selectedDiff = #chartObject.diffObjects
             end
         end
     end
 
     if data == 264 then -- down
-        selection = selection + 1
 
         if currentView == 0 then
+            selection = selection + 1
             if selection > #packObjects then
                 selection = 1
             end
-        else
+        elseif currentView == 1 then
+            selection = selection + 1
             if selection > #chartObjects then
                 selection = 1
+            end
+        else
+            selectedDiff = selectedDiff + 1
+            if selectedDiff > #chartObject.diffObjects then
+                selectedDiff = 1
             end
         end
     end
@@ -130,10 +199,15 @@ function keyPress(data)
     if data == 256 then
         if currentView == 0 then
             switchTo("Scripts/MainMenu.lua")
-        else
+        elseif currentView == 1 then
             currentView = 0
             createPacks()
             selection = 1
+        else
+            currentView = 1
+            table.sort(currentCharts, sortChart)
+            createCharts()
+            print(tostring(selection))
         end
     end
 
@@ -146,8 +220,9 @@ function keyPress(data)
             table.sort(currentCharts, sortChart)
             createCharts()
             selection = 1
-        else
+        elseif currentView == 1 then
             currentView = 2
+            selectedChart = currentCharts[selection]
             createChart()
         end
     end
@@ -242,11 +317,6 @@ function view_charts()
             p.banner = nil
             p.bId = -1
 
-            if p.background ~= nil then
-                currentMenu:removeObject(p.background)
-            end
-            p.background = nil
-            p.backgroundId = -1
         end
     end
 
@@ -295,6 +365,55 @@ end
 
 function view_chart()
 
+    local min = selectedDiff - 5
+    local max = selectedDiff + 5
+
+    if min < 1 then
+        min = 1
+    end
+
+    if max > #chartObject.diffObjects then
+        max = #chartObject.diffObjects
+    end
+
+    -- set view
+    for i = 1, #chartObject.diffObjects do
+        local p = chartObject.diffObjects[i]
+
+        if i >= min and i <= max then
+            -- nada
+        else
+            p.text.text = p.name
+            p.text.y = -1000
+        end
+    end
+
+    for i = min, max do
+        local p = chartObject.diffObjects[i]
+
+        local away = i - selectedDiff
+
+        if away == 0 then
+            p.text.text = "> " .. p.name .. " <"
+        else
+            p.text.text = p.name
+        end
+
+        p.text.y = 500 + (away * 40)
+
+        if p.text.y < logo.y + logo.height + 64 then
+            p.text.y = -1000
+        end
+
+        if p.text.y > 900 then
+            p.text.y = -1000
+        end
+    end
+
+end
+
+function lerp(a,b,t) 
+    return a * (1-t) + b * t 
 end
 
 function draw()
@@ -340,19 +459,61 @@ function draw()
                 currentMenu:addObject(p.banner)
             end
         end
+    end
 
-        if p.background == nil and p.backgroundId ~= -1 and p.showBG then
-            local spr = getAsyncTexture(p.backgroundId)
+    if currentView == 2 then
+        if chartObject.background == nil and chartObject.backgroundId ~= -1 then
+            local spr = getAsyncTexture(chartObject.backgroundId)
 
-            if not spr.width == 0 and not spr.height == 0 then -- doesn't exist yet
-                p.background = spr
-                p.background.x = 0
-                p.background.y = 0
-                p.background.width = 1920
-                p.background.height = 1080
-
-                currentMenu:addObject(p.background)
+            if not (spr.width == 0) and not (spr.height == 0) then -- doesn't exist yet
+                chartObject.background = spr
+                chartObject.background.zIndex = -1
+                chartObject.background.x = 0
+                chartObject.background.y = 0
+                chartObject.background.width = 1920
+                chartObject.background.height = 1080
+                chartObject.background.alpha = 0.0
+                currentMenu:addObject(chartObject.background)
             end
+        end
+
+        if chartObject.background ~= nil then
+            chartObject.background.alpha = lerp(chartObject.background.alpha, 0.5, 0.1)
+        end
+
+        if not selectedChart["loaded"] then
+            local c = checkChart()
+
+            if c["title"] ~= selectedChart["title"] then
+                return
+            end
+
+            selectedChart = c
+            selectedChart["loaded"] = true
+
+            print("Loaded diffs " .. tostring(#selectedChart["difficulties"]) .. " for " .. selectedChart["title"])
+
+            -- create difficulties
+
+            for i = 1, #selectedChart["difficulties"] do
+                local d = selectedChart["difficulties"][i]
+
+                local t = d["name"]
+
+                if d["charter"] ~= "" then
+                    t = t .. " charted by " .. d["charter"]
+                end
+                
+                t = t .. " (Rating: " .. d["rating"] .. ")"
+
+                local diff = Text.new(20, 500 + (i * 40), "ArialUnicode.fnt", t, 42)
+
+                chartObject.diffObjects[i] = { text = diff, name = t, id = i }
+
+                currentMenu:addObject(diff)
+            end
+
+            
         end
     end
 end

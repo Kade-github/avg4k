@@ -54,6 +54,7 @@ void Average4k::Data::AsyncChartLoader::AsyncLoadChart(std::wstring path)
 
 void Average4k::Data::AsyncChartLoader::ClearAll()
 {
+	pool.purge();
 	if (pool.get_tasks_queued() + pool.get_tasks_running() > 0)
 	{
 		pool.wait();

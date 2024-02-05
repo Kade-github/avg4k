@@ -16,11 +16,13 @@ namespace Average4k::Screens::Menu
 	{
 		std::string path = "";
 	public:
+
 		MainMenu(std::string _path)
 		{
 			path = _path;
 		}
 		bool switchNextFrame = false;
+		Average4k::Api::Stubs::LuaMenu cm;
 		std::string _toPath = "";
 		sol::table m;
 		static bool loaded;

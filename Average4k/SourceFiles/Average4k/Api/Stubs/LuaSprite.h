@@ -118,14 +118,74 @@ namespace Average4k::Api::Stubs
 			return _base->transform.angle;
 		}
 
-		void setColor(float r, float g, float b, float a)
+		void setR(float r)
 		{
 			if (_base == NULL)
 				return;
 			_base->transform.r = r;
+		}
+
+		void setG(float g)
+		{
+			if (_base == NULL)
+				return;
 			_base->transform.g = g;
+		}
+
+		void setB(float b)
+		{
+			if (_base == NULL)
+				return;
 			_base->transform.b = b;
+		}
+
+		void setA(float a)
+		{
+			if (_base == NULL)
+				return;
 			_base->transform.a = a;
+		}
+
+		float getR()
+		{
+			if (_base == NULL)
+				return 0;
+			return _base->transform.r;
+		}
+
+		float getG()
+		{
+			if (_base == NULL)
+				return 0;
+			return _base->transform.g;
+		}
+
+		float getB()
+		{
+			if (_base == NULL)
+				return 0;
+			return _base->transform.b;
+		}
+
+		float getA()
+		{
+			if (_base == NULL)
+				return 0;
+			return _base->transform.a;
+		}
+
+		void setZIndex(int index)
+		{
+			if (_base == NULL)
+				return;
+			_base->zIndex = index;
+		}
+
+		int getZIndex()
+		{
+			if (_base == NULL)
+				return 0;
+			return _base->zIndex;
 		}
 
 		static void Register(sol::state& state)
@@ -137,7 +197,11 @@ namespace Average4k::Api::Stubs
 				"width", sol::property(&LuaSprite::getWidth, &LuaSprite::setWidth),
 				"height", sol::property(&LuaSprite::getHeight, &LuaSprite::setHeight),
 				"angle", sol::property(&LuaSprite::getAngle, &LuaSprite::setAngle),
-				"color", &LuaSprite::setColor,
+				"r", sol::property(&LuaSprite::getR, &LuaSprite::setR),
+				"g", sol::property(&LuaSprite::getG, &LuaSprite::setG),
+				"b", sol::property(&LuaSprite::getB, &LuaSprite::setB),
+				"alpha", sol::property(&LuaSprite::getA, &LuaSprite::setA),
+				"zIndex", sol::property(&LuaSprite::getZIndex, &LuaSprite::setZIndex),
 				sol::base_classes, sol::bases<LuaObject>()
 			);
 		}

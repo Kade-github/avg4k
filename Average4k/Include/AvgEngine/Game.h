@@ -143,6 +143,9 @@ namespace AvgEngine
 		{
 			HandleGamepad();
 
+			if (CurrentMenu != NULL)
+				CurrentMenu->draw();
+
 			if (queuedEvents.size() != 0)
 			{
 				std::vector<int> listtoDelete = {};
@@ -178,8 +181,6 @@ namespace AvgEngine
 					eventMutex.unlock();
 				}
 			}
-			if (CurrentMenu != NULL)
-				CurrentMenu->draw();
 		}
 
 		virtual void QueueEvent(Events::Event e)

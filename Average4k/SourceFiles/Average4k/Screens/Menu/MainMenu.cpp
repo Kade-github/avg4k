@@ -37,6 +37,7 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 	});
 
 	lua->getState().set_function("scanCharts", [this]() {
+		lua->getState().collect_garbage();
 		Average4k::Data::ChartFinder::FindCharts("Charts");
 	});
 

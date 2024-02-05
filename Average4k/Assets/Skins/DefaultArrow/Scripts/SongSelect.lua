@@ -12,6 +12,9 @@ currentSong = nil
 packSelection = 1
 selection = 1
 
+reloadFrameCounter = 0
+justReloaded = false
+
 packObjects = {}
 chartObjects = {}
 
@@ -29,13 +32,16 @@ function sortChart(a,b)
     return a["title"] < b["title"]
 end
 
-function createPacks()
+function resetAll()
     currentMenu:removeAll()
     clearAsync()
     packObjects = {}
     chartObjects = {}
     chartObject = {}
+end
 
+function createPacks()
+    resetAll()
     logo = Sprite.new(20, 20, "Images/Logo.png")
 
     currentMenu:addObject(logo)
@@ -65,11 +71,7 @@ function createCharts()
         currentView = 0
         return
     end
-    currentMenu:removeAll()
-    clearAsync()
-    packObjects = {}
-    chartObjects = {}
-    chartObject = {}
+    resetAll()
 
     logo = Sprite.new(20, 20, "Images/Logo.png")
 
@@ -92,11 +94,7 @@ function createCharts()
 end
 
 function createChart()
-    currentMenu:removeAll()
-    clearAsync()
-    packObjects = {}
-    chartObjects = {}
-    chartObject = {}
+    resetAll()
 
     selectedDiff = 1
 
@@ -172,6 +170,20 @@ function findSong()
 end
 
 function keyPress(data)
+
+    -- pressed f1
+
+    if data == 290 then -- reload charts
+        justReloaded = true
+        selection = 1
+        packSelection = 1
+        currentView = 0
+        selectedDiff = 1
+        packs = {}
+        resetAll()
+        scanCharts()
+    end
+
     if data == 265 then -- up
 
         if currentView == 0 then
@@ -246,10 +258,8 @@ function keyPress(data)
             end
         elseif currentView == 1 then
             selectedChart = currentCharts[selection]
-            if #selectedChart["difficulties"] ~= 0 then
-                currentView = 2
-                createChart()
-            end
+            currentView = 2
+            createChart()
         end
     end
 end
@@ -446,6 +456,21 @@ function lerp(a,b,t)
 end
 
 function draw()
+    if justReloaded then
+        reloadFrameCounter = reloadFrameCounter + 1
+        if reloadFrameCounter > 30 then -- wait 30ish frames, probably bad but whatever
+            reloadFrameCounter = 0
+            print("Reloaded!")
+            justReloaded = false
+            packs = getPacks()
+            table.sort(packs, sortPack)
+
+            createPacks()
+        end
+        return
+    end
+
+
     if currentView == 0 then
         view_packs()
     elseif currentView == 1 then
@@ -529,11 +554,34 @@ function draw()
         if not selectedChart["loaded"] then
             local c = checkChart()
 
-            if c["title"] ~= selectedChart["title"] then
+            local t = c["title"]
+
+            if t == "" then
+                t = "Unknown Title"
+            end
+
+            local ot = selectedChart["title"]
+
+            if ot == "" then
+                ot = "Unknown Title"
+            end
+
+            if t ~= selectedChart["title"] then
                 return
             end
 
             selectedChart = c
+
+            if selectedChart["difficulties"] == nil then
+                selectedChart["loaded"] = true
+                return
+            end
+
+            if #selectedChart["difficulties"] == 0 then
+                selectedChart["loaded"] = true
+                return
+            end
+
             selectedChart["loaded"] = true
 
             print("Loaded diffs " .. tostring(#selectedChart["difficulties"]) .. " for " .. selectedChart["title"])

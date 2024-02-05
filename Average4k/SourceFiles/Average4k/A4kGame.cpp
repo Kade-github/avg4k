@@ -65,7 +65,7 @@ void Average4k::A4kGame::Start()
 
 void Average4k::A4kGame::update()
 {
-	if (Average4k::Data::ChartFinder::pack_pool.get_tasks_queued() || Average4k::Data::ChartFinder::pack_pool.get_tasks_running() > 0)
+	if (Average4k::Data::ChartFinder::pack_pool.get_tasks_queued() || Average4k::Data::ChartFinder::pack_pool.get_tasks_running() > 0 || Average4k::Data::ChartFinder::startedSearching)
 	{
 		DrawOutlinedDebugText(200, 100, "please hold... im loading packs", 84);
 

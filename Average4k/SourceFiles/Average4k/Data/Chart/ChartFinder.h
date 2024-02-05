@@ -25,6 +25,7 @@ namespace Average4k::Data
 	class ChartFinder
 	{
 	public:
+		static bool startedSearching;
 		static std::mutex m_lock;
 		static std::vector<Pack> Packs;
 		static BS::thread_pool pack_pool;

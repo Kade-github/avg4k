@@ -16,6 +16,8 @@ std::vector<Pack> ChartFinder::Packs = {};
 
 BS::thread_pool ChartFinder::pack_pool = BS::thread_pool(std::thread::hardware_concurrency() * 3.334f); // MAGIC NUMBER
 
+bool ChartFinder::startedSearching = false;
+
 void ChartFinder::FindCharts(const std::string _path)
 {
 	if (pack_pool.get_tasks_running() != 0)
@@ -26,6 +28,7 @@ void ChartFinder::FindCharts(const std::string _path)
 	AvgEngine::Logging::writeLog("[ChartFinder] Scanning for packs in " + _path + " with " + std::to_string(pack_pool.get_thread_count()) + " threads.");
 
 	std::string p = _path;
+	startedSearching = true;
 
 	std::thread t([p]() {
 		for (const auto& entry : std::filesystem::directory_iterator(p))
@@ -121,6 +124,7 @@ void ChartFinder::FindCharts(const std::string _path)
 					});
 			}
 		}
+		startedSearching = false;
 	});
 	t.detach();
 }

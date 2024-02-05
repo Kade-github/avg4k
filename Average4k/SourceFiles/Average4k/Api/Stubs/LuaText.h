@@ -110,6 +110,7 @@ namespace Average4k::Api::Stubs
 		static void Register(sol::state& state)
 		{
 			state.new_usertype<LuaText>("Text",
+				sol::meta_function::garbage_collect,
 				sol::constructors<LuaText(int, int, const std::string&, const std::wstring&, int)>(),
 				"x", sol::property(&LuaText::getX, &LuaText::setX),
 				"y", sol::property(&LuaText::getY, &LuaText::setY),

@@ -105,6 +105,9 @@ void ChartFinder::FindCharts(const std::string _path)
 								if (stepfile.isValid)
 								{
 									std::lock_guard<std::mutex> lock(m);
+									// if the name, artist are the same probably skip
+									if (std::find_if(p.charts.begin(), p.charts.end(), [stepfile](const Chart::Providers::StepFile& c) { return c.metadata.title == stepfile.metadata.title && c.metadata.artist == stepfile.metadata.artist; }) != p.charts.end())
+										return;
 									p.charts.push_back(stepfile);
 								}
 							}

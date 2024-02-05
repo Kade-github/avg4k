@@ -1,140 +1,53 @@
-[Sun Feb  4 19:28:14 2024] [Main] Logging system initialized.
-[Sun Feb  4 19:28:14 2024] [GLFW] GLFW initialized.
-[Sun Feb  4 19:28:15 2024] [AvgEngine] Game created, title: Average4k. Version: a1
-[Sun Feb  4 19:28:15 2024] [GLAD] GLAD initialized.
-[Sun Feb  4 19:28:15 2024] [Main] Starting game...
-[Sun Feb  4 19:28:15 2024] [Average4k] Set window icon!
-[Sun Feb  4 19:28:15 2024] [ChartFinder] Scanning for packs in Charts with 20 threads.
-[Sun Feb  4 19:28:15 2024] [ChartFinder] Scanning for charts in Charts\Chiptune Moddo with 6 threads.
-[Sun Feb  4 19:28:15 2024] [ChartFinder] Scanning for charts in Charts\communityPack with 6 threads.
-[Sun Feb  4 19:28:15 2024] [ChartFinder] Scanning for charts in Charts\KITUNEKOTEI with 6 threads.
-[Sun Feb  4 19:28:15 2024] [ChartFinder] Scanning for charts in Charts\Martzi's archive (All charts) with 6 threads.
-[Sun Feb  4 19:28:16 2024] [ChartFinder] Scanning for charts in Charts\mizuki with 6 threads.
-[Sun Feb  4 19:28:16 2024] [ChartFinder] Scanning for charts in Charts\ost.vol.1 with 6 threads.
-[Sun Feb  4 19:28:16 2024] [ChartFinder] Scanning for charts in Charts\Purple Paradise with 6 threads.
-[Sun Feb  4 19:28:16 2024] [ChartFinder] Scanning for charts in Charts\sabo with 6 threads.
-[Sun Feb  4 19:28:16 2024] [ChartFinder] Scanning for charts in Charts\Sanatenshin with 6 threads.
-[Sun Feb  4 19:28:17 2024] [Main] Initialized BASS!
-[Sun Feb  4 19:28:17 2024] [Main] Initialized Display!
-[Sun Feb  4 19:28:17 2024] [Main] Initialized ImGUI!
-[Sun Feb  4 19:28:17 2024] [Lua] Loaded file: Assets/Skins/DefaultArrow/Scripts/MainMenu.lua
-[Sun Feb  4 19:28:17 2024] hello :)
-[Sun Feb  4 19:28:17 2024] [Fnt] Loaded font Arialx128
-[Sun Feb  4 19:28:17 2024] [FNT] [Warning] ArialUnicode.fnt doesn't have a kernings node.
-[Sun Feb  4 19:28:17 2024] [FNT] [Warning] ArialUnicodeOutlined.fnt doesn't have a kernings node.
-[Sun Feb  4 19:28:18 2024] [Lua] Loaded file: Assets/Skins/DefaultArrow/Scripts/SongSelect.lua
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\1111 (68)/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\minimalian/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\(RYU Remix)/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\Shonyun A/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\Brandnew Mind/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\1111 (7)/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\GOTHIC SYSTEM/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\breathless/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\1111 (8)/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\MOON RACE/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\SHOOTING STAR/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\Gravity/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\Broken Strawberry ShortCake/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\-3rd.eye- Trance.edt/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\Gup/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\1111 (9)/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\Moon Story/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\Brother soul (RyuüÖ Remix)/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\Shoujyo Satori -3rd.eye- Trance.edt/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\Mooned Insect/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\Muse/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\12 Jigokuno Fire/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\B_T_DUTCH/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\Haeok jajang gar/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\SigSig(ssry-ha2 mix)/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\HAPPY SKY ENDING/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\MY FUTURE/banner.png
-[Sun Feb  4 19:28:20 2024] loading Charts\sabo\12.4/banner.png
-[Sun Feb  4 19:28:22 2024] loading Charts\sabo\-ANOTHER-/banner.png
-[Sun Feb  4 19:28:42 2024] [User] reload
-[Sun Feb  4 19:28:42 2024] [Debug] [CmdHandler] [reload] Reloaded lua.
-[Sun Feb  4 19:28:42 2024] [Lua] Loaded file: Assets/Skins/DefaultArrow/Scripts/SongSelect.lua
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\1111 (68)/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\minimalian/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\(RYU Remix)/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\Shonyun A/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\Brandnew Mind/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\1111 (7)/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\GOTHIC SYSTEM/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\breathless/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\1111 (8)/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\MOON RACE/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\SHOOTING STAR/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\Gravity/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\Broken Strawberry ShortCake/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\-3rd.eye- Trance.edt/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\Gup/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\1111 (9)/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\Moon Story/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\Brother soul (RyuüÖ Remix)/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\Shoujyo Satori -3rd.eye- Trance.edt/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\Mooned Insect/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\Muse/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\12 Jigokuno Fire/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\B_T_DUTCH/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\Haeok jajang gar/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\SigSig(ssry-ha2 mix)/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\HAPPY SKY ENDING/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\MY FUTURE/banner.png
-[Sun Feb  4 19:28:45 2024] loading Charts\sabo\12.4/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\GUN/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\Cleanse The Bloodlines/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\Haikyo (DourGent)/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\Raindrop (Martzi)\bad/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\Maniacal Princess (DourGent & James May)/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\Manic Miner/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\Raindrop (Martzi)/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\Marimba (DourGent)/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\Rainy Devil (Martzi)/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\Marys song (DourGent)/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\#GOTO (Xingren & Samctuary)/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\Hanezeve Caradhina/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\Mayonaka no Toubou [Csenc + DourGent]/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\Re-Construction EX-001 (Tim & Celebelian & DourGent)/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\Thos Moser (Samctuary)/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\Time Flow (Samctuary)/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\Clear Tamei (DourGent & James May)/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\(DourGent)Make U Mine/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\Meeting a Hero intro (Martzi)/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\Click Bait [DourGent]/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\Memories of Wonderland (DourGent)/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\(DourGent)Monster/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\TIT FOR TAT (DourGent)/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\Re-Construction EX.002 (IcyWorld & DourGent)/banner.png
-[Sun Feb  4 19:28:54 2024] loading Charts\Martzi's archive (All charts)\Title Screen (Dourgent)/banner.png
-[Sun Feb  4 19:28:55 2024] loading Charts\Martzi's archive (All charts)\Title Theme (DourGent)/banner.png
-[Sun Feb  4 19:28:55 2024] loading Charts\Martzi's archive (All charts)\Title Theme (Samctuary)/banner.png
-[Sun Feb  4 19:28:56 2024] loading Charts\Martzi's archive (All charts)\Click Clack For You (DourGent)/banner.png
-[Sun Feb  4 19:28:56 2024] loading Charts\Martzi's archive (All charts)\Memories of Wonderland [DourGent]/banner.png
-[Sun Feb  4 19:28:56 2024] loading Charts\Martzi's archive (All charts)\Cocktail (DourGent)/banner.png
-[Sun Feb  4 19:28:56 2024] loading Charts\Martzi's archive (All charts)\HANIPAGANDA (Samctuary)/banner.png
-[Sun Feb  4 19:28:56 2024] loading Charts\Martzi's archive (All charts)\Haniwa Dance Event (Samctuary)/banner.png
-[Sun Feb  4 19:28:57 2024] loading Charts\Martzi's archive (All charts)\(DourGent)Uso and Braindead Berserker/banner.png
-[Sun Feb  4 19:28:57 2024] loading Charts\Martzi's archive (All charts)\TOHO Geek (DourGent)/banner.png
-[Sun Feb  4 19:28:57 2024] loading Charts\Martzi's archive (All charts)\HARD (DourGent)/banner.png
-[Sun Feb  4 19:28:57 2024] loading Charts\Martzi's archive (All charts)\HARD RENAISSAMBA (Samctuary)\gengaozo (Martzi)/banner.png
-[Sun Feb  4 19:28:57 2024] loading Charts\Martzi's archive (All charts)\TOP 40 SHART TOPPER (Dourworld)/banner.png
-[Sun Feb  4 19:28:58 2024] loading Charts\Martzi's archive (All charts)\MEMPHIS BASS PRO SHOP PYRAMID PARTY ROCK ANTHEM (BASS PRO)/banner.png
-[Sun Feb  4 19:28:58 2024] loading Charts\Martzi's archive (All charts)\Re-Sin (DourGent)/banner.png
-[Sun Feb  4 19:28:58 2024] loading Charts\Martzi's archive (All charts)\(DourGent)Youkoso Juukan Park he/banner.png
-[Sun Feb  4 19:28:58 2024] loading Charts\Martzi's archive (All charts)\Red Fraction (Martzi)/banner.png
-[Sun Feb  4 19:28:58 2024] loading Charts\Martzi's archive (All charts)\HARD RENAISSAMBA (Samctuary)/banner.png
-[Sun Feb  4 19:28:58 2024] loading Charts\Martzi's archive (All charts)\Toransudansuanaki (Martzi)/banner.png
-[Sun Feb  4 19:28:58 2024] loading Charts\Martzi's archive (All charts)\Come to daddy (Samctuary)/banner.png
-[Sun Feb  4 19:28:58 2024] loading Charts\Martzi's archive (All charts)\HARD [DourGent]/banner.png
-[Sun Feb  4 19:28:58 2024] loading Charts\Martzi's archive (All charts)\Toriningen Party (DourGent)/banner.png
-[Sun Feb  4 19:28:59 2024] loading Charts\Martzi's archive (All charts)\MiLK (Martzi)/banner.png
-[Sun Feb  4 19:28:59 2024] loading Charts\Martzi's archive (All charts)\Religious Sun Faith 1st anniversary mix (Samctuary)/banner.png
-[Sun Feb  4 19:28:59 2024] loading Charts\Martzi's archive (All charts)\Comfortable Hole Bye (DourGent)/banner.png
-[Sun Feb  4 19:28:59 2024] loading Charts\Martzi's archive (All charts)\(Martzi)line zeta/banner.png
-[Sun Feb  4 19:28:59 2024] loading Charts\Martzi's archive (All charts)\TORNILLO UN DIA TODO SE TERMINA STYLE FAST AT ABSURDUM MUSIC NOT FOR MONEY SER ABSURDUM-MELODY/banner.png
-[Sun Feb  4 19:28:59 2024] loading Charts\Martzi's archive (All charts)\Common Battle (Samctuary)/banner.png
-[Sun Feb  4 19:28:59 2024] loading Charts\Martzi's archive (All charts)\Construction Site (Samctuary)/banner.png
-[Sun Feb  4 19:28:59 2024] loading Charts\Martzi's archive (All charts)\Headspace (DourGent)/banner.png
-[Sun Feb  4 19
+[Sun Feb  4 20:38:41 2024] [Main] Logging system initialized.
+[Sun Feb  4 20:38:41 2024] [GLFW] GLFW initialized.
+[Sun Feb  4 20:38:42 2024] [AvgEngine] Game created, title: Average4k. Version: a1
+[Sun Feb  4 20:38:42 2024] [GLAD] GLAD initialized.
+[Sun Feb  4 20:38:42 2024] [Main] Starting game...
+[Sun Feb  4 20:38:42 2024] [Average4k] Set window icon!
+[Sun Feb  4 20:38:42 2024] [ChartFinder] Scanning for packs in Charts with 20 threads.
+[Sun Feb  4 20:38:42 2024] [ChartFinder] Scanning for charts in Charts\Chiptune Moddo with 6 threads.
+[Sun Feb  4 20:38:42 2024] [ChartFinder] Scanning for charts in Charts\communityPack with 6 threads.
+[Sun Feb  4 20:38:42 2024] [ChartFinder] Scanning for charts in Charts\KITUNEKOTEI with 6 threads.
+[Sun Feb  4 20:38:43 2024] [ChartFinder] Scanning for charts in Charts\Martzi's archive (All charts) with 6 threads.
+[Sun Feb  4 20:38:43 2024] [ChartFinder] Scanning for charts in Charts\mizuki with 6 threads.
+[Sun Feb  4 20:38:44 2024] [ChartFinder] Scanning for charts in Charts\ost.vol.1 with 6 threads.
+[Sun Feb  4 20:38:44 2024] [ChartFinder] Scanning for charts in Charts\Purple Paradise with 6 threads.
+[Sun Feb  4 20:38:44 2024] [ChartFinder] Scanning for charts in Charts\sabo with 6 threads.
+[Sun Feb  4 20:38:44 2024] [ChartFinder] Scanning for charts in Charts\Sanatenshin with 6 threads.
+[Sun Feb  4 20:38:44 2024] [Main] Initialized BASS!
+[Sun Feb  4 20:38:44 2024] [Main] Initialized Display!
+[Sun Feb  4 20:38:44 2024] [Main] Initialized ImGUI!
+[Sun Feb  4 20:38:44 2024] [Lua] Loaded file: Assets/Skins/DefaultArrow/Scripts/MainMenu.lua
+[Sun Feb  4 20:38:44 2024] hello :)
+[Sun Feb  4 20:38:44 2024] [Fnt] Loaded font Arialx128
+[Sun Feb  4 20:38:45 2024] [FNT] [Warning] ArialUnicode.fnt doesn't have a kernings node.
+[Sun Feb  4 20:38:45 2024] [FNT] [Warning] ArialUnicodeOutlined.fnt doesn't have a kernings node.
+[Sun Feb  4 20:38:45 2024] [Lua] Loaded file: Assets/Skins/DefaultArrow/Scripts/SongSelect.lua
+[Sun Feb  4 20:38:47 2024] Loading Charts\sabo\minimalian/banner.jpg as 8
+[Sun Feb  4 20:38:47 2024] Loading Charts\sabo\1111 (68)/banner.jpg as 9
+[Sun Feb  4 20:38:47 2024] Loading Charts\sabo\(RYU Remix)/banner.jpg as 10
+[Sun Feb  4 20:38:47 2024] Loading Charts\sabo\Brandnew Mind/banner.jpg as 11
+[Sun Feb  4 20:38:47 2024] Loading Charts\sabo\GOTHIC SYSTEM/banner.jpg as 12
+[Sun Feb  4 20:38:47 2024] Loading Charts\sabo\1111 (7)/banner.jpg as 13
+[Sun Feb  4 20:38:47 2024] Loading Charts\sabo\Shonyun A/banner.jpg as 14
+[Sun Feb  4 20:38:47 2024] Loading Charts\sabo\breathless/banner.jpg as 15
+[Sun Feb  4 20:38:47 2024] Loading Charts\sabo\Gravity/banner.jpg as 16
+[Sun Feb  4 20:38:47 2024] Loading Charts\sabo\1111 (8)/banner.jpg as 17
+[Sun Feb  4 20:38:47 2024] Loading Charts\sabo\MOON RACE/banner.jpg as 18
+[Sun Feb  4 20:38:47 2024] Loading Charts\sabo\1111 (9)/banner.jpg as 19
+[Sun Feb  4 20:38:47 2024] Loading Charts\sabo\SHOOTING STAR/banner.jpg as 20
+[Sun Feb  4 20:38:47 2024] Loading Charts\sabo\-3rd.eye- Trance.edt/banner.jpg as 21
+[Sun Feb  4 20:38:47 2024] Loading Charts\sabo\Broken Strawberry ShortCake/banner.jpg as 22
+[Sun Feb  4 20:38:47 2024] Loading Charts\sabo\Moon Story/banner.jpg as 23
+[Sun Feb  4 20:38:47 2024] Loading Charts\sabo\Gup/banner.jpg as 24
+[Sun Feb  4 20:38:47 2024] Loading Charts\sabo\Mooned Insect/banner.jpg as 25
+[Sun Feb  4 20:38:47 2024] Loading Charts\sabo\Muse/banner.jpg as 26
+[Sun Feb  4 20:38:47 2024] Loading Charts\sabo\12 Jigokuno Fire/banner.jpg as 27
+[Sun Feb  4 20:38:47 2024] Loading Charts\sabo\Brother soul (RyuüÖ Remix)/banner.jpg as 28
+[Sun Feb  4 20:38:49 2024] Loading Charts\sabo\Haeok jajang gar/banner.jpg as 29
+[Sun Feb  4 20:38:50 2024] Loading Charts\sabo\HAPPY SKY ENDING/banner.jpg as 30
+[Sun Feb  4 20:38:51 2024] Loading Charts\sabo\MY FUTURE/banner.jpg as 31
+[Sun Feb  4 20:38:51 2024] Loading Charts\sabo\12.4/banner.jpg as 32
+[Sun Feb  4 20:38:51 2024] Loading Charts\sabo\HAPPY SKY OPENING/banner.jpg as 33
+[Sun Feb  4 20:38:51 2024] Loading Charts\sabo\B_T_DUTCH/banner.jpg as 34
+[Sun Feb  4 20:38:51 2024] Loading Charts\sabo\-A

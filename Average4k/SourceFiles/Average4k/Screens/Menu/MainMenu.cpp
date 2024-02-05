@@ -17,6 +17,7 @@ bool Average4k::Screens::Menu::MainMenu::loaded = false;
 void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset)
 {
 	eManager->Clear(); // just in case
+	Average4k::Data::AsyncChartLoader::ClearAll();
 	lua = new AvgLuaFile(Average4k::A4kGame::gameInstance->skin.GetPath(path));
 	lua->path = path;
 

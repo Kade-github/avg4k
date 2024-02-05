@@ -27,6 +27,7 @@ chartObjects = {}
 
 function createPacks()
     currentMenu:removeAll()
+    clearAsync()
     packObjects = {}
     chartObjects = {}
 
@@ -56,6 +57,7 @@ end
 
 function createCharts()
     currentMenu:removeAll()
+    clearAsync()
     packObjects = {}
     chartObjects = {}
 
@@ -122,6 +124,7 @@ function keyPress(data)
         else
             currentView = 0
             createPacks()
+            selection = 1
         end
     end
 
@@ -132,6 +135,7 @@ function keyPress(data)
             currentView = 1
             currentCharts = getCharts(packs[selection]["name"])
             createCharts()
+            selection = 1
         else
             -- load chart
         end
@@ -208,11 +212,11 @@ function view_charts()
     -- set view
     for i = 1, #chartObjects do
         local p = chartObjects[i]
+        local rp = currentCharts[i]
 
         if i >= min and i <= max then
             if p.bId == -1 then
-                print("loading " .. p.folder .. "/banner.png")
-                p.bId = loadAsyncTexture(p.folder .. "/banner.png")
+                p.bId = loadAsyncTexture(p.folder .. "/" .. rp["banner"])
             end
         else
             p.text.text = p.name
@@ -223,13 +227,15 @@ function view_charts()
 
             if p.banner ~= nil then
                 currentMenu:removeObject(p.banner)
-                p.bId = -1
             end
+            p.banner = nil
+            p.bId = -1
 
             if p.background ~= nil then
                 currentMenu:removeObject(p.background)
-                p.backgroundId = -1
             end
+            p.background = nil
+            p.backgroundId = -1
         end
     end
 
@@ -307,33 +313,29 @@ function draw()
         if p.banner == nil and p.bId ~= -1 then
             local spr = getAsyncTexture(p.bId)
 
-            if spr.width == 0 and spr.height == 0 then -- doesn't exist yet
-                return
+            if not (spr.width == 0) and not (spr.height == 0) then -- doesn't exist yet
+                p.banner = spr
+                p.banner.x = p.text.x + p.text.width + 20
+                p.banner.height = 38
+                p.banner.width = 200
+                p.banner.y = p.text.y + (p.text.height / 2) - (p.banner.height / 2)
+
+                currentMenu:addObject(p.banner)
             end
-
-            p.banner = spr
-            p.banner.x = p.text.x + p.text.width + 20
-            p.banner.height = 38
-            p.banner.width = 200
-            p.banner.y = p.text.y + (p.text.height / 2) - (p.banner.height / 2)
-
-            currentMenu:addObject(p.banner)
         end
 
         if p.background == nil and p.backgroundId ~= -1 and p.showBG then
             local spr = getAsyncTexture(p.backgroundId)
 
-            if spr.width == 0 and spr.height == 0 then -- doesn't exist yet
-                return
+            if not spr.width == 0 and not spr.height == 0 then -- doesn't exist yet
+                p.background = spr
+                p.background.x = 0
+                p.background.y = 0
+                p.background.width = 1920
+                p.background.height = 1080
+
+                currentMenu:addObject(p.background)
             end
-
-            p.background = spr
-            p.background.x = 0
-            p.background.y = 0
-            p.background.width = 1920
-            p.background.height = 1080
-
-            currentMenu:addObject(p.background)
         end
     end
 end

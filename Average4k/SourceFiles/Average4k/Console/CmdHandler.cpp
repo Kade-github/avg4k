@@ -6,6 +6,7 @@
 #include "CmdHandler.h"
 #include "AvgEngine/Utils/StringTools.h"
 #include "../Screens/Menu/MainMenu.h"
+#include "../Data/Chart/AsyncChartLoader.h"
 #include <AvgEngine/Game.h>
 #include "../Data/Chart/ChartFinder.h"
 

@@ -8,8 +8,6 @@
 
 #pragma once
 
-#define SOL_NO_EXCEPTIONS 1
-
 #define SOL_USE_LUA_HPP
 
 #include <AvgEngine/Base/GameObject.h>

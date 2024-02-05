@@ -41,7 +41,7 @@ namespace Average4k::Data
 		
 		static void AsyncLoadChart(std::wstring path);
 
-		static void AsyncLoadAudio(std::wstring path, std::string name);
+		static void AsyncLoadAudio(std::string path, std::string name);
 
 		static void LoadAudio(std::string path, std::string name);
 

@@ -11,7 +11,6 @@
 #include <AvgEngine/External/Bass/BASS.h>
 #include "../../A4kGame.h"
 
-#define SOL_NO_EXCEPTIONS 1
 #define SOL_USE_LUA_HPP
 #include <sol/sol.hpp>
 
@@ -32,12 +31,18 @@ namespace Average4k::Api::Stubs
 
 		LuaSong(std::string name, std::string audioPath)
 		{
-			_base = AvgEngine::External::BASS::CreateChannel(name, A4kGame::gameInstance->skin.GetPath(audioPath));
+			_base = AvgEngine::External::BASS::CreateChannel(name, A4kGame::gameInstance->skin.GetPath(audioPath), false);
 		}
 
 		bool isValid()
 		{
 			return _base != NULL;
+		}
+
+		void SetLoop(bool loop)
+		{
+			if (_base != NULL)
+				_base->Repeat(loop);
 		}
 
 		void Play(bool restart = false)
@@ -79,6 +84,19 @@ namespace Average4k::Api::Stubs
 			return 0;
 		}
 
+		float GetPosition()
+		{
+			if (_base != NULL)
+				return _base->GetPos();
+			return 0;
+		}
+
+		void SetPosition(float pos)
+		{
+			if (_base != NULL)
+				_base->SetPos(pos);
+		}
+
 		void Destruct()
 		{
 			if (_base != NULL)
@@ -93,11 +111,12 @@ namespace Average4k::Api::Stubs
 				sol::constructors<LuaSong(std::string, std::string)>(),
 				"Play", &LuaSong::Play,
 				"Stop", &LuaSong::Stop,
-				"SetVolume", &LuaSong::SetVolume,
-				"GetVolume", &LuaSong::GetVolume,
-				"SetSpeed", &LuaSong::SetSpeed,
-				"GetSpeed", &LuaSong::GetSpeed,
-				"isValid", &LuaSong::isValid
+				"volume", sol::property(&LuaSong::GetVolume, &LuaSong::SetVolume),
+				"speed", sol::property(&LuaSong::GetSpeed, &LuaSong::SetSpeed),
+				"time", sol::property(&LuaSong::GetPosition, &LuaSong::SetPosition),
+				"Repeat", &LuaSong::SetLoop,
+				"Destruct", &LuaSong::Destruct,
+				"isValid", sol::readonly_property(&LuaSong::isValid)
 			);
 		}
 

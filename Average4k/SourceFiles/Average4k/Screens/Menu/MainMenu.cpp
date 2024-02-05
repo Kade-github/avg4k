@@ -23,6 +23,7 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 	lua->path = path;
 
 	Average4k::Api::Stubs::LuaMenu::Register(lua->getState());
+	Average4k::Api::Stubs::LuaSong::Register(lua->getState());
 
 	cm = Average4k::Api::Stubs::LuaMenu(this);
 
@@ -118,11 +119,11 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 		return Average4k::Data::AsyncChartLoader::AsyncLoadTexture(path);
 	});
 
-	lua->getState().set_function("loadSong", [this](std::string name, std::wstring path) {
+	lua->getState().set_function("loadSong", [this](std::string name, std::string path) {
 		Average4k::Data::AsyncChartLoader::AsyncLoadAudio(path, name);
 	});
 
-	lua->getState().set_function("getAsyncSong", [this](std::string name) {
+	lua->getState().set_function("getAsyncSong", [this]() {
 		AvgEngine::Audio::Channel* audio = Average4k::Data::AsyncChartLoader::CheckAudio();
 
 		if (audio == nullptr)

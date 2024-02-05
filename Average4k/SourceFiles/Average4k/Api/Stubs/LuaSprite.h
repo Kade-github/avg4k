@@ -12,7 +12,6 @@
 #include "AvgEngine/Base/Sprite.h"
 #include <AvgEngine/Utils/StringTools.h>
 
-#define SOL_NO_EXCEPTIONS 1
 #define SOL_USE_LUA_HPP
 #include <sol/sol.hpp>
 

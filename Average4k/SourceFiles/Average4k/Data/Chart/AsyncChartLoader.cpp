@@ -59,10 +59,11 @@ void Average4k::Data::AsyncChartLoader::AsyncLoadChart(std::wstring path)
 	});
 }
 
-void Average4k::Data::AsyncChartLoader::AsyncLoadAudio(std::wstring path, std::string name)
+void Average4k::Data::AsyncChartLoader::AsyncLoadAudio(std::string path, std::string name)
 {
-	std::string p = AvgEngine::Utils::StringTools::Ws2s(path);
+	std::string p = path;
 	latestAudioPath = p;
+	audioPool.purge();
 	audioPool.detach_task([p, name]() {
 		LoadAudio(p, name);
 	});
@@ -95,5 +96,5 @@ void Average4k::Data::AsyncChartLoader::LoadAudio(std::string path, std::string 
 		AvgEngine::External::BASS::RemoveChannel(channel->id);
 		delete channel;
 	}
-	channel = AvgEngine::External::BASS::CreateChannel(name, path);
+	channel = AvgEngine::External::BASS::CreateChannel(name, path, false);
 }

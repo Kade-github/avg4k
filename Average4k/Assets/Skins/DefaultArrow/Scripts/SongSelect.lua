@@ -20,6 +20,8 @@ currentPack = 1
 
 currentCharts = {}
 
+currentSong = nil
+
 selection = 1
 
 packObjects = {}
@@ -28,6 +30,8 @@ chartObjects = {}
 selectedChart = {}
 selectedDiff = 1
 chartObject = {}
+
+waitingForSong = false
 
 function sortPack(a,b)
   return a["name"] < b["name"]
@@ -118,6 +122,9 @@ function createChart()
     if rp["titleTranslit"] ~= "" then
         t = rp["titleTranslit"]
     end
+    if t == "" then
+        t = "Unknown Title"
+    end
     if rp["artistTranslit"] ~= "" then
         t = t .. " by " .. rp["artist"]
     elseif rp["artist"] ~= "" then
@@ -153,6 +160,22 @@ function create()
     createPacks()
 end
 
+function findSong()
+    local rp = currentCharts[selection]
+
+    if currentSong ~= nil then
+        if currentSong.isValid then
+            currentSong:Stop()
+        end
+    end
+
+    loadSong(rp["file"], rp["folder"] .. "/" .. rp["file"])
+
+    print("queued song " .. rp["folder"] .. "/" .. rp["file"])
+
+    waitingForSong = true
+end
+
 function keyPress(data)
     if data == 265 then -- up
 
@@ -166,6 +189,8 @@ function keyPress(data)
             if selection < 1 then
                 selection = #chartObjects
             end
+            
+            findSong()
         else
             selectedDiff = selectedDiff - 1
             if selectedDiff < 1 then
@@ -186,6 +211,8 @@ function keyPress(data)
             if selection > #chartObjects then
                 selection = 1
             end
+
+            findSong()
         else
             selectedDiff = selectedDiff + 1
             if selectedDiff > #chartObject.diffObjects then
@@ -219,6 +246,7 @@ function keyPress(data)
             currentCharts = getCharts(packs[selection]["name"])
             table.sort(currentCharts, sortChart)
             createCharts()
+            findSong()
             selection = 1
         elseif currentView == 1 then
             currentView = 2
@@ -328,6 +356,9 @@ function view_charts()
         local t = rp["title"]
         if rp["titleTranslit"] ~= "" then
             t = rp["titleTranslit"]
+        end
+        if t == "" then
+            t = "Unknown Title"
         end
         if rp["artistTranslit"] ~= "" then
             t = t .. " by " .. rp["artist"]
@@ -444,6 +475,9 @@ function draw()
         end
     end
 
+
+    -- async callbacks
+
     for i = 1, #chartObjects do
         local p = chartObjects[i]
         if p.banner == nil and p.bId ~= -1 then
@@ -458,6 +492,19 @@ function draw()
 
                 currentMenu:addObject(p.banner)
             end
+        end
+    end
+
+    if waitingForSong then
+        currentSong = getAsyncSong()
+
+        if currentSong.isValid then
+            local rp = currentCharts[selection]
+            waitingForSong = false
+            currentSong.volume = 0
+            currentSong.time = rp["previewStart"]
+            currentSong:Play(false)
+            currentSong:Repeat(true)
         end
     end
 
@@ -514,6 +561,14 @@ function draw()
             end
 
             
+        end
+    end
+
+    -- song fade in
+
+    if currentSong ~= nil then
+        if currentSong.isValid then
+            currentSong.volume = lerp(currentSong.volume, 0.6, 0.08)
         end
     end
 end

@@ -123,6 +123,19 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 		Average4k::Data::AsyncChartLoader::AsyncLoadAudio(path, name);
 	});
 
+	lua->getState().set_function("clearAudio", [this]() {
+		for (AvgEngine::Audio::Channel* c : AvgEngine::External::BASS::Channels)
+		{
+			if (c == NULL || c->id == -1)
+				continue;
+			if (c->isPlaying)
+				c->Stop();
+			delete c;
+		}
+
+		AvgEngine::External::BASS::Channels.clear();
+	});
+
 	lua->getState().set_function("getAsyncSong", [this]() {
 		AvgEngine::Audio::Channel* audio = Average4k::Data::AsyncChartLoader::CheckAudio();
 
@@ -261,11 +274,11 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_KeyPress, [&](AvgEngine::Events::Event e) {
 		sol::state& s = lua->getState();
-		auto f = s.get<sol::optional<sol::function>>("keyPress");
+		auto f = s.get<sol::optional<sol::protected_function>>("keyPress");
 		
 		if (f.has_value())
 		{
-			sol::function_result result = f.value()(e.data);
+			sol::protected_function_result result = f.value()(e.data);
 
 			if (!result.valid())
 			{
@@ -277,11 +290,11 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_KeyRelease, [&](AvgEngine::Events::Event e) {
 		sol::state& s = lua->getState();
-		auto f = s.get<sol::optional<sol::function>>("keyRelease");
+		auto f = s.get<sol::optional<sol::protected_function>>("keyRelease");
 
 		if (f.has_value())
 		{
-			sol::function_result result = f.value()(e.data);
+			sol::protected_function_result result = f.value()(e.data);
 
 			if (!result.valid())
 			{
@@ -293,11 +306,11 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_MouseDown, [&](AvgEngine::Events::Event e) {
 		sol::state& s = lua->getState();
-		auto f = s.get<sol::optional<sol::function>>("mouseDown");
+		auto f = s.get<sol::optional<sol::protected_function>>("mouseDown");
 
 		if (f.has_value())
 		{
-			sol::function_result result = f.value()(e.data);
+			sol::protected_function_result result = f.value()(e.data);
 
 			if (!result.valid())
 			{
@@ -309,11 +322,11 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_MouseRelease, [&](AvgEngine::Events::Event e) {
 		sol::state& s = lua->getState();
-		auto f = s.get<sol::optional<sol::function>>("mouseRelease");
+		auto f = s.get<sol::optional<sol::protected_function>>("mouseRelease");
 
 		if (f.has_value())
 		{
-			sol::function_result result = f.value()(e.data);
+			sol::protected_function_result result = f.value()(e.data);
 
 			if (!result.valid())
 			{
@@ -325,11 +338,11 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_MouseScroll, [&](AvgEngine::Events::Event e) {
 		sol::state& s = lua->getState();
-		auto f = s.get<sol::optional<sol::function>>("mouseScroll");
+		auto f = s.get<sol::optional<sol::protected_function>>("mouseScroll");
 
 		if (f.has_value())
 		{
-			sol::function_result result = f.value()(e.data);
+			sol::protected_function_result result = f.value()(e.data);
 
 			if (!result.valid())
 			{
@@ -359,10 +372,10 @@ void Average4k::Screens::Menu::MainMenu::draw()
 	m.set("x", mouse[0]);
 	m.set("y", mouse[1]);
 
-	auto f = lua->getState().get<sol::optional<sol::function>>("draw");
+	auto f = lua->getState().get<sol::optional<sol::protected_function>>("draw");
 	if (f.has_value())
 	{
-		sol::function_result result = f.value()();
+		sol::protected_function_result result = f.value()();
 
 		if (!result.valid())
 		{

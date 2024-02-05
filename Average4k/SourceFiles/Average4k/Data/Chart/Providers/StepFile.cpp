@@ -116,10 +116,10 @@ void StepFile::ParseMetadata(bool only, std::wifstream* stream)
 			if (key == L"MUSIC")
 				metadata.file = value;
 
-			if (key == L"OFFSET")
+			if (key == L"OFFSET" && !value.empty())
 				metadata.offset = std::stof(value);
 
-			if (key == L"SAMPLESTART")
+			if (key == L"SAMPLESTART" && !value.empty())
 				metadata.previewStart = std::stof(value);
 			break;
 		case 1:

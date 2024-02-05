@@ -6,7 +6,6 @@
 #pragma comment(lib,"Library\\x64_static\\opengl.lib")
 #pragma comment(lib,"Library\\x64_static\\bass.lib")
 #pragma comment(lib,"Library\\x64_static\\bass_fx.lib")
-#pragma comment(lib,"Library\\x64_static\\basswasapi.lib")
 #pragma comment(lib,"Library\\x64_static\\msgpackc.lib")
 #pragma comment(lib,"Library\\x64_static\\glfw3_mt.lib")
 #pragma comment(lib,"Library\\x64_static\\lua51.lib")

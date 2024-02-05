@@ -47,7 +47,6 @@ namespace AvgEngine
 			ctime_s(tmBuff, sizeof(tmBuff), &legacyStart);
 
 			std::string date = std::string(tmBuff);
-
 			std::string logs = "[" + date.substr(0, date.length() - 1) + "] " + l;
 
 			// substr -1 because it appends a \n. it just hates me man
@@ -88,7 +87,6 @@ namespace AvgEngine
 
 			if (consoleLog.size() > 500)
 				consoleLog.erase(consoleLog.begin());
-
 		}
 
 		/**

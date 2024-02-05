@@ -1,18 +1,5 @@
 logo = nil
 
-function dump(o)
-    if type(o) == 'table' then
-        local s = '{ '
-        for k, v in pairs(o) do
-            if type(k) ~= 'number' then k = '"' .. k .. '"' end
-            s = s .. '[' .. k .. '] = ' .. dump(v) .. ','
-        end
-        return s .. '} '
-    else
-        return tostring(o)
-    end
-end
-
 currentView = 0
 
 packs = {}
@@ -22,6 +9,7 @@ currentCharts = {}
 
 currentSong = nil
 
+packSelection = 1
 selection = 1
 
 packObjects = {}
@@ -73,6 +61,10 @@ function createPacks()
 end
 
 function createCharts()
+    if #currentCharts == 0 then
+        currentView = 0
+        return
+    end
     currentMenu:removeAll()
     clearAsync()
     packObjects = {}
@@ -166,7 +158,10 @@ function findSong()
     if currentSong ~= nil then
         if currentSong.isValid then
             currentSong:Stop()
+            currentSong:Destruct()
         end
+    else
+        clearAudio()
     end
 
     loadSong(rp["file"], rp["folder"] .. "/" .. rp["file"])
@@ -180,9 +175,9 @@ function keyPress(data)
     if data == 265 then -- up
 
         if currentView == 0 then
-            selection = selection - 1
-            if selection < 1 then
-                selection = #packObjects
+            packSelection = packSelection - 1
+            if packSelection < 1 then
+                packSelection = #packObjects
             end
         elseif currentView == 1 then
             selection = selection - 1
@@ -202,9 +197,9 @@ function keyPress(data)
     if data == 264 then -- down
 
         if currentView == 0 then
-            selection = selection + 1
-            if selection > #packObjects then
-                selection = 1
+            packSelection = packSelection + 1
+            if packSelection > #packObjects then
+                packSelection = 1
             end
         elseif currentView == 1 then
             selection = selection + 1
@@ -234,7 +229,6 @@ function keyPress(data)
             currentView = 1
             table.sort(currentCharts, sortChart)
             createCharts()
-            print(tostring(selection))
         end
     end
 
@@ -242,23 +236,27 @@ function keyPress(data)
 
     if data == 257 then
         if currentView == 0 then
-            currentView = 1
-            currentCharts = getCharts(packs[selection]["name"])
+            currentCharts = getCharts(packs[packSelection]["name"])
             table.sort(currentCharts, sortChart)
-            createCharts()
-            findSong()
-            selection = 1
+            if #currentCharts ~= 0 then
+                currentView = 1
+                createCharts()
+                findSong()
+                selection = 1
+            end
         elseif currentView == 1 then
-            currentView = 2
             selectedChart = currentCharts[selection]
-            createChart()
+            if #selectedChart["difficulties"] ~= 0 then
+                currentView = 2
+                createChart()
+            end
         end
     end
 end
 
 function view_packs()
-    local min = selection - 14
-    local max = selection + 14
+    local min = packSelection - 14
+    local max = packSelection + 14
 
     if min < 1 then
         min = 1
@@ -286,7 +284,7 @@ function view_packs()
     for i = min, max do
         local p = packObjects[i]
 
-        local away = i - selection
+        local away = i - packSelection
 
         if away == 0 then
             p.text.text = "> " .. p.name .. " <"

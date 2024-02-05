@@ -30,6 +30,8 @@ namespace Average4k
 
 		void Start();
 
+		void update() override;
+
 		void Switch() override
 		{
 			if (CurrentMenu != NULL)

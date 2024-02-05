@@ -90,11 +90,5 @@ void Average4k::Data::AsyncChartLoader::ClearAll()
 void Average4k::Data::AsyncChartLoader::LoadAudio(std::string path, std::string name)
 {
 	std::lock_guard<std::mutex> lock(s_lock);
-	if (channel != nullptr)
-	{
-		channel->Stop();
-		AvgEngine::External::BASS::RemoveChannel(channel->id);
-		delete channel;
-	}
 	channel = AvgEngine::External::BASS::CreateChannel(name, path, false);
 }

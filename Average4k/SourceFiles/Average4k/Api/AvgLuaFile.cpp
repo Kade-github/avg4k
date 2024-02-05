@@ -52,11 +52,11 @@ void Average4k::Api::AvgLuaFile::reload()
 
 void Average4k::Api::AvgLuaFile::create()
 {
-	auto create = state->get<sol::optional<sol::function>>("create");
+	auto create = state->get<sol::optional<sol::protected_function>>("create");
 
 	if (create.has_value())
 	{
-		sol::function_result result = create.value()();
+		sol::protected_function_result result = create.value()();
 
 		if (!result.valid())
 		{

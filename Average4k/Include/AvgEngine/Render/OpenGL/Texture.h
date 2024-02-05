@@ -49,7 +49,10 @@ namespace AvgEngine::OpenGL
 
 		static Texture* loadTextureFromLoadedData(unsigned char* data, int w, int h)
 		{
-			return new Texture(data, w, h);
+			Texture* t = new Texture(data, w, h);
+			t->fromSTBI = true;
+			t->dontDelete = false;
+			return t;
 		}
 		static Texture* loadTextureFromData(char* data, size_t size);
 		static Texture* loadTextureFromData(unsigned char* data, int w, int h);

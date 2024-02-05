@@ -102,6 +102,9 @@
     <ClCompile Include="SourceFiles\Average4k\Objects\UnicodeText.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SourceFiles\Average4k\Data\Chart\AsyncChartLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceFiles\Average4k\A4kGame.h">
@@ -183,6 +186,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SourceFiles\Average4k\Objects\UnicodeText.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceFiles\Average4k\Data\Chart\AsyncChartLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

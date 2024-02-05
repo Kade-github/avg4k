@@ -38,11 +38,17 @@ namespace Average4k::Api::Stubs
 			AvgLuaFile::objects.push_back(obj._baseObject);
 		}
 
+		void removeAll()
+		{
+			_base->removeAll();
+		}
+
 		static void Register(sol::state& state)
 		{
 			state.new_usertype<LuaMenu>("Menu",
 								"addObject", &LuaMenu::addObject,
-								"removeObject", &LuaMenu::removeObject
+								"removeObject", &LuaMenu::removeObject,
+								"removeAll", &LuaMenu::removeAll
 						);
 		}
 

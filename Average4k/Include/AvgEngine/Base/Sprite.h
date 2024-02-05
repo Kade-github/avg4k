@@ -24,10 +24,19 @@ namespace AvgEngine::Base
 
 		Render::Rect src;
 
+		Sprite(float x, float y, unsigned char* data, int w, int h) : GameObject(x, y)
+		{
+			src = { 0,0,1,1 };
+			texture = OpenGL::Texture::loadTextureFromLoadedData(data, w, h);
+			transform.w = static_cast<float>(texture->width);
+			transform.h = static_cast<float>(texture->height);
+			iTransform = transform;
+		}
+
 		Sprite(float x, float y, char* data, size_t size) : GameObject(x, y)
 		{
 			src = { 0,0,1,1 };
-			texture = OpenGL::Texture::loadTextureFromData(data,size);
+			texture = OpenGL::Texture::loadTextureFromData(data, size);
 			transform.w = static_cast<float>(texture->width);
 			transform.h = static_cast<float>(texture->height);
 			iTransform = transform;

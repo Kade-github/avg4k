@@ -7,6 +7,8 @@
 #include "MainMenu.h"
 
 #include "../../Data/Chart/ChartFinder.h"
+#include "../../Data/Chart/AsyncChartLoader.h"
+#include "../../Api/Stubs/LuaSprite.h"
 
 using namespace Average4k::Api;
 
@@ -46,6 +48,8 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 			pack["name"] = p.name;
 			pack["path"] = p.path;
 			pack["banner"] = p.banner;
+
+			t[i + 1] = pack;
 		}
 
 		return t;
@@ -93,6 +97,132 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 		}
 
 		return lua->getState().create_table();
+	});
+
+	lua->getState().set_function("loadChart", [this](std::wstring path) {
+		Average4k::Data::AsyncChartLoader::AsyncLoadChart(path);
+	});
+
+	lua->getState().set_function("loadAsyncTexture", [this](std::wstring path) {
+		return Average4k::Data::AsyncChartLoader::AsyncLoadTexture(path);
+	});
+
+	lua->getState().set_function("getAsyncTexture", [this](int id) {
+		Average4k::Data::asyncImage img = Average4k::Data::AsyncChartLoader::checkTexture(id);
+
+		if (img.data == nullptr)
+			return Average4k::Api::Stubs::LuaSprite();
+
+		lua->getState().collect_garbage();
+
+		Average4k::Api::Stubs::LuaSprite spr = Average4k::Api::Stubs::LuaSprite(new AvgEngine::Base::Sprite(-100,-100,img.data, img.width, img.height));
+
+		return spr;
+	});
+
+
+	lua->getState().set_function("checkChart", [this]() {
+		Average4k::Data::ChartFile chart = Average4k::Data::AsyncChartLoader::CheckChart();
+
+		lua->getState().collect_garbage();
+
+		sol::table t = lua->getState().create_table();
+
+		if (chart.metadata.title == L"")
+		{
+			t["title"] = "";
+			return t;
+		}
+
+		t["title"] = chart.metadata.title;
+		t["titleTranslit"] = chart.metadata.titleTranslit;
+		t["subtitle"] = chart.metadata.subtitle;
+		t["subtitleTranslit"] = chart.metadata.subtitleTranslit;
+		t["artist"] = chart.metadata.artist;
+		t["artistTranslit"] = chart.metadata.artistTranslit;
+		t["genre"] = chart.metadata.genre;
+		t["credit"] = chart.metadata.credit;
+		t["banner"] = chart.metadata.banner;
+		t["background"] = chart.metadata.background;
+		t["file"] = chart.metadata.file;
+		t["offset"] = chart.metadata.offset;
+		t["previewStart"] = chart.metadata.previewStart;
+
+		t["type"] = chart.metadata.type;
+
+		t["workshop"] = chart.metadata.workshop;
+
+		t["timingPoints"] = lua->getState().create_table();
+
+		for (int i = 0; i < chart.timingPoints.size(); i++)
+		{
+			Average4k::Data::Chart::TimingPoint& tp = chart.timingPoints[i];
+
+			sol::table timingPoint = lua->getState().create_table();
+
+			timingPoint["startBeat"] = tp.startBeat;
+			timingPoint["endBeat"] = tp.endBeat;
+			timingPoint["bpm"] = tp.bpm;
+
+			timingPoint["startTimestamp"] = tp.startTimestamp;
+			timingPoint["endTimestamp"] = tp.endTimestamp;
+			timingPoint["length"] = tp.length;
+
+			t["timingPoints"][i + 1] = timingPoint;
+		}
+
+		t["stopPoints"] = lua->getState().create_table();
+
+		for (int i = 0; i < chart.stopPoints.size(); i++)
+		{
+			Average4k::Data::Chart::StopPoint& sp = chart.stopPoints[i];
+
+			sol::table stopPoint = lua->getState().create_table();
+
+			stopPoint["startBeat"] = sp.startBeat;
+			stopPoint["startTimestamp"] = sp.startTimestamp;
+			stopPoint["length"] = sp.length;
+
+
+			t["stopPoints"][i + 1] = stopPoint;
+		}
+
+		t["difficulties"] = lua->getState().create_table();
+
+		for (int i = 0; i < chart.difficulties.size(); i++)
+		{
+			Average4k::Data::Chart::Difficulty& d = chart.difficulties[i];
+
+			sol::table difficulty = lua->getState().create_table();
+
+			difficulty["name"] = d.name;
+			difficulty["charter"] = d.charter;
+			difficulty["rating"] = d.rating;
+
+			difficulty["notes"] = lua->getState().create_table();
+
+			for (int j = 0; j < d.notes.size(); j++)
+			{
+				Average4k::Data::Chart::Note& n = d.notes[j];
+
+				sol::table note = lua->getState().create_table();
+
+				note["beat"] = n.beat;
+				note["lane"] = n.lane;
+				note["type"] = n.type;
+
+				difficulty["notes"][j + 1] = note;
+			}
+			
+
+			t["difficulties"][i + 1] = difficulty;
+		}
+
+		return t;
+	});
+
+	lua->getState().set_function("clearAsync", [this]() {
+		Average4k::Data::AsyncChartLoader::ClearAll();
 	});
 
 	lua->create();

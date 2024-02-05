@@ -33,59 +33,93 @@ namespace Average4k::Api::Stubs
 			_baseObject = _base;
 		}
 
+		LuaSprite(AvgEngine::Base::Sprite* sprite)
+		{
+			_base = sprite;
+			_baseObject = _base;
+		}
+
+		LuaSprite()
+		{
+			_base = NULL;
+			_baseObject = NULL;
+		}
+
 
 		void setX(float x)
 		{
+			if (_base == NULL)
+				return;
 			_base->transform.x = x;
 		}
 
 		float getX()
 		{
+			if (_base == NULL)
+				return 0;
 			return _base->transform.x;
 		}
 
 		void setY(float y)
 		{
+			if (_base == NULL)
+				return;
 			_base->transform.y = y;
 		}
 
 		float getY()
 		{
+			if (_base == NULL)
+				return 0;
 			return _base->transform.y;
 		}
 
 		void setWidth(int width)
 		{
+			if (_base == NULL)
+				return;
 			_base->transform.w = width;
 		}
 
 		int getWidth()
 		{
+			if (_base == NULL)
+				return 0;
 			return _base->transform.w;
 		}
 
 		void setHeight(int height)
 		{
+			if (_base == NULL)
+				return;
 			_base->transform.h = height;
 		}
 
 		int getHeight()
 		{
+			if (_base == NULL)
+				return 0;
 			return _base->transform.h;
 		}
 
 		void setAngle(float angle)
 		{
+			if (_base == NULL)
+				return;
 			_base->transform.angle = angle;
 		}
 
 		float getAngle()
 		{
+			if (_base == NULL)
+				return 0;
 			return _base->transform.angle;
 		}
 
 		void setColor(float r, float g, float b, float a)
 		{
+			if (_base == NULL)
+				return;
 			_base->transform.r = r;
 			_base->transform.g = g;
 			_base->transform.b = b;

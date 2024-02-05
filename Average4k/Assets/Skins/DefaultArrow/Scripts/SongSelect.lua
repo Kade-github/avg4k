@@ -1,47 +1,66 @@
-charts = {}
-chartTexts = {}
-chartBanners = {}
-
 logo = nil
+
+function dump(o)
+   if type(o) == 'table' then
+      local s = '{ '
+      for k,v in pairs(o) do
+         if type(k) ~= 'number' then k = '"'..k..'"' end
+         s = s .. '['..k..'] = ' .. dump(v) .. ','
+      end
+      return s .. '} '
+   else
+      return tostring(o)
+   end
+end
+
+currentView = 0
+
+packs = {}
+currentPack = 1
+
+currentCharts = {}
 
 selection = 1
 
-function loadCharts()
-    -- clear the charts table
-    charts = {}
-    for i = 1, #chartTexts do
-        currentMenu:removeObject(chartTexts[i])
-        if chartBanners[i] ~= nil then
-            currentMenu:removeObject(chartBanners[i])
-        end
-    end
+packObjects = {}
 
-    chartTexts = {}
-    chartBanners = {}
+function createPacks()
+    currentMenu:removeAll()
 
-    collectgarbage("collect")
-
-    scanCharts();
-
-end
-
-function create()
     logo = Sprite.new(20,20, "Images/Logo.png")
 
     currentMenu:addObject(logo)
 
-    loadCharts()
+    for i = 1, #packs do
+        local p = packs[i]
+        local pack = Text.new(20, logo.y + logo.height + 20 + (i * 40), "ArialUnicode.fnt", packs[i].name, 42)
+
+        local bannerId = -1
+
+        if p["banner"] ~= "" then
+            bannerId = loadAsyncTexture(p["path"] .. "/" .. p["banner"])
+        end
+
+        packObjects[i] = {text = pack, banner = nil, bId = bannerId}
+
+        currentMenu:addObject(pack)
+    end
+end
+
+function create()
+    packs = getPacks()
+
+    createPacks()
 end
 
 function keyPress(data)
-    chartTexts[selection].text = string.sub(chartTexts[selection].text, 3, string.len(chartTexts[selection].text));
 
     if data == 265 then -- up
 
         selection = selection - 1
 
         if selection < 1 then
-            selection = #chartTexts
+            selection = 1
         end
 
         
@@ -50,93 +69,47 @@ function keyPress(data)
     if data == 264 then -- down
         selection = selection + 1
 
-        if selection > #chartTexts then
+        if selection > 1 then
             selection = 1
         end
     end
 
-    chartTexts[selection].text = "> " .. chartTexts[selection].text;
+
 end
 
+function view_packs()
+
+end
+
+function view_charts()
+
+end
 
 function draw()
-    local min = selection - 6
-    local max = selection + 6
-
-    if min < 1 then
-        min = 1
-    end
-
-    if max > #chartTexts then
-        max = #chartTexts
-    end
-
-    for i = 1, #chartTexts do
-        local text = chartTexts[i]
-        local banner = chartBanners[i]
-
-        if i < min or i > max then
-            text.x = -100
-            text.y = -100
-            if banner ~= nil then
-                banner.x = -100
-                banner.y = -100
-            end
-        else
-
-            local diff = math.abs(i - selection)
-
-            local behind = i < selection
-
-            local e = 100 / (diff)
-
-            if e > 100 then
-                e = 100
-            end
-
-            if e < -1000 then
-                e = -1000
-            end
-
-            e = math.floor(e)
-
-            text.x = e
-            text.x = text.x
-            text.y = logo.y + logo.height + 20
-            text.y = 500 + math.floor((text.y * diff) * 0.2)
-            if behind then
-                text.y = 550 - math.floor((text.y * diff) * 0.2)
-            end
-            if banner ~= nil then
-                banner.width = 200
-                banner.height = 50
-                banner.x = text.x + text.width + 6
-                banner.y = text.y + (text.height / 2) - (banner.height / 2)
-            end
-        end
-    end
-end
-
-function chartFound(c)
-    local text = c["title"] .. " by " .. c["artist"]
-    if c["artist"] == "" then
-        text = c["title"]
-    end
-
-    if c["subtitle"] ~= "" then
-        text = text .. " (" .. c["subtitle"] .. ")"
-    end
-
-    local t = Text.new(-100, -100, "ArialUnicode.fnt", text, 42)
-    currentMenu:addObject(t)
-    local banner = nil
-
-    
-
-    table.insert(chartTexts, t)
-    if banner ~= nil then
-        table.insert(chartBanners, banner)
+    if currentView == 0 then
+        view_packs()
     else
-        table.insert(chartBanners, {})
+        view_charts()
+    end
+
+    for i = 1, #packObjects do
+        local p = packObjects[i]
+        if p.banner == nil and p.bId ~= -1 then
+            local spr = getAsyncTexture(p.bId)
+
+            if spr.width == 0 and spr.height == 0 then -- doesn't exist yet
+                return
+            end
+
+            print("banner loaded for " .. p.text.text)
+
+            p.banner = spr
+            p.banner.x = p.text.x + p.text.width + 20
+            p.banner.height = 38
+            p.banner.width = 200
+            p.banner.y = p.text.y + (p.text.height / 2) - (p.banner.height / 2)
+
+            currentMenu:addObject(p.banner)
+        end
     end
 end

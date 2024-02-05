@@ -15,6 +15,7 @@ int Average4k::Data::AsyncChartLoader::currentId = 0;
 std::mutex Average4k::Data::AsyncChartLoader::m_lock;
 
 BS::thread_pool Average4k::Data::AsyncChartLoader::pool = BS::thread_pool();
+BS::thread_pool Average4k::Data::AsyncChartLoader::chartPool = BS::thread_pool();
 
 int Average4k::Data::AsyncChartLoader::AsyncLoadTexture(std::wstring path)
 {
@@ -42,7 +43,7 @@ int Average4k::Data::AsyncChartLoader::AsyncLoadTexture(std::wstring path)
 }
 void Average4k::Data::AsyncChartLoader::AsyncLoadChart(std::wstring path)
 {
-	pool.detach_task([path]() {
+	chartPool.detach_task([path]() {
 		if (path.ends_with(L".sm") || path.ends_with(L".ssc"))
 		{
 			Chart::Providers::StepFile stepfile = Chart::Providers::StepFile(path);
@@ -59,6 +60,13 @@ void Average4k::Data::AsyncChartLoader::ClearAll()
 	{
 		pool.wait();
 	}
+	chartPool.purge();
+	if (chartPool.get_tasks_queued() + chartPool.get_tasks_running() > 0)
+	{
+		chartPool.wait();
+	}
 	textures.clear();
 	chart = ChartFile();
+
+
 }

@@ -28,6 +28,7 @@ namespace Average4k::Data
 		static std::mutex m_lock;
 		static int currentId;
 		static BS::thread_pool pool;
+		static BS::thread_pool chartPool;
 		static std::unordered_map<int, asyncImage> textures;
 		static ChartFile chart;
 
@@ -49,7 +50,7 @@ namespace Average4k::Data
 		}
 		static ChartFile CheckChart()
 		{
-			if (pool.get_tasks_queued() + pool.get_tasks_running() > 0)
+			if (chartPool.get_tasks_queued() + chartPool.get_tasks_running() > 0)
 				return ChartFile();
 			ChartFile copy = chart;
 			chart = ChartFile();

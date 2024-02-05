@@ -35,7 +35,7 @@ void Average4k::Console::CmdHandler::Handle(std::string cmd)
 		if (Average4k::Screens::Menu::MainMenu::loaded)
 		{
 			m = static_cast<Average4k::Screens::Menu::MainMenu*>(AvgEngine::Game::Instance->CurrentMenu);
-			m->createFile(m->lua->path);
+			AvgEngine::Game::Instance->SwitchMenu(new Average4k::Screens::Menu::MainMenu(m->lua->path));
 			AvgEngine::Logging::writeLog("[Debug] [CmdHandler] [reload] Reloaded lua.");
 		}
 		else

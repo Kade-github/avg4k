@@ -37,13 +37,21 @@ void ChartFinder::FindCharts(const std::string _path)
 		if (entry.is_directory())
 		{
 			std::string s_path = AvgEngine::Utils::StringTools::Ws2s(path);
-			pack_pool.detach_task([&, path, s_path]()
+			std::wstring name = path.substr(path.find_last_of(L"\\") + 1);
+
+			{
+				std::lock_guard<std::mutex> lock(m_lock);
+				// check if pack already exists
+
+				if (std::find_if(Packs.begin(), Packs.end(), [name](const Pack& p) { return p.name == name; }) != Packs.end())
+					continue;
+			}
+			pack_pool.detach_task([&, path, s_path, name]()
 			{
 					Pack p;
 					
 					// get directory name from path
 
-					std::wstring name = path.substr(path.find_last_of(L"\\") + 1);
 
 					p.name = name;
 					p.path = path;

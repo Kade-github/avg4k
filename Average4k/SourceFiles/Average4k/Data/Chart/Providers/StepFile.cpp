@@ -39,9 +39,11 @@ void StepFile::ParseMetadata(bool only, std::wifstream* stream)
 
 	int lineNumber = 0;
 
+	bool skip = false;
+
 	while (std::getline(*stream, line))
 	{
-		if (line.empty())
+		if (line.empty() || skip)
 			continue;
 
 		std::wstring key;
@@ -76,7 +78,10 @@ void StepFile::ParseMetadata(bool only, std::wifstream* stream)
 			else
 			{
 				if (line.starts_with(L"#NOTES"))
-					return;
+				{
+					skip = true;
+					continue;
+				}
 			}
 
 			key = line.substr(line.find_first_of(L"#") + 1, line.find_first_of(L":") - 1);
@@ -88,31 +93,31 @@ void StepFile::ParseMetadata(bool only, std::wifstream* stream)
 
 			if (isTitle)
 				metadata.title = value;
-			if (key == L"TITLETRANSLIT")
+			if (key.contains(L"TITLETRANSLIT"))
 				metadata.titleTranslit = value;
-			if (key == L"SUBTITLE")
+			if (key.contains(L"SUBTITLE") && !key.contains(L"SUBTITLETRANSLIT"))
 				metadata.subtitle = value;
-			if (key == L"SUBTITLETRANSLIT")
+			if (key.contains(L"SUBTITLETRANSLIT"))
 				metadata.subtitleTranslit = value;
-			if (key == L"ARTIST")
+			if (key.contains(L"ARTIST") && !key.contains(L"ARTISTTRANSLIT"))
 				metadata.artist = value;
-			if (key == L"ARTISTTRANSLIT")
+			if (key.contains(L"ARTISTTRANSLIT"))
 				metadata.artistTranslit = value;
-			if (key == L"GENRE")
-				metadata.artist = value;
-			if (key == L"CREDIT")
+			if (key.contains(L"GENRE"))
+				metadata.genre = value;
+			if (key.contains(L"CREDIT"))
 				metadata.credit = value;
-			if (key == L"BANNER")
+			if (key.contains(L"BANNER"))
 				metadata.banner = value;
-			if (key == L"BACKGROUND")
+			if (key.contains(L"BACKGROUND"))
 				metadata.background = value;
-			if (key == L"MUSIC")
+			if (key.contains(L"MUSIC"))
 				metadata.file = value;
 
-			if (key == L"OFFSET")
+			if (key.contains(L"OFFSET"))
 				metadata.offset = std::stof(value);
 
-			if (key == L"SAMPLESTART")
+			if (key.contains(L"SAMPLESTART"))
 				metadata.previewStart = std::stof(value);
 			break;
 		case 1:

@@ -27,6 +27,8 @@ namespace Average4k::Data::Chart
 	class Metadata
 	{
 	public:
+		Metadata() = default;
+
 		std::wstring artist = L"";
 		std::wstring artistTranslit = L"";
 		std::wstring title = L"";

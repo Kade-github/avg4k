@@ -16,6 +16,7 @@ bool Average4k::Screens::Menu::MainMenu::loaded = false;
 
 void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset)
 {
+	eManager->Clear(); // just in case
 	lua = new AvgLuaFile(Average4k::A4kGame::gameInstance->skin.GetPath(path));
 	lua->path = path;
 
@@ -65,20 +66,24 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 			{
 				sol::table charts = lua->getState().create_table();
 
+				std::wstring_convert<std::codecvt_utf8<char8_t>, char8_t> convert;
+
 				for (int j = 0; j < p.charts.size(); j++)
 				{
-					Average4k::Data::Chart::Providers::StepFile& c = p.charts[j];
+					Average4k::Data::Chart::Providers::StepFile c = p.charts[j];
 
 					sol::table chart = lua->getState().create_table();
 
-					chart["title"] = c.metadata.title;
+
+
+					chart["title"] = convert.from_bytes(AvgEngine::Utils::StringTools::Ws2s(c.metadata.title));
 					chart["titleTranslit"] = c.metadata.titleTranslit;
-					chart["subtitle"] = c.metadata.subtitle;
+					chart["subtitle"] = convert.from_bytes(AvgEngine::Utils::StringTools::Ws2s(c.metadata.subtitle));
 					chart["subtitleTranslit"] = c.metadata.subtitleTranslit;
-					chart["artist"] = c.metadata.artist;
+					chart["artist"] = convert.from_bytes(AvgEngine::Utils::StringTools::Ws2s(c.metadata.artist));
 					chart["artistTranslit"] = c.metadata.artistTranslit;
 					chart["genre"] = c.metadata.genre;
-					chart["credit"] = c.metadata.credit;
+					chart["credit"]= convert.from_bytes(AvgEngine::Utils::StringTools::Ws2s(c.metadata.credit));
 					chart["banner"] = c.metadata.banner;
 					chart["background"] = c.metadata.background;
 					chart["file"] = c.metadata.file;
@@ -88,6 +93,8 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 					chart["type"] = c.metadata.type;
 
 					chart["workshop"] = c.metadata.workshop;
+					// get folder from path
+					chart["folder"] = c.path.substr(0, c.path.find_last_of(L"\\"));
 
 					charts[j + 1] = chart;
 				}

@@ -7,7 +7,8 @@
 #define AVG4K_MAINMENU_H
 
 #pragma once
-#include "../../Api/AvgLuaFile.h"
+#include "../../Api/Functions/FMenu.h"
+#include "../../Api/Functions/FCharts.h"
 #include "../../Api/Stubs/LuaMenu.h"
 
 namespace Average4k::Screens::Menu

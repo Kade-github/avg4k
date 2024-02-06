@@ -7,8 +7,10 @@
 #define AVG4K_LUA_MENU_H
 
 #pragma once
+#include <AvgEngine/Base/Menu.h>
+
 #include "LuaObject.h"
-#include "AvgEngine/Base/Menu.h"
+#include "../AvgLuaFile.h"
 
 #define SOL_USE_LUA_HPP
 #include <sol/sol.hpp>

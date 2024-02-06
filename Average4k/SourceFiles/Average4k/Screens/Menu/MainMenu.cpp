@@ -8,10 +8,6 @@
 
 #include "../../Data/Chart/ChartFinder.h"
 #include "../../Data/Chart/AsyncChartLoader.h"
-#include "../../Api/Stubs/LuaSprite.h"
-#include "../../Api/Stubs/LuaSong.h"
-#include "../../Api/Functions/FMenu.h"
-#include "../../Api/Functions/FCharts.h"
 
 using namespace Average4k::Api;
 
@@ -47,7 +43,7 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 	lua->getState().set_function("getCharts", Functions::FCharts::GetCharts);
 	lua->getState().set_function("loadChart", Functions::FCharts::LoadChart);
 	lua->getState().set_function("loadAsyncTexture", Functions::FCharts::LoadAsyncTexture);
-	lua->getState().set_function("loadSong", Functions::FCharts::LoadAsyncTexture);
+	lua->getState().set_function("loadSong", Functions::FCharts::LoadAsyncAudio);
 	lua->getState().set_function("clearAudio", Functions::FCharts::ClearAudio);
 	lua->getState().set_function("getAsyncSong", Functions::FCharts::GetAsyncAudio);
 	lua->getState().set_function("getAsyncTexture", Functions::FCharts::GetAsyncTexture);

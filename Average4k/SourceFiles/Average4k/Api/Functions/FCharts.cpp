@@ -7,6 +7,8 @@
 #include "../../Data/Chart/ChartFinder.h"
 #include "../../Data/Chart/AsyncChartLoader.h"
 
+Average4k::Api::AvgLuaFile* Average4k::Api::Functions::FCharts::Lua = nullptr;
+
 void Average4k::Api::Functions::FCharts::ScanCharts()
 {
 	Lua->getState().collect_garbage();

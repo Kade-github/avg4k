@@ -34,6 +34,34 @@ double frametimelast;
 std::chrono::steady_clock::time_point startTime;
 uint32_t framecount;
 
+#include <DbgHelp.h>
+
+void CrashDmp(_EXCEPTION_POINTERS* ExceptionInfo) {
+
+#ifdef _DEBUG
+	return;
+#endif
+
+	if (!ExceptionInfo)
+	{
+		AvgEngine::Logging::writeLog("no crash :)");
+		return;
+	}
+	OFSTRUCT data;
+	HANDLE file = CreateFile(L"crash.dmp", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
+
+	MINIDUMP_EXCEPTION_INFORMATION info;
+	info.ClientPointers = false;
+	info.ExceptionPointers = ExceptionInfo;
+	info.ThreadId = GetCurrentThreadId();
+
+	MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), file, MiniDumpWithFullMemory, &info, NULL, NULL);
+	CloseHandle(file);
+	AvgEngine::Logging::writeLog("Dumped crashlog");
+	AvgEngine::Logging::closeLog();
+}
+
 void fpsthink(AvgEngine::Game* g) {
 	uint32_t frametimesindex;
 	uint32_t count;
@@ -62,6 +90,28 @@ void fpsthink(AvgEngine::Game* g) {
 	g->fps = std::floorf(1000.f / (float)g->fps);
 }
 
+LONG PvectoredExceptionHandler(
+	_EXCEPTION_POINTERS* ExceptionInfo
+)
+{
+	if (ExceptionInfo->ExceptionRecord->ExceptionCode == 0x40010006 || ExceptionInfo->ExceptionRecord->ExceptionCode == 0xE24C4A02 || ExceptionInfo->ExceptionRecord->ExceptionCode == 0x80000003)
+		return EXCEPTION_CONTINUE_SEARCH;
+
+
+	CrashDmp(ExceptionInfo);
+	return EXCEPTION_CONTINUE_SEARCH;
+}
+
+long WINAPI UnhandledExceptionFilterHandler(LPEXCEPTION_POINTERS ex) {
+
+	if (ex->ExceptionRecord->ExceptionCode == 0x40010006 || ex->ExceptionRecord->ExceptionCode == 0xE24C4A02 || ex->ExceptionRecord->ExceptionCode == 0x80000003)
+		return EXCEPTION_CONTINUE_SEARCH;
+
+	CrashDmp(ex);
+	return EXCEPTION_CONTINUE_SEARCH;
+}
+
+
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	PSTR lpCmdLine, INT nCmdShow)
 {
@@ -72,6 +122,12 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	AvgEngine::Logging::openLog();
 #endif
 	AvgEngine::Logging::writeLog("[Main] Logging system initialized.");
+
+	SetUnhandledExceptionFilter(UnhandledExceptionFilterHandler);
+
+	AddVectoredExceptionHandler(1, &PvectoredExceptionHandler);
+
+	AvgEngine::Logging::writeLog("[Main] Set crash handlers...");
 
 	if (!glfwInit())
 	{

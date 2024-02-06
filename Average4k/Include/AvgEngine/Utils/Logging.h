@@ -13,6 +13,7 @@
 #include <fstream>
 #include "StringTools.h"
 #include <ImGui/imgui.h>
+#include <mutex>
 
 namespace AvgEngine
 {
@@ -41,12 +42,16 @@ namespace AvgEngine
 		 */
 		static void writeLog(std::string l)
 		{
+			static std::mutex m;
 			auto start = std::chrono::system_clock::now();
 			auto legacyStart = std::chrono::system_clock::to_time_t(start);
 			char tmBuff[30];
 			ctime_s(tmBuff, sizeof(tmBuff), &legacyStart);
 
 			std::string date = std::string(tmBuff);
+
+			std::lock_guard<std::mutex> lo(m);
+
 			std::string logs = "[" + date.substr(0, date.length() - 1) + "] " + l;
 
 			// substr -1 because it appends a \n. it just hates me man
@@ -54,7 +59,9 @@ namespace AvgEngine
 			std::cout << logs << "\n";
 #else
 			log << logs << "\n";
+			log.flush();
 #endif
+
 
 			int type = 0;
 

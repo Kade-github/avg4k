@@ -105,6 +105,12 @@
     <ClCompile Include="SourceFiles\Average4k\Data\Chart\AsyncChartLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SourceFiles\Average4k\Api\Functions\FMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceFiles\Average4k\Api\Functions\FCharts.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceFiles\Average4k\A4kGame.h">
@@ -192,6 +198,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaSong.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceFiles\Average4k\Api\Functions\FMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceFiles\Average4k\Api\Functions\FCharts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

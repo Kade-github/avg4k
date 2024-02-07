@@ -173,6 +173,20 @@ namespace Average4k::Api::Stubs
 			return _base->transform.a;
 		}
 
+		float getScale()
+		{
+			if (_base == NULL)
+				return 0;
+			return _base->transform.scale;
+		}
+
+		void setScale(float scale)
+		{
+			if (_base == NULL)
+				return;
+			_base->transform.scale = scale;
+		}
+
 		void setZIndex(int index)
 		{
 			if (_base == NULL)
@@ -200,6 +214,7 @@ namespace Average4k::Api::Stubs
 				"g", sol::property(&LuaSprite::getG, &LuaSprite::setG),
 				"b", sol::property(&LuaSprite::getB, &LuaSprite::setB),
 				"alpha", sol::property(&LuaSprite::getA, &LuaSprite::setA),
+				"scale", sol::property(&LuaSprite::getScale, &LuaSprite::setScale),
 				"zIndex", sol::property(&LuaSprite::getZIndex, &LuaSprite::setZIndex),
 				sol::base_classes, sol::bases<LuaObject>()
 			);

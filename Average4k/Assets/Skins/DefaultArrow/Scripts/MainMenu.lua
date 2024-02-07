@@ -11,21 +11,24 @@ function create()
     print("hello :)")
     local s = Sprite.new(20,20, "Images/Logo.png")
 
+    s.width = math.floor(700 * getWidthScale())
+    s.height = math.floor(314 * getHeightScale())
+
     currentMenu:addObject(s)
 
-    songs = Text.new(20, s.y + s.height + 20, "Arial.fnt", "> Songs", 42)
+    songs = Text.new(20, s.y + s.height + math.floor(20 * getHeightScale()), "Arial.fnt", "> Songs", math.floor(42 * getHeightScale()))
 
     currentMenu:addObject(songs)
 
-    multiplayer = Text.new(20, songs.y + songs.height + 40, "Arial.fnt", "Multiplayer", 42)
+    multiplayer = Text.new(20, songs.y + songs.height + math.floor(40 * getHeightScale()), "Arial.fnt", "Multiplayer", math.floor(42 * getHeightScale()))
 
     currentMenu:addObject(multiplayer)
 
-    settings = Text.new(20, multiplayer.y + multiplayer.height + 40, "Arial.fnt", "Settings", 42)
+    settings = Text.new(20, multiplayer.y + multiplayer.height + math.floor(40 * getHeightScale()), "Arial.fnt", "Settings", math.floor(42 * getHeightScale()))
 
     currentMenu:addObject(settings)
 
-    exit = Text.new(20, settings.y + settings.height + 40, "Arial.fnt", "Exit", 42)
+    exit = Text.new(20, settings.y + settings.height + math.floor(40 * getHeightScale()), "Arial.fnt", "Exit", math.floor(42 * getHeightScale()))
 
     currentMenu:addObject(exit)
 

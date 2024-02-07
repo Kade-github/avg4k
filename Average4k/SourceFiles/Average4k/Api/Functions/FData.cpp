@@ -55,6 +55,8 @@ sol::table Average4k::Api::Functions::FData::GetVideoData()
 
 	data["width"] = v.width;
 	data["height"] = v.height;
+	data["fullscreen"] = v.fullscreen;
+	data["borderless"] = v.borderless;
 
 	return data;
 }
@@ -77,6 +79,42 @@ void Average4k::Api::Functions::FData::SetVideoData(sol::table data)
 
 	v.width = data["width"];
 	v.height = data["height"];
+	v.fullscreen = data["fullscreen"];
+	v.borderless = data["borderless"];
+
+	int* res = AvgEngine::Render::DisplayHelper::getMonitorResolution();
+
+	if (v.width == -1)
+		v.width = res[0];
+
+	if (v.height == -1)
+		v.height = res[1];
+
+	if (v.width >= res[0])
+		v.width = res[0];
+	if (v.height >= res[1])
+		v.height = res[1];
+
+	if (v.width < 640)
+		v.width = 640;
+
+	if (v.height < 480)
+		v.height = 480;
+
+	A4kGame::Instance->Resize(v.width, v.height);
+
+	if (v.fullscreen)
+	{
+		AvgEngine::Render::Display::Fullscreen(A4kGame::Instance->Window, 1);
+	}
+	else if (v.borderless)
+	{
+		AvgEngine::Render::Display::Fullscreen(A4kGame::Instance->Window, 2);
+	}
+	else
+	{
+		AvgEngine::Render::Display::Fullscreen(A4kGame::Instance->Window, 0);
+	}
 
 	A4kGame::gameInstance->saveData.Save("Assets/Save/Save.avg");
 }

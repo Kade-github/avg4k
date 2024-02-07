@@ -16,10 +16,13 @@ namespace Average4k::Data::Types
 	public:
 		VideoData() = default;
 
+		bool fullscreen = false;
+		bool borderless = false;
+
 		int width = 1920;
 		int height = 1080;
 
-		MSGPACK_DEFINE_ARRAY(width, height);
+		MSGPACK_DEFINE_ARRAY(fullscreen, borderless, width, height);
 	};
 }
 

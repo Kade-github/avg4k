@@ -30,57 +30,79 @@ namespace Average4k::Api::Stubs
 
 		void setX(int x)
 		{
+			if (_base == NULL)
+				return;
 			_base->transform.x = x;
 		}
 
 		int getX()
 		{
+			if (_base == NULL)
+				return 0;
 			return _base->transform.x;
 		}
 
 		void setY(int y)
 		{
+			if (_base == NULL)
+				return;
 			_base->transform.y = y;
 		}
 
 		int getY()
 		{
+			if (_base == NULL)
+				return 0;
 			return _base->transform.y;
 		}
 
 		void setText(const std::wstring& text)
 		{
+			if (_base == NULL)
+				return;
 			_base->text = text;
 		}
 
 		std::wstring getText()
 		{
+			if (_base == NULL)
+				return L"";
 			return _base->text;
 		}
 
 		void setFont(const std::string& font)
 		{
+			if (_base == NULL)
+				return;
 			_base->SetFont(A4kGame::gameInstance->skin.GetPath("Fonts/"), font);
 			_font = font;
 		}
 
 		std::string getFont()
 		{
+			if (_base == NULL)
+				return "";
 			return _font;
 		}
 
 		void setSize(int size)
 		{
+			if (_base == NULL)
+				return;
 			_base->size = size;
 		}
 
 		int getSize()
 		{
+			if (_base == NULL)
+				return 0;
 			return _base->size;
 		}
 
 		void setColor(int r, int g, int b, int a)
 		{
+			if (_base == NULL)
+				return;
 			_base->transform.r = r;
 			_base->transform.g = g;
 			_base->transform.b = b;
@@ -89,21 +111,31 @@ namespace Average4k::Api::Stubs
 
 		void setAngle(float angle)
 		{
+			if (_base == NULL)
+				return;
 			_base->transform.angle = angle;
 		}
 
 		float getAngle()
 		{
+			if (_base == NULL)
+				return 0;
 			return _base->transform.angle;
 		}
 
 		int getWidth()
 		{
+			if (_base == NULL)
+				return 0;
+
 			return _base->transform.w;
 		}
 
 		int getHeight()
 		{
+			if (_base == NULL)
+				return 0;
+
 			return _base->transform.h;
 		}
 

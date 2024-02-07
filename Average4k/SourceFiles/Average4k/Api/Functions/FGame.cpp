@@ -12,3 +12,13 @@ void Average4k::Api::Functions::FGame::Quit()
 {
 	glfwSetWindowShouldClose(AvgEngine::Game::Instance->Window, true);
 }
+
+float Average4k::Api::Functions::FGame::GetWidthScale()
+{
+	return AvgEngine::Render::Display::width / 1920.0f;
+}
+
+float Average4k::Api::Functions::FGame::GetHeightScale()
+{
+	return AvgEngine::Render::Display::height / 1080.0f;
+}

@@ -14,6 +14,8 @@ namespace Average4k::Api::Functions
 	class FGame {
 	public:
 		static void Quit();
+		static float GetWidthScale();
+		static float GetHeightScale();
 	};
 }
 

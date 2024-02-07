@@ -44,15 +44,18 @@ function createPacks()
     resetAll()
     logo = Sprite.new(20, 20, "Images/Logo.png")
 
+    logo.width = math.floor(700 * getWidthScale())
+    logo.height = math.floor(314 * getHeightScale())
+
     currentMenu:addObject(logo)
 
-    local goBack = Text.new(20, logo.y + logo.height + 20, "ArialUnicode.fnt", "Press escape to go back", 42)
+    local goBack = Text.new(20, logo.y + logo.height + math.floor(20 * getHeightScale()), "ArialUnicode.fnt", "Press escape to go back", math.floor(42 * getHeightScale()))
 
     currentMenu:addObject(goBack)
 
     for i = 1, #packs do
         local p = packs[i]
-        local pack = Text.new(20, logo.y + logo.height + 20 + (i * 40), "ArialUnicode.fnt", packs[i].name, 42)
+        local pack = Text.new(20, logo.y + logo.height + math.floor(20 * getHeightScale()) + (i * math.floor(40 * getHeightScale())), "ArialUnicode.fnt", packs[i].name, math.floor(42 * getHeightScale()))
 
         local bannerId = -1
 
@@ -75,16 +78,19 @@ function createCharts()
 
     logo = Sprite.new(20, 20, "Images/Logo.png")
 
+    logo.width = math.floor(700 * getWidthScale())
+    logo.height = math.floor(314 * getHeightScale())
+
     currentMenu:addObject(logo)
 
-    local goBack = Text.new(20, logo.y + logo.height + 20, "ArialUnicode.fnt", "Press escape to go back", 42)
+    local goBack = Text.new(20, logo.y + logo.height + math.floor(20 * getHeightScale()), "ArialUnicode.fnt", "Press escape to go back", math.floor(42 * getHeightScale()))
 
     currentMenu:addObject(goBack)
 
     for i = 1, #currentCharts do
         local p = currentCharts[i]
 
-        local pack = Text.new(20, logo.y + logo.height + 20 + (i * 40), "ArialUnicode.fnt", "whatvever", 42)
+        local pack = Text.new(20, logo.y + logo.height + math.floor(20 * getHeightScale()) + (i * math.floor(40 * getHeightScale())), "ArialUnicode.fnt", "whatever", math.floor(42 * getHeightScale()))
 
         chartObjects[i] = { text = pack, name = p["title"], banner = nil, bId = -1, id = i, background = nil, backgroundId =
         -1, path = p["path"], showBG = false, folder = p["folder"] }
@@ -100,9 +106,12 @@ function createChart()
 
     logo = Sprite.new(20, 20, "Images/Logo.png")
 
+    logo.width = math.floor(700 * getWidthScale())
+    logo.height = math.floor(314 * getHeightScale())
+
     currentMenu:addObject(logo)
 
-    local goBack = Text.new(20, logo.y + logo.height + 20, "ArialUnicode.fnt", "Press escape to go back", 42)
+    local goBack = Text.new(20, logo.y + logo.height + math.floor(20 * getHeightScale()), "ArialUnicode.fnt", "Press escape to go back", math.floor(42 * getHeightScale()))
 
     currentMenu:addObject(goBack)
 
@@ -126,7 +135,7 @@ function createChart()
         t = t .. " (" .. rp["subtitle"] .. ")"
     end
 
-    local chart = Text.new(20, logo.y + logo.height + 62, "ArialUnicode.fnt", t, 42)
+    local chart = Text.new(20, logo.y + logo.height + math.floor(62 * getHeightScale()), "ArialUnicode.fnt", t, math.floor(42 * getHeightScale()))
 
     currentMenu:addObject(chart)
 
@@ -302,13 +311,13 @@ function view_packs()
             p.text.text = p.name
         end
 
-        p.text.y = 500 + (away * 40)
+        p.text.y = logo.y + logo.height + math.floor(300 * getHeightScale()) + (away * math.floor(40 * getHeightScale()))
 
-        if p.text.y < logo.y + logo.height + 64 then
+        if p.text.y < logo.y + logo.height + math.floor(64 * getHeightScale()) then
             p.text.y = -1000
         end
 
-        if p.text.y > 900 then
+        if p.text.y > math.floor(900 * getHeightScale()) then
             p.text.y = -1000
         end
 
@@ -385,13 +394,13 @@ function view_charts()
             p.text.text = t
         end
 
-        p.text.y = 500 + (away * 40)
+        p.text.y = logo.y + logo.height + math.floor(300 * getHeightScale()) + (away * math.floor(40 * getHeightScale()))
 
-        if p.text.y < logo.y + logo.height + 64 then
+        if p.text.y < logo.y + logo.height + math.floor(64 * getHeightScale()) then
             p.text.y = -1000
         end
 
-        if p.text.y > 900 then
+        if p.text.y > math.floor(900 * getHeightScale()) then
             p.text.y = -1000
         end
 
@@ -438,13 +447,13 @@ function view_chart()
             p.text.text = p.name
         end
 
-        p.text.y = 500 + (away * 40)
+        p.text.y = logo.y + logo.height + math.floor(300 * getHeightScale()) + (away * math.floor(40 * getHeightScale()))
 
-        if p.text.y < logo.y + logo.height + 64 then
+        if p.text.y < logo.y + logo.height + math.floor(64 * getHeightScale()) then
             p.text.y = -1000
         end
 
-        if p.text.y > 900 then
+        if p.text.y > math.floor(900 * getHeightScale()) then
             p.text.y = -1000
         end
     end
@@ -490,8 +499,8 @@ function draw()
 
             p.banner = spr
             p.banner.x = p.text.x + p.text.width + 20
-            p.banner.height = 38
-            p.banner.width = 200
+            p.banner.height = math.floor(38 * getHeightScale())
+            p.banner.width = math.floor(200 * getWidthScale())
             p.banner.y = p.text.y + (p.text.height / 2) - (p.banner.height / 2)
 
             currentMenu:addObject(p.banner)
@@ -509,8 +518,8 @@ function draw()
             if not (spr.width == 0) and not (spr.height == 0) then -- doesn't exist yet
                 p.banner = spr
                 p.banner.x = p.text.x + p.text.width + 20
-                p.banner.height = 38
-                p.banner.width = 200
+                p.banner.height = math.floor(38 * getHeightScale())
+                p.banner.width = math.floor(200 * getWidthScale())
                 p.banner.y = p.text.y + (p.text.height / 2) - (p.banner.height / 2)
 
                 currentMenu:addObject(p.banner)
@@ -540,8 +549,8 @@ function draw()
                 chartObject.background.zIndex = -1
                 chartObject.background.x = 0
                 chartObject.background.y = 0
-                chartObject.background.width = 1920
-                chartObject.background.height = 1080
+                chartObject.background.width = math.floor(1920 * getWidthScale())
+                chartObject.background.height = math.floor(1080 * getHeightScale())
                 chartObject.background.alpha = 0.0
                 currentMenu:addObject(chartObject.background)
             end
@@ -599,7 +608,7 @@ function draw()
                 
                 t = t .. " (Rating: " .. d["rating"] .. ")"
 
-                local diff = Text.new(20, 500 + (i * 40), "ArialUnicode.fnt", t, 42)
+                local diff = Text.new(20, 500 + (i * 40), "ArialUnicode.fnt", t, math.floor(42 * getHeightScale()))
 
                 chartObject.diffObjects[i] = { text = diff, name = t, id = i }
 

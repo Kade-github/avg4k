@@ -9,6 +9,8 @@
 #include "Data/Chart/ChartFinder.h"
 #include "Console/CmdHandler.h"
 #include <AvgEngine/External/Bass/BASS.h>
+#include "Api/Functions/FData.h"
+#include "Api/Functions/FGame.h"
 #include <AvgEngine/Utils/Paths.h>
 Average4k::A4kGame* Average4k::A4kGame::gameInstance = nullptr;
 
@@ -76,6 +78,38 @@ void Average4k::A4kGame::Start()
 		}
 	}
 
+	// Set res
+
+	Data::Types::VideoData& v = saveData.videoData;
+
+	int* res = AvgEngine::Render::DisplayHelper::getMonitorResolution();
+
+	if (v.width >= res[0])
+		v.width = res[0];
+	if (v.height >= res[1])
+		v.height = res[1];
+
+	if (v.width < 640)
+		v.width = 640;
+
+	if (v.height < 480)
+		v.height = 480;
+
+	A4kGame::Instance->Resize(v.width, v.height);
+
+	if (v.fullscreen)
+	{
+		AvgEngine::Render::Display::Fullscreen(A4kGame::Instance->Window, 1);
+	}
+	else if (v.borderless)
+	{
+		AvgEngine::Render::Display::Fullscreen(A4kGame::Instance->Window, 2);
+	}
+	else
+	{
+		AvgEngine::Render::Display::Fullscreen(A4kGame::Instance->Window, 0);
+	}
+
 	// Load charts
 
 	Data::ChartFinder::FindCharts("Charts");
@@ -86,9 +120,9 @@ void Average4k::A4kGame::update()
 {
 	if (!skinExists)
 	{
-		DrawOutlinedDebugText(20, 20, "The game couldn't find a skin to use, please re-download/verify your game.", 32);
+		DrawOutlinedDebugText(20 * Average4k::Api::Functions::FGame::GetWidthScale(), 20 * Average4k::Api::Functions::FGame::GetHeightScale(), "The game couldn't find a skin to use, please re-download/verify your game.", 32 * Average4k::Api::Functions::FGame::GetHeightScale());
 
-		DrawOutlinedDebugText(20, 64, "Please make sure at least one skin is named \"DefaultArrow\" so the game doesn't show this message.", 32);
+		DrawOutlinedDebugText(20 * Average4k::Api::Functions::FGame::GetWidthScale(), 64 * Average4k::Api::Functions::FGame::GetHeightScale(), "Please make sure at least one skin is named \"DefaultArrow\" so the game doesn't show this message.", 32 * Average4k::Api::Functions::FGame::GetHeightScale());
 
 		if (CurrentMenu != NULL)
 			CurrentMenu->cameraDraw();
@@ -96,13 +130,14 @@ void Average4k::A4kGame::update()
 	}
 	if (Average4k::Data::ChartFinder::pack_pool.get_tasks_queued() || Average4k::Data::ChartFinder::pack_pool.get_tasks_running() > 0 || Average4k::Data::ChartFinder::startedSearching)
 	{
-		DrawOutlinedDebugText(200, 100, "please hold... im loading packs", 84);
 
-		DrawOutlinedDebugText(200, 200, "Packs queued to be loaded: " + std::to_string(Average4k::Data::ChartFinder::pack_pool.get_tasks_queued()), 64);
+		DrawOutlinedDebugText(200 * Average4k::Api::Functions::FGame::GetWidthScale(), 100 * Average4k::Api::Functions::FGame::GetHeightScale(), "please hold... im loading packs", 84 * Average4k::Api::Functions::FGame::GetHeightScale());
 
-		DrawOutlinedDebugText(200, 300, "Packs currently loading: " + std::to_string(Average4k::Data::ChartFinder::pack_pool.get_tasks_running()), 64);
+		DrawOutlinedDebugText(200 * Average4k::Api::Functions::FGame::GetWidthScale(), 200 * Average4k::Api::Functions::FGame::GetHeightScale(), "Packs queued to be loaded: " + std::to_string(Average4k::Data::ChartFinder::pack_pool.get_tasks_queued()), 64 * Average4k::Api::Functions::FGame::GetHeightScale());
 
-		DrawOutlinedDebugText(200, 400, "Packs loaded: " + std::to_string(Average4k::Data::ChartFinder::Packs.size()), 64);
+		DrawOutlinedDebugText(200 * Average4k::Api::Functions::FGame::GetWidthScale(), 300 * Average4k::Api::Functions::FGame::GetHeightScale(), "Packs currently loading: " + std::to_string(Average4k::Data::ChartFinder::pack_pool.get_tasks_running()), 64 * Average4k::Api::Functions::FGame::GetHeightScale());
+
+		DrawOutlinedDebugText(200 * Average4k::Api::Functions::FGame::GetWidthScale(), 400 * Average4k::Api::Functions::FGame::GetHeightScale(), "Packs loaded: " + std::to_string(Average4k::Data::ChartFinder::Packs.size()), 64 * Average4k::Api::Functions::FGame::GetHeightScale());
 
 		if (CurrentMenu != NULL)
 			CurrentMenu->cameraDraw();

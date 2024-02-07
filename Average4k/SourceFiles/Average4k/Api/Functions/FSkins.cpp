@@ -9,13 +9,14 @@
 
 sol::table Average4k::Api::Functions::FSkins::GetSkins()
 {
-    sol::table skins = sol::table();
+	sol::table skins = FCharts::Lua->getState().create_table();
 
     for (const auto& entry : std::filesystem::directory_iterator("Assets/Skins"))
     {
 		if (entry.is_directory())
 		{
-			skins.add(entry.path().filename().wstring());
+			std::wstring name = entry.path().filename().wstring();
+			skins.add(name);
 		}
     }
 

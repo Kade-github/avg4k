@@ -19,6 +19,7 @@ keybindTable = {}
 gameplayTable = {}
 
 view = {}
+skins = {}
 
 -- keyboard codes
 
@@ -182,6 +183,8 @@ end
 function create_main()
     removeStuff()
     selection = 1
+
+    back.text = "Press escape to go back"
     
     local video = Text.new(20,math.floor(450 * getHeightScale()), "ArialUnicode.fnt", "Video", 42)
 
@@ -352,6 +355,35 @@ function create_gameplay()
     view[selection].text = "> " .. view[selection].text;
 end
 
+function create_skin()
+    removeStuff()
+
+    skins = getSkins()
+
+    back.text = "Press escape to go back; Select a skin :"
+    
+    for i = 1, #skins do
+        local skinText = Text.new(20,back.y + back.height + 20 + (i - 1) * math.floor(60 * getHeightScale()), "ArialUnicode.fnt", skins[i], 42)
+
+        currentMenu:addObject(skinText)
+
+        table.insert(view, skinText)
+    end
+
+    view[selection].text = "> " .. view[selection].text;
+
+    logo.width = math.floor(700 * getWidthScale())
+    logo.height = math.floor(314 * getHeightScale())
+
+    back.size = math.floor(42 * getHeightScale())
+    back.y = logo.y + logo.height + math.floor(20 * getHeightScale()) 
+
+    for i = 1, #view do
+        view[i].size = math.floor(42 * getHeightScale())
+        view[i].y = back.y + math.floor(60 * getHeightScale()) + (i - 1) * math.floor(60 * getHeightScale())
+    end
+end
+
 function create()
     logo = Sprite.new(20,20, "Images/Logo.png")
 
@@ -409,6 +441,7 @@ function keyPress(data)
             end
             if initialSelc == 4 then
                 currentView = 4
+                create_skin()
             end
         elseif currentView == 1 then
             if selection == 1 and not videoTable["borderless"] then
@@ -482,6 +515,8 @@ function keyPress(data)
                     create_gameplay()
                 end
             end
+        elseif currentView == 4 then
+            setSkin(skins[selection])
         end
     end
 
@@ -666,6 +701,24 @@ function keyPress(data)
     end
 end
 function draw()
+    if currentView == 4 then
+        for i = 1, #skins do
+            local away = i - selection
+
+            local p = view[i]
+
+            p.y = logo.y + logo.height + math.floor(300 * getHeightScale()) + (away * math.floor(40 * getHeightScale()))
+
+            if p.y < logo.y + logo.height + math.floor(64 * getHeightScale()) then
+                p.y = -1000
+            end
+    
+            if p.y > math.floor(900 * getHeightScale()) then
+                p.y = -1000
+            end    
+        end
+    end
+
     if frameSkip < 60  then
         frameSkip = frameSkip + 1
         return

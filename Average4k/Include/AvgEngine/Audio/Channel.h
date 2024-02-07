@@ -214,7 +214,13 @@ namespace AvgEngine::Audio
 		{
 			if (id == -1)
 				return;
-			volume = vol;
+			volume = sqrt(vol); // better curve
+
+			if (volume > 1.0f)
+				volume = 1.0f;
+			if (volume < 0.0f)
+				volume = 0.0f;
+
 			if (!BASS_ChannelSetAttribute(id, BASS_ATTRIB_VOL, vol))
 				Logging::writeLog("[BASS] [Error] Failed to set channel volume: " + std::to_string(BASS_ErrorGetCode()));
 		}

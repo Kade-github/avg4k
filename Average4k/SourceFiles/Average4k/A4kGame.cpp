@@ -118,6 +118,21 @@ void Average4k::A4kGame::Start()
 
 void Average4k::A4kGame::update()
 {
+	volume = saveData.audioData.volume;
+	sfxVolume = saveData.audioData.sfxVolume;
+
+	for (auto c : AvgEngine::External::BASS::Channels)
+	{
+		if (c->name.contains("sfx_"))
+		{
+			c->SetVolume(sfxVolume);
+		}
+		else
+		{
+			c->SetVolume(volume);
+		}
+	}
+
 	if (!skinExists)
 	{
 		DrawOutlinedDebugText(20 * Average4k::Api::Functions::FGame::GetWidthScale(), 20 * Average4k::Api::Functions::FGame::GetHeightScale(), "The game couldn't find a skin to use, please re-download/verify your game.", 32 * Average4k::Api::Functions::FGame::GetHeightScale());

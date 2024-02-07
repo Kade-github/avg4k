@@ -12,11 +12,19 @@ selection = 1
 videoTable = {}
 defRes = 2
 
+audioTable = {}
+
 view = {}
 
 
 supportedWidths = {640, 1280, 1920, 2560, 3840}
 supportedHeights = {480, 720, 1080, 1440, 2160}
+
+function Round(to_round)
+    local divided = to_round / 5
+    local rounded = 5 * math.floor(divided)
+    return rounded
+end
 
 function getIndexFromVideoData()
     for i = 1, #supportedWidths do
@@ -106,8 +114,35 @@ function create_video()
         view[i].size = math.floor(42 * getHeightScale())
         view[i].y = back.y + math.floor(60 * getHeightScale()) + (i - 1) * math.floor(60 * getHeightScale())
     end
+end
 
-    print(tostring(getWidthScale()) .. " " .. tostring(getHeightScale()))
+function create_audio()
+    removeStuff()
+
+    audioTable = getAudioData()
+
+    local volume = Text.new(20,math.floor(450 * getHeightScale()), "ArialUnicode.fnt", "Volume (" .. tostring(math.floor(audioTable["volume"] * 100)) .. "%)", 42)
+
+    currentMenu:addObject(volume)
+
+    local sfxvolume = Text.new(20,volume.y + volume.height + math.floor(20 * getHeightScale()), "ArialUnicode.fnt", "Sfx Volume (" .. tostring(math.floor(audioTable["sfxVolume"] * 100)) .. "%)", 42)
+
+    currentMenu:addObject(sfxvolume)
+
+    view = {volume, sfxvolume}
+
+    logo.width = math.floor(700 * getWidthScale())
+    logo.height = math.floor(314 * getHeightScale())
+
+    back.size = math.floor(42 * getHeightScale())
+    back.y = logo.y + logo.height + math.floor(20 * getHeightScale()) 
+
+    for i = 1, #view do
+        view[i].size = math.floor(42 * getHeightScale())
+        view[i].y = back.y + math.floor(60 * getHeightScale()) + (i - 1) * math.floor(60 * getHeightScale())
+    end
+
+    view[selection].text = "> " .. view[selection].text;
 end
 
 function create()
@@ -123,14 +158,29 @@ function create()
 
 end
 
+pressLeft = false
+pressRight = false
+
+frameSkip = 0
+
+
+function keyRelease(data)
+    if data == 263 then
+        pressLeft = false
+    end
+    if data == 262 then
+        pressRight = false
+    end
+    frameSkip = 0
+end
+
 function keyPress(data)
     -- escape
 
     if data == 256 then
         if currentView == 0 then
             switchTo("Scripts/MainMenu.lua")
-        end
-        if currentView == 1 then
+        else
             currentView = 0
             create_main()
         end
@@ -146,6 +196,8 @@ function keyPress(data)
             end
             if selection == 2 then
                 currentView = 2
+                selection = 1
+                create_audio()
             end
             if selection == 3 then
                 currentView = 3
@@ -162,8 +214,6 @@ function keyPress(data)
                 videoTable["width"] = supportedWidths[defRes]
                 videoTable["height"] = supportedHeights[defRes]
 
-                print("setting res to " .. videoTable["width"] .. "x" .. videoTable["height"])
-                
                 setVideoData(videoTable)
 
                 create_video()
@@ -193,12 +243,31 @@ function keyPress(data)
                 setVideoData(videoTable)
                 create_video()
             end
+        elseif currentView == 2 then
+            if selection == 1 then
+                audioTable["volume"] = Round((audioTable["volume"] + 0.25) * 100) / 100
+                if audioTable["volume"] > 1 then
+                    audioTable["volume"] = 0
+                end
+                setAudioData(audioTable)
+                create_audio()
+            end
+            if selection == 2 then
+                audioTable["sfxVolume"] = Round((audioTable["sfxVolume"] + 0.25) * 100) / 100
+                if audioTable["sfxVolume"] > 1 then
+                    audioTable["sfxVolume"] = 0
+                end
+                setAudioData(audioTable)
+                create_audio()
+            end
         end
     end
 
     -- left 
 
     if data == 263 then
+        pressLeft = true
+        frameSkip = 0
         if currentView == 1 then
             if selection == 1 and not videoTable["borderless"] then
                 defRes = defRes - 1
@@ -207,11 +276,26 @@ function keyPress(data)
                 end
                 videoTable["width"] = supportedWidths[defRes]
                 videoTable["height"] = supportedHeights[defRes]
-
-                print("setting res to " .. videoTable["width"] .. "x" .. videoTable["height"])
-
                 setVideoData(videoTable)
                 create_video()
+            end
+        end
+        if currentView == 2 then
+            if selection == 1 then
+                audioTable["volume"] = audioTable["volume"] - 0.01
+                if audioTable["volume"] < 0 then
+                    audioTable["volume"] = 1
+                end
+                setAudioData(audioTable)
+                create_audio()
+            end
+            if selection == 2 then
+                audioTable["sfxVolume"] = audioTable["sfxVolume"] - 0.01
+                if audioTable["sfxVolume"] < 0 then
+                    audioTable["sfxVolume"] = 1
+                end
+                setAudioData(audioTable)
+                create_audio()
             end
         end
     end
@@ -219,6 +303,8 @@ function keyPress(data)
     -- right
 
     if data == 262 then
+        pressRight = true
+        frameSkip = 0
         if currentView == 1 then
             if selection == 1 then
                 defRes = defRes + 1
@@ -227,11 +313,26 @@ function keyPress(data)
                 end
                 videoTable["width"] = supportedWidths[defRes]
                 videoTable["height"] = supportedHeights[defRes]
-
-                print("setting res to " .. videoTable["width"] .. "x" .. videoTable["height"])
-
                 setVideoData(videoTable)
                 create_video()
+            end
+        end
+        if currentView == 2 then
+            if selection == 1 then
+                audioTable["volume"] = audioTable["volume"] + 0.01
+                if audioTable["volume"] > 1 then
+                    audioTable["volume"] = 0
+                end
+                setAudioData(audioTable)
+                create_audio()
+            end
+            if selection == 2 then
+                audioTable["sfxVolume"] = audioTable["sfxVolume"] + 0.01
+                if audioTable["sfxVolume"] > 1 then
+                    audioTable["sfxVolume"] = 0
+                end
+                setAudioData(audioTable)
+                create_audio()
             end
         end
     end
@@ -258,7 +359,51 @@ function keyPress(data)
 
     view[selection].text = "> " .. view[selection].text;
 end
-
 function draw()
+    if frameSkip < 60  then
+        frameSkip = frameSkip + 1
+        return
+    end
+    
+    if pressLeft then
+        if currentView == 2 then
+            if selection == 1 then
+                audioTable["volume"] = audioTable["volume"] - 0.005
+                if audioTable["volume"] < 0 then
+                    audioTable["volume"] = 1
+                end
+                setAudioData(audioTable)
+                create_audio()
+            end
+            if selection == 2 then
+                audioTable["sfxVolume"] = audioTable["sfxVolume"] - 0.005
+                if audioTable["sfxVolume"] < 0 then
+                    audioTable["sfxVolume"] = 1
+                end
+                setAudioData(audioTable)
+                create_audio()
+            end
+        end
+    end
 
+    if pressRight then
+        if currentView == 2 then
+            if selection == 1 then
+                audioTable["volume"] = audioTable["volume"] + 0.005
+                if audioTable["volume"] > 1 then
+                    audioTable["volume"] = 0
+                end
+                setAudioData(audioTable)
+                create_audio()
+            end
+            if selection == 2 then
+                audioTable["sfxVolume"] = audioTable["sfxVolume"] + 0.005
+                if audioTable["sfxVolume"] > 1 then
+                    audioTable["sfxVolume"] = 0
+                end
+                setAudioData(audioTable)
+                create_audio()
+            end
+        end
+    end
 end

@@ -16,8 +16,8 @@ namespace Average4k::Data::Types
 	public:
 		AudioData() = default;
 
-		float volume = 1.0f;
-		float sfxVolume = 1.0f;
+		float volume = 0.5f;
+		float sfxVolume = 0.6f;
 
 		MSGPACK_DEFINE_ARRAY(volume, sfxVolume);
 	};

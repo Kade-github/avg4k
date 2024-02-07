@@ -19,6 +19,8 @@ namespace Average4k
 	{
 		bool skinExists = false;
 	public:
+		float volume = 1.0f;
+		float sfxVolume = 1.0f;
 		Data::SaveData saveData;
 		Skin skin;
 		static A4kGame* gameInstance;

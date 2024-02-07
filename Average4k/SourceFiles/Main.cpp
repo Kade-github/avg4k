@@ -241,6 +241,28 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			A4kGame::Instance->QueueEvent(e);
 		});
 
+	glfwSetWindowIconifyCallback(game->Window, [](GLFWwindow* window, int iconified)
+		{
+			Data::Types::VideoData& v = A4kGame::gameInstance->saveData.videoData;
+			// minimize window
+			if (iconified)
+			{
+				AvgEngine::Render::Display::Fullscreen(window, 0);
+			}
+			else
+			{
+				// restore window
+				if (v.fullscreen)
+				{
+					AvgEngine::Render::Display::Fullscreen(window, 1);
+				}
+				else if (v.borderless)
+				{
+					AvgEngine::Render::Display::Fullscreen(window, 2);
+				}
+			}
+		});
+
 	AvgEngine::Logging::writeLog("[Main] Starting game...");
 
 	game->Start();

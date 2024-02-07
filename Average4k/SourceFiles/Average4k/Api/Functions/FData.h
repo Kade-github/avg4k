@@ -8,8 +8,6 @@
 
 #pragma once
 
-#include <string>
-
 #include "FCharts.h"
 
 namespace Average4k::Api::Functions

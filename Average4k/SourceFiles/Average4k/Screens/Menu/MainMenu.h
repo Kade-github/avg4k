@@ -8,7 +8,8 @@
 
 #pragma once
 #include "../../Api/Functions/FMenu.h"
-#include "../../Api/Functions/FCharts.h"
+#include "../../Api/Functions/FData.h"
+#include "../../Api/Functions/FSkins.h"
 #include "../../Api/Stubs/LuaMenu.h"
 
 namespace Average4k::Screens::Menu
@@ -24,7 +25,7 @@ namespace Average4k::Screens::Menu
 		}
 		bool switchNextFrame = false;
 		Average4k::Api::Stubs::LuaMenu cm;
-		std::string _toPath = "";
+		bool errorOut = false;
 		sol::table m;
 		static bool loaded;
 		Average4k::Api::AvgLuaFile* lua;

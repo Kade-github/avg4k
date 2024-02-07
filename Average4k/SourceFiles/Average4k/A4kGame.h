@@ -17,6 +17,7 @@ namespace Average4k
 {
 	class A4kGame : public AvgEngine::Game
 	{
+		bool skinExists = false;
 	public:
 		Data::SaveData saveData;
 		Skin skin;
@@ -31,6 +32,12 @@ namespace Average4k
 		void Start();
 
 		void update() override;
+		
+		bool fallback = false;
+		void setDebugText(bool _fallback)
+		{
+			fallback = _fallback;
+		}
 
 		void Switch() override
 		{
@@ -52,13 +59,21 @@ namespace Average4k
 				lastMenu->tween.Clear();
 				delete lastMenu;
 			}
+
 			CurrentMenu->load();
 			AvgEngine::Render::Display::defaultShader->setProject(CurrentMenu->camera.projection);
-			if (!debugText)
+
+			if (!fallback)
 			{
 				debugText = skin.CreateText("ArialUnicode.fnt", 32);
 				debugTextOutlined = skin.CreateText("ArialUnicodeOutlined.fnt", 32);
 			}
+			else
+			{
+				debugText = new AvgEngine::Base::Text(0, 0, "Assets/Fallback/Fonts/", "ArialUnicode.fnt", "", 32);
+				debugTextOutlined = new AvgEngine::Base::Text(0, 0, "Assets/Fallback/Fonts/", "ArialUnicode.fnt", "", 32);
+			}
+
 			debugText->tween = &CurrentMenu->tween;
 			debugText->eManager = CurrentMenu->eManager;
 			debugText->camera = &CurrentMenu->camera;

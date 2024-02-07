@@ -37,6 +37,9 @@ function keyPress(data)
         if selection == 1 then -- songs
             switchTo("Scripts/SongSelect.lua")
         end
+        if selection == 3 then -- settings
+            switchTo("Scripts/Settings.lua")
+        end
     else
         texts[selection].text = string.sub(texts[selection].text, 3, string.len(texts[selection].text));
 

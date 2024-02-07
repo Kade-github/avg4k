@@ -87,4 +87,9 @@ void Average4k::Api::Functions::FData::SetSkin(std::string skinName)
 	A4kGame::gameInstance->skin = Skin(s);
 
 	A4kGame::gameInstance->saveData.Save("Assets/Save/Save.avg");
+
+	AvgEngine::Events::Event e;
+	e.type = AvgEngine::Events::EventType::Event_ReloadFont;
+
+	A4kGame::gameInstance->QueueEvent(e);
 }

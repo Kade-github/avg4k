@@ -9,7 +9,7 @@
 #include "Data/Chart/ChartFinder.h"
 #include "Console/CmdHandler.h"
 #include <AvgEngine/External/Bass/BASS.h>
-
+#include <AvgEngine/Utils/Paths.h>
 Average4k::A4kGame* Average4k::A4kGame::gameInstance = nullptr;
 
 Average4k::A4kGame::A4kGame(std::string _t, std::string _v, int w, int h) : Game(_t, _v, w, h)
@@ -55,7 +55,26 @@ void Average4k::A4kGame::Start()
 
 	skin = Skin(saveData.skinData);
 
+	skinExists = AvgEngine::Utils::Paths::pathExists("Assets/Skins/" + saveData.skinData.name + "/");
+
 	console.handler = new Average4k::Console::CmdHandler();
+
+
+	if (!skinExists)
+	{
+		skin = Skin(Data::Types::SkinData());
+
+		AvgEngine::Logging::writeLog("[Average4k] Skin not found, trying to use the default skin!");
+
+		skinExists = AvgEngine::Utils::Paths::pathExists("Assets/Skins/" + saveData.skinData.name + "/");
+
+		if (!skinExists)
+		{
+			AvgEngine::Logging::writeLog("[Average4k] [Error] Default skin not found, the game will not load.");
+			A4kGame::gameInstance->setDebugText(true); // set fallback
+			return;
+		}
+	}
 
 	// Load charts
 
@@ -65,6 +84,16 @@ void Average4k::A4kGame::Start()
 
 void Average4k::A4kGame::update()
 {
+	if (!skinExists)
+	{
+		DrawOutlinedDebugText(20, 20, "The game couldn't find a skin to use, please re-download/verify your game.", 32);
+
+		DrawOutlinedDebugText(20, 64, "Please make sure at least one skin is named \"DefaultArrow\" so the game doesn't show this message.", 32);
+
+		if (CurrentMenu != NULL)
+			CurrentMenu->cameraDraw();
+		return;
+	}
 	if (Average4k::Data::ChartFinder::pack_pool.get_tasks_queued() || Average4k::Data::ChartFinder::pack_pool.get_tasks_running() > 0 || Average4k::Data::ChartFinder::startedSearching)
 	{
 		DrawOutlinedDebugText(200, 100, "please hold... im loading packs", 84);

@@ -40,6 +40,9 @@ function keyPress(data)
         if selection == 3 then -- settings
             switchTo("Scripts/Settings.lua")
         end
+        if selection == 4 then -- exit
+            quitGame()
+        end
     else
         texts[selection].text = string.sub(texts[selection].text, 3, string.len(texts[selection].text));
 

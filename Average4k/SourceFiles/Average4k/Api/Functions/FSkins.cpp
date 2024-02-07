@@ -1,3 +1,8 @@
+/*
+	Avg Dev Team
+	2021-2024 Average4k
+*/
+
 #include "FSkins.h"
 
 #include <filesystem>

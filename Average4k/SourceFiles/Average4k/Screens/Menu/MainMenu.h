@@ -10,6 +10,7 @@
 #include "../../Api/Functions/FMenu.h"
 #include "../../Api/Functions/FData.h"
 #include "../../Api/Functions/FSkins.h"
+#include "../../Api/Functions/FGame.h"
 #include "../../Api/Stubs/LuaMenu.h"
 
 namespace Average4k::Screens::Menu

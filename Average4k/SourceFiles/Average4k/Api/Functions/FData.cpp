@@ -52,6 +52,8 @@ void Average4k::Api::Functions::FData::SetSkinData(sol::table data)
 	Data::Types::SkinData& s = A4kGame::gameInstance->saveData.skinData;
 
 	s.name = data["name"];
+
+	A4kGame::gameInstance->saveData.Save("Assets/Save/Save.avg");
 }
 
 
@@ -66,6 +68,8 @@ void Average4k::Api::Functions::FData::SetKeybindData(sol::table data)
 
 	k.keyPause = data["keyPause"];
 	k.keyRestart = data["keyRestart"];
+
+	A4kGame::gameInstance->saveData.Save("Assets/Save/Save.avg");
 }
 
 void Average4k::Api::Functions::FData::SetGameplayData(sol::table data)
@@ -74,6 +78,8 @@ void Average4k::Api::Functions::FData::SetGameplayData(sol::table data)
 
 	g.constantMod = data["cmod"];
 	g.multiplierMod = data["xmod"];
+
+	A4kGame::gameInstance->saveData.Save("Assets/Save/Save.avg");
 }
 
 void Average4k::Api::Functions::FData::SetSkin(std::string skinName)

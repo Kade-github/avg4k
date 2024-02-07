@@ -33,6 +33,7 @@
     <ClCompile Include="SourceFiles\Average4k\Api\AvgLuaFile.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Api\Functions\FCharts.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Api\Functions\FData.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Api\Functions\FGame.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Api\Functions\FMenu.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Api\Functions\FSkins.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Console\CmdHandler.cpp" />
@@ -60,6 +61,7 @@
     <ClInclude Include="SourceFiles\Average4k\Api\AvgLuaFile.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Functions\FCharts.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Functions\FData.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\Functions\FGame.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Functions\FMenu.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Functions\FSkins.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaMenu.h" />

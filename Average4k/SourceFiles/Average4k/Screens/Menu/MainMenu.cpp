@@ -66,6 +66,10 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 
 	lua->getState().set_function("getSkins", Functions::FSkins::GetSkins);
 
+	// FGame
+
+	lua->getState().set_function("quitGame", Functions::FGame::Quit);
+
 	lua->create();
 
 	// setup event listeners

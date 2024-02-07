@@ -44,6 +44,7 @@ sol::table Average4k::Api::Functions::FData::GetGameplayData()
 	data["useCmod"] = g.useCmod;
 	data["cmod"] = g.constantMod;
 	data["xmod"] = g.multiplierMod;
+	data["noteskin"] = g.noteskin;
 
 	return data;
 }
@@ -162,6 +163,7 @@ void Average4k::Api::Functions::FData::SetGameplayData(sol::table data)
 	g.constantMod = data["cmod"];
 	g.multiplierMod = data["xmod"];
 	g.useCmod = data["useCmod"];
+	g.noteskin = data["noteskin"];
 
 	if (g.constantMod < 400)
 		g.constantMod = 400;
@@ -174,6 +176,7 @@ void Average4k::Api::Functions::FData::SetGameplayData(sol::table data)
 
 	if (g.multiplierMod > 10.0)
 		g.multiplierMod = 10.0;
+
 
 	A4kGame::gameInstance->saveData.Save("Assets/Save/Save.avg");
 }

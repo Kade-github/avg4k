@@ -17,6 +17,7 @@ audioTable = {}
 
 keybindTable = {}
 gameplayTable = {}
+noteskins = {}
 
 view = {}
 skins = {}
@@ -152,6 +153,17 @@ function getNameFromCode(code)
     return keys[code]
 end
 
+noteskinIndex = 1
+
+function getIndexFromValue(table, value)
+    for i = 1, #table do
+        if table[i] == value then
+            return i
+        end
+    end
+    return 1
+end
+
 
 supportedWidths = {640, 1280, 1920, 2560, 3840}
 supportedHeights = {480, 720, 1080, 1440, 2160}
@@ -201,7 +213,6 @@ function create_main()
     local skin = Text.new(20, gameplay.y + gameplay.height + 20, "ArialUnicode.fnt", "Skin", 42)
 
     currentMenu:addObject(skin)
-
 
     view = {video, audio, gameplay, skin}
 
@@ -301,7 +312,10 @@ function create_gameplay()
 
     keybindTable = getKeybindData()
     gameplayTable = getGameplayData()
+    noteskins = getNoteskins()
 
+    noteskinIndex = getIndexFromValue(noteskins, gameplayTable["noteskin"])
+    
     local key0 = Text.new(20,math.floor(450 * getHeightScale()), "ArialUnicode.fnt", "Key 0 : " .. getNameFromCode(keybindTable["key0"]), 42)
 
     currentMenu:addObject(key0)
@@ -338,8 +352,11 @@ function create_gameplay()
 
     currentMenu:addObject(xmod)
 
+    local noteskin = Text.new(20,xmod.y + xmod.height + 20, "ArialUnicode.fnt", "Noteskin : " .. gameplayTable["noteskin"], 42)
 
-    view = {key0, key1, key2, key3, keyPause, keyRestart, useCmod, cmod, xmod}
+    currentMenu:addObject(noteskin)
+
+    view = {key0, key1, key2, key3, keyPause, keyRestart, useCmod, cmod, xmod, noteskin}
 
     logo.width = math.floor(700 * getWidthScale())
     logo.height = math.floor(314 * getHeightScale())
@@ -600,6 +617,15 @@ function keyPress(data)
                 setGameplayData(gameplayTable)
                 create_gameplay()
             end
+            if selection == 10 then
+                noteskinIndex = noteskinIndex - 1
+                if noteskinIndex < 1 then
+                    noteskinIndex = #noteskins
+                end
+                gameplayTable["noteskin"] = noteskins[noteskinIndex]
+                setGameplayData(gameplayTable)
+                create_gameplay()
+            end
         end
     end
 
@@ -647,6 +673,15 @@ function keyPress(data)
             end
             if selection == 9 then
                 gameplayTable["xmod"] = gameplayTable["xmod"] + 0.01
+                setGameplayData(gameplayTable)
+                create_gameplay()
+            end
+            if selection == 10 then
+                noteskinIndex = noteskinIndex + 1
+                if noteskinIndex > #noteskins then
+                    noteskinIndex = 1
+                end
+                gameplayTable["noteskin"] = noteskins[noteskinIndex]
                 setGameplayData(gameplayTable)
                 create_gameplay()
             end

@@ -15,6 +15,7 @@ namespace Average4k::Api::Functions
 	class FSkins {
 	public:
 		static sol::table GetSkins();
+		static sol::table GetNoteskins();
 	};
 }
 

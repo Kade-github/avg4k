@@ -68,6 +68,7 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 	// FSkins
 
 	lua->getState().set_function("getSkins", Functions::FSkins::GetSkins);
+	lua->getState().set_function("getNoteskins", Functions::FSkins::GetNoteskins);
 
 	// FGame
 

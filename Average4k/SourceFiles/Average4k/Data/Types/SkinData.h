@@ -16,7 +16,6 @@ namespace Average4k::Data::Types
 	public:
 		SkinData() = default;
 		std::string name = "DefaultArrow";
-		std::string script = "Default.lua";
 
 		bool relativePath = true;
 		std::string path = "Assets/Skins/DefaultArrow";

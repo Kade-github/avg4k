@@ -24,6 +24,7 @@ namespace Average4k::Data
 		std::string header = A_SHEADER;
 
 		Types::SkinData skinData;
+		Types::KeybindData keybindData;
 		Types::GameplayData gameplayData;
 
 		void Save(std::string file)
@@ -53,7 +54,7 @@ namespace Average4k::Data
 			return s;
 		}
 
-		MSGPACK_DEFINE_ARRAY(header, skinData, gameplayData);
+		MSGPACK_DEFINE_ARRAY(header, skinData, keybindData, gameplayData);
 	};
 }
 

@@ -167,7 +167,6 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 
 void Average4k::Screens::Menu::MainMenu::load()
 {
-	loaded = true;
 
 	if (!AvgEngine::Utils::Paths::pathExists(Average4k::A4kGame::gameInstance->skin.GetPath(path)))
 	{
@@ -176,11 +175,9 @@ void Average4k::Screens::Menu::MainMenu::load()
 		AvgEngine::Logging::writeLog("[MainMenu] [Error] This is either one of two issues:");
 		AvgEngine::Logging::writeLog("[MainMenu] [Error] 1. The skin doesn't implement this file, and it should. If you are the skinner, please do this.");
 		AvgEngine::Logging::writeLog("[MainMenu] [Error] 2. You deleted something important in a default (or current) skin, and you should re-download/verify your files.");
-		AvgEngine::Logging::writeLog("[MainMenu] [Error] If you know what you are doing, add the file. Once done, press F3 (to open the console),");
-		AvgEngine::Logging::writeLog("[MainMenu] [Error] then input the \"reload\" command to reload the skin.");
 		return;
 	}
-
+	loaded = true;
 	createFile(path, false);
 }
 
@@ -194,9 +191,6 @@ void Average4k::Screens::Menu::MainMenu::draw()
 		A4kGame::gameInstance->DrawDebugText(20 * Average4k::Api::Functions::FGame::GetWidthScale(), 64 * Average4k::Api::Functions::FGame::GetHeightScale(), "This is either one of two issues:", 32 * Average4k::Api::Functions::FGame::GetHeightScale());
 		A4kGame::gameInstance->DrawDebugText(20 * Average4k::Api::Functions::FGame::GetWidthScale(), 108 * Average4k::Api::Functions::FGame::GetHeightScale(), "1. The skin doesn't implement this file, and it should. If you are the skinner, please do this.", 32 * Average4k::Api::Functions::FGame::GetHeightScale());
 		A4kGame::gameInstance->DrawDebugText(20 * Average4k::Api::Functions::FGame::GetWidthScale(), 152 * Average4k::Api::Functions::FGame::GetHeightScale(), "2. You deleted something important in a default (or current) skin, and you should re-download/verify your files.", 32 * Average4k::Api::Functions::FGame::GetHeightScale());
-
-		A4kGame::gameInstance->DrawDebugText(20 * Average4k::Api::Functions::FGame::GetWidthScale(), 214 * Average4k::Api::Functions::FGame::GetHeightScale(), "If you know what you are doing, add the file. Once done, press F3 (to open the console),", 32 * Average4k::Api::Functions::FGame::GetHeightScale());
-		A4kGame::gameInstance->DrawDebugText(20 * Average4k::Api::Functions::FGame::GetWidthScale(), 258 * Average4k::Api::Functions::FGame::GetHeightScale(), "then input the \"reload\" command to reload the skin.", 32 * Average4k::Api::Functions::FGame::GetHeightScale());
 		return;
 	}
 

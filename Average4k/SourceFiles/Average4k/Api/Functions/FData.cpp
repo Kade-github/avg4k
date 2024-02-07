@@ -41,6 +41,7 @@ sol::table Average4k::Api::Functions::FData::GetGameplayData()
 
 	sol::table data = FCharts::Lua->getState().create_table();
 
+	data["useCmod"] = g.useCmod;
 	data["cmod"] = g.constantMod;
 	data["xmod"] = g.multiplierMod;
 
@@ -160,6 +161,19 @@ void Average4k::Api::Functions::FData::SetGameplayData(sol::table data)
 
 	g.constantMod = data["cmod"];
 	g.multiplierMod = data["xmod"];
+	g.useCmod = data["useCmod"];
+
+	if (g.constantMod < 400)
+		g.constantMod = 400;
+
+	if (g.multiplierMod < 0.25)
+		g.multiplierMod = 0.25;
+
+	if (g.constantMod > 3000)
+		g.constantMod = 3000;
+
+	if (g.multiplierMod > 10.0)
+		g.multiplierMod = 10.0;
 
 	A4kGame::gameInstance->saveData.Save("Assets/Save/Save.avg");
 }

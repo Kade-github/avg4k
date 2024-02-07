@@ -32,10 +32,12 @@ namespace Average4k::Data::Types
 	public:
 		GameplayData() = default;
 
+		bool useCmod = true;
+
 		int constantMod = 700;
 		float multiplierMod = 1.0;
 
-		MSGPACK_DEFINE_ARRAY(constantMod, multiplierMod);
+		MSGPACK_DEFINE_ARRAY(useCmod, constantMod, multiplierMod);
 	};
 }
 

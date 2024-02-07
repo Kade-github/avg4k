@@ -7,6 +7,7 @@ logo = nil
 back = nil
 
 currentView = 0
+initialSelc = 1
 selection = 1
 
 videoTable = {}
@@ -201,7 +202,7 @@ function create_main()
 
     view = {video, audio, gameplay, skin}
 
-    view[selection].text = "> " .. view[selection].text;
+    view[initialSelc].text = "> " .. view[initialSelc].text;
 
     logo.width = math.floor(700 * getWidthScale())
     logo.height = math.floor(314 * getHeightScale())
@@ -322,8 +323,20 @@ function create_gameplay()
 
     currentMenu:addObject(keyRestart)
 
+    local useCmod = Text.new(20,keyPause.y + keyPause.height + 20, "ArialUnicode.fnt", "Use Constant Scrollspeed : " .. tostring(gameplayTable["useCmod"]), 42)
 
-    view = {key0, key1, key2, key3, keyPause, keyRestart}
+    currentMenu:addObject(useCmod)
+
+    local cmod = Text.new(20,useCmod.y + useCmod.height + 20, "ArialUnicode.fnt", "Constant Scrollspeed : " .. tostring(gameplayTable["cmod"]), 42)
+
+    currentMenu:addObject(cmod)
+
+    local xmod = Text.new(20,cmod.y + cmod.height + 20, "ArialUnicode.fnt", "Multiplicative Scrollspeed : " .. tostring(math.floor(gameplayTable["xmod"] * 100)) .. "%", 42)
+
+    currentMenu:addObject(xmod)
+
+
+    view = {key0, key1, key2, key3, keyPause, keyRestart, useCmod, cmod, xmod}
 
     logo.width = math.floor(700 * getWidthScale())
     logo.height = math.floor(314 * getHeightScale())
@@ -368,37 +381,33 @@ function keyRelease(data)
     frameSkip = 0
 end
 
+keybinding = false
+
 function keyPress(data)
-    -- escape
+    -- f3
 
-    if data == 256 then
-        if currentView == 0 then
-            switchTo("Scripts/MainMenu.lua")
-        else
-            currentView = 0
-            create_main()
-        end
+    if data == 292 then
+        return
     end
-
     -- enter
 
     if data == 257 then
         if currentView == 0 then
-            if selection == 1 then
+            if initialSelc == 1 then
                 currentView = 1
                 create_video()
             end
-            if selection == 2 then
+            if initialSelc == 2 then
                 currentView = 2
                 selection = 1
                 create_audio()
             end
-            if selection == 3 then
+            if initialSelc == 3 then
                 currentView = 3
                 selection = 1
                 create_gameplay()
             end
-            if selection == 4 then
+            if initialSelc == 4 then
                 currentView = 4
             end
         elseif currentView == 1 then
@@ -456,6 +465,55 @@ function keyPress(data)
                 setAudioData(audioTable)
                 create_audio()
             end
+        elseif currentView == 3 then
+            if selection < 7 then -- keybinds
+                if not keybinding then
+                    keybinding = true
+                    view[selection].text = view[selection].text .. " <";
+                    return
+                else
+                    keybinding = false
+                    create_gameplay()
+                end
+            else -- everything else
+                if selection == 7 then
+                    gameplayTable["useCmod"] = not gameplayTable["useCmod"]
+                    setGameplayData(gameplayTable)
+                    create_gameplay()
+                end
+            end
+        end
+    end
+
+    if keybinding then
+        print(tostring(selection))
+        if selection < 5 then
+            keybindTable["key" .. tostring(selection - 1)] = data
+            setKeybindData(keybindTable)
+            create_gameplay()
+        else
+            if selection == 5 then
+                keybindTable["keyPause"] = data
+                setKeybindData(keybindTable)
+                create_gameplay()
+            elseif selection == 6 then
+                keybindTable["keyRestart"] = data
+                setKeybindData(keybindTable)
+                create_gameplay()
+            end
+        end
+        keybinding = false
+        return
+    end
+
+    -- escape
+
+    if data == 256 then
+        if currentView == 0 then
+            switchTo("Scripts/MainMenu.lua")
+        else
+            currentView = 0
+            create_main()
         end
     end
 
@@ -492,6 +550,20 @@ function keyPress(data)
                 end
                 setAudioData(audioTable)
                 create_audio()
+            end
+        end
+
+        if currentView == 3 then
+            if selection == 8 then
+                gameplayTable["cmod"] = gameplayTable["cmod"] - 1
+                setGameplayData(gameplayTable)
+                create_gameplay()
+            end
+            if selection == 9 then
+                gameplayTable["xmod"] = gameplayTable["xmod"] - 0.01
+
+                setGameplayData(gameplayTable)
+                create_gameplay()
             end
         end
     end
@@ -531,29 +603,67 @@ function keyPress(data)
                 create_audio()
             end
         end
+
+        if currentView == 3 then
+            if selection == 8 then
+                gameplayTable["cmod"] = gameplayTable["cmod"] + 1
+                setGameplayData(gameplayTable)
+                create_gameplay()
+            end
+            if selection == 9 then
+                gameplayTable["xmod"] = gameplayTable["xmod"] + 0.01
+                setGameplayData(gameplayTable)
+                create_gameplay()
+            end
+        end
     end
 
-    view[selection].text = string.sub(view[selection].text, 3, string.len(view[selection].text));
+    if currentView == 0 then
+        view[initialSelc].text = string.sub(view[initialSelc].text, 3, string.len(view[initialSelc].text));
+    else
+        view[selection].text = string.sub(view[selection].text, 3, string.len(view[selection].text));
+    end
 
     if data == 265 then -- up
 
-        selection = selection - 1
+        if currentView == 0 then
+            initialSelc = initialSelc - 1
 
-        if selection < 1 then
-            selection = #view
+            if initialSelc < 1 then
+                initialSelc = #view
+            end
+        else
+
+            selection = selection - 1
+
+            if selection < 1 then
+                selection = #view
+            end
         end
     end
 
     if data == 264 then -- down
 
-        selection = selection + 1
+        if currentView == 0 then
+            initialSelc = initialSelc + 1
 
-        if selection > #view then
-            selection = 1
+            if initialSelc > #view then
+                initialSelc = 1
+            end
+        else
+            selection = selection + 1
+
+            if selection > #view then
+                selection = 1
+            end
         end
     end
 
-    view[selection].text = "> " .. view[selection].text;
+    if currentView == 0 then
+        view[initialSelc].text = "> " .. view[initialSelc].text;
+    else
+        view[selection].text = "> " .. view[selection].text;
+    end
 end
 function draw()
     if frameSkip < 60  then
@@ -580,6 +690,18 @@ function draw()
                 create_audio()
             end
         end
+        if currentView == 3 then
+            if selection == 8 then
+                gameplayTable["cmod"] = gameplayTable["cmod"] - 1
+                setGameplayData(gameplayTable)
+                create_gameplay()
+            end
+            if selection == 9 then
+                gameplayTable["xmod"] = gameplayTable["xmod"] - 0.005
+                setGameplayData(gameplayTable)
+                create_gameplay()
+            end
+        end
     end
 
     if pressRight then
@@ -599,6 +721,18 @@ function draw()
                 end
                 setAudioData(audioTable)
                 create_audio()
+            end
+        end
+        if currentView == 3 then
+            if selection == 8 then
+                gameplayTable["cmod"] = gameplayTable["cmod"] + 1
+                setGameplayData(gameplayTable)
+                create_gameplay()
+            end
+            if selection == 9 then
+                gameplayTable["xmod"] = gameplayTable["xmod"] + 0.005
+                setGameplayData(gameplayTable)
+                create_gameplay()
             end
         end
     end

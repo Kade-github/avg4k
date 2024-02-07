@@ -14,7 +14,141 @@ defRes = 2
 
 audioTable = {}
 
+keybindTable = {}
+gameplayTable = {}
+
 view = {}
+
+-- keyboard codes
+
+local keys = {
+    [32] = "SPACE",
+    [39] = "APOSTROPHE",
+    [44] = "COMMA",
+    [45] = "MINUS",
+    [46] = "PERIOD",
+    [47] = "SLASH",
+    [48] = "0",
+    [49] = "1",
+    [50] = "2",
+    [51] = "3",
+    [52] = "4",
+    [53] = "5",
+    [54] = "6",
+    [55] = "7",
+    [56] = "8",
+    [57] = "9",
+    [59] = "SEMICOLON",
+    [61] = "EQUAL",
+    [91] = "LEFT_BRACKET",
+    [92] = "BACKSLASH",
+    [93] = "RIGHT_BRACKET",
+    [96] = "GRAVE_ACCENT",
+    [161] = "WORLD_1",
+    [162] = "WORLD_2",
+    [256] = "ESCAPE",
+    [257] = "ENTER",
+    [258] = "TAB",
+    [259] = "BACKSPACE",
+    [260] = "INSERT",
+    [261] = "DELETE",
+    [262] = "RIGHT",
+    [263] = "LEFT",
+    [264] = "DOWN",
+    [265] = "UP",
+    [266] = "PAGE_UP",
+    [267] = "PAGE_DOWN",
+    [268] = "HOME",
+    [269] = "END",
+    [280] = "CAPS_LOCK",
+    [281] = "SCROLL_LOCK",
+    [282] = "NUM_LOCK",
+    [283] = "PRINT_SCREEN",
+    [284] = "PAUSE",
+    [290] = "F1",
+    [291] = "F2",
+    [292] = "F3",
+    [293] = "F4",
+    [294] = "F5",
+    [295] = "F6",
+    [296] = "F7",
+    [297] = "F8",
+    [298] = "F9",
+    [299] = "F10",
+    [300] = "F11",
+    [301] = "F12",
+    [302] = "F13",
+    [303] = "F14",
+    [304] = "F15",
+    [305] = "F16",
+    [306] = "F17",
+    [307] = "F18",
+    [308] = "F19",
+    [309] = "F20",
+    [310] = "F21",
+    [311] = "F22",
+    [312] = "F23",
+    [313] = "F24",
+    [314] = "F25",
+    [320] = "KP_0",
+    [321] = "KP_1",
+    [322] = "KP_2",
+    [323] = "KP_3",
+    [324] = "KP_4",
+    [325] = "KP_5",
+    [326] = "KP_6",
+    [327] = "KP_7",
+    [328] = "KP_8",
+    [329] = "KP_9",
+    [330] = "KP_DECIMAL",
+    [331] = "KP_DIVIDE",
+    [332] = "KP_MULTIPLY",
+    [333] = "KP_SUBTRACT",
+    [334] = "KP_ADD",
+    [335] = "KP_ENTER",
+    [336] = "KP_EQUAL",
+    [340] = "LEFT_SHIFT",
+    [341] = "LEFT_CONTROL",
+    [342] = "LEFT_ALT",
+    [343] = "LEFT_SUPER",
+    [344] = "RIGHT_SHIFT",
+    [345] = "RIGHT_CONTROL",
+    [346] = "RIGHT_ALT",
+    [347] = "RIGHT_SUPER",
+    [348] = "MENU",
+    [364] = "LAST",
+    -- alphabet
+    [65] = "A",
+    [66] = "B",
+    [67] = "C",
+    [68] = "D",
+    [69] = "E",
+    [70] = "F",
+    [71] = "G",
+    [72] = "H",
+    [73] = "I",
+    [74] = "J",
+    [75] = "K",
+    [76] = "L",
+    [77] = "M",
+    [78] = "N",
+    [79] = "O",
+    [80] = "P",
+    [81] = "Q",
+    [82] = "R",
+    [83] = "S",
+    [84] = "T",
+    [85] = "U",
+    [86] = "V",
+    [87] = "W",
+    [88] = "X",
+    [89] = "Y",
+    [90] = "Z"
+}
+
+function getNameFromCode(code)
+    return keys[code]
+end
 
 
 supportedWidths = {640, 1280, 1920, 2560, 3840}
@@ -145,6 +279,66 @@ function create_audio()
     view[selection].text = "> " .. view[selection].text;
 end
 
+function dump(o)
+   if type(o) == 'table' then
+      local s = '{ '
+      for k,v in pairs(o) do
+         if type(k) ~= 'number' then k = '"'..k..'"' end
+         s = s .. '['..k..'] = ' .. dump(v) .. ','
+      end
+      return s .. '} '
+   else
+      return tostring(o)
+   end
+end
+
+function create_gameplay()
+    removeStuff()
+
+    keybindTable = getKeybindData()
+    gameplayTable = getGameplayData()
+
+    local key0 = Text.new(20,math.floor(450 * getHeightScale()), "ArialUnicode.fnt", "Key 0 : " .. getNameFromCode(keybindTable["key0"]), 42)
+
+    currentMenu:addObject(key0)
+
+    local key1 = Text.new(20,key0.y + key0.height + 20, "ArialUnicode.fnt", "Key 1 : " .. getNameFromCode(keybindTable["key1"]), 42)
+
+    currentMenu:addObject(key1)
+
+    local key2 = Text.new(20,key1.y + key1.height + 20, "ArialUnicode.fnt", "Key 2 : " .. getNameFromCode(keybindTable["key2"]), 42)
+
+    currentMenu:addObject(key2)
+
+    local key3 = Text.new(20,key2.y + key2.height + 20, "ArialUnicode.fnt", "Key 3 : " .. getNameFromCode(keybindTable["key3"]), 42)
+
+    currentMenu:addObject(key3)
+
+    local keyPause = Text.new(20,key3.y + key3.height + 20, "ArialUnicode.fnt", "Key Pause : " .. getNameFromCode(keybindTable["keyPause"]), 42)
+
+    currentMenu:addObject(keyPause)
+
+    local keyRestart = Text.new(20,keyPause.y + keyPause.height + 20, "ArialUnicode.fnt", "Key Restart : " .. getNameFromCode(keybindTable["keyRestart"]), 42)
+
+    currentMenu:addObject(keyRestart)
+
+
+    view = {key0, key1, key2, key3, keyPause, keyRestart}
+
+    logo.width = math.floor(700 * getWidthScale())
+    logo.height = math.floor(314 * getHeightScale())
+
+    back.size = math.floor(42 * getHeightScale())
+    back.y = logo.y + logo.height + math.floor(20 * getHeightScale())
+
+    for i = 1, #view do
+        view[i].size = math.floor(42 * getHeightScale())
+        view[i].y = back.y + math.floor(60 * getHeightScale()) + (i - 1) * math.floor(60 * getHeightScale())
+    end
+
+    view[selection].text = "> " .. view[selection].text;
+end
+
 function create()
     logo = Sprite.new(20,20, "Images/Logo.png")
 
@@ -201,6 +395,8 @@ function keyPress(data)
             end
             if selection == 3 then
                 currentView = 3
+                selection = 1
+                create_gameplay()
             end
             if selection == 4 then
                 currentView = 4

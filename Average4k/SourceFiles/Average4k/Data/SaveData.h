@@ -13,6 +13,8 @@
 
 #include "Types/SkinData.h"
 #include "Types/GameplayData.h"
+#include "Types/AudioData.h"
+#include "Types/VideoData.h"
 
 #include "../Defines.h"
 
@@ -26,6 +28,8 @@ namespace Average4k::Data
 		Types::SkinData skinData;
 		Types::KeybindData keybindData;
 		Types::GameplayData gameplayData;
+		Types::AudioData audioData;
+		Types::VideoData videoData;
 
 		void Save(std::string file)
 		{
@@ -54,7 +58,7 @@ namespace Average4k::Data
 			return s;
 		}
 
-		MSGPACK_DEFINE_ARRAY(header, skinData, keybindData, gameplayData);
+		MSGPACK_DEFINE_ARRAY(header, skinData, keybindData, gameplayData, audioData, videoData);
 	};
 }
 

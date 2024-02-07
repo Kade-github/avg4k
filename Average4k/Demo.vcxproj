@@ -80,7 +80,9 @@
     <ClInclude Include="SourceFiles\Average4k\Data\Chart\StopPoint.h" />
     <ClInclude Include="SourceFiles\Average4k\Data\Types\GameplayData.h" />
     <ClInclude Include="SourceFiles\Average4k\Data\SaveData.h" />
+    <ClInclude Include="SourceFiles\Average4k\Data\Types\AudioData.h" />
     <ClInclude Include="SourceFiles\Average4k\Data\Types\SkinData.h" />
+    <ClInclude Include="SourceFiles\Average4k\Data\Types\VideoData.h" />
     <ClInclude Include="SourceFiles\Average4k\Defines.h" />
     <ClInclude Include="SourceFiles\Average4k\Helpers\FileDiag.h" />
     <ClInclude Include="SourceFiles\Average4k\Helpers\QuickAdd.h" />

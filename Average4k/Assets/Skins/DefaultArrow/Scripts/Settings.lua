@@ -6,9 +6,9 @@ audioSettings = nil
 currentView = 0
 
 function create()
-    local s = Sprite.new(20,20, "Images/Logo.png")
+    local logo = Sprite.new(20,20, "Images/Logo.png")
 
-    currentMenu:addObject(s)
+    currentMenu:addObject(logo)
 
     local goBack = Text.new(20, logo.y + logo.height + 20, "ArialUnicode.fnt", "Press escape to go back", 42)
 

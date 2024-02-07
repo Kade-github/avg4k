@@ -6,7 +6,7 @@
 #ifndef _AVGDEFINE_H_
 #define _AVGDEFINE_H_
 
-#define A_VERSION "a1"
-#define A_SHEADER "ASaveFormat1.1"
+#define A_VERSION "b14"
+#define A_SHEADER "ASaveFormat1.2"
 
 #endif _AVGDEFINE_H_

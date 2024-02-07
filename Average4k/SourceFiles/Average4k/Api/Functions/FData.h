@@ -20,6 +20,10 @@ namespace Average4k::Api::Functions
 		static void SetKeybindData(sol::table data);
 		static sol::table GetGameplayData();
 		static void SetGameplayData(sol::table data);
+		static sol::table GetVideoData();
+		static void SetVideoData(sol::table data);
+		static sol::table GetAudioData();
+		static void SetAudioData(sol::table data);
 
 		static void SetSkin(std::string skinName);
 	};

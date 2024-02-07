@@ -47,6 +47,50 @@ sol::table Average4k::Api::Functions::FData::GetGameplayData()
 	return data;
 }
 
+sol::table Average4k::Api::Functions::FData::GetVideoData()
+{
+	Data::Types::VideoData& v = A4kGame::gameInstance->saveData.videoData;
+
+	sol::table data = FCharts::Lua->getState().create_table();
+
+	data["width"] = v.width;
+	data["height"] = v.height;
+
+	return data;
+}
+
+sol::table Average4k::Api::Functions::FData::GetAudioData()
+{
+Data::Types::AudioData& a = A4kGame::gameInstance->saveData.audioData;
+
+	sol::table data = FCharts::Lua->getState().create_table();
+
+	data["volume"] = a.volume;
+	data["sfxVolume"] = a.sfxVolume;
+
+	return data;
+}
+
+void Average4k::Api::Functions::FData::SetVideoData(sol::table data)
+{
+	Data::Types::VideoData& v = A4kGame::gameInstance->saveData.videoData;
+
+	v.width = data["width"];
+	v.height = data["height"];
+
+	A4kGame::gameInstance->saveData.Save("Assets/Save/Save.avg");
+}
+
+void Average4k::Api::Functions::FData::SetAudioData(sol::table data)
+{
+	Data::Types::AudioData& a = A4kGame::gameInstance->saveData.audioData;
+
+	a.volume = data["volume"];
+	a.sfxVolume = data["sfxVolume"];
+
+	A4kGame::gameInstance->saveData.Save("Assets/Save/Save.avg");
+}
+
 void Average4k::Api::Functions::FData::SetSkinData(sol::table data)
 {
 	Data::Types::SkinData& s = A4kGame::gameInstance->saveData.skinData;
@@ -81,6 +125,7 @@ void Average4k::Api::Functions::FData::SetGameplayData(sol::table data)
 
 	A4kGame::gameInstance->saveData.Save("Assets/Save/Save.avg");
 }
+
 
 void Average4k::Api::Functions::FData::SetSkin(std::string skinName)
 {

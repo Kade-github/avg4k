@@ -201,10 +201,25 @@ namespace Average4k::Api::Stubs
 			return _base->zIndex;
 		}
 
+		std::string getTag()
+		{
+			if (_base == NULL)
+				return "";
+			return _base->tag;
+		}
+
+		void setTag(const std::string& tag)
+		{
+			if (_base == NULL)
+				return;
+			_base->tag = tag;
+		}
+
 		static void Register(sol::state& state)
 		{
 			state.new_usertype<LuaSprite>("Sprite",
 				sol::constructors<LuaSprite(float, float, const std::string&)>(),
+				"tag", sol::property(&LuaSprite::getTag, &LuaSprite::setTag),
 				"x", sol::property(&LuaSprite::getX, &LuaSprite::setX),
 				"y", sol::property(&LuaSprite::getY, &LuaSprite::setY),
 				"width", sol::property(&LuaSprite::getWidth, &LuaSprite::setWidth),

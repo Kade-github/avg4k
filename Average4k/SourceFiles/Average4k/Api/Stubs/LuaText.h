@@ -139,10 +139,39 @@ namespace Average4k::Api::Stubs
 			return _base->transform.h;
 		}
 
+		std::string getTag()
+		{
+			if (_base == NULL)
+				return "";
+			return _base->tag;
+		}
+
+		void setTag(const std::string& tag)
+		{
+			if (_base == NULL)
+				return;
+			_base->tag = tag;
+		}
+
+		bool getCentered()
+		{
+			if (_base == NULL)
+				return false;
+			return _base->centerLines;
+		}
+
+		void setCentered(bool centered)
+		{
+			if (_base == NULL)
+				return;
+			_base->centerLines = centered;
+		}
+
 		static void Register(sol::state& state)
 		{
 			state.new_usertype<LuaText>("Text",
 				sol::constructors<LuaText(int, int, const std::string&, const std::wstring&, int)>(),
+				"tag", sol::property(&LuaText::getTag, &LuaText::setTag),
 				"x", sol::property(&LuaText::getX, &LuaText::setX),
 				"y", sol::property(&LuaText::getY, &LuaText::setY),
 				"width", sol::readonly_property(&LuaText::getWidth),
@@ -152,6 +181,7 @@ namespace Average4k::Api::Stubs
 				"size", sol::property(&LuaText::getSize, &LuaText::setSize),
 				"color", &LuaText::setColor,
 				"angle", sol::property(&LuaText::getAngle, &LuaText::setAngle),
+				"center", sol::property(&LuaText::getCentered, &LuaText::setCentered),
 				sol::base_classes, sol::bases<LuaObject>()
 			);
 		}

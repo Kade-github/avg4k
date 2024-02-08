@@ -10,6 +10,7 @@
 #include <AvgEngine/Base/Menu.h>
 #include "../../Data/Chart/Providers/StepFile.h"
 #include "../../A4kGame.h"
+#include "../../Api/AvgLuaFile.h"
 
 namespace Average4k::Screens::Menu
 {
@@ -19,7 +20,15 @@ namespace Average4k::Screens::Menu
 		std::wstring _path;
 		int _diff;
 	public:
+		Average4k::Api::AvgLuaFile* lua;
 		Average4k::Data::ChartFile chart;
+
+		int noteWidth = 0;
+		int noteHeight = 0;
+
+		std::string comboTag = "";
+		std::string judgementTextTag = "";
+		std::map<std::string, std::string> judgementTags = {};
 
 		Gameplay(std::wstring chart_path, int diff)
 		{

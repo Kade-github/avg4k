@@ -57,18 +57,18 @@ void Average4k::A4kGame::Start()
 
 	skin = Skin(saveData.skinData);
 
-	skinExists = AvgEngine::Utils::Paths::pathExists("Assets/Skins/" + saveData.skinData.name + "/");
+	skinExists = AvgEngine::Utils::Paths::pathExists("Assets/Skins/" + saveData.skinData.name);
 
 	console.handler = new Average4k::Console::CmdHandler();
 
 
 	if (!skinExists)
 	{
-		skin = Skin(Data::Types::SkinData());
+		AvgEngine::Logging::writeLog("[Average4k] Skin \"" + saveData.skinData.name + "\" not found, trying to use the default skin!");
+		saveData.skinData = Data::Types::SkinData();
+		skin = Skin(saveData.skinData);
 
-		AvgEngine::Logging::writeLog("[Average4k] Skin not found, trying to use the default skin!");
-
-		skinExists = AvgEngine::Utils::Paths::pathExists("Assets/Skins/" + saveData.skinData.name + "/");
+		skinExists = AvgEngine::Utils::Paths::pathExists("Assets/Skins/" + saveData.skinData.name);
 
 		if (!skinExists)
 		{
@@ -121,6 +121,12 @@ void Average4k::A4kGame::update()
 	volume = saveData.audioData.volume;
 	sfxVolume = saveData.audioData.sfxVolume;
 
+	if (switchOnFadeout && fadeoutSong)
+	{
+		volume = std::lerp(0.0f, volume, fadeout);
+		sfxVolume = std::lerp(0.0f, sfxVolume, fadeout);
+	}
+
 	for (auto c : AvgEngine::External::BASS::Channels)
 	{
 		if (c->name.contains("sfx_"))
@@ -137,7 +143,7 @@ void Average4k::A4kGame::update()
 	{
 		DrawOutlinedDebugText(20 * Average4k::Api::Functions::FGame::GetWidthScale(), 20 * Average4k::Api::Functions::FGame::GetHeightScale(), "The game couldn't find a skin to use, please re-download/verify your game.", 32 * Average4k::Api::Functions::FGame::GetHeightScale());
 
-		DrawOutlinedDebugText(20 * Average4k::Api::Functions::FGame::GetWidthScale(), 64 * Average4k::Api::Functions::FGame::GetHeightScale(), "Please make sure at least one skin is named \"DefaultArrow\" so the game doesn't show this message.", 32 * Average4k::Api::Functions::FGame::GetHeightScale());
+		DrawOutlinedDebugText(20 * Average4k::Api::Functions::FGame::GetWidthScale(), 64 * Average4k::Api::Functions::FGame::GetHeightScale(), "Please make sure at least one skin is named \"Default\" so the game doesn't show this message.", 32 * Average4k::Api::Functions::FGame::GetHeightScale());
 
 		if (CurrentMenu != NULL)
 			CurrentMenu->cameraDraw();
@@ -156,8 +162,93 @@ void Average4k::A4kGame::update()
 
 		if (CurrentMenu != NULL)
 			CurrentMenu->cameraDraw();
+		return;
 	}
-	else
-		Game::update();
+
+	HandleGamepad();
+
+	if (queuedEvents.size() != 0 && !switchOnFadeout)
+	{
+		std::vector<int> listtoDelete = {};
+		for (AvgEngine::Events::Event& e : queuedEvents)
+		{
+			Event(e);
+			if (e.type == AvgEngine::Events::EventType::Event_SwitchMenu)
+			{
+				if (eventMutex.try_lock())
+				{
+					queuedEvents.clear();
+					eventMutex.unlock();
+				}
+				switchOnFadeout = true;
+				return;
+			}
+			listtoDelete.push_back(e.id);
+		}
+		if (eventMutex.try_lock())
+		{
+			int index = 0;
+			for (int toDelete : listtoDelete)
+			{
+				for (AvgEngine::Events::Event& e : queuedEvents)
+				{
+					if (e.id == toDelete)
+					{
+						queuedEvents.erase(queuedEvents.begin() + index);
+						break;
+					}
+				}
+			}
+			eventMutex.unlock();
+		}
+	}
+	if (CurrentMenu == NULL)
+		return;
+	if (switchOnFadeout)
+	{
+		AvgEngine::Render::Rect r = AvgEngine::Render::Rect(0,0, AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
+
+		fadeout -= 0.05;
+
+		r.a = std::lerp(1.0f, 0.0f,fadeout);
+		r.r = 0;
+		r.g = 0;
+		r.b = 0;
+
+		AvgEngine::Base::Primitives::DrawRectangle(&CurrentMenu->camera, 999, r);
+
+		if (fadeout < 0.01f)
+		{
+			switchOnFadeout = false;
+			fadedOut = true;
+			fadeout = 1.0f;
+			fadeoutSong = false;
+			Switch();
+			return;
+		}
+	}
+	if (fadedOut)
+	{
+		AvgEngine::Render::Rect r = AvgEngine::Render::Rect(0, 0, AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
+
+		fadeout -= 0.05;
+
+
+		r.a = std::lerp(0.0f, 1.0f, fadeout);
+		r.r = 0;
+		r.g = 0;
+		r.b = 0;
+
+		AvgEngine::Base::Primitives::DrawRectangle(&CurrentMenu->camera, 999, r);
+
+		if (fadeout < 0.01f)
+		{
+			fadedOut = false;
+			fadeout = 1.0f;
+		}
+	}
+
+
+	CurrentMenu->draw();
 
 }

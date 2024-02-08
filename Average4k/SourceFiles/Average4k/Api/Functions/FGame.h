@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <string>
 
 namespace Average4k::Api::Functions
 {
@@ -16,6 +17,8 @@ namespace Average4k::Api::Functions
 		static void Quit();
 		static float GetWidthScale();
 		static float GetHeightScale();
+		static void FadeOutSong(bool fade);
+		static void PlayChart(std::wstring path, int diff);
 	};
 }
 

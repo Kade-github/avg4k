@@ -7,6 +7,7 @@
 
 #include <GLFW/glfw3.h>
 #include <AvgEngine/Game.h>
+#include "../../Screens/Menu/Gameplay.h"
 
 void Average4k::Api::Functions::FGame::Quit()
 {
@@ -21,4 +22,14 @@ float Average4k::Api::Functions::FGame::GetWidthScale()
 float Average4k::Api::Functions::FGame::GetHeightScale()
 {
 	return AvgEngine::Render::Display::height / 1080.0f;
+}
+
+void Average4k::Api::Functions::FGame::FadeOutSong(bool fade)
+{
+	A4kGame::gameInstance->fadeoutSong = fade;
+}
+
+void Average4k::Api::Functions::FGame::PlayChart(std::wstring path, int diff)
+{
+	AvgEngine::Game::Instance->SwitchMenu(new Average4k::Screens::Menu::Gameplay(path, diff));
 }

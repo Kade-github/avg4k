@@ -45,6 +45,7 @@ sol::table Average4k::Api::Functions::FData::GetGameplayData()
 	data["cmod"] = g.constantMod;
 	data["xmod"] = g.multiplierMod;
 	data["noteskin"] = g.noteskin;
+	data["backgroundDim"] = g.backgroundDim;
 
 	return data;
 }
@@ -164,6 +165,7 @@ void Average4k::Api::Functions::FData::SetGameplayData(sol::table data)
 	g.multiplierMod = data["xmod"];
 	g.useCmod = data["useCmod"];
 	g.noteskin = data["noteskin"];
+	g.backgroundDim = data["backgroundDim"];
 
 	if (g.constantMod < 400)
 		g.constantMod = 400;

@@ -18,7 +18,11 @@ namespace Average4k
 	class A4kGame : public AvgEngine::Game
 	{
 		bool skinExists = false;
+		bool switchOnFadeout = false;
+		bool fadedOut = false;
+		float fadeout = 1.0f;
 	public:
+		bool fadeoutSong = false;
 		float volume = 1.0f;
 		float sfxVolume = 1.0f;
 		Data::SaveData saveData;

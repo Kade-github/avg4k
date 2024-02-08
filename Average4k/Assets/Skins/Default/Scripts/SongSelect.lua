@@ -269,6 +269,9 @@ function keyPress(data)
             selectedChart = currentCharts[selection]
             currentView = 2
             createChart()
+        elseif currentView == 2 then
+            fadeOutSong(true)
+            playChart(selectedChart["path"], selectedDiff)
         end
     end
 end

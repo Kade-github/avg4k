@@ -348,7 +348,7 @@ function create_gameplay()
 
     currentMenu:addObject(cmod)
 
-    local xmod = Text.new(20,cmod.y + cmod.height + 20, "ArialUnicode.fnt", "Multiplicative Scrollspeed : " .. tostring(math.floor(gameplayTable["xmod"] * 100)) .. "%", 42)
+    local xmod = Text.new(20,cmod.y + cmod.height + 20, "ArialUnicode.fnt", "Multiplicative Scrollspeed : " .. string.format("%.2f", tostring(gameplayTable["xmod"])) .. "x", 42)
 
     currentMenu:addObject(xmod)
 
@@ -356,7 +356,11 @@ function create_gameplay()
 
     currentMenu:addObject(noteskin)
 
-    view = {key0, key1, key2, key3, keyPause, keyRestart, useCmod, cmod, xmod, noteskin}
+    local backgroundDim = Text.new(20,noteskin.y + noteskin.height + 20, "ArialUnicode.fnt", "Background Opacity : " .. tostring(math.floor(gameplayTable["backgroundDim"] * 100)) .. "%", 42)
+
+    currentMenu:addObject(backgroundDim)
+
+    view = {key0, key1, key2, key3, keyPause, keyRestart, useCmod, cmod, xmod, noteskin, backgroundDim}
 
     logo.width = math.floor(700 * getWidthScale())
     logo.height = math.floor(314 * getHeightScale())
@@ -626,6 +630,15 @@ function keyPress(data)
                 setGameplayData(gameplayTable)
                 create_gameplay()
             end
+
+            if selection == 11 then
+                gameplayTable["backgroundDim"] = gameplayTable["backgroundDim"] - 0.01
+                if gameplayTable["backgroundDim"] < 0 then
+                    gameplayTable["backgroundDim"] = 1
+                end
+                setGameplayData(gameplayTable)
+                create_gameplay()
+            end
         end
     end
 
@@ -682,6 +695,15 @@ function keyPress(data)
                     noteskinIndex = 1
                 end
                 gameplayTable["noteskin"] = noteskins[noteskinIndex]
+                setGameplayData(gameplayTable)
+                create_gameplay()
+            end
+
+            if selection == 11 then
+                gameplayTable["backgroundDim"] = gameplayTable["backgroundDim"] + 0.01
+                if gameplayTable["backgroundDim"] > 1 then
+                    gameplayTable["backgroundDim"] = 0
+                end
                 setGameplayData(gameplayTable)
                 create_gameplay()
             end
@@ -789,6 +811,14 @@ function draw()
                 setGameplayData(gameplayTable)
                 create_gameplay()
             end
+            if selection == 11 then
+                gameplayTable["backgroundDim"] = gameplayTable["backgroundDim"] - 0.005
+                if gameplayTable["backgroundDim"] < 0 then
+                    gameplayTable["backgroundDim"] = 1
+                end
+                setGameplayData(gameplayTable)
+                create_gameplay()
+            end
         end
     end
 
@@ -819,6 +849,15 @@ function draw()
             end
             if selection == 9 then
                 gameplayTable["xmod"] = gameplayTable["xmod"] + 0.005
+                setGameplayData(gameplayTable)
+                create_gameplay()
+            end
+
+            if selection == 11 then
+                gameplayTable["backgroundDim"] = gameplayTable["backgroundDim"] + 0.005
+                if gameplayTable["backgroundDim"] > 1 then
+                    gameplayTable["backgroundDim"] = 0
+                end
                 setGameplayData(gameplayTable)
                 create_gameplay()
             end

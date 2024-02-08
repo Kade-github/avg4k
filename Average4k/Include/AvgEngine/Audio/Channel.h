@@ -214,7 +214,10 @@ namespace AvgEngine::Audio
 		{
 			if (id == -1)
 				return;
-			volume = sqrt(vol); // better curve
+			if (vol < 0.05f)
+				volume = 0;
+			else
+				volume = sqrt(vol); // better curve
 
 			if (volume > 1.0f)
 				volume = 1.0f;

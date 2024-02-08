@@ -35,11 +35,13 @@ namespace Average4k::Data::Types
 		bool useCmod = true;
 
 		int constantMod = 700;
-		float multiplierMod = 1.0;
+		float multiplierMod = 1.0f;
+
+		float backgroundDim = 0.65f;
 
 		std::string noteskin = "Arrow";
 
-		MSGPACK_DEFINE_ARRAY(useCmod, constantMod, multiplierMod, noteskin);
+		MSGPACK_DEFINE_ARRAY(useCmod, constantMod, multiplierMod, noteskin, backgroundDim);
 	};
 }
 

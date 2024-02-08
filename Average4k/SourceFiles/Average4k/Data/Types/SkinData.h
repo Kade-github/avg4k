@@ -15,10 +15,10 @@ namespace Average4k::Data::Types
 	class SkinData {
 	public:
 		SkinData() = default;
-		std::string name = "DefaultArrow";
+		std::string name = "Default";
 
 		bool relativePath = true;
-		std::string path = "Assets/Skins/DefaultArrow";
+		std::string path = "Assets/Skins/Default";
 
 		MSGPACK_DEFINE_ARRAY(name);
 	};

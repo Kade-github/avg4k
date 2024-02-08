@@ -13,6 +13,5 @@ Average4k::Api::Stubs::LuaMenu* Average4k::Api::Functions::FMenu::CurrentMenu;
 
 void Average4k::Api::Functions::FMenu::SwitchTo(std::string path)
 {
-	CurrentMenu->removeAll();
 	AvgEngine::Game::Instance->SwitchMenu(new Average4k::Screens::Menu::MainMenu(path));
 }

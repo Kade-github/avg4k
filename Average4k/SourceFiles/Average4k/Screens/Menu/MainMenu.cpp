@@ -75,6 +75,8 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 	lua->getState().set_function("quitGame", Functions::FGame::Quit);
 	lua->getState().set_function("getWidthScale", Functions::FGame::GetWidthScale);
 	lua->getState().set_function("getHeightScale", Functions::FGame::GetHeightScale);
+	lua->getState().set_function("playChart", Functions::FGame::PlayChart);
+	lua->getState().set_function("fadeOutSong", Functions::FGame::FadeOutSong);
 
 	lua->create();
 

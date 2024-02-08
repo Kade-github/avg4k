@@ -41,6 +41,7 @@
     <ClCompile Include="SourceFiles\Average4k\Data\Chart\ChartFinder.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Data\Chart\Providers\StepFile.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Objects\UnicodeText.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Screens\Menu\Gameplay.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Screens\Menu\MainMenu.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Skin\Skin.cpp" />
     <ClCompile Include="SourceFiles\External\ImGui\imgui.cpp" />
@@ -90,6 +91,7 @@
     <ClInclude Include="SourceFiles\Average4k\Helpers\TimeToScreen.h" />
     <ClInclude Include="SourceFiles\Average4k\Helpers\WaveformData.h" />
     <ClInclude Include="SourceFiles\Average4k\Objects\UnicodeText.h" />
+    <ClInclude Include="SourceFiles\Average4k\Screens\Menu\Gameplay.h" />
     <ClInclude Include="SourceFiles\Average4k\Screens\Menu\MainMenu.h" />
     <ClInclude Include="SourceFiles\Average4k\Skin\Skin.h" />
   </ItemGroup>

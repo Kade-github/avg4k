@@ -29,6 +29,9 @@ namespace Average4k::Screens::Menu
 
 		void loadChart();
 		void loadBackground();
+		void loadPlayfield();
+
+		void start();
 
 		void load() override;
 		void draw() override;

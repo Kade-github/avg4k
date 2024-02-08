@@ -41,6 +41,14 @@ void Average4k::Screens::Menu::Gameplay::loadBackground()
 	addObject(bg);
 }
 
+void Average4k::Screens::Menu::Gameplay::loadPlayfield()
+{
+}
+
+void Average4k::Screens::Menu::Gameplay::start()
+{
+}
+
 void Average4k::Screens::Menu::Gameplay::load()
 {
 	// Stop all audio

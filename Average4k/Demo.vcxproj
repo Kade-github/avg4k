@@ -92,6 +92,8 @@
     <ClInclude Include="SourceFiles\Average4k\Helpers\StringTools.h" />
     <ClInclude Include="SourceFiles\Average4k\Helpers\TimeToScreen.h" />
     <ClInclude Include="SourceFiles\Average4k\Helpers\WaveformData.h" />
+    <ClInclude Include="SourceFiles\Average4k\Objects\BaseNote.h" />
+    <ClInclude Include="SourceFiles\Average4k\Objects\Notes\Hold.h" />
     <ClInclude Include="SourceFiles\Average4k\Objects\RenderTexture.h" />
     <ClInclude Include="SourceFiles\Average4k\Objects\UnicodeText.h" />
     <ClInclude Include="SourceFiles\Average4k\Screens\Menu\Gameplay.h" />

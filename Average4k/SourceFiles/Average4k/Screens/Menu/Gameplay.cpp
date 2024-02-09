@@ -27,19 +27,19 @@ void Average4k::Screens::Menu::Gameplay::loadBackground()
 		return;
 	}
 
-	AvgEngine::Base::Sprite* bg = new AvgEngine::Base::Sprite(0,0, strPath);
+	background = new AvgEngine::Base::Sprite(0,0, strPath);
 
-	bg->tag = "background";
+	background->tag = "background";
 
 	// set width and height
 
-	bg->transform.w = AvgEngine::Render::Display::width;
-	bg->transform.h = AvgEngine::Render::Display::height;
+	background->transform.w = AvgEngine::Render::Display::width;
+	background->transform.h = AvgEngine::Render::Display::height;
 
-	bg->transform.a = save->gameplayData.backgroundDim;
+	background->transform.a = save->gameplayData.backgroundDim;
 
 	// add
-	addObject(bg);
+	addObject(background);
 }
 
 void Average4k::Screens::Menu::Gameplay::loadPlayfield()
@@ -98,6 +98,10 @@ void Average4k::Screens::Menu::Gameplay::start()
 
 void Average4k::Screens::Menu::Gameplay::load()
 {
+	hud = new Average4k::Objects::RenderTexture(&camera, AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
+	playfield = new Average4k::Objects::RenderTexture(&camera, AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
+
+
 	// Stop all audio
 	for (AvgEngine::Audio::Channel* c : AvgEngine::External::BASS::Channels)
 	{
@@ -135,5 +139,11 @@ void Average4k::Screens::Menu::Gameplay::load()
 
 void Average4k::Screens::Menu::Gameplay::draw()
 {
-	AvgEngine::Base::Menu::draw();
+	// draw bg
+	background->draw();
+
+	// draw playfield and hud
+	playfield->Bind();
+
+
 }

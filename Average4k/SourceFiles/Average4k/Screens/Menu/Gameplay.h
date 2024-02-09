@@ -12,6 +12,8 @@
 #include "../../A4kGame.h"
 #include "../../Api/AvgLuaFile.h"
 
+#include "../../Objects/RenderTexture.h"
+
 namespace Average4k::Screens::Menu
 {
 	class Gameplay : public AvgEngine::Base::Menu
@@ -23,8 +25,15 @@ namespace Average4k::Screens::Menu
 		Average4k::Api::AvgLuaFile* lua;
 		Average4k::Data::ChartFile chart;
 
+		Average4k::Objects::RenderTexture* hud;
+		Average4k::Objects::RenderTexture* playfield;
+
 		int noteWidth = 64;
 		int noteHeight = 64;
+
+		AvgEngine::Base::Sprite* background;
+
+
 
 		std::string comboTag = "";
 		std::string judgementTextTag = "";
@@ -34,6 +43,12 @@ namespace Average4k::Screens::Menu
 		{
 			_path = chart_path;
 			_diff = diff - 1; // - 1 cuz lua
+		}
+
+		~Gameplay()
+		{
+			delete hud;
+			delete playfield;
 		}
 
 		void loadChart();

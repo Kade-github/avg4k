@@ -86,7 +86,10 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 	{
 		AvgEngine::Logging::writeLog("[Lua] Error in file: " + lua->path + "\n" + "No setup function found.");
 		AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
+		return;
 	}
+
+
 }
 
 void Average4k::Screens::Menu::Gameplay::start()

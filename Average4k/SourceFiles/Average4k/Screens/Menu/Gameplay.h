@@ -23,8 +23,8 @@ namespace Average4k::Screens::Menu
 		Average4k::Api::AvgLuaFile* lua;
 		Average4k::Data::ChartFile chart;
 
-		int noteWidth = 0;
-		int noteHeight = 0;
+		int noteWidth = 64;
+		int noteHeight = 64;
 
 		std::string comboTag = "";
 		std::string judgementTextTag = "";

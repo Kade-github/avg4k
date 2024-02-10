@@ -13,6 +13,7 @@
 #include "../../Api/AvgLuaFile.h"
 
 #include "../../Objects/RenderTexture.h"
+#include "../../Objects/Notes/Hold.h"
 
 namespace Average4k::Screens::Menu
 {
@@ -21,19 +22,26 @@ namespace Average4k::Screens::Menu
 		Average4k::Data::SaveData* save;
 		std::wstring _path;
 		int _diff;
+
+		AvgEngine::OpenGL::Texture* _noteskinSheet;
 	public:
+		int receptorColumn = 0;
+		int receptorRow = 0;
+
 		Average4k::Api::AvgLuaFile* lua;
 		Average4k::Data::ChartFile chart;
 
 		Average4k::Objects::RenderTexture* hud;
-		Average4k::Objects::RenderTexture* playfield;
+
+		AvgEngine::Base::Sprite* hud_spr;
 
 		int noteWidth = 64;
 		int noteHeight = 64;
 
 		AvgEngine::Base::Sprite* background;
 
-
+		std::vector<AvgEngine::Base::Sprite*> receptors;
+		std::vector<Average4k::Objects::BaseNote*> notes;
 
 		std::string comboTag = "";
 		std::string judgementTextTag = "";

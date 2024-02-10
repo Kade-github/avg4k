@@ -8,7 +8,7 @@
 
 #pragma once
 
-#define PIXELS_BETWEEN_BEATS 64
+#define PIXELS_BETWEEN_BEATS 256
 
 namespace Average4k::Helpers
 {
@@ -25,6 +25,11 @@ namespace Average4k::Helpers
 		{
 			double bps = (speed / 60);
 			return ((bps * differenceInBeats) * PIXELS_BETWEEN_BEATS) * zoomFactor;
+		}
+
+		static float YOffsetXMod(double speed, double differenceInBeats, float zoomFactor = 1.0f)
+		{
+			return ((differenceInBeats * PIXELS_BETWEEN_BEATS) * speed) * zoomFactor;
 		}
 
 		/// <summary>

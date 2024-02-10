@@ -45,6 +45,7 @@ void Average4k::Screens::Menu::Gameplay::loadBackground()
 void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 {
 	std::string p = "Assets/Noteskin/" + save->gameplayData.noteskin + "/skin.lua";
+	std::string png = "Assets/Noteskin/" + save->gameplayData.noteskin + "/noteskin.png";
 
 	if (!AvgEngine::Utils::Paths::pathExists(p))
 	{
@@ -52,6 +53,17 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 		AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
 		return;
 	}
+
+	if (!AvgEngine::Utils::Paths::pathExists(png))
+	{
+		AvgEngine::Logging::writeLog("[Gameplay] [Error] Noteskin texture (" + png + ") not found, returning to main menu.");
+		AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
+		return;
+	}
+
+	_noteskinSheet = AvgEngine::OpenGL::Texture::createWithImage(png);
+
+	_noteskinSheet->dontDelete = true;
 
 	lua = new Average4k::Api::AvgLuaFile(p);
 	lua->path = p;
@@ -68,6 +80,7 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 	lua->getState().set_function("setJudgementTag", Average4k::Api::Functions::FGameplay::SetJudgementTag);
 	lua->getState().set_function("setJudgementTextTag", Average4k::Api::Functions::FGameplay::SetJudgementTextTag);
 	lua->getState().set_function("setNoteSize", Average4k::Api::Functions::FGameplay::SetNoteSize);
+	lua->getState().set_function("setReceptorLocation", Average4k::Api::Functions::FGameplay::SetReceptorLocation);
 
 	lua->getState().set_function("getWidthScale", Average4k::Api::Functions::FGame::GetWidthScale);
 	lua->getState().set_function("getHeightScale", Average4k::Api::Functions::FGame::GetHeightScale);
@@ -89,7 +102,27 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 		return;
 	}
 
+	// load receptors
 
+	noteWidth = noteWidth / _noteskinSheet->width; // opengl normalizes the texture coordinates
+	noteHeight = noteHeight / _noteskinSheet->height;
+
+	for (int i = 0; i < 4; i++)
+	{
+		AvgEngine::Base::Sprite* spr = new AvgEngine::Base::Sprite(0, 0, _noteskinSheet);
+		spr->tag = "receptor_" + std::to_string(i);
+		spr->transform.x = (i * (AvgEngine::Render::Display::width / 4)) + (AvgEngine::Render::Display::width / 8);
+		spr->transform.y = AvgEngine::Render::Display::height - 100;
+		spr->transform.w = 256;
+		spr->transform.h = 256;
+
+		spr->src.x = noteWidth * receptorColumn;
+		spr->src.w = noteWidth;
+		spr->src.y = noteHeight * receptorRow;
+		spr->src.h = noteHeight;
+
+		receptors.push_back(spr);
+	}
 }
 
 void Average4k::Screens::Menu::Gameplay::start()
@@ -99,8 +132,8 @@ void Average4k::Screens::Menu::Gameplay::start()
 void Average4k::Screens::Menu::Gameplay::load()
 {
 	hud = new Average4k::Objects::RenderTexture(&camera, AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
-	playfield = new Average4k::Objects::RenderTexture(&camera, AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
 
+	hud_spr = new AvgEngine::Base::Sprite(0, 0, hud->texture);
 
 	// Stop all audio
 	for (AvgEngine::Audio::Channel* c : AvgEngine::External::BASS::Channels)
@@ -143,7 +176,21 @@ void Average4k::Screens::Menu::Gameplay::draw()
 	background->draw();
 
 	// draw playfield and hud
-	playfield->Bind();
+	hud->Bind();
 
+	for (AvgEngine::Base::GameObject* o : GameObjects)
+	{
+		if (o->tag == "background")
+			continue;
+		o->draw();
+	}
 
+	for (AvgEngine::Base::Sprite* s : receptors)
+	{
+		s->draw();
+	}
+
+	hud->Unbind();
+
+	hud_spr->draw();
 }

@@ -8,5 +8,7 @@
 #ifndef AVG4K_HOLD_NOTE_H
 #define AVG4K_HOLD_NOTE_H
 
+#include "../BaseNote.h"
+
 
 #endif

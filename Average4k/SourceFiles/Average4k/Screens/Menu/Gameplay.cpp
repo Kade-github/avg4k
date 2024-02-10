@@ -65,15 +65,7 @@ void Average4k::Screens::Menu::Gameplay::loadBackground()
 
 void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 {
-	std::string p = "Assets/Noteskin/" + save->gameplayData.noteskin + "/skin.lua";
 	std::string png = "Assets/Noteskin/" + save->gameplayData.noteskin + "/noteskin.png";
-
-	if (!AvgEngine::Utils::Paths::pathExists(p))
-	{
-		AvgEngine::Logging::writeLog("[Gameplay] [Error] Noteskin lua file (" + p + ") not found, returning to main menu.");
-		AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
-		return;
-	}
 
 	if (!AvgEngine::Utils::Paths::pathExists(png))
 	{
@@ -85,42 +77,6 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 	_noteskinSheet = AvgEngine::OpenGL::Texture::createWithImage(png);
 
 	_noteskinSheet->dontDelete = true;
-
-	lua = new Average4k::Api::AvgLuaFile(p);
-	lua->path = p;
-
-	Average4k::Api::Stubs::LuaMenu::Register(lua->getState());
-
-	Average4k::Api::Stubs::LuaMenu cm = Average4k::Api::Stubs::LuaMenu(this);
-
-	lua->getState().set("currentMenu", cm);
-
-	auto setup = lua->getState().get<sol::optional<sol::protected_function>>("setup");
-
-	lua->getState().set_function("setComboTag", Average4k::Api::Functions::FGameplay::SetComboTag);
-	lua->getState().set_function("setJudgementTag", Average4k::Api::Functions::FGameplay::SetJudgementTag);
-	lua->getState().set_function("setJudgementTextTag", Average4k::Api::Functions::FGameplay::SetJudgementTextTag);
-	lua->getState().set_function("setNoteSize", Average4k::Api::Functions::FGameplay::SetNoteSize);
-
-	lua->getState().set_function("getWidthScale", Average4k::Api::Functions::FGame::GetWidthScale);
-	lua->getState().set_function("getHeightScale", Average4k::Api::Functions::FGame::GetHeightScale);
-
-	if (setup.has_value())
-	{
-		sol::protected_function_result result = setup.value()();
-
-		if (!result.valid())
-		{
-			sol::error err = result;
-			AvgEngine::Logging::writeLog("[Lua] Error in file: " + lua->path + "\n" + err.what());
-		}
-	}
-	else
-	{
-		AvgEngine::Logging::writeLog("[Lua] Error in file: " + lua->path + "\n" + "No setup function found.");
-		AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
-		return;
-	}
 
 	setupNote = lua->getState().get<sol::protected_function>("noteSetup");
 
@@ -136,8 +92,9 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 	noteWidth = noteWidth / _noteskinSheet->width; // opengl normalizes the texture coordinates
 	noteHeight = noteHeight / _noteskinSheet->height;
 
-	float wScale = Average4k::Api::Functions::FGame::GetWidthScale();
-	float hScale = Average4k::Api::Functions::FGame::GetHeightScale();
+	wScale = Average4k::Api::Functions::FGame::GetWidthScale();
+	hScale = Average4k::Api::Functions::FGame::GetHeightScale();
+
 	float startX = (AvgEngine::Render::Display::width / 2) - (((128 * noteScale) * wScale) * 2);
 
 	for (int i = 0; i < 4; i++)
@@ -206,10 +163,76 @@ void Average4k::Screens::Menu::Gameplay::load()
 	AvgEngine::External::BASS::Channels.clear();
 
 	save = &A4kGame::gameInstance->saveData;
+
+	std::string p = "Assets/Noteskin/" + save->gameplayData.noteskin + "/skin.lua";
+
+	if (!AvgEngine::Utils::Paths::pathExists(p))
+	{
+		AvgEngine::Logging::writeLog("[Gameplay] [Error] Noteskin lua file (" + p + ") not found, returning to main menu.");
+		AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
+		return;
+	}
+
+	lua = new Average4k::Api::AvgLuaFile(p);
+	lua->path = p;
+
+	Average4k::Api::Stubs::LuaMenu::Register(lua->getState());
+
+	Average4k::Api::Stubs::LuaMenu cm = Average4k::Api::Stubs::LuaMenu(this);
+
+	lua->getState().set("currentMenu", cm);
+
+	auto setup = lua->getState().get<sol::optional<sol::protected_function>>("setup");
+
+	lua->getState().set_function("setComboTag", Average4k::Api::Functions::FGameplay::SetComboTag);
+	lua->getState().set_function("setJudgementTag", Average4k::Api::Functions::FGameplay::SetJudgementTag);
+	lua->getState().set_function("setJudgementTextTag", Average4k::Api::Functions::FGameplay::SetJudgementTextTag);
+	lua->getState().set_function("setAccuracyTag", Average4k::Api::Functions::FGameplay::SetAccuracyTag);
+	lua->getState().set_function("setNoteSize", Average4k::Api::Functions::FGameplay::SetNoteSize);
+
+	lua->getState().set_function("getWidthScale", Average4k::Api::Functions::FGame::GetWidthScale);
+	lua->getState().set_function("getHeightScale", Average4k::Api::Functions::FGame::GetHeightScale);
+
+	if (setup.has_value())
+	{
+		sol::protected_function_result result = setup.value()();
+
+		if (!result.valid())
+		{
+			sol::error err = result;
+			AvgEngine::Logging::writeLog("[Lua] Error in file: " + lua->path + "\n" + err.what());
+		}
+	}
+	else
+	{
+		AvgEngine::Logging::writeLog("[Lua] Error in file: " + lua->path + "\n" + "No setup function found.");
+		AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
+		return;
+	}
+
+	// find based on tag
+	comboText = (AvgEngine::Base::Text*)findObject(comboTag);
+	judgementText = (AvgEngine::Base::Text*)findObject(judgementTextTag);
+	accuracyText = (AvgEngine::Base::Text*)findObject(accuracyTag);
+
+	if (!comboText || !judgementText || !accuracyText)
+	{
+		AvgEngine::Logging::writeLog("[Gameplay] [Error] Combo, Judgement or Accuracy text not found, returning to main menu.");
+		AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
+		return;
+	}
+
 	loadChart();
 	if (!chart.isValid)
 	{
 		AvgEngine::Logging::writeLog("[Gameplay] [Error] Chart is not valid, returning to main menu.");
+		AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
+		return;
+	}
+
+	if (chart.difficulties.size() == 0)
+	{
+		AvgEngine::Logging::writeLog("[Gameplay] [Error] No difficulties found, returning to main menu.");
 		AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
 		return;
 	}
@@ -256,17 +279,30 @@ void Average4k::Screens::Menu::Gameplay::load()
 	addObject(hud_spr);
 	addObject(playfield_spr);
 
-	// find based on tag
-	comboText = (AvgEngine::Base::Text*)findObject(comboTag);
-	judgementText = (AvgEngine::Base::Text*)findObject(judgementTextTag);
+
 
 	comboText->text = "";
 	judgementText->text = "";
+	accuracyText->text = "100%";
+
+	start();
 
 }
 
 void Average4k::Screens::Menu::Gameplay::draw()
 {
+	if (channel == NULL)
+		return;
+
+	if (channel->isPlaying)
+	{
+		currentTime = channel->GetPos();
+		currentBeat = chart.GetBeatFromTime(currentTime);
+
+		spawnNotes();
+		updateNotes();
+	}
+
 	// draw hud
 	hud->Bind();
 
@@ -298,4 +334,83 @@ void Average4k::Screens::Menu::Gameplay::draw()
 	// draw render textures
 	playfield_spr->draw();
 	hud_spr->draw();
+}
+
+void Average4k::Screens::Menu::Gameplay::spawnNotes()
+{
+	if (noteIndex + 1 > chart.difficulties[_diff].notes.size())
+		return;
+
+	Average4k::Data::Chart::Note n = chart.difficulties[_diff].notes[noteIndex];
+
+	if (n.beat > currentBeat + 8)
+		return;
+
+	float cmod = save->gameplayData.constantMod;
+	float xmod = save->gameplayData.multiplierMod;
+
+	if (save->gameplayData.useCmod)
+		xmod = -1;
+	else
+		cmod = -1;
+
+	Average4k::Objects::BaseNote* no;
+
+	switch (n.type)
+	{
+	default:
+		no = new Average4k::Objects::BaseNote(_noteskinSheet, n, &chart, false, cmod, xmod);
+		no->texture->dontDelete = true;
+
+		Average4k::Api::Stubs::LuaSprite lspr = Average4k::Api::Stubs::LuaSprite(no);
+
+		sol::protected_function_result result = setupNote(lspr, noteWidth, noteHeight, n.beat, n.type, n.lane);
+
+		if (!result.valid())
+		{
+			sol::error err = result;
+			AvgEngine::Logging::writeLog("[Lua] Error in function noteSetup.\n" + std::string(err.what()));
+		}
+
+		break;
+	}
+
+	no->transform.w = (128 * noteScale) * wScale;
+	no->transform.h = (128 * noteScale) * hScale;
+
+	notes.push_back(no);
+
+	addObject(no);
+
+	noteIndex++;
+}
+
+void Average4k::Screens::Menu::Gameplay::updateNotes()
+{
+	std::vector<Average4k::Objects::BaseNote*> toRemove;
+
+	for (auto n : notes)
+	{
+		n->currentBeat = currentBeat;
+		n->currentTime = currentTime;
+
+		int lane = n->data.lane;
+
+		n->transform.y = receptors[lane]->transform.y;
+		n->transform.x = receptors[lane]->transform.x;
+
+		if (n->data.beat - currentBeat < -8)
+		{
+			toRemove.push_back(n);
+			continue;
+		}
+	}
+
+	for (auto n : toRemove)
+	{
+		notes.erase(std::remove(notes.begin(), notes.end(), n), notes.end());
+		removeObject(n);
+		n->texture->dontDelete = true;
+		delete n;
+	}
 }

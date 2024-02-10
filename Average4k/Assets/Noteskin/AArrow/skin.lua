@@ -1,6 +1,4 @@
 function setup()
-    setNoteSize(256,256)
-
     centerX = (1920 / 2) * getWidthScale()
 
     centerY = (1080 / 2) * getHeightScale()
@@ -27,9 +25,11 @@ function setup()
 
     currentMenu:addObject(judgementText)
 
-    setJudgementTextTag("judgement")
+    local accuracy = Text.new(24, 24, "FuturaBoldOutlined.fnt", "100%", math.floor(42 * getHeightScale()))
 
-    setComboTag("combo")
+    accuracy.tag = "accuracy"
+
+    currentMenu:addObject(accuracy)
 
     local judgementHeader = Text.new(24, 24 + comboText.height + math.floor(200 * getHeightScale()), "FuturaBoldOutlined.fnt", "Judgements", math.floor(42 * getHeightScale()))
 
@@ -67,6 +67,12 @@ function setup()
 
     currentMenu:addObject(badText)
 
+    setNoteSize(256,256)
+
+    setAccuracyTag("accuracy")
+    setJudgementTextTag("judgement")
+    setComboTag("combo")
+
     setJudgementTag("marvelous", "marv")
     setJudgementTag("perfect", "perf")
     setJudgementTag("great", "great")
@@ -78,4 +84,45 @@ end
 function receptorSetup(rec, w, h)
     -- index 2,4
     rec:setSrcRec(4 * w, 2 * h, w, h)
+end
+
+function noteSetup(n, w, h, beat, type, lane)
+    -- figure out what quant its at
+    local row = 0
+    local col = 0
+
+    local beatRow = beat * 48
+
+    if math.fmod(beatRow, 192 / 4) == 0 then -- 4th
+        row = 1
+        col = 1
+    elseif math.fmod(beatRow, 192 / 8) == 0 then -- 8th
+        row = 2
+        col = 1
+    elseif math.fmod(beatRow, 192 / 12) == 0 or math.fmod(beatRow, 192 / 24) == 0 then -- 12th/24th
+        row = 0
+        col = 0
+    elseif math.fmod(beatRow, 192 / 16) == 0 then -- 16th
+        row = 1
+        col = 0
+    elseif math.fmod(beatRow, 192 / 32) == 0 then -- 32nd
+        row = 0
+        col = 1
+    elseif math.fmod(beatRow, 192 / 64) == 0 then -- 64th
+        row = 0
+        col = 2
+    end
+
+    n:setSrcRec(col * w, row * h, w, h)
+
+    if lane == 0 then
+        n.angle = 90
+    end
+    if lane == 2 then
+        n.angle = 180
+    end
+    if lane == 3 then
+        n.angle = -90
+    end
+
 end

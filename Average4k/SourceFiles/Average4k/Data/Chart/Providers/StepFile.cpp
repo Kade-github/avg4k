@@ -68,11 +68,19 @@ void StepFile::ParseMetadata(bool only, std::wifstream* stream)
 				else if (line.starts_with(L"#BPMS"))
 				{
 					state = 1;
+					ParseBPMS(line);
+
+					if (line.find(';') != std::string::npos) // if the line ends with a semicolon, we're done
+						state = 0;
 					break;
 				}
 				else if (line.starts_with(L"#STOPS"))
 				{
 					state = 2;
+					ParseStops(line);
+
+					if (line.find(';') != std::string::npos) // if the line ends with a semicolon, we're done
+						state = 0;
 					break;
 				}
 			}

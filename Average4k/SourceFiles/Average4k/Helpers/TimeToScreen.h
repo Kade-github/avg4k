@@ -8,7 +8,7 @@
 
 #pragma once
 
-#define PIXELS_BETWEEN_BEATS 256
+#define PIXELS_BETWEEN_BEATS 128
 
 namespace Average4k::Helpers
 {

@@ -15,6 +15,8 @@
 #include "../../Objects/RenderTexture.h"
 #include "../../Objects/Notes/Hold.h"
 
+#include <AvgEngine/External/Bass/BASS.h>
+
 namespace Average4k::Screens::Menu
 {
 	class Gameplay : public AvgEngine::Base::Menu
@@ -40,11 +42,15 @@ namespace Average4k::Screens::Menu
 
 		AvgEngine::Base::Text* comboText;
 		AvgEngine::Base::Text* judgementText;
+		AvgEngine::Base::Text* accuracyText;
 
 		float noteScale = 1;
 		float noteSpace = 1.1;
 		float noteWidth = 64;
 		float noteHeight = 64;
+
+		float wScale = 1;
+		float hScale = 1;
 
 		AvgEngine::Base::Sprite* background;
 
@@ -53,11 +59,16 @@ namespace Average4k::Screens::Menu
 
 		std::string comboTag = "";
 		std::string judgementTextTag = "";
+		std::string accuracyTag = "";
+
 		std::map<std::string, std::string> judgementTags = {};
 
 		int combo = 0;
 		int hitNotes = 0;
 		int totalNotes = 0;
+
+		float currentBeat = 0;
+		float currentTime = 0;
 
 		Gameplay(std::wstring chart_path, int diff)
 		{
@@ -80,6 +91,11 @@ namespace Average4k::Screens::Menu
 
 		void load() override;
 		void draw() override;
+
+		int noteIndex = 0;
+
+		void spawnNotes();
+		void updateNotes();
 	};
 }
 

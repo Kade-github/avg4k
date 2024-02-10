@@ -14,6 +14,13 @@ void Average4k::Api::Functions::FGameplay::SetNoteSize(float width, float height
 	gameplay->noteHeight = height;
 }
 
+void Average4k::Api::Functions::FGameplay::SetAccuracyTag(std::string tag)
+{
+	Average4k::Screens::Menu::Gameplay* gameplay = (Average4k::Screens::Menu::Gameplay*)A4kGame::gameInstance->CurrentMenu;
+
+	gameplay->accuracyTag = tag;
+}
+
 void Average4k::Api::Functions::FGameplay::SetComboTag(std::string tag)
 {
 	Average4k::Screens::Menu::Gameplay* gameplay = (Average4k::Screens::Menu::Gameplay*)A4kGame::gameInstance->CurrentMenu;

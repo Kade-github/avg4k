@@ -18,7 +18,6 @@ namespace Average4k::Api::Functions
 		static void SetComboTag(std::string tag);
 		static void SetJudgementTag(std::string judge, std::string tag);
 		static void SetJudgementTextTag(std::string tag);
-		static void SetReceptorLocation(int column, int row);
 	};
 }
 

@@ -76,7 +76,11 @@ namespace Average4k::Objects
 
 		void Unbind()
 		{
+			camera->w = _w;
+			camera->h = _h;
 			camera->draw();
+			camera->w = AvgEngine::Render::Display::width;
+			camera->h = AvgEngine::Render::Display::height;
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glViewport(0, 0, AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
 			AvgEngine::Render::Display::defaultShader->setProject(glm::ortho(0.0f, (float)AvgEngine::Render::Display::width, (float)AvgEngine::Render::Display::height, 0.0f));

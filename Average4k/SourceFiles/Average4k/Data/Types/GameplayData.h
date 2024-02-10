@@ -39,7 +39,7 @@ namespace Average4k::Data::Types
 
 		float backgroundDim = 0.65f;
 
-		std::string noteskin = "Arrow";
+		std::string noteskin = "AArrow";
 
 		MSGPACK_DEFINE_ARRAY(useCmod, constantMod, multiplierMod, noteskin, backgroundDim);
 	};

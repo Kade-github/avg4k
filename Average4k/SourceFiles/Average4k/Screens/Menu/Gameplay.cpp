@@ -6,6 +6,9 @@
 #include "Gameplay.h"
 #include "MainMenu.h"
 #include "../../Api/Functions/FGameplay.h"
+
+#include "../../Api/Stubs/LuaSprite.h"
+
 #include <AvgEngine/Utils/Paths.h>
 
 void Average4k::Screens::Menu::Gameplay::loadChart()
@@ -80,7 +83,6 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 	lua->getState().set_function("setJudgementTag", Average4k::Api::Functions::FGameplay::SetJudgementTag);
 	lua->getState().set_function("setJudgementTextTag", Average4k::Api::Functions::FGameplay::SetJudgementTextTag);
 	lua->getState().set_function("setNoteSize", Average4k::Api::Functions::FGameplay::SetNoteSize);
-	lua->getState().set_function("setReceptorLocation", Average4k::Api::Functions::FGameplay::SetReceptorLocation);
 
 	lua->getState().set_function("getWidthScale", Average4k::Api::Functions::FGame::GetWidthScale);
 	lua->getState().set_function("getHeightScale", Average4k::Api::Functions::FGame::GetHeightScale);
@@ -116,10 +118,21 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 		spr->transform.w = 256;
 		spr->transform.h = 256;
 
-		spr->src.x = noteWidth * receptorColumn;
-		spr->src.w = noteWidth;
-		spr->src.y = noteHeight * receptorRow;
-		spr->src.h = noteHeight;
+		addObject(spr);
+
+		Average4k::Api::Stubs::LuaSprite lspr = Average4k::Api::Stubs::LuaSprite(spr);
+
+		auto f = lua->getState().get<sol::optional<sol::protected_function>>("receptorSetup");
+		if (f.has_value())
+		{
+			sol::protected_function_result result = f.value()(lspr, noteWidth, noteHeight);
+
+			if (!result.valid())
+			{
+				sol::error err = result;
+				AvgEngine::Logging::writeLog("[Lua] Error in function receptorSetup.\n" + std::string(err.what()));
+			}
+		}
 
 		receptors.push_back(spr);
 	}
@@ -131,10 +144,6 @@ void Average4k::Screens::Menu::Gameplay::start()
 
 void Average4k::Screens::Menu::Gameplay::load()
 {
-	hud = new Average4k::Objects::RenderTexture(&camera, AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
-
-	hud_spr = new AvgEngine::Base::Sprite(0, 0, hud->texture);
-
 	// Stop all audio
 	for (AvgEngine::Audio::Channel* c : AvgEngine::External::BASS::Channels)
 	{
@@ -168,6 +177,12 @@ void Average4k::Screens::Menu::Gameplay::load()
 		if (e.data == save->keybindData.keyPause)
 			AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
 	});
+
+	hud = new Average4k::Objects::RenderTexture(&camera, AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
+
+	hud_spr = new AvgEngine::Base::Sprite(0, 0, hud->texture);
+
+	addObject(hud_spr);
 }
 
 void Average4k::Screens::Menu::Gameplay::draw()
@@ -183,11 +198,6 @@ void Average4k::Screens::Menu::Gameplay::draw()
 		if (o->tag == "background")
 			continue;
 		o->draw();
-	}
-
-	for (AvgEngine::Base::Sprite* s : receptors)
-	{
-		s->draw();
 	}
 
 	hud->Unbind();

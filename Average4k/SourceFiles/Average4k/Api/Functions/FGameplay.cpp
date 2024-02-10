@@ -34,11 +34,3 @@ void Average4k::Api::Functions::FGameplay::SetJudgementTextTag(std::string tag)
 
 	gameplay->judgementTextTag = tag;
 }
-
-void Average4k::Api::Functions::FGameplay::SetReceptorLocation(int column, int row)
-{
-	Average4k::Screens::Menu::Gameplay* gameplay = (Average4k::Screens::Menu::Gameplay*)A4kGame::gameInstance->CurrentMenu;
-
-	gameplay->receptorRow = row;
-	gameplay->receptorColumn = column;
-}

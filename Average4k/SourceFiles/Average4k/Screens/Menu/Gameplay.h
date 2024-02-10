@@ -25,9 +25,6 @@ namespace Average4k::Screens::Menu
 
 		AvgEngine::OpenGL::Texture* _noteskinSheet;
 	public:
-		int receptorColumn = 0;
-		int receptorRow = 0;
-
 		Average4k::Api::AvgLuaFile* lua;
 		Average4k::Data::ChartFile chart;
 
@@ -55,8 +52,8 @@ namespace Average4k::Screens::Menu
 
 		~Gameplay()
 		{
-			delete hud;
-			delete playfield;
+			if (hud)
+				delete hud;
 		}
 
 		void loadChart();

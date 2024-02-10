@@ -215,6 +215,16 @@ namespace Average4k::Api::Stubs
 			_base->tag = tag;
 		}
 
+		void setSrcRec(int x, int y, int w, int h)
+		{
+			if (_base == NULL)
+				return;
+			_base->src.x = x;
+			_base->src.y = y;
+			_base->src.w = w;
+			_base->src.h = h;
+		}
+
 		static void Register(sol::state& state)
 		{
 			state.new_usertype<LuaSprite>("Sprite",
@@ -231,6 +241,7 @@ namespace Average4k::Api::Stubs
 				"alpha", sol::property(&LuaSprite::getA, &LuaSprite::setA),
 				"scale", sol::property(&LuaSprite::getScale, &LuaSprite::setScale),
 				"zIndex", sol::property(&LuaSprite::getZIndex, &LuaSprite::setZIndex),
+				"setSrcRec", &LuaSprite::setSrcRec,
 				sol::base_classes, sol::bases<LuaObject>()
 			);
 		}

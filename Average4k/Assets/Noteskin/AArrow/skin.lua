@@ -72,3 +72,7 @@ function setup()
     setJudgementTag("bad", "bad")
     setJudgementTag("miss", "miss")
 end
+
+function receptorSetup(rec, w, h)
+    rec:setSrcRec(6 * w, h, w, h)
+end

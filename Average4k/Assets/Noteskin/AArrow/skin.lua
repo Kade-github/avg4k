@@ -33,6 +33,8 @@ function setup()
 
     local judgementHeader = Text.new(24, 24 + comboText.height + math.floor(200 * getHeightScale()), "FuturaBoldOutlined.fnt", "Judgements", math.floor(42 * getHeightScale()))
 
+    judgementHeader.tag = "_ui_judgement_header"
+
     currentMenu:addObject(judgementHeader)
 
     local marvelousText = Text.new(24, judgementHeader.y + judgementHeader.height + math.floor(10 * getHeightScale()), "FuturaBoldOutlined.fnt", "Marvelous: 0", math.floor(24 * getHeightScale()))
@@ -74,5 +76,6 @@ function setup()
 end
 
 function receptorSetup(rec, w, h)
-    rec:setSrcRec(6 * w, h, w, h)
+    -- index 2,4
+    rec:setSrcRec(4 * w, 2 * h, w, h)
 end

@@ -44,14 +44,8 @@ namespace Average4k::Objects
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 
-		void DeleteTexture()
-		{
-			delete texture;
-		}
-
 		~RenderTexture()
 		{
-			DeleteTexture();
 			glDeleteFramebuffers(1, &fb);
 		}
 
@@ -67,8 +61,9 @@ namespace Average4k::Objects
 		{
 			camera->draw();
 			glBindFramebuffer(GL_FRAMEBUFFER, fb);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+			glColorMask(TRUE, TRUE, TRUE, TRUE);
 			glClearColor(0, 0, 0, 0);
+			glClear(GL_COLOR_BUFFER_BIT);
 
 			glViewport(0, 0, _w, _h);
 			AvgEngine::Render::Display::defaultShader->setProject(glm::ortho(0.0f, (float)_w, (float)_h, 0.0f));
@@ -82,6 +77,8 @@ namespace Average4k::Objects
 			camera->w = AvgEngine::Render::Display::width;
 			camera->h = AvgEngine::Render::Display::height;
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
 			glViewport(0, 0, AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
 			AvgEngine::Render::Display::defaultShader->setProject(glm::ortho(0.0f, (float)AvgEngine::Render::Display::width, (float)AvgEngine::Render::Display::height, 0.0f));
 		}

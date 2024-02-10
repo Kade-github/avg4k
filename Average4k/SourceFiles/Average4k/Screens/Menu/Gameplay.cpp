@@ -11,6 +11,22 @@
 
 #include <AvgEngine/Utils/Paths.h>
 
+void Average4k::Screens::Menu::Gameplay::loadAudio()
+{
+	std::wstring folder = chart.path.substr(0, chart.path.find_last_of(L"/\\"));
+	std::wstring audioPath = folder + L"/" + chart.metadata.file;
+
+	std::string strPath = std::string(audioPath.begin(), audioPath.end());
+
+	if (!AvgEngine::Utils::Paths::pathExists(strPath))
+	{
+		AvgEngine::Logging::writeLog("[Gameplay] [Warning] Audio not found.");
+		return;
+	}
+
+	channel = AvgEngine::External::BASS::CreateChannel("audio", strPath, false);
+}
+
 void Average4k::Screens::Menu::Gameplay::loadChart()
 {
 	if (_path.ends_with(L".sm") || _path.ends_with(L".ssc"))
@@ -30,7 +46,7 @@ void Average4k::Screens::Menu::Gameplay::loadBackground()
 		return;
 	}
 
-	background = new AvgEngine::Base::Sprite(0,0, strPath);
+	background = new AvgEngine::Base::Sprite(0, 0, strPath);
 
 	background->tag = "background";
 
@@ -40,6 +56,8 @@ void Average4k::Screens::Menu::Gameplay::loadBackground()
 	background->transform.h = AvgEngine::Render::Display::height;
 
 	background->transform.a = save->gameplayData.backgroundDim;
+
+	background->zIndex = 1;
 
 	// add
 	addObject(background);
@@ -104,19 +122,46 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 		return;
 	}
 
+	setupNote = lua->getState().get<sol::protected_function>("noteSetup");
+
+	if (!setupNote)
+	{
+		AvgEngine::Logging::writeLog("[Lua] Error in file: " + lua->path + "\n" + "No noteSetup function found.");
+		AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
+		return;
+	}
+
 	// load receptors
 
 	noteWidth = noteWidth / _noteskinSheet->width; // opengl normalizes the texture coordinates
 	noteHeight = noteHeight / _noteskinSheet->height;
 
+	float wScale = Average4k::Api::Functions::FGame::GetWidthScale();
+	float hScale = Average4k::Api::Functions::FGame::GetHeightScale();
+	float startX = (AvgEngine::Render::Display::width / 2) - (((128 * noteScale) * wScale) * 2);
+
 	for (int i = 0; i < 4; i++)
 	{
 		AvgEngine::Base::Sprite* spr = new AvgEngine::Base::Sprite(0, 0, _noteskinSheet);
-		spr->tag = "receptor_" + std::to_string(i);
-		spr->transform.x = (i * (AvgEngine::Render::Display::width / 4)) + (AvgEngine::Render::Display::width / 8);
-		spr->transform.y = AvgEngine::Render::Display::height - 100;
-		spr->transform.w = 256;
-		spr->transform.h = 256;
+		spr->tag = "_play_receptor_" + std::to_string(i);
+
+		spr->transform.x = ((startX + (((i * (128 * noteSpace))) * noteScale)) - (((64 * noteSpace) / 2) * noteScale)) * wScale;
+		spr->transform.y = 64 * hScale;
+		spr->transform.w = (128 * noteScale) * wScale;
+		spr->transform.h = (128 * noteScale) * hScale;
+
+		switch (i)
+		{
+		case 0:
+			spr->transform.angle = 90;
+			break;
+		case 2:
+			spr->transform.angle = 180;
+			break;
+		case 3:
+			spr->transform.angle = -90;
+			break;
+		}
 
 		addObject(spr);
 
@@ -140,6 +185,10 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 
 void Average4k::Screens::Menu::Gameplay::start()
 {
+	// start audio
+	channel->Play();
+
+	
 }
 
 void Average4k::Screens::Menu::Gameplay::load()
@@ -167,6 +216,15 @@ void Average4k::Screens::Menu::Gameplay::load()
 
 	AvgEngine::Logging::writeLog("[Gameplay] Playing " + std::string(chart.metadata.title.begin(), chart.metadata.title.end()) + " on " + std::string(chart.difficulties[_diff].name.begin(), chart.difficulties[_diff].name.end()));
 
+	loadAudio();
+
+	if (!channel)
+	{
+		AvgEngine::Logging::writeLog("[Gameplay] [Error] Audio not found, returning to main menu.");
+		AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
+		return;
+	}
+
 	loadBackground();
 
 	loadPlayfield();
@@ -176,31 +234,68 @@ void Average4k::Screens::Menu::Gameplay::load()
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_KeyPress, [&](AvgEngine::Events::Event e) {
 		if (e.data == save->keybindData.keyPause)
 			AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
-	});
+		});
 
 	hud = new Average4k::Objects::RenderTexture(&camera, AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
 
 	hud_spr = new AvgEngine::Base::Sprite(0, 0, hud->texture);
+	hud_spr->tag = "hud";
+	hud_spr->src.h = -1;
+	hud_spr->src.y = 1;
+	hud_spr->zIndex = 3;
+
+	playfield = new Average4k::Objects::RenderTexture(&camera, AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
+
+	playfield_spr = new AvgEngine::Base::Sprite(0, 0, playfield->texture);
+
+	playfield_spr->tag = "_playfield";
+	playfield_spr->src.h = -1;
+	playfield_spr->src.y = 1;
+	playfield_spr->zIndex = 2;
 
 	addObject(hud_spr);
+	addObject(playfield_spr);
+
+	// find based on tag
+	comboText = (AvgEngine::Base::Text*)findObject(comboTag);
+	judgementText = (AvgEngine::Base::Text*)findObject(judgementTextTag);
+
+	comboText->text = "";
+	judgementText->text = "";
+
 }
 
 void Average4k::Screens::Menu::Gameplay::draw()
 {
-	// draw bg
-	background->draw();
-
-	// draw playfield and hud
+	// draw hud
 	hud->Bind();
 
 	for (AvgEngine::Base::GameObject* o : GameObjects)
 	{
-		if (o->tag == "background")
+		if (o->tag == "background" || o->tag == "hud" || o->tag.starts_with("_play"))
 			continue;
 		o->draw();
 	}
 
 	hud->Unbind();
 
+	// draw playfield
+
+	playfield->Bind();
+
+	for (AvgEngine::Base::GameObject* o : GameObjects)
+	{
+		if (!o->tag.starts_with("_play") || o->tag == "_playfield")
+			continue;
+		o->draw();
+	}
+
+	playfield->Unbind();
+
+	// draw bg
+	background->draw();
+
+	// draw render textures
+	playfield_spr->draw();
 	hud_spr->draw();
 }

@@ -215,7 +215,7 @@ namespace Average4k::Api::Stubs
 			_base->tag = tag;
 		}
 
-		void setSrcRec(int x, int y, int w, int h)
+		void setSrcRec(float x, float y, float w, float h)
 		{
 			if (_base == NULL)
 				return;

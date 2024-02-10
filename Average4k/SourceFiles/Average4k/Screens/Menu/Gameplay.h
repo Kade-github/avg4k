@@ -25,15 +25,26 @@ namespace Average4k::Screens::Menu
 
 		AvgEngine::OpenGL::Texture* _noteskinSheet;
 	public:
+		sol::protected_function setupNote;
+
+		AvgEngine::Audio::Channel* channel;
+
 		Average4k::Api::AvgLuaFile* lua;
 		Average4k::Data::ChartFile chart;
 
 		Average4k::Objects::RenderTexture* hud;
+		Average4k::Objects::RenderTexture* playfield;
 
 		AvgEngine::Base::Sprite* hud_spr;
+		AvgEngine::Base::Sprite* playfield_spr;
 
-		int noteWidth = 64;
-		int noteHeight = 64;
+		AvgEngine::Base::Text* comboText;
+		AvgEngine::Base::Text* judgementText;
+
+		float noteScale = 1;
+		float noteSpace = 1.1;
+		float noteWidth = 64;
+		float noteHeight = 64;
 
 		AvgEngine::Base::Sprite* background;
 
@@ -43,6 +54,10 @@ namespace Average4k::Screens::Menu
 		std::string comboTag = "";
 		std::string judgementTextTag = "";
 		std::map<std::string, std::string> judgementTags = {};
+
+		int combo = 0;
+		int hitNotes = 0;
+		int totalNotes = 0;
 
 		Gameplay(std::wstring chart_path, int diff)
 		{
@@ -56,6 +71,7 @@ namespace Average4k::Screens::Menu
 				delete hud;
 		}
 
+		void loadAudio();
 		void loadChart();
 		void loadBackground();
 		void loadPlayfield();

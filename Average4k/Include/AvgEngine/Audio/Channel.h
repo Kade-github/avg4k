@@ -214,8 +214,12 @@ namespace AvgEngine::Audio
 		{
 			if (id == -1)
 				return;
-			if (vol < 0.05f)
+			if (vol <= 0.01f)
+			{
 				volume = 0;
+				BASS_ChannelSetAttribute(id, BASS_ATTRIB_VOL, 0.0f);
+				return;
+			}
 			else
 				volume = sqrt(vol); // better curve
 

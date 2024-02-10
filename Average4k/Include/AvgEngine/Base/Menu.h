@@ -130,6 +130,14 @@ namespace AvgEngine::Base
 					GameObjects.erase(std::ranges::remove(GameObjects, g).begin(), GameObjects.end());
 		}
 
+		virtual GameObject* findObject(std::string tag)
+		{
+			for (GameObject* g : GameObjects)
+				if (g->tag == tag)
+					return g;
+			return NULL;
+		}
+
 
 	};
 }

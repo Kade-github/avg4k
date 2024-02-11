@@ -118,6 +118,7 @@ void Average4k::A4kGame::Start()
 
 void Average4k::A4kGame::update()
 {
+	static bool other = false;
 	volume = saveData.audioData.volume;
 	sfxVolume = saveData.audioData.sfxVolume;
 
@@ -127,17 +128,20 @@ void Average4k::A4kGame::update()
 		sfxVolume = std::lerp(0.0f, sfxVolume, fadeout);
 	}
 
-	for (auto c : AvgEngine::External::BASS::Channels)
-	{
-		if (c->name.contains("sfx_"))
+	if (other)
+		for (auto c : AvgEngine::External::BASS::Channels)
 		{
-			c->SetVolume(sfxVolume);
+			if (c->name.contains("sfx_"))
+			{
+				c->SetVolume(sfxVolume);
+			}
+			else
+			{
+				c->SetVolume(volume);
+			}
 		}
-		else
-		{
-			c->SetVolume(volume);
-		}
-	}
+
+	other = !other;
 
 	if (!skinExists)
 	{

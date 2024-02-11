@@ -10,5 +10,12 @@
 
 #include "../BaseNote.h"
 
+namespace Average4k::Objects {
+	class HoldNote : public BaseNote {
+	public:
+		HoldNote(AvgEngine::OpenGL::Texture* spritesheet, Average4k::Data::Chart::Note _data, Average4k::Data::ChartFile* file, bool _downscroll = false, float _cmod = -1, float _xmod = -1) : BaseNote(spritesheet, _data, file, _downscroll, _cmod, _xmod) {}
+		void draw() override;
+	};
+}
 
 #endif

@@ -44,6 +44,8 @@ namespace Average4k::Data
 			AvgEngine::Logging::writeLog("[Error] ChartFile::Write() is not implemented for chart type: " + std::to_string(metadata.type));
 		};
 
+		void ConstructTimings();
+
 		Chart::TimingPoint GetTimingPoint(float beat)
 		{
 			Chart::TimingPoint tp{};

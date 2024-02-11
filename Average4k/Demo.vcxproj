@@ -39,9 +39,11 @@
     <ClCompile Include="SourceFiles\Average4k\Api\Functions\FSkins.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Console\CmdHandler.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Data\Chart\AsyncChartLoader.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Data\Chart\ChartFile.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Data\Chart\ChartFinder.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Data\Chart\Providers\StepFile.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Objects\BaseNote.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Objects\Notes\Hold.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Objects\UnicodeText.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Screens\Menu\Gameplay.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Screens\Menu\MainMenu.cpp" />
@@ -69,6 +71,7 @@
     <ClInclude Include="SourceFiles\Average4k\Api\Functions\FMenu.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Functions\FSkins.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaMenu.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaNote.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaObject.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaSong.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaSprite.h" />

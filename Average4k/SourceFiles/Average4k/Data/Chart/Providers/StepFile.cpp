@@ -24,6 +24,8 @@ void StepFile::Parse(std::wstring _path, bool metadataOnly)
 
 	ParseMetadata(metadataOnly, stream);
 
+	ConstructTimings();
+
 	isValid = true;
 
 	stream->close();

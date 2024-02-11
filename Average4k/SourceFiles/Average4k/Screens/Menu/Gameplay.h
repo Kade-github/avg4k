@@ -28,6 +28,8 @@ namespace Average4k::Screens::Menu
 		AvgEngine::OpenGL::Texture* _noteskinSheet;
 	public:
 		sol::protected_function setupNote;
+		sol::protected_function overlayUpdate;
+
 
 		AvgEngine::Audio::Channel* channel;
 
@@ -54,8 +56,11 @@ namespace Average4k::Screens::Menu
 
 		AvgEngine::Base::Sprite* background;
 
+		Average4k::Objects::BaseNote* holds[4] = { nullptr, nullptr, nullptr, nullptr };
 		std::vector<AvgEngine::Base::Sprite*> receptors;
 		std::vector<Average4k::Objects::BaseNote*> notes;
+
+		std::vector<Average4k::Data::Chart::Note> cNotes;
 
 		std::string comboTag = "";
 		std::string judgementTextTag = "";
@@ -80,6 +85,8 @@ namespace Average4k::Screens::Menu
 		{
 			if (hud)
 				delete hud;
+			if (playfield)
+				delete playfield;
 		}
 
 		void loadAudio();

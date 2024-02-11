@@ -17,11 +17,11 @@ namespace Average4k::Data::Chart
 	public:
 		float bpm = 120;
 		float startBeat = 0;
-		float endBeat = INFINITY;
+		float endBeat = 0;
 
 		float startTimestamp = 0;
-		float endTimestamp = INFINITY;
-		float length = INFINITY;
+		float endTimestamp = 0;
+		float length = 0;
 	};
 }
 

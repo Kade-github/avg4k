@@ -93,6 +93,23 @@ function noteSetup(n, w, h, beat, type, lane)
 
     local beatRow = beat * 48
 
+    if type == 1 then
+        -- special hold note functions, for it's body and end sprites
+        n.row = 0
+        n.col = 3
+        n.endRow = 2
+        n.endCol = 2
+    elseif type == 4 then 
+        -- mine
+
+        n:addOverlay(3,2) -- spin
+
+        row = 0
+        col = 4
+        n:setSrcRec(col * w, row * h, w, h)
+        return
+    end
+
     if math.fmod(beatRow, 192 / 4) == 0 then -- 4th
         row = 1
         col = 1
@@ -113,6 +130,11 @@ function noteSetup(n, w, h, beat, type, lane)
         col = 2
     end
 
+    if type == 5 then
+        row = 1
+        col = 2
+    end
+
     n:setSrcRec(col * w, row * h, w, h)
 
     if lane == 0 then
@@ -125,4 +147,11 @@ function noteSetup(n, w, h, beat, type, lane)
         n.angle = -90
     end
 
+end
+
+function overlayUpdate(type, curAngle, curOpacity)
+    if type == 4 then -- spinning
+        return {curAngle + 1, curOpacity}
+    end
+    return {curAngle, curOpacity}
 end

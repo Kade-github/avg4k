@@ -134,7 +134,7 @@ namespace AvgEngine::Render
 		 * \param src The source struct
 		 * \return An array of Vertex's
 		 */
-		static std::vector<Vertex> RectToVertex(Rect dst, Rect src, bool center = false)
+		static std::vector<Vertex> RectToVertex(Rect dst, Rect src, bool center = false, bool flip = false)
 		{
 			std::vector<Vertex> verts;
 
@@ -207,6 +207,15 @@ namespace AvgEngine::Render
 					float ry = tx * s + ty * c;
 					vert->x = rx + cx;
 					vert->y = ry + cy;
+				}
+			}
+
+			if (flip)
+			{
+				Vertex* verts[] = { &tl, &bl, &tr, &br };
+				for (Vertex* vert : verts)
+				{
+					vert->v = src.y + src.h - vert->v;
 				}
 			}
 

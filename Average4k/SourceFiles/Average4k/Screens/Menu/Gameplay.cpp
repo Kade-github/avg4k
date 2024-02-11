@@ -7,7 +7,7 @@
 #include "MainMenu.h"
 #include "../../Api/Functions/FGameplay.h"
 
-#include "../../Api/Stubs/LuaSprite.h"
+#include "../../Api/Stubs/LuaNote.h"
 
 #include <AvgEngine/Utils/Paths.h>
 
@@ -87,6 +87,15 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 		return;
 	}
 
+	overlayUpdate = lua->getState().get<sol::protected_function>("overlayUpdate");
+
+	if (!overlayUpdate)
+	{
+		AvgEngine::Logging::writeLog("[Lua] Error in file: " + lua->path + "\n" + "No overlayUpdate function found.");
+		AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
+		return;
+	}
+
 	// load receptors
 
 	noteWidth = noteWidth / _noteskinSheet->width; // opengl normalizes the texture coordinates
@@ -144,7 +153,7 @@ void Average4k::Screens::Menu::Gameplay::start()
 {
 	// start audio
 	channel->Play();
-
+	cNotes = chart.difficulties[_diff].notes;
 	
 }
 
@@ -177,6 +186,7 @@ void Average4k::Screens::Menu::Gameplay::load()
 	lua->path = p;
 
 	Average4k::Api::Stubs::LuaMenu::Register(lua->getState());
+	Average4k::Api::Stubs::LuaNote::Register(lua->getState());
 
 	Average4k::Api::Stubs::LuaMenu cm = Average4k::Api::Stubs::LuaMenu(this);
 
@@ -279,8 +289,6 @@ void Average4k::Screens::Menu::Gameplay::load()
 	addObject(hud_spr);
 	addObject(playfield_spr);
 
-
-
 	comboText->text = "";
 	judgementText->text = "";
 	accuracyText->text = "100%";
@@ -334,55 +342,91 @@ void Average4k::Screens::Menu::Gameplay::draw()
 	// draw render textures
 	playfield_spr->draw();
 	hud_spr->draw();
+
+	A4kGame::gameInstance->DrawOutlinedDebugText(24, AvgEngine::Render::Display::height - 42, 
+		"Beat: " + std::to_string(currentBeat) + 
+		" | Time: " + std::to_string(currentTime) + 
+		" | FPS: " + std::to_string((int)(std::floorf(A4kGame::Instance->fps))) + 
+		"/" + std::to_string((int)(std::floorf(A4kGame::Instance->fpsCap))), 42);
 }
 
 void Average4k::Screens::Menu::Gameplay::spawnNotes()
 {
-	if (noteIndex + 1 > chart.difficulties[_diff].notes.size())
+	if (cNotes.size() == 0)
 		return;
 
-	Average4k::Data::Chart::Note n = chart.difficulties[_diff].notes[noteIndex];
+	Average4k::Data::Chart::Note n = cNotes[0];
 
-	if (n.beat > currentBeat + 8)
-		return;
-
-	float cmod = save->gameplayData.constantMod;
-	float xmod = save->gameplayData.multiplierMod;
-
-	if (save->gameplayData.useCmod)
-		xmod = -1;
-	else
-		cmod = -1;
-
-	Average4k::Objects::BaseNote* no;
-
-	switch (n.type)
+	while (n.beat < currentBeat + 8)
 	{
-	default:
-		no = new Average4k::Objects::BaseNote(_noteskinSheet, n, &chart, false, cmod, xmod);
+
+		if (n.type == 3) // skip ends
+		{
+			if (notes.size() != 0 && holds[n.lane] != nullptr)
+			{
+				Average4k::Objects::BaseNote* last = holds[n.lane];
+				last->endBeat = n.beat;
+				last->endTime = chart.GetTimeFromBeat(n.beat);
+				holds[n.lane] = nullptr;
+			}
+			cNotes.erase(cNotes.begin());
+
+			if (cNotes.size() == 0)
+				break;
+
+			n = cNotes[0];
+			continue;
+		}
+
+		float cmod = save->gameplayData.constantMod;
+		float xmod = save->gameplayData.multiplierMod;
+
+		if (save->gameplayData.useCmod)
+			xmod = -1;
+		else
+			cmod = -1;
+
+		Average4k::Objects::BaseNote* no;
+
+		switch (n.type)
+		{
+		case 1: // hold head
+			no = new Average4k::Objects::HoldNote(_noteskinSheet, n, &chart, false, cmod, xmod);
+			holds[n.lane] = no;
+			break;
+		default:
+			no = new Average4k::Objects::BaseNote(_noteskinSheet, n, &chart, false, cmod, xmod);
+			break;
+		}
+
+		no->tag = "_play_note_" + std::to_string(n.beat);
+
 		no->texture->dontDelete = true;
 
-		Average4k::Api::Stubs::LuaSprite lspr = Average4k::Api::Stubs::LuaSprite(no);
+		Average4k::Api::Stubs::LuaNote lspr = Average4k::Api::Stubs::LuaNote(no);
 
 		sol::protected_function_result result = setupNote(lspr, noteWidth, noteHeight, n.beat, n.type, n.lane);
 
 		if (!result.valid())
 		{
 			sol::error err = result;
-			AvgEngine::Logging::writeLog("[Lua] Error in function noteSetup.\n" + std::string(err.what()));
+			AvgEngine::Logging::writeLog("[Lua] Error in function noteSetup for note type " + std::to_string(n.type) + " at beat " + std::to_string(n.beat) + ".\n" + std::string(err.what()));
 		}
 
-		break;
+		no->transform.w = (128 * noteScale) * wScale;
+		no->transform.h = (128 * noteScale) * hScale;
+
+		notes.push_back(no);
+
+		addObject(no);
+
+		cNotes.erase(cNotes.begin());
+
+		if (cNotes.size() == 0)
+			break;
+
+		n = cNotes[0];
 	}
-
-	no->transform.w = (128 * noteScale) * wScale;
-	no->transform.h = (128 * noteScale) * hScale;
-
-	notes.push_back(no);
-
-	addObject(no);
-
-	noteIndex++;
 }
 
 void Average4k::Screens::Menu::Gameplay::updateNotes()
@@ -391,19 +435,52 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 
 	for (auto n : notes)
 	{
+		if (n->overlays.size() != 0)
+		{
+			sol::protected_function_result result = overlayUpdate(n->data.type, n->overlayAngle, n->overlayOpacity);
+
+			if (!result.valid())
+			{
+				sol::error err = result;
+				AvgEngine::Logging::writeLog("[Lua] [Warning] Overlay for " + std::to_string(n->data.type) + " errored out.\n" + std::string(err.what()));
+			}
+			else
+			{
+				sol::table t = result.get<sol::table>();
+				sol::type ty = result.get_type();
+				if (!t.valid())
+				{
+					AvgEngine::Logging::writeLog("[Lua] [Warning] Overlay for " + std::to_string(n->data.type) + " returned a " + t.as<std::string>() + " instead of a sol::table.");
+				}
+				else
+				{
+					if (t.size() != 2)
+					{
+						AvgEngine::Logging::writeLog("[Lua] [Warning] Overlay for " + std::to_string(n->data.type) + " returned an invalid table.");
+					}
+					else
+					{
+						n->overlayAngle = t[1];
+						n->overlayOpacity = t[2];
+					}
+				}
+			}
+		}
+
 		n->currentBeat = currentBeat;
 		n->currentTime = currentTime;
 
 		int lane = n->data.lane;
 
-		n->transform.y = receptors[lane]->transform.y;
-		n->transform.x = receptors[lane]->transform.x;
-
-		if (n->data.beat - currentBeat < -8)
+		if (n->data.beat < currentBeat - 8)
 		{
 			toRemove.push_back(n);
 			continue;
 		}
+
+		n->transform.y = receptors[lane]->transform.y;
+		n->transform.x = receptors[lane]->transform.x;
+
 	}
 
 	for (auto n : toRemove)

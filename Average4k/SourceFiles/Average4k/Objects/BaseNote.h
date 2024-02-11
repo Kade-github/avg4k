@@ -20,10 +20,23 @@ namespace Average4k::Objects
 		bool downscroll = false;
 		float cmod = -1.0f;
 		float xmod = -1.0f;
+		float endBeat = 0;
+		float endTime = 0;
 
 		float currentBeat = 0;
 		float currentTime = 0;
 		float noteTime = 0;
+
+		int sheet_row = 0;
+		int sheet_col = 0;
+
+		int sheet_end_row = 0;
+		int sheet_end_col = 0;
+
+		std::vector<int> overlays = {};
+
+		float overlayAngle = 0;
+		float overlayOpacity = 1;
 
 		Average4k::Data::Chart::Note data;
 
@@ -35,6 +48,8 @@ namespace Average4k::Objects
 			xmod = _xmod;
 			noteTime = file->GetTimeFromBeat(data.beat);
 		}
+
+		void setPosition();
 
 		void draw() override;
 	};

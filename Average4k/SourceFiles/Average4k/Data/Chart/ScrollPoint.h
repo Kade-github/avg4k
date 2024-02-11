@@ -16,9 +16,6 @@ namespace Average4k::Data::Chart
 	{
 	public:
 		float startBeat = -1;
-		float endBeat = -1;
-		float startTimestamp = -1;
-		float endTimestamp = -1;
 		float scrollMultiplier = 1;
 	};
 }

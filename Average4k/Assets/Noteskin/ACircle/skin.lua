@@ -69,6 +69,8 @@ function setup()
 
     setNoteSize(256,256)
 
+    rotateReceptors(false) -- cuz circle (it would do nothing)
+
     setAccuracyTag("accuracy")
     setJudgementTextTag("judgement")
     setComboTag("combo")
@@ -136,16 +138,6 @@ function noteSetup(n, w, h, beat, type, lane)
     end
 
     n:setSrcRec(col * w, row * h, w, h)
-
-    if lane == 0 then
-        n.angle = 90
-    end
-    if lane == 2 then
-        n.angle = 180
-    end
-    if lane == 3 then
-        n.angle = -90
-    end
 
 end
 

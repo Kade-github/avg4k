@@ -1,8 +1,21 @@
 #include "Hold.h"
 #include "../../Helpers/TimeToScreen.h"
+#include "../../A4kGame.h"
 
 void Average4k::Objects::HoldNote::draw()
 {
+	if (holding)
+		hasHeld = true;
+
+	if (lastHold != holding)
+	{
+		if (lastHold && !holding) // if you were holding last frame, and you stopped holding this frame
+			endHold = currentBeat;
+		lastHold = holding;
+	}
+
+	std::vector<AvgEngine::Render::Vertex> receptor = AvgEngine::Render::DisplayHelper::RectToVertex({ transform.x, transform.y + (transform.h / 2), transform.w, transform.h}, src);
+
 	float endPosition = Average4k::Helpers::TimeToScreen::YOffset(cmod, endTime - noteTime);
 
 	if (xmod > 0)
@@ -36,9 +49,26 @@ void Average4k::Objects::HoldNote::draw()
 
 	std::vector<std::vector<Render::Vertex>> vertices;
 
+	float progress = -1;
+
+	if (holding)
+	{
+		progress = (currentBeat - data.beat) / (endBeat - noteBeat);
+	}
+	else if (endHold >= 0)
+	{
+		progress = (endHold - data.beat) / (endBeat - noteBeat);
+	}
+
+	if (progress > 1)
+		progress = 1;
+
 	for (int i = 0; i < amount; i++)
 	{
 		Render::Rect r = { transform.x, transform.y + (transform.h / 2) + (transform.h * i), transform.w, transform.h };
+
+		float p2 = (float)i / (float)amount;
+		float p3 = (float)(i + 1) / (float)amount;
 
 		std::vector<Render::Vertex> v = {};
 
@@ -75,6 +105,40 @@ void Average4k::Objects::HoldNote::draw()
 			v[3].x = last[5].x; // set the top right to the bottom right x
 		}
 
+		// hold cliping
+
+		if (p2 <= progress)
+		{
+			if (!downscroll) // top
+			{
+				v[0].y = receptor[0].y;
+				v[2].y = receptor[2].y;
+				v[3].y = receptor[3].y;
+			}
+			else // bottom
+			{
+				v[1].y = receptor[1].y;
+				v[4].y = receptor[4].y;
+				v[5].y = receptor[5].y;
+			}
+		}
+
+		if (p3 <= progress)
+		{
+			if (!downscroll) // bottom
+			{
+				v[1].y = v[0].y;
+				v[4].y = v[0].y;
+				v[5].y = v[2].y;
+			}
+			else // top
+			{
+				v[0].y = v[1].y;
+				v[2].y = v[5].y;
+				v[3].y = v[5].y;
+			}
+		}
+
 		vertices.push_back(v);
 	}
 
@@ -84,6 +148,9 @@ void Average4k::Objects::HoldNote::draw()
 		camera->addDrawCall(c);
 	}
 
-	Base::Sprite::draw();
+	if (!hasHeld)
+		Base::Sprite::draw();
 
+	if (progress > 0 && progress < 1)
+		A4kGame::gameInstance->DrawOutlinedDebugText(receptor[0].x, receptor[0].y - 32, std::to_string(progress), 32);
 }

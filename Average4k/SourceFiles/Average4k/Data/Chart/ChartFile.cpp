@@ -95,24 +95,6 @@ void Average4k::Data::ChartFile::ConstructTimings()
 		timingPoints.back().endTimestamp = INT_MAX;
 	}
 
-	// ScrollPoints
-	for (int i = 0; i < scrollPoints.size(); i++)
-	{
-		ScrollPoint& sp = scrollPoints[i];
-		if (i == 0)
-			sp.startTimestamp = GetTimeFromBeat(sp.startBeat);
-		else
-		{
-			ScrollPoint& last = scrollPoints[i - 1];
-			sp.startTimestamp = GetTimeFromBeat(sp.startBeat);
-			last.endBeat = sp.startBeat;
-			last.endTimestamp = sp.startTimestamp;
-		}
-
-		sp.endBeat = INT_MAX;
-		sp.endTimestamp = INT_MAX;
-	}
-
 	// SpeedPoints
 	for (int i = 0; i < speedPoints.size(); i++)
 	{

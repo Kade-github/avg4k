@@ -49,10 +49,12 @@ namespace Average4k::Screens::Menu
 
 		bool stop = false;
 
-		float noteScale = 1;
+		float noteScaleW = 1;
+		float noteScaleH = 1;
 		float noteSpace = 1.1;
 		float noteWidth = 64;
 		float noteHeight = 64;
+
 
 		float wScale = 1;
 		float hScale = 1;
@@ -65,6 +67,8 @@ namespace Average4k::Screens::Menu
 
 		std::vector<Average4k::Data::Chart::Note> cNotes;
 
+		bool rotateReceptors = true;
+
 		std::string comboTag = "";
 		std::string judgementTextTag = "";
 		std::string accuracyTag = "";
@@ -75,6 +79,8 @@ namespace Average4k::Screens::Menu
 		int hitNotes = 0;
 		int totalNotes = 0;
 
+		int scrlId = 0;
+		float _lastModifier = 1.0f;
 		float scrollModifier = 1.0f;
 
 		float _lastStretch = 1.0f;
@@ -91,6 +97,9 @@ namespace Average4k::Screens::Menu
 
 
 		void leave();
+
+		void hitNote();
+		void missNote();
 
 		void loadAudio();
 		void loadChart();

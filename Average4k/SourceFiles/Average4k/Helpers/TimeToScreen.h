@@ -43,6 +43,11 @@ namespace Average4k::Helpers
 			double bps = (speed / 60);
 			return (double)((offset / zoomFactor) / (bps * PIXELS_BETWEEN_BEATS));
 		}
+
+		static double YOffsetToBeatXMod(double speed, int offset, float zoomFactor = 1.0f)
+		{
+			return (double)((offset / zoomFactor) / PIXELS_BETWEEN_BEATS);
+		}
 	};
 }
 

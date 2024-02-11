@@ -181,10 +181,11 @@ namespace Average4k::Data
 
 		Chart::ScrollPoint GetScrollPoint(float beat)
 		{
+			// get the latest scroll point
 			Chart::ScrollPoint sp{};
 			for (Chart::ScrollPoint& _sp : scrollPoints)
 			{
-				if (_sp.startBeat <= beat && _sp.endBeat > beat)
+				if (_sp.startBeat <= beat)
 				{
 					sp = _sp;
 				}

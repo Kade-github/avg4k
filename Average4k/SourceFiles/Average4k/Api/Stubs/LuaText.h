@@ -21,35 +21,35 @@ namespace Average4k::Api::Stubs
 		Average4k::Objects::UnicodeText* _base;
 		std::string _font;
 	public:
-		LuaText(int x, int y, const std::string& font, const std::wstring& text, int size)
+		LuaText(float x, float y, const std::string& font, const std::wstring& text, int size)
 		{
 			_font = _font;
 			_base = new Average4k::Objects::UnicodeText(x, y, A4kGame::gameInstance->skin.GetPath("Fonts/"), font, text, size);
 			_baseObject = _base;
 		}
 
-		void setX(int x)
+		void setX(float x)
 		{
 			if (_base == NULL)
 				return;
 			_base->transform.x = x;
 		}
 
-		int getX()
+		float getX()
 		{
 			if (_base == NULL)
 				return 0;
 			return _base->transform.x;
 		}
 
-		void setY(int y)
+		void setY(float y)
 		{
 			if (_base == NULL)
 				return;
 			_base->transform.y = y;
 		}
 
-		int getY()
+		float getY()
 		{
 			if (_base == NULL)
 				return 0;

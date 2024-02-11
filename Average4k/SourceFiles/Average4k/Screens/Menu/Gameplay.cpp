@@ -38,6 +38,14 @@ void Average4k::Screens::Menu::Gameplay::leave()
 	AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
 }
 
+void Average4k::Screens::Menu::Gameplay::hitNote()
+{
+}
+
+void Average4k::Screens::Menu::Gameplay::missNote()
+{
+}
+
 void Average4k::Screens::Menu::Gameplay::loadAudio()
 {
 	std::wstring folder = chart.path.substr(0, chart.path.find_last_of(L"/\\"));
@@ -131,30 +139,34 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 	wScale = Average4k::Api::Functions::FGame::GetWidthScale();
 	hScale = Average4k::Api::Functions::FGame::GetHeightScale();
 
-	float startX = (AvgEngine::Render::Display::width / 2) - (((128 * noteScale) * wScale) * 2);
+	noteScaleW *= wScale;
+	noteScaleH *= hScale;
+
+	float startX = (AvgEngine::Render::Display::width / 2) - ((128 * noteScaleW) * 2);
 
 	for (int i = 0; i < 4; i++)
 	{
 		AvgEngine::Base::Sprite* spr = new AvgEngine::Base::Sprite(0, 0, _noteskinSheet);
 		spr->tag = "_play_receptor_" + std::to_string(i);
 
-		spr->transform.x = ((startX + (((i * (128 * noteSpace))) * noteScale)) - (((64 * noteSpace) / 2) * noteScale)) * wScale;
+		spr->transform.x = ((startX + (((i * (128 * noteSpace))) * noteScaleW)) - (((64 * noteSpace) / 2) * noteScaleW));
 		spr->transform.y = 64 * hScale;
-		spr->transform.w = (128 * noteScale) * wScale;
-		spr->transform.h = (128 * noteScale) * hScale;
+		spr->transform.w = (128 * noteScaleW);
+		spr->transform.h = (128 * noteScaleH);
 
-		switch (i)
-		{
-		case 0:
-			spr->transform.angle = 90;
-			break;
-		case 2:
-			spr->transform.angle = 180;
-			break;
-		case 3:
-			spr->transform.angle = -90;
-			break;
-		}
+		if (rotateReceptors)
+			switch (i)
+			{
+			case 0:
+				spr->transform.angle = 90;
+				break;
+			case 2:
+				spr->transform.angle = 180;
+				break;
+			case 3:
+				spr->transform.angle = -90;
+				break;
+			}
 
 		addObject(spr);
 
@@ -230,6 +242,7 @@ void Average4k::Screens::Menu::Gameplay::load()
 	lua->getState().set_function("setJudgementTextTag", Average4k::Api::Functions::FGameplay::SetJudgementTextTag);
 	lua->getState().set_function("setAccuracyTag", Average4k::Api::Functions::FGameplay::SetAccuracyTag);
 	lua->getState().set_function("setNoteSize", Average4k::Api::Functions::FGameplay::SetNoteSize);
+	lua->getState().set_function("rotateReceptors", Average4k::Api::Functions::FGameplay::RotateReceptors);
 
 	lua->getState().set_function("getWidthScale", Average4k::Api::Functions::FGame::GetWidthScale);
 	lua->getState().set_function("getHeightScale", Average4k::Api::Functions::FGame::GetHeightScale);
@@ -241,7 +254,7 @@ void Average4k::Screens::Menu::Gameplay::load()
 		if (!result.valid())
 		{
 			sol::error err = result;
-			AvgEngine::Logging::writeLog("[Lua] Error in file: " + lua->path + "\n" + err.what());
+			AvgEngine::Logging::writeLog("[Lua] Error in setup: " + lua->path + "\n" + err.what());
 		}
 	}
 	else
@@ -414,8 +427,8 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 			continue;
 		}
 
-		float cmod = save->gameplayData.constantMod;
-		float xmod = save->gameplayData.multiplierMod;
+		float cmod = save->gameplayData.constantMod * hScale;
+		float xmod = save->gameplayData.multiplierMod * hScale;
 
 		Average4k::Objects::BaseNote* no;
 
@@ -446,8 +459,8 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 			AvgEngine::Logging::writeLog("[Lua] [Warning] Error in function noteSetup for note type " + std::to_string(n.type) + " at beat " + std::to_string(n.beat) + ".\n" + std::string(err.what()));
 		}
 
-		no->transform.w = (128 * noteScale) * wScale;
-		no->transform.h = (128 * noteScale) * hScale;
+		no->transform.w = (128 * noteScaleW);
+		no->transform.h = (128 * noteScaleH);
 
 		notes.push_back(no);
 
@@ -469,6 +482,9 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 	// scroll modifiers
 
 	Average4k::Data::Chart::ScrollPoint sp = chart.GetScrollPoint(currentBeat);
+
+	scrollModifier = sp.scrollMultiplier;
+
 	Average4k::Data::Chart::SpeedPoint spd = chart.GetSpeedPoint(currentBeat);
 
 	if (spd.spdId != 0)
@@ -490,7 +506,6 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 			A4kGame::gameInstance->DrawOutlinedDebugText(24, AvgEngine::Render::Display::height - 84, "Progress on stretch: " + std::to_string((int)std::floorf(progress * 100)) + "%", 42);
 	}
 
-	scrollModifier = sp.scrollMultiplier;
 
 	for (auto n : notes)
 	{
@@ -536,7 +551,30 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 
 		int lane = n->data.lane;
 
-		if (n->data.beat < currentBeat - 8)
+		if (n->data.type == Data::Chart::Tap)
+		{
+			if (n->data.beat < currentBeat)
+			{
+				toRemove.push_back(n);
+				continue;
+			}
+		}
+
+		if (n->data.type == Data::Chart::Head)
+		{
+			if (n->data.beat < currentBeat)
+			{
+				Average4k::Objects::HoldNote* hn = (Average4k::Objects::HoldNote*)n;
+				hn->holding = true;
+			}
+		}
+
+		float diff = n->endBeat - n->data.beat;
+
+		if (n->endBeat <= 0)
+			diff = 0;
+
+		if (n->data.beat + diff < currentBeat - 8)
 		{
 			toRemove.push_back(n);
 			continue;

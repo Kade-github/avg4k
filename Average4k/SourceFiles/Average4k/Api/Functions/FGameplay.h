@@ -14,6 +14,7 @@ namespace Average4k::Api::Functions
 {
 	class FGameplay {
 	public:
+		static void RotateReceptors(bool rotate);
 		static void SetNoteSize(float width, float height);
 		static void SetAccuracyTag(std::string tag);
 		static void SetComboTag(std::string tag);

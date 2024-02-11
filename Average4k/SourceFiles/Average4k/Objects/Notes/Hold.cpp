@@ -3,7 +3,10 @@
 
 void Average4k::Objects::HoldNote::draw()
 {
-	float endPosition = Average4k::Helpers::TimeToScreen::YOffset(cmod, endBeat - data.beat);
+	float endPosition = Average4k::Helpers::TimeToScreen::YOffset(cmod, endTime - noteTime);
+
+	if (xmod > 0)
+		endPosition = Average4k::Helpers::TimeToScreen::YOffsetXMod(xmod, endBeat - data.beat);
 
 	setPosition(); // Objects::BaseNote
 
@@ -13,7 +16,12 @@ void Average4k::Objects::HoldNote::draw()
 
 	// (aka holds)
 
-	int amount = 1 + static_cast<int>((endPosition - transform.h) / transform.h);
+	float div = transform.h;
+
+	int amount = static_cast<int>((endPosition + div) / div);
+
+	if (amount < 0)
+		amount = 0;
 
 	using namespace AvgEngine;
 

@@ -34,6 +34,8 @@ namespace Average4k::Data::Chart::Providers
 		void ParseMetadata(bool only, std::wifstream* stream);
 		void ParseBPMS(std::wstring line);
 		void ParseStops(std::wstring line);
+		void ParseScrolls(std::wstring line);
+		void ParseSpeeds(std::wstring line);
 		void ParseNotes(std::wstring line, int& lineNumber);
 
 		void Parse(std::wstring path, bool metadataOnly) override;

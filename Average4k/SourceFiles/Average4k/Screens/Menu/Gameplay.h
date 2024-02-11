@@ -75,6 +75,11 @@ namespace Average4k::Screens::Menu
 		int hitNotes = 0;
 		int totalNotes = 0;
 
+		float scrollModifier = 1.0f;
+
+		float _lastStretch = 1.0f;
+		float stretch = 1.0f;
+
 		float currentBeat = 0;
 		float currentTime = 0;
 

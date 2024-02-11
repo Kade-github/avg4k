@@ -18,13 +18,17 @@ namespace Average4k::Objects
 	{
 	public:
 		bool downscroll = false;
+		bool useXmod = false;
 		float cmod = -1.0f;
 		float xmod = -1.0f;
 		float endBeat = 0;
 		float endTime = 0;
 
+		float stretch = 1.0f;
+
 		float currentBeat = 0;
 		float currentTime = 0;
+		float noteBeat = 0;
 		float noteTime = 0;
 
 		int sheet_row = 0;
@@ -46,6 +50,7 @@ namespace Average4k::Objects
 			data = _data;
 			cmod = _cmod;
 			xmod = _xmod;
+			noteBeat = data.beat;
 			noteTime = file->GetTimeFromBeat(data.beat);
 		}
 

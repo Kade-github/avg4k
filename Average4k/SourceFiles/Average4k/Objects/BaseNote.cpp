@@ -10,17 +10,17 @@ void Average4k::Objects::BaseNote::setPosition()
 {
 	if (!downscroll)
 	{
-		if (cmod > 0)
+		if (!useXmod)
 			transform.y += Average4k::Helpers::TimeToScreen::YOffset(cmod, noteTime - currentTime);
 		else
-			transform.y += Average4k::Helpers::TimeToScreen::YOffsetXMod(xmod, data.beat - currentBeat);
+			transform.y += Average4k::Helpers::TimeToScreen::YOffsetXMod(xmod, noteBeat - currentBeat, stretch);
 	}
 	else
 	{
-		if (cmod > 0)
+		if (!useXmod)
 			transform.y -= Average4k::Helpers::TimeToScreen::YOffset(cmod, noteTime - currentTime);
 		else
-			transform.y -= Average4k::Helpers::TimeToScreen::YOffsetXMod(xmod, data.beat - currentBeat);
+			transform.y -= Average4k::Helpers::TimeToScreen::YOffsetXMod(xmod, noteBeat - currentBeat, stretch);
 	}
 }
 

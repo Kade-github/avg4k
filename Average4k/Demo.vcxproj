@@ -83,6 +83,8 @@
     <ClInclude Include="SourceFiles\Average4k\Data\Chart\Difficulty.h" />
     <ClInclude Include="SourceFiles\Average4k\Data\Chart\Metadata.h" />
     <ClInclude Include="SourceFiles\Average4k\Data\Chart\Providers\StepFile.h" />
+    <ClInclude Include="SourceFiles\Average4k\Data\Chart\ScrollPoint.h" />
+    <ClInclude Include="SourceFiles\Average4k\Data\Chart\SpeedPoints.h" />
     <ClInclude Include="SourceFiles\Average4k\Data\Chart\TimingPoint.h" />
     <ClInclude Include="SourceFiles\Average4k\Data\Chart\StopPoint.h" />
     <ClInclude Include="SourceFiles\Average4k\Data\Types\GameplayData.h" />

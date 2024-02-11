@@ -18,7 +18,8 @@
 #include "StopPoint.h"
 #include "TimingPoint.h"
 #include "Difficulty.h"
-
+#include "ScrollPoint.h"
+#include "SpeedPoints.h"
 
 #define MAX(a,b) (((a)>(b))?(a):(b)) // for some reason std::max is being defined by another definition of max so we just do our own fuck you.
 
@@ -34,6 +35,8 @@ namespace Average4k::Data
 
 		std::vector<Chart::TimingPoint> timingPoints = {};
 		std::vector<Chart::StopPoint> stopPoints = {};
+		std::vector<Chart::ScrollPoint> scrollPoints = {};
+		std::vector<Chart::SpeedPoint> speedPoints = {};
 
 		std::vector<Chart::Difficulty> difficulties = {};
 
@@ -176,6 +179,31 @@ namespace Average4k::Data
 			return beat;
 		}
 
+		Chart::ScrollPoint GetScrollPoint(float beat)
+		{
+			Chart::ScrollPoint sp{};
+			for (Chart::ScrollPoint& _sp : scrollPoints)
+			{
+				if (_sp.startBeat <= beat && _sp.endBeat > beat)
+				{
+					sp = _sp;
+				}
+			}
+			return sp;
+		}
+
+		Chart::SpeedPoint GetSpeedPoint(float beat)
+		{
+			Chart::SpeedPoint sp{};
+			for (Chart::SpeedPoint& _sp : speedPoints)
+			{
+				if (_sp.startBeat <= beat && _sp.endBeat > beat)
+				{
+					sp = _sp;
+				}
+			}
+			return sp;
+		}
 	};
 }
 

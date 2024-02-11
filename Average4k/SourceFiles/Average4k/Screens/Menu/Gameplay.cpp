@@ -381,7 +381,9 @@ void Average4k::Screens::Menu::Gameplay::draw()
 		"Beat: " + std::to_string(currentBeat) + 
 		" | Time: " + std::to_string(currentTime) + 
 		" | FPS: " + std::to_string((int)(std::floorf(A4kGame::Instance->fps))) + 
-		"/" + std::to_string((int)(std::floorf(A4kGame::Instance->fpsCap))), 42);
+		"/" + std::to_string((int)(std::floorf(A4kGame::Instance->fpsCap))) + 
+		" | Scroll Modifier: " + std::to_string(scrollModifier) + 
+		" | Stretch: " + std::to_string(stretch), 42);
 }
 
 void Average4k::Screens::Menu::Gameplay::spawnNotes()
@@ -415,11 +417,6 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 		float cmod = save->gameplayData.constantMod;
 		float xmod = save->gameplayData.multiplierMod;
 
-		if (save->gameplayData.useCmod)
-			xmod = -1;
-		else
-			cmod = -1;
-
 		Average4k::Objects::BaseNote* no;
 
 		switch (n.type)
@@ -432,6 +429,8 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 			no = new Average4k::Objects::BaseNote(_noteskinSheet, n, &chart, false, cmod, xmod);
 			break;
 		}
+
+		no->useXmod = !save->gameplayData.useCmod;
 
 		no->tag = "_play_note_" + std::to_string(n.beat);
 
@@ -467,6 +466,32 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 {
 	std::vector<Average4k::Objects::BaseNote*> toRemove;
 
+	// scroll modifiers
+
+	Average4k::Data::Chart::ScrollPoint sp = chart.GetScrollPoint(currentBeat);
+	Average4k::Data::Chart::SpeedPoint spd = chart.GetSpeedPoint(currentBeat);
+
+	if (spd.spdId != 0)
+		_lastStretch = chart.speedPoints[spd.spdId - 1].stretch;
+
+	if (spd.stretch >= 0)
+	{
+		float progress = 0;
+
+		if (spd.type == 0)
+			progress = (currentBeat - spd.startBeat) / (spd.endBeat - spd.startBeat);
+		else
+			progress = (currentTime - spd.startTimestamp) / (spd.endTimestamp - spd.startTimestamp);
+
+
+		stretch = std::lerp(_lastStretch, spd.stretch, std::min(progress, 1.0f));
+
+		if (progress <= 1)
+			A4kGame::gameInstance->DrawOutlinedDebugText(24, AvgEngine::Render::Display::height - 84, "Progress on stretch: " + std::to_string((int)std::floorf(progress * 100)) + "%", 42);
+	}
+
+	scrollModifier = sp.scrollMultiplier;
+
 	for (auto n : notes)
 	{
 		if (n->overlays.size() != 0)
@@ -501,8 +526,13 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 			}
 		}
 
+		n->stretch = stretch;
+
 		n->currentBeat = currentBeat;
 		n->currentTime = currentTime;
+
+		if (n->useXmod)
+			n->xmod = save->gameplayData.multiplierMod * scrollModifier;
 
 		int lane = n->data.lane;
 

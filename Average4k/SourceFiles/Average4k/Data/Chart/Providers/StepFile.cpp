@@ -8,6 +8,7 @@
 
 using namespace Average4k::Data::Chart::Providers;
 
+
 void StepFile::Parse(std::wstring _path, bool metadataOnly)
 {
 	std::wifstream* stream = new std::wifstream(_path);
@@ -85,6 +86,24 @@ void StepFile::ParseMetadata(bool only, std::wifstream* stream)
 						state = 0;
 					break;
 				}
+				else if (line.starts_with(L"#SCROLLS"))
+				{
+					state = 4;
+					ParseScrolls(line);
+
+					if (line.find(';') != std::string::npos) // if the line ends with a semicolon, we're done
+						state = 0;
+					break;
+				}
+				else if (line.starts_with(L"#SPEEDS"))
+				{
+					state = 5;
+					ParseSpeeds(line);
+
+					if (line.find(';') != std::string::npos) // if the line ends with a semicolon, we're done
+						state = 0;
+					break;
+				}
 			}
 			else
 			{
@@ -154,6 +173,18 @@ void StepFile::ParseMetadata(bool only, std::wifstream* stream)
 				lineNumber = 0;
 			}
 			break;
+		case 4:
+			ParseScrolls(line);
+
+			if (line.find(';') != std::string::npos) // if the line ends with a semicolon, we're done
+				state = 0;
+			break;
+		case 5:
+			ParseSpeeds(line);
+
+			if (line.find(';') != std::string::npos) // if the line ends with a semicolon, we're done
+				state = 0;
+			break;
 		}
 	}
 }
@@ -222,6 +253,69 @@ void StepFile::ParseStops(std::wstring line)
 		p.length = std::stof(stop[1]);
 
 		stopPoints.push_back(p);
+	}
+}
+
+void StepFile::ParseScrolls(std::wstring line)
+{
+	std::wstring l = line;
+
+	// Clean up the line
+	if (l.find(':') != std::string::npos) // remove the starting "#SCROLLS:" if it exists
+		l = l.substr(l.find(':') + 1);
+
+	if (l.find(';') != std::string::npos) // remove the trailing semicolon if it exists
+		l = l.substr(0, l.find(';'));
+
+	// Split the line into individual BPMs
+	std::vector<std::wstring> split = AvgEngine::Utils::StringTools::Split(l, L",");
+
+	for (std::wstring s : split)
+	{
+		std::vector<std::wstring> scroll = AvgEngine::Utils::StringTools::Split(s, L"=");
+
+		if (scroll.size() != 2)
+			continue;
+
+		ScrollPoint p;
+		p.startBeat = std::stof(scroll[0]);
+		p.scrollMultiplier = std::stof(scroll[1]);
+
+		scrollPoints.push_back(p);
+	}
+}
+
+void StepFile::ParseSpeeds(std::wstring line)
+{
+	std::wstring l = line;
+
+	// Clean up the line
+	if (l.find(':') != std::string::npos) // remove the starting "#SPEEDS:" if it exists
+		l = l.substr(l.find(':') + 1);
+
+	if (l.find(';') != std::string::npos) // remove the trailing semicolon if it exists
+		l = l.substr(0, l.find(';'));
+
+	// Split the line into individual BPMs
+	std::vector<std::wstring> split = AvgEngine::Utils::StringTools::Split(l, L",");
+
+	for (std::wstring s : split)
+	{
+		std::vector<std::wstring> speed = AvgEngine::Utils::StringTools::Split(s, L"=");
+
+		if (speed.size() != 4)
+			continue;
+
+		SpeedPoint p;
+		p.startBeat = std::stof(speed[0]);
+		p.stretch = std::stof(speed[1]);
+		p.delay = std::stof(speed[2]);
+		p.type = std::stoi(speed[3]);
+		
+		if (p.delay < 0 || p.stretch < 0)
+			continue;
+
+		speedPoints.push_back(p);
 	}
 }
 

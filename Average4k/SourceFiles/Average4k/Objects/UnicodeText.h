@@ -58,11 +58,6 @@ namespace Average4k::Objects
 
 		}
 
-		~UnicodeText()
-		{
-
-		}
-
 		void SetFont(std::string folder, std::string font)
 		{
 			// this doesn't actually reload the font's texture if it already existed.

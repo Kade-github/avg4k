@@ -14,6 +14,7 @@
 
 #include "../../Objects/RenderTexture.h"
 #include "../../Objects/Notes/Hold.h"
+#include "../../Objects/UnicodeText.h"
 
 #include <AvgEngine/External/Bass/BASS.h>
 
@@ -42,9 +43,11 @@ namespace Average4k::Screens::Menu
 		AvgEngine::Base::Sprite* hud_spr;
 		AvgEngine::Base::Sprite* playfield_spr;
 
-		AvgEngine::Base::Text* comboText;
-		AvgEngine::Base::Text* judgementText;
-		AvgEngine::Base::Text* accuracyText;
+		Average4k::Objects::UnicodeText* comboText;
+		Average4k::Objects::UnicodeText* judgementText;
+		Average4k::Objects::UnicodeText* accuracyText;
+
+		bool stop = false;
 
 		float noteScale = 1;
 		float noteSpace = 1.1;
@@ -81,13 +84,8 @@ namespace Average4k::Screens::Menu
 			_diff = diff - 1; // - 1 cuz lua
 		}
 
-		~Gameplay()
-		{
-			if (hud)
-				delete hud;
-			if (playfield)
-				delete playfield;
-		}
+
+		void leave();
 
 		void loadAudio();
 		void loadChart();

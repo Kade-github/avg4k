@@ -11,6 +11,33 @@
 
 #include <AvgEngine/Utils/Paths.h>
 
+void Average4k::Screens::Menu::Gameplay::leave()
+{
+	// Stop all audio
+	for (AvgEngine::Audio::Channel* c : AvgEngine::External::BASS::Channels)
+	{
+		if (c == NULL || c->id == -1)
+			continue;
+		if (c->isPlaying)
+			c->Stop();
+		delete c;
+	}
+
+	AvgEngine::External::BASS::Channels.clear();
+
+	stop = true;
+
+	notes.clear();
+	receptors.clear();
+
+	if (hud)
+		delete hud;
+	if (playfield)
+		delete playfield;
+
+	AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
+}
+
 void Average4k::Screens::Menu::Gameplay::loadAudio()
 {
 	std::wstring folder = chart.path.substr(0, chart.path.find_last_of(L"/\\"));
@@ -70,7 +97,7 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 	if (!AvgEngine::Utils::Paths::pathExists(png))
 	{
 		AvgEngine::Logging::writeLog("[Gameplay] [Error] Noteskin texture (" + png + ") not found, returning to main menu.");
-		AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
+		leave();
 		return;
 	}
 
@@ -83,7 +110,7 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 	if (!setupNote)
 	{
 		AvgEngine::Logging::writeLog("[Lua] Error in file: " + lua->path + "\n" + "No noteSetup function found.");
-		AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
+		leave();
 		return;
 	}
 
@@ -92,7 +119,7 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 	if (!overlayUpdate)
 	{
 		AvgEngine::Logging::writeLog("[Lua] Error in file: " + lua->path + "\n" + "No overlayUpdate function found.");
-		AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
+		leave();
 		return;
 	}
 
@@ -154,6 +181,10 @@ void Average4k::Screens::Menu::Gameplay::start()
 	// start audio
 	channel->Play();
 	cNotes = chart.difficulties[_diff].notes;
+	holds[0] = nullptr;
+	holds[1] = nullptr;
+	holds[2] = nullptr;
+	holds[3] = nullptr;
 	
 }
 
@@ -178,7 +209,7 @@ void Average4k::Screens::Menu::Gameplay::load()
 	if (!AvgEngine::Utils::Paths::pathExists(p))
 	{
 		AvgEngine::Logging::writeLog("[Gameplay] [Error] Noteskin lua file (" + p + ") not found, returning to main menu.");
-		AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
+		leave();
 		return;
 	}
 
@@ -216,19 +247,19 @@ void Average4k::Screens::Menu::Gameplay::load()
 	else
 	{
 		AvgEngine::Logging::writeLog("[Lua] Error in file: " + lua->path + "\n" + "No setup function found.");
-		AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
+		leave();
 		return;
 	}
 
 	// find based on tag
-	comboText = (AvgEngine::Base::Text*)findObject(comboTag);
-	judgementText = (AvgEngine::Base::Text*)findObject(judgementTextTag);
-	accuracyText = (AvgEngine::Base::Text*)findObject(accuracyTag);
+	comboText = (Average4k::Objects::UnicodeText*)findObject(comboTag);
+	judgementText = (Average4k::Objects::UnicodeText*)findObject(judgementTextTag);
+	accuracyText = (Average4k::Objects::UnicodeText*)findObject(accuracyTag);
 
 	if (!comboText || !judgementText || !accuracyText)
 	{
 		AvgEngine::Logging::writeLog("[Gameplay] [Error] Combo, Judgement or Accuracy text not found, returning to main menu.");
-		AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
+		leave();
 		return;
 	}
 
@@ -236,14 +267,14 @@ void Average4k::Screens::Menu::Gameplay::load()
 	if (!chart.isValid)
 	{
 		AvgEngine::Logging::writeLog("[Gameplay] [Error] Chart is not valid, returning to main menu.");
-		AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
+		leave();
 		return;
 	}
 
 	if (chart.difficulties.size() == 0)
 	{
 		AvgEngine::Logging::writeLog("[Gameplay] [Error] No difficulties found, returning to main menu.");
-		AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
+		leave();
 		return;
 	}
 
@@ -254,7 +285,7 @@ void Average4k::Screens::Menu::Gameplay::load()
 	if (!channel)
 	{
 		AvgEngine::Logging::writeLog("[Gameplay] [Error] Audio not found, returning to main menu.");
-		AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
+		leave();
 		return;
 	}
 
@@ -266,7 +297,7 @@ void Average4k::Screens::Menu::Gameplay::load()
 
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_KeyPress, [&](AvgEngine::Events::Event e) {
 		if (e.data == save->keybindData.keyPause)
-			AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
+			leave();
 		});
 
 	hud = new Average4k::Objects::RenderTexture(&camera, AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
@@ -289,9 +320,9 @@ void Average4k::Screens::Menu::Gameplay::load()
 	addObject(hud_spr);
 	addObject(playfield_spr);
 
-	comboText->text = "";
-	judgementText->text = "";
-	accuracyText->text = "100%";
+	comboText->text = L"";
+	judgementText->text = L"";
+	accuracyText->text = L"100%";
 
 	start();
 
@@ -299,7 +330,7 @@ void Average4k::Screens::Menu::Gameplay::load()
 
 void Average4k::Screens::Menu::Gameplay::draw()
 {
-	if (channel == NULL)
+	if (channel == NULL || stop)
 		return;
 
 	if (channel->isPlaying)
@@ -336,8 +367,11 @@ void Average4k::Screens::Menu::Gameplay::draw()
 
 	playfield->Unbind();
 
-	// draw bg
-	background->draw();
+	if (background != NULL)
+	{
+		// draw bg
+		background->draw();
+	}
 
 	// draw render textures
 	playfield_spr->draw();
@@ -410,7 +444,7 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 		if (!result.valid())
 		{
 			sol::error err = result;
-			AvgEngine::Logging::writeLog("[Lua] Error in function noteSetup for note type " + std::to_string(n.type) + " at beat " + std::to_string(n.beat) + ".\n" + std::string(err.what()));
+			AvgEngine::Logging::writeLog("[Lua] [Warning] Error in function noteSetup for note type " + std::to_string(n.type) + " at beat " + std::to_string(n.beat) + ".\n" + std::string(err.what()));
 		}
 
 		no->transform.w = (128 * noteScale) * wScale;

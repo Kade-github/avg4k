@@ -81,9 +81,25 @@ function setup()
     setJudgementTag("miss", "miss")
 end
 
+function hitNote(type, lane, judge)
+end
+
+function missNote()
+end
+
 function receptorSetup(rec, w, h)
     -- index 2,4
     rec:setSrcRec(4 * w, 2 * h, w, h)
+end
+
+function receptorHit(rec, w, h)
+    rec:setSrcRec(3 * w, 1 * h, w, h)
+    rec.scale = 0.95
+end
+
+function receptorRelease(rec, w, h)
+    rec:setSrcRec(4 * w, 2 * h, w, h)
+    rec.scale = 1
 end
 
 function noteSetup(n, w, h, beat, type, lane)

@@ -24,6 +24,9 @@ namespace Average4k::Objects
 		float endBeat = 0;
 		float endTime = 0;
 
+		bool hit = false;
+		bool missed = false;
+
 		float stretch = 1.0f;
 
 		float currentBeat = 0;

@@ -4,6 +4,9 @@
 
 void Average4k::Objects::HoldNote::draw()
 {
+	if (missed)
+		return;
+
 	if (holding)
 		hasHeld = true;
 
@@ -13,6 +16,10 @@ void Average4k::Objects::HoldNote::draw()
 			endHold = currentBeat;
 		lastHold = holding;
 	}
+
+	// center
+	transform.x -= transform.w / 2;
+	transform.y -= transform.h / 2;
 
 	std::vector<AvgEngine::Render::Vertex> receptor = AvgEngine::Render::DisplayHelper::RectToVertex({ transform.x, transform.y + (transform.h / 2), transform.w, transform.h}, src);
 
@@ -147,9 +154,14 @@ void Average4k::Objects::HoldNote::draw()
 		camera->addDrawCall(c);
 	}
 
+	transform.x += transform.w / 2;
+	transform.y += transform.h / 2;
+
 	if (!hasHeld)
 		Base::Sprite::draw();
 
 	if (progress > 0 && progress < 1)
 		A4kGame::gameInstance->DrawOutlinedDebugText(receptor[0].x, receptor[0].y - 32, std::to_string(progress), 32);
+
+
 }

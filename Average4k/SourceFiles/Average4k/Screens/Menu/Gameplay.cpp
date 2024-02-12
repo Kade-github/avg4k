@@ -9,6 +9,8 @@
 
 #include "../../Api/Stubs/LuaNote.h"
 
+#include "../../Helpers/JudgementHelper.h"
+
 #include <AvgEngine/Utils/Paths.h>
 
 void Average4k::Screens::Menu::Gameplay::restart()
@@ -53,11 +55,93 @@ void Average4k::Screens::Menu::Gameplay::leave()
 	AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
 }
 
-void Average4k::Screens::Menu::Gameplay::hitNote()
+void Average4k::Screens::Menu::Gameplay::noteRelease(int lane)
 {
+	for (auto n : notes)
+	{
+		if (n->data.lane != lane)
+			continue;
+
+		if (n->data.type != Data::Chart::Head)
+			continue;
+
+		std::string judgement = Average4k::Helpers::JudgementHelper::GetJudgement(currentTime - n->noteTime);
+
+		if (judgement == "Miss")
+			continue;
+
+		Average4k::Objects::HoldNote* hn = (Average4k::Objects::HoldNote*)n;
+		hn->holding = false;
+
+		Average4k::Api::Stubs::LuaSprite lspr = Average4k::Api::Stubs::LuaSprite(receptors[lane]);
+
+
+		break;
+	}
+
+	lua->getState().collect_garbage();
+	sol::protected_function_result result = receptorRelease(Average4k::Api::Stubs::LuaSprite(receptors[lane]), noteWidth, noteHeight);
+
+	if (!result.valid())
+	{
+		sol::error err = result;
+		AvgEngine::Logging::writeLog("[Lua] [Warning] Error in function receptorRelease.\n" + std::string(err.what()));
+	}
 }
 
-void Average4k::Screens::Menu::Gameplay::missNote()
+void Average4k::Screens::Menu::Gameplay::noteHit(int lane)
+{
+	for (auto n : notes)
+	{
+		if (n->data.lane != lane || n->hit || n->data.type == Data::Chart::Fake)
+			continue;
+
+		std::string judgement = Average4k::Helpers::JudgementHelper::GetJudgement(currentTime - n->noteTime);
+
+		if (judgement == "Miss")
+			continue;
+
+		Average4k::Objects::HoldNote* hn = NULL;
+		switch (n->data.type)
+		{
+		case Data::Chart::Tap:
+			n->hit = true;
+			break;
+		case Data::Chart::Head:
+			hn = (Average4k::Objects::HoldNote*)n;
+			n->hit = true;
+			hn->holding = true;
+			break;
+		case Data::Chart::Mine:
+			n->hit = true;
+			continue;
+		}
+
+		if (n->hit)
+		{
+			sol::protected_function_result result = hitNote(n->data.type, n->data.lane, judgement);
+
+			if (!result.valid())
+			{
+				sol::error err = result;
+				AvgEngine::Logging::writeLog("[Lua] [Warning] Error in function hitNote for note type " + std::to_string(n->data.type) + " at beat " + std::to_string(n->data.beat) + ".\n" + std::string(err.what()));
+			}
+		}
+		break;
+	}
+
+	lua->getState().collect_garbage();
+	sol::protected_function_result result = receptorHit(Average4k::Api::Stubs::LuaSprite(receptors[lane]), noteWidth, noteHeight);
+
+
+	if (!result.valid())
+	{
+		sol::error err = result;
+		AvgEngine::Logging::writeLog("[Lua] [Warning] Error in function receptorHit.\n" + std::string(err.what()));
+	}
+}
+
+void Average4k::Screens::Menu::Gameplay::noteMiss()
 {
 }
 
@@ -128,6 +212,8 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 
 	_noteskinSheet->dontDelete = true;
 
+	// Lua functions
+
 	setupNote = lua->getState().get<sol::protected_function>("noteSetup");
 
 	if (!setupNote)
@@ -146,6 +232,42 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 		return;
 	}
 
+	hitNote = lua->getState().get<sol::protected_function>("hitNote");
+
+	if (!hitNote)
+	{
+		AvgEngine::Logging::writeLog("[Lua] Error in file: " + lua->path + "\n" + "No hitNote function found.");
+		leave();
+		return;
+	}
+
+	missNote = lua->getState().get<sol::protected_function>("missNote");
+
+	if (!missNote)
+	{
+		AvgEngine::Logging::writeLog("[Lua] Error in file: " + lua->path + "\n" + "No missNote function found.");
+		leave();
+		return;
+	}
+
+	receptorHit = lua->getState().get<sol::protected_function>("receptorHit");
+
+	if (!receptorHit)
+	{
+		AvgEngine::Logging::writeLog("[Lua] Error in file: " + lua->path + "\n" + "No receptorHit function found.");
+		leave();
+		return;
+	}
+
+	receptorRelease = lua->getState().get<sol::protected_function>("receptorRelease");
+
+	if (!receptorRelease)
+	{
+		AvgEngine::Logging::writeLog("[Lua] Error in file: " + lua->path + "\n" + "No receptorRelease function found.");
+		leave();
+		return;
+	}
+
 	// load receptors
 
 	noteWidth = noteWidth / _noteskinSheet->width; // opengl normalizes the texture coordinates
@@ -157,7 +279,7 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 	noteScaleW *= wScale;
 	noteScaleH *= hScale;
 
-	float startX = (AvgEngine::Render::Display::width / 2) - ((128 * noteScaleW) * 2);
+	float startX = (AvgEngine::Render::Display::width / 2) - ((128 * noteScaleW) * 1.5);
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -165,9 +287,11 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 		spr->tag = "_play_receptor_" + std::to_string(i);
 
 		spr->transform.x = ((startX + (((i * (128 * noteSpace))) * noteScaleW)) - (((64 * noteSpace) / 2) * noteScaleW));
-		spr->transform.y = 64 * hScale;
+		spr->transform.y = 128 * hScale;
 		spr->transform.w = (128 * noteScaleW);
 		spr->transform.h = (128 * noteScaleH);
+
+		spr->center = true;
 
 		spr->dontDelete = true;
 
@@ -227,6 +351,16 @@ void Average4k::Screens::Menu::Gameplay::start()
 
 void Average4k::Screens::Menu::Gameplay::load()
 {
+	// Judgement
+
+	Average4k::Helpers::JudgementHelper::Clear();
+
+	Average4k::Helpers::JudgementHelper::AddJudgement(22.5f, "Marvelous");
+	Average4k::Helpers::JudgementHelper::AddJudgement(45.0f, "Perfect");
+	Average4k::Helpers::JudgementHelper::AddJudgement(90.0f, "Great");
+	Average4k::Helpers::JudgementHelper::AddJudgement(135.0f, "Good");
+	Average4k::Helpers::JudgementHelper::AddJudgement(180.0f, "Bad");
+
 	// Stop all audio
 	for (AvgEngine::Audio::Channel* c : AvgEngine::External::BASS::Channels)
 	{
@@ -334,12 +468,32 @@ void Average4k::Screens::Menu::Gameplay::load()
 	// event handlers
 
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_KeyPress, [&](AvgEngine::Events::Event e) {
-		if (e.data == save->keybindData.keyPause)
-			leave();
+			if (e.data == save->keybindData.keyPause)
+				leave();
 
-		if (e.data == save->keybindData.keyRestart)
-			restart();
+			if (e.data == save->keybindData.keyRestart)
+				restart();
+
+			if (e.data == save->keybindData.key0)
+				noteHit(0);
+			if (e.data == save->keybindData.key1)
+				noteHit(1);
+			if (e.data == save->keybindData.key2)
+				noteHit(2);
+			if (e.data == save->keybindData.key3)
+				noteHit(3);
 		});
+
+	eManager->Subscribe(AvgEngine::Events::EventType::Event_KeyRelease, [&](AvgEngine::Events::Event e) {
+		if (e.data == save->keybindData.key0)
+			noteRelease(0);
+		if (e.data == save->keybindData.key1)
+			noteRelease(1);
+		if (e.data == save->keybindData.key2)
+			noteRelease(2);
+		if (e.data == save->keybindData.key3)
+			noteRelease(3);
+	});
 
 	hud = new Average4k::Objects::RenderTexture(&camera, AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
 
@@ -502,6 +656,7 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 		no->useXmod = !save->gameplayData.useCmod;
 
 		no->tag = "_play_note_" + std::to_string(n.beat);
+		no->noteTime = chart.GetTimeFromBeat(n.beat);
 
 		no->dontDelete = true;
 
@@ -517,6 +672,7 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 
 		no->transform.w = (128 * noteScaleW);
 		no->transform.h = (128 * noteScaleH);
+		no->center = true;
 
 		notes.push_back(no);
 
@@ -602,6 +758,40 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 		n->currentBeat = currentBeat;
 		n->currentTime = currentTime;
 
+		if (n->noteTime - currentTime < 0 && !n->missed)
+		{
+			bool noMiss = false;
+			if (n->hit)
+			{
+				// check if the note is a hold head
+
+				if (n->data.type == Data::Chart::Head)
+				{
+					Average4k::Objects::HoldNote* hn = (Average4k::Objects::HoldNote*)n;
+					if (hn->holding)
+						noMiss = true;
+					else
+					{
+						float diff = std::abs(hn->endHold - currentBeat);
+
+						if (diff <= 0.35) // grab back
+							noMiss = true;
+					}
+				}
+			}
+
+			if (!noMiss)
+			{
+				std::string judgement = Average4k::Helpers::JudgementHelper::GetJudgement(currentTime - n->noteTime);
+
+				if (judgement == "Miss")
+				{
+					n->missed = true;
+					noteMiss();
+				}
+			}
+		}
+
 		if (n->useXmod)
 			n->xmod = save->gameplayData.multiplierMod * scrollModifier;
 
@@ -609,7 +799,7 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 		{
 			float diff = n->endBeat - n->data.beat;
 
-			if (n->endBeat <= 0)
+			if (n->endBeat <= 0.001f || n->endTime <= 0.001f)
 				diff = 0;
 
 			if (n->data.beat + diff < currentBeat - 8)
@@ -624,7 +814,7 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 
 			float diff = n->endTime - t;
 
-			if (n->endBeat <= 0)
+			if (n->endBeat <= 0.001f || n->endTime <= 0.001f)
 				diff = 0;
 
 			if (t + diff < currentTime - 8)

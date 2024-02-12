@@ -42,6 +42,7 @@
     <ClCompile Include="SourceFiles\Average4k\Data\Chart\ChartFile.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Data\Chart\ChartFinder.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Data\Chart\Providers\StepFile.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Helpers\JudgementHelper.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Objects\BaseNote.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Objects\Notes\Hold.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Objects\UnicodeText.cpp" />
@@ -94,6 +95,7 @@
     <ClInclude Include="SourceFiles\Average4k\Data\Types\VideoData.h" />
     <ClInclude Include="SourceFiles\Average4k\Defines.h" />
     <ClInclude Include="SourceFiles\Average4k\Helpers\FileDiag.h" />
+    <ClInclude Include="SourceFiles\Average4k\Helpers\JudgementHelper.h" />
     <ClInclude Include="SourceFiles\Average4k\Helpers\QuickAdd.h" />
     <ClInclude Include="SourceFiles\Average4k\Helpers\StringTools.h" />
     <ClInclude Include="SourceFiles\Average4k\Helpers\TimeToScreen.h" />

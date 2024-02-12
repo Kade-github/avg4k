@@ -27,6 +27,10 @@ void Average4k::Objects::BaseNote::setPosition()
 void Average4k::Objects::BaseNote::draw()
 {
 	setPosition();
+	if (missed)
+		hit = true;
+	if (hit)
+		return;
 	AvgEngine::Base::Sprite::draw();
 
 	if (overlays.size() == 2)

@@ -10,7 +10,7 @@
 
 #include <iostream>
 
-namespace Averag4k::Data 
+namespace Average4k::Data
 {
 	enum ChartType {
 		Step = 0,
@@ -44,7 +44,7 @@ namespace Average4k::Data::Chart
 		float offset = 0;
 		float previewStart = 0;
 
-		Averag4k::Data::ChartType type = Averag4k::Data::ChartType::Unknown;
+		Average4k::Data::ChartType type = Average4k::Data::ChartType::Unknown;
 
 		bool workshop = false;
 	};

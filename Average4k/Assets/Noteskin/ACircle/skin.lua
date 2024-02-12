@@ -83,6 +83,10 @@ function setup()
     setJudgementTag("miss", "miss")
 end
 
+function hitNote()
+
+end
+
 function receptorSetup(rec, w, h)
     -- index 2,4
     rec:setSrcRec(4 * w, 2 * h, w, h)

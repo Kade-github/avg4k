@@ -93,6 +93,7 @@ void Average4k::Data::ChartFile::ConstructTimings()
 	if (timingPoints.size() != 0)
 	{
 		timingPoints.back().endTimestamp = INT_MAX;
+		timingPoints.back().endBeat = INT_MAX;
 	}
 
 	// SpeedPoints

@@ -30,7 +30,10 @@ namespace Average4k::Screens::Menu
 	public:
 		sol::protected_function setupNote;
 		sol::protected_function overlayUpdate;
-
+		sol::protected_function hitNote;
+		sol::protected_function missNote;
+		sol::protected_function receptorHit;
+		sol::protected_function receptorRelease;
 
 		AvgEngine::Audio::Channel* channel;
 
@@ -103,8 +106,9 @@ namespace Average4k::Screens::Menu
 		void restart();
 		void leave();
 
-		void hitNote();
-		void missNote();
+		void noteRelease(int lane);
+		void noteHit(int lane);
+		void noteMiss();
 
 		void loadAudio();
 		void loadChart();

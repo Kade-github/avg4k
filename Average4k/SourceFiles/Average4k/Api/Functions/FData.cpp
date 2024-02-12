@@ -46,6 +46,9 @@ sol::table Average4k::Api::Functions::FData::GetGameplayData()
 	data["xmod"] = g.multiplierMod;
 	data["noteskin"] = g.noteskin;
 	data["backgroundDim"] = g.backgroundDim;
+	data["downscroll"] = g.downscroll;
+	data["noteSpace"] = g.noteSpace;
+	data["startTime"] = g.startTime;
 
 	return data;
 }
@@ -103,6 +106,7 @@ void Average4k::Api::Functions::FData::SetVideoData(sol::table data)
 
 	if (v.height < 480)
 		v.height = 480;
+
 
 	A4kGame::Instance->Resize(v.width, v.height);
 
@@ -166,6 +170,15 @@ void Average4k::Api::Functions::FData::SetGameplayData(sol::table data)
 	g.useCmod = data["useCmod"];
 	g.noteskin = data["noteskin"];
 	g.backgroundDim = data["backgroundDim"];
+	g.downscroll = data["downscroll"];
+	g.noteSpace = data["noteSpace"];
+	g.startTime = data["startTime"];
+
+	if (g.startTime < 0.01)
+		g.startTime = 0.01;
+
+	if (g.noteSpace < 0)
+		g.noteSpace = 0;
 
 	if (g.constantMod < 400)
 		g.constantMod = 400;

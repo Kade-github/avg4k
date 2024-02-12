@@ -313,7 +313,7 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 	noteScaleW *= wScale;
 	noteScaleH *= hScale;
 
-	float startX = (AvgEngine::Render::Display::width / 2) - ((128 * noteScaleW) * 1.5);
+	float startX = (AvgEngine::Render::Display::width / 2) - ((128 * noteScaleW) * 1.25);
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -322,6 +322,8 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 
 		spr->transform.x = ((startX + (((i * (128 * noteSpace))) * noteScaleW)) - (((64 * noteSpace) / 2) * noteScaleW));
 		spr->transform.y = 128 * hScale;
+		if (downscroll)
+			spr->transform.y = AvgEngine::Render::Display::height - (128 * hScale);
 		spr->transform.w = (128 * noteScaleW);
 		spr->transform.h = (128 * noteScaleH);
 
@@ -423,6 +425,9 @@ void Average4k::Screens::Menu::Gameplay::load()
 	AvgEngine::External::BASS::Channels.clear();
 
 	save = &A4kGame::gameInstance->saveData;
+
+	noteSpace = save->gameplayData.noteSpace;
+	downscroll = save->gameplayData.downscroll;
 
 	std::string p = "Assets/Noteskin/" + save->gameplayData.noteskin + "/skin.lua";
 
@@ -684,6 +689,7 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 		}
 
 		no->useXmod = !save->gameplayData.useCmod;
+		no->downscroll = downscroll;
 
 		no->tag = "_play_note_" + std::to_string(n.beat);
 		no->noteTime = chart.GetTimeFromBeat(n.beat);

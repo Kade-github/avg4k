@@ -1,9 +1,20 @@
+local accText = nil
+local comboText = nil
+
+local judgeText = nil
+
+local marvTex = nil
+local perfTex = nil
+local greatTex = nil
+local goodTex = nil
+local badTex = nil
+
 function setup()
     centerX = (1920.0 / 2.0) * getWidthScale()
 
     centerY = (1080.0 / 2.0) * getHeightScale()
 
-    local comboText = Text.new(24, 24, "FuturaBoldOutlined.fnt", "Combo: 0", math.floor(38 * getHeightScale()))
+    comboText = Text.new(24, 24, "FuturaBoldOutlined.fnt", "Combo: 0", math.floor(38 * getHeightScale()))
 
     comboText.y = centerY
     comboText.x = centerX
@@ -14,22 +25,22 @@ function setup()
 
     currentMenu:addObject(comboText)
 
-    local judgementText = Text.new(0,0, "FuturaBoldOutlined.fnt", "judge", math.floor(38 * getHeightScale()))
+    judgeText = Text.new(0,0, "FuturaBoldOutlined.fnt", "judge", math.floor(38 * getHeightScale()))
 
-    judgementText.center = true
+    judgeText.center = true
 
-    judgementText.tag = "judgement"
+    judgeText.tag = "judgement"
 
-    judgementText.y = centerY - math.floor(38 * getHeightScale())
-    judgementText.x = centerX
+    judgeText.y = centerY - math.floor(38 * getHeightScale())
+    judgeText.x = centerX
 
-    currentMenu:addObject(judgementText)
+    currentMenu:addObject(judgeText)
 
-    local accuracy = Text.new(24, 24, "FuturaBoldOutlined.fnt", "100%", math.floor(42 * getHeightScale()))
+    accText = Text.new(24, 24, "FuturaBoldOutlined.fnt", "100%", math.floor(42 * getHeightScale()))
 
-    accuracy.tag = "accuracy"
+    accText.tag = "accuracy"
 
-    currentMenu:addObject(accuracy)
+    currentMenu:addObject(accText)
 
     local judgementHeader = Text.new(24, 24 + comboText.height + math.floor(200 * getHeightScale()), "FuturaBoldOutlined.fnt", "Judgements", math.floor(42 * getHeightScale()))
 
@@ -37,56 +48,89 @@ function setup()
 
     currentMenu:addObject(judgementHeader)
 
-    local marvelousText = Text.new(24, judgementHeader.y + judgementHeader.height + math.floor(10 * getHeightScale()), "FuturaBoldOutlined.fnt", "Marvelous: 0", math.floor(24 * getHeightScale()))
+    marvTex = Text.new(24, 24 + comboText.height + math.floor(200 * getHeightScale()) + judgementHeader.height, "FuturaBoldOutlined.fnt", "Marvelous: 0", math.floor(38 * getHeightScale()))
 
-    marvelousText.tag = "marv"
+    marvTex.tag = "_ui_marv"
 
-    currentMenu:addObject(marvelousText)
+    currentMenu:addObject(marvTex)
 
-    local perfectText = Text.new(24, marvelousText.y + marvelousText.height + math.floor(10 * getHeightScale()), "FuturaBoldOutlined.fnt", "Perfect: 0", math.floor(24 * getHeightScale()))
+    perfTex = Text.new(24, 24 + comboText.height + math.floor(200 * getHeightScale()) + judgementHeader.height + marvTex.height, "FuturaBoldOutlined.fnt", "Perfect: 0", math.floor(38 * getHeightScale()))
 
-    perfectText.tag = "perf"
+    perfTex.tag = "_ui_perf"
 
-    currentMenu:addObject(perfectText)
+    currentMenu:addObject(perfTex)
 
-    local greatText = Text.new(24, perfectText.y + perfectText.height + math.floor(10 * getHeightScale()), "FuturaBoldOutlined.fnt", "Great: 0", math.floor(24 * getHeightScale()))
+    greatTex = Text.new(24, 24 + comboText.height + math.floor(200 * getHeightScale()) + judgementHeader.height + marvTex.height + perfTex.height, "FuturaBoldOutlined.fnt", "Great: 0", math.floor(38 * getHeightScale()))
 
-    greatText.tag = "great"
+    greatTex.tag = "_ui_great"
 
-    currentMenu:addObject(greatText)
+    currentMenu:addObject(greatTex)
 
-    local goodText = Text.new(24, greatText.y + greatText.height + math.floor(10 * getHeightScale()), "FuturaBoldOutlined.fnt", "Good: 0", math.floor(24 * getHeightScale()))
+    goodTex = Text.new(24, 24 + comboText.height + math.floor(200 * getHeightScale()) + judgementHeader.height + marvTex.height + perfTex.height + greatTex.height, "FuturaBoldOutlined.fnt", "Good: 0", math.floor(38 * getHeightScale()))
 
-    goodText.tag = "good"
+    goodTex.tag = "_ui_good"
 
-    currentMenu:addObject(goodText)
+    currentMenu:addObject(goodTex)
 
-    local badText = Text.new(24, goodText.y + goodText.height + math.floor(10 * getHeightScale()), "FuturaBoldOutlined.fnt", "Bad: 0", math.floor(24 * getHeightScale()))
+    badTex = Text.new(24, 24 + comboText.height + math.floor(200 * getHeightScale()) + judgementHeader.height + marvTex.height + perfTex.height + greatTex.height + goodTex.height, "FuturaBoldOutlined.fnt", "Bad: 0", math.floor(38 * getHeightScale()))
 
-    badText.tag = "bad"
+    badTex.tag = "_ui_bad"
 
-    currentMenu:addObject(badText)
+    currentMenu:addObject(badTex)
+
+    rotateReceptors(false)
 
     setNoteSize(256,256)
-
-    rotateReceptors(false) -- cuz bar
-
-    setAccuracyTag("accuracy")
-    setJudgementTextTag("judgement")
-    setComboTag("combo")
-
-    setJudgementTag("marvelous", "marv")
-    setJudgementTag("perfect", "perf")
-    setJudgementTag("great", "great")
-    setJudgementTag("good", "good")
-    setJudgementTag("bad", "bad")
-    setJudgementTag("miss", "miss")
 end
 
-function hitNote(type, lane, judge)
+function start()
+    accText.text = "100%"
+    comboText.text = ""
+
+    marvTex.text = "Marvelous: 0"
+    perfTex.text = "Perfect: 0"
+    greatTex.text = "Great: 0"
+    goodTex.text = "Good: 0"
+    badTex.text = "Bad: 0"
+
+    judgeText.text = ""
 end
 
-function missNote()
+function hitNote(type, lane, judge, combo, acc)
+
+    accText.text = string.format("%.2f", acc * 100.0) .. "%"
+
+    comboText.text = tostring(combo)
+
+    judgeText.text = judge
+
+    print(judge)
+
+    if judge == "Marvelous" then
+        marvTex.text = "Marvelous: " .. (tonumber(marvTex.text:sub(12)) + 1)
+        judgeText:setColor(73,247,255, 1)
+    elseif judge == "Perfect" then
+        perfTex.text = "Perfect: " .. (tonumber(perfTex.text:sub(9)) + 1)
+        judgeText:setColor(255,252,0, 1)
+    elseif judge == "Great" then
+        greatTex.text = "Great: " .. (tonumber(greatTex.text:sub(7)) + 1)
+        judgeText:setColor(54,255,0, 1)
+    elseif judge == "Good" then
+        goodTex.text = "Good: " .. (tonumber(goodTex.text:sub(6)) + 1)
+        judgeText:setColor(255,148,0, 1)
+    elseif judge == "Bad" then
+        badTex.text = "Bad: " .. (tonumber(badTex.text:sub(5)) + 1)
+        judgeText:setColor(83,0,0, 1)
+    end
+end
+
+function missNote(combo, acc)
+    comboText.text = "0"
+
+    judgeText.text = "Miss"
+    judgeText:setColor(255,0,0, 1)
+
+    accText.text = string.format("%.2f", acc * 100.0) .. "%"
 end
 
 function receptorSetup(rec, w, h)

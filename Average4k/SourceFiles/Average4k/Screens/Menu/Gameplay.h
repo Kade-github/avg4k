@@ -70,6 +70,7 @@ namespace Average4k::Screens::Menu
 		std::vector<Average4k::Data::Chart::Note> cNotes;
 
 		bool rotateReceptors = true;
+		bool downscroll = false;
 
 		bool hasStarted = false;
 

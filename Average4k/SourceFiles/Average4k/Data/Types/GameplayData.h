@@ -33,15 +33,19 @@ namespace Average4k::Data::Types
 		GameplayData() = default;
 
 		bool useCmod = true;
+		bool downscroll = false;
 
 		int constantMod = 700;
 		float multiplierMod = 1.0f;
 
+		float startTime = 2.0f;
+
 		float backgroundDim = 0.65f;
+		float noteSpace = 1.1f;
 
 		std::string noteskin = "AArrow";
 
-		MSGPACK_DEFINE_ARRAY(useCmod, constantMod, multiplierMod, noteskin, backgroundDim);
+		MSGPACK_DEFINE_ARRAY(useCmod, constantMod, multiplierMod, noteskin, backgroundDim, downscroll, noteSpace);
 	};
 }
 

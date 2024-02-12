@@ -360,7 +360,19 @@ function create_gameplay()
 
     currentMenu:addObject(backgroundDim)
 
-    view = {key0, key1, key2, key3, keyPause, keyRestart, useCmod, cmod, xmod, noteskin, backgroundDim}
+    local noteSpace = Text.new(20,backgroundDim.y + backgroundDim.height + 20, "ArialUnicode.fnt", "Note Space : " .. string.format("%.2f", gameplayTable["noteSpace"]), 42)
+
+    currentMenu:addObject(noteSpace)
+
+    local startTime = Text.new(20,noteSpace.y + noteSpace.height + 20, "ArialUnicode.fnt", "Start Time : " .. string.format("%.2f", gameplayTable["startTime"]) .. " seconds.", 42)
+
+    currentMenu:addObject(startTime)
+
+    local downscroll = Text.new(20,startTime.y + startTime.height + 20, "ArialUnicode.fnt", "Downscroll : " .. tostring(gameplayTable["downscroll"]), 42)
+
+    currentMenu:addObject(downscroll)
+
+    view = {key0, key1, key2, key3, keyPause, keyRestart, useCmod, cmod, xmod, downscroll, noteskin, backgroundDim, noteSpace, startTime}
 
     logo.width = math.floor(700 * getWidthScale())
     logo.height = math.floor(314 * getHeightScale())
@@ -535,6 +547,15 @@ function keyPress(data)
                     setGameplayData(gameplayTable)
                     create_gameplay()
                 end
+
+                -- downscroll
+
+                if selection == 10 then
+                    gameplayTable["downscroll"] = not gameplayTable["downscroll"]
+                    print(tostring(gameplayTable["downscroll"]))
+                    setGameplayData(gameplayTable)
+                    create_gameplay()
+                end
             end
         elseif currentView == 4 then
             setSkin(skins[selection])
@@ -621,7 +642,7 @@ function keyPress(data)
                 setGameplayData(gameplayTable)
                 create_gameplay()
             end
-            if selection == 10 then
+            if selection == 11 then
                 noteskinIndex = noteskinIndex - 1
                 if noteskinIndex < 1 then
                     noteskinIndex = #noteskins
@@ -631,10 +652,28 @@ function keyPress(data)
                 create_gameplay()
             end
 
-            if selection == 11 then
+            if selection == 12 then
                 gameplayTable["backgroundDim"] = gameplayTable["backgroundDim"] - 0.01
                 if gameplayTable["backgroundDim"] < 0 then
                     gameplayTable["backgroundDim"] = 1
+                end
+                setGameplayData(gameplayTable)
+                create_gameplay()
+            end
+
+            if selection == 13 then
+                gameplayTable["noteSpace"] = gameplayTable["noteSpace"] - 0.01
+                if gameplayTable["noteSpace"] < 1 then
+                    gameplayTable["noteSpace"] = 1
+                end
+                setGameplayData(gameplayTable)
+                create_gameplay()
+            end
+
+            if selection == 14 then
+                gameplayTable["startTime"] = gameplayTable["startTime"] - 0.01
+                if gameplayTable["startTime"] < 1 then
+                    gameplayTable["startTime"] = 1
                 end
                 setGameplayData(gameplayTable)
                 create_gameplay()
@@ -689,7 +728,7 @@ function keyPress(data)
                 setGameplayData(gameplayTable)
                 create_gameplay()
             end
-            if selection == 10 then
+            if selection == 11 then
                 noteskinIndex = noteskinIndex + 1
                 if noteskinIndex > #noteskins then
                     noteskinIndex = 1
@@ -699,11 +738,23 @@ function keyPress(data)
                 create_gameplay()
             end
 
-            if selection == 11 then
+            if selection == 12 then
                 gameplayTable["backgroundDim"] = gameplayTable["backgroundDim"] + 0.01
                 if gameplayTable["backgroundDim"] > 1 then
                     gameplayTable["backgroundDim"] = 0
                 end
+                setGameplayData(gameplayTable)
+                create_gameplay()
+            end
+
+            if selection == 13 then
+                gameplayTable["noteSpace"] = gameplayTable["noteSpace"] + 0.01
+                setGameplayData(gameplayTable)
+                create_gameplay()
+            end
+
+            if selection == 14 then
+                gameplayTable["startTime"] = gameplayTable["startTime"] + 0.01
                 setGameplayData(gameplayTable)
                 create_gameplay()
             end
@@ -774,6 +825,22 @@ function draw()
                 p.y = -1000
             end    
         end
+    elseif currentView == 3 then
+        for i = 1, #view do
+            local away = i - selection
+
+            local p = view[i]
+
+            p.y = logo.y + logo.height + math.floor(300 * getHeightScale()) + (away * math.floor(40 * getHeightScale()))
+
+            if p.y < logo.y + logo.height + math.floor(64 * getHeightScale()) then
+                p.y = -1000
+            end
+    
+            if p.y > math.floor(900 * getHeightScale()) then
+                p.y = -1000
+            end    
+        end
     end
 
     if frameSkip < 60  then
@@ -819,6 +886,24 @@ function draw()
                 setGameplayData(gameplayTable)
                 create_gameplay()
             end
+
+            if selection == 13 then
+                gameplayTable["noteSpace"] = gameplayTable["noteSpace"] - 0.01
+                if gameplayTable["noteSpace"] < 1 then
+                    gameplayTable["noteSpace"] = 1
+                end
+                setGameplayData(gameplayTable)
+                create_gameplay()
+            end
+
+            if selection == 14 then
+                gameplayTable["startTime"] = gameplayTable["startTime"] - 0.01
+                if gameplayTable["startTime"] < 1 then
+                    gameplayTable["startTime"] = 1
+                end
+                setGameplayData(gameplayTable)
+                create_gameplay()
+            end
         end
     end
 
@@ -858,6 +943,18 @@ function draw()
                 if gameplayTable["backgroundDim"] > 1 then
                     gameplayTable["backgroundDim"] = 0
                 end
+                setGameplayData(gameplayTable)
+                create_gameplay()
+            end
+
+            if selection == 13 then
+                gameplayTable["noteSpace"] = gameplayTable["noteSpace"] + 0.1
+                setGameplayData(gameplayTable)
+                create_gameplay()
+            end
+
+            if selection == 14 then
+                gameplayTable["startTime"] = gameplayTable["startTime"] + 0.1
                 setGameplayData(gameplayTable)
                 create_gameplay()
             end

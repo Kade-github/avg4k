@@ -73,6 +73,9 @@ void Average4k::Objects::HoldNote::draw()
 	{
 		Render::Rect r = { transform.x, transform.y + (transform.h / 2) + (transform.h * i), transform.w, transform.h };
 
+		if (downscroll)
+			r.y = transform.y - (transform.h * i);
+
 		float p2 = (float)i / (float)amount;
 		float p3 = (float)(i + 1) / (float)amount;
 
@@ -91,24 +94,49 @@ void Average4k::Objects::HoldNote::draw()
 		// [4] bl
 		// [5] br
 
-		if (i == 0)
+		if (!downscroll)
 		{
-			v[0].y = transform.y + (transform.h / 2); // top left
-			v[0].x = transform.x;
-			v[2].y = transform.y + (transform.h / 2); // top right
-			v[2].x = transform.x + transform.w;
-			v[3].y = transform.y + (transform.h / 2); // top right
-			v[3].x = transform.x + transform.w;
+			if (i == 0)
+			{
+				v[0].y = transform.y + (transform.h / 2); // top left
+				v[0].x = transform.x;
+				v[2].y = transform.y + (transform.h / 2); // top right
+				v[2].x = transform.x + transform.w;
+				v[3].y = transform.y + (transform.h / 2); // top right
+				v[3].x = transform.x + transform.w;
+			}
+			else
+			{
+				std::vector<Render::Vertex>& last = vertices.back();
+				v[0].y = last[1].y; // set the top left to the bottom left y
+				v[0].x = last[1].x; // set the top left to the bottom left x
+				v[2].y = last[5].y; // set the top right to the bottom right y
+				v[2].x = last[5].x; // set the top right to the bottom right x
+				v[3].y = last[5].y; // set the top right to the bottom right y
+				v[3].x = last[5].x; // set the top right to the bottom right x
+			}
 		}
 		else
 		{
-			std::vector<Render::Vertex>& last = vertices.back();
-			v[0].y = last[1].y; // set the top left to the bottom left y
-			v[0].x = last[1].x; // set the top left to the bottom left x
-			v[2].y = last[5].y; // set the top right to the bottom right y
-			v[2].x = last[5].x; // set the top right to the bottom right x
-			v[3].y = last[5].y; // set the top right to the bottom right y
-			v[3].x = last[5].x; // set the top right to the bottom right x
+			if (i == 0)
+			{
+				v[1].y = transform.y - (transform.h / 2); // bottom left
+				v[1].x = transform.x;
+				v[4].y = transform.y - (transform.h / 2); // bottom left
+				v[4].x = transform.x;
+				v[5].y = transform.y - (transform.h / 2); // bottom right
+				v[5].x = transform.x + transform.w;
+			}
+			else
+			{
+				std::vector<Render::Vertex>& last = vertices.back();
+				v[1].y = last[0].y; // set the bottom left to the top left y
+				v[1].x = last[0].x; // set the bottom left to the top left x
+				v[4].y = last[0].y; // set the bottom left to the top left y
+				v[4].x = last[0].x; // set the bottom left to the top left x
+				v[5].y = last[2].y; // set the bottom right to the top right y
+				v[5].x = last[2].x; // set the bottom right to the top right x
+			}
 		}
 
 		// hold cliping

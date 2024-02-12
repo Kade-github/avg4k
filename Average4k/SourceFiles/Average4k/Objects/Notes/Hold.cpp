@@ -18,9 +18,6 @@ void Average4k::Objects::HoldNote::draw()
 
 	float endPosition = Average4k::Helpers::TimeToScreen::YOffset(cmod, endTime - noteTime);
 
-	if (xmod > 0)
-		endPosition = Average4k::Helpers::TimeToScreen::YOffsetXMod(xmod, endBeat - data.beat);
-
 	setPosition(); // Objects::BaseNote
 
 	// welcome to the jungle, we got fun and games, we got everything you want, honey we know the names, we are the people that can find, whatever you may need, 
@@ -29,9 +26,11 @@ void Average4k::Objects::HoldNote::draw()
 
 	// (aka holds)
 
-	float div = transform.h;
 
-	int amount = static_cast<int>((endPosition + div) / div);
+	int amount = 1 + (endPosition / (transform.h));
+
+	if (useXmod)
+		amount = 1 + ((endBeat - data.beat) * (transform.h * xmod)) / (transform.h);
 
 	if (amount < 0)
 		amount = 0;

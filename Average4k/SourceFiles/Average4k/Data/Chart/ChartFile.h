@@ -40,6 +40,9 @@ namespace Average4k::Data
 
 		std::vector<Chart::Difficulty> difficulties = {};
 
+		int cacheIndex = 0;
+		Chart::TimingPoint cache;
+
 		ChartFile() = default;
 
 		virtual void Parse(std::wstring path, bool metadataOnly) {};
@@ -107,8 +110,6 @@ namespace Average4k::Data
 			}
 			return sp;
 		}
-
-
 
 		float GetTimeFromBeat(float beat)
 		{

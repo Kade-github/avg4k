@@ -11,6 +11,21 @@
 
 #include <AvgEngine/Utils/Paths.h>
 
+void Average4k::Screens::Menu::Gameplay::restart()
+{
+	hasStarted = false;
+	channel->Stop();
+	for (auto n : notes)
+	{
+		removeObject(n);
+		n->texture->dontDelete = true;
+		delete n;
+	}
+	notes.clear();
+
+	start();
+}
+
 void Average4k::Screens::Menu::Gameplay::leave()
 {
 	// Stop all audio
@@ -154,6 +169,8 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 		spr->transform.w = (128 * noteScaleW);
 		spr->transform.h = (128 * noteScaleH);
 
+		spr->dontDelete = true;
+
 		if (rotateReceptors)
 			switch (i)
 			{
@@ -190,13 +207,21 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 
 void Average4k::Screens::Menu::Gameplay::start()
 {
-	// start audio
-	channel->Play();
+	currentTime = -1;
+	hasStarted = true;
 	cNotes = chart.difficulties[_diff].notes;
 	holds[0] = nullptr;
 	holds[1] = nullptr;
 	holds[2] = nullptr;
 	holds[3] = nullptr;
+
+	// reset timing cache
+	chart.cache = {};
+	chart.cacheIndex = 0;
+
+	start_time = std::chrono::steady_clock::now();
+	fakeBeat = 0;
+	currentBeat = -1;
 	
 }
 
@@ -311,6 +336,9 @@ void Average4k::Screens::Menu::Gameplay::load()
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_KeyPress, [&](AvgEngine::Events::Event e) {
 		if (e.data == save->keybindData.keyPause)
 			leave();
+
+		if (e.data == save->keybindData.keyRestart)
+			restart();
 		});
 
 	hud = new Average4k::Objects::RenderTexture(&camera, AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
@@ -350,7 +378,33 @@ void Average4k::Screens::Menu::Gameplay::draw()
 	{
 		currentTime = channel->GetPos();
 		currentBeat = chart.GetBeatFromTime(currentTime);
+	}
+	else
+	{
+		std::chrono::duration diff = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start_time);
 
+		Average4k::Data::Chart::TimingPoint tp = chart.timingPoints[0];
+
+		float secondInABeat = tp.startBeat + (2 * (tp.bpm / 60.0f));
+
+		float t = (float)(diff.count()) / 1000.0f;
+
+		fakeBeat = tp.startBeat + (t * (tp.bpm / 60.0f));
+
+		float p = fakeBeat / secondInABeat;
+
+		float sBeat = -secondInABeat;
+
+		currentBeat = std::lerp(sBeat, 0, p);
+		currentTime = currentBeat / (tp.bpm / 60.0f);
+
+		if (currentBeat >= 0)
+			channel->Play();
+	}
+
+
+	if (hasStarted)
+	{
 		spawnNotes();
 		updateNotes();
 	}
@@ -406,7 +460,9 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 
 	Average4k::Data::Chart::Note n = cNotes[0];
 
-	while (n.beat < currentBeat + 8)
+	bool spawn = n.beat < currentBeat + 24;
+
+	while (spawn)
 	{
 
 		if (n.type == 3) // skip ends
@@ -447,7 +503,7 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 
 		no->tag = "_play_note_" + std::to_string(n.beat);
 
-		no->texture->dontDelete = true;
+		no->dontDelete = true;
 
 		Average4k::Api::Stubs::LuaNote lspr = Average4k::Api::Stubs::LuaNote(no);
 
@@ -549,36 +605,36 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 		if (n->useXmod)
 			n->xmod = save->gameplayData.multiplierMod * scrollModifier;
 
-		int lane = n->data.lane;
-
-		if (n->data.type == Data::Chart::Tap)
+		if (!save->gameplayData.useCmod)
 		{
-			if (n->data.beat < currentBeat)
+			float diff = n->endBeat - n->data.beat;
+
+			if (n->endBeat <= 0)
+				diff = 0;
+
+			if (n->data.beat + diff < currentBeat - 8)
+			{
+				toRemove.push_back(n);
+				continue;
+			}
+		}
+		else
+		{
+			float t = n->noteTime;
+
+			float diff = n->endTime - t;
+
+			if (n->endBeat <= 0)
+				diff = 0;
+
+			if (t + diff < currentTime - 8)
 			{
 				toRemove.push_back(n);
 				continue;
 			}
 		}
 
-		if (n->data.type == Data::Chart::Head)
-		{
-			if (n->data.beat < currentBeat)
-			{
-				Average4k::Objects::HoldNote* hn = (Average4k::Objects::HoldNote*)n;
-				hn->holding = true;
-			}
-		}
-
-		float diff = n->endBeat - n->data.beat;
-
-		if (n->endBeat <= 0)
-			diff = 0;
-
-		if (n->data.beat + diff < currentBeat - 8)
-		{
-			toRemove.push_back(n);
-			continue;
-		}
+		int lane = n->data.lane;
 
 		n->transform.y = receptors[lane]->transform.y;
 		n->transform.x = receptors[lane]->transform.x;

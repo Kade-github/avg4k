@@ -94,7 +94,7 @@ LONG PvectoredExceptionHandler(
 	_EXCEPTION_POINTERS* ExceptionInfo
 )
 {
-	if (ExceptionInfo->ExceptionRecord->ExceptionCode == 0x40010006 || ExceptionInfo->ExceptionRecord->ExceptionCode == 0xE24C4A02 || ExceptionInfo->ExceptionRecord->ExceptionCode == 0x80000003)
+	if (ExceptionInfo->ExceptionRecord->ExceptionCode == 0x40010006 || ExceptionInfo->ExceptionRecord->ExceptionCode == 0xE24C4A02 || ExceptionInfo->ExceptionRecord->ExceptionCode == 0x80000003 || ExceptionInfo->ExceptionRecord->ExceptionCode == 0xE06D7363)
 		return EXCEPTION_CONTINUE_SEARCH;
 
 
@@ -104,7 +104,7 @@ LONG PvectoredExceptionHandler(
 
 long WINAPI UnhandledExceptionFilterHandler(LPEXCEPTION_POINTERS ex) {
 
-	if (ex->ExceptionRecord->ExceptionCode == 0x40010006 || ex->ExceptionRecord->ExceptionCode == 0xE24C4A02 || ex->ExceptionRecord->ExceptionCode == 0x80000003)
+	if (ex->ExceptionRecord->ExceptionCode == 0x40010006 || ex->ExceptionRecord->ExceptionCode == 0xE24C4A02 || ex->ExceptionRecord->ExceptionCode == 0x80000003 || ex->ExceptionRecord->ExceptionCode == 0xE06D7363)
 		return EXCEPTION_CONTINUE_SEARCH;
 
 	CrashDmp(ex);
@@ -239,28 +239,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			e.type = AvgEngine::Events::EventType::Event_MouseScroll;
 			e.data = yoffset;
 			A4kGame::Instance->QueueEvent(e);
-		});
-
-	glfwSetWindowIconifyCallback(game->Window, [](GLFWwindow* window, int iconified)
-		{
-			Data::Types::VideoData& v = A4kGame::gameInstance->saveData.videoData;
-			// minimize window
-			if (iconified)
-			{
-				AvgEngine::Render::Display::Fullscreen(window, 0);
-			}
-			else
-			{
-				// restore window
-				if (v.fullscreen)
-				{
-					AvgEngine::Render::Display::Fullscreen(window, 1);
-				}
-				else if (v.borderless)
-				{
-					AvgEngine::Render::Display::Fullscreen(window, 2);
-				}
-			}
 		});
 
 	AvgEngine::Logging::writeLog("[Main] Starting game...");

@@ -75,6 +75,11 @@ namespace Average4k::Screens::Menu
 
 		std::map<std::string, std::string> judgementTags = {};
 
+		bool hasStarted = false;
+
+		std::chrono::steady_clock::time_point start_time;
+		float fakeBeat = 0;
+
 		int combo = 0;
 		int hitNotes = 0;
 		int totalNotes = 0;
@@ -95,7 +100,7 @@ namespace Average4k::Screens::Menu
 			_diff = diff - 1; // - 1 cuz lua
 		}
 
-
+		void restart();
 		void leave();
 
 		void hitNote();

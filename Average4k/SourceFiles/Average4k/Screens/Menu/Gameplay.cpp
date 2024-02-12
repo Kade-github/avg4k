@@ -184,6 +184,7 @@ void Average4k::Screens::Menu::Gameplay::loadAudio()
 	}
 
 	channel = AvgEngine::External::BASS::CreateChannel("audio", strPath, false);
+	channel->ConvertToFX();
 }
 
 void Average4k::Screens::Menu::Gameplay::loadChart()
@@ -367,6 +368,7 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 
 void Average4k::Screens::Menu::Gameplay::start()
 {
+	musicHasPlayed = false;
 	currentTime = -1;
 	hasStarted = true;
 	cNotes = chart.difficulties[_diff].notes;
@@ -521,6 +523,23 @@ void Average4k::Screens::Menu::Gameplay::load()
 				noteHit(2);
 			if (e.data == save->keybindData.key3)
 				noteHit(3);
+
+			if (e.data == GLFW_KEY_F10)
+				channel->RateChange(channel->rate + 0.25f);
+			
+			if (e.data == GLFW_KEY_F9)
+				channel->RateChange(channel->rate - 0.25f);
+
+			if (e.data == GLFW_KEY_F5)
+			{
+				if (musicHasPlayed)
+				{
+					if (channel->isPlaying)
+						channel->Stop();
+					else
+						channel->Play(false);
+				}
+			}
 		});
 
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_KeyRelease, [&](AvgEngine::Events::Event e) {
@@ -568,7 +587,7 @@ void Average4k::Screens::Menu::Gameplay::draw()
 		currentTime = channel->GetPos();
 		currentBeat = chart.GetBeatFromTime(currentTime);
 	}
-	else
+	else if (!musicHasPlayed)
 	{
 		std::chrono::duration diff = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start_time);
 
@@ -588,7 +607,10 @@ void Average4k::Screens::Menu::Gameplay::draw()
 		currentTime = currentBeat / (tp.bpm / 60.0f);
 
 		if (currentBeat >= 0)
+		{
+			musicHasPlayed = true;
 			channel->Play();
+		}
 	}
 
 
@@ -672,7 +694,7 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 			continue;
 		}
 
-		float cmod = save->gameplayData.constantMod * hScale;
+		float cmod = (save->gameplayData.constantMod / channel->rate) * hScale;
 		float xmod = save->gameplayData.multiplierMod * hScale;
 
 		Average4k::Objects::BaseNote* no;
@@ -837,6 +859,8 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 
 		if (n->useXmod)
 			n->xmod = save->gameplayData.multiplierMod * scrollModifier;
+
+		n->cmod = (save->gameplayData.constantMod / channel->rate) * hScale;
 
 		if (!save->gameplayData.useCmod)
 		{

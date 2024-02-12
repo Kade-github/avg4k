@@ -21,7 +21,15 @@ void Average4k::Objects::HoldNote::draw()
 	transform.x -= transform.w / 2;
 	transform.y -= transform.h / 2;
 
-	std::vector<AvgEngine::Render::Vertex> receptor = AvgEngine::Render::DisplayHelper::RectToVertex({ transform.x, transform.y + (transform.h / 2), transform.w, transform.h}, src);
+	using namespace AvgEngine;
+
+	float w = src.w;
+	float h = src.h;
+
+	Render::Rect bodySrc = { sheet_col * w, sheet_row * h, w,h };
+	Render::Rect endSrc = { sheet_end_col * w, sheet_end_row * h, w,h };
+
+	std::vector<AvgEngine::Render::Vertex> receptor = AvgEngine::Render::DisplayHelper::RectToVertex({ transform.x, transform.y + (transform.h / 2), transform.w, transform.h }, bodySrc);
 
 	float endPosition = Average4k::Helpers::TimeToScreen::YOffset(cmod, endTime - noteTime);
 
@@ -42,13 +50,7 @@ void Average4k::Objects::HoldNote::draw()
 	if (amount < 0)
 		amount = 0;
 
-	using namespace AvgEngine;
 
-	float w = src.w;
-	float h = src.h;
-
-	Render::Rect bodySrc = { sheet_col * w, sheet_row * h, w,h };
-	Render::Rect endSrc = { sheet_end_col * w, sheet_end_row * h, w,h };
 
 	if (!downscroll) // flip
 		endSrc = { sheet_end_col * w, (sheet_end_row + 1) * h, w,-h };
@@ -120,11 +122,11 @@ void Average4k::Objects::HoldNote::draw()
 		{
 			if (i == 0)
 			{
-				v[1].y = transform.y - (transform.h / 2); // bottom left
+				v[1].y = transform.y + (transform.h / 2); // bottom left
 				v[1].x = transform.x;
-				v[4].y = transform.y - (transform.h / 2); // bottom left
+				v[4].y = transform.y + (transform.h / 2); // bottom left
 				v[4].x = transform.x;
-				v[5].y = transform.y - (transform.h / 2); // bottom right
+				v[5].y = transform.y + (transform.h / 2); // bottom right
 				v[5].x = transform.x + transform.w;
 			}
 			else
@@ -143,34 +145,31 @@ void Average4k::Objects::HoldNote::draw()
 
 		if (p2 <= progress)
 		{
-			if (!downscroll) // top
+			if (!downscroll) 
 			{
-				v[0].y = receptor[0].y;
-				v[2].y = receptor[2].y;
-				v[3].y = receptor[3].y;
+				v[0].y = receptor[0].y; // tl
+				v[2].y = receptor[2].y; // tr
+				v[3].y = receptor[3].y; // tr
 			}
-			else // bottom
+			else
 			{
-				v[1].y = receptor[1].y;
-				v[4].y = receptor[4].y;
-				v[5].y = receptor[5].y;
+				// no fuckin idea why you gotta do this shit
+				v[0].y = receptor[0].y; // tl
+				v[2].y = receptor[0].y; // tr
+				v[3].y = receptor[0].y; // tr
+
+				v[1].y = receptor[0].y; // bl
+				v[4].y = receptor[0].y; // bl
+				v[5].y = receptor[0].y; // br
+
 			}
 		}
 
-		if (p3 <= progress)
+		if (p3 <= progress && !downscroll)
 		{
-			if (!downscroll) // bottom
-			{
-				v[1].y = v[0].y;
-				v[4].y = v[0].y;
-				v[5].y = v[2].y;
-			}
-			else // top
-			{
-				v[0].y = v[1].y;
-				v[2].y = v[5].y;
-				v[3].y = v[5].y;
-			}
+			v[1].y = receptor[0].y; // bl
+			v[4].y = receptor[0].y; // bl
+			v[5].y = receptor[2].y; // br
 		}
 
 		vertices.push_back(v);
@@ -182,14 +181,12 @@ void Average4k::Objects::HoldNote::draw()
 		camera->addDrawCall(c);
 	}
 
+
 	transform.x += transform.w / 2;
 	transform.y += transform.h / 2;
 
 	if (!hasHeld)
 		Base::Sprite::draw();
-
-	if (progress > 0 && progress < 1)
-		A4kGame::gameInstance->DrawOutlinedDebugText(receptor[0].x, receptor[0].y - 32, std::to_string(progress), 32);
 
 
 }

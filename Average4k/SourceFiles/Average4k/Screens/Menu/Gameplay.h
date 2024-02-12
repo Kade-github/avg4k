@@ -48,7 +48,7 @@ namespace Average4k::Screens::Menu
 		AvgEngine::Base::Sprite* hud_spr;
 		AvgEngine::Base::Sprite* playfield_spr;
 
-
+		bool musicHasPlayed = false;
 		bool stop = false;
 
 		float noteScaleW = 1;

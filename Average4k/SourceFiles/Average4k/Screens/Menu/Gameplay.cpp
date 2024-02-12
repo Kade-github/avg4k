@@ -65,16 +65,9 @@ void Average4k::Screens::Menu::Gameplay::noteRelease(int lane)
 		if (n->data.type != Data::Chart::Head)
 			continue;
 
-		std::string judgement = Average4k::Helpers::JudgementHelper::GetJudgement(currentTime - n->noteTime);
-
-		if (judgement == "Miss")
-			continue;
-
 		Average4k::Objects::HoldNote* hn = (Average4k::Objects::HoldNote*)n;
 		hn->holding = false;
-
-		Average4k::Api::Stubs::LuaSprite lspr = Average4k::Api::Stubs::LuaSprite(receptors[lane]);
-
+		hn->endHold = currentBeat;
 
 		break;
 	}
@@ -119,7 +112,29 @@ void Average4k::Screens::Menu::Gameplay::noteHit(int lane)
 
 		if (n->hit)
 		{
-			sol::protected_function_result result = hitNote(n->data.type, n->data.lane, judgement);
+			combo++;
+			totalNotes++;
+
+			if (judgement == "Marvelous")
+				hitNotes++;
+			else if (judgement == "Perfect")
+				hitNotes += 0.85;
+			else if (judgement == "Great")
+				hitNotes += 0.75;
+			else if (judgement == "Good")
+			{
+				combo = 0;
+				hitNotes += 0.6;
+			}
+			else if (judgement == "Bad")
+			{
+				combo = 0;
+				hitNotes += 0.5;
+			}
+
+			sol::protected_function_result result = hitNote(n->data.type, n->data.lane, judgement, combo, (float)hitNotes / (float)totalNotes);
+
+
 
 			if (!result.valid())
 			{
@@ -143,6 +158,16 @@ void Average4k::Screens::Menu::Gameplay::noteHit(int lane)
 
 void Average4k::Screens::Menu::Gameplay::noteMiss()
 {
+	combo = 0;
+	totalNotes++;
+
+	sol::protected_function_result result = missNote(combo, (float)hitNotes / (float)totalNotes);
+
+	if (!result.valid())
+	{
+		sol::error err = result;
+		AvgEngine::Logging::writeLog("[Lua] [Warning] Error in function missNote.\n" + std::string(err.what()));
+	}
 }
 
 void Average4k::Screens::Menu::Gameplay::loadAudio()
@@ -268,6 +293,15 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 		return;
 	}
 
+	startChart = lua->getState().get<sol::protected_function>("start");
+
+	if (!startChart)
+	{
+		AvgEngine::Logging::writeLog("[Lua] Error in file: " + lua->path + "\n" + "No start function found.");
+		leave();
+		return;
+	}
+
 	// load receptors
 
 	noteWidth = noteWidth / _noteskinSheet->width; // opengl normalizes the texture coordinates
@@ -346,7 +380,22 @@ void Average4k::Screens::Menu::Gameplay::start()
 	start_time = std::chrono::steady_clock::now();
 	fakeBeat = 0;
 	currentBeat = -1;
-	
+
+	// reset stats
+
+	combo = 0;
+	hitNotes = 0;
+	totalNotes = 0;
+
+	// start chart
+
+	sol::protected_function_result result = startChart();
+
+	if (!result.valid())
+	{
+		sol::error err = result;
+		AvgEngine::Logging::writeLog("[Lua] Error in function start.\n" + std::string(err.what()));
+	}
 }
 
 void Average4k::Screens::Menu::Gameplay::load()
@@ -355,11 +404,11 @@ void Average4k::Screens::Menu::Gameplay::load()
 
 	Average4k::Helpers::JudgementHelper::Clear();
 
-	Average4k::Helpers::JudgementHelper::AddJudgement(22.5f, "Marvelous");
-	Average4k::Helpers::JudgementHelper::AddJudgement(45.0f, "Perfect");
-	Average4k::Helpers::JudgementHelper::AddJudgement(90.0f, "Great");
-	Average4k::Helpers::JudgementHelper::AddJudgement(135.0f, "Good");
 	Average4k::Helpers::JudgementHelper::AddJudgement(180.0f, "Bad");
+	Average4k::Helpers::JudgementHelper::AddJudgement(135.0f, "Good");
+	Average4k::Helpers::JudgementHelper::AddJudgement(90.0f, "Great");
+	Average4k::Helpers::JudgementHelper::AddJudgement(45.0f, "Perfect");
+	Average4k::Helpers::JudgementHelper::AddJudgement(22.5f, "Marvelous");
 
 	// Stop all audio
 	for (AvgEngine::Audio::Channel* c : AvgEngine::External::BASS::Channels)
@@ -396,10 +445,7 @@ void Average4k::Screens::Menu::Gameplay::load()
 
 	auto setup = lua->getState().get<sol::optional<sol::protected_function>>("setup");
 
-	lua->getState().set_function("setComboTag", Average4k::Api::Functions::FGameplay::SetComboTag);
-	lua->getState().set_function("setJudgementTag", Average4k::Api::Functions::FGameplay::SetJudgementTag);
-	lua->getState().set_function("setJudgementTextTag", Average4k::Api::Functions::FGameplay::SetJudgementTextTag);
-	lua->getState().set_function("setAccuracyTag", Average4k::Api::Functions::FGameplay::SetAccuracyTag);
+
 	lua->getState().set_function("setNoteSize", Average4k::Api::Functions::FGameplay::SetNoteSize);
 	lua->getState().set_function("rotateReceptors", Average4k::Api::Functions::FGameplay::RotateReceptors);
 
@@ -419,18 +465,6 @@ void Average4k::Screens::Menu::Gameplay::load()
 	else
 	{
 		AvgEngine::Logging::writeLog("[Lua] Error in file: " + lua->path + "\n" + "No setup function found.");
-		leave();
-		return;
-	}
-
-	// find based on tag
-	comboText = (Average4k::Objects::UnicodeText*)findObject(comboTag);
-	judgementText = (Average4k::Objects::UnicodeText*)findObject(judgementTextTag);
-	accuracyText = (Average4k::Objects::UnicodeText*)findObject(accuracyTag);
-
-	if (!comboText || !judgementText || !accuracyText)
-	{
-		AvgEngine::Logging::writeLog("[Gameplay] [Error] Combo, Judgement or Accuracy text not found, returning to main menu.");
 		leave();
 		return;
 	}
@@ -514,10 +548,6 @@ void Average4k::Screens::Menu::Gameplay::load()
 
 	addObject(hud_spr);
 	addObject(playfield_spr);
-
-	comboText->text = L"";
-	judgementText->text = L"";
-	accuracyText->text = L"100%";
 
 	start();
 
@@ -774,10 +804,17 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 					{
 						float diff = std::abs(hn->endHold - currentBeat);
 
-						if (diff <= 0.35) // grab back
+						if (diff <= 0.5) // grab back
+							noMiss = true;
+
+						float endDiff = hn->endTime - currentTime;
+
+						if (endDiff <= 0.05)
 							noMiss = true;
 					}
 				}
+				else
+					noMiss = true;
 			}
 
 			if (!noMiss)

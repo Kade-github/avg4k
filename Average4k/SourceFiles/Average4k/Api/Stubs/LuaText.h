@@ -99,7 +99,7 @@ namespace Average4k::Api::Stubs
 			return _base->size;
 		}
 
-		void setColor(int r, int g, int b, int a)
+		void setColor(int r, int g, int b, float a)
 		{
 			if (_base == NULL)
 				return;
@@ -179,7 +179,7 @@ namespace Average4k::Api::Stubs
 				"text", sol::property(&LuaText::getText, &LuaText::setText),
 				"font", sol::property(&LuaText::getFont, &LuaText::setFont),
 				"size", sol::property(&LuaText::getSize, &LuaText::setSize),
-				"color", &LuaText::setColor,
+				"setColor", &LuaText::setColor,
 				"angle", sol::property(&LuaText::getAngle, &LuaText::setAngle),
 				"center", sol::property(&LuaText::getCentered, &LuaText::setCentered),
 				sol::base_classes, sol::bases<LuaObject>()

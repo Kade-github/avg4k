@@ -35,6 +35,8 @@ namespace Average4k::Screens::Menu
 		sol::protected_function receptorHit;
 		sol::protected_function receptorRelease;
 
+		sol::protected_function startChart;
+
 		AvgEngine::Audio::Channel* channel;
 
 		Average4k::Api::AvgLuaFile* lua;
@@ -46,9 +48,6 @@ namespace Average4k::Screens::Menu
 		AvgEngine::Base::Sprite* hud_spr;
 		AvgEngine::Base::Sprite* playfield_spr;
 
-		Average4k::Objects::UnicodeText* comboText;
-		Average4k::Objects::UnicodeText* judgementText;
-		Average4k::Objects::UnicodeText* accuracyText;
 
 		bool stop = false;
 
@@ -71,12 +70,6 @@ namespace Average4k::Screens::Menu
 		std::vector<Average4k::Data::Chart::Note> cNotes;
 
 		bool rotateReceptors = true;
-
-		std::string comboTag = "";
-		std::string judgementTextTag = "";
-		std::string accuracyTag = "";
-
-		std::map<std::string, std::string> judgementTags = {};
 
 		bool hasStarted = false;
 

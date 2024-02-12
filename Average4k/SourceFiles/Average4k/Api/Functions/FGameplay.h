@@ -16,10 +16,6 @@ namespace Average4k::Api::Functions
 	public:
 		static void RotateReceptors(bool rotate);
 		static void SetNoteSize(float width, float height);
-		static void SetAccuracyTag(std::string tag);
-		static void SetComboTag(std::string tag);
-		static void SetJudgementTag(std::string judge, std::string tag);
-		static void SetJudgementTextTag(std::string tag);
 	};
 }
 

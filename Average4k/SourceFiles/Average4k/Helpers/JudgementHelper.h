@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <string>
 #include <map>
 
@@ -42,6 +43,7 @@ namespace Average4k::Helpers
 				if (abs <= judgement.first)
 				{
 					judge = judgement.second;
+					break;
 				}
 			}
 			return judge;

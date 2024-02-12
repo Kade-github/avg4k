@@ -74,7 +74,7 @@ void Average4k::Objects::HoldNote::draw()
 		Render::Rect r = { transform.x, transform.y + (transform.h / 2) + (transform.h * i), transform.w, transform.h };
 
 		if (downscroll)
-			r.y = transform.y - (transform.h * i);
+			r.y = (transform.y + (transform.h / 2)) - (transform.h * i);
 
 		float p2 = (float)i / (float)amount;
 		float p3 = (float)(i + 1) / (float)amount;

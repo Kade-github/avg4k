@@ -81,78 +81,6 @@ void Average4k::Screens::Menu::Gameplay::noteRelease(int lane)
 
 void Average4k::Screens::Menu::Gameplay::noteHit(int lane)
 {
-	for (auto n : notes)
-	{
-		bool hitBefore = n->hit;
-		if (n->data.lane != lane || n->data.type == Data::Chart::Fake)
-			continue;
-
-		std::string judgement = Average4k::Helpers::JudgementHelper::GetJudgement(currentTime - n->noteTime);
-
-		if (judgement == "Miss" && !hitBefore)
-			continue;
-
-		Average4k::Objects::HoldNote* hn = NULL;
-		switch (n->data.type)
-		{
-		case Data::Chart::Tap:
-			if (hitBefore)
-				continue;
-			n->hit = true;
-			break;
-		case Data::Chart::Head:
-			hn = (Average4k::Objects::HoldNote*)n;
-			n->hit = true;
-			hn->holding = true;
-			break;
-		case Data::Chart::Mine:
-			if (hitBefore)
-				continue;
-			n->hit = true;
-			hitNotes -= 0.25;
-			continue;
-		}
-
-		if (judgement == "Miss")
-			continue;
-
-		if (hitBefore)
-			continue;
-
-		if (n->hit)
-		{
-			combo++;
-			totalNotes++;
-
-			if (judgement == "Marvelous")
-				hitNotes++;
-			else if (judgement == "Perfect")
-				hitNotes += 0.925;
-			else if (judgement == "Great")
-				hitNotes += 0.7;
-			else if (judgement == "Good")
-			{
-				hitNotes += 0.35;
-			}
-			else if (judgement == "Bad")
-			{
-				combo = 0;
-				hitNotes += 0.1;
-			}
-
-			sol::protected_function_result result = hitNote(n->data.type, n->data.lane, judgement, combo, (float)hitNotes / (float)totalNotes);
-
-
-
-			if (!result.valid())
-			{
-				sol::error err = result;
-				AvgEngine::Logging::writeLog("[Lua] [Warning] Error in function hitNote for note type " + std::to_string(n->data.type) + " at beat " + std::to_string(n->data.beat) + ".\n" + std::string(err.what()));
-			}
-		}
-		break;
-	}
-
 	lua->getState().collect_garbage();
 	sol::protected_function_result result = receptorHit(Average4k::Api::Stubs::LuaSprite(receptors[lane]), noteWidth, noteHeight);
 
@@ -161,6 +89,102 @@ void Average4k::Screens::Menu::Gameplay::noteHit(int lane)
 	{
 		sol::error err = result;
 		AvgEngine::Logging::writeLog("[Lua] [Warning] Error in function receptorHit.\n" + std::string(err.what()));
+	}
+
+	Average4k::Objects::BaseNote* hit = nullptr;
+	std::string j = "Miss";
+
+	for (auto n : notes)
+	{
+		if (n->data.lane != lane || n->data.type == Data::Chart::Fake)
+			continue;
+
+		std::string judgement = Average4k::Helpers::JudgementHelper::GetJudgement(currentTime - n->noteTime);
+
+		if (judgement == "Miss")
+			continue;
+
+		if (hit == nullptr)
+		{
+			hit = n;
+			j = judgement;
+		}
+		else
+		{
+			float d = std::abs(n->noteTime - currentTime);
+			float d2 = std::abs(hit->noteTime - currentTime);
+
+			if (d < d2)
+			{
+				hit = n;
+				j = judgement;
+			}
+		}
+
+	}
+
+	bool hitBefore = hit->hit;
+
+	if ((j == "Miss" && !hitBefore) || hit == nullptr)
+		return;
+
+	Average4k::Objects::HoldNote* hn = NULL;
+	switch (hit->data.type)
+	{
+	case Data::Chart::Tap:
+		if (hitBefore)
+			return;
+		hit->hit = true;
+		break;
+	case Data::Chart::Head:
+		hn = (Average4k::Objects::HoldNote*)hit;
+		hit->hit = true;
+		hn->holding = true;
+		break;
+	case Data::Chart::Mine:
+		if (hitBefore)
+			return;
+		hit->hit = true;
+		hitNotes -= 0.25;
+		return;
+	}
+
+	if (j == "Miss")
+		return;
+
+	if (hitBefore)
+		return;
+
+	if (hit->hit)
+	{
+		combo++;
+		totalNotes++;
+
+		if (j == "Marvelous")
+			hitNotes++;
+		else if (j == "Perfect")
+			hitNotes += 0.925;
+		else if (j == "Great")
+			hitNotes += 0.7;
+		else if (j == "Good")
+		{
+			hitNotes += 0.35;
+		}
+		else if (j == "Bad")
+		{
+			combo = 0;
+			hitNotes += 0.1;
+		}
+
+		sol::protected_function_result result = hitNote(hit->data.type, hit->data.lane, j, combo, (float)hitNotes / (float)totalNotes);
+
+
+
+		if (!result.valid())
+		{
+			sol::error err = result;
+			AvgEngine::Logging::writeLog("[Lua] [Warning] Error in function hitNote for note type " + std::to_string(hit->data.type) + " at beat " + std::to_string(hit->data.beat) + ".\n" + std::string(err.what()));
+		}
 	}
 }
 
@@ -664,7 +688,12 @@ void Average4k::Screens::Menu::Gameplay::draw()
 
 	if (hasStarted)
 	{
-		spawnNotes();
+		static bool oFps = false;
+
+		oFps = !oFps;
+
+		if (oFps)
+			spawnNotes();
 
 		updateNotes();
 	}
@@ -735,7 +764,7 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 
 	Average4k::Data::Chart::Note n = cNotes[0];
 
-	bool spawn = n.beat < currentBeat + 24;
+	bool spawn = n.beat < currentBeat + 6;
 
 	if (spawn)
 	{
@@ -806,6 +835,9 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 			return;
 
 		n = cNotes[0];
+
+		if (n.beat < currentBeat + 6)
+			spawnNotes();
 	}
 }
 

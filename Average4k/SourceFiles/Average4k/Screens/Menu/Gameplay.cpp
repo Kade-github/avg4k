@@ -123,9 +123,12 @@ void Average4k::Screens::Menu::Gameplay::noteHit(int lane)
 
 	}
 
+	if (hit == nullptr)
+		return;
+
 	bool hitBefore = hit->hit;
 
-	if ((j == "Miss" && !hitBefore) || hit == nullptr)
+	if ((j == "Miss" && !hitBefore))
 		return;
 
 	Average4k::Objects::HoldNote* hn = NULL;
@@ -154,6 +157,9 @@ void Average4k::Screens::Menu::Gameplay::noteHit(int lane)
 
 	if (hitBefore)
 		return;
+
+	if (botplay)
+		j = "Perfect";
 
 	if (hit->hit)
 	{

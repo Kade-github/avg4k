@@ -2,7 +2,7 @@
 // strand.hpp
 // ~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -263,6 +263,13 @@ public:
 
   /// Request the strand to invoke the given function object.
   /**
+   * Do not call this function directly. It is intended for use with the
+   * execution::execute customisation point.
+   *
+   * For example:
+   * @code boost::asio::strand<my_executor_type> ex = ...;
+   * execution::execute(ex, my_function_object); @endcode
+   *
    * This function is used to ask the strand to execute the given function
    * object on its underlying executor. The function object will be executed
    * according to the properties of the underlying executor.
@@ -273,14 +280,7 @@ public:
    */
   template <typename Function>
   typename constraint<
-#if defined(BOOST_ASIO_NO_DEPRECATED) \
-  || defined(GENERATING_DOCUMENTATION)
-    traits::execute_member<const Executor&, Function>::is_valid,
-#else // defined(BOOST_ASIO_NO_DEPRECATED)
-      //   || defined(GENERATING_DOCUMENTATION)
     execution::can_execute<const Executor&, Function>::value,
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-       //   || defined(GENERATING_DOCUMENTATION)
     void
   >::type execute(BOOST_ASIO_MOVE_ARG(Function) f) const
   {
@@ -442,11 +442,6 @@ private:
 /*@{*/
 
 /// Create a @ref strand object for an executor.
-/**
- * @param ex An executor.
- *
- * @returns A strand constructed with the specified executor.
- */
 template <typename Executor>
 inline strand<Executor> make_strand(const Executor& ex,
     typename constraint<
@@ -457,12 +452,6 @@ inline strand<Executor> make_strand(const Executor& ex,
 }
 
 /// Create a @ref strand object for an execution context.
-/**
- * @param ctx An execution context, from which an executor will be obtained.
- *
- * @returns A strand constructed with the execution context's executor, obtained
- * by performing <tt>ctx.get_executor()</tt>.
- */
 template <typename ExecutionContext>
 inline strand<typename ExecutionContext::executor_type>
 make_strand(ExecutionContext& ctx,
@@ -495,11 +484,7 @@ struct equality_comparable<strand<Executor> >
 template <typename Executor, typename Function>
 struct execute_member<strand<Executor>, Function,
     typename enable_if<
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-      traits::execute_member<const Executor&, Function>::is_valid
-#else // defined(BOOST_ASIO_NO_DEPRECATED)
       execution::can_execute<const Executor&, Function>::value
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
     >::type>
 {
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);

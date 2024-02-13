@@ -33,13 +33,13 @@ namespace container {
 template <class PseudoReference>
 struct operator_arrow_proxy
 {
-   BOOST_CONTAINER_FORCEINLINE operator_arrow_proxy(const PseudoReference &px)
+   operator_arrow_proxy(const PseudoReference &px)
       :  m_value(px)
    {}
 
    typedef PseudoReference element_type;
 
-   BOOST_CONTAINER_FORCEINLINE PseudoReference* operator->() const { return &m_value; }
+   PseudoReference* operator->() const { return &m_value; }
 
    mutable PseudoReference m_value;
 };
@@ -47,13 +47,13 @@ struct operator_arrow_proxy
 template <class T>
 struct operator_arrow_proxy<T&>
 {
-   BOOST_CONTAINER_FORCEINLINE operator_arrow_proxy(T &px)
+   operator_arrow_proxy(T &px)
       :  m_value(px)
    {}
 
    typedef T element_type;
 
-   BOOST_CONTAINER_FORCEINLINE T* operator->() const { return const_cast<T*>(&m_value); }
+   T* operator->() const { return const_cast<T*>(&m_value); }
 
    T &m_value;
 };
@@ -69,29 +69,29 @@ class transform_iterator
       , typename UnaryFunction::result_type>
 {
    public:
-   BOOST_CONTAINER_FORCEINLINE explicit transform_iterator(const Iterator &it, const UnaryFunction &f = UnaryFunction())
+   explicit transform_iterator(const Iterator &it, const UnaryFunction &f = UnaryFunction())
       :  UnaryFunction(f), m_it(it)
    {}
 
-   BOOST_CONTAINER_FORCEINLINE explicit transform_iterator()
+   explicit transform_iterator()
       :  UnaryFunction(), m_it()
    {}
 
    //Constructors
-   BOOST_CONTAINER_FORCEINLINE transform_iterator& operator++()
+   transform_iterator& operator++()
    { increment();   return *this;   }
 
-      BOOST_CONTAINER_FORCEINLINE transform_iterator operator++(int)
+   transform_iterator operator++(int)
    {
       transform_iterator result (*this);
       increment();
       return result;
    }
 
-   BOOST_CONTAINER_FORCEINLINE friend bool operator== (const transform_iterator& i, const transform_iterator& i2)
+   friend bool operator== (const transform_iterator& i, const transform_iterator& i2)
    { return i.equal(i2); }
 
-   BOOST_CONTAINER_FORCEINLINE friend bool operator!= (const transform_iterator& i, const transform_iterator& i2)
+   friend bool operator!= (const transform_iterator& i, const transform_iterator& i2)
    { return !(i == i2); }
 
 /*
@@ -104,69 +104,69 @@ class transform_iterator
    friend bool operator>= (const transform_iterator& i, const transform_iterator& i2)
    { return !(i < i2); }
 */
-   BOOST_CONTAINER_FORCEINLINE friend typename Iterator::difference_type operator- (const transform_iterator& i, const transform_iterator& i2)
+   friend typename Iterator::difference_type operator- (const transform_iterator& i, const transform_iterator& i2)
    { return i2.distance_to(i); }
 
    //Arithmetic
-   BOOST_CONTAINER_FORCEINLINE transform_iterator& operator+=(typename Iterator::difference_type off)
+   transform_iterator& operator+=(typename Iterator::difference_type off)
    {  this->advance(off); return *this;   }
 
-   BOOST_CONTAINER_FORCEINLINE transform_iterator operator+(typename Iterator::difference_type off) const
+   transform_iterator operator+(typename Iterator::difference_type off) const
    {
       transform_iterator other(*this);
       other.advance(off);
       return other;
    }
 
-   BOOST_CONTAINER_FORCEINLINE friend transform_iterator operator+(typename Iterator::difference_type off, const transform_iterator& right)
+   friend transform_iterator operator+(typename Iterator::difference_type off, const transform_iterator& right)
    {  return right + off; }
 
-   BOOST_CONTAINER_FORCEINLINE transform_iterator& operator-=(typename Iterator::difference_type off)
+   transform_iterator& operator-=(typename Iterator::difference_type off)
    {  this->advance(-off); return *this;   }
 
-   BOOST_CONTAINER_FORCEINLINE transform_iterator operator-(typename Iterator::difference_type off) const
+   transform_iterator operator-(typename Iterator::difference_type off) const
    {  return *this + (-off);  }
 
-   BOOST_CONTAINER_FORCEINLINE typename UnaryFunction::result_type operator*() const
+   typename UnaryFunction::result_type operator*() const
    { return dereference(); }
 
-   BOOST_CONTAINER_FORCEINLINE operator_arrow_proxy<typename UnaryFunction::result_type>
+   operator_arrow_proxy<typename UnaryFunction::result_type>
       operator->() const
    { return operator_arrow_proxy<typename UnaryFunction::result_type>(dereference());  }
 
-   BOOST_CONTAINER_FORCEINLINE Iterator & base()
+   Iterator & base()
    {  return m_it;   }
 
-   BOOST_CONTAINER_FORCEINLINE const Iterator & base() const
+   const Iterator & base() const
    {  return m_it;   }
 
    private:
    Iterator m_it;
 
-   BOOST_CONTAINER_FORCEINLINE void increment()
+   void increment()
    { ++m_it; }
 
-   BOOST_CONTAINER_FORCEINLINE void decrement()
+   void decrement()
    { --m_it; }
 
-   BOOST_CONTAINER_FORCEINLINE bool equal(const transform_iterator &other) const
+   bool equal(const transform_iterator &other) const
    {  return m_it == other.m_it;   }
 
-   BOOST_CONTAINER_FORCEINLINE bool less(const transform_iterator &other) const
+   bool less(const transform_iterator &other) const
    {  return other.m_it < m_it;   }
 
-   BOOST_CONTAINER_FORCEINLINE typename UnaryFunction::result_type dereference() const
+   typename UnaryFunction::result_type dereference() const
    { return UnaryFunction::operator()(*m_it); }
 
-   BOOST_CONTAINER_FORCEINLINE void advance(typename Iterator::difference_type n)
+   void advance(typename Iterator::difference_type n)
    {  boost::container::iterator_advance(m_it, n); }
 
-   BOOST_CONTAINER_FORCEINLINE typename Iterator::difference_type distance_to(const transform_iterator &other)const
+   typename Iterator::difference_type distance_to(const transform_iterator &other)const
    {  return boost::container::iterator_distance(other.m_it, m_it); }
 };
 
 template <class Iterator, class UnaryFunc>
-BOOST_CONTAINER_FORCEINLINE transform_iterator<Iterator, UnaryFunc>
+transform_iterator<Iterator, UnaryFunc>
 make_transform_iterator(Iterator it, UnaryFunc fun)
 {
    return transform_iterator<Iterator, UnaryFunc>(it, fun);

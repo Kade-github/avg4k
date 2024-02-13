@@ -9,9 +9,7 @@
 #ifndef BOOST_RATIO_CONFIG_HPP
 #define BOOST_RATIO_CONFIG_HPP
 
-#include <boost/ratio/detail/requires_cxx11.hpp>
 #include <boost/config.hpp>
-#include <boost/config/pragma_message.hpp>
 #include <boost/cstdint.hpp>
 
 
@@ -26,7 +24,7 @@
 
 
 #if !defined BOOST_RATIO_VERSION
-#define BOOST_RATIO_VERSION 2
+#define BOOST_RATIO_VERSION 1
 #else
 #if BOOST_RATIO_VERSION!=1  && BOOST_RATIO_VERSION!=2
 #error "BOOST_RATIO_VERSION must be 1 or 2"
@@ -92,10 +90,7 @@
 #define BOOST_RATIO_DENOMINATOR_IS_OUT_OF_RANGE "ratio denominator is out of range"
 #endif
 
-#if defined(BOOST_RATIO_EXTENSIONS)
 
-BOOST_PRAGMA_MESSAGE("Support for BOOST_RATIO_EXTENSIONS is deprecated and will be removed when Boost.Ratio is implemented in terms of <ratio>.")
-
-#endif
+//#define BOOST_RATIO_EXTENSIONS
 
 #endif  // header

@@ -6,6 +6,8 @@
 #include "FData.h"
 #include "../../A4kGame.h"
 
+#include "../../Helpers/SteamHelper.h"
+
 sol::table Average4k::Api::Functions::FData::GetSkinData()
 {
 	Data::Types::SkinData& s = A4kGame::gameInstance->saveData.skinData;
@@ -213,4 +215,9 @@ void Average4k::Api::Functions::FData::SetSkin(std::string skinName)
 	e.type = AvgEngine::Events::EventType::Event_ReloadFont;
 
 	A4kGame::gameInstance->QueueEvent(e);
+}
+
+std::string Average4k::Api::Functions::FData::GetSteamName()
+{
+	return Average4k::Helpers::SteamHelper::Nickname;
 }

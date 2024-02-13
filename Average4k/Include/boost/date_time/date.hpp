@@ -21,7 +21,7 @@ namespace date_time {
   /*!
     The date template represents an interface shell for a date class
     that is based on a year-month-day system such as the gregorian
-    or ISO 8601 systems.  It provides basic operations to enable calculation
+    or iso systems.  It provides basic operations to enable calculation
     and comparisons.
 
     <b>Theory</b>

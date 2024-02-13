@@ -22,9 +22,8 @@
 #endif
 
 #include <boost/config.hpp>
-#include <boost/intrusive/detail/workaround.hpp>
+#include <boost/core/no_exceptions_support.hpp>
 #include <boost/move/detail/placement_new.hpp>
-#include <boost/move/detail/force_ptr.hpp>
 
 namespace boost {
 namespace intrusive {
@@ -55,20 +54,20 @@ class array_initializer
    {
       char *init_buf = (char*)rawbuf;
       std::size_t i = 0;
-      BOOST_INTRUSIVE_TRY{
+      BOOST_TRY{
          for(; i != N; ++i){
             ::new(init_buf, boost_move_new_t()) T(init);
             init_buf += sizeof(T);
          }
       }
-      BOOST_INTRUSIVE_CATCH(...){
+      BOOST_CATCH(...){
          while(i--){
             init_buf -= sizeof(T);
-            move_detail::force_ptr<T*>(init_buf)->~T();
+            ((T*)init_buf)->~T();
          }
-         BOOST_INTRUSIVE_RETHROW;
+         BOOST_RETHROW;
       }
-      BOOST_INTRUSIVE_CATCH_END
+      BOOST_CATCH_END
    }
 
    operator T* ()
@@ -82,7 +81,7 @@ class array_initializer
       char *init_buf = (char*)rawbuf + N*sizeof(T);
       for(std::size_t i = 0; i != N; ++i){
          init_buf -= sizeof(T);
-         move_detail::force_ptr<T*>(init_buf)->~T();
+         ((T*)init_buf)->~T();
       }
    }
 

@@ -2,7 +2,7 @@
 // cancellation_signal.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -21,6 +21,8 @@
 #include <utility>
 #include <boost/asio/cancellation_type.hpp>
 #include <boost/asio/detail/cstddef.hpp>
+#include <boost/asio/detail/thread_context.hpp>
+#include <boost/asio/detail/thread_info_base.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/detail/variadic_templates.hpp>
 
@@ -110,7 +112,17 @@ public:
   {
   }
 
-  BOOST_ASIO_DECL ~cancellation_signal();
+  ~cancellation_signal()
+  {
+    if (handler_)
+    {
+      std::pair<void*, std::size_t> mem = handler_->destroy();
+      detail::thread_info_base::deallocate(
+          detail::thread_info_base::cancellation_signal_tag(),
+          detail::thread_context::top_of_thread_call_stack(),
+          mem.first, mem.second);
+    }
+  }
 
   /// Emits the signal and causes invocation of the slot's handler, if any.
   void emit(cancellation_type_t type)
@@ -240,7 +252,18 @@ public:
   /**
    * Destroys any existing handler in the slot.
    */
-  BOOST_ASIO_DECL void clear();
+  void clear()
+  {
+    if (handler_ != 0 && *handler_ != 0)
+    {
+      std::pair<void*, std::size_t> mem = (*handler_)->destroy();
+      detail::thread_info_base::deallocate(
+          detail::thread_info_base::cancellation_signal_tag(),
+          detail::thread_context::top_of_thread_call_stack(),
+          mem.first, mem.second);
+      *handler_ = 0;
+    }
+  }
 
   /// Returns whether the slot is connected to a signal.
   BOOST_ASIO_CONSTEXPR bool is_connected() const BOOST_ASIO_NOEXCEPT
@@ -277,14 +300,49 @@ private:
   {
   }
 
-  BOOST_ASIO_DECL std::pair<void*, std::size_t> prepare_memory(
-      std::size_t size, std::size_t align);
+  std::pair<void*, std::size_t> prepare_memory(
+      std::size_t size, std::size_t align)
+  {
+    assert(handler_);
+    std::pair<void*, std::size_t> mem;
+    if (*handler_)
+    {
+      mem = (*handler_)->destroy();
+      *handler_ = 0;
+    }
+    if (size > mem.second
+        || reinterpret_cast<std::size_t>(mem.first) % align != 0)
+    {
+      if (mem.first)
+      {
+        detail::thread_info_base::deallocate(
+            detail::thread_info_base::cancellation_signal_tag(),
+            detail::thread_context::top_of_thread_call_stack(),
+            mem.first, mem.second);
+      }
+      mem.first = detail::thread_info_base::allocate(
+          detail::thread_info_base::cancellation_signal_tag(),
+          detail::thread_context::top_of_thread_call_stack(),
+          size, align);
+      mem.second = size;
+    }
+    return mem;
+  }
 
   struct auto_delete_helper
   {
     std::pair<void*, std::size_t> mem;
 
-    BOOST_ASIO_DECL ~auto_delete_helper();
+    ~auto_delete_helper()
+    {
+      if (mem.first)
+      {
+        detail::thread_info_base::deallocate(
+            detail::thread_info_base::cancellation_signal_tag(),
+            detail::thread_context::top_of_thread_call_stack(),
+            mem.first, mem.second);
+      }
+    }
   };
 
   detail::cancellation_handler_base** handler_;
@@ -299,9 +357,5 @@ inline cancellation_slot cancellation_signal::slot() BOOST_ASIO_NOEXCEPT
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
-
-#if defined(BOOST_ASIO_HEADER_ONLY)
-# include <boost/asio/impl/cancellation_signal.ipp>
-#endif // defined(BOOST_ASIO_HEADER_ONLY)
 
 #endif // BOOST_ASIO_CANCELLATION_SIGNAL_HPP

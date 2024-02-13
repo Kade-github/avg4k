@@ -162,15 +162,8 @@ class new_allocator
 
    //!Deallocates previously allocated memory.
    //!Never throws
-   void deallocate(pointer ptr, size_type n) BOOST_NOEXCEPT_OR_NOTHROW
-   {
-      (void)n;
-      # if __cpp_sized_deallocation
-      ::operator delete((void*)ptr, n * sizeof(T));
-      #else
-      ::operator delete((void*)ptr);
-      # endif
-   }
+   void deallocate(pointer ptr, size_type) BOOST_NOEXCEPT_OR_NOTHROW
+     { ::operator delete((void*)ptr); }
 
    //!Returns the maximum number of elements that could be allocated.
    //!Never throws

@@ -6,7 +6,9 @@
 #ifndef _AVGDEFINE_H_
 #define _AVGDEFINE_H_
 
-#define A_VERSION "b14"
+#define _WINSOCKAPI_
+#define A_VERSION "nb14"
 #define A_SHEADER "ASaveFormat1.2"
+#define A_PRODUCTION 1
 
 #endif _AVGDEFINE_H_

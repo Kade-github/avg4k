@@ -2,7 +2,7 @@
 // execution/outstanding_work.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -159,12 +159,6 @@ template <int I = 0>
 struct outstanding_work_t
 {
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
-# if defined(BOOST_ASIO_NO_DEPRECATED)
-  template <typename T>
-  BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = (
-      is_executor<T>::value));
-# else // defined(BOOST_ASIO_NO_DEPRECATED)
   template <typename T>
   BOOST_ASIO_STATIC_CONSTEXPR(bool,
     is_applicable_property_v = (
@@ -178,9 +172,7 @@ struct outstanding_work_t
             is_executor<T>::value,
             false_type,
             is_scheduler<T>
-          >::type::value
-      ));
-# endif // defined(BOOST_ASIO_NO_DEPRECATED)
+          >::type::value));
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = false);
@@ -418,12 +410,6 @@ template <int I = 0>
 struct untracked_t
 {
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
-# if defined(BOOST_ASIO_NO_DEPRECATED)
-  template <typename T>
-  BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = (
-      is_executor<T>::value));
-# else // defined(BOOST_ASIO_NO_DEPRECATED)
   template <typename T>
   BOOST_ASIO_STATIC_CONSTEXPR(bool,
     is_applicable_property_v = (
@@ -437,9 +423,7 @@ struct untracked_t
             is_executor<T>::value,
             false_type,
             is_scheduler<T>
-          >::type::value
-      ));
-# endif // defined(BOOST_ASIO_NO_DEPRECATED)
+          >::type::value));
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -526,12 +510,6 @@ template <int I = 0>
 struct tracked_t
 {
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
-# if defined(BOOST_ASIO_NO_DEPRECATED)
-  template <typename T>
-  BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = (
-      is_executor<T>::value));
-# else // defined(BOOST_ASIO_NO_DEPRECATED)
   template <typename T>
   BOOST_ASIO_STATIC_CONSTEXPR(bool,
     is_applicable_property_v = (
@@ -545,9 +523,7 @@ struct tracked_t
             is_executor<T>::value,
             false_type,
             is_scheduler<T>
-          >::type::value
-      ));
-# endif // defined(BOOST_ASIO_NO_DEPRECATED)
+          >::type::value));
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -632,7 +608,6 @@ template <typename T>
 struct is_applicable_property<T, execution::outstanding_work_t>
   : integral_constant<bool,
       execution::is_executor<T>::value
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
         || conditional<
             execution::is_executor<T>::value,
             false_type,
@@ -642,9 +617,7 @@ struct is_applicable_property<T, execution::outstanding_work_t>
             execution::is_executor<T>::value,
             false_type,
             execution::is_scheduler<T>
-          >::type::value
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
-    >
+          >::type::value>
 {
 };
 
@@ -652,7 +625,6 @@ template <typename T>
 struct is_applicable_property<T, execution::outstanding_work_t::untracked_t>
   : integral_constant<bool,
       execution::is_executor<T>::value
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
         || conditional<
             execution::is_executor<T>::value,
             false_type,
@@ -662,9 +634,7 @@ struct is_applicable_property<T, execution::outstanding_work_t::untracked_t>
             execution::is_executor<T>::value,
             false_type,
             execution::is_scheduler<T>
-          >::type::value
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
-    >
+          >::type::value>
 {
 };
 
@@ -672,7 +642,6 @@ template <typename T>
 struct is_applicable_property<T, execution::outstanding_work_t::tracked_t>
   : integral_constant<bool,
       execution::is_executor<T>::value
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
         || conditional<
             execution::is_executor<T>::value,
             false_type,
@@ -682,9 +651,7 @@ struct is_applicable_property<T, execution::outstanding_work_t::tracked_t>
             execution::is_executor<T>::value,
             false_type,
             execution::is_scheduler<T>
-          >::type::value
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
-    >
+          >::type::value>
 {
 };
 

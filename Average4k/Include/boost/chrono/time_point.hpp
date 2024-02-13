@@ -182,7 +182,7 @@ namespace chrono {
                 , typename boost::enable_if
                 <
                     boost::is_convertible<Duration2, duration>
-                >::type* = BOOST_NULLPTR
+                >::type* = 0
         )
             : d_(t.time_since_epoch())
         {

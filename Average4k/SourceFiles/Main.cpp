@@ -9,6 +9,9 @@
 #pragma comment(lib,"Library\\x64_static\\msgpackc.lib")
 #pragma comment(lib,"Library\\x64_static\\glfw3_mt.lib")
 #pragma comment(lib,"Library\\x64_static\\lua51.lib")
+#pragma comment(lib,"Library\\x64_static\\steam_api64.lib")
+#pragma comment(lib,"Library\\x64_static\\libcrypto.lib")
+#pragma comment(lib,"Library\\x64_static\\libssl.lib")
 
 #ifdef _DEBUG
 #pragma comment(lib,"Library\\x64_static\\Debug\\AvgEngine.lib")

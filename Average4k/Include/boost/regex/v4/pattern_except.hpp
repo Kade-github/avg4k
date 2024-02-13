@@ -88,8 +88,7 @@ typedef regex_error bad_expression;
 
 namespace BOOST_REGEX_DETAIL_NS{
 
-template <class E>
-inline void raise_runtime_error(const E& ex)
+inline void BOOST_REGEX_CALL raise_runtime_error(const std::runtime_error& ex)
 {
 #ifndef BOOST_REGEX_STANDALONE
    ::boost::throw_exception(ex);
@@ -102,7 +101,7 @@ template <class traits>
 void raise_error(const traits& t, regex_constants::error_type code)
 {
    (void)t;  // warning suppression
-   regex_error e(t.error_string(code), code, 0);
+   std::runtime_error e(t.error_string(code));
    ::boost::BOOST_REGEX_DETAIL_NS::raise_runtime_error(e);
 }
 

@@ -12,6 +12,11 @@
 #include "Api/Functions/FData.h"
 #include "Api/Functions/FGame.h"
 #include <AvgEngine/Utils/Paths.h>
+
+#include "Helpers/SteamHelper.h"
+
+Average4k::Multiplayer::Connection* c;
+
 Average4k::A4kGame* Average4k::A4kGame::gameInstance = nullptr;
 
 Average4k::A4kGame::A4kGame(std::string _t, std::string _v, int w, int h) : Game(_t, _v, w, h)
@@ -35,6 +40,18 @@ void Average4k::A4kGame::Destroy()
 	}
 
 	AvgEngine::External::BASS::Channels.clear();
+
+	// Disconnect from server
+
+	VM_START
+
+	c->inQuotesGracefullyDisconnect();
+
+	VM_END
+
+	// Destroy steam
+
+	Helpers::SteamHelper::Destroy();
 }
 
 void Average4k::A4kGame::Start()
@@ -114,10 +131,34 @@ void Average4k::A4kGame::Start()
 
 	Data::ChartFinder::FindCharts("Charts");
 
+	// Init steam
+
+	Helpers::SteamHelper::Initialize();
+
+	if (Helpers::SteamHelper::IsSteamRunning)
+		Helpers::SteamHelper::SetPresence("Alpha Version: " + std::string(A_VERSION));
+
+	// Connect to the server
+
+	VM_START
+
+	c = new Multiplayer::Connection();
+
+	c->InitCrypto();
+
+	std::jthread t(c->connect);
+
+	t.detach();
+
+	VM_END
+
 }
 
 void Average4k::A4kGame::update()
 {
+	// Run steam callbacks
+	SteamAPI_RunCallbacks();
+
 	static bool other = false;
 	volume = saveData.audioData.volume;
 	sfxVolume = saveData.audioData.sfxVolume;
@@ -206,6 +247,9 @@ void Average4k::A4kGame::update()
 			eventMutex.unlock();
 		}
 	}
+
+	HandlePackets();
+
 	if (CurrentMenu == NULL)
 		return;
 	if (switchOnFadeout)
@@ -255,4 +299,27 @@ void Average4k::A4kGame::update()
 
 	CurrentMenu->draw();
 
+}
+
+void Average4k::A4kGame::SubmitPacket(msgpack::v2::object obj, Multiplayer::PacketType type)
+{
+	std::lock_guard<std::mutex> lock(packetQueueMutex);
+
+	packetQueue.push_back(QueuedPacket(obj, type));
+}
+
+void Average4k::A4kGame::HandlePackets()
+{
+	std::lock_guard<std::mutex> lock(packetQueueMutex);
+
+	if (packetQueue.size() == 0)
+		return;
+
+	for (QueuedPacket p : packetQueue)
+	{
+		// nothing atm
+
+	}
+
+	packetQueue.clear();
 }

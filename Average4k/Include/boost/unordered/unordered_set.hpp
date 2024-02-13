@@ -1,7 +1,6 @@
 
 // Copyright (C) 2003-2004 Jeremy B. Maitin-Shepard.
 // Copyright (C) 2005-2011 Daniel James.
-// Copyright (C) 2022 Christian Mazakas
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
@@ -15,12 +14,10 @@
 #pragma once
 #endif
 
-#include <boost/unordered/detail/requires_cxx11.hpp>
 #include <boost/core/explicit_operator_bool.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/move/move.hpp>
 #include <boost/unordered/detail/set.hpp>
-#include <boost/unordered/detail/type_traits.hpp>
 
 #if !defined(BOOST_NO_CXX11_HDR_INITIALIZER_LIST)
 #include <initializer_list>
@@ -58,6 +55,8 @@ namespace boost {
       typedef boost::unordered::detail::set<A, T, H, P> types;
       typedef typename types::value_allocator_traits value_allocator_traits;
       typedef typename types::table table;
+      typedef typename table::node_pointer node_pointer;
+      typedef typename table::link_pointer link_pointer;
 
     public:
       typedef typename value_allocator_traits::pointer pointer;
@@ -69,9 +68,9 @@ namespace boost {
       typedef std::size_t size_type;
       typedef std::ptrdiff_t difference_type;
 
-      typedef typename table::c_iterator iterator;
+      typedef typename table::iterator iterator;
       typedef typename table::c_iterator const_iterator;
-      typedef typename table::cl_iterator local_iterator;
+      typedef typename table::l_iterator local_iterator;
       typedef typename table::cl_iterator const_local_iterator;
       typedef typename types::node_type node_type;
       typedef typename types::insert_return_type insert_return_type;
@@ -123,9 +122,6 @@ namespace boost {
 
       explicit unordered_set(size_type, const hasher&, const allocator_type&);
 
-      template <class InputIterator>
-      unordered_set(InputIterator, InputIterator, const allocator_type&);
-
       template <class InputIt>
       unordered_set(InputIt, InputIt, size_type, const allocator_type&);
 
@@ -134,8 +130,6 @@ namespace boost {
         InputIt, InputIt, size_type, const hasher&, const allocator_type&);
 
 #if !defined(BOOST_NO_CXX11_HDR_INITIALIZER_LIST)
-      unordered_set(std::initializer_list<value_type>, const allocator_type&);
-
       unordered_set(
         std::initializer_list<value_type>, size_type, const allocator_type&);
 
@@ -214,10 +208,7 @@ namespace boost {
 
       // size and capacity
 
-      BOOST_ATTRIBUTE_NODISCARD bool empty() const BOOST_NOEXCEPT
-      {
-        return table_.size_ == 0;
-      }
+      bool empty() const BOOST_NOEXCEPT { return table_.size_ == 0; }
 
       size_type size() const BOOST_NOEXCEPT { return table_.size_; }
 
@@ -391,15 +382,6 @@ namespace boost {
         return this->emplace(boost::move(x));
       }
 
-      template <class Key>
-      typename boost::enable_if_c<
-        detail::transparent_non_iterable<Key, unordered_set>::value,
-        std::pair<iterator, bool> >::type
-      insert(BOOST_FWD_REF(Key) k)
-      {
-        return table_.try_emplace_unique(boost::forward<Key>(k));
-      }
-
       iterator insert(const_iterator hint, value_type const& x)
       {
         return this->emplace_hint(hint, x);
@@ -408,15 +390,6 @@ namespace boost {
       iterator insert(const_iterator hint, BOOST_UNORDERED_RV_REF(value_type) x)
       {
         return this->emplace_hint(hint, boost::move(x));
-      }
-
-      template <class Key>
-      typename boost::enable_if_c<
-        detail::transparent_non_iterable<Key, unordered_set>::value,
-        iterator>::type
-      insert(const_iterator hint, BOOST_FWD_REF(Key) k)
-      {
-        return table_.try_emplace_hint_unique(hint, boost::forward<Key>(k));
       }
 
       template <class InputIt> void insert(InputIt, InputIt);
@@ -435,16 +408,7 @@ namespace boost {
 
       node_type extract(const key_type& k)
       {
-        return node_type(table_.extract_by_key_impl(k), table_.node_alloc());
-      }
-
-      template <class Key>
-      typename boost::enable_if_c<
-        detail::transparent_non_iterable<Key, unordered_set>::value,
-        node_type>::type
-      extract(const Key& k)
-      {
-        return node_type(table_.extract_by_key_impl(k), table_.node_alloc());
+        return node_type(table_.extract_by_key(k), table_.node_alloc());
       }
 
       insert_return_type insert(BOOST_RV_REF(node_type) np)
@@ -472,16 +436,6 @@ namespace boost {
       iterator erase(const_iterator);
       size_type erase(const key_type&);
       iterator erase(const_iterator, const_iterator);
-
-      template <class Key>
-      typename boost::enable_if_c<
-        detail::transparent_non_iterable<Key, unordered_set>::value,
-        size_type>::type
-      erase(BOOST_FWD_REF(Key) k)
-      {
-        return table_.erase_key_unique_impl(boost::forward<Key>(k));
-      }
-
       BOOST_UNORDERED_DEPRECATED("Use erase instead")
       void quick_erase(const_iterator it) { erase(it); }
       BOOST_UNORDERED_DEPRECATED("Use erase instead")
@@ -518,64 +472,21 @@ namespace boost {
 
       const_iterator find(const key_type&) const;
 
-      template <class Key>
-      typename boost::enable_if_c<detail::are_transparent<Key, H, P>::value,
-        const_iterator>::type
-      find(const Key& k) const
-      {
-        return const_iterator(table_.find(k));
-      }
-
       template <class CompatibleKey, class CompatibleHash,
         class CompatiblePredicate>
       const_iterator find(CompatibleKey const&, CompatibleHash const&,
         CompatiblePredicate const&) const;
 
-      bool contains(key_type const& k) const
-      {
-        return table_.find(k) != this->end();
-      }
-
-      template <class Key>
-      typename boost::enable_if_c<detail::are_transparent<Key, H, P>::value,
-        bool>::type
-      contains(const Key& k) const
-      {
-        return table_.find(k) != this->end();
-      }
-
       size_type count(const key_type&) const;
-
-      template <class Key>
-      typename boost::enable_if_c<detail::are_transparent<Key, H, P>::value,
-        size_type>::type
-      count(const Key& k) const
-      {
-        return table_.find(k) != this->end() ? 1 : 0;
-      }
 
       std::pair<const_iterator, const_iterator> equal_range(
         const key_type&) const;
-
-      template <class Key>
-      typename boost::enable_if_c<detail::are_transparent<Key, H, P>::value,
-        std::pair<const_iterator, const_iterator> >::type
-      equal_range(Key const& k) const
-      {
-        iterator n = table_.find(k);
-        iterator m = n;
-        if (m != this->end()) {
-          ++m;
-        }
-
-        return std::make_pair(const_iterator(n), const_iterator(m));
-      }
 
       // bucket interface
 
       size_type bucket_count() const BOOST_NOEXCEPT
       {
-        return table_.bucket_count();
+        return table_.bucket_count_;
       }
 
       size_type max_bucket_count() const BOOST_NOEXCEPT
@@ -590,22 +501,14 @@ namespace boost {
         return table_.hash_to_bucket(table_.hash(k));
       }
 
-      template <class Key>
-      typename boost::enable_if_c<detail::are_transparent<Key, H, P>::value,
-        size_type>::type
-      bucket(BOOST_FWD_REF(Key) k) const
-      {
-        return table_.hash_to_bucket(table_.hash(boost::forward<Key>(k)));
-      }
-
       local_iterator begin(size_type n)
       {
-        return local_iterator(table_.begin(n));
+        return local_iterator(table_.begin(n), n, table_.bucket_count_);
       }
 
       const_local_iterator begin(size_type n) const
       {
-        return const_local_iterator(table_.begin(n));
+        return const_local_iterator(table_.begin(n), n, table_.bucket_count_);
       }
 
       local_iterator end(size_type) { return local_iterator(); }
@@ -617,7 +520,7 @@ namespace boost {
 
       const_local_iterator cbegin(size_type n) const
       {
-        return const_local_iterator(table_.begin(n));
+        return const_local_iterator(table_.begin(n), n, table_.bucket_count_);
       }
 
       const_local_iterator cend(size_type) const
@@ -649,70 +552,41 @@ namespace boost {
       class Pred =
         std::equal_to<typename std::iterator_traits<InputIterator>::value_type>,
       class Allocator = std::allocator<
-        typename std::iterator_traits<InputIterator>::value_type>,
-      class = boost::enable_if_t<detail::is_input_iterator_v<InputIterator> >,
-      class = boost::enable_if_t<detail::is_hash_v<Hash> >,
-      class = boost::enable_if_t<detail::is_pred_v<Pred> >,
-      class = boost::enable_if_t<detail::is_allocator_v<Allocator> > >
+        typename std::iterator_traits<InputIterator>::value_type> >
     unordered_set(InputIterator, InputIterator,
       std::size_t = boost::unordered::detail::default_bucket_count,
       Hash = Hash(), Pred = Pred(), Allocator = Allocator())
-      -> unordered_set<typename std::iterator_traits<InputIterator>::value_type,
+      ->unordered_set<typename std::iterator_traits<InputIterator>::value_type,
         Hash, Pred, Allocator>;
 
     template <class T, class Hash = boost::hash<T>,
-      class Pred = std::equal_to<T>, class Allocator = std::allocator<T>,
-      class = boost::enable_if_t<detail::is_hash_v<Hash> >,
-      class = boost::enable_if_t<detail::is_pred_v<Pred> >,
-      class = boost::enable_if_t<detail::is_allocator_v<Allocator> > >
+      class Pred = std::equal_to<T>, class Allocator = std::allocator<T> >
     unordered_set(std::initializer_list<T>,
       std::size_t = boost::unordered::detail::default_bucket_count,
       Hash = Hash(), Pred = Pred(), Allocator = Allocator())
-      -> unordered_set<T, Hash, Pred, Allocator>;
+      ->unordered_set<T, Hash, Pred, Allocator>;
 
-    template <class InputIterator, class Allocator,
-      class = boost::enable_if_t<detail::is_input_iterator_v<InputIterator> >,
-      class = boost::enable_if_t<detail::is_allocator_v<Allocator> > >
+    template <class InputIterator, class Allocator>
     unordered_set(InputIterator, InputIterator, std::size_t, Allocator)
-      -> unordered_set<typename std::iterator_traits<InputIterator>::value_type,
+      ->unordered_set<typename std::iterator_traits<InputIterator>::value_type,
         boost::hash<typename std::iterator_traits<InputIterator>::value_type>,
         std::equal_to<typename std::iterator_traits<InputIterator>::value_type>,
         Allocator>;
 
-    template <class InputIterator, class Hash, class Allocator,
-      class = boost::enable_if_t<detail::is_hash_v<Hash> >,
-      class = boost::enable_if_t<detail::is_input_iterator_v<InputIterator> >,
-      class = boost::enable_if_t<detail::is_allocator_v<Allocator> > >
+    template <class InputIterator, class Hash, class Allocator>
     unordered_set(InputIterator, InputIterator, std::size_t, Hash, Allocator)
-      -> unordered_set<typename std::iterator_traits<InputIterator>::value_type,
+      ->unordered_set<typename std::iterator_traits<InputIterator>::value_type,
         Hash,
         std::equal_to<typename std::iterator_traits<InputIterator>::value_type>,
         Allocator>;
 
-    template <class T, class Allocator,
-      class = boost::enable_if_t<detail::is_allocator_v<Allocator> > >
+    template <class T, class Allocator>
     unordered_set(std::initializer_list<T>, std::size_t, Allocator)
-      -> unordered_set<T, boost::hash<T>, std::equal_to<T>, Allocator>;
+      ->unordered_set<T, boost::hash<T>, std::equal_to<T>, Allocator>;
 
-    template <class T, class Hash, class Allocator,
-      class = boost::enable_if_t<detail::is_hash_v<Hash> >,
-      class = boost::enable_if_t<detail::is_allocator_v<Allocator> > >
+    template <class T, class Hash, class Allocator>
     unordered_set(std::initializer_list<T>, std::size_t, Hash, Allocator)
-      -> unordered_set<T, Hash, std::equal_to<T>, Allocator>;
-
-    template <class InputIterator, class Allocator,
-      class = boost::enable_if_t<detail::is_input_iterator_v<InputIterator> >,
-      class = boost::enable_if_t<detail::is_allocator_v<Allocator> > >
-    unordered_set(InputIterator, InputIterator, Allocator)
-      -> unordered_set<typename std::iterator_traits<InputIterator>::value_type,
-        boost::hash<typename std::iterator_traits<InputIterator>::value_type>,
-        std::equal_to<typename std::iterator_traits<InputIterator>::value_type>,
-        Allocator>;
-
-    template <class T, class Allocator,
-      class = boost::enable_if_t<detail::is_allocator_v<Allocator> > >
-    unordered_set(std::initializer_list<T>, Allocator)
-      -> unordered_set<T, boost::hash<T>, std::equal_to<T>, Allocator>;
+      ->unordered_set<T, Hash, std::equal_to<T>, Allocator>;
 
 #endif
 
@@ -735,6 +609,8 @@ namespace boost {
       typedef boost::unordered::detail::set<A, T, H, P> types;
       typedef typename types::value_allocator_traits value_allocator_traits;
       typedef typename types::table table;
+      typedef typename table::node_pointer node_pointer;
+      typedef typename table::link_pointer link_pointer;
 
     public:
       typedef typename value_allocator_traits::pointer pointer;
@@ -746,9 +622,9 @@ namespace boost {
       typedef std::size_t size_type;
       typedef std::ptrdiff_t difference_type;
 
-      typedef typename table::c_iterator iterator;
+      typedef typename table::iterator iterator;
       typedef typename table::c_iterator const_iterator;
-      typedef typename table::cl_iterator local_iterator;
+      typedef typename table::l_iterator local_iterator;
       typedef typename table::cl_iterator const_local_iterator;
       typedef typename types::node_type node_type;
 
@@ -801,9 +677,6 @@ namespace boost {
       explicit unordered_multiset(
         size_type, const hasher&, const allocator_type&);
 
-      template <class InputIterator>
-      unordered_multiset(InputIterator, InputIterator, const allocator_type&);
-
       template <class InputIt>
       unordered_multiset(InputIt, InputIt, size_type, const allocator_type&);
 
@@ -812,9 +685,6 @@ namespace boost {
         InputIt, InputIt, size_type, const hasher&, const allocator_type&);
 
 #if !defined(BOOST_NO_CXX11_HDR_INITIALIZER_LIST)
-      unordered_multiset(
-        std::initializer_list<value_type>, const allocator_type&);
-
       unordered_multiset(
         std::initializer_list<value_type>, size_type, const allocator_type&);
 
@@ -893,10 +763,7 @@ namespace boost {
 
       // size and capacity
 
-      BOOST_ATTRIBUTE_NODISCARD bool empty() const BOOST_NOEXCEPT
-      {
-        return table_.size_ == 0;
-      }
+      bool empty() const BOOST_NOEXCEPT { return table_.size_ == 0; }
 
       size_type size() const BOOST_NOEXCEPT { return table_.size_; }
 
@@ -1090,16 +957,7 @@ namespace boost {
 
       node_type extract(const key_type& k)
       {
-        return node_type(table_.extract_by_key_impl(k), table_.node_alloc());
-      }
-
-      template <class Key>
-      typename boost::enable_if_c<
-        detail::transparent_non_iterable<Key, unordered_multiset>::value,
-        node_type>::type
-      extract(const Key& k)
-      {
-        return node_type(table_.extract_by_key_impl(k), table_.node_alloc());
+        return node_type(table_.extract_by_key(k), table_.node_alloc());
       }
 
       iterator insert(BOOST_RV_REF(node_type) np)
@@ -1124,16 +982,6 @@ namespace boost {
 
       iterator erase(const_iterator);
       size_type erase(const key_type&);
-
-      template <class Key>
-      typename boost::enable_if_c<
-        detail::transparent_non_iterable<Key, unordered_multiset>::value,
-        size_type>::type
-      erase(const Key& k)
-      {
-        return table_.erase_key_equiv_impl(k);
-      }
-
       iterator erase(const_iterator, const_iterator);
       BOOST_UNORDERED_DEPRECATED("Use erase instead")
       void quick_erase(const_iterator it) { erase(it); }
@@ -1171,60 +1019,21 @@ namespace boost {
 
       const_iterator find(const key_type&) const;
 
-      template <class Key>
-      typename boost::enable_if_c<detail::are_transparent<Key, H, P>::value,
-        const_iterator>::type
-      find(const Key& k) const
-      {
-        return table_.find(k);
-      }
-
       template <class CompatibleKey, class CompatibleHash,
         class CompatiblePredicate>
       const_iterator find(CompatibleKey const&, CompatibleHash const&,
         CompatiblePredicate const&) const;
 
-      bool contains(const key_type& k) const
-      {
-        return table_.find(k) != this->end();
-      }
-
-      template <class Key>
-      typename boost::enable_if_c<detail::are_transparent<Key, H, P>::value,
-        bool>::type
-      contains(const Key& k) const
-      {
-        return table_.find(k) != this->end();
-      }
-
       size_type count(const key_type&) const;
-
-      template <class Key>
-      typename boost::enable_if_c<detail::are_transparent<Key, H, P>::value,
-        size_type>::type
-      count(const Key& k) const
-      {
-        return table_.group_count(k);
-      }
 
       std::pair<const_iterator, const_iterator> equal_range(
         const key_type&) const;
-
-      template <class Key>
-      typename boost::enable_if_c<detail::are_transparent<Key, H, P>::value,
-        std::pair<const_iterator, const_iterator> >::type
-      equal_range(const Key& k) const
-      {
-        iterator first = table_.find(k);
-        iterator last = table_.next_group(k, first);
-        return std::make_pair(const_iterator(first), const_iterator(last));
-      }
 
       // bucket interface
 
       size_type bucket_count() const BOOST_NOEXCEPT
       {
-        return table_.bucket_count();
+        return table_.bucket_count_;
       }
 
       size_type max_bucket_count() const BOOST_NOEXCEPT
@@ -1239,22 +1048,14 @@ namespace boost {
         return table_.hash_to_bucket(table_.hash(k));
       }
 
-      template <class Key>
-      typename boost::enable_if_c<detail::are_transparent<Key, H, P>::value,
-        size_type>::type
-      bucket(BOOST_FWD_REF(Key) k) const
-      {
-        return table_.hash_to_bucket(table_.hash(boost::forward<Key>(k)));
-      }
-
       local_iterator begin(size_type n)
       {
-        return local_iterator(table_.begin(n));
+        return local_iterator(table_.begin(n), n, table_.bucket_count_);
       }
 
       const_local_iterator begin(size_type n) const
       {
-        return const_local_iterator(table_.begin(n));
+        return const_local_iterator(table_.begin(n), n, table_.bucket_count_);
       }
 
       local_iterator end(size_type) { return local_iterator(); }
@@ -1266,7 +1067,7 @@ namespace boost {
 
       const_local_iterator cbegin(size_type n) const
       {
-        return const_local_iterator(table_.begin(n));
+        return const_local_iterator(table_.begin(n), n, table_.bucket_count_);
       }
 
       const_local_iterator cend(size_type) const
@@ -1298,80 +1099,52 @@ namespace boost {
       class Pred =
         std::equal_to<typename std::iterator_traits<InputIterator>::value_type>,
       class Allocator = std::allocator<
-        typename std::iterator_traits<InputIterator>::value_type>,
-      class = boost::enable_if_t<detail::is_input_iterator_v<InputIterator> >,
-      class = boost::enable_if_t<detail::is_hash_v<Hash> >,
-      class = boost::enable_if_t<detail::is_pred_v<Pred> >,
-      class = boost::enable_if_t<detail::is_allocator_v<Allocator> > >
+        typename std::iterator_traits<InputIterator>::value_type> >
     unordered_multiset(InputIterator, InputIterator,
       std::size_t = boost::unordered::detail::default_bucket_count,
       Hash = Hash(), Pred = Pred(), Allocator = Allocator())
-      -> unordered_multiset<
+      ->unordered_multiset<
         typename std::iterator_traits<InputIterator>::value_type, Hash, Pred,
         Allocator>;
 
     template <class T, class Hash = boost::hash<T>,
-      class Pred = std::equal_to<T>, class Allocator = std::allocator<T>,
-      class = boost::enable_if_t<detail::is_hash_v<Hash> >,
-      class = boost::enable_if_t<detail::is_pred_v<Pred> >,
-      class = boost::enable_if_t<detail::is_allocator_v<Allocator> > >
+      class Pred = std::equal_to<T>, class Allocator = std::allocator<T> >
     unordered_multiset(std::initializer_list<T>,
       std::size_t = boost::unordered::detail::default_bucket_count,
       Hash = Hash(), Pred = Pred(), Allocator = Allocator())
-      -> unordered_multiset<T, Hash, Pred, Allocator>;
+      ->unordered_multiset<T, Hash, Pred, Allocator>;
 
-    template <class InputIterator, class Allocator,
-      class = boost::enable_if_t<detail::is_input_iterator_v<InputIterator> >,
-      class = boost::enable_if_t<detail::is_allocator_v<Allocator> > >
+    template <class InputIterator, class Allocator>
     unordered_multiset(InputIterator, InputIterator, std::size_t, Allocator)
-      -> unordered_multiset<
+      ->unordered_multiset<
         typename std::iterator_traits<InputIterator>::value_type,
         boost::hash<typename std::iterator_traits<InputIterator>::value_type>,
         std::equal_to<typename std::iterator_traits<InputIterator>::value_type>,
         Allocator>;
 
-    template <class InputIterator, class Hash, class Allocator,
-      class = boost::enable_if_t<detail::is_hash_v<Hash> >,
-      class = boost::enable_if_t<detail::is_input_iterator_v<InputIterator> >,
-      class = boost::enable_if_t<detail::is_allocator_v<Allocator> > >
+    template <class InputIterator, class Hash, class Allocator>
     unordered_multiset(
       InputIterator, InputIterator, std::size_t, Hash, Allocator)
-      -> unordered_multiset<
+      ->unordered_multiset<
         typename std::iterator_traits<InputIterator>::value_type, Hash,
         std::equal_to<typename std::iterator_traits<InputIterator>::value_type>,
         Allocator>;
 
-    template <class T, class Allocator,
-      class = boost::enable_if_t<detail::is_allocator_v<Allocator> > >
+    template <class T, class Allocator>
     unordered_multiset(std::initializer_list<T>, std::size_t, Allocator)
-      -> unordered_multiset<T, boost::hash<T>, std::equal_to<T>, Allocator>;
+      ->unordered_multiset<T, boost::hash<T>, std::equal_to<T>, Allocator>;
 
-    template <class T, class Hash, class Allocator,
-      class = boost::enable_if_t<detail::is_hash_v<Hash> >,
-      class = boost::enable_if_t<detail::is_allocator_v<Allocator> > >
+    template <class T, class Hash, class Allocator>
     unordered_multiset(std::initializer_list<T>, std::size_t, Hash, Allocator)
-      -> unordered_multiset<T, Hash, std::equal_to<T>, Allocator>;
-
-    template <class InputIterator, class Allocator,
-      class = boost::enable_if_t<detail::is_input_iterator_v<InputIterator> >,
-      class = boost::enable_if_t<detail::is_allocator_v<Allocator> > >
-    unordered_multiset(InputIterator, InputIterator, Allocator)
-      -> unordered_multiset<
-        typename std::iterator_traits<InputIterator>::value_type,
-        boost::hash<typename std::iterator_traits<InputIterator>::value_type>,
-        std::equal_to<typename std::iterator_traits<InputIterator>::value_type>,
-        Allocator>;
-
-    template <class T, class Allocator,
-      class = boost::enable_if_t<detail::is_allocator_v<Allocator> > >
-    unordered_multiset(std::initializer_list<T>, Allocator)
-      -> unordered_multiset<T, boost::hash<T>, std::equal_to<T>, Allocator>;
+      ->unordered_multiset<T, Hash, std::equal_to<T>, Allocator>;
 
 #endif
 
     ////////////////////////////////////////////////////////////////////////////
     template <class T, class H, class P, class A>
     unordered_set<T, H, P, A>::unordered_set()
+        : table_(boost::unordered::detail::default_bucket_count, hasher(),
+            key_equal(), allocator_type())
     {
     }
 
@@ -1397,7 +1170,7 @@ namespace boost {
             unordered_set::value_allocator_traits::
               select_on_container_copy_construction(other.get_allocator()))
     {
-      if (other.size()) {
+      if (other.table_.size_) {
         table_.copy_buckets(
           other.table_, boost::unordered::detail::true_type());
       }
@@ -1459,17 +1232,6 @@ namespace boost {
     }
 
     template <class T, class H, class P, class A>
-    template <class InputIterator>
-    unordered_set<T, H, P, A>::unordered_set(
-      InputIterator f, InputIterator l, const allocator_type& a)
-        : table_(boost::unordered::detail::initial_size(
-                   f, l, detail::default_bucket_count),
-            hasher(), key_equal(), a)
-    {
-      this->insert(f, l);
-    }
-
-    template <class T, class H, class P, class A>
     template <class InputIt>
     unordered_set<T, H, P, A>::unordered_set(
       InputIt f, InputIt l, size_type n, const allocator_type& a)
@@ -1490,16 +1252,6 @@ namespace boost {
     }
 
 #if !defined(BOOST_NO_CXX11_HDR_INITIALIZER_LIST)
-
-    template <class T, class H, class P, class A>
-    unordered_set<T, H, P, A>::unordered_set(
-      std::initializer_list<value_type> list, const allocator_type& a)
-        : table_(boost::unordered::detail::initial_size(
-                   list.begin(), list.end(), detail::default_bucket_count),
-            hasher(), key_equal(), a)
-    {
-      this->insert(list.begin(), list.end());
-    }
 
     template <class T, class H, class P, class A>
     unordered_set<T, H, P, A>::unordered_set(
@@ -1582,21 +1334,29 @@ namespace boost {
     typename unordered_set<T, H, P, A>::iterator
     unordered_set<T, H, P, A>::erase(const_iterator position)
     {
-      return table_.erase_node(position);
+      node_pointer node = table::get_node(position);
+      BOOST_ASSERT(node);
+      node_pointer next = table::next_node(node);
+      table_.erase_nodes_unique(node, next);
+      return iterator(next);
     }
 
     template <class T, class H, class P, class A>
     typename unordered_set<T, H, P, A>::size_type
     unordered_set<T, H, P, A>::erase(const key_type& k)
     {
-      return table_.erase_key_unique_impl(k);
+      return table_.erase_key_unique(k);
     }
 
     template <class T, class H, class P, class A>
     typename unordered_set<T, H, P, A>::iterator
     unordered_set<T, H, P, A>::erase(const_iterator first, const_iterator last)
     {
-      return table_.erase_nodes_range(first, last);
+      node_pointer last_node = table::get_node(last);
+      if (first == last)
+        return iterator(last_node);
+      table_.erase_nodes_unique(table::get_node(first), last_node);
+      return iterator(last_node);
     }
 
     template <class T, class H, class P, class A>
@@ -1666,7 +1426,7 @@ namespace boost {
     typename unordered_set<T, H, P, A>::const_iterator
     unordered_set<T, H, P, A>::find(const key_type& k) const
     {
-      return const_iterator(table_.find(k));
+      return const_iterator(table_.find_node(k));
     }
 
     template <class T, class H, class P, class A>
@@ -1676,7 +1436,8 @@ namespace boost {
     unordered_set<T, H, P, A>::find(CompatibleKey const& k,
       CompatibleHash const& hash, CompatiblePredicate const& eq) const
     {
-      return table_.transparent_find(k, hash, eq);
+      return const_iterator(
+        table_.find_node_impl(table::policy::apply_hash(hash, k), k, eq));
     }
 
     template <class T, class H, class P, class A>
@@ -1691,12 +1452,9 @@ namespace boost {
       typename unordered_set<T, H, P, A>::const_iterator>
     unordered_set<T, H, P, A>::equal_range(const key_type& k) const
     {
-      iterator first = table_.find(k);
-      iterator second = first;
-      if (second != this->end()) {
-        ++second;
-      }
-      return std::make_pair(first, second);
+      node_pointer n = table_.find_node(k);
+      return std::make_pair(
+        const_iterator(n), const_iterator(n ? table::next_node(n) : n));
     }
 
     template <class T, class H, class P, class A>
@@ -1711,13 +1469,9 @@ namespace boost {
     template <class T, class H, class P, class A>
     float unordered_set<T, H, P, A>::load_factor() const BOOST_NOEXCEPT
     {
-      if (table_.size_ == 0) {
-        return 0.0f;
-      }
-
-      BOOST_ASSERT(table_.bucket_count() != 0);
+      BOOST_ASSERT(table_.bucket_count_ != 0);
       return static_cast<float>(table_.size_) /
-             static_cast<float>(table_.bucket_count());
+             static_cast<float>(table_.bucket_count_);
     }
 
     template <class T, class H, class P, class A>
@@ -1735,7 +1489,8 @@ namespace boost {
     template <class T, class H, class P, class A>
     void unordered_set<T, H, P, A>::reserve(size_type n)
     {
-      table_.reserve(n);
+      table_.rehash(static_cast<std::size_t>(
+        std::ceil(static_cast<double>(n) / table_.mlf_)));
     }
 
     template <class T, class H, class P, class A>
@@ -1778,17 +1533,12 @@ namespace boost {
       m1.swap(m2);
     }
 
-    template <class K, class H, class P, class A, class Predicate>
-    typename unordered_set<K, H, P, A>::size_type erase_if(
-      unordered_set<K, H, P, A>& c, Predicate pred)
-    {
-      return detail::erase_if(c, pred);
-    }
-
     ////////////////////////////////////////////////////////////////////////////
 
     template <class T, class H, class P, class A>
     unordered_multiset<T, H, P, A>::unordered_multiset()
+        : table_(boost::unordered::detail::default_bucket_count, hasher(),
+            key_equal(), allocator_type())
     {
     }
 
@@ -1878,17 +1628,6 @@ namespace boost {
     }
 
     template <class T, class H, class P, class A>
-    template <class InputIterator>
-    unordered_multiset<T, H, P, A>::unordered_multiset(
-      InputIterator f, InputIterator l, const allocator_type& a)
-        : table_(boost::unordered::detail::initial_size(
-                   f, l, detail::default_bucket_count),
-            hasher(), key_equal(), a)
-    {
-      this->insert(f, l);
-    }
-
-    template <class T, class H, class P, class A>
     template <class InputIt>
     unordered_multiset<T, H, P, A>::unordered_multiset(
       InputIt f, InputIt l, size_type n, const allocator_type& a)
@@ -1909,16 +1648,6 @@ namespace boost {
     }
 
 #if !defined(BOOST_NO_CXX11_HDR_INITIALIZER_LIST)
-
-    template <class T, class H, class P, class A>
-    unordered_multiset<T, H, P, A>::unordered_multiset(
-      std::initializer_list<value_type> list, const allocator_type& a)
-        : table_(boost::unordered::detail::initial_size(
-                   list.begin(), list.end(), detail::default_bucket_count),
-            hasher(), key_equal(), a)
-    {
-      this->insert(list.begin(), list.end());
-    }
 
     template <class T, class H, class P, class A>
     unordered_multiset<T, H, P, A>::unordered_multiset(
@@ -1998,8 +1727,11 @@ namespace boost {
     typename unordered_multiset<T, H, P, A>::iterator
     unordered_multiset<T, H, P, A>::erase(const_iterator position)
     {
-      BOOST_ASSERT(position != this->end());
-      return table_.erase_node(position);
+      node_pointer node = table::get_node(position);
+      BOOST_ASSERT(node);
+      node_pointer next = table::next_node(node);
+      table_.erase_nodes_equiv(node, next);
+      return iterator(next);
     }
 
     template <class T, class H, class P, class A>
@@ -2014,7 +1746,11 @@ namespace boost {
     unordered_multiset<T, H, P, A>::erase(
       const_iterator first, const_iterator last)
     {
-      return table_.erase_nodes_range(first, last);
+      node_pointer last_node = table::get_node(last);
+      if (first == last)
+        return iterator(last_node);
+      table_.erase_nodes_equiv(table::get_node(first), last_node);
+      return iterator(last_node);
     }
 
     template <class T, class H, class P, class A>
@@ -2092,7 +1828,7 @@ namespace boost {
     typename unordered_multiset<T, H, P, A>::const_iterator
     unordered_multiset<T, H, P, A>::find(const key_type& k) const
     {
-      return const_iterator(table_.find(k));
+      return const_iterator(table_.find_node(k));
     }
 
     template <class T, class H, class P, class A>
@@ -2102,14 +1838,16 @@ namespace boost {
     unordered_multiset<T, H, P, A>::find(CompatibleKey const& k,
       CompatibleHash const& hash, CompatiblePredicate const& eq) const
     {
-      return table_.transparent_find(k, hash, eq);
+      return const_iterator(
+        table_.find_node_impl(table::policy::apply_hash(hash, k), k, eq));
     }
 
     template <class T, class H, class P, class A>
     typename unordered_multiset<T, H, P, A>::size_type
     unordered_multiset<T, H, P, A>::count(const key_type& k) const
     {
-      return table_.group_count(k);
+      node_pointer n = table_.find_node(k);
+      return n ? table_.group_count(n) : 0;
     }
 
     template <class T, class H, class P, class A>
@@ -2117,9 +1855,9 @@ namespace boost {
       typename unordered_multiset<T, H, P, A>::const_iterator>
     unordered_multiset<T, H, P, A>::equal_range(const key_type& k) const
     {
-      iterator n = table_.find(k);
-      return std::make_pair(const_iterator(n),
-        const_iterator(n == end() ? n : table_.next_group(k, n)));
+      node_pointer n = table_.find_node(k);
+      return std::make_pair(
+        const_iterator(n), const_iterator(n ? table_.next_group(n) : n));
     }
 
     template <class T, class H, class P, class A>
@@ -2134,13 +1872,9 @@ namespace boost {
     template <class T, class H, class P, class A>
     float unordered_multiset<T, H, P, A>::load_factor() const BOOST_NOEXCEPT
     {
-      if (table_.size_ == 0) {
-        return 0.0f;
-      }
-
-      BOOST_ASSERT(table_.bucket_count() != 0);
+      BOOST_ASSERT(table_.bucket_count_ != 0);
       return static_cast<float>(table_.size_) /
-             static_cast<float>(table_.bucket_count());
+             static_cast<float>(table_.bucket_count_);
     }
 
     template <class T, class H, class P, class A>
@@ -2158,7 +1892,8 @@ namespace boost {
     template <class T, class H, class P, class A>
     void unordered_multiset<T, H, P, A>::reserve(size_type n)
     {
-      table_.reserve(n);
+      table_.rehash(static_cast<std::size_t>(
+        std::ceil(static_cast<double>(n) / table_.mlf_)));
     }
 
     template <class T, class H, class P, class A>
@@ -2199,13 +1934,6 @@ namespace boost {
       };
 #endif
       m1.swap(m2);
-    }
-
-    template <class K, class H, class P, class A, class Predicate>
-    typename unordered_multiset<K, H, P, A>::size_type erase_if(
-      unordered_multiset<K, H, P, A>& c, Predicate pred)
-    {
-      return detail::erase_if(c, pred);
     }
 
     template <typename N, typename T, typename A> class node_handle_set
@@ -2298,10 +2026,7 @@ namespace boost {
 
       bool operator!() const BOOST_NOEXCEPT { return ptr_ ? 0 : 1; }
 
-      BOOST_ATTRIBUTE_NODISCARD bool empty() const BOOST_NOEXCEPT
-      {
-        return ptr_ ? 0 : 1;
-      }
+      bool empty() const BOOST_NOEXCEPT { return ptr_ ? 0 : 1; }
 
       void swap(node_handle_set& n) BOOST_NOEXCEPT_IF(
         value_allocator_traits::propagate_on_container_swap::value ||
@@ -2326,25 +2051,25 @@ namespace boost {
       x.swap(y);
     }
 
-    template <class Iter, class NodeType> struct insert_return_type_set
+    template <typename N, typename T, typename A> struct insert_return_type_set
     {
     private:
       BOOST_MOVABLE_BUT_NOT_COPYABLE(insert_return_type_set)
 
-      // typedef typename boost::unordered::detail::rebind_wrap<A, T>::type
-      //   value_allocator;
-      // typedef N node_;
+      typedef typename boost::unordered::detail::rebind_wrap<A, T>::type
+        value_allocator;
+      typedef N node_;
 
     public:
-      Iter position;
       bool inserted;
-      NodeType node;
+      boost::unordered::iterator_detail::c_iterator<node_> position;
+      boost::unordered::node_handle_set<N, T, A> node;
 
-      insert_return_type_set() : position(), inserted(false), node() {}
+      insert_return_type_set() : inserted(false), position(), node() {}
 
       insert_return_type_set(BOOST_RV_REF(insert_return_type_set)
-          x) BOOST_NOEXCEPT : position(x.position),
-                              inserted(x.inserted),
+          x) BOOST_NOEXCEPT : inserted(x.inserted),
+                              position(x.position),
                               node(boost::move(x.node))
       {
       }
@@ -2358,9 +2083,9 @@ namespace boost {
       }
     };
 
-    template <class Iter, class NodeType>
+    template <typename N, typename T, typename A>
     void swap(
-      insert_return_type_set<Iter, NodeType>& x, insert_return_type_set<Iter, NodeType>& y)
+      insert_return_type_set<N, T, A>& x, insert_return_type_set<N, T, A>& y)
     {
       boost::swap(x.node, y.node);
       boost::swap(x.inserted, y.inserted);

@@ -81,7 +81,7 @@ class node_allocator
    typedef std::ptrdiff_t                       difference_type;
 
    typedef boost::container::dtl::
-      version_type<self_t, (unsigned int) Version>             version;
+      version_type<self_t, Version>             version;
 
    #ifndef BOOST_CONTAINER_DOXYGEN_INVOKED
    typedef boost::container::dtl::
@@ -317,7 +317,7 @@ class node_allocator
    {
       std::size_t const preferred_size = prefer_in_recvd_out_size;
       dlmalloc_command_ret_t ret = {0 , 0};
-      if((limit_size > this->max_size()) || (preferred_size > this->max_size())){
+      if((limit_size > this->max_size()) | (preferred_size > this->max_size())){
          return pointer();
       }
       std::size_t l_size = limit_size*sizeof(T);

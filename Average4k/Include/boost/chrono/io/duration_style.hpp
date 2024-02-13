@@ -10,7 +10,7 @@
 #ifndef BOOST_CHRONO_IO_DURATION_STYLE_HPP
 #define BOOST_CHRONO_IO_DURATION_STYLE_HPP
 
-#include <boost/core/scoped_enum.hpp>
+#include <boost/detail/scoped_enum_emulation.hpp>
 
 namespace boost
 {

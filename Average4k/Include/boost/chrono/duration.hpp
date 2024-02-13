@@ -47,7 +47,7 @@ time2_demo contained this comment:
 #include <boost/chrono/detail/is_evenly_divisible_by.hpp>
 
 #include <boost/cstdint.hpp>
-#include <boost/core/enable_if.hpp>
+#include <boost/utility/enable_if.hpp>
 #include <boost/detail/workaround.hpp>
 #include <boost/integer_traits.hpp>
 
@@ -324,8 +324,8 @@ namespace detail
 //                                                                            //
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
-//      20.9.2.1 treat_as_floating_point [time.traits.is_fp]                  //
-//      Probably should have been treat_as_floating_point. Editor notified.   //
+//      20.9.2.1 treat_as_floating_point [time.traits.is_fp]                        //
+//      Probably should have been treat_as_floating_point. Editor notifed.    //
 //----------------------------------------------------------------------------//
 
     // Support bidirectional (non-exact) conversions for floating point rep types
@@ -455,7 +455,7 @@ namespace chrono {
                             >
                         >
                     >
-                >::type* = BOOST_NULLPTR
+                >::type* = 0
             ) : rep_(r) { }
 #if  defined   BOOST_NO_CXX11_DEFAULTED_FUNCTIONS
         duration& operator=(const duration& rhs)
@@ -463,12 +463,9 @@ namespace chrono {
             if (&rhs != this) rep_= rhs.rep_;
             return *this;
         }
-        duration(const duration& rhs) : rep_(rhs.rep_) {}
 #else
         duration& operator=(const duration& rhs) = default;
-        duration(const duration&) = default;
 #endif
-
         // conversions
         template <class Rep2, class Period2>
         BOOST_FORCEINLINE BOOST_CONSTEXPR
@@ -481,7 +478,7 @@ namespace chrono {
                             mpl::not_ < treat_as_floating_point<Rep2> >
                         >
                     >
-                >::type* = BOOST_NULLPTR
+                >::type* = 0
         )
             : rep_(chrono::detail::duration_cast<duration<Rep2, Period2>, duration>()(d).count()) {}
 
@@ -493,7 +490,7 @@ namespace chrono {
         // arithmetic
 
         BOOST_CONSTEXPR
-        duration  operator+() const {return duration(rep_);}
+        duration  operator+() const {return duration(rep_);;}
         BOOST_CONSTEXPR
         duration  operator-() const {return duration(-rep_);}
         duration& operator++()      {++rep_; return *this;}

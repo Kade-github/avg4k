@@ -2,7 +2,7 @@
 // detail/win_iocp_socket_service.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -206,8 +206,6 @@ public:
       impl.have_remote_endpoint_ = false;
       impl.remote_endpoint_ = endpoint_type();
     }
-
-    BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
 
@@ -222,8 +220,6 @@ public:
       impl.have_remote_endpoint_ = native_socket.have_remote_endpoint();
       impl.remote_endpoint_ = native_socket.remote_endpoint();
     }
-
-    BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
 
@@ -240,8 +236,6 @@ public:
       const endpoint_type& endpoint, boost::system::error_code& ec)
   {
     socket_ops::bind(impl.socket_, endpoint.data(), endpoint.size(), ec);
-
-    BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
 
@@ -253,8 +247,6 @@ public:
     socket_ops::setsockopt(impl.socket_, impl.state_,
         option.level(impl.protocol_), option.name(impl.protocol_),
         option.data(impl.protocol_), option.size(impl.protocol_), ec);
-
-    BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
 
@@ -269,8 +261,6 @@ public:
         option.data(impl.protocol_), &size, ec);
     if (!ec)
       option.resize(impl.protocol_, size);
-
-    BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
 
@@ -281,10 +271,7 @@ public:
     endpoint_type endpoint;
     std::size_t addr_len = endpoint.capacity();
     if (socket_ops::getsockname(impl.socket_, endpoint.data(), &addr_len, ec))
-    {
-      BOOST_ASIO_ERROR_LOCATION(ec);
       return endpoint_type();
-    }
     endpoint.resize(addr_len);
     return endpoint;
   }
@@ -297,10 +284,7 @@ public:
     std::size_t addr_len = endpoint.capacity();
     if (socket_ops::getpeername(impl.socket_, endpoint.data(),
           &addr_len, impl.have_remote_endpoint_, ec))
-    {
-      BOOST_ASIO_ERROR_LOCATION(ec);
       return endpoint_type();
-    }
     endpoint.resize(addr_len);
     return endpoint;
   }
@@ -323,12 +307,9 @@ public:
     buffer_sequence_adapter<boost::asio::const_buffer,
         ConstBufferSequence> bufs(buffers);
 
-    size_t n = socket_ops::sync_sendto(impl.socket_,
-        impl.state_, bufs.buffers(), bufs.count(), flags,
+    return socket_ops::sync_sendto(impl.socket_, impl.state_,
+        bufs.buffers(), bufs.count(), flags,
         destination.data(), destination.size(), ec);
-
-    BOOST_ASIO_ERROR_LOCATION(ec);
-    return n;
   }
 
   // Wait until data can be sent without blocking.
@@ -338,7 +319,7 @@ public:
   {
     // Wait for socket to become ready.
     socket_ops::poll_write(impl.socket_, impl.state_, -1, ec);
-    BOOST_ASIO_ERROR_LOCATION(ec);
+
     return 0;
   }
 
@@ -408,15 +389,14 @@ public:
         MutableBufferSequence> bufs(buffers);
 
     std::size_t addr_len = sender_endpoint.capacity();
-    std::size_t n = socket_ops::sync_recvfrom(impl.socket_,
-        impl.state_, bufs.buffers(), bufs.count(), flags,
-        sender_endpoint.data(), &addr_len, ec);
+    std::size_t bytes_recvd = socket_ops::sync_recvfrom(
+        impl.socket_, impl.state_, bufs.buffers(), bufs.count(),
+        flags, sender_endpoint.data(), &addr_len, ec);
 
     if (!ec)
       sender_endpoint.resize(addr_len);
 
-    BOOST_ASIO_ERROR_LOCATION(ec);
-    return n;
+    return bytes_recvd;
   }
 
   // Wait until data can be received without blocking.
@@ -430,7 +410,6 @@ public:
     // Reset endpoint since it can be given no sensible value at this time.
     sender_endpoint = endpoint_type();
 
-    BOOST_ASIO_ERROR_LOCATION(ec);
     return 0;
   }
 
@@ -520,7 +499,6 @@ public:
     if (peer.is_open())
     {
       ec = boost::asio::error::already_open;
-      BOOST_ASIO_ERROR_LOCATION(ec);
       return ec;
     }
 
@@ -539,7 +517,6 @@ public:
         new_socket.release();
     }
 
-    BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
 
@@ -629,7 +606,6 @@ public:
   {
     socket_ops::sync_connect(impl.socket_,
         peer_endpoint.data(), peer_endpoint.size(), ec);
-    BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
 

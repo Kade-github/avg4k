@@ -116,9 +116,9 @@ namespace boost
       {
         register_once(index(), ios_);
         void* &pw = ios_.pword(index());
-        if (pw == BOOST_NULLPTR)
+        if (pw == 0)
         {
-          return BOOST_NULLPTR;
+          return 0;
         }
         return static_cast<T*> (pw);
       }
@@ -243,18 +243,18 @@ namespace boost
         case std::ios_base::erase_event:
         {
           void*& pw = ios.pword(index);
-          if (pw != BOOST_NULLPTR)
+          if (pw != 0)
           {
             T* ptr = static_cast<T*> (pw);
             delete ptr;
-            pw = BOOST_NULLPTR;
+            pw = 0;
           }
           break;
         }
         case std::ios_base::copyfmt_event:
         {
           void*& pw = ios.pword(index);
-          if (pw != BOOST_NULLPTR)
+          if (pw != 0)
           {
             pw = new T(*static_cast<T*> (pw));
           }
@@ -303,7 +303,7 @@ namespace boost
       explicit ios_state_not_null_ptr(std::ios_base& ios) :
       base_type(ios)
       {
-        if (this->get() == BOOST_NULLPTR)
+        if (this->get() == 0)
         {
           this->base_type::reset(new T());
         }
@@ -314,7 +314,7 @@ namespace boost
 
       void reset(T* new_value) BOOST_NOEXCEPT
       {
-        BOOST_ASSERT(new_value!=BOOST_NULLPTR);
+        BOOST_ASSERT(new_value!=0);
         this->base_type::reset(new_value);
       }
 

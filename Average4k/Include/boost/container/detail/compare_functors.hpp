@@ -32,11 +32,11 @@ class equal_to_value
    const value_type &t_;
 
    public:
-   BOOST_CONTAINER_FORCEINLINE explicit equal_to_value(const value_type &t)
+   explicit equal_to_value(const value_type &t)
       :  t_(t)
    {}
 
-   BOOST_CONTAINER_FORCEINLINE bool operator()(const value_type &t)const
+   bool operator()(const value_type &t)const
    {  return t_ == t;   }
 };
 
@@ -47,28 +47,28 @@ struct value_to_node_compare
    typedef Pred predicate_type;
    typedef Node node_type;
 
-   BOOST_CONTAINER_FORCEINLINE value_to_node_compare()
+   value_to_node_compare()
       : Pred()
    {}
 
-   BOOST_CONTAINER_FORCEINLINE explicit value_to_node_compare(Pred pred)
+   explicit value_to_node_compare(Pred pred)
       :  Pred(pred)
    {}
 
-   BOOST_CONTAINER_FORCEINLINE Ret operator()(const Node &a, const Node &b) const
+   Ret operator()(const Node &a, const Node &b) const
    {  return static_cast<const Pred&>(*this)(a.get_data(), b.get_data());  }
 
-   BOOST_CONTAINER_FORCEINLINE Ret operator()(const Node &a) const
+   Ret operator()(const Node &a) const
    {  return static_cast<const Pred&>(*this)(a.get_data());  }
 
-   BOOST_CONTAINER_FORCEINLINE Ret operator()(const Node &a, const Node &b)
+   Ret operator()(const Node &a, const Node &b)
    {  return static_cast<Pred&>(*this)(a.get_data(), b.get_data());  }
 
-   BOOST_CONTAINER_FORCEINLINE Ret operator()(const Node &a)
+   Ret operator()(const Node &a)
    {  return static_cast<Pred&>(*this)(a.get_data());  }
 
-   BOOST_CONTAINER_FORCEINLINE predicate_type &       predicate()        { return static_cast<predicate_type&>(*this); }
-   BOOST_CONTAINER_FORCEINLINE const predicate_type & predicate()  const { return static_cast<predicate_type&>(*this); }
+   predicate_type &       predicate()        { return static_cast<predicate_type&>(*this); }
+   const predicate_type & predicate()  const { return static_cast<predicate_type&>(*this); }
 };
 
 template<class KeyPred, class KeyOfValue, class Node, class Ret = bool>
@@ -77,9 +77,6 @@ struct key_node_pred
 {
    BOOST_CONTAINER_FORCEINLINE explicit key_node_pred(const KeyPred &comp)
       :  base_t(comp)
-   {}
-
-   BOOST_CONTAINER_FORCEINLINE explicit key_node_pred()
    {}
 
    typedef boost::intrusive::detail::ebo_functor_holder<KeyPred> base_t;

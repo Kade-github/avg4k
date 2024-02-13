@@ -19,8 +19,6 @@
 #  pragma once
 #endif
 
-#include <cstddef>
-
 namespace boost {
 namespace intrusive {
 
@@ -99,19 +97,19 @@ struct pack_options
 #else
 
 //index_tuple
-template<std::size_t... Indexes>
+template<int... Indexes>
 struct index_tuple{};
 
 //build_number_seq
 template<std::size_t Num, typename Tuple = index_tuple<> >
 struct build_number_seq;
 
-template<std::size_t Num, std::size_t... Indexes>
+template<std::size_t Num, int... Indexes>
 struct build_number_seq<Num, index_tuple<Indexes...> >
    : build_number_seq<Num - 1, index_tuple<Indexes..., sizeof...(Indexes)> >
 {};
 
-template<std::size_t... Indexes>
+template<int... Indexes>
 struct build_number_seq<0, index_tuple<Indexes...> >
 {  typedef index_tuple<Indexes...> type;  };
 
@@ -123,10 +121,10 @@ struct typelist
 template<class T>
 struct invert_typelist;
 
-template<std::size_t I, typename Tuple>
+template<int I, typename Tuple>
 struct typelist_element;
 
-template<std::size_t I, typename Head, typename... Tail>
+template<int I, typename Head, typename... Tail>
 struct typelist_element<I, typelist<Head, Tail...> >
 {
    typedef typename typelist_element<I-1, typelist<Tail...> >::type type;
@@ -138,7 +136,7 @@ struct typelist_element<0, typelist<Head, Tail...> >
    typedef Head type;
 };
 
-template<std::size_t ...Ints, class ...Types>
+template<int ...Ints, class ...Types>
 typelist<typename typelist_element<(sizeof...(Types) - 1) - Ints, typelist<Types...> >::type...>
    inverted_typelist(index_tuple<Ints...>, typelist<Types...>)
 {
@@ -160,7 +158,7 @@ template<class Typelist, class Indexes>
 struct invert_typelist_impl;
 
 
-template<class Typelist, std::size_t ...Ints>
+template<class Typelist, int ...Ints>
 struct invert_typelist_impl< Typelist, index_tuple<Ints...> >
 {
    static const std::size_t last_idx = sizeof_typelist<Typelist>::value - 1;
@@ -168,7 +166,7 @@ struct invert_typelist_impl< Typelist, index_tuple<Ints...> >
       <typename typelist_element<last_idx - Ints, Typelist>::type...> type;
 };
 
-template<class Typelist, std::size_t Int>
+template<class Typelist, int Int>
 struct invert_typelist_impl< Typelist, index_tuple<Int> >
 {
    typedef Typelist type;
@@ -251,8 +249,6 @@ struct OPTION_NAME \
 template< TYPE VALUE> \
 struct OPTION_NAME \
 { \
-   static const TYPE value = VALUE; \
- \
    template<class Base> \
    struct pack : Base \
    { \

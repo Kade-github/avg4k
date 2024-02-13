@@ -9,18 +9,35 @@
 #pragma once
 #include <AvgEngine/Game.h>
 #include <AvgEngine/Base/Text.h>
+#include "Multiplayer/Connection.h"
 
 #include "Data/SaveData.h"
 #include "Skin/Skin.h"
 
 namespace Average4k
 {
+	struct QueuedPacket {
+		QueuedPacket(msgpack::v2::object _obj, Multiplayer::PacketType _type)
+		{
+			obj = _obj;
+			type = _type;
+		}
+
+		Multiplayer::PacketType type;
+		msgpack::v2::object obj;
+	};
+
 	class A4kGame : public AvgEngine::Game
 	{
 		bool skinExists = false;
 		bool switchOnFadeout = false;
 		bool fadedOut = false;
 		float fadeout = 1.0f;
+
+		std::mutex packetQueueMutex;
+
+		std::vector<QueuedPacket> packetQueue;
+
 	public:
 		bool fadeoutSong = false;
 		float volume = 1.0f;
@@ -44,6 +61,10 @@ namespace Average4k
 		{
 			fallback = _fallback;
 		}
+
+		void SubmitPacket(msgpack::v2::object obj, Multiplayer::PacketType type);
+
+		void HandlePackets();
 
 		void Switch() override
 		{

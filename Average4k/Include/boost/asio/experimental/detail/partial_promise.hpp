@@ -2,8 +2,8 @@
 // experimental/detail/partial_promise.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2021-2023 Klemens D. Morgenstern
-//                         (klemens dot morgenstern at gmx dot net)
+// Copyright (c) 2021 Klemens D. Morgenstern
+//                    (klemens dot morgenstern at gmx dot net)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -13,9 +13,9 @@
 #define BOOST_ASIO_EXPERIMENTAL_DETAIL_PARTIAL_PROMISE_HPP
 
 #include <boost/asio/detail/config.hpp>
-#include <boost/asio/append.hpp>
+#include <boost/asio/experimental/detail/coro_traits.hpp>
 #include <boost/asio/awaitable.hpp>
-#include <boost/asio/experimental/coro_traits.hpp>
+#include <iostream>
 
 #if defined(BOOST_ASIO_HAS_STD_COROUTINE)
 # include <coroutine>
@@ -46,33 +46,7 @@ using std::experimental::noop_coroutine;
 
 #endif // defined(BOOST_ASIO_HAS_STD_COROUTINE)
 
-struct partial_coro
-{
-  coroutine_handle<void> handle{nullptr};
-};
-
-template <typename Allocator>
-struct partial_promise_base
-{
-  template <typename Executor, typename Token, typename... Args>
-  void* operator new(const std::size_t size, Executor&, Token& tk, Args&...)
-  {
-    return allocate_coroutine<Allocator>(size, get_associated_allocator(tk));
-  }
-
-  void operator delete(void* raw, const std::size_t size)
-  {
-    deallocate_coroutine<Allocator>(raw, size);
-  }
-};
-
-template <>
-struct partial_promise_base<std::allocator<void>>
-{
-};
-
-template <typename Allocator>
-struct partial_promise : partial_promise_base<Allocator>
+struct partial_promise
 {
   auto initial_suspend() noexcept
   {
@@ -89,7 +63,7 @@ struct partial_promise : partial_promise_base<Allocator>
 
       auto await_suspend(boost::asio::detail::coroutine_handle<>) noexcept
       {
-        p->get_return_object().handle.destroy();
+        p->get_return_object().destroy();
       }
 
       constexpr void await_resume() noexcept {}
@@ -100,9 +74,9 @@ struct partial_promise : partial_promise_base<Allocator>
 
   void return_void() {}
 
-  partial_coro get_return_object()
+  coroutine_handle<partial_promise> get_return_object()
   {
-    return partial_coro{coroutine_handle<partial_promise>::from_promise(*this)};
+    return coroutine_handle<partial_promise>::from_promise(*this);
   }
 
   void unhandled_exception()
@@ -111,9 +85,7 @@ struct partial_promise : partial_promise_base<Allocator>
   }
 };
 
-
-
-}; // namespace detail
+} // namespace detail
 } // namespace experimental
 } // namespace asio
 } // namespace boost
@@ -122,14 +94,12 @@ struct partial_promise : partial_promise_base<Allocator>
 
 namespace std {
 
-template <typename Executor, typename Completion, typename... Args>
+template<typename ... Args>
 struct coroutine_traits<
-    boost::asio::experimental::detail::partial_coro,
-    Executor, Completion, Args...>
+    coroutine_handle<boost::asio::experimental::detail::partial_promise>,
+    Args...>
 {
-  using promise_type =
-    boost::asio::experimental::detail::partial_promise<
-      boost::asio::associated_allocator_t<Completion>>;
+  using promise_type = boost::asio::experimental::detail::partial_promise;
 };
 
 } // namespace std
@@ -138,14 +108,12 @@ struct coroutine_traits<
 
 namespace std { namespace experimental {
 
-template <typename Executor, typename Completion, typename... Args>
+template<typename... Args>
 struct coroutine_traits<
-    boost::asio::experimental::detail::partial_coro,
-    Executor, Completion, Args...>
+    coroutine_handle<boost::asio::experimental::detail::partial_promise>,
+    Args...>
 {
-  using promise_type =
-    boost::asio::experimental::detail::partial_promise<
-      boost::asio::associated_allocator_t<Completion>>;
+  using promise_type = boost::asio::experimental::detail::partial_promise;
 };
 
 }} // namespace std::experimental
@@ -157,39 +125,51 @@ namespace asio {
 namespace experimental {
 namespace detail {
 
-template <execution::executor Executor,
-    typename CompletionToken, typename... Args>
-partial_coro post_coroutine(Executor exec,
-    CompletionToken token, Args&&... args) noexcept
+template<typename CompletionToken>
+auto post_coroutine(CompletionToken token) noexcept
+  -> coroutine_handle<partial_promise>
 {
-  post(exec, boost::asio::append(std::move(token), std::move(args)...));
+  post(std::move(token));
   co_return;
 }
 
-template <detail::execution_context Context,
-    typename CompletionToken, typename... Args>
-partial_coro post_coroutine(Context& ctx,
-    CompletionToken token, Args&&... args) noexcept
+template<execution::executor Executor, typename CompletionToken>
+auto post_coroutine(Executor exec, CompletionToken token) noexcept
+  -> coroutine_handle<partial_promise>
 {
-  post(ctx, boost::asio::append(std::move(token), std::move(args)...));
+  post(exec, std::move(token));
   co_return;
 }
 
-template <execution::executor Executor,
-    typename CompletionToken, typename... Args>
-partial_coro dispatch_coroutine(Executor exec,
-    CompletionToken token, Args&&... args) noexcept
+template<execution_context Context, typename CompletionToken>
+auto post_coroutine(Context &ctx, CompletionToken token) noexcept
+  -> coroutine_handle<partial_promise>
 {
-  dispatch(exec, boost::asio::append(std::move(token), std::move(args)...));
+  post(ctx, std::move(token));
   co_return;
 }
 
-template <detail::execution_context Context,
-    typename CompletionToken, typename... Args>
-partial_coro dispatch_coroutine(Context& ctx,
-    CompletionToken token, Args &&... args) noexcept
+template<typename CompletionToken>
+auto dispatch_coroutine(CompletionToken token) noexcept
+  -> coroutine_handle<partial_promise>
 {
-  dispatch(ctx, boost::asio::append(std::move(token), std::move(args)...));
+  dispatch(std::move(token));
+  co_return;
+}
+
+template<execution::executor Executor, typename CompletionToken>
+auto dispatch_coroutine(Executor exec, CompletionToken token) noexcept
+  -> coroutine_handle<partial_promise>
+{
+  dispatch(exec, std::move(token));
+  co_return;
+}
+
+template<execution_context Context, typename CompletionToken>
+auto dispatch_coroutine(Context &ctx, CompletionToken token) noexcept
+  -> coroutine_handle<partial_promise>
+{
+  dispatch(ctx, std::move(token));
   co_return;
 }
 

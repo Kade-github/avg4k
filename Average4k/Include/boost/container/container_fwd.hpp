@@ -92,6 +92,9 @@ namespace container {
 
 #ifndef BOOST_CONTAINER_DOXYGEN_INVOKED
 
+template<class T1, class T2>
+struct pair;
+
 template<class T>
 class new_allocator;
 
@@ -379,7 +382,6 @@ struct dummy
 
 }  //detail_really_deep_namespace {
 
-typedef const std::piecewise_construct_t & piecewise_construct_t;
 
 #endif   //#ifndef BOOST_CONTAINER_DOXYGEN_INVOKED
 

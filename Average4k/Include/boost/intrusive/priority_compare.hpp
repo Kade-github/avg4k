@@ -28,13 +28,8 @@ namespace intrusive {
 
 /// @cond
 
-namespace adldft {
-
-template<class T, class U>
-BOOST_INTRUSIVE_FORCEINLINE bool priority_order(const T &t, const U &u)
-{  return t < u;  }
-
-}  //namespace adldft {
+template<class U>
+void priority_order();
 
 /// @endcond
 
@@ -48,7 +43,6 @@ struct priority_compare
 
    BOOST_INTRUSIVE_FORCEINLINE bool operator()(const T &val, const T &val2) const
    {
-      using adldft::priority_order;
       return priority_order(val, val2);
    }
 };
@@ -59,7 +53,6 @@ struct priority_compare<void>
    template<class T, class U>
    BOOST_INTRUSIVE_FORCEINLINE bool operator()(const T &t, const U &u) const
    {
-      using adldft::priority_order;
       return priority_order(t, u);
    }
 };

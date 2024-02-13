@@ -64,6 +64,7 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 	lua->getState().set_function("setVideoData", Functions::FData::SetVideoData);
 	lua->getState().set_function("setAudioData", Functions::FData::SetAudioData);
 	lua->getState().set_function("setSkin", Functions::FData::SetSkin);
+	lua->getState().set_function("getSteamName", Functions::FData::GetSteamName);
 
 	// FSkins
 

@@ -2,7 +2,7 @@
 // associated_executor.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -52,12 +52,7 @@ struct associated_executor_impl
 
   typedef E type;
 
-  static type get(const T&) BOOST_ASIO_NOEXCEPT
-  {
-    return type();
-  }
-
-  static const type& get(const T&, const E& e) BOOST_ASIO_NOEXCEPT
+  static type get(const T&, const E& e = E()) BOOST_ASIO_NOEXCEPT
   {
     return e;
   }
@@ -69,16 +64,7 @@ struct associated_executor_impl<T, E,
 {
   typedef typename T::executor_type type;
 
-  static BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX(type) get(
-      const T& t) BOOST_ASIO_NOEXCEPT
-    BOOST_ASIO_AUTO_RETURN_TYPE_SUFFIX((t.get_executor()))
-  {
-    return t.get_executor();
-  }
-
-  static BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX(type) get(
-      const T& t, const E&) BOOST_ASIO_NOEXCEPT
-    BOOST_ASIO_AUTO_RETURN_TYPE_SUFFIX((t.get_executor()))
+  static type get(const T& t, const E& = E()) BOOST_ASIO_NOEXCEPT
   {
     return t.get_executor();
   }
@@ -111,12 +97,10 @@ struct associated_executor_impl<T, E,
  * Executor requirements.
  *
  * @li Provide a noexcept static member function named @c get, callable as @c
- * get(t) and with return type @c type or a (possibly const) reference to @c
- * type.
+ * get(t) and with return type @c type.
  *
  * @li Provide a noexcept static member function named @c get, callable as @c
- * get(t,e) and with return type @c type or a (possibly const) reference to @c
- * type.
+ * get(t,e) and with return type @c type.
  */
 template <typename T, typename Executor = system_executor>
 struct associated_executor
@@ -130,12 +114,9 @@ struct associated_executor
   typedef see_below type;
 
   /// If @c T has a nested type @c executor_type, returns
-  /// <tt>t.get_executor()</tt>. Otherwise returns @c type().
-  static decltype(auto) get(const T& t) BOOST_ASIO_NOEXCEPT;
-
-  /// If @c T has a nested type @c executor_type, returns
   /// <tt>t.get_executor()</tt>. Otherwise returns @c ex.
-  static decltype(auto) get(const T& t, const Executor& ex) BOOST_ASIO_NOEXCEPT;
+  static type get(const T& t,
+      const Executor& ex = Executor()) BOOST_ASIO_NOEXCEPT;
 #endif // defined(GENERATING_DOCUMENTATION)
 };
 
@@ -144,7 +125,7 @@ struct associated_executor
  * @returns <tt>associated_executor<T>::get(t)</tt>
  */
 template <typename T>
-BOOST_ASIO_NODISCARD inline typename associated_executor<T>::type
+inline typename associated_executor<T>::type
 get_associated_executor(const T& t) BOOST_ASIO_NOEXCEPT
 {
   return associated_executor<T>::get(t);
@@ -155,14 +136,11 @@ get_associated_executor(const T& t) BOOST_ASIO_NOEXCEPT
  * @returns <tt>associated_executor<T, Executor>::get(t, ex)</tt>
  */
 template <typename T, typename Executor>
-BOOST_ASIO_NODISCARD inline BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX2(
-    typename associated_executor<T, Executor>::type)
+inline typename associated_executor<T, Executor>::type
 get_associated_executor(const T& t, const Executor& ex,
     typename constraint<
       is_executor<Executor>::value || execution::is_executor<Executor>::value
     >::type = 0) BOOST_ASIO_NOEXCEPT
-  BOOST_ASIO_AUTO_RETURN_TYPE_SUFFIX((
-    associated_executor<T, Executor>::get(t, ex)))
 {
   return associated_executor<T, Executor>::get(t, ex);
 }
@@ -173,8 +151,8 @@ get_associated_executor(const T& t, const Executor& ex,
  * ExecutionContext::executor_type>::get(t, ctx.get_executor())</tt>
  */
 template <typename T, typename ExecutionContext>
-BOOST_ASIO_NODISCARD inline typename associated_executor<T,
-    typename ExecutionContext::executor_type>::type
+inline typename associated_executor<T,
+  typename ExecutionContext::executor_type>::type
 get_associated_executor(const T& t, ExecutionContext& ctx,
     typename constraint<is_convertible<ExecutionContext&,
       execution_context&>::value>::type = 0) BOOST_ASIO_NOEXCEPT
@@ -228,17 +206,8 @@ struct associated_executor<reference_wrapper<T>, Executor>
 
   /// Forwards the request to get the executor to the associator specialisation
   /// for the unwrapped type @c T.
-  static type get(reference_wrapper<T> t) BOOST_ASIO_NOEXCEPT
-  {
-    return associated_executor<T, Executor>::get(t.get());
-  }
-
-  /// Forwards the request to get the executor to the associator specialisation
-  /// for the unwrapped type @c T.
-  static BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX(type) get(
-      reference_wrapper<T> t, const Executor& ex) BOOST_ASIO_NOEXCEPT
-    BOOST_ASIO_AUTO_RETURN_TYPE_SUFFIX((
-      associated_executor<T, Executor>::get(t.get(), ex)))
+  static type get(reference_wrapper<T> t,
+      const Executor& ex = Executor()) BOOST_ASIO_NOEXCEPT
   {
     return associated_executor<T, Executor>::get(t.get(), ex);
   }

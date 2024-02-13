@@ -471,11 +471,6 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_word_boundary()
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_within_word()
 {
-   bool b = !match_word_boundary();
-   if(b)
-      pstate = pstate->next.p;
-   return b;
-   /*
    if(position == last)
       return false;
    // both prev and this character must be m_word_mask:
@@ -497,7 +492,6 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_within_word()
       }
    }
    return false;
-   */
 }
 
 template <class BidiIterator, class Allocator, class traits>

@@ -21,6 +21,7 @@
 
 #include <boost/container/detail/config_begin.hpp>
 #include <boost/container/detail/workaround.hpp>
+#include <boost/core/ignore_unused.hpp>
 
 #ifndef BOOST_NO_EXCEPTIONS
 #include <exception> //for std exception base
@@ -58,7 +59,7 @@ class BOOST_SYMBOL_VISIBLE exception
       : std_exception_t(), m_msg(msg)
    {}
 
-   virtual const char *what() const BOOST_NOEXCEPT_OR_NOTHROW BOOST_OVERRIDE
+   virtual const char *what() const BOOST_NOEXCEPT_OR_NOTHROW
    {  return m_msg ? m_msg : "unknown boost::container exception"; }
 
    private:
@@ -96,7 +97,7 @@ class BOOST_SYMBOL_VISIBLE length_error
    {}
 };
 
-typedef length_error length_error_t;
+typedef out_of_range length_error_t;
 
 class BOOST_SYMBOL_VISIBLE logic_error
    : public exception
@@ -155,28 +156,28 @@ namespace container {
 
    BOOST_NORETURN inline void throw_out_of_range(const char* str)
    {
-      boost::container::ignore(str);
+      boost::ignore_unused(str);
       BOOST_ASSERT_MSG(!"boost::container out_of_range thrown", str);
       std::abort();
    }
 
    BOOST_NORETURN inline void throw_length_error(const char* str)
    {
-      boost::container::ignore(str);
+      boost::ignore_unused(str);
       BOOST_ASSERT_MSG(!"boost::container length_error thrown", str);
       std::abort();
    }
 
    BOOST_NORETURN inline void throw_logic_error(const char* str)
    {
-      boost::container::ignore(str);
+      boost::ignore_unused(str);
       BOOST_ASSERT_MSG(!"boost::container logic_error thrown", str);
       std::abort();
    }
 
    BOOST_NORETURN inline void throw_runtime_error(const char* str)
    {
-      boost::container::ignore(str);
+      boost::ignore_unused(str);
       BOOST_ASSERT_MSG(!"boost::container runtime_error thrown", str);
       std::abort();
    }

@@ -13,7 +13,6 @@
 #include <boost/system/detail/config.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/config.hpp>
-#include <boost/config/workaround.hpp>
 #include <string>
 #include <functional>
 #include <cstddef>
@@ -49,20 +48,12 @@ class std_category;
 #pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
 #endif
 
-#if defined(BOOST_MSVC) && BOOST_MSVC < 1900
-#pragma warning(push)
-#pragma warning(disable: 4351) //  new behavior: elements of array will be default initialized
-#endif
-
 class BOOST_SYMBOL_VISIBLE error_category
 {
 private:
 
     friend std::size_t hash_value( error_code const & ec );
     friend BOOST_SYSTEM_CONSTEXPR bool detail::failed_impl( int ev, error_category const & cat );
-
-    friend class error_code;
-    friend class error_condition;
 
 #if !defined(BOOST_NO_CXX11_DELETED_FUNCTIONS)
 public:
@@ -82,21 +73,13 @@ private:
 
     boost::ulong_long_type id_;
 
-    static std::size_t const stdcat_size_ = 4 * sizeof( void const* );
-
-    union
-    {
-        mutable unsigned char stdcat_[ stdcat_size_ ];
-        void const* stdcat_align_;
-    };
-
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
 
-    mutable std::atomic< unsigned > sc_init_;
+    mutable std::atomic< boost::system::detail::std_category* > ps_;
 
 #else
 
-    unsigned sc_init_;
+    boost::system::detail::std_category* ps_;
 
 #endif
 
@@ -117,18 +100,11 @@ protected:
 
 #endif
 
-#if !BOOST_WORKAROUND(BOOST_GCC, < 40800)
-    BOOST_CONSTEXPR
-#endif
-    error_category() BOOST_NOEXCEPT: id_( 0 ), stdcat_(), sc_init_()
+    BOOST_SYSTEM_CONSTEXPR error_category() BOOST_NOEXCEPT: id_( 0 ), ps_()
     {
     }
 
-    explicit
-#if !BOOST_WORKAROUND(BOOST_GCC, < 40800)
-    BOOST_CONSTEXPR
-#endif
-    error_category( boost::ulong_long_type id ) BOOST_NOEXCEPT: id_( id ), stdcat_(), sc_init_()
+    explicit BOOST_SYSTEM_CONSTEXPR error_category( boost::ulong_long_type id ) BOOST_NOEXCEPT: id_( id ), ps_()
     {
     }
 
@@ -179,21 +155,13 @@ public:
     }
 
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
-
-    void init_stdcat() const;
-
 # if defined(__SUNPRO_CC) // trailing __global is not supported
     operator std::error_category const & () const;
 # else
     operator std::error_category const & () const BOOST_SYMBOL_VISIBLE;
 # endif
-
 #endif
 };
-
-#if defined(BOOST_MSVC) && BOOST_MSVC < 1900
-#pragma warning(pop)
-#endif
 
 #if ( defined( BOOST_GCC ) && BOOST_GCC >= 40600 ) || defined( BOOST_CLANG )
 #pragma GCC diagnostic pop
@@ -202,9 +170,9 @@ public:
 namespace detail
 {
 
-static const boost::ulong_long_type generic_category_id = ( boost::ulong_long_type( 0xB2AB117A ) << 32 ) + 0x257EDFD0;
-static const boost::ulong_long_type system_category_id = generic_category_id + 1;
-static const boost::ulong_long_type interop_category_id = generic_category_id + 2;
+static const boost::ulong_long_type generic_category_id = ( boost::ulong_long_type( 0xB2AB117A ) << 32 ) + 0x257EDF0D;
+static const boost::ulong_long_type system_category_id = ( boost::ulong_long_type( 0x8FAFD21E ) << 32 ) + 0x25C5E09B;
+static const boost::ulong_long_type interop_category_id = ( boost::ulong_long_type( 0x943F2817 ) << 32 ) + 0xFD3A8FAF;
 
 BOOST_SYSTEM_CONSTEXPR inline bool failed_impl( int ev, error_category const & cat )
 {

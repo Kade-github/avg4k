@@ -664,12 +664,7 @@ void Average4k::Screens::Menu::Gameplay::draw()
 
 	if (hasStarted)
 	{
-		static bool oFps = false;
-
-		oFps = !oFps;
-
-		if (oFps)
-			spawnNotes();
+		spawnNotes();
 
 		updateNotes();
 	}
@@ -740,7 +735,7 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 
 	Average4k::Data::Chart::Note n = cNotes[0];
 
-	bool spawn = n.beat < currentBeat + 8;
+	bool spawn = n.beat < currentBeat + 24;
 
 	if (spawn)
 	{
@@ -888,22 +883,42 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 		n->currentBeat = currentBeat;
 		n->currentTime = currentTime;
 
-		if (botplay)
+		if (botplay && (n->data.type == Data::Chart::Tap || n->data.type == Data::Chart::Head))
 		{
-			float d = n->noteTime - currentTime;
-			std::string judge = Average4k::Helpers::JudgementHelper::GetJudgement(d);
-			if (judge == "Marvelous")
+			if (!n->hit)
 			{
-				noteHit(lane);
+				float d = std::abs(n->noteTime - currentTime);
+				if (d <= 0.01)
+				{
+					noteHit(lane);
 
+					if (n->data.type == Data::Chart::Head)
+					{
+						Average4k::Objects::HoldNote* hn = (Average4k::Objects::HoldNote*)n;
+						hn->holding = true;
+						n->hit = true;
+					}
+					else
+						noteRelease(lane);
+				}
+			}
+			else
+			{
 				if (n->data.type == Data::Chart::Head)
 				{
 					Average4k::Objects::HoldNote* hn = (Average4k::Objects::HoldNote*)n;
-					hn->holding = true;
+					if (hn->holding)
+					{
+						float d = std::abs(hn->endTime - currentTime);
+						if (d <= 0.01)
+							noteRelease(lane);
+					}
 				}
+
 			}
 
 		}
+
 
 		if (n->noteTime - currentTime < 0 && !n->missed && n->data.type != Data::Chart::Fake && n->data.type != Data::Chart::Mine)
 		{
@@ -929,7 +944,7 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 							if (diff <= 0.25) // grab back
 								noMiss = true;
 
-							float endDiff = std::abs(hn->endTime - currentTime);
+							float endDiff = hn->endTime - currentTime;
 
 							if (endDiff <= 0.25)
 								noMiss = true;

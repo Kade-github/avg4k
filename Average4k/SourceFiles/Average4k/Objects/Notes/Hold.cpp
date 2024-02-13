@@ -153,7 +153,7 @@ void Average4k::Objects::HoldNote::draw()
 			}
 			else
 			{
-				// no fuckin idea why you gotta do this shit
+				// no fuckin idea why you gotta do this shit (this is probably bad and wont work with modfiles)
 				v[0].y = receptor[0].y; // tl
 				v[2].y = receptor[0].y; // tr
 				v[3].y = receptor[0].y; // tr

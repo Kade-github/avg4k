@@ -391,6 +391,10 @@ void Average4k::Screens::Menu::Gameplay::start()
 	hitNotes = 0;
 	totalNotes = 0;
 
+	// set rate
+
+	channel->RateChange(1);
+
 	// start chart
 
 	sol::protected_function_result result = startChart();
@@ -451,7 +455,6 @@ void Average4k::Screens::Menu::Gameplay::load()
 	lua->getState().set("currentMenu", cm);
 
 	auto setup = lua->getState().get<sol::optional<sol::protected_function>>("setup");
-
 
 	lua->getState().set_function("setNoteSize", Average4k::Api::Functions::FGameplay::SetNoteSize);
 	lua->getState().set_function("rotateReceptors", Average4k::Api::Functions::FGameplay::RotateReceptors);

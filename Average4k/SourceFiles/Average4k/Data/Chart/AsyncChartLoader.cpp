@@ -8,6 +8,8 @@
 #include <AvgEngine/Utils/StringTools.h>
 #include "Providers/StepFile.h"
 
+#include "../../A4kGame.h"
+
 
 Average4k::Data::ChartFile Average4k::Data::AsyncChartLoader::chart = {};
 std::unordered_map<int, Average4k::Data::asyncImage> Average4k::Data::AsyncChartLoader::textures = {};
@@ -91,4 +93,18 @@ void Average4k::Data::AsyncChartLoader::LoadAudio(std::string path, std::string 
 {
 	std::lock_guard<std::mutex> lock(s_lock);
 	channel = AvgEngine::External::BASS::CreateChannel(name, path, false);
+
+	Data::SaveData a = A4kGame::gameInstance->saveData;
+
+	for (auto c : AvgEngine::External::BASS::Channels)
+	{
+		if (c->name.contains("sfx_"))
+		{
+			c->SetVolume(a.audioData.sfxVolume);
+		}
+		else
+		{
+			c->SetVolume(a.audioData.volume);
+		}
+	}
 }

@@ -381,8 +381,19 @@ function create_gameplay()
     back.y = logo.y + logo.height + math.floor(20 * getHeightScale())
 
     for i = 1, #view do
-        view[i].size = math.floor(42 * getHeightScale())
-        view[i].y = back.y + math.floor(60 * getHeightScale()) + (i - 1) * math.floor(60 * getHeightScale())
+        local away = i - selection
+
+        local p = view[i]
+
+        p.y = logo.y + logo.height + math.floor(300 * getHeightScale()) + (away * math.floor(40 * getHeightScale()))
+
+        if p.y < logo.y + logo.height + math.floor(64 * getHeightScale()) then
+            p.y = -1000
+        end
+
+        if p.y > math.floor(900 * getHeightScale()) then
+            p.y = -1000
+        end    
     end
 
     view[selection].text = "> " .. view[selection].text;

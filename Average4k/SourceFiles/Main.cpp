@@ -8,8 +8,10 @@
 #pragma comment(lib,"Library\\x64_static\\bass_fx.lib")
 #pragma comment(lib,"Library\\x64_static\\msgpackc.lib")
 #pragma comment(lib,"Library\\x64_static\\glfw3_mt.lib")
+#pragma comment(lib,"crypt32")
 #pragma comment(lib,"Library\\x64_static\\lua51.lib")
 #pragma comment(lib,"Library\\x64_static\\steam_api64.lib")
+
 #pragma comment(lib,"Library\\x64_static\\libcrypto.lib")
 #pragma comment(lib,"Library\\x64_static\\libssl.lib")
 
@@ -18,6 +20,7 @@
 #else
 #pragma comment(lib,"Library\\x64_static\\Release\\AvgEngine.lib")
 #endif
+
 #include <thread>
 
 #include <stdio.h>

@@ -87,7 +87,8 @@ inline void Connection::sendMessage(T p)
     SendPacket(dataStr, (PacketType)p.PacketType);
 }
 
-void Connection::InitCrypto() {
+#pragma optimize("", off)
+__declspec(noinline) void Connection::InitCrypto() {
 
 
     VM_START
@@ -135,6 +136,7 @@ void Connection::InitCrypto() {
 
 }
 
+#pragma optimize("", off)
 bool IsPointerBad(void* p)
 {
     VM_START
@@ -226,8 +228,8 @@ __declspec(noinline) int Connection::DetectSpeedhack(std::vector<char>* function
         return 0;
 }
 
-
-DWORD WINAPI SendPacketT(LPVOID param) {
+#pragma optimize("", off)
+__declspec(noinline) DWORD WINAPI SendPacketT(LPVOID param) {
 
 
     while (true) {
@@ -345,10 +347,14 @@ DWORD WINAPI SendPacketT(LPVOID param) {
 
         bool success = false;
 
+        VM_END
+
         try {
             if (connectionData) {
+                VM_START
                 connectionData->c.send(connectionData->connectionHdl, std::string((char*)cipherplusIV, ciphertext_len + 16), websocketpp::frame::opcode::BINARY, ec);
                 success = true;
+                VM_END
             }
         }
         catch (std::exception ex) {
@@ -365,8 +371,6 @@ DWORD WINAPI SendPacketT(LPVOID param) {
         unfuckPlease.unlock();
         free(cipherplusIV);
         free(sendData);
-
-        VM_END
     }
     return 0;
 
@@ -382,9 +386,8 @@ void Connection::SendPacket(std::string data, PacketType packet) {
     MUTATE_END
 }
 
-
-
-DWORD WINAPI NewThread(LPVOID param) {
+#pragma optimize("", off)
+__declspec(noinline) DWORD WINAPI NewThread(LPVOID param) {
     for (;;) {
         VM_START
             Sleep(1000);
@@ -872,8 +875,8 @@ context_ptr on_tls_init(const char* hostname, websocketpp::connection_hdl) {
 
 bool firstConnection = false;
 
-
-void Connection::connect()
+#pragma optimize("", off)
+__declspec(noinline) void Connection::connect()
 {
     if (!Instance)
         Instance = new Connection();
@@ -896,11 +899,13 @@ void Connection::connect()
     AvgEngine::Logging::writeLog("[Server] Connecting...");
     CreateThread(NULL, NULL, SendPacketT, NULL, NULL, NULL);
 
+    VM_END
+
     try {
 
         while (true)
         {
-
+            VM_START
 
             if (!firstConnection)
             {
@@ -999,6 +1004,8 @@ void Connection::connect()
 
 
             connectionData->c.reset();
+
+            VM_END
         }
     }
     catch (websocketpp::exception const& e) {
@@ -1006,10 +1013,10 @@ void Connection::connect()
         loggedIn = false;
         connectedToServer = false;
     }
-    VM_END
 }
 
-void Connection::login()
+#pragma optimize("", off)
+__declspec(noinline) void Connection::login()
 {
     VM_START
         if (!connectedToServer)
@@ -1032,7 +1039,8 @@ void Connection::login()
     VM_END
 }
 
-void Connection::OnSteamAuthTicket(EncryptedAppTicketResponse_t* pEncryptedAppTicketResponse, bool bIOFailure)
+#pragma optimize("", off)
+__declspec(noinline) void Connection::OnSteamAuthTicket(EncryptedAppTicketResponse_t* pEncryptedAppTicketResponse, bool bIOFailure)
 {
     VM_START
     Packets::CPacketHello hello;

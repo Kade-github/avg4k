@@ -135,6 +135,18 @@ void Average4k::Api::Functions::FData::SetAudioData(sol::table data)
 	a.volume = data["volume"];
 	a.sfxVolume = data["sfxVolume"];
 
+	for (auto c : AvgEngine::External::BASS::Channels)
+	{
+		if (c->name.contains("sfx_"))
+		{
+			c->SetVolume(a.sfxVolume);
+		}
+		else
+		{
+			c->SetVolume(a.volume);
+		}
+	}
+
 	A4kGame::gameInstance->saveData.Save("Assets/Save/Save.avg");
 }
 

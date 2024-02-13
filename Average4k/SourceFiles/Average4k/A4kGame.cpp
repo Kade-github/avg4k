@@ -155,31 +155,6 @@ void Average4k::A4kGame::update()
 	// Run steam callbacks
 	SteamAPI_RunCallbacks();
 
-	static bool other = false;
-	volume = saveData.audioData.volume;
-	sfxVolume = saveData.audioData.sfxVolume;
-
-	if (switchOnFadeout && fadeoutSong)
-	{
-		volume = std::lerp(0.0f, volume, fadeout);
-		sfxVolume = std::lerp(0.0f, sfxVolume, fadeout);
-	}
-
-	if (other)
-		for (auto c : AvgEngine::External::BASS::Channels)
-		{
-			if (c->name.contains("sfx_"))
-			{
-				c->SetVolume(sfxVolume);
-			}
-			else
-			{
-				c->SetVolume(volume);
-			}
-		}
-
-	other = !other;
-
 	if (!skinExists)
 	{
 		DrawOutlinedDebugText(20 * Average4k::Api::Functions::FGame::GetWidthScale(), 20 * Average4k::Api::Functions::FGame::GetHeightScale(), "The game couldn't find a skin to use, please re-download/verify your game.", 32 * Average4k::Api::Functions::FGame::GetHeightScale());

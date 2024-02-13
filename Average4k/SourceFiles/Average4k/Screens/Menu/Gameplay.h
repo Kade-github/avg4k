@@ -78,8 +78,11 @@ namespace Average4k::Screens::Menu
 		float fakeBeat = 0;
 
 		int combo = 0;
-		int hitNotes = 0;
-		int totalNotes = 0;
+		float hitNotes = 0;
+		float totalNotes = 0;
+
+		bool endAfterSecond = false;
+		std::chrono::steady_clock::time_point endSecond;
 
 		int scrlId = 0;
 		float _lastModifier = 1.0f;

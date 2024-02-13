@@ -221,7 +221,7 @@ namespace AvgEngine::Audio
 				return;
 			}
 			else
-				volume = sqrt(vol); // better curve
+				volume = std::floor(sqrt(vol) * 100) / 100; // better curve
 
 			if (volume > 1.0f)
 				volume = 1.0f;

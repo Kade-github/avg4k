@@ -5,10 +5,9 @@
 
 #include "Gameplay.h"
 #include "MainMenu.h"
+
 #include "../../Api/Functions/FGameplay.h"
-
 #include "../../Api/Stubs/LuaNote.h"
-
 #include "../../Helpers/JudgementHelper.h"
 
 #include <AvgEngine/Utils/Paths.h>
@@ -107,6 +106,7 @@ void Average4k::Screens::Menu::Gameplay::noteHit(int lane)
 			break;
 		case Data::Chart::Mine:
 			n->hit = true;
+			hitNotes -= 0.25;
 			continue;
 		}
 
@@ -118,18 +118,17 @@ void Average4k::Screens::Menu::Gameplay::noteHit(int lane)
 			if (judgement == "Marvelous")
 				hitNotes++;
 			else if (judgement == "Perfect")
-				hitNotes += 0.85;
+				hitNotes += 0.925;
 			else if (judgement == "Great")
-				hitNotes += 0.75;
+				hitNotes += 0.7;
 			else if (judgement == "Good")
 			{
-				combo = 0;
-				hitNotes += 0.6;
+				hitNotes += 0.35;
 			}
 			else if (judgement == "Bad")
 			{
 				combo = 0;
-				hitNotes += 0.5;
+				hitNotes += 0.1;
 			}
 
 			sol::protected_function_result result = hitNote(n->data.type, n->data.lane, judgement, combo, (float)hitNotes / (float)totalNotes);
@@ -185,6 +184,22 @@ void Average4k::Screens::Menu::Gameplay::loadAudio()
 
 	channel = AvgEngine::External::BASS::CreateChannel("audio", strPath, false);
 	channel->ConvertToFX();
+
+	channel->length = BASS_ChannelBytes2Seconds(channel->id, BASS_ChannelGetLength(channel->id, BASS_POS_BYTE));
+
+	Data::SaveData a = A4kGame::gameInstance->saveData;
+
+	for (auto c : AvgEngine::External::BASS::Channels)
+	{
+		if (c->name.contains("sfx_"))
+		{
+			c->SetVolume(a.audioData.sfxVolume);
+		}
+		else
+		{
+			c->SetVolume(a.audioData.volume);
+		}
+	}
 }
 
 void Average4k::Screens::Menu::Gameplay::loadChart()
@@ -585,6 +600,19 @@ void Average4k::Screens::Menu::Gameplay::draw()
 	if (channel == NULL || stop)
 		return;
 
+	if (endAfterSecond)
+	{
+		std::chrono::duration diff = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - endSecond);
+
+		float diffC = diff.count();
+
+		if (diffC >= 2)
+		{
+			leave();
+			return;
+		}
+	}
+
 	if (channel->isPlaying)
 	{
 		currentTime = channel->GetPos();
@@ -619,7 +647,13 @@ void Average4k::Screens::Menu::Gameplay::draw()
 
 	if (hasStarted)
 	{
-		spawnNotes();
+		static bool oFps = false;
+
+		oFps = !oFps;
+
+		if (oFps)
+			spawnNotes();
+
 		updateNotes();
 	}
 
@@ -658,6 +692,14 @@ void Average4k::Screens::Menu::Gameplay::draw()
 	playfield_spr->draw();
 	hud_spr->draw();
 
+	if (!endAfterSecond)
+		if ((currentTime >= channel->length) || (notes.size() == 0 && cNotes.size() == 0))
+		{
+			endAfterSecond = true;
+			endSecond = std::chrono::steady_clock::now();
+			return;
+		}
+
 	A4kGame::gameInstance->DrawOutlinedDebugText(24, AvgEngine::Render::Display::height - 42, 
 		"Beat: " + std::to_string(currentBeat) + 
 		" | Time: " + std::to_string(currentTime) + 
@@ -674,7 +716,7 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 
 	Average4k::Data::Chart::Note n = cNotes[0];
 
-	bool spawn = n.beat < currentBeat + 24;
+	bool spawn = n.beat < currentBeat + 8;
 
 	while (spawn)
 	{
@@ -750,6 +792,7 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 
 void Average4k::Screens::Menu::Gameplay::updateNotes()
 {
+
 	std::vector<Average4k::Objects::BaseNote*> toRemove;
 
 	// scroll modifiers
@@ -779,11 +822,11 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 			A4kGame::gameInstance->DrawOutlinedDebugText(24, AvgEngine::Render::Display::height - 84, "Progress on stretch: " + std::to_string((int)std::floorf(progress * 100)) + "%", 42);
 	}
 
-
 	for (auto n : notes)
 	{
 		if (n->overlays.size() != 0)
 		{
+
 			sol::protected_function_result result = overlayUpdate(n->data.type, n->overlayAngle, n->overlayOpacity);
 
 			if (!result.valid())
@@ -819,7 +862,7 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 		n->currentBeat = currentBeat;
 		n->currentTime = currentTime;
 
-		if (n->noteTime - currentTime < 0 && !n->missed)
+		if (n->noteTime - currentTime < 0 && !n->missed && n->data.type != Data::Chart::Fake && n->data.type != Data::Chart::Mine)
 		{
 			bool noMiss = false;
 			if (n->hit)

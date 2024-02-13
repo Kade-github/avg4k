@@ -67,8 +67,6 @@ void Average4k::Screens::Menu::Gameplay::noteRelease(int lane)
 		Average4k::Objects::HoldNote* hn = (Average4k::Objects::HoldNote*)n;
 		hn->holding = false;
 		hn->endHold = currentBeat;
-
-		break;
 	}
 
 	lua->getState().collect_garbage();
@@ -85,18 +83,21 @@ void Average4k::Screens::Menu::Gameplay::noteHit(int lane)
 {
 	for (auto n : notes)
 	{
-		if (n->data.lane != lane || n->hit || n->data.type == Data::Chart::Fake)
+		bool hitBefore = n->hit;
+		if (n->data.lane != lane || n->data.type == Data::Chart::Fake)
 			continue;
 
 		std::string judgement = Average4k::Helpers::JudgementHelper::GetJudgement(currentTime - n->noteTime);
 
-		if (judgement == "Miss")
+		if (judgement == "Miss" && !hitBefore)
 			continue;
 
 		Average4k::Objects::HoldNote* hn = NULL;
 		switch (n->data.type)
 		{
 		case Data::Chart::Tap:
+			if (hitBefore)
+				continue;
 			n->hit = true;
 			break;
 		case Data::Chart::Head:
@@ -105,10 +106,18 @@ void Average4k::Screens::Menu::Gameplay::noteHit(int lane)
 			hn->holding = true;
 			break;
 		case Data::Chart::Mine:
+			if (hitBefore)
+				continue;
 			n->hit = true;
 			hitNotes -= 0.25;
 			continue;
 		}
+
+		if (judgement == "Miss")
+			continue;
+
+		if (hitBefore)
+			continue;
 
 		if (n->hit)
 		{
@@ -824,6 +833,8 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 
 	for (auto n : notes)
 	{
+		int lane = n->data.lane;
+
 		if (n->overlays.size() != 0)
 		{
 
@@ -872,19 +883,25 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 				if (n->data.type == Data::Chart::Head)
 				{
 					Average4k::Objects::HoldNote* hn = (Average4k::Objects::HoldNote*)n;
-					if (hn->holding)
+
+					if (hn->holdHasEnded)
 						noMiss = true;
 					else
 					{
-						float diff = std::abs(hn->endHold - currentBeat);
-
-						if (diff <= 0.5) // grab back
+						if (hn->holding)
 							noMiss = true;
+						else
+						{
+							float diff = std::abs(hn->endHold - currentBeat);
 
-						float endDiff = hn->endTime - currentTime;
+							if (diff <= 0.25) // grab back
+								noMiss = true;
 
-						if (endDiff <= 0.05)
-							noMiss = true;
+							float endDiff = std::abs(hn->endTime - currentTime);
+
+							if (endDiff <= 0.25)
+								noMiss = true;
+						}
 					}
 				}
 				else
@@ -936,8 +953,6 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 				continue;
 			}
 		}
-
-		int lane = n->data.lane;
 
 		n->transform.y = receptors[lane]->transform.y;
 		n->transform.x = receptors[lane]->transform.x;

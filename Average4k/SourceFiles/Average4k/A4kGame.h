@@ -107,12 +107,17 @@ namespace Average4k
 			debugText->parent = &CurrentMenu->displayRect;
 			debugText->parentI = &CurrentMenu->displayRect;
 			debugText->camera = &CurrentMenu->camera;
+
+			debugText->zIndex = 999;
+
 			debugTextOutlined->tween = &CurrentMenu->tween;
 			debugTextOutlined->eManager = CurrentMenu->eManager;
 			debugTextOutlined->camera = &CurrentMenu->camera;
 			debugTextOutlined->parent = &CurrentMenu->displayRect;
 			debugTextOutlined->parentI = &CurrentMenu->displayRect;
 			debugTextOutlined->camera = &CurrentMenu->camera;
+
+			debugTextOutlined->zIndex = 999;
 		}
 
 		void DrawDebugText(float x, float y, std::string text, int size)

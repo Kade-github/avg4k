@@ -69,7 +69,10 @@ void Average4k::Objects::HoldNote::draw()
 	}
 
 	if (progress > 1)
+	{
+		holdHasEnded = true;
 		progress = 1;
+	}
 
 	for (int i = 0; i < amount; i++)
 	{
@@ -78,8 +81,13 @@ void Average4k::Objects::HoldNote::draw()
 		if (downscroll)
 			r.y = (transform.y + (transform.h / 2)) - (transform.h * i);
 
+		float p1 = (float)(i - 1) / (float)amount;
 		float p2 = (float)i / (float)amount;
 		float p3 = (float)(i + 1) / (float)amount;
+		if (p1 < 0)
+			p1 = 0;
+		if (p3 > 1)
+			p3 = 1;
 
 		std::vector<Render::Vertex> v = {};
 
@@ -98,7 +106,7 @@ void Average4k::Objects::HoldNote::draw()
 
 		if (!downscroll)
 		{
-			if (i == 0)
+			if (i == 0 || vertices.size() == 0)
 			{
 				v[0].y = transform.y + (transform.h / 2); // top left
 				v[0].x = transform.x;
@@ -120,7 +128,7 @@ void Average4k::Objects::HoldNote::draw()
 		}
 		else
 		{
-			if (i == 0)
+			if (i == 0 || vertices.size() == 0)
 			{
 				v[1].y = transform.y + (transform.h / 2); // bottom left
 				v[1].x = transform.x;
@@ -143,34 +151,40 @@ void Average4k::Objects::HoldNote::draw()
 
 		// hold cliping
 
-		if (p2 <= progress)
+		if (holding)
 		{
-			if (!downscroll) 
+			if (p2 <= progress)
 			{
-				v[0].y = receptor[0].y; // tl
-				v[2].y = receptor[2].y; // tr
-				v[3].y = receptor[3].y; // tr
-			}
-			else
-			{
-				// no fuckin idea why you gotta do this shit (this is probably bad and wont work with modfiles)
-				v[0].y = receptor[0].y; // tl
-				v[2].y = receptor[0].y; // tr
-				v[3].y = receptor[0].y; // tr
+				if (!downscroll)
+				{
+					v[0].y = receptor[0].y; // tl
+					v[2].y = receptor[2].y; // tr
+					v[3].y = receptor[3].y; // tr
+				}
+				else
+				{
+					// no fuckin idea why you gotta do this shit (this is probably bad and wont work with modfiles)
+					v[0].y = receptor[0].y; // tl
+					v[2].y = receptor[0].y; // tr
+					v[3].y = receptor[0].y; // tr
 
+					v[1].y = receptor[0].y; // bl
+					v[4].y = receptor[0].y; // bl
+					v[5].y = receptor[0].y; // br
+
+				}
+			}
+
+			if (p3 <= progress && !downscroll)
+			{
 				v[1].y = receptor[0].y; // bl
 				v[4].y = receptor[0].y; // bl
-				v[5].y = receptor[0].y; // br
-
+				v[5].y = receptor[2].y; // br
 			}
 		}
 
-		if (p3 <= progress && !downscroll)
-		{
-			v[1].y = receptor[0].y; // bl
-			v[4].y = receptor[0].y; // bl
-			v[5].y = receptor[2].y; // br
-		}
+		if (p1 <= progress && !holding && hasHeld)
+			continue;
 
 		vertices.push_back(v);
 	}

@@ -7,7 +7,7 @@
 #define _AVGDEFINE_H_
 
 #define _WINSOCKAPI_
-#define A_VERSION "nb14"
+#define A_VERSION "2nb14"
 #define A_SHEADER "ASaveFormat1.2"
 #define A_PRODUCTION 1
 

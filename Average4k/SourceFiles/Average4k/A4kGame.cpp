@@ -43,11 +43,7 @@ void Average4k::A4kGame::Destroy()
 
 	// Disconnect from server
 
-	VM_START
-
 	c->inQuotesGracefullyDisconnect();
-
-	VM_END
 
 	// Destroy steam
 
@@ -140,8 +136,6 @@ void Average4k::A4kGame::Start()
 
 	// Connect to the server
 
-	VM_START
-
 	c = new Multiplayer::Connection();
 
 	c->InitCrypto();
@@ -149,8 +143,6 @@ void Average4k::A4kGame::Start()
 	std::jthread t(c->connect);
 
 	t.detach();
-
-	VM_END
 
 }
 

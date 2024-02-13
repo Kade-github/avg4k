@@ -152,8 +152,11 @@ bool IsPointerBad(void* p)
         return true;
 }
 
+
 typedef BOOL WINAPI RtlQueryPerformanceCounter_t(LARGE_INTEGER* ticks);
-int Connection::DetectSpeedhack(std::vector<char>* function) {
+
+#pragma optimize("", off)
+__declspec(noinline) int Connection::DetectSpeedhack(std::vector<char>* function) {
 
     VM_START
         RtlQueryPerformanceCounter_t* perfCounter = (RtlQueryPerformanceCounter_t*)GetProcAddress(GetModuleHandleA("ntdll"), "RtlQueryPerformanceCounter");
@@ -511,7 +514,8 @@ DWORD WINAPI pleaseLogin(LPVOID agh)
     return 0;
 }
 
-void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr msg) {
+#pragma optimize("", off)
+__declspec(noinline) void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr msg) {
 
     PacketType type;
     if (msg->get_opcode() != websocketpp::frame::opcode::BINARY)
@@ -524,7 +528,9 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
 
 
         if (strData.length() <= 16)
+        {
             return;
+        }
         size_t payloadLength = strData.length();
 
         char* ciphertext = (char*)malloc(payloadLength);
@@ -617,8 +623,8 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
 
 
         VM_END
-            switch (type)
-            {
+        switch (type)
+        {
             case eSPacketStatus: {
 
                 unpack(result, data, length);
@@ -757,7 +763,7 @@ void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr 
                 game->SubmitPacket(obj, type);
                 VM_END
                 break;
-            }
+        }
     }
     catch (std::exception e) {
         AvgEngine::Logging::writeLog("[Server] Shit " + std::string(e.what()) + " - THINGY CASTING " + std::to_string(type));

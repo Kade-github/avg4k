@@ -919,7 +919,7 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 		{
 			if (!n->hit)
 			{
-				float d = std::abs(n->noteTime - currentTime);
+				float d = n->noteTime - currentTime;
 				if (d <= 0.01)
 				{
 					noteHit(lane);

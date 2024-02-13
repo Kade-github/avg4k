@@ -142,7 +142,7 @@ void Average4k::Screens::Menu::Gameplay::noteHit(int lane)
 		hn->holding = true;
 		break;
 	case Data::Chart::Mine:
-		if (hitBefore)
+		if (hitBefore || j != "Marvelous")
 			return;
 		hit->hit = true;
 		hitNotes -= 0.25;

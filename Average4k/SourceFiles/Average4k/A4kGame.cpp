@@ -267,8 +267,10 @@ void Average4k::A4kGame::update()
 		}
 	}
 
+	DrawOutlinedDebugText(0,0, "A4k Alpha Build " + std::string(A_VERSION) + " | Not even close to being done.", 32 * Average4k::Api::Functions::FGame::GetHeightScale());
 
 	CurrentMenu->draw();
+
 
 }
 

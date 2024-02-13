@@ -132,18 +132,22 @@ void Average4k::A4kGame::Start()
 	Helpers::SteamHelper::Initialize();
 
 	if (Helpers::SteamHelper::IsSteamRunning)
+	{
 		Helpers::SteamHelper::SetPresence("Alpha Version: " + std::string(A_VERSION));
 
-	// Connect to the server
+		// Connect to the server
 
-	c = new Multiplayer::Connection();
 
-	c->InitCrypto();
+		c = new Multiplayer::Connection();
 
-	std::jthread t(c->connect);
+		c->InitCrypto();
 
-	t.detach();
+		std::jthread t(c->connect);
 
+		t.detach();
+	}
+	else
+		AvgEngine::Logging::writeLog("[Average4k] [Warning] Steam is not running, running in offline mode.");
 }
 
 void Average4k::A4kGame::update()

@@ -33,7 +33,13 @@ void Average4k::Objects::HoldNote::draw()
 
 	float endPosition = Average4k::Helpers::TimeToScreen::YOffset(cmod, endTime - noteTime);
 
+	float rEnd = transform.y + endPosition;
+
 	setPosition(); // Objects::BaseNote
+
+	if ((transform.y > Render::Display::height && !downscroll) ||
+		(transform.y < 0 && downscroll))
+		return;
 
 	// welcome to the jungle, we got fun and games, we got everything you want, honey we know the names, we are the people that can find, whatever you may need, 
 	// if you got the money honey, we got your disease. 

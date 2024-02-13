@@ -415,6 +415,8 @@ void Average4k::Screens::Menu::Gameplay::start()
 	hitNotes = 0;
 	totalNotes = 0;
 
+	botplay = false;
+
 	// set rate
 
 	channel->RateChange(1);
@@ -542,14 +544,20 @@ void Average4k::Screens::Menu::Gameplay::load()
 			if (e.data == save->keybindData.keyRestart)
 				restart();
 
-			if (e.data == save->keybindData.key0)
-				noteHit(0);
-			if (e.data == save->keybindData.key1)
-				noteHit(1);
-			if (e.data == save->keybindData.key2)
-				noteHit(2);
-			if (e.data == save->keybindData.key3)
-				noteHit(3);
+			if (!botplay)
+			{
+				if (e.data == save->keybindData.key0)
+					noteHit(0);
+				if (e.data == save->keybindData.key1)
+					noteHit(1);
+				if (e.data == save->keybindData.key2)
+					noteHit(2);
+				if (e.data == save->keybindData.key3)
+					noteHit(3);
+			}
+
+			if (e.data == GLFW_KEY_F1)
+				botplay = !botplay;
 
 			if (e.data == GLFW_KEY_F10)
 				channel->RateChange(channel->rate + 0.25f);
@@ -716,6 +724,13 @@ void Average4k::Screens::Menu::Gameplay::draw()
 		"/" + std::to_string((int)(std::floorf(A4kGame::Instance->fpsCap))) + 
 		" | Scroll Modifier: " + std::to_string(scrollModifier) + 
 		" | Stretch: " + std::to_string(stretch), 42);
+
+	A4kGame::gameInstance->DrawOutlinedDebugText(24, AvgEngine::Render::Display::height - 84, "Notes: " + std::to_string(notes.size()) + "/" + std::to_string(cNotes.size()) + " (queued)", 42);
+
+	// botplay
+
+	if (botplay)
+		A4kGame::gameInstance->DrawOutlinedDebugText(24, AvgEngine::Render::Display::height - 126, "Botplay enabled.", 42);
 }
 
 void Average4k::Screens::Menu::Gameplay::spawnNotes()
@@ -727,7 +742,7 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 
 	bool spawn = n.beat < currentBeat + 8;
 
-	while (spawn)
+	if (spawn)
 	{
 
 		if (n.type == 3) // skip ends
@@ -742,10 +757,10 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 			cNotes.erase(cNotes.begin());
 
 			if (cNotes.size() == 0)
-				break;
+				return;
 
 			n = cNotes[0];
-			continue;
+			return;
 		}
 
 		float cmod = (save->gameplayData.constantMod / channel->rate) * hScale;
@@ -793,7 +808,7 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 		cNotes.erase(cNotes.begin());
 
 		if (cNotes.size() == 0)
-			break;
+			return;
 
 		n = cNotes[0];
 	}
@@ -872,6 +887,23 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 
 		n->currentBeat = currentBeat;
 		n->currentTime = currentTime;
+
+		if (botplay)
+		{
+			float d = n->noteTime - currentTime;
+			std::string judge = Average4k::Helpers::JudgementHelper::GetJudgement(d);
+			if (judge == "Marvelous")
+			{
+				noteHit(lane);
+
+				if (n->data.type == Data::Chart::Head)
+				{
+					Average4k::Objects::HoldNote* hn = (Average4k::Objects::HoldNote*)n;
+					hn->holding = true;
+				}
+			}
+
+		}
 
 		if (n->noteTime - currentTime < 0 && !n->missed && n->data.type != Data::Chart::Fake && n->data.type != Data::Chart::Mine)
 		{

@@ -77,6 +77,8 @@ namespace Average4k::Screens::Menu
 		std::chrono::steady_clock::time_point start_time;
 		float fakeBeat = 0;
 
+		bool botplay = false;
+
 		int combo = 0;
 		float hitNotes = 0;
 		float totalNotes = 0;

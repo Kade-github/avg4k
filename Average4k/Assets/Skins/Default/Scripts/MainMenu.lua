@@ -71,7 +71,7 @@ function keyPress(data)
         if data == 264 then -- down
             selection = selection + 1
 
-            if selection > 4 then
+            if selection > 5 then
                 selection = 1
             end
         end

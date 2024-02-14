@@ -56,6 +56,8 @@ void Average4k::Screens::Menu::Gameplay::leave()
 
 void Average4k::Screens::Menu::Gameplay::noteRelease(int lane)
 {
+	holdingLanes[lane] = 0;
+
 	for (auto n : notes)
 	{
 		if (n->data.lane != lane)
@@ -85,6 +87,8 @@ void Average4k::Screens::Menu::Gameplay::noteHit(int lane)
 	sol::protected_function_result result = receptorHit(Average4k::Api::Stubs::LuaSprite(receptors[lane]), noteWidth, noteHeight);
 
 
+	holdingLanes[lane] = 1;
+
 	if (!result.valid())
 	{
 		sol::error err = result;
@@ -96,7 +100,7 @@ void Average4k::Screens::Menu::Gameplay::noteHit(int lane)
 
 	for (auto n : notes)
 	{
-		if (n->data.lane != lane || n->data.type == Data::Chart::Fake)
+		if (n->data.lane != lane || n->data.type == Data::Chart::Fake || n->data.type == Data::Chart::Mine)
 			continue;
 
 		std::string judgement = Average4k::Helpers::JudgementHelper::GetJudgement(currentTime - n->noteTime);
@@ -144,12 +148,6 @@ void Average4k::Screens::Menu::Gameplay::noteHit(int lane)
 		hit->hit = true;
 		hn->holding = true;
 		break;
-	case Data::Chart::Mine:
-		if (hitBefore || j != "Marvelous")
-			return;
-		hit->hit = true;
-		hitNotes -= 0.25;
-		return;
 	}
 
 	if (j == "Miss")
@@ -882,6 +880,19 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 	for (auto n : notes)
 	{
 		int lane = n->data.lane;
+
+		if (holdingLanes[lane] == 1 && n->data.type == Data::Chart::Mine)
+		{
+			std::string judge = Average4k::Helpers::JudgementHelper::GetJudgement(std::abs(currentTime - n->noteTime) * 1.5);
+
+			if (judge == "Marvelous")
+			{
+				n->hit = true;
+				hitNotes -= 1;
+				continue;
+			}
+		}
+			
 
 		if (n->overlays.size() != 0)
 		{

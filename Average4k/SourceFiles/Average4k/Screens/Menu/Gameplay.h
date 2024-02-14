@@ -63,6 +63,7 @@ namespace Average4k::Screens::Menu
 
 		AvgEngine::Base::Sprite* background;
 
+		int holdingLanes[4] = { 0, 0, 0, 0 };
 		Average4k::Objects::BaseNote* holds[4] = { nullptr, nullptr, nullptr, nullptr };
 		std::vector<AvgEngine::Base::Sprite*> receptors;
 		std::vector<Average4k::Objects::BaseNote*> notes;

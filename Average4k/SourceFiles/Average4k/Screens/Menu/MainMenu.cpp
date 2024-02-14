@@ -79,6 +79,11 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 	lua->getState().set_function("playChart", Functions::FGame::PlayChart);
 	lua->getState().set_function("fadeOutSong", Functions::FGame::FadeOutSong);
 
+	// FFiles
+
+	lua->getState().set_function("getFileFromUser", Functions::FFiles::GetFileFromUser);
+	lua->getState().set_function("getFolderFromUser", Functions::FFiles::GetFolderFromUser);
+
 	lua->create();
 
 	// setup event listeners

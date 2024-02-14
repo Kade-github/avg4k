@@ -8,6 +8,7 @@
 
 #include <windows.h>
 #include <string>
+#include <ShlObj.h>
 
 #pragma once
 namespace Average4k::Helpers
@@ -49,6 +50,33 @@ namespace Average4k::Helpers
                 return "";
 
         }
+
+        static inline std::string GetFolder()
+        {
+			// thing
+			BROWSEINFO bi = { 0 };
+			bi.lpszTitle = L"Browse for folder...";
+			LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
+
+			// get the name of the folder
+			wchar_t path[MAX_PATH];
+            if (pidl != 0)
+            {
+				SHGetPathFromIDList(pidl, path);
+				// free memory used
+				IMalloc* imalloc = 0;
+                if (SUCCEEDED(SHGetMalloc(&imalloc)))
+                {
+					imalloc->Free(pidl);
+					imalloc->Release();
+				}
+				std::wstring ws(path);
+				std::string str(ws.begin(), ws.end());
+				return str;
+			}
+			else
+				return "";
+		}
 
         /// <summary>
         /// Returns the file path of the file selected by the user as an "Save File" dialog.

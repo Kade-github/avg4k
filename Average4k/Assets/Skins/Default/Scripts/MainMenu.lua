@@ -1,5 +1,6 @@
 songs = nil
 multiplayer = nil
+workshop = nil
 settings = nil
 exit = nil
 
@@ -24,7 +25,11 @@ function create()
 
     currentMenu:addObject(multiplayer)
 
-    settings = Text.new(20, multiplayer.y + multiplayer.height + math.floor(40 * getHeightScale()), "Arial.fnt", "Settings", math.floor(42 * getHeightScale()))
+    workshop = Text.new(20, multiplayer.y + multiplayer.height + math.floor(40 * getHeightScale()), "Arial.fnt", "Workshop", math.floor(42 * getHeightScale()))
+
+    currentMenu:addObject(workshop)
+
+    settings = Text.new(20, workshop.y + workshop.height + math.floor(40 * getHeightScale()), "Arial.fnt", "Settings", math.floor(42 * getHeightScale()))
 
     currentMenu:addObject(settings)
 
@@ -32,7 +37,7 @@ function create()
 
     currentMenu:addObject(exit)
 
-    texts = {songs, multiplayer, settings, exit}
+    texts = {songs, multiplayer, workshop, settings, exit}
 end
 
 function keyPress(data)
@@ -40,10 +45,13 @@ function keyPress(data)
         if selection == 1 then -- songs
             switchTo("Scripts/SongSelect.lua")
         end
-        if selection == 3 then -- settings
+        if selection == 3 then -- multiplayer
+            switchTo("Scripts/Workshop.lua")
+        end
+        if selection == 4 then -- settings
             switchTo("Scripts/Settings.lua")
         end
-        if selection == 4 then -- exit
+        if selection == 5 then -- exit
             quitGame()
         end
     else

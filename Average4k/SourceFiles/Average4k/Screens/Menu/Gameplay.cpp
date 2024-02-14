@@ -881,7 +881,7 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 	{
 		int lane = n->data.lane;
 
-		if (holdingLanes[lane] == 1 && n->data.type == Data::Chart::Mine)
+		if (holdingLanes[lane] == 1 && n->data.type == Data::Chart::Mine && !n->hit)
 		{
 			std::string judge = Average4k::Helpers::JudgementHelper::GetJudgement(std::abs(currentTime - n->noteTime) * 1.5);
 
@@ -889,6 +889,20 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 			{
 				n->hit = true;
 				hitNotes -= 1;
+				
+				float acc = (float)hitNotes / (float)totalNotes;
+
+				if (totalNotes == 0)
+					acc = 0;
+
+				sol::protected_function_result result = hitNote(n->data.type, n->data.lane, "Mine", combo, acc);
+
+				if (!result.valid())
+				{
+					sol::error err = result;
+					AvgEngine::Logging::writeLog("[Lua] [Warning] Error in function hitNote for note type " + std::to_string(n->data.type) + " at beat " + std::to_string(n->data.beat) + ".\n" + std::string(err.what()));
+				}
+
 				continue;
 			}
 		}

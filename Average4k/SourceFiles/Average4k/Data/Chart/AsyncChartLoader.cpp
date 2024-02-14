@@ -96,15 +96,5 @@ void Average4k::Data::AsyncChartLoader::LoadAudio(std::string path, std::string 
 
 	Data::SaveData a = A4kGame::gameInstance->saveData;
 
-	for (auto c : AvgEngine::External::BASS::Channels)
-	{
-		if (c->name.contains("sfx_"))
-		{
-			c->SetVolume(a.audioData.sfxVolume);
-		}
-		else
-		{
-			c->SetVolume(a.audioData.volume);
-		}
-	}
+	channel->SetVolume(a.audioData.volume);
 }

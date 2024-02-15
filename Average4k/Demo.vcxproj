@@ -38,6 +38,7 @@
     <ClCompile Include="SourceFiles\Average4k\Api\Functions\FGameplay.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Api\Functions\FMenu.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Api\Functions\FSkins.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Api\Functions\FSteam.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Console\CmdHandler.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Data\Chart\AsyncChartLoader.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Data\Chart\ChartFile.cpp" />
@@ -53,6 +54,7 @@
     <ClCompile Include="SourceFiles\Average4k\Screens\Menu\Gameplay.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Screens\Menu\MainMenu.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Skin\Skin.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Steam\UGCHandler.cpp" />
     <ClCompile Include="SourceFiles\External\ImGui\imgui.cpp" />
     <ClCompile Include="SourceFiles\External\ImGui\imgui_demo.cpp" />
     <ClCompile Include="SourceFiles\External\ImGui\imgui_draw.cpp" />
@@ -76,6 +78,7 @@
     <ClInclude Include="SourceFiles\Average4k\Api\Functions\FGameplay.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Functions\FMenu.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Functions\FSkins.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\Functions\FSteam.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaMenu.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaNote.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaObject.h" />
@@ -153,6 +156,7 @@
     <ClInclude Include="SourceFiles\Average4k\Screens\Menu\Gameplay.h" />
     <ClInclude Include="SourceFiles\Average4k\Screens\Menu\MainMenu.h" />
     <ClInclude Include="SourceFiles\Average4k\Skin\Skin.h" />
+    <ClInclude Include="SourceFiles\Average4k\Steam\UGCHandler.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Average4k.rc" />

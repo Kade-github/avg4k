@@ -45,7 +45,10 @@ function keyPress(data)
         if selection == 1 then -- songs
             switchTo("Scripts/SongSelect.lua")
         end
-        if selection == 3 then -- multiplayer
+        if selection == 2 and isSteamRunning() then -- multiplayer
+            
+        end
+        if selection == 3 and isSteamRunning() then -- workshop
             switchTo("Scripts/Workshop.lua")
         end
         if selection == 4 then -- settings

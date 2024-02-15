@@ -8,6 +8,7 @@
 
 #include <windows.h>
 #include <string>
+#include <filesystem>
 #include <ShlObj.h>
 
 #pragma once
@@ -56,6 +57,9 @@ namespace Average4k::Helpers
 			// thing
 			BROWSEINFO bi = { 0 };
 			bi.lpszTitle = L"Browse for folder...";
+            bi.ulFlags = BIF_NEWDIALOGSTYLE;
+
+            // show the dialog
 			LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
 
 			// get the name of the folder

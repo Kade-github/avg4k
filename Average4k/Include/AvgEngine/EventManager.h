@@ -30,6 +30,7 @@ namespace AvgEngine::Events
 		Event_MouseScroll = 10,
 		Event_SwitchMenu = 11,
 		Event_WindowResize = 12,
+		Event_CharacterInput = 13,
 		Event_Null = -1,
 		Event_User = 100
 	};

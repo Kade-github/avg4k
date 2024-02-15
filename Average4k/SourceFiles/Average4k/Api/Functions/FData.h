@@ -26,8 +26,6 @@ namespace Average4k::Api::Functions
 		static void SetAudioData(sol::table data);
 
 		static void SetSkin(std::string skinName);
-
-		static std::string GetSteamName();
 	};
 }
 

@@ -229,6 +229,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			}
 		});
 
+
+
 	glfwSetWindowSizeCallback(game->Window, [](GLFWwindow* window, int width, int height)
 		{
 			AvgEngine::Events::Event e;
@@ -244,6 +246,14 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			AvgEngine::Events::Event e;
 			e.type = AvgEngine::Events::EventType::Event_MouseScroll;
 			e.data = yoffset;
+			A4kGame::Instance->QueueEvent(e);
+		});
+
+	glfwSetCharCallback(game->Window, [](GLFWwindow* window, unsigned int codepoint)
+		{
+			AvgEngine::Events::Event e;
+			e.type = AvgEngine::Events::EventType::Event_CharacterInput;
+			e.data = codepoint;
 			A4kGame::Instance->QueueEvent(e);
 		});
 

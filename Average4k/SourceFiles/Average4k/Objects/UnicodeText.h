@@ -55,6 +55,7 @@ namespace Average4k::Objects
 			transform.w = _text.size() * size;
 			transform.h = size;
 			iTransform = transform;
+			wrap = true;
 
 		}
 

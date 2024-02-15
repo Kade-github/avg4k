@@ -16,6 +16,7 @@ namespace Average4k::Helpers
 	class SteamHelper
 	{
 	public:
+		static char* avatarTexture;
 		static std::string Id64;
 		static std::string Nickname;
 		static bool IsSteamRunning;

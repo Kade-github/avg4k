@@ -228,8 +228,3 @@ void Average4k::Api::Functions::FData::SetSkin(std::string skinName)
 
 	A4kGame::gameInstance->QueueEvent(e);
 }
-
-std::string Average4k::Api::Functions::FData::GetSteamName()
-{
-	return Average4k::Helpers::SteamHelper::Nickname;
-}

@@ -5,11 +5,14 @@
 
 
 #include "SteamHelper.h"
-#include <steam/steam_api.h>
+#include "../Steam/UGCHandler.h"
 
 #include <AvgEngine/Utils/Logging.h>
 
+
 bool Average4k::Helpers::SteamHelper::IsSteamRunning = false;
+
+char* Average4k::Helpers::SteamHelper::avatarTexture = nullptr;
 
 std::string Average4k::Helpers::SteamHelper::Id64 = "";
 std::string Average4k::Helpers::SteamHelper::Nickname = "Not logged in";
@@ -36,6 +39,7 @@ void Average4k::Helpers::SteamHelper::Initialize()
 	Id64 = id.ConvertToUint64();
 	Nickname = std::string(name);
 
+	Steam::UGCHandler* ugcHandler = new Steam::UGCHandler(); // create this (this gets put in UGCHandler::Instance)
 }
 
 void Average4k::Helpers::SteamHelper::SetPresence(std::string presence)

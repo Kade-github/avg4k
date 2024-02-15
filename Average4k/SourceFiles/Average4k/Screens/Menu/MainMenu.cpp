@@ -10,6 +10,7 @@
 
 #include "../../Data/Chart/ChartFinder.h"
 #include "../../Data/Chart/AsyncChartLoader.h"
+#include "../../Helpers/SteamHelper.h"
 
 using namespace Average4k::Api;
 
@@ -64,7 +65,6 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 	lua->getState().set_function("setVideoData", Functions::FData::SetVideoData);
 	lua->getState().set_function("setAudioData", Functions::FData::SetAudioData);
 	lua->getState().set_function("setSkin", Functions::FData::SetSkin);
-	lua->getState().set_function("getSteamName", Functions::FData::GetSteamName);
 
 	// FSkins
 
@@ -83,6 +83,20 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 
 	lua->getState().set_function("getFileFromUser", Functions::FFiles::GetFileFromUser);
 	lua->getState().set_function("getFolderFromUser", Functions::FFiles::GetFolderFromUser);
+
+	// FSteam
+
+	if (Helpers::SteamHelper::IsSteamRunning)
+	{
+		lua->getState().set_function("getSteamName", Functions::FSteam::GetSteamName);
+		lua->getState().set_function("isSteamRunning", Functions::FSteam::IsSteamRunning);
+		lua->getState().set_function("openWorkshop", Functions::FSteam::OpenWorkshop);
+		lua->getState().set_function("createItem", Functions::FSteam::CreateItem);
+		lua->getState().set_function("uploadPack", Functions::FSteam::UploadPack);
+		lua->getState().set_function("uploadNoteskin", Functions::FSteam::UploadNoteskin);
+		lua->getState().set_function("uploadTheme", Functions::FSteam::UploadTheme);
+		lua->getState().set_function("deleteItem", Functions::FSteam::DeleteItem);
+	}
 
 	lua->create();
 
@@ -164,6 +178,22 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 			{
 				sol::error err = result;
 				AvgEngine::Logging::writeLog("[Lua] Error in function mouseScroll.\n" + std::string(err.what()));
+			}
+		}
+	});
+
+	eManager->Subscribe(AvgEngine::Events::EventType::Event_CharacterInput, [&](AvgEngine::Events::Event e) {
+		sol::state& s = lua->getState();
+		auto f = s.get<sol::optional<sol::protected_function>>("charInput");
+
+		if (f.has_value())
+		{
+			sol::protected_function_result result = f.value()(e.data);
+
+			if (!result.valid())
+			{
+				sol::error err = result;
+				AvgEngine::Logging::writeLog("[Lua] Error in function charInput.\n" + std::string(err.what()));
 			}
 		}
 	});

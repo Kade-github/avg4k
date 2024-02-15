@@ -73,6 +73,27 @@ void Average4k::Objects::UnicodeText::draw()
 			}
 		}
 		float advance = ((fileAdvance * scale) + characterSpacing) * transform.scale;
+
+		if (wrap && dst.x + dst.w > parent->x + parent->w)
+		{
+			dst.x = start.x;
+			dst.y += highestH;
+			d += highestH;
+			highestH = 0;
+			currentLine.w = totalW;
+			if (outlineThickness != 0)
+			{
+				currentOutline.w = totalW;
+				outlines.push_back(currentOutline);
+			}
+			lines.push_back(currentLine);
+			currentLine = {};
+			currentOutline = {};
+			if (totalW > transform.w)
+				transform.w = totalW;
+			totalW = 0;
+		}
+
 		if (ch == 32)
 		{
 			CharacterLine l;
@@ -80,25 +101,6 @@ void Average4k::Objects::UnicodeText::draw()
 			l.advance = advance;
 			totalW += advance;
 			dst.x += advance;
-			if (wrap && dst.x + dst.w > parent->x + parent->w && wrap)
-			{
-				dst.x = start.x;
-				dst.y += highestH;
-				d += highestH;
-				highestH = 0;
-				currentLine.w = totalW;
-				if (outlineThickness != 0)
-				{
-					currentOutline.w = totalW;
-					outlines.push_back(currentOutline);
-				}
-				lines.push_back(currentLine);
-				currentLine = {};
-				currentOutline = {};
-				if (totalW > transform.w)
-					transform.w = totalW;
-				totalW = 0;
-			}
 			if (outlineThickness != 0)
 				currentOutline.characters.push_back(l);
 			currentLine.characters.push_back(l);

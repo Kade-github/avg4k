@@ -818,15 +818,16 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 		i++;
 	}
 
+	float cmod = (save->gameplayData.constantMod / channel->rate) * hScale;
+	float xmod = save->gameplayData.multiplierMod * hScale;
+
 	Average4k::Data::Chart::Note n = cNotes[0];
 
-	bool spawn = n.beat < currentBeat + 6;
+	bool spawn = n.beat < currentBeat + (6 * xmod);
 
 	if (spawn && n.type != 3)
 	{
 
-		float cmod = (save->gameplayData.constantMod / channel->rate) * hScale;
-		float xmod = save->gameplayData.multiplierMod * hScale;
 
 		Average4k::Objects::BaseNote* no;
 

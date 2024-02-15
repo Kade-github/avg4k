@@ -125,6 +125,12 @@ void Average4k::Steam::UGCHandler::onSubscribedItems(SteamUGCQueryCompleted_t* p
 
 void Average4k::Steam::UGCHandler::UploadPack(std::string folder, std::string previewPath, std::string title, std::string description, std::vector<std::string> tags)
 {
+	if (tags.size() == 0)
+	{
+		AvgEngine::Logging::writeLog("[Steam] [Error] No tags provided for pack.");
+		return;
+	}
+
 	if (currentItem_updateHandle != 0)
 	{
 		AvgEngine::Logging::writeLog("[Steam] [Error] Item update already in progress.");
@@ -158,6 +164,11 @@ void Average4k::Steam::UGCHandler::UploadPack(std::string folder, std::string pr
 
 void Average4k::Steam::UGCHandler::UploadNoteskin(std::string folder, std::string previewPath, std::string title, std::string description, std::vector<std::string> previewPictures, std::vector<std::string> tags)
 {
+	if (tags.size() == 0)
+	{
+		AvgEngine::Logging::writeLog("[Steam] [Error] No tags provided for noteskin.");
+		return;
+	}
 	if (currentItem_updateHandle != 0)
 	{
 		AvgEngine::Logging::writeLog("[Steam] [Error] Item update already in progress.");
@@ -196,6 +207,12 @@ void Average4k::Steam::UGCHandler::UploadNoteskin(std::string folder, std::strin
 
 void Average4k::Steam::UGCHandler::UploadTheme(std::string folder, std::string previewPath, std::string title, std::string description, std::vector<std::string> previewPictures, std::vector<std::string> tags)
 {
+	if (tags.size() == 0)
+	{
+		AvgEngine::Logging::writeLog("[Steam] [Error] No tags provided for theme.");
+		return;
+	}
+
 	if (currentItem_updateHandle != 0)
 	{
 		AvgEngine::Logging::writeLog("[Steam] [Error] Item update already in progress.");

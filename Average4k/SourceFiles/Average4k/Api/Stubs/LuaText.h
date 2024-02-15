@@ -21,6 +21,14 @@ namespace Average4k::Api::Stubs
 		Average4k::Objects::UnicodeText* _base;
 		std::string _font;
 	public:
+		/// <summary>
+		/// Create a new text object
+		/// </summary>
+		/// <param name="x">The x position</param>
+		/// <param name="y">The y position</param>
+		/// <param name="font">The font</param>
+		/// <param name="text">The text</param>
+		/// <param name="size">The size</param>
 		LuaText(float x, float y, const std::string& font, const std::wstring& text, int size)
 		{
 			_font = _font;
@@ -28,6 +36,10 @@ namespace Average4k::Api::Stubs
 			_baseObject = _base;
 		}
 
+		/// <summary>
+		/// Set the x position of the text
+		/// </summary>
+		/// <param name="x">The x position</param>
 		void setX(float x)
 		{
 			if (_base == NULL)
@@ -35,6 +47,10 @@ namespace Average4k::Api::Stubs
 			_base->transform.x = x;
 		}
 
+		/// <summary>
+		/// Get the x position of the text
+		/// </summary>
+		/// <returns>The x position</returns>
 		float getX()
 		{
 			if (_base == NULL)
@@ -42,6 +58,10 @@ namespace Average4k::Api::Stubs
 			return _base->transform.x;
 		}
 
+		/// <summary>
+		/// Set the y position of the text
+		/// </summary>
+		/// <param name="y">The y position</param>
 		void setY(float y)
 		{
 			if (_base == NULL)
@@ -49,6 +69,10 @@ namespace Average4k::Api::Stubs
 			_base->transform.y = y;
 		}
 
+		/// <summary>
+		/// Get the y position of the text
+		/// </summary>
+		/// <returns>The y position</returns>
 		float getY()
 		{
 			if (_base == NULL)
@@ -56,6 +80,10 @@ namespace Average4k::Api::Stubs
 			return _base->transform.y;
 		}
 
+		/// <summary>
+		/// Set the text of the text
+		/// </summary>
+		/// <param name="text">The text</param>
 		void setText(const std::wstring& text)
 		{
 			if (_base == NULL)
@@ -63,6 +91,10 @@ namespace Average4k::Api::Stubs
 			_base->text = text;
 		}
 
+		/// <summary>
+		/// Get the text of the text
+		/// </summary>
+		/// <returns>The text</returns>
 		std::wstring getText()
 		{
 			if (_base == NULL)
@@ -70,6 +102,10 @@ namespace Average4k::Api::Stubs
 			return _base->text;
 		}
 
+		/// <summary>
+		/// Set the font of the text
+		/// </summary>
+		/// <param name="font">The font</param>
 		void setFont(const std::string& font)
 		{
 			if (_base == NULL)
@@ -78,6 +114,10 @@ namespace Average4k::Api::Stubs
 			_font = font;
 		}
 
+		/// <summary>
+		/// Get the font of the text
+		/// </summary>
+		/// <returns>The font</returns>
 		std::string getFont()
 		{
 			if (_base == NULL)
@@ -85,6 +125,10 @@ namespace Average4k::Api::Stubs
 			return _font;
 		}
 
+		/// <summary>
+		/// Set the size of the text
+		/// </summary>
+		/// <param name="size">The size</param>
 		void setSize(int size)
 		{
 			if (_base == NULL)
@@ -92,6 +136,10 @@ namespace Average4k::Api::Stubs
 			_base->size = size;
 		}
 
+		/// <summary>
+		/// Get the size of the text
+		/// </summary>
+		/// <returns>The size</returns>
 		int getSize()
 		{
 			if (_base == NULL)
@@ -99,6 +147,12 @@ namespace Average4k::Api::Stubs
 			return _base->size;
 		}
 
+		/// <summary>
+		/// Set the color of the text
+		/// </summary>
+		/// <param name="r">The red value</param>
+		/// <param name="g">The green value</param>
+		/// <param name="b">The blue value</param>
 		void setColor(int r, int g, int b, float a)
 		{
 			if (_base == NULL)
@@ -109,20 +163,10 @@ namespace Average4k::Api::Stubs
 			_base->transform.a = a;
 		}
 
-		void setAngle(float angle)
-		{
-			if (_base == NULL)
-				return;
-			_base->transform.angle = angle;
-		}
-
-		float getAngle()
-		{
-			if (_base == NULL)
-				return 0;
-			return _base->transform.angle;
-		}
-
+		/// <summary>
+		/// Get the width of the text
+		/// </summary>
+		/// <returns>The width</returns>
 		int getWidth()
 		{
 			if (_base == NULL)
@@ -131,6 +175,10 @@ namespace Average4k::Api::Stubs
 			return _base->transform.w;
 		}
 
+		/// <summary>
+		/// Get the height of the text
+		/// </summary>
+		/// <returns>The height</returns>
 		int getHeight()
 		{
 			if (_base == NULL)
@@ -139,6 +187,10 @@ namespace Average4k::Api::Stubs
 			return _base->transform.h;
 		}
 
+		/// <summary>
+		/// Get the tag of the text
+		/// </summary>
+		/// <returns>The tag</returns>
 		std::string getTag()
 		{
 			if (_base == NULL)
@@ -146,6 +198,10 @@ namespace Average4k::Api::Stubs
 			return _base->tag;
 		}
 
+		/// <summary>
+		/// Set the tag of the text
+		/// </summary>
+		/// <param name="tag">The tag</param>
 		void setTag(const std::string& tag)
 		{
 			if (_base == NULL)
@@ -153,6 +209,10 @@ namespace Average4k::Api::Stubs
 			_base->tag = tag;
 		}
 
+		/// <summary>
+		/// Get if the text is centered
+		/// </summary>
+		/// <returns>If the text is centered</returns>
 		bool getCentered()
 		{
 			if (_base == NULL)
@@ -160,6 +220,10 @@ namespace Average4k::Api::Stubs
 			return _base->centerLines;
 		}
 
+		/// <summary>
+		/// Set if the text is centered
+		/// </summary>
+		/// <param name="centered">If the text is centered</param>
 		void setCentered(bool centered)
 		{
 			if (_base == NULL)
@@ -180,7 +244,6 @@ namespace Average4k::Api::Stubs
 				"font", sol::property(&LuaText::getFont, &LuaText::setFont),
 				"size", sol::property(&LuaText::getSize, &LuaText::setSize),
 				"setColor", &LuaText::setColor,
-				"angle", sol::property(&LuaText::getAngle, &LuaText::setAngle),
 				"center", sol::property(&LuaText::getCentered, &LuaText::setCentered),
 				sol::base_classes, sol::bases<LuaObject>()
 			);

@@ -30,6 +30,10 @@ namespace Average4k::Api::Stubs
 			_base = base;
 		}
 
+		/// <summary>
+		/// Add an object to the menu
+		/// </summary>
+		/// <param name="obj">The object</param>
 		void addObject(LuaObject obj)
 		{
 			if (obj._baseObject == nullptr)
@@ -42,6 +46,10 @@ namespace Average4k::Api::Stubs
 			AvgLuaFile::objects.push_back(obj._baseObject);
 		}
 
+		/// <summary>
+		/// Remove an object from the menu
+		/// </summary>
+		/// <param name="obj">The object</param>
 		void removeObject(LuaObject obj)
 		{
 			_base->removeObject(obj._baseObject);
@@ -51,6 +59,9 @@ namespace Average4k::Api::Stubs
 			delete obj._baseObject;
 		}
 
+		/// <summary>
+		/// Remove all objects from the menu
+		/// </summary>
 		void removeAll()
 		{
 			AvgLuaFile::objects.clear();

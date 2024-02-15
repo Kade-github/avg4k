@@ -87,10 +87,11 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 
 	// FSteam
 
+	lua->getState().set_function("isSteamRunning", Functions::FSteam::IsSteamRunning);
+
 	if (Helpers::SteamHelper::IsSteamRunning)
 	{
 		lua->getState().set_function("getSteamName", Functions::FSteam::GetSteamName);
-		lua->getState().set_function("isSteamRunning", Functions::FSteam::IsSteamRunning);
 		lua->getState().set_function("openWorkshop", Functions::FSteam::OpenWorkshop);
 		lua->getState().set_function("createItem", Functions::FSteam::CreateItem);
 		lua->getState().set_function("uploadPack", Functions::FSteam::UploadPack);

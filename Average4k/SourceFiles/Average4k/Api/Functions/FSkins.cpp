@@ -6,6 +6,8 @@
 #include "FSkins.h"
 
 #include <filesystem>
+#include "../../Steam/UGCHandler.h"
+#include "../../Helpers/SteamHelper.h"
 
 sol::table Average4k::Api::Functions::FSkins::GetSkins()
 {
@@ -20,6 +22,14 @@ sol::table Average4k::Api::Functions::FSkins::GetSkins()
 		}
     }
 
+	if (Helpers::SteamHelper::IsSteamRunning)
+	{
+		for (auto p : Steam::UGCHandler::Instance->subscribedThemes)
+		{
+			skins.add(p.first);
+		}
+	}
+
     return skins;
 }
 
@@ -33,6 +43,14 @@ sol::table Average4k::Api::Functions::FSkins::GetNoteskins()
 		{
 			std::wstring name = entry.path().filename().wstring();
 			noteskins.add(name);
+		}
+	}
+
+	if (Helpers::SteamHelper::IsSteamRunning)
+	{
+		for (auto p : Steam::UGCHandler::Instance->subscribedNoteskins)
+		{
+			noteskins.add(p.first);
 		}
 	}
 

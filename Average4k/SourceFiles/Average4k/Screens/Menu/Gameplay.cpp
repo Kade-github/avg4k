@@ -11,6 +11,8 @@
 #include "../../Helpers/JudgementHelper.h"
 
 #include <AvgEngine/Utils/Paths.h>
+#include "../../Steam/UGCHandler.h"
+#include "../../Helpers/SteamHelper.h"
 
 void Average4k::Screens::Menu::Gameplay::restart()
 {
@@ -277,11 +279,81 @@ void Average4k::Screens::Menu::Gameplay::loadBackground()
 
 void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 {
-	std::string png = "Assets/Noteskin/" + save->gameplayData.noteskin + "/noteskin.png";
+	std::string folder = "Assets/Noteskin/" + save->gameplayData.noteskin;
+
+	if (!AvgEngine::Utils::Paths::pathExists(folder)) // check steam
+	{
+		if (!Helpers::SteamHelper::IsSteamRunning)
+		{
+			AvgEngine::Logging::writeLog("[Gameplay] [Error] Noteskin folder (" + folder + ") not found. Steam isn't running, but this might be a steam skin. Returning to main menu.");
+			return;
+		}
+
+		for (auto p : Steam::UGCHandler::Instance->subscribedNoteskins)
+		{
+			if (p.first == save->gameplayData.noteskin)
+			{
+				folder = p.second;
+				break;
+			}
+		}
+
+		if (!AvgEngine::Utils::Paths::pathExists(folder))
+		{
+			AvgEngine::Logging::writeLog("[Gameplay] [Error] Noteskin folder (" + folder + ") not found. Returning to main menu.");
+			return;
+		}
+	}
+
+	std::string png = folder + "/noteskin.png";
 
 	if (!AvgEngine::Utils::Paths::pathExists(png))
 	{
 		AvgEngine::Logging::writeLog("[Gameplay] [Error] Noteskin texture (" + png + ") not found, returning to main menu.");
+		leave();
+		return;
+	}
+
+	std::string p = folder + "/skin.lua";
+
+	if (!AvgEngine::Utils::Paths::pathExists(p))
+	{
+		AvgEngine::Logging::writeLog("[Gameplay] [Error] Noteskin lua file (" + p + ") not found, returning to main menu.");
+		leave();
+		return;
+	}
+
+	lua = new Average4k::Api::AvgLuaFile(p);
+	lua->path = p;
+
+	Average4k::Api::Stubs::LuaMenu::Register(lua->getState());
+	Average4k::Api::Stubs::LuaNote::Register(lua->getState());
+
+	Average4k::Api::Stubs::LuaMenu cm = Average4k::Api::Stubs::LuaMenu(this);
+
+	lua->getState().set("currentMenu", cm);
+
+	auto setup = lua->getState().get<sol::optional<sol::protected_function>>("setup");
+
+	lua->getState().set_function("setNoteSize", Average4k::Api::Functions::FGameplay::SetNoteSize);
+	lua->getState().set_function("rotateReceptors", Average4k::Api::Functions::FGameplay::RotateReceptors);
+
+	lua->getState().set_function("getWidthScale", Average4k::Api::Functions::FGame::GetWidthScale);
+	lua->getState().set_function("getHeightScale", Average4k::Api::Functions::FGame::GetHeightScale);
+
+	if (setup.has_value())
+	{
+		sol::protected_function_result result = setup.value()();
+
+		if (!result.valid())
+		{
+			sol::error err = result;
+			AvgEngine::Logging::writeLog("[Lua] Error in setup: " + lua->path + "\n" + err.what());
+		}
+	}
+	else
+	{
+		AvgEngine::Logging::writeLog("[Lua] Error in file: " + lua->path + "\n" + "No setup function found.");
 		leave();
 		return;
 	}
@@ -488,50 +560,6 @@ void Average4k::Screens::Menu::Gameplay::load()
 
 	noteSpace = save->gameplayData.noteSpace;
 	downscroll = save->gameplayData.downscroll;
-
-	std::string p = "Assets/Noteskin/" + save->gameplayData.noteskin + "/skin.lua";
-
-	if (!AvgEngine::Utils::Paths::pathExists(p))
-	{
-		AvgEngine::Logging::writeLog("[Gameplay] [Error] Noteskin lua file (" + p + ") not found, returning to main menu.");
-		leave();
-		return;
-	}
-
-	lua = new Average4k::Api::AvgLuaFile(p);
-	lua->path = p;
-
-	Average4k::Api::Stubs::LuaMenu::Register(lua->getState());
-	Average4k::Api::Stubs::LuaNote::Register(lua->getState());
-
-	Average4k::Api::Stubs::LuaMenu cm = Average4k::Api::Stubs::LuaMenu(this);
-
-	lua->getState().set("currentMenu", cm);
-
-	auto setup = lua->getState().get<sol::optional<sol::protected_function>>("setup");
-
-	lua->getState().set_function("setNoteSize", Average4k::Api::Functions::FGameplay::SetNoteSize);
-	lua->getState().set_function("rotateReceptors", Average4k::Api::Functions::FGameplay::RotateReceptors);
-
-	lua->getState().set_function("getWidthScale", Average4k::Api::Functions::FGame::GetWidthScale);
-	lua->getState().set_function("getHeightScale", Average4k::Api::Functions::FGame::GetHeightScale);
-
-	if (setup.has_value())
-	{
-		sol::protected_function_result result = setup.value()();
-
-		if (!result.valid())
-		{
-			sol::error err = result;
-			AvgEngine::Logging::writeLog("[Lua] Error in setup: " + lua->path + "\n" + err.what());
-		}
-	}
-	else
-	{
-		AvgEngine::Logging::writeLog("[Lua] Error in file: " + lua->path + "\n" + "No setup function found.");
-		leave();
-		return;
-	}
 
 	loadChart();
 	if (!chart.isValid)

@@ -7,6 +7,8 @@
 #include "../../A4kGame.h"
 
 #include "../../Helpers/SteamHelper.h"
+#include "../../Steam/UGCHandler.h"
+#include <AvgEngine/Utils/Paths.h>
 
 sol::table Average4k::Api::Functions::FData::GetSkinData()
 {
@@ -215,7 +217,33 @@ void Average4k::Api::Functions::FData::SetSkin(std::string skinName)
 {
 	Data::Types::SkinData s;
 	s.name = skinName;
-	s.path = "Assets/Skins/" + skinName;
+	std::string rp = "Assets/Skins/" + skinName;
+
+	if (!AvgEngine::Utils::Paths::pathExists(rp))
+	{
+		if (Helpers::SteamHelper::IsSteamRunning)
+		{
+			for (auto sk : Steam::UGCHandler::Instance->subscribedThemes)
+			{
+				if (sk.first == skinName)
+				{
+					rp = sk.second;
+					s.relativePath = false;
+					break;
+				}
+			}
+		}
+		if (!AvgEngine::Utils::Paths::pathExists(rp))
+		{
+			AvgEngine::Logging::writeLog("[Data] [Error] Skin not found: " + skinName);
+			return;
+		}
+
+	}
+	else
+		s.relativePath = true;
+
+	s.path = rp;
 
 	A4kGame::gameInstance->saveData.skinData = s;
 

@@ -20,7 +20,7 @@ namespace Average4k::Data::Types
 		bool relativePath = true;
 		std::string path = "Assets/Skins/Default";
 
-		MSGPACK_DEFINE_ARRAY(name);
+		MSGPACK_DEFINE_ARRAY(name, relativePath, path);
 	};
 }
 

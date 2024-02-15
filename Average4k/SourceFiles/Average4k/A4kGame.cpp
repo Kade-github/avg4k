@@ -70,7 +70,7 @@ void Average4k::A4kGame::Start()
 
 	skin = Skin(saveData.skinData);
 
-	skinExists = AvgEngine::Utils::Paths::pathExists("Assets/Skins/" + saveData.skinData.name);
+	skinExists = AvgEngine::Utils::Paths::pathExists(saveData.skinData.path);
 
 	console.handler = new Average4k::Console::CmdHandler();
 

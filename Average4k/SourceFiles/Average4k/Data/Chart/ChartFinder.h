@@ -31,10 +31,12 @@ namespace Average4k::Data
 		static BS::thread_pool pack_pool;
 
 		/// <summary>
-		/// Asyncronously find all charts in the given path
+		/// Asynchronously find all charts in the given path
 		/// </summary>
 		/// <param name="path">The path to search</param>
 		static void FindCharts(const std::string path);
+
+		static void FindCharts(const std::vector<std::string> paths);
 	};
 }
 

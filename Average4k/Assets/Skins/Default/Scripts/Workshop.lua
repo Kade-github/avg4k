@@ -560,7 +560,7 @@ function draw()
             Page1()
         end
 
-        debugText(24, height - 24, "Uploading: " .. string.format("%.2f", progress * 100) .. "%", 24)
+        debugText(24, height - 24, "Uploading... please hold: " .. string.format("%.2f", progress * 100) .. "%", 24)
         return
     end
 

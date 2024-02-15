@@ -40,6 +40,8 @@ void Average4k::Helpers::SteamHelper::Initialize()
 	Nickname = std::string(name);
 
 	Steam::UGCHandler* ugcHandler = new Steam::UGCHandler(); // create this (this gets put in UGCHandler::Instance)
+
+	ugcHandler->PopulateSubscribedItems();
 }
 
 void Average4k::Helpers::SteamHelper::SetPresence(std::string presence)

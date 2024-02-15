@@ -12,7 +12,7 @@
 #include "Api/Functions/FData.h"
 #include "Api/Functions/FGame.h"
 #include <AvgEngine/Utils/Paths.h>
-
+#include "Steam/UGCHandler.h"
 #include "Helpers/SteamHelper.h"
 
 Average4k::Multiplayer::Connection* c;
@@ -123,13 +123,13 @@ void Average4k::A4kGame::Start()
 		AvgEngine::Render::Display::Fullscreen(A4kGame::Instance->Window, 0);
 	}
 
-	// Load charts
-
-	Data::ChartFinder::FindCharts("Charts");
-
 	// Init steam
 
 	Helpers::SteamHelper::Initialize();
+
+	// Load charts
+
+	Data::ChartFinder::FindCharts("Charts");
 
 	if (Helpers::SteamHelper::IsSteamRunning)
 	{
@@ -145,9 +145,27 @@ void Average4k::A4kGame::Start()
 		std::jthread t(c->connect);
 
 		t.detach();
+
+		if (sizeof(Steam::UGCHandler::Instance->subscribedItems) != 0)
+		{
+			std::jthread th([&]() {
+				while (Steam::UGCHandler::Instance->findingSubscribedItems)
+				{
+					std::this_thread::sleep_for(std::chrono::milliseconds(100));
+				}
+
+				Data::ChartFinder::FindCharts(Steam::UGCHandler::Instance->subscribedPacks);
+				});
+			th.detach();
+		}
+		else
+		{
+			AvgEngine::Logging::writeLog("[Average4k] [Warning] No subscribed packs found.");
+		}
 	}
 	else
 		AvgEngine::Logging::writeLog("[Average4k] [Warning] Steam is not running, running in offline mode.");
+
 }
 
 void Average4k::A4kGame::update()

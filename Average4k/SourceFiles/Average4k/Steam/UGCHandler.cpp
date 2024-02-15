@@ -1,6 +1,7 @@
 #include "UGCHandler.h"
 
 #include <AvgEngine/Utils/Logging.h>
+#include <AvgEngine/Utils/StringTools.h>
 
 Average4k::Steam::UGCHandler* Average4k::Steam::UGCHandler::Instance = NULL;
 
@@ -56,6 +57,8 @@ void Average4k::Steam::UGCHandler::onItemSubmitted(SubmitItemUpdateResult_t* pCa
 	isDone = true;
 	AvgEngine::Logging::writeLog("[Steam] Item submitted. ID: " + std::to_string(pCallback->m_nPublishedFileId));
 
+	SteamUGC()->SubscribeItem(pCallback->m_nPublishedFileId);
+
 	currentItem = {};
 }
 
@@ -70,6 +73,44 @@ void Average4k::Steam::UGCHandler::onItemDeleted(DeleteItemResult_t* pCallback, 
 	AvgEngine::Logging::writeLog("[Steam] Item deleted. ID: " + std::to_string(pCallback->m_nPublishedFileId));
 
 	currentItem = {};
+}
+
+void Average4k::Steam::UGCHandler::onSubscribedItems(SteamUGCQueryCompleted_t* pCallback, bool bIOFailure)
+{
+	if (bIOFailure)
+	{
+		AvgEngine::Logging::writeLog("[Steam] [Error] Failed to query subscribed items. Error: " + std::to_string(pCallback->m_eResult));
+		return;
+	}
+
+	AvgEngine::Logging::writeLog("[Steam] Subscribed items query completed.");
+
+	uint32_t count = pCallback->m_unNumResultsReturned;
+
+	for (int i = 0; i < count; i++)
+	{
+		SteamUGCDetails_t details;
+		SteamUGC()->GetQueryUGCResult(subscribedItems_queryHandle, i, &details);
+
+		if (details.m_eVisibility == k_ERemoteStoragePublishedFileVisibilityPrivate)
+			continue;
+
+		std::string s = details.m_rgchTags;
+		char* folder;
+		uint64 sizeOnDisk;
+		uint32 timestamp;
+
+		SteamUGC()->GetItemInstallInfo(details.m_nPublishedFileId, &sizeOnDisk, folder, 1024, &timestamp);
+
+		if (s.contains("Packs"))
+			subscribedPacks.push_back(folder);
+		else if (s.contains("Noteskins"))
+			subscribedNoteskins.push_back(folder);
+		else if (s.contains("Themes"))
+			subscribedThemes.push_back(folder);
+	}
+
+	findingSubscribedItems = false;
 }
 
 void Average4k::Steam::UGCHandler::UploadPack(std::string folder, std::string previewPath, std::string title, std::string description, std::vector<std::string> tags)
@@ -181,6 +222,27 @@ void Average4k::Steam::UGCHandler::UploadTheme(std::string folder, std::string p
 
 	SteamAPICall_t hSteamAPICall = SteamUGC()->SubmitItemUpdate(currentItem_updateHandle, "Initial upload");
 	m_SubmitItemUpdateResult.Set(hSteamAPICall, this, &UGCHandler::onItemSubmitted);
+}
+
+void Average4k::Steam::UGCHandler::PopulateSubscribedItems()
+{
+	if (subscribedItems != nullptr)
+	{
+		delete[] subscribedItems;
+	}
+
+	uint32_t count = SteamUGC()->GetNumSubscribedItems();
+	subscribedItems = new PublishedFileId_t[count];
+	SteamUGC()->GetSubscribedItems(subscribedItems, count);
+
+	AvgEngine::Logging::writeLog("[Steam] Subscribed items count: " + std::to_string(count));
+
+	subscribedItems_queryHandle = SteamUGC()->CreateQueryUGCDetailsRequest(subscribedItems, count);
+
+	SteamAPICall_t hSteamAPICall = SteamUGC()->SendQueryUGCRequest(subscribedItems_queryHandle);
+	m_SubscribedItemsResult.Set(hSteamAPICall, this, &UGCHandler::onSubscribedItems);
+
+	findingSubscribedItems = true;
 }
 
 void Average4k::Steam::UGCHandler::CreateItem()

@@ -7,12 +7,34 @@
 #include "../../Data/Chart/ChartFinder.h"
 #include "../../Data/Chart/AsyncChartLoader.h"
 
+#include "../../Steam/UGCHandler.h"
+
 Average4k::Api::AvgLuaFile* Average4k::Api::Functions::FCharts::Lua = nullptr;
 
 void Average4k::Api::Functions::FCharts::ScanCharts()
 {
 	Lua->getState().collect_garbage();
+
 	Average4k::Data::ChartFinder::FindCharts("Charts");
+
+	Steam::UGCHandler::Instance->PopulateSubscribedItems();
+
+	if (sizeof(Steam::UGCHandler::Instance->subscribedItems) != 0)
+	{
+		std::jthread th([&]() {
+			while (Steam::UGCHandler::Instance->findingSubscribedItems)
+			{
+				std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			}
+
+			Data::ChartFinder::FindCharts(Steam::UGCHandler::Instance->subscribedPacks);
+			});
+		th.detach();
+	}
+	else
+	{
+		AvgEngine::Logging::writeLog("[Average4k] [Warning] No subscribed packs found.");
+	}
 }
 
 sol::table Average4k::Api::Functions::FCharts::GetPacks()

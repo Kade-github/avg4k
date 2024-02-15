@@ -116,6 +116,10 @@ void Average4k::Steam::UGCHandler::onSubscribedItems(SteamUGCQueryCompleted_t* p
 
 	}
 
+
+	SteamUGC()->ReleaseQueryUGCRequest(subscribedItems_queryHandle);
+	subscribedItems_queryHandle = 0;
+
 	findingSubscribedItems = false;
 }
 
@@ -232,6 +236,12 @@ void Average4k::Steam::UGCHandler::UploadTheme(std::string folder, std::string p
 
 void Average4k::Steam::UGCHandler::PopulateSubscribedItems()
 {
+	if (subscribedItems_queryHandle != 0)
+	{
+		AvgEngine::Logging::writeLog("[Steam] [Warning] Subscribed items query already in progress.");
+		return;
+	}
+
 	if (subscribedItems != nullptr)
 	{
 		delete[] subscribedItems;
@@ -249,8 +259,6 @@ void Average4k::Steam::UGCHandler::PopulateSubscribedItems()
 	m_SubscribedItemsResult.Set(hSteamAPICall, this, &UGCHandler::onSubscribedItems);
 
 	findingSubscribedItems = true;
-
-	SteamUGC()->ReleaseQueryUGCRequest(subscribedItems_queryHandle);
 }
 
 void Average4k::Steam::UGCHandler::CreateItem()

@@ -11,6 +11,7 @@
 #include "../../Data/Chart/ChartFinder.h"
 #include "../../Data/Chart/AsyncChartLoader.h"
 #include "../../Helpers/SteamHelper.h"
+#include "../../Steam/UGCHandler.h"
 
 using namespace Average4k::Api;
 
@@ -225,6 +226,11 @@ void Average4k::Screens::Menu::MainMenu::load()
 	}
 	loaded = true;
 	createFile(path, false);
+
+	if (Steam::UGCHandler::Instance->subscribedItems_queryHandle == 0)
+	{
+		Steam::UGCHandler::Instance->PopulateSubscribedItems();
+	}
 }
 
 void Average4k::Screens::Menu::MainMenu::draw()

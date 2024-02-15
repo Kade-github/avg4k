@@ -104,8 +104,6 @@ function hitNote(type, lane, judge, combo, acc)
 
     judgeText.text = judge
 
-    print(judge)
-
     if judge == "Marvelous" then
         marvTex.text = "Marvelous: " .. (tonumber(marvTex.text:sub(12)) + 1)
         judgeText:setColor(73,247,255, 1)
@@ -121,6 +119,8 @@ function hitNote(type, lane, judge, combo, acc)
     elseif judge == "Bad" then
         badTex.text = "Bad: " .. (tonumber(badTex.text:sub(5)) + 1)
         judgeText:setColor(83,0,0, 1)
+    else
+        judgeText:setColor(255,0,0, 1)
     end
 end
 

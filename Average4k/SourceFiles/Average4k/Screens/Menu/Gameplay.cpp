@@ -798,7 +798,7 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 
 	bool spawn = n.beat < currentBeat + 6;
 
-	if (spawn)
+	if (spawn || n.type == 3)
 	{
 
 		if (n.type == 3) // skip ends

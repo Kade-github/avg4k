@@ -823,7 +823,9 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 
 	Average4k::Data::Chart::Note n = cNotes[0];
 
-	bool spawn = n.beat < currentBeat + (6 / xmod);
+	float add = (6.0f / xmod);
+
+	bool spawn = n.beat < (currentBeat + add);
 
 	if (spawn && n.type != 3)
 	{

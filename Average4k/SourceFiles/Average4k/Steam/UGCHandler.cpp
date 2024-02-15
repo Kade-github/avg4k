@@ -131,6 +131,24 @@ void Average4k::Steam::UGCHandler::UploadPack(std::string folder, std::string pr
 		return;
 	}
 
+	// check if it has any tags that aren't correct (like, themes, noteskins, downscroll, upscroll, etc)
+
+	if (std::find(tags.begin(), tags.end(), "Themes") != tags.end() || 
+		std::find(tags.begin(), tags.end(), "Noteskins") != tags.end() || 
+		std::find(tags.begin(), tags.end(), "Downscroll") != tags.end() ||
+		std::find(tags.begin(), tags.end(), "Upscroll") != tags.end()) {
+		AvgEngine::Logging::writeLog("[Steam] [Error] Invalid tags provided for pack.");
+		return;
+	}
+
+	// check if it has the right tag
+
+	if (std::find(tags.begin(), tags.end(), "Packs") == tags.end())
+	{
+		AvgEngine::Logging::writeLog("[Steam] [Error] Invalid tags provided for pack.");
+		return;
+	}
+
 	if (currentItem_updateHandle != 0)
 	{
 		AvgEngine::Logging::writeLog("[Steam] [Error] Item update already in progress.");
@@ -169,6 +187,29 @@ void Average4k::Steam::UGCHandler::UploadNoteskin(std::string folder, std::strin
 		AvgEngine::Logging::writeLog("[Steam] [Error] No tags provided for noteskin.");
 		return;
 	}
+
+	// check if it has any tags that aren't correct (like, themes, pack, beginner, easy, medium, hard, challenge, edit, etc)
+
+	if (std::find(tags.begin(), tags.end(), "Themes") != tags.end() ||
+		std::find(tags.begin(), tags.end(), "Packs") != tags.end() ||
+		std::find(tags.begin(), tags.end(), "Beginner") != tags.end() ||
+		std::find(tags.begin(), tags.end(), "Easy") != tags.end() ||
+		std::find(tags.begin(), tags.end(), "Medium") != tags.end() ||
+		std::find(tags.begin(), tags.end(), "Hard") != tags.end() ||
+		std::find(tags.begin(), tags.end(), "Challenge") != tags.end() ||
+		std::find(tags.begin(), tags.end(), "Edit") != tags.end()) {
+		AvgEngine::Logging::writeLog("[Steam] [Error] Invalid tags provided for noteskin.");
+		return;
+	}
+
+	// check if it has the right tag
+
+	if (std::find(tags.begin(), tags.end(), "Noteskin") == tags.end())
+	{
+		AvgEngine::Logging::writeLog("[Steam] [Error] Invalid tags provided for noteskin.");
+		return;
+	}
+
 	if (currentItem_updateHandle != 0)
 	{
 		AvgEngine::Logging::writeLog("[Steam] [Error] Item update already in progress.");
@@ -212,6 +253,21 @@ void Average4k::Steam::UGCHandler::UploadTheme(std::string folder, std::string p
 		AvgEngine::Logging::writeLog("[Steam] [Error] No tags provided for theme.");
 		return;
 	}
+
+	// check if it has any tags that aren't correct
+
+	if (tags.size() > 1)
+	{
+		AvgEngine::Logging::writeLog("[Steam] [Error] Invalid tags provided for theme.");
+		return;
+	}
+
+	if (tags[0] != "Themes")
+	{
+		AvgEngine::Logging::writeLog("[Steam] [Error] Invalid tags provided for theme.");
+		return;
+	}
+
 
 	if (currentItem_updateHandle != 0)
 	{

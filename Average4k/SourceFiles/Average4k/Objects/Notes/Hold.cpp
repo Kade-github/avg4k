@@ -37,8 +37,8 @@ void Average4k::Objects::HoldNote::draw()
 
 	setPosition(); // Objects::BaseNote
 
-	if ((transform.y > Render::Display::height && !downscroll) ||
-		(transform.y < 0 && downscroll))
+	if ((transform.y - transform.h > Render::Display::height && !downscroll) ||
+		(transform.y + transform.h < 0 && downscroll))
 		return;
 
 	// welcome to the jungle, we got fun and games, we got everything you want, honey we know the names, we are the people that can find, whatever you may need, 

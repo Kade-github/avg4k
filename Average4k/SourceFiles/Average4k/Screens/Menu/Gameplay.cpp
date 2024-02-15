@@ -794,10 +794,9 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 	if (cNotes.size() == 0)
 		return;
 
-	Average4k::Data::Chart::Note n = cNotes[0];
-
 	// check for tails
 
+	int i = 0;
 	for (auto n : cNotes)
 	{
 		if (n.type == 3) // skip ends
@@ -808,20 +807,22 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 				last->endBeat = n.beat;
 				last->endTime = chart.GetTimeFromBeat(n.beat);
 				holds[n.lane] = nullptr;
+
+				cNotes.erase(cNotes.begin() + i);
+
+				if (cNotes.size() == 0)
+					return;
+				break;
 			}
-			cNotes.erase(cNotes.begin());
-
-			if (cNotes.size() == 0)
-				return;
-
-			n = cNotes[0];
-			break;
 		}
+		i++;
 	}
+
+	Average4k::Data::Chart::Note n = cNotes[0];
 
 	bool spawn = n.beat < currentBeat + 6;
 
-	if (spawn && n.type == 3)
+	if (spawn && n.type != 3)
 	{
 
 		float cmod = (save->gameplayData.constantMod / channel->rate) * hScale;

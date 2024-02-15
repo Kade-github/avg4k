@@ -18,20 +18,23 @@ BS::thread_pool ChartFinder::pack_pool = BS::thread_pool(std::thread::hardware_c
 
 bool ChartFinder::startedSearching = false;
 
-void ChartFinder::FindCharts(const std::vector<std::string> paths)
+void ChartFinder::FindCharts(const std::map<std::string, std::string> paths)
 {
-	std::vector<std::string> p = paths;
+	std::map<std::string, std::string> ps = paths;
 	startedSearching = true;
 
-	for (const auto& path : p)
+	for (const auto& a : ps)
 	{
-		if (path.empty())
+		std::string rp = a.second;
+		std::string packName = a.first;
+
+		if (rp.empty())
 			continue;
 
-		std::wstring path = path;
+		std::wstring path = std::wstring(rp.begin(), rp.end());
 
 		std::string s_path = AvgEngine::Utils::StringTools::Ws2s(path);
-		std::wstring name = path.substr(path.find_last_of(L"\\") + 1);
+		std::wstring name = std::wstring(packName.begin(), packName.end());
 
 		{
 			std::lock_guard<std::mutex> lock(m_lock);

@@ -9,6 +9,7 @@
 #define AVG4K_UGCHANDLER_H
 
 #include <steam/steam_api.h>
+#include <map>
 #include <vector>
 #include <string>
 namespace Average4k::Steam
@@ -31,9 +32,9 @@ namespace Average4k::Steam
 
 		UGCQueryHandle_t subscribedItems_queryHandle;
 
-		std::vector<std::string> subscribedPacks;
-		std::vector<std::string> subscribedNoteskins;
-		std::vector<std::string> subscribedThemes;
+		std::map<std::string, std::string> subscribedPacks;
+		std::map<std::string, std::string> subscribedNoteskins;
+		std::map<std::string, std::string> subscribedThemes;
 
 		bool isDone = false;
 		bool findingSubscribedItems = false;

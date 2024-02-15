@@ -15,13 +15,7 @@ float Average4k::Steam::UGCHandler::GetCurrentItemProgress()
 		float prog = 0.0f;
 		if (totalBytes != 0)
 			prog = (float)bytesProcessed / (float)totalBytes;
-		if (prog >= 1.0f)
-		{
-			if (isDone)
-				return 1.0f;
-			else
-				return 0.95f;
-		}
+		return prog;
 	}
 	return 0.0f;
 }
@@ -87,27 +81,39 @@ void Average4k::Steam::UGCHandler::onSubscribedItems(SteamUGCQueryCompleted_t* p
 
 	uint32_t count = pCallback->m_unNumResultsReturned;
 
+	subscribedPacks.clear();
+	subscribedNoteskins.clear();
+	subscribedThemes.clear();
+
 	for (int i = 0; i < count; i++)
 	{
 		SteamUGCDetails_t details;
-		SteamUGC()->GetQueryUGCResult(subscribedItems_queryHandle, i, &details);
+		bool y = SteamUGC()->GetQueryUGCResult(subscribedItems_queryHandle, i, &details);
+
+		if (!y)
+			continue;
 
 		if (details.m_eVisibility == k_ERemoteStoragePublishedFileVisibilityPrivate)
 			continue;
 
 		std::string s = details.m_rgchTags;
-		char* folder;
+		std::string title = details.m_rgchTitle;
+		char folder[MAX_PATH] = "";
 		uint64 sizeOnDisk;
 		uint32 timestamp;
 
-		SteamUGC()->GetItemInstallInfo(details.m_nPublishedFileId, &sizeOnDisk, folder, 1024, &timestamp);
+		SteamUGC()->GetItemInstallInfo(details.m_nPublishedFileId, &sizeOnDisk, folder, sizeof(folder), &timestamp);
 
 		if (s.contains("Packs"))
-			subscribedPacks.push_back(folder);
+			subscribedPacks[title] = folder;
 		else if (s.contains("Noteskins"))
-			subscribedNoteskins.push_back(folder);
+			subscribedNoteskins[title] = folder;
 		else if (s.contains("Themes"))
-			subscribedThemes.push_back(folder);
+			subscribedThemes[title] = folder;
+
+		AvgEngine::Logging::writeLog("[Steam] [Subscriptions] Found item: " + title);
+
+
 	}
 
 	findingSubscribedItems = false;
@@ -243,6 +249,8 @@ void Average4k::Steam::UGCHandler::PopulateSubscribedItems()
 	m_SubscribedItemsResult.Set(hSteamAPICall, this, &UGCHandler::onSubscribedItems);
 
 	findingSubscribedItems = true;
+
+	SteamUGC()->ReleaseQueryUGCRequest(subscribedItems_queryHandle);
 }
 
 void Average4k::Steam::UGCHandler::CreateItem()

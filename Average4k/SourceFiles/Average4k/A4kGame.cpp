@@ -154,6 +154,8 @@ void Average4k::A4kGame::Start()
 					std::this_thread::sleep_for(std::chrono::milliseconds(100));
 				}
 
+				AvgEngine::Logging::writeLog("[Average4k] Loading subscribed packs...");
+
 				Data::ChartFinder::FindCharts(Steam::UGCHandler::Instance->subscribedPacks);
 				});
 			th.detach();

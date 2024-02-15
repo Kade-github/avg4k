@@ -36,7 +36,7 @@ namespace Average4k::Data
 		/// <param name="path">The path to search</param>
 		static void FindCharts(const std::string path);
 
-		static void FindCharts(const std::vector<std::string> paths);
+		static void FindCharts(const std::map<std::string, std::string> paths);
 	};
 }
 

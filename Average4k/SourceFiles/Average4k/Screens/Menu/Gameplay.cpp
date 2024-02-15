@@ -438,7 +438,7 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 	noteScaleW *= wScale;
 	noteScaleH *= hScale;
 
-	float startX = (AvgEngine::Render::Display::width / 2) - ((128 * noteScaleW) * 1.25);
+	float startX = (AvgEngine::Render::Display::width / 2) - (((128 * noteSpace) * noteScaleW) * 1.25);
 
 	for (int i = 0; i < 4; i++)
 	{

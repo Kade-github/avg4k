@@ -96,7 +96,14 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 		lua->getState().set_function("uploadNoteskin", Functions::FSteam::UploadNoteskin);
 		lua->getState().set_function("uploadTheme", Functions::FSteam::UploadTheme);
 		lua->getState().set_function("deleteItem", Functions::FSteam::DeleteItem);
+		lua->getState().set_function("getCurrentItemProgress", Functions::FSteam::GetCurrentItemProgress);
 	}
+
+	// FDebug
+
+	lua->getState().set_function("debugText", [](float x, float y, std::string text, int size) {
+		A4kGame::gameInstance->DrawDebugText(x, y, text, size);
+	});
 
 	lua->create();
 

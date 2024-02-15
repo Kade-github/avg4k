@@ -9,6 +9,10 @@ local page = 1
 local inSubmenu = false
 local submenuIndex = 1
 
+local isUploading = false
+
+local hasnotuploaded = true
+
 -- workshop details
 
 local cFolder = ""
@@ -18,6 +22,27 @@ local cDescription = ""
 local cDifficulty = ""
 local cTags = {}
 local cPreviews = {}
+
+local width = 0
+local height = 0
+
+function containsValue(table, value)
+    for i = 1, #table do
+        if table[i] == value then
+            return true
+        end
+    end
+    return false
+end
+
+function findValue(table, value)
+    for i = 1, #table do
+        if table[i] == value then
+            return i
+        end
+    end
+    return 0
+end
 
 
 function createView(list)
@@ -55,6 +80,7 @@ function createView(list)
 end
 
 function Page1()
+    hasnotuploaded = true
     page = 1
 
     -- reset workshop details
@@ -73,19 +99,19 @@ end
 function Page2()
     page = 2
 
-    createView({"Select folder", "Select thumbnail", "Set Title", "Set description", "Overall difficulty", "Special tags", "Upload"})
+    createView({"Select folder", "Select thumbnail", "Set title", "Set description", "Overall difficulty", "Special tags", "Upload"})
 end
 
 function Page3()
     page = 3
 
-    createView({"Select folder", "Select thumbnail", "Set Title", "Set description", "Select preview pictures", "Tags", "Upload"})
+    createView({"Select folder", "Select thumbnail", "Set title", "Set description", "Select preview pictures", "Tags", "Upload"})
 end
 
 function Page4()
     page = 4
 
-    createView({"Select folder", "Select thumbnail", "Set Title", "Set description", "Select preview pictures", "Upload"})
+    createView({"Select folder", "Select thumbnail", "Set title", "Set description", "Select preview pictures", "Upload"})
 end
 
 function Folder()
@@ -139,14 +165,14 @@ end
 function Tags_Pack()
     inSubmenu = true
 
-    createView({"Contains Modfiles [" .. tostring(table.contains(cTags, "Modfiles")) .. "]", "Contains XMod files [" .. tostring(table.contains(cTags, "XMod")) .. "]"})
+    createView({"Contains Modfiles [" .. tostring(containsValue(cTags, "Modfiles")) .. "]", "Contains XMod files [" .. tostring(containsValue(cTags, "XMod")) .. "]"})
 end
 
 
 function Tags_Noteskin()
     inSubmenu = true
 
-    createView({"Made for Downscroll", "Made for Upscroll"})
+    createView({"Made for Downscroll [" .. tostring(containsValue(cTags, "Downscroll")) .. "]", "Made for Upscroll [" .. tostring(containsValue(cTags, "Upscroll")) .. "]"})
 end
 
 function Previews()
@@ -162,18 +188,41 @@ function Previews()
 end
 
 function CreatePack()
-    uploadPack(cFolder, cThumb, cTitle, cDescription, cDifficulty, cTags)
+    table.insert(cTags, "Packs")
+
+    if cDifficulty == "" then
+        cDifficulty = "Beginner"
+    end
+
+    table.insert(cTags, cDifficulty)
+    uploadPack(cFolder, cThumb, cTitle, cDescription, cTags)
+    hasnotuploaded = false
+    isUploading = true
 end
 
 function CreateNoteskin()
+    table.insert(cTags, "Noteskins")
+    
     uploadNoteskin(cFolder, cThumb, cTitle, cDescription, cPreviews, cTags)
+    hasnotuploaded = false
+    isUploading = true
 end
 
 function CreateTheme()
-    uploadTheme(cFolder, cThumb, cTitle, cDescription, cPreviews)
+    table.insert(cTags, "Themes")
+
+    uploadTheme(cFolder, cThumb, cTitle, cDescription, cPreviews, cTags)
+    hasnotuploaded = false
+    isUploading = true
 end
 
 function create()
+
+    local vData = getVideoData()
+
+    width = vData["width"]
+    height = vData["height"]
+
     Page1()
 end
 
@@ -204,12 +253,15 @@ end
 function enter()
     if page == 1 then
         if selection == 1 then
+            createItem()
             Page2()
         end
         if selection == 2 then
+            createItem()
             Page3()
         end
         if selection == 3 then
+            createItem()
             Page4()
         end
         if selection == 4 then
@@ -260,16 +312,16 @@ function enter()
                 if submenuIndex == 6 then
                     if selection == 1 then
                         -- if it exists
-                        if table.contains(cTags, "Modfiles") then
-                            table.remove(cTags, table.find(cTags, "Modfiles"))
+                        if containsValue(cTags, "Modfiles") then
+                            table.remove(cTags, findValue(cTags, "Modfiles"))
                         else
                             table.insert(cTags, "Modfiles")
                         end
                     end
                     if selection == 2 then
                         -- if it exists
-                        if table.contains(cTags, "XMod") then
-                            table.remove(cTags, table.find(cTags, "XMod"))
+                        if containsValue(cTags, "XMod") then
+                            table.remove(cTags, findValue(cTags, "XMod"))
                         else
                             table.insert(cTags, "XMod")
                         end
@@ -281,7 +333,7 @@ function enter()
             if page == 3 then
                 if submenuIndex == 5 then
                     if selection == 1 then
-                        cPreviews = cPreviews + getFileFromUser("Image Files (*.png, *.jpg)\0*.png;*.jpg\0")
+                        table.insert(cPreviews, getFileFromUser("Image Files (*.png, *.jpg)\0*.png;*.jpg\0"))
                     end
                     Previews()
                 end
@@ -289,16 +341,16 @@ function enter()
                 if submenuIndex == 6 then
                     if selection == 1 then
                         -- if it exists
-                        if table.contains(cTags, "Downscroll") then
-                            table.remove(cTags, table.find(cTags, "Downscroll"))
+                        if containsValue(cTags, "Downscroll") then
+                            table.remove(cTags, findValue(cTags, "Downscroll"))
                         else
                             table.insert(cTags, "Downscroll")
                         end
                     end
                     if selection == 2 then
                         -- if it exists
-                        if table.contains(cTags, "Upscroll") then
-                            table.remove(cTags, table.find(cTags, "Upscroll"))
+                        if containsValue(cTags, "Upscroll")  then
+                            table.remove(cTags, findValue(cTags, "Upscroll"))
                         else
                             table.insert(cTags, "Upscroll")
                         end
@@ -310,7 +362,7 @@ function enter()
             if page == 4 then
                 if submenuIndex == 5 then
                     if selection == 1 then
-                        cPreviews = cPreviews + getFileFromUser("Image Files (*.png, *.jpg)\0*.png;*.jpg\0")
+                        table.insert(cPreviews, getFileFromUser("Image Files (*.png, *.jpg)\0*.png;*.jpg\0"))
                     end
                     Previews()
                 end
@@ -420,6 +472,11 @@ end
 local holdingBackspace = false
 
 function keyPress(data)
+
+    if isUploading then
+        return
+    end
+
     -- escape
 
     if data == 256 then
@@ -438,6 +495,9 @@ function keyPress(data)
                     Page4()
                 end
             else
+                if hasnotuploaded then
+                    deleteItem()
+                end
                 Page1()
             end
         end
@@ -491,6 +551,19 @@ end
 local offset = 0
 
 function draw()
+
+    if isUploading then
+        local progress = getCurrentItemProgress()
+
+        if progress >= 1 then
+            isUploading = false
+            Page1()
+        end
+
+        debugText(24, height - 24, "Uploading: " .. string.format("%.2f", progress * 100) .. "%", 24)
+        return
+    end
+
     if holdingBackspace then
         offset = offset + 1
     else

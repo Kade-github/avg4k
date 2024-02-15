@@ -25,13 +25,19 @@ namespace Average4k::Steam
 
 		PublishedFileId_t currentItem;
 
+		UGCUpdateHandle_t currentItem_updateHandle;
+
+		bool isDone = false;
+
+		float GetCurrentItemProgress();
+
 		void onItemCreated(CreateItemResult_t* pCallback, bool bIOFailure);
 		void onItemSubmitted(SubmitItemUpdateResult_t* pCallback, bool bIOFailure);
 		void onItemDeleted(DeleteItemResult_t* pCallback, bool bIOFailure);
 
 		void UploadPack(std::string folder, std::string previewPath, std::string title, std::string description, std::vector<std::string> tags);
 		void UploadNoteskin(std::string folder, std::string previewPath, std::string title, std::string description, std::vector<std::string> previewPictures, std::vector<std::string> tags);
-		void UploadTheme(std::string folder, std::string previewPath, std::string title, std::string description, std::vector<std::string> previewPictures);
+		void UploadTheme(std::string folder, std::string previewPath, std::string title, std::string description, std::vector<std::string> previewPictures, std::vector<std::string> tags);
 
 		CCallResult<UGCHandler, CreateItemResult_t> m_CreateItemResult;
 		CCallResult<UGCHandler, SubmitItemUpdateResult_t> m_SubmitItemUpdateResult;

@@ -4,6 +4,27 @@
 
 Average4k::Steam::UGCHandler* Average4k::Steam::UGCHandler::Instance = NULL;
 
+float Average4k::Steam::UGCHandler::GetCurrentItemProgress()
+{
+	if (currentItem_updateHandle != 0)
+	{
+		uint64_t totalBytes = 0;
+		uint64_t bytesProcessed = 0;
+		SteamUGC()->GetItemUpdateProgress(currentItem_updateHandle, &bytesProcessed, &totalBytes);
+		float prog = 0.0f;
+		if (totalBytes != 0)
+			prog = (float)bytesProcessed / (float)totalBytes;
+		if (prog >= 1.0f)
+		{
+			if (isDone)
+				return 1.0f;
+			else
+				return 0.95f;
+		}
+	}
+	return 0.0f;
+}
+
 void Average4k::Steam::UGCHandler::onItemCreated(CreateItemResult_t* pCallback, bool bIOFailure)
 {
 	if (bIOFailure)
@@ -12,6 +33,8 @@ void Average4k::Steam::UGCHandler::onItemCreated(CreateItemResult_t* pCallback, 
 		DeleteItem();
 		return;
 	}
+
+	isDone = false;
 
 	if (pCallback->m_bUserNeedsToAcceptWorkshopLegalAgreement)
 	{
@@ -30,7 +53,7 @@ void Average4k::Steam::UGCHandler::onItemSubmitted(SubmitItemUpdateResult_t* pCa
 		DeleteItem();
 		return;
 	}
-
+	isDone = true;
 	AvgEngine::Logging::writeLog("[Steam] Item submitted. ID: " + std::to_string(pCallback->m_nPublishedFileId));
 
 	currentItem = {};
@@ -51,14 +74,21 @@ void Average4k::Steam::UGCHandler::onItemDeleted(DeleteItemResult_t* pCallback, 
 
 void Average4k::Steam::UGCHandler::UploadPack(std::string folder, std::string previewPath, std::string title, std::string description, std::vector<std::string> tags)
 {
-	UGCUpdateHandle_t handle = SteamUGC()->StartItemUpdate(SteamUtils()->GetAppID(), currentItem);
+	if (currentItem_updateHandle != 0)
+	{
+		AvgEngine::Logging::writeLog("[Steam] [Error] Item update already in progress.");
+		return;
+	}
 
-	SteamUGC()->SetItemTitle(handle, title.c_str());
-	SteamUGC()->SetItemDescription(handle, description.c_str());
+	currentItem_updateHandle = SteamUGC()->StartItemUpdate(SteamUtils()->GetAppID(), currentItem);
 
-	SteamUGC()->SetItemContent(handle, folder.c_str());
+	SteamUGC()->SetItemTitle(currentItem_updateHandle, title.c_str());
+	SteamUGC()->SetItemDescription(currentItem_updateHandle, description.c_str());
 
-	SteamUGC()->SetItemPreview(handle, previewPath.c_str());
+	SteamUGC()->SetItemContent(currentItem_updateHandle, folder.c_str());
+
+	SteamUGC()->SetItemPreview(currentItem_updateHandle, previewPath.c_str());
+	SteamUGC()->SetItemVisibility(currentItem_updateHandle, k_ERemoteStoragePublishedFileVisibilityPublic);
 
 	SteamParamStringArray_t paramArray;
 
@@ -69,26 +99,33 @@ void Average4k::Steam::UGCHandler::UploadPack(std::string folder, std::string pr
 		paramArray.m_ppStrings[i] = tags[i].c_str();
 	}
 
-	SteamUGC()->SetItemTags(handle, &paramArray);
+	SteamUGC()->SetItemTags(currentItem_updateHandle, &paramArray);
 
-	SteamAPICall_t hSteamAPICall = SteamUGC()->SubmitItemUpdate(handle, "Initial upload");
+	SteamAPICall_t hSteamAPICall = SteamUGC()->SubmitItemUpdate(currentItem_updateHandle, "Initial upload");
 	m_SubmitItemUpdateResult.Set(hSteamAPICall, this, &UGCHandler::onItemSubmitted);
 }
 
 void Average4k::Steam::UGCHandler::UploadNoteskin(std::string folder, std::string previewPath, std::string title, std::string description, std::vector<std::string> previewPictures, std::vector<std::string> tags)
 {
-	UGCUpdateHandle_t handle = SteamUGC()->StartItemUpdate(SteamUtils()->GetAppID(), currentItem);
+	if (currentItem_updateHandle != 0)
+	{
+		AvgEngine::Logging::writeLog("[Steam] [Error] Item update already in progress.");
+		return;
+	}
 
-	SteamUGC()->SetItemTitle(handle, title.c_str());
-	SteamUGC()->SetItemDescription(handle, description.c_str());
+	currentItem_updateHandle = SteamUGC()->StartItemUpdate(SteamUtils()->GetAppID(), currentItem);
 
-	SteamUGC()->SetItemContent(handle, folder.c_str());
+	SteamUGC()->SetItemTitle(currentItem_updateHandle, title.c_str());
+	SteamUGC()->SetItemDescription(currentItem_updateHandle, description.c_str());
 
-	SteamUGC()->SetItemPreview(handle, previewPath.c_str());
+	SteamUGC()->SetItemContent(currentItem_updateHandle, folder.c_str());
+
+	SteamUGC()->SetItemPreview(currentItem_updateHandle, previewPath.c_str());
+	SteamUGC()->SetItemVisibility(currentItem_updateHandle, k_ERemoteStoragePublishedFileVisibilityPublic);
 
 	for (std::string s : previewPictures)
 	{
-		SteamUGC()->AddItemPreviewFile(handle, s.c_str(), EItemPreviewType::k_EItemPreviewType_Image);
+		SteamUGC()->AddItemPreviewFile(currentItem_updateHandle, s.c_str(), EItemPreviewType::k_EItemPreviewType_Image);
 	}
 
 	SteamParamStringArray_t paramArray;
@@ -100,29 +137,49 @@ void Average4k::Steam::UGCHandler::UploadNoteskin(std::string folder, std::strin
 		paramArray.m_ppStrings[i] = tags[i].c_str();
 	}
 
-	SteamUGC()->SetItemTags(handle, &paramArray);
+	SteamUGC()->SetItemTags(currentItem_updateHandle, &paramArray);
 
-	SteamAPICall_t hSteamAPICall = SteamUGC()->SubmitItemUpdate(handle, "Initial upload");
+	SteamAPICall_t hSteamAPICall = SteamUGC()->SubmitItemUpdate(currentItem_updateHandle, "Initial upload");
 	m_SubmitItemUpdateResult.Set(hSteamAPICall, this, &UGCHandler::onItemSubmitted);
 }
 
-void Average4k::Steam::UGCHandler::UploadTheme(std::string folder, std::string previewPath, std::string title, std::string description, std::vector<std::string> previewPictures)
+void Average4k::Steam::UGCHandler::UploadTheme(std::string folder, std::string previewPath, std::string title, std::string description, std::vector<std::string> previewPictures, std::vector<std::string> tags)
 {
-	UGCUpdateHandle_t handle = SteamUGC()->StartItemUpdate(SteamUtils()->GetAppID(), currentItem);
+	if (currentItem_updateHandle != 0)
+	{
+		AvgEngine::Logging::writeLog("[Steam] [Error] Item update already in progress.");
+		return;
+	}
 
-	SteamUGC()->SetItemTitle(handle, title.c_str());
-	SteamUGC()->SetItemDescription(handle, description.c_str());
+	currentItem_updateHandle = SteamUGC()->StartItemUpdate(SteamUtils()->GetAppID(), currentItem);
 
-	SteamUGC()->SetItemContent(handle, folder.c_str());
+	SteamUGC()->SetItemTitle(currentItem_updateHandle, title.c_str());
+	SteamUGC()->SetItemDescription(currentItem_updateHandle, description.c_str());
 
-	SteamUGC()->SetItemPreview(handle, previewPath.c_str());
+	SteamUGC()->SetItemContent(currentItem_updateHandle, folder.c_str());
+
+	SteamUGC()->SetItemPreview(currentItem_updateHandle, previewPath.c_str());
+	SteamUGC()->SetItemVisibility(currentItem_updateHandle, k_ERemoteStoragePublishedFileVisibilityPublic);
 
 	for (std::string s : previewPictures)
 	{
-		SteamUGC()->AddItemPreviewFile(handle, s.c_str(), EItemPreviewType::k_EItemPreviewType_Image);
+		SteamUGC()->AddItemPreviewFile(currentItem_updateHandle, s.c_str(), EItemPreviewType::k_EItemPreviewType_Image);
 	}
 
-	SteamAPICall_t hSteamAPICall = SteamUGC()->SubmitItemUpdate(handle, "Initial upload");
+	SteamParamStringArray_t paramArray;
+
+	paramArray.m_nNumStrings = tags.size();
+
+	paramArray.m_ppStrings = new const char* [tags.size()];
+
+	for (int i = 0; i < tags.size(); i++)
+	{
+		paramArray.m_ppStrings[i] = tags[i].c_str();
+	}
+
+	SteamUGC()->SetItemTags(currentItem_updateHandle, &paramArray);
+
+	SteamAPICall_t hSteamAPICall = SteamUGC()->SubmitItemUpdate(currentItem_updateHandle, "Initial upload");
 	m_SubmitItemUpdateResult.Set(hSteamAPICall, this, &UGCHandler::onItemSubmitted);
 }
 

@@ -10,6 +10,7 @@
 
 #include <string>
 #include <vector>
+#include "FData.h"
 
 namespace Average4k::Api::Functions
 {
@@ -20,11 +21,13 @@ namespace Average4k::Api::Functions
 
 		static bool ScanFolderForBad(std::string folder);
 
-		static void UploadPack(std::string folder, std::string banner, std::string title, std::string description, std::vector<std::string> tags);
-		static void UploadNoteskin(std::string folder, std::string banner, std::string title, std::string description, std::vector<std::string> previewPictures, std::vector<std::string> tags);
-		static void UploadTheme(std::string folder, std::string banner, std::string title, std::string description, std::vector<std::string> previewPictures);
+		static void UploadPack(std::string folder, std::string banner, std::string title, std::string description, sol::table tags);
+		static void UploadNoteskin(std::string folder, std::string banner, std::string title, std::string description, sol::table previewPictures, sol::table tags);
+		static void UploadTheme(std::string folder, std::string banner, std::string title, std::string description, sol::table previewPictures, sol::table tags);
 
 		static void DeleteItem();
+
+		static float GetCurrentItemProgress();
 
 		static void OpenWorkshop();
 		static std::string GetSteamName();

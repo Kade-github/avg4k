@@ -30,7 +30,7 @@ bool Average4k::Api::Functions::FSteam::ScanFolderForBad(std::string folder)
 	return true;
 }
 
-void Average4k::Api::Functions::FSteam::UploadPack(std::string folder, std::string banner, std::string title, std::string description, std::vector<std::string> tags)
+void Average4k::Api::Functions::FSteam::UploadPack(std::string folder, std::string banner, std::string title, std::string description, sol::table tags)
 {
 	if (folder.empty())
 	{
@@ -89,10 +89,18 @@ void Average4k::Api::Functions::FSteam::UploadPack(std::string folder, std::stri
 		AvgEngine::Logging::writeLog("[Steam] [Error] You must create an item before uploading it.");
 		return;
 	}
-	Steam::UGCHandler::Instance->UploadPack(folder, banner, title, description, tags);
+
+	std::vector<std::string> tags_v;
+
+	for (auto& v : tags)
+	{
+		tags_v.push_back(v.second.as<std::string>());
+	}
+
+	Steam::UGCHandler::Instance->UploadPack(folder, banner, title, description, tags_v);
 }
 
-void Average4k::Api::Functions::FSteam::UploadNoteskin(std::string folder, std::string banner, std::string title, std::string description, std::vector<std::string> previewPictures, std::vector<std::string> tags)
+void Average4k::Api::Functions::FSteam::UploadNoteskin(std::string folder, std::string banner, std::string title, std::string description, sol::table previewPictures, sol::table tags)
 {
 	if (folder.empty())
 	{
@@ -152,10 +160,24 @@ void Average4k::Api::Functions::FSteam::UploadNoteskin(std::string folder, std::
 		return;
 	}
 
-	Steam::UGCHandler::Instance->UploadNoteskin(folder, banner, title, description, previewPictures, tags);
+	std::vector<std::string> tags_v;
+
+	for (auto& v : tags)
+	{
+		tags_v.push_back(v.second.as<std::string>());
+	}
+
+	std::vector<std::string> previewPictures_v;
+
+	for (auto& v : previewPictures)
+	{
+		previewPictures_v.push_back(v.second.as<std::string>());
+	}
+
+	Steam::UGCHandler::Instance->UploadNoteskin(folder, banner, title, description, previewPictures_v, tags_v);
 }
 
-void Average4k::Api::Functions::FSteam::UploadTheme(std::string folder, std::string banner, std::string title, std::string description, std::vector<std::string> previewPictures)
+void Average4k::Api::Functions::FSteam::UploadTheme(std::string folder, std::string banner, std::string title, std::string description, sol::table previewPictures, sol::table tags)
 {
 	if (folder.empty())
 	{
@@ -215,12 +237,31 @@ void Average4k::Api::Functions::FSteam::UploadTheme(std::string folder, std::str
 		return;
 	}
 
-	Steam::UGCHandler::Instance->UploadTheme(folder, banner, title, description, previewPictures);
+	std::vector<std::string> previewPictures_v;
+
+	for (auto& v : previewPictures)
+	{
+		previewPictures_v.push_back(v.second.as<std::string>());
+	}
+
+	std::vector<std::string> tags_v;
+
+	for (auto& v : tags)
+	{
+		tags_v.push_back(v.second.as<std::string>());
+	}
+
+	Steam::UGCHandler::Instance->UploadTheme(folder, banner, title, description, previewPictures_v, tags_v);
 }
 
 void Average4k::Api::Functions::FSteam::DeleteItem()
 {
 	Steam::UGCHandler::Instance->DeleteItem();
+}
+
+float Average4k::Api::Functions::FSteam::GetCurrentItemProgress()
+{
+	return Steam::UGCHandler::Instance->GetCurrentItemProgress();
 }
 
 void Average4k::Api::Functions::FSteam::OpenWorkshop()

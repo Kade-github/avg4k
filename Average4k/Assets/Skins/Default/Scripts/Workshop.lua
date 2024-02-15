@@ -332,8 +332,10 @@ function enter()
 
             if page == 3 then
                 if submenuIndex == 5 then
-                    if selection == 1 then
-                        table.insert(cPreviews, getFileFromUser("Image Files (*.png, *.jpg)\0*.png;*.jpg\0"))
+                    if #cPreviews < 5 then
+                        if selection == 1 then
+                            table.insert(cPreviews, getFileFromUser("Image Files (*.png, *.jpg)\0*.png;*.jpg\0"))
+                        end
                     end
                     Previews()
                 end
@@ -361,8 +363,10 @@ function enter()
 
             if page == 4 then
                 if submenuIndex == 5 then
-                    if selection == 1 then
-                        table.insert(cPreviews, getFileFromUser("Image Files (*.png, *.jpg)\0*.png;*.jpg\0"))
+                    if #cPreviews < 5 then
+                        if selection == 1 then
+                            table.insert(cPreviews, getFileFromUser("Image Files (*.png, *.jpg)\0*.png;*.jpg\0"))
+                        end
                     end
                     Previews()
                 end

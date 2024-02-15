@@ -796,11 +796,10 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 
 	Average4k::Data::Chart::Note n = cNotes[0];
 
-	bool spawn = n.beat < currentBeat + 6;
+	// check for tails
 
-	if (spawn || n.type == 3)
+	for (auto n : cNotes)
 	{
-
 		if (n.type == 3) // skip ends
 		{
 			if (notes.size() != 0 && holds[n.lane] != nullptr)
@@ -816,8 +815,14 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 				return;
 
 			n = cNotes[0];
-			return;
+			break;
 		}
+	}
+
+	bool spawn = n.beat < currentBeat + 6;
+
+	if (spawn && n.type == 3)
+	{
 
 		float cmod = (save->gameplayData.constantMod / channel->rate) * hScale;
 		float xmod = save->gameplayData.multiplierMod * hScale;

@@ -19,7 +19,7 @@ namespace Average4k::Data::Chart::Providers
 
 		StepFile(std::wstring path, bool metadataOnly = false)
 		{
-			ChartFile();
+			ChartFile::ChartFile();
 			Parse(path, metadataOnly);
 		}
 

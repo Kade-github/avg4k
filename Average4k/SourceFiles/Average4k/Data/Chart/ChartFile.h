@@ -150,7 +150,7 @@ namespace Average4k::Data
 						return sp.startBeat;
 					float larger = MAX(stopEndTime, tp.startTimestamp);
 					float beast = tp.startBeat;
-					if (tp.startTimestamp < stopEndTime)
+					if (tp.startTimestamp < stopEndTime && sp.startBeat >= 0)
 						beast = sp.startBeat;
 					float cb = beast + ((time - larger) * (tp.bpm / 60.0f));
 					return cb;

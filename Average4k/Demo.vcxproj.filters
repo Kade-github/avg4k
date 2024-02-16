@@ -425,6 +425,9 @@
     <ClInclude Include="SourceFiles\Average4k\Steam\UGCHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SourceFiles\Average4k\Objects\Playfield.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Average4k.rc">

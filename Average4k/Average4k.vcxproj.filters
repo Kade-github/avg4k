@@ -1,0 +1,429 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="E:\avg4k\Average4k\Include\ImGui\imgui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\Include\ImGui\imgui_demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\Include\ImGui\imgui_draw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\Include\ImGui\imgui_impl_glfw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\Include\ImGui\imgui_impl_opengl3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\Include\ImGui\imgui_tables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\Include\ImGui\imgui_widgets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\Include\ImGui\implot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\Include\ImGui\implot_demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\Include\ImGui\implot_items.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\A4kGame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\AvgLuaFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\Functions\FCharts.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\Functions\FData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\Functions\FFiles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\Functions\FGame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\Functions\FGameplay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\Functions\FMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\Functions\FSkins.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\Functions\FSteam.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Console\CmdHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Data\Chart\AsyncChartLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Data\Chart\ChartFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Data\Chart\ChartFinder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Data\Chart\Providers\StepFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Helpers\Base64.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Helpers\JudgementHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Helpers\SteamHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Connection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Objects\BaseNote.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Objects\Notes\Hold.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Objects\UnicodeText.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Screens\Menu\Gameplay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Screens\Menu\MainMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Skin\Skin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Average4k\Steam\UGCHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\External\ImGui\imgui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\External\ImGui\imgui_demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\External\ImGui\imgui_draw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\External\ImGui\imgui_impl_glfw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\External\ImGui\imgui_impl_opengl3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\External\ImGui\imgui_tables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\External\ImGui\imgui_widgets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\External\ImGui\implot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\External\ImGui\implot_demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\External\ImGui\implot_items.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\avg4k\Average4k\SourceFiles\Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="E:\avg4k\Average4k\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\A4kGame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\AvgLuaFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\Functions\FCharts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\Functions\FData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\Functions\FFiles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\Functions\FGame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\Functions\FGameplay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\Functions\FMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\Functions\FSkins.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\Functions\FSteam.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\Stubs\LuaMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\Stubs\LuaNote.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\Stubs\LuaObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\Stubs\LuaSong.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\Stubs\LuaSprite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Api\Stubs\LuaText.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Console\CmdHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Data\Chart\AsyncChartLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Data\Chart\ChartFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Data\Chart\ChartFinder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Data\Chart\Difficulty.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Data\Chart\Metadata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Data\Chart\Providers\StepFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Data\Chart\ScrollPoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Data\Chart\SpeedPoints.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Data\Chart\StopPoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Data\Chart\TimingPoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Data\SaveData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Data\Types\AudioData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Data\Types\GameplayData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Data\Types\SkinData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Data\Types\VideoData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Defines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Helpers\FileDiag.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Helpers\JudgementHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Helpers\QuickAdd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Helpers\SteamHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Helpers\StringTools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Helpers\TimeToScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Helpers\WaveformData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Connection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\CPacketChartAcquired.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\CPacketHello.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\CPacketHostChangeChart.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\CPacketHostEndChart.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\CPacketHostServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\CPacketHostStartGame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\CPacketHostUpdateLobby.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\CPacketJoinServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\CPacketLeaderboardRequest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\CPacketLeave.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\CPacketNoteHit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\CPacketRequestAvatar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\CPacketSendMessage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\CPacketServerList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\CPacketSongFinished.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\CPacketStatus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\CPacketSubmitScore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\CPacketWtfAmIn.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\Lobby.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\Packet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\SPacketAvatarRequestResponse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\SPacketFinalizeChart.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\SPacketFuckYou.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\SPacketHello.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\SPacketHostServerReply.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\SPacketInvalidPacket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\SPacketJoinServerReply.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\SPacketLeaderboardResponse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\SPacketOnChat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\SPacketPlayerSongFinished.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\SPacketScoreResult.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\SPacketServerListReply.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\SPacketStartLobbyGame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\SPacketStatus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\SPacketUpdateEncryptionParameters.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\SPacketUpdateLeaderboard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\SPacketUpdateLobbyChart.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\SPacketUpdateLobbyData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Multiplayer\Packets\SPacketWtfAmInReply.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Objects\BaseNote.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Objects\Notes\Hold.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Objects\Playfield.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Objects\RenderTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Objects\UnicodeText.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Screens\Menu\Gameplay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Screens\Menu\MainMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Skin\Skin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\avg4k\Average4k\SourceFiles\Average4k\Steam\UGCHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="E:\avg4k\Average4k\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{E1D44370-A873-345F-B055-DD012A81E1AB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{7A388F7F-46CE-3868-8110-C44AE5AB39C9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,3 +1,0 @@
-E:/avg4k/Average4k/CMakeFiles/Average4k.dir
-E:/avg4k/Average4k/CMakeFiles/edit_cache.dir
-E:/avg4k/Average4k/CMakeFiles/rebuild_cache.dir

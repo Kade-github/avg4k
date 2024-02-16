@@ -889,7 +889,7 @@ function draw()
                 setGameplayData(gameplayTable)
                 create_gameplay()
             end
-            if selection == 11 then
+            if selection == 12 then
                 gameplayTable["backgroundDim"] = gameplayTable["backgroundDim"] - 0.01
                 if gameplayTable["backgroundDim"] < 0 then
                     gameplayTable["backgroundDim"] = 1
@@ -949,7 +949,7 @@ function draw()
                 create_gameplay()
             end
 
-            if selection == 11 then
+            if selection == 12 then
                 gameplayTable["backgroundDim"] = gameplayTable["backgroundDim"] + 0.01
                 if gameplayTable["backgroundDim"] > 1 then
                     gameplayTable["backgroundDim"] = 0

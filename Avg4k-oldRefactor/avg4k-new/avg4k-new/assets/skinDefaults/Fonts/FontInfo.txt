@@ -1,5 +1,0 @@
-Andale, Arial, ArialBold, FuturaBold are all non unicode. Basically they don't support japanese characters.
-
-ArialUnicode is obviously one that contains japanese and korean characters along with latin.
-
-HaiseiBold is basically futura with some small changes, but it has japanese characters. (it does not contain korean characters though)

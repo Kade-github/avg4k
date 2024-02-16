@@ -1,2 +1,0 @@
-# metadata information for skinners, aka; The sizes of the frames.
-judgements.png - horizontal rect [210x84]

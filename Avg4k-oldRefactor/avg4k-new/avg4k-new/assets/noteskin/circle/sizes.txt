@@ -1,5 +1,0 @@
-# metadata information for skinners, aka; The sizes of the frames.
-arrows.png - horizontal rect [64x64]
-explosion.png - horizontal rect [64x64]
-holds.png - horizontal rect [64x64]
-receptors.png - horizontal rect [64x64]

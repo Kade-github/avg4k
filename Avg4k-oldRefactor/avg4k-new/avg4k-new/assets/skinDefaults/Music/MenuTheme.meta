@@ -1,9 +1,0 @@
-bpm: 155
-# this is when the logo will appear.
-# the other events for like the kade dev team logo and stuff
-# are based off this value
-beat: 32
-# how often to bop (0 = every beat, 1 = 2 beats etc)
-bop: 3
-# what beat to start the song at
-startOffset: 0

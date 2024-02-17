@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{e1830b87-66ef-4396-af1f-b9b80687367c}</ItemsProjectGuid>
+    <ItemsProjectName>Average4kShared</ItemsProjectName>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\A4kGame.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\AvgLuaFile.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\Functions\FCharts.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\Functions\FData.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\Functions\FFiles.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\Functions\FGame.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\Functions\FGameplay.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\Functions\FMenu.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\Functions\FSkins.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\Functions\FSteam.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Console\CmdHandler.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Data\Chart\AsyncChartLoader.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Data\Chart\ChartFile.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Data\Chart\ChartFinder.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Data\Chart\Providers\StepFile.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Helpers\Base64.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Helpers\JudgementHelper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Helpers\SteamHelper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Connection.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Objects\BaseNote.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Objects\Notes\Hold.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Objects\UnicodeText.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Screens\Menu\Gameplay.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Screens\Menu\MainMenu.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Skin\Skin.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Steam\UGCHandler.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\External\ImGui\imgui.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\External\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\External\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\External\ImGui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\External\ImGui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\External\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\External\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\External\ImGui\implot.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\External\ImGui\implot_demo.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\External\ImGui\implot_items.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\A4kGame.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\AvgLuaFile.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\Functions\FCharts.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\Functions\FData.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\Functions\FFiles.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\Functions\FGame.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\Functions\FGameplay.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\Functions\FMenu.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\Functions\FSkins.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\Functions\FSteam.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\Stubs\LuaMenu.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\Stubs\LuaNote.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\Stubs\LuaObject.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\Stubs\LuaSong.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\Stubs\LuaSprite.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Api\Stubs\LuaText.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Console\CmdHandler.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Data\Chart\AsyncChartLoader.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Data\Chart\ChartFile.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Data\Chart\ChartFinder.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Data\Chart\Difficulty.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Data\Chart\Metadata.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Data\Chart\Providers\StepFile.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Data\Chart\ScrollPoint.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Data\Chart\SpeedPoints.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Data\Chart\StopPoint.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Data\Chart\TimingPoint.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Data\SaveData.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Data\Types\AudioData.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Data\Types\GameplayData.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Data\Types\SkinData.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Data\Types\VideoData.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Defines.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Helpers\FileDiag.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Helpers\JudgementHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Helpers\QuickAdd.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Helpers\SteamHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Helpers\StringTools.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Helpers\TimeToScreen.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Helpers\WaveformData.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Connection.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\CPacketChartAcquired.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\CPacketHello.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\CPacketHostChangeChart.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\CPacketHostEndChart.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\CPacketHostServer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\CPacketHostStartGame.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\CPacketHostUpdateLobby.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\CPacketJoinServer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\CPacketLeaderboardRequest.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\CPacketLeave.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\CPacketNoteHit.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\CPacketRequestAvatar.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\CPacketSendMessage.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\CPacketServerList.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\CPacketSongFinished.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\CPacketStatus.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\CPacketSubmitScore.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\CPacketWtfAmIn.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\Lobby.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\Packet.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\SPacketAvatarRequestResponse.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\SPacketFinalizeChart.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\SPacketFuckYou.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\SPacketHello.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\SPacketHostServerReply.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\SPacketInvalidPacket.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\SPacketJoinServerReply.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\SPacketLeaderboardResponse.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\SPacketOnChat.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\SPacketPlayerSongFinished.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\SPacketScoreResult.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\SPacketServerListReply.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\SPacketStartLobbyGame.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\SPacketStatus.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\SPacketUpdateEncryptionParameters.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\SPacketUpdateLeaderboard.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\SPacketUpdateLobbyChart.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\SPacketUpdateLobbyData.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Multiplayer\Packets\SPacketWtfAmInReply.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Objects\BaseNote.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Objects\Notes\Hold.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Objects\Playfield.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Objects\RenderTexture.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Objects\UnicodeText.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Screens\Menu\Gameplay.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Screens\Menu\MainMenu.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Skin\Skin.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\Average4k\Steam\UGCHandler.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\External\ImGui\imconfig.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\External\ImGui\imgui.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\External\ImGui\imgui_impl_glfw.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\External\ImGui\imgui_impl_opengl3.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\External\ImGui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\External\ImGui\imgui_internal.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\External\ImGui\implot.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\External\ImGui\implot_internal.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\External\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\External\ImGui\imstb_textedit.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SourceFiles\External\ImGui\imstb_truetype.h" />
+  </ItemGroup>
+</Project>

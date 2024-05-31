@@ -19,7 +19,145 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Include\ImGui\imgui.cpp" />
+    <ClCompile Include="Include\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="Include\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="Include\ImGui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="Include\ImGui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="Include\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="Include\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Include\ImGui\implot.cpp" />
+    <ClCompile Include="Include\ImGui\implot_demo.cpp" />
+    <ClCompile Include="Include\ImGui\implot_items.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\A4kGame.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Api\AvgLuaFile.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Api\Functions\FCharts.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Api\Functions\FData.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Api\Functions\FFiles.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Api\Functions\FGame.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Api\Functions\FGameplay.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Api\Functions\FMenu.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Api\Functions\FSkins.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Api\Functions\FSteam.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Console\CmdHandler.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Data\Chart\AsyncChartLoader.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Data\Chart\ChartFile.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Data\Chart\ChartFinder.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Data\Chart\Providers\StepFile.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Helpers\Base64.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Helpers\JudgementHelper.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Helpers\SteamHelper.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Multiplayer\Connection.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Objects\BaseNote.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Objects\Notes\Hold.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Objects\UnicodeText.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Screens\Menu\Gameplay.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Screens\Menu\MainMenu.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Skin\Skin.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Steam\UGCHandler.cpp" />
+    <ClCompile Include="SourceFiles\External\ImGui\imgui.cpp" />
+    <ClCompile Include="SourceFiles\External\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="SourceFiles\External\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="SourceFiles\External\ImGui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="SourceFiles\External\ImGui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="SourceFiles\External\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="SourceFiles\External\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="SourceFiles\External\ImGui\implot.cpp" />
+    <ClCompile Include="SourceFiles\External\ImGui\implot_demo.cpp" />
+    <ClCompile Include="SourceFiles\External\ImGui\implot_items.cpp" />
+    <ClCompile Include="SourceFiles\Main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SourceFiles\Average4k\A4kGame.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\AvgLuaFile.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\Functions\FCharts.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\Functions\FData.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\Functions\FFiles.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\Functions\FGame.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\Functions\FGameplay.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\Functions\FMenu.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\Functions\FSkins.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\Functions\FSteam.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaMenu.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaNote.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaObject.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaSong.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaSprite.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaText.h" />
+    <ClInclude Include="SourceFiles\Average4k\Console\CmdHandler.h" />
+    <ClInclude Include="SourceFiles\Average4k\Data\Chart\AsyncChartLoader.h" />
+    <ClInclude Include="SourceFiles\Average4k\Data\Chart\ChartFile.h" />
+    <ClInclude Include="SourceFiles\Average4k\Data\Chart\ChartFinder.h" />
+    <ClInclude Include="SourceFiles\Average4k\Data\Chart\Difficulty.h" />
+    <ClInclude Include="SourceFiles\Average4k\Data\Chart\Metadata.h" />
+    <ClInclude Include="SourceFiles\Average4k\Data\Chart\Providers\StepFile.h" />
+    <ClInclude Include="SourceFiles\Average4k\Data\Chart\ScrollPoint.h" />
+    <ClInclude Include="SourceFiles\Average4k\Data\Chart\SpeedPoints.h" />
+    <ClInclude Include="SourceFiles\Average4k\Data\Chart\TimingPoint.h" />
+    <ClInclude Include="SourceFiles\Average4k\Data\Chart\StopPoint.h" />
+    <ClInclude Include="SourceFiles\Average4k\Data\Types\GameplayData.h" />
+    <ClInclude Include="SourceFiles\Average4k\Data\SaveData.h" />
+    <ClInclude Include="SourceFiles\Average4k\Data\Types\AudioData.h" />
+    <ClInclude Include="SourceFiles\Average4k\Data\Types\SkinData.h" />
+    <ClInclude Include="SourceFiles\Average4k\Data\Types\VideoData.h" />
+    <ClInclude Include="SourceFiles\Average4k\Defines.h" />
+    <ClInclude Include="SourceFiles\Average4k\Helpers\FileDiag.h" />
+    <ClInclude Include="SourceFiles\Average4k\Helpers\JudgementHelper.h" />
+    <ClInclude Include="SourceFiles\Average4k\Helpers\QuickAdd.h" />
+    <ClInclude Include="SourceFiles\Average4k\Helpers\SteamHelper.h" />
+    <ClInclude Include="SourceFiles\Average4k\Helpers\StringTools.h" />
+    <ClInclude Include="SourceFiles\Average4k\Helpers\TimeToScreen.h" />
+    <ClInclude Include="SourceFiles\Average4k\Helpers\WaveformData.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Connection.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\CPacketChartAcquired.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\CPacketHello.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\CPacketHostChangeChart.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\CPacketHostEndChart.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\CPacketHostServer.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\CPacketHostStartGame.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\CPacketHostUpdateLobby.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\CPacketJoinServer.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\CPacketLeaderboardRequest.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\CPacketLeave.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\CPacketNoteHit.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\CPacketRequestAvatar.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\CPacketSendMessage.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\CPacketServerList.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\CPacketSongFinished.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\CPacketStatus.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\CPacketSubmitScore.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\CPacketWtfAmIn.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\Lobby.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\Packet.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\SPacketAvatarRequestResponse.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\SPacketFinalizeChart.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\SPacketFuckYou.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\SPacketHello.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\SPacketHostServerReply.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\SPacketInvalidPacket.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\SPacketJoinServerReply.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\SPacketLeaderboardResponse.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\SPacketOnChat.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\SPacketPlayerSongFinished.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\SPacketScoreResult.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\SPacketServerListReply.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\SPacketStartLobbyGame.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\SPacketStatus.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\SPacketUpdateEncryptionParameters.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\SPacketUpdateLeaderboard.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\SPacketUpdateLobbyChart.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\SPacketUpdateLobbyData.h" />
+    <ClInclude Include="SourceFiles\Average4k\Multiplayer\Packets\SPacketWtfAmInReply.h" />
+    <ClInclude Include="SourceFiles\Average4k\Objects\BaseNote.h" />
+    <ClInclude Include="SourceFiles\Average4k\Objects\Notes\Hold.h" />
+    <ClInclude Include="SourceFiles\Average4k\Objects\Playfield.h" />
+    <ClInclude Include="SourceFiles\Average4k\Objects\RenderTexture.h" />
+    <ClInclude Include="SourceFiles\Average4k\Objects\UnicodeText.h" />
+    <ClInclude Include="SourceFiles\Average4k\Screens\Menu\Gameplay.h" />
+    <ClInclude Include="SourceFiles\Average4k\Screens\Menu\MainMenu.h" />
+    <ClInclude Include="SourceFiles\Average4k\Skin\Skin.h" />
+    <ClInclude Include="SourceFiles\Average4k\Steam\UGCHandler.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Average4k.rc" />
@@ -35,7 +173,7 @@
     <ProjectGuid>{d2905e4f-723d-4e2a-bc58-4acd14791299}</ProjectGuid>
     <RootNamespace>Demo</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Average4k-Windows</ProjectName>
+    <ProjectName>Average4k</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -68,7 +206,6 @@
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="Shared">
-    <Import Project="..\Shared\Shared.vcxitems" Label="Shared" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -109,12 +246,11 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;SILENCE_ALL_CXX17_DEPRECATION_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalOptions>/D _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS %(AdditionalOptions)</AdditionalOptions>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -134,13 +270,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;SILENCE_ALL_CXX17_DEPRECATION_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalOptions>/D _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MinSpace</Optimization>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -159,12 +294,11 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;SILENCE_ALL_CXX17_DEPRECATION_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalOptions>/D _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS %(AdditionalOptions)</AdditionalOptions>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -184,13 +318,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;SILENCE_ALL_CXX17_DEPRECATION_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalOptions>/D _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MinSpace</Optimization>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -49,7 +49,7 @@ namespace AvgEngine::Fnt
 
 		bool hasKernings = false;
 
-		OpenGL::Texture* texture = NULL;
+		std::shared_ptr<OpenGL::Texture> texture = NULL;
 
 		static void ClearCache()
 		{
@@ -65,8 +65,6 @@ namespace AvgEngine::Fnt
 			#endif
 			for (Fnt* f : *fonts)
 			{
-				if (f->texture)
-					delete f->texture;
 				delete f;
 			}
 			fonts->clear();
@@ -98,21 +96,6 @@ namespace AvgEngine::Fnt
 			if (it != chars.end())
 				return *it;
 			
-			FntChar cc;
-			cc.id = -1;
-
-			return cc;
-		}
-
-		FntChar GetWChar(wchar_t c)
-		{
-			unsigned int u = c;
-
-			auto it = std::find_if(chars.begin(), chars.end(), [&u](const FntChar& obj) {return obj.id == u; });
-
-			if (it != chars.end())
-				return *it;
-
 			FntChar cc;
 			cc.id = -1;
 

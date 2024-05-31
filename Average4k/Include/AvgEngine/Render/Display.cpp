@@ -41,7 +41,7 @@ void AvgEngine::Render::Display::Init()
 	defaultShader->GL_CompileShader(NULL, NULL);
 }
 
-void AvgEngine::Render::Display::DrawBuffer(OpenGL::Texture* tex, OpenGL::Shader* shad)
+void AvgEngine::Render::Display::DrawBuffer(std::shared_ptr<OpenGL::Texture> tex, OpenGL::Shader* shad)
 {
 	if (batch_buffer.size() == 0)
 		return;

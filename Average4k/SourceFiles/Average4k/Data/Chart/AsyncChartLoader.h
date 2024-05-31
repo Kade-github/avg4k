@@ -20,6 +20,7 @@ namespace Average4k::Data
 		unsigned char* data = nullptr;
 		int width = -1;
 		int height = -1;
+		size_t size = 0;
 		std::wstring path = L"";
 	};
 

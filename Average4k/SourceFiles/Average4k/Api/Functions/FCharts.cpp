@@ -163,7 +163,9 @@ Average4k::Api::Stubs::LuaSprite Average4k::Api::Functions::FCharts::GetAsyncTex
 
 	Lua->getState().collect_garbage();
 
-	Average4k::Api::Stubs::LuaSprite spr = Average4k::Api::Stubs::LuaSprite(std::make_shared<AvgEngine::Base::Sprite>(-100, -100, (char*)img.data, sizeof(img.data), img.width, img.height));
+	std::shared_ptr<AvgEngine::Base::Sprite> sp = std::make_shared<AvgEngine::Base::Sprite>(-100, -100, reinterpret_cast<char*>(img.data), 0, img.width, img.height);
+
+	Average4k::Api::Stubs::LuaSprite spr = Average4k::Api::Stubs::LuaSprite(sp);
 
 	return spr;
 }

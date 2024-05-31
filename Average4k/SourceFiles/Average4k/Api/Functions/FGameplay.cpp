@@ -8,14 +8,14 @@
 
 void Average4k::Api::Functions::FGameplay::RotateReceptors(bool rotate)
 {
-	Average4k::Screens::Menu::Gameplay* gameplay = (Average4k::Screens::Menu::Gameplay*)A4kGame::gameInstance->CurrentMenu;
+	std::shared_ptr<Average4k::Screens::Menu::Gameplay> gameplay = std::dynamic_pointer_cast<Average4k::Screens::Menu::Gameplay>(A4kGame::gameInstance->CurrentMenu);
 
 	gameplay->rotateReceptors = rotate;
 }
 
 void Average4k::Api::Functions::FGameplay::SetNoteSize(float width, float height)
 {
-	Average4k::Screens::Menu::Gameplay* gameplay = (Average4k::Screens::Menu::Gameplay*)A4kGame::gameInstance->CurrentMenu;
+	std::shared_ptr< Average4k::Screens::Menu::Gameplay> gameplay = std::dynamic_pointer_cast<Average4k::Screens::Menu::Gameplay>(A4kGame::gameInstance->CurrentMenu);
 
 	gameplay->noteWidth = width;
 	gameplay->noteHeight = height;

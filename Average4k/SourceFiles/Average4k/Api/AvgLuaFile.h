@@ -19,7 +19,7 @@ namespace Average4k::Api
 	class AvgLuaFile
 	{
 	public:
-		static std::vector<AvgEngine::Base::GameObject*> objects;
+		static std::vector<std::shared_ptr<AvgEngine::Base::GameObject>> objects;
 
 		AvgLuaFile() = default;
 		AvgLuaFile(const std::string& path);

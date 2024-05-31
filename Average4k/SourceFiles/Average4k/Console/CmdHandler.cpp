@@ -5,6 +5,7 @@
 
 #include "CmdHandler.h"
 #include "AvgEngine/Utils/StringTools.h"
+#include "../Helpers/StringTools.h"
 #include "../Screens/Menu/MainMenu.h"
 #include "../Data/Chart/AsyncChartLoader.h"
 #include <AvgEngine/Game.h>
@@ -26,7 +27,7 @@ void Average4k::Console::CmdHandler::Handle(std::string cmd)
 	else
 		s = AvgEngine::Utils::StringTools::Split(cmd, " ")[0];
 
-	Average4k::Screens::Menu::MainMenu* m = NULL;
+	std::shared_ptr<Average4k::Screens::Menu::MainMenu> m = NULL;
 
 	int total = 0;
 	AvgEngine::Utils::StringTools::ToLower(s);
@@ -35,8 +36,8 @@ void Average4k::Console::CmdHandler::Handle(std::string cmd)
 	case "reload"_sh:
 		if (Average4k::Screens::Menu::MainMenu::loaded)
 		{
-			m = static_cast<Average4k::Screens::Menu::MainMenu*>(AvgEngine::Game::Instance->CurrentMenu);
-			AvgEngine::Game::Instance->SwitchMenu(new Average4k::Screens::Menu::MainMenu(m->lua->path));
+			m = std::dynamic_pointer_cast<Average4k::Screens::Menu::MainMenu>(AvgEngine::Game::Instance->CurrentMenu);
+			AvgEngine::Game::Instance->SwitchMenu(std::make_shared<Average4k::Screens::Menu::MainMenu>(m->lua->path));
 			AvgEngine::Logging::writeLog("[Debug] [CmdHandler] [reload] Reloaded lua.");
 		}
 		else
@@ -45,7 +46,7 @@ void Average4k::Console::CmdHandler::Handle(std::string cmd)
 	case "packs"_sh:
 		for (auto& p : Average4k::Data::ChartFinder::Packs)
 		{
-			AvgEngine::Logging::writeLog(AvgEngine::Utils::StringTools::Ws2s(p.name) + " - Charts: " + std::to_string(p.charts.size()));
+			AvgEngine::Logging::writeLog(Average4k::Helpers::StringTools::Ws2s(p.name) + " - Charts: " + std::to_string(p.charts.size()));
 
 			total += p.charts.size();
 		}

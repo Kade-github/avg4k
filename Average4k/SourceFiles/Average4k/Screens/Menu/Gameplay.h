@@ -42,11 +42,11 @@ namespace Average4k::Screens::Menu
 		Average4k::Api::AvgLuaFile* lua;
 		Average4k::Data::ChartFile chart;
 
-		Average4k::Objects::RenderTexture* hud;
-		Average4k::Objects::RenderTexture* playfield;
+		std::shared_ptr<Average4k::Objects::RenderTexture> hud;
+		std::shared_ptr<Average4k::Objects::RenderTexture> playfield;
 
-		AvgEngine::Base::Sprite* hud_spr;
-		AvgEngine::Base::Sprite* playfield_spr;
+		std::shared_ptr<AvgEngine::Base::Sprite> hud_spr;
+		std::shared_ptr<AvgEngine::Base::Sprite> playfield_spr;
 
 		bool musicHasPlayed = false;
 		bool stop = false;
@@ -61,12 +61,12 @@ namespace Average4k::Screens::Menu
 		float wScale = 1;
 		float hScale = 1;
 
-		AvgEngine::Base::Sprite* background;
+		std::shared_ptr<AvgEngine::Base::Sprite> background;
 
 		int holdingLanes[4] = { 0, 0, 0, 0 };
-		Average4k::Objects::BaseNote* holds[4] = { nullptr, nullptr, nullptr, nullptr };
-		std::vector<AvgEngine::Base::Sprite*> receptors;
-		std::vector<Average4k::Objects::BaseNote*> notes;
+		std::shared_ptr<Average4k::Objects::BaseNote> holds[4] = { nullptr, nullptr, nullptr, nullptr };
+		std::vector<std::shared_ptr<AvgEngine::Base::Sprite>> receptors;
+		std::vector<std::shared_ptr<Average4k::Objects::BaseNote>> notes;
 
 		std::vector<Average4k::Data::Chart::Note> cNotes;
 

@@ -19,7 +19,7 @@ namespace Average4k::Api::Stubs
 {
 
 	class LuaSprite : public LuaObject {
-		AvgEngine::Base::Sprite* _base;
+		std::shared_ptr<AvgEngine::Base::Sprite> _base;
 	public:
 		/// <summary>
 		/// Create a new sprite
@@ -32,14 +32,14 @@ namespace Average4k::Api::Stubs
 			std::string formatted = path;
 			AvgEngine::Utils::StringTools::ToLower(formatted);
 			if (formatted.contains("charts"))
-				_base = new AvgEngine::Base::Sprite(x, y, path);
+				_base = std::make_shared<AvgEngine::Base::Sprite>(x, y, path);
 			else
-				_base = new AvgEngine::Base::Sprite(x, y, A4kGame::gameInstance->skin.GetPath(path));
+				_base = std::make_shared<AvgEngine::Base::Sprite>(x, y, A4kGame::gameInstance->skin.GetPath(path));
 			_base->texture->dontDelete = false;
 			_baseObject = _base;
 		}
 
-		LuaSprite(AvgEngine::Base::Sprite* sprite)
+		LuaSprite(std::shared_ptr<AvgEngine::Base::Sprite> sprite)
 		{
 			_base = sprite;
 			_base->texture->dontDelete = false;

@@ -19,13 +19,13 @@ namespace Average4k::Api::Stubs
 {
 
 	class LuaMenu {
-		AvgEngine::Base::Menu* _base;
+		std::shared_ptr<AvgEngine::Base::Menu> _base;
 	public:
 		LuaMenu()
 		{
-			_base = NULL;
+			_base = nullptr;
 		}
-		LuaMenu(AvgEngine::Base::Menu* base)
+		LuaMenu(std::shared_ptr<AvgEngine::Base::Menu> base)
 		{
 			_base = base;
 		}
@@ -55,8 +55,6 @@ namespace Average4k::Api::Stubs
 			_base->removeObject(obj._baseObject);
 
 			AvgLuaFile::objects.erase(std::remove(AvgLuaFile::objects.begin(), AvgLuaFile::objects.end(), obj._baseObject), AvgLuaFile::objects.end());
-
-			delete obj._baseObject;
 		}
 
 		/// <summary>

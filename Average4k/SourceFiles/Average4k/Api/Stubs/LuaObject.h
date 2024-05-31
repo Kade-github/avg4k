@@ -12,7 +12,7 @@ namespace Average4k::Api::Stubs
 {
 	class LuaObject {
 	public:
-		AvgEngine::Base::GameObject* _baseObject;
+		std::shared_ptr<AvgEngine::Base::GameObject> _baseObject;
 	};
 }
 #endif

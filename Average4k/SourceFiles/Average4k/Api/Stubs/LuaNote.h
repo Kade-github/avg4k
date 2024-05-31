@@ -16,14 +16,14 @@ namespace Average4k::Api::Stubs
 	class LuaNote : public LuaObject
 	{
 	public:
-		Average4k::Objects::BaseNote* _base;
+		std::shared_ptr<Average4k::Objects::BaseNote> _base;
 
 		LuaNote()
 		{
 			_base = nullptr;
 		}
 
-		LuaNote(Average4k::Objects::BaseNote* note)
+		LuaNote(std::shared_ptr<Average4k::Objects::BaseNote> note)
 		{
 			_base = note;
 			_base->texture->dontDelete = false;

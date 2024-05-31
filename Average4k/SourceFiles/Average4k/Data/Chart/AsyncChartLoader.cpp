@@ -7,6 +7,7 @@
 #include <AvgEngine/External/Image/stbi.h>
 #include <AvgEngine/Utils/StringTools.h>
 #include "Providers/StepFile.h"
+#include "../../Helpers/StringTools.h"
 
 #include "../../A4kGame.h"
 
@@ -30,7 +31,7 @@ int Average4k::Data::AsyncChartLoader::AsyncLoadTexture(std::wstring path)
 	int myId = currentId;
 	currentId++;
 	pool.detach_task([path, myId]() {
-		std::string converted_str = AvgEngine::Utils::StringTools::Ws2s(path);
+		std::string converted_str = Average4k::Helpers::StringTools::Ws2s(path);
 
 		int w, h;
 

@@ -33,6 +33,15 @@ namespace AvgEngine::Base
 			iTransform = transform;
 		}
 
+		Sprite(float x, float y, char* data, size_t size, float width, float height) : GameObject(x, y)
+		{
+			src = { 0,0,1,1 };
+			texture = OpenGL::Texture::loadTextureFromData(data, size);
+			transform.w = width;
+			transform.h = height;
+			iTransform = transform;
+		}
+
 		Sprite(float x, float y, OpenGL::Texture* _texture) : GameObject(x, y)
 		{
 			src = { 0,0,1,1 };

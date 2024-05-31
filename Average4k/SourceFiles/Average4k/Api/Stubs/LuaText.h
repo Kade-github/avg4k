@@ -18,7 +18,7 @@
 namespace Average4k::Api::Stubs
 {
 	class LuaText : public LuaObject {
-		Average4k::Objects::UnicodeText* _base;
+		std::shared_ptr<Average4k::Objects::UnicodeText> _base;
 		std::string _font;
 	public:
 		/// <summary>
@@ -32,7 +32,7 @@ namespace Average4k::Api::Stubs
 		LuaText(float x, float y, const std::string& font, const std::wstring& text, int size)
 		{
 			_font = _font;
-			_base = new Average4k::Objects::UnicodeText(x, y, A4kGame::gameInstance->skin.GetPath("Fonts/"), font, text, size);
+			_base = std::make_shared<Average4k::Objects::UnicodeText>(x, y, A4kGame::gameInstance->skin.GetPath("Fonts/"), font, text, size);
 			_baseObject = _base;
 		}
 

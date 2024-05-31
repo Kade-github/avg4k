@@ -4,6 +4,7 @@
 */
 
 #include "StepFile.h"
+#include "../../../Helpers/StringTools.h"
 #include <AvgEngine/Utils/StringTools.h>
 
 using namespace Average4k::Data::Chart::Providers;
@@ -13,7 +14,7 @@ void StepFile::Parse(std::wstring _path, bool metadataOnly)
 {
 	std::wifstream* stream = new std::wifstream(_path);
 
-	std::string converted_str = AvgEngine::Utils::StringTools::Ws2s(_path);
+	std::string converted_str = Average4k::Helpers::StringTools::Ws2s(_path);
 
 	if (!stream->good())
 	{

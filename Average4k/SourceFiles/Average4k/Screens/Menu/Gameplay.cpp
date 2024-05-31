@@ -18,11 +18,10 @@ void Average4k::Screens::Menu::Gameplay::restart()
 {
 	hasStarted = false;
 	channel->Stop();
-	for (auto n : notes)
+	for (auto&& n : notes)
 	{
 		removeObject(n);
 		n->texture->dontDelete = true;
-		delete n;
 	}
 	notes.clear();
 
@@ -48,12 +47,7 @@ void Average4k::Screens::Menu::Gameplay::leave()
 	notes.clear();
 	receptors.clear();
 
-	if (hud)
-		delete hud;
-	if (playfield)
-		delete playfield;
-
-	AvgEngine::Game::Instance->SwitchMenu(new MainMenu("Scripts/MainMenu.lua"));
+	AvgEngine::Game::Instance->SwitchMenu(std::make_shared<Average4k::Screens::Menu::MainMenu>("Scripts/MainMenu.lua"));
 }
 
 void Average4k::Screens::Menu::Gameplay::noteRelease(int lane)
@@ -68,7 +62,7 @@ void Average4k::Screens::Menu::Gameplay::noteRelease(int lane)
 		if (n->data.type != Data::Chart::Head)
 			continue;
 
-		Average4k::Objects::HoldNote* hn = (Average4k::Objects::HoldNote*)n;
+		std::shared_ptr<Average4k::Objects::HoldNote> hn = std::dynamic_pointer_cast<Average4k::Objects::HoldNote>(n);
 		hn->holding = false;
 		hn->endHold = currentBeat;
 	}
@@ -97,10 +91,10 @@ void Average4k::Screens::Menu::Gameplay::noteHit(int lane)
 		AvgEngine::Logging::writeLog("[Lua] [Warning] Error in function receptorHit.\n" + std::string(err.what()));
 	}
 
-	Average4k::Objects::BaseNote* hit = nullptr;
+	std::shared_ptr<Average4k::Objects::BaseNote> hit = nullptr;
 	std::string j = "Miss";
 
-	for (auto n : notes)
+	for (auto&& n : notes)
 	{
 		if (n->data.lane != lane || n->data.type == Data::Chart::Fake || n->data.type == Data::Chart::Mine)
 			continue;
@@ -137,7 +131,7 @@ void Average4k::Screens::Menu::Gameplay::noteHit(int lane)
 	if ((j == "Miss" && !hitBefore))
 		return;
 
-	Average4k::Objects::HoldNote* hn = NULL;
+	std::shared_ptr<Average4k::Objects::HoldNote> hn = nullptr;
 	switch (hit->data.type)
 	{
 	case Data::Chart::Tap:
@@ -146,7 +140,7 @@ void Average4k::Screens::Menu::Gameplay::noteHit(int lane)
 		hit->hit = true;
 		break;
 	case Data::Chart::Head:
-		hn = (Average4k::Objects::HoldNote*)hit;
+		hn = std::dynamic_pointer_cast<Average4k::Objects::HoldNote>(hit);
 		hit->hit = true;
 		hn->holding = true;
 		break;
@@ -260,7 +254,7 @@ void Average4k::Screens::Menu::Gameplay::loadBackground()
 		return;
 	}
 
-	background = new AvgEngine::Base::Sprite(0, 0, strPath);
+	background = std::make_shared<AvgEngine::Base::Sprite>(0, 0, strPath);
 
 	background->tag = "background";
 
@@ -329,7 +323,7 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 	Average4k::Api::Stubs::LuaMenu::Register(lua->getState());
 	Average4k::Api::Stubs::LuaNote::Register(lua->getState());
 
-	Average4k::Api::Stubs::LuaMenu cm = Average4k::Api::Stubs::LuaMenu(this);
+	Average4k::Api::Stubs::LuaMenu cm = Average4k::Api::Stubs::LuaMenu(std::dynamic_pointer_cast<Average4k::Screens::Menu::Gameplay>(Average4k::A4kGame::Instance->CurrentMenu));
 
 	lua->getState().set("currentMenu", cm);
 
@@ -442,7 +436,7 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 
 	for (int i = 0; i < 4; i++)
 	{
-		AvgEngine::Base::Sprite* spr = new AvgEngine::Base::Sprite(0, 0, _noteskinSheet);
+		std::shared_ptr<AvgEngine::Base::Sprite> spr = std::make_shared<AvgEngine::Base::Sprite>(0, 0, _noteskinSheet);
 		spr->tag = "_play_receptor_" + std::to_string(i);
 
 		spr->transform.x = ((startX + (((i * (128 * noteSpace))) * noteScaleW)) - (((64 * noteSpace) / 2) * noteScaleW));
@@ -644,17 +638,17 @@ void Average4k::Screens::Menu::Gameplay::load()
 			noteRelease(3);
 	});
 
-	hud = new Average4k::Objects::RenderTexture(&camera, AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
+	hud = std::make_shared<Average4k::Objects::RenderTexture>(&camera, AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
 
-	hud_spr = new AvgEngine::Base::Sprite(0, 0, hud->texture);
+	hud_spr = std::make_shared<AvgEngine::Base::Sprite>(0, 0, hud->texture);
 	hud_spr->tag = "hud";
 	hud_spr->src.h = -1;
 	hud_spr->src.y = 1;
 	hud_spr->zIndex = 3;
 
-	playfield = new Average4k::Objects::RenderTexture(&camera, AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
+	playfield = std::make_shared<Average4k::Objects::RenderTexture>(&camera, AvgEngine::Render::Display::width, AvgEngine::Render::Display::height);
 
-	playfield_spr = new AvgEngine::Base::Sprite(0, 0, playfield->texture);
+	playfield_spr = std::make_shared<AvgEngine::Base::Sprite>(0, 0, playfield->texture);
 
 	playfield_spr->tag = "_playfield";
 	playfield_spr->src.h = -1;
@@ -733,7 +727,7 @@ void Average4k::Screens::Menu::Gameplay::draw()
 	// draw hud
 	hud->Bind();
 
-	for (AvgEngine::Base::GameObject* o : GameObjects)
+	for (auto&& o : GameObjects)
 	{
 		if (o->tag == "background" || o->tag == "hud" || o->tag.starts_with("_play"))
 			continue;
@@ -746,7 +740,7 @@ void Average4k::Screens::Menu::Gameplay::draw()
 
 	playfield->Bind();
 
-	for (AvgEngine::Base::GameObject* o : GameObjects)
+	for (auto&& o : GameObjects)
 	{
 		if (!o->tag.starts_with("_play") || o->tag == "_playfield")
 			continue;
@@ -803,7 +797,7 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 		{
 			if (notes.size() != 0 && holds[n.lane] != nullptr)
 			{
-				Average4k::Objects::BaseNote* last = holds[n.lane];
+				std::shared_ptr<Average4k::Objects::BaseNote> last = holds[n.lane];
 				last->endBeat = n.beat;
 				last->endTime = chart.GetTimeFromBeat(n.beat);
 				holds[n.lane] = nullptr;
@@ -831,16 +825,16 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 	{
 
 
-		Average4k::Objects::BaseNote* no;
+		std::shared_ptr<Average4k::Objects::BaseNote> no = nullptr;
 
 		switch (n.type)
 		{
 		case 1: // hold head
-			no = new Average4k::Objects::HoldNote(_noteskinSheet, n, &chart, false, cmod, xmod);
+			no = std::make_shared<Average4k::Objects::HoldNote>(_noteskinSheet, n, &chart, false, cmod, xmod);
 			holds[n.lane] = no;
 			break;
 		default:
-			no = new Average4k::Objects::BaseNote(_noteskinSheet, n, &chart, false, cmod, xmod);
+			no = std::make_shared<Average4k::Objects::BaseNote>(_noteskinSheet, n, &chart, false, cmod, xmod);
 			break;
 		}
 
@@ -885,7 +879,7 @@ void Average4k::Screens::Menu::Gameplay::spawnNotes()
 void Average4k::Screens::Menu::Gameplay::updateNotes()
 {
 
-	std::vector<Average4k::Objects::BaseNote*> toRemove;
+	std::vector<std::shared_ptr<Average4k::Objects::BaseNote>> toRemove;
 
 	// scroll modifiers
 
@@ -994,7 +988,7 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 
 					if (n->data.type == Data::Chart::Head)
 					{
-						Average4k::Objects::HoldNote* hn = (Average4k::Objects::HoldNote*)n;
+						std::shared_ptr<Average4k::Objects::HoldNote> hn = std::dynamic_pointer_cast<Average4k::Objects::HoldNote>(n);
 						hn->holding = true;
 						n->hit = true;
 					}
@@ -1006,7 +1000,7 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 			{
 				if (n->data.type == Data::Chart::Head)
 				{
-					Average4k::Objects::HoldNote* hn = (Average4k::Objects::HoldNote*)n;
+					std::shared_ptr<Average4k::Objects::HoldNote> hn = std::dynamic_pointer_cast<Average4k::Objects::HoldNote>(n);
 					if (hn->holding)
 					{
 						float d = std::abs(hn->endTime - currentTime);
@@ -1029,7 +1023,7 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 
 				if (n->data.type == Data::Chart::Head)
 				{
-					Average4k::Objects::HoldNote* hn = (Average4k::Objects::HoldNote*)n;
+					std::shared_ptr<Average4k::Objects::HoldNote> hn = std::dynamic_pointer_cast<Average4k::Objects::HoldNote>(n);
 
 					if (hn->holdHasEnded)
 						noMiss = true;
@@ -1106,11 +1100,10 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 
 	}
 
-	for (auto n : toRemove)
+	for (auto&& n : toRemove)
 	{
 		notes.erase(std::remove(notes.begin(), notes.end(), n), notes.end());
 		removeObject(n);
 		n->texture->dontDelete = true;
-		delete n;
 	}
 }

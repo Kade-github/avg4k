@@ -31,5 +31,5 @@ void Average4k::Api::Functions::FGame::FadeOutSong(bool fade)
 
 void Average4k::Api::Functions::FGame::PlayChart(std::wstring path, int diff)
 {
-	AvgEngine::Game::Instance->SwitchMenu(new Average4k::Screens::Menu::Gameplay(path, diff));
+	AvgEngine::Game::Instance->SwitchMenu(std::make_shared<Average4k::Screens::Menu::Gameplay>(path, diff));
 }

@@ -7,7 +7,7 @@
 #define AVG4K_STRINGTOOLS_H
 
 #pragma once
-
+#include <codecvt>
 #include <string>
 
 namespace Average4k::Helpers
@@ -24,6 +24,13 @@ namespace Average4k::Helpers
 				return str;
 
 			return str.substr(0, decimalIndex + decimalPlaces + 1);
+		}
+
+		static std::string Ws2s(const std::wstring& wstr)
+		{
+			std::string str(wstr.length(), '\0');
+			std::copy(wstr.begin(), wstr.end(), str.begin());
+			return str;
 		}
 	};
 }

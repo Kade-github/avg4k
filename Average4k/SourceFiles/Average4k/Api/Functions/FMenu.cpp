@@ -13,5 +13,5 @@ Average4k::Api::Stubs::LuaMenu* Average4k::Api::Functions::FMenu::CurrentMenu;
 
 void Average4k::Api::Functions::FMenu::SwitchTo(std::string path)
 {
-	AvgEngine::Game::Instance->SwitchMenu(new Average4k::Screens::Menu::MainMenu(path));
+	AvgEngine::Game::Instance->SwitchMenu(std::make_shared<Average4k::Screens::Menu::MainMenu>(path));
 }

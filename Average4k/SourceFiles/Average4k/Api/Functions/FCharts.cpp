@@ -8,6 +8,7 @@
 #include "../../Data/Chart/AsyncChartLoader.h"
 
 #include "../../Steam/UGCHandler.h"
+#include "../../Helpers/StringTools.h"
 
 Average4k::Api::AvgLuaFile* Average4k::Api::Functions::FCharts::Lua = nullptr;
 
@@ -79,14 +80,14 @@ sol::table Average4k::Api::Functions::FCharts::GetCharts(std::wstring pack)
 
 
 
-				chart["title"] = convert.from_bytes(AvgEngine::Utils::StringTools::Ws2s(c.metadata.title));
+				chart["title"] = convert.from_bytes(Average4k::Helpers::StringTools::Ws2s(c.metadata.title));
 				chart["titleTranslit"] = c.metadata.titleTranslit;
-				chart["subtitle"] = convert.from_bytes(AvgEngine::Utils::StringTools::Ws2s(c.metadata.subtitle));
+				chart["subtitle"] = convert.from_bytes(Average4k::Helpers::StringTools::Ws2s(c.metadata.subtitle));
 				chart["subtitleTranslit"] = c.metadata.subtitleTranslit;
-				chart["artist"] = convert.from_bytes(AvgEngine::Utils::StringTools::Ws2s(c.metadata.artist));
+				chart["artist"] = convert.from_bytes(Average4k::Helpers::StringTools::Ws2s(c.metadata.artist));
 				chart["artistTranslit"] = c.metadata.artistTranslit;
 				chart["genre"] = c.metadata.genre;
-				chart["credit"] = convert.from_bytes(AvgEngine::Utils::StringTools::Ws2s(c.metadata.credit));
+				chart["credit"] = convert.from_bytes(Average4k::Helpers::StringTools::Ws2s(c.metadata.credit));
 				chart["banner"] = c.metadata.banner;
 				chart["background"] = c.metadata.background;
 				chart["file"] = c.metadata.file;
@@ -162,7 +163,7 @@ Average4k::Api::Stubs::LuaSprite Average4k::Api::Functions::FCharts::GetAsyncTex
 
 	Lua->getState().collect_garbage();
 
-	Average4k::Api::Stubs::LuaSprite spr = Average4k::Api::Stubs::LuaSprite(new AvgEngine::Base::Sprite(-100, -100, img.data, img.width, img.height));
+	Average4k::Api::Stubs::LuaSprite spr = Average4k::Api::Stubs::LuaSprite(std::make_shared<AvgEngine::Base::Sprite>(-100, -100, (char*)img.data, sizeof(img.data), img.width, img.height));
 
 	return spr;
 }

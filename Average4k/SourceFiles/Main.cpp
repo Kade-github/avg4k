@@ -210,11 +210,12 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	bool shouldQuit = false;
 
-	Screens::Menu::MainMenu* cm = new Screens::Menu::MainMenu("Scripts/MainMenu.lua");
 
 	std::thread t = std::thread([&] {
 		glfwMakeContextCurrent(game->Window);
 		glfwSwapInterval(0);
+
+		std::shared_ptr<Screens::Menu::MainMenu> cm = std::make_shared<Screens::Menu::MainMenu>("Scripts/MainMenu.lua");
 
 		AvgEngine::External::BASS::Initialize();
 		AvgEngine::Logging::writeLog("[Main] Initialized BASS!");;

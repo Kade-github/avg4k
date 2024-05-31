@@ -7,6 +7,7 @@
 
 #include "ChartFinder.h"
 #include <mutex>
+#include "../../Helpers/StringTools.h"
 
 using namespace Average4k::Data;
 
@@ -33,7 +34,7 @@ void ChartFinder::FindCharts(const std::map<std::string, std::string> paths)
 
 		std::wstring path = std::wstring(rp.begin(), rp.end());
 
-		std::string s_path = AvgEngine::Utils::StringTools::Ws2s(path);
+		std::string s_path = Average4k::Helpers::StringTools::Ws2s(path);
 		std::wstring name = std::wstring(packName.begin(), packName.end());
 
 		{
@@ -155,7 +156,7 @@ void ChartFinder::FindCharts(const std::string _path)
 
 			if (entry.is_directory())
 			{
-				std::string s_path = AvgEngine::Utils::StringTools::Ws2s(path);
+				std::string s_path = Average4k::Helpers::StringTools::Ws2s(path);
 				std::wstring name = path.substr(path.find_last_of(L"\\") + 1);
 
 				{

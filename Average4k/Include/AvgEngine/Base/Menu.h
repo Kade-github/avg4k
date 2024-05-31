@@ -89,9 +89,9 @@ namespace AvgEngine::Base
 		 */
 		virtual std::shared_ptr<GameObject> getObject(int id)
 		{
-			for (int i = 0; i < GameObjects.size(); i++)
-				if (GameObjects[i]->id == id)
-					return GameObjects[i];
+			for (auto&& g : GameObjects)
+				if (g->id == id)
+					return g;
 			return NULL;
 		}
 
@@ -112,11 +112,15 @@ namespace AvgEngine::Base
 		 */
 		virtual void removeObject(int id)
 		{
-			for (std::shared_ptr<GameObject> g : GameObjects)
+			for (auto&& g : GameObjects)
 				if (g->id == id)
 					GameObjects.erase(std::ranges::remove(GameObjects, g).begin(), GameObjects.end());
 		}
 
+		virtual void removeAll()
+		{
+			GameObjects.clear();
+		}
 
 	};
 }

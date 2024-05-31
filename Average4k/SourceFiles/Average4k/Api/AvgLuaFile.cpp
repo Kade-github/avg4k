@@ -6,7 +6,7 @@
 #include "AvgLuaFile.h"
 #include "Stubs/LuaSprite.h"
 #include "Stubs/LuaText.h"
-std::vector<AvgEngine::Base::GameObject*> Average4k::Api::AvgLuaFile::objects = std::vector<AvgEngine::Base::GameObject*>();
+std::vector<std::shared_ptr<AvgEngine::Base::GameObject>> Average4k::Api::AvgLuaFile::objects = std::vector<std::shared_ptr<AvgEngine::Base::GameObject>>();
 
 Average4k::Api::AvgLuaFile::AvgLuaFile(const std::string& ppath)
 {

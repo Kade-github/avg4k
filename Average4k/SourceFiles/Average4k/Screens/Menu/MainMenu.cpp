@@ -26,7 +26,7 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 	Average4k::Api::Stubs::LuaMenu::Register(lua->getState());
 	Average4k::Api::Stubs::LuaSong::Register(lua->getState());
 
-	cm = Average4k::Api::Stubs::LuaMenu(this);
+	cm = Average4k::Api::Stubs::LuaMenu(std::dynamic_pointer_cast<Average4k::Screens::Menu::MainMenu>(Average4k::A4kGame::Instance->CurrentMenu));
 
 	lua->getState().set("currentMenu", cm);
 
@@ -209,7 +209,7 @@ void Average4k::Screens::Menu::MainMenu::createFile(std::string path, bool reset
 
 	eManager->Subscribe(AvgEngine::Events::EventType::Event_ReloadFont, [&](AvgEngine::Events::Event e) {
 		cm.removeAll();
-		AvgEngine::Game::Instance->SwitchMenu(new Average4k::Screens::Menu::MainMenu("Scripts/MainMenu.lua"));
+		AvgEngine::Game::Instance->SwitchMenu(std::make_shared<MainMenu>("Scripts/MainMenu.lua"));
 	});
 }
 

@@ -24,24 +24,10 @@ namespace AvgEngine::Base
 
 		Render::Rect src;
 
-		Render::Rect skewTL;
-		Render::Rect skewTR;
-		Render::Rect skewBL;
-		Render::Rect skewBR;
-
-		Sprite(float x, float y, unsigned char* data, int w, int h) : GameObject(x, y)
-		{
-			src = { 0,0,1,1 };
-			texture = OpenGL::Texture::loadTextureFromLoadedData(data, w, h);
-			transform.w = static_cast<float>(texture->width);
-			transform.h = static_cast<float>(texture->height);
-			iTransform = transform;
-		}
-
 		Sprite(float x, float y, char* data, size_t size) : GameObject(x, y)
 		{
 			src = { 0,0,1,1 };
-			texture = OpenGL::Texture::loadTextureFromData(data, size);
+			texture = OpenGL::Texture::loadTextureFromData(data,size);
 			transform.w = static_cast<float>(texture->width);
 			transform.h = static_cast<float>(texture->height);
 			iTransform = transform;
@@ -62,12 +48,6 @@ namespace AvgEngine::Base
 			texture = OpenGL::Texture::createWithImage(filePath);
 			transform.w = static_cast<float>(texture->width);
 			transform.h = static_cast<float>(texture->height);
-			iTransform = transform;
-		}
-
-		Sprite(float x, float y) : GameObject(x, y)
-		{
-			src = { 0,0,1,1 };
 			iTransform = transform;
 		}
 
@@ -234,24 +214,6 @@ namespace AvgEngine::Base
 					srcCopy.h = src.h / texture->height;
 
 				drawCall c = Camera::FormatDrawCall(zIndex, texture, shader, Render::DisplayHelper::RectToVertex(r, srcCopy, center), iTransform);
-				
-				c.vertices[0].x += skewTL.x;
-				c.vertices[0].y += skewTL.y;
-
-				c.vertices[1].x += skewBL.x;
-				c.vertices[1].y += skewBL.y;
-
-				c.vertices[2].x += skewTR.x;
-				c.vertices[2].y += skewTR.y;
-				c.vertices[3].x += skewTR.x;
-				c.vertices[3].y += skewTR.y;
-
-				c.vertices[4].x += skewBL.x;
-				c.vertices[4].y += skewBL.y;
-
-				c.vertices[5].x += skewBR.x;
-				c.vertices[5].y += skewBR.y;
-
 				c.tag = tag;
 				if ((cr.w != 0 || cr.h != 0) && clipAll)
 					c.clip = cr;

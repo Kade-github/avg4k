@@ -134,7 +134,7 @@ namespace AvgEngine::Render
 		 * \param src The source struct
 		 * \return An array of Vertex's
 		 */
-		static std::vector<Vertex> RectToVertex(Rect dst, Rect src, bool center = false, bool flip = false)
+		static std::vector<Vertex> RectToVertex(Rect dst, Rect src, bool center = false)
 		{
 			std::vector<Vertex> verts;
 
@@ -210,15 +210,6 @@ namespace AvgEngine::Render
 				}
 			}
 
-			if (flip)
-			{
-				Vertex* verts[] = { &tl, &bl, &tr, &br };
-				for (Vertex* vert : verts)
-				{
-					vert->v = src.y + src.h - vert->v;
-				}
-			}
-
 			verts.push_back(tl);
 			verts.push_back(bl);
 			verts.push_back(tr);
@@ -268,6 +259,7 @@ namespace AvgEngine::Render
 			{
 			case 0: // windowed
 				glfwSetWindowAttrib(window, GLFW_DECORATED, 1);
+				glfwSetWindowAttrib(window, GLFW_FLOATING, 0);
 				glfwSetWindowMonitor(window, NULL, (max_res[0] / 2) - width / 2, (max_res[1] / 2) - height / 2, width, height, GLFW_DONT_CARE);
 				break;
 			case 1: // fullscreen
@@ -275,6 +267,7 @@ namespace AvgEngine::Render
 				break;
 			case 2: // borderless
 				glfwSetWindowAttrib(window, GLFW_DECORATED, 0);
+				glfwSetWindowAttrib(window, GLFW_FLOATING, 1);
 				width = max_res[0];
 				height = max_res[1];
 				glfwSetWindowMonitor(window, NULL, 0, 0, max_res[0], max_res[1], GLFW_DONT_CARE);

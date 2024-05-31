@@ -29,7 +29,7 @@ namespace AvgEngine::Base
 			displayRect.h = Render::Display::height;
 		}
 		int lastObjectId = 0;
-		std::vector<GameObject*> GameObjects;
+		std::vector<std::shared_ptr<GameObject>> GameObjects;
 
 		Render::Rect displayRect;
 
@@ -51,7 +51,7 @@ namespace AvgEngine::Base
 			// Update tweens
 			tween.Update();
 
-			for(GameObject* ob : GameObjects)
+			for(auto&& ob : GameObjects)
 			{
 				// Render objects' draw calls.
 				if (ob->render)
@@ -69,7 +69,7 @@ namespace AvgEngine::Base
 		 * \brief Creates a copy of an object and puts the copy onto a vector with a given id
 		 * \param object Object to copy onto the vector
 		 */
-		virtual void addObject(GameObject* object)
+		virtual void addObject(std::shared_ptr<GameObject> object)
 		{
 			object->tween = &tween;
 			object->id = lastObjectId;
@@ -87,7 +87,7 @@ namespace AvgEngine::Base
 		 * \brief Get an object by id
 		 * \returns object The object
 		 */
-		virtual GameObject* getObject(int id)
+		virtual std::shared_ptr<GameObject> getObject(int id)
 		{
 			for (int i = 0; i < GameObjects.size(); i++)
 				if (GameObjects[i]->id == id)
@@ -99,24 +99,11 @@ namespace AvgEngine::Base
 		 * \brief Removes an object
 		 * \param object The object to remove
 		 */
-		virtual void removeObject(GameObject* object)
+		virtual void removeObject(std::shared_ptr<GameObject> object)
 		{
-			for (GameObject* g : GameObjects)
+			for (auto&& g : GameObjects)
 				if (g->id == object->id)
 					GameObjects.erase(std::ranges::remove(GameObjects, g).begin(), GameObjects.end());
-		}
-
-		/**
-		 * \brief Removes every object, and deletes them from the stack.
-		 */
-		virtual void removeAll()
-		{
-			for (GameObject* g : GameObjects)
-			{
-				delete g;
-			}
-
-			GameObjects.clear();
 		}
 
 		/**
@@ -125,17 +112,9 @@ namespace AvgEngine::Base
 		 */
 		virtual void removeObject(int id)
 		{
-			for (GameObject* g : GameObjects)
+			for (std::shared_ptr<GameObject> g : GameObjects)
 				if (g->id == id)
 					GameObjects.erase(std::ranges::remove(GameObjects, g).begin(), GameObjects.end());
-		}
-
-		virtual GameObject* findObject(std::string tag)
-		{
-			for (GameObject* g : GameObjects)
-				if (g->tag == tag)
-					return g;
-			return NULL;
 		}
 
 

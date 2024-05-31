@@ -8,11 +8,11 @@
 #define GAME_H
 
 #pragma once
-#include <mutex>
 #include <AvgEngine/Base/Menu.h>
 #include <AvgEngine/Debug/Console.h>
 #include <AvgEngine/EventManager.h>
 #include <AvgEngine/Base/Text.h>
+#include <mutex>
 
 namespace AvgEngine
 {
@@ -44,11 +44,11 @@ namespace AvgEngine
 		std::string Title;
 		std::string Version;
 
-		Base::Menu* CurrentMenu = NULL;
-		Base::Menu* NextMenu = NULL;
-		Base::Text* fpsText = NULL;
+		std::shared_ptr<Base::Menu> CurrentMenu = NULL;
+		std::shared_ptr<Base::Menu> NextMenu = NULL;
+		std::shared_ptr<Base::Text> fpsText = NULL;
 
-		Base::Text* alphaText = NULL;
+		std::shared_ptr<Base::Text> alphaText = NULL;
 
 		Game(std::string _title, std::string ver, int w = 1920, int h = 1080)
 		{
@@ -118,22 +118,16 @@ namespace AvgEngine
 		virtual void Switch()
 		{
 			if (CurrentMenu != NULL)
-			{
-				for (Base::GameObject* obj : CurrentMenu->GameObjects)
-				{
-					if (!obj->dontDelete)
-						delete obj;
-				}
 				CurrentMenu->GameObjects.clear();
-			}
-			AvgEngine::Base::Menu* lastMenu = CurrentMenu;
+
+			std::shared_ptr<Base::Menu> lastMenu = CurrentMenu;
 			CurrentMenu = NextMenu;
 			CurrentMenu->eManager = &eManager;
 			eManager.Clear();
 			if (lastMenu != NULL)
 			{
 				lastMenu->tween.Clear();
-				delete lastMenu;
+				lastMenu.reset();
 			}
 			CurrentMenu->load();
 			Render::Display::defaultShader->setProject(CurrentMenu->camera.projection);
@@ -178,7 +172,6 @@ namespace AvgEngine
 					eventMutex.unlock();
 				}
 			}
-
 			if (CurrentMenu != NULL)
 				CurrentMenu->draw();
 		}
@@ -202,7 +195,7 @@ namespace AvgEngine
 					listen.toCall(e);
 		}
 
-		virtual void SwitchMenu(Base::Menu* menu)
+		virtual void SwitchMenu(std::shared_ptr<Base::Menu> menu)
 		{
 			NextMenu = menu;
 			Events::Event e;

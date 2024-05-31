@@ -51,10 +51,7 @@ namespace AvgEngine::Base
 				SetFont(folder, font);
 			SetSize(_size);
 			SetText(_text);
-			transform.w = _text.size() * size;
-			transform.h = size;
 			iTransform = transform;
-			
 		}
 
 		~Text()
@@ -104,7 +101,7 @@ namespace AvgEngine::Base
 			if (cr.w == 0 && cr.h == 0 && parentClip)
 				cr = *parentClip;
 
-			if (transform.a == 0 || text == "" || text.size() == 0 || dst.x + dst.w < 0 || dst.x > parent->w || dst.y + dst.h < 0 || dst.y > parent->h)
+			if (transform.a == 0 || text == "" || text.size() == 0)
 			{
 				drawn = false;
 				return;

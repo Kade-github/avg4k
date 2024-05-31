@@ -11,7 +11,7 @@
 #include <AvgEngine/Utils/StringTools.h>
 #include <iostream>
 #include <shlobj.h>
-
+#include <sys/stat.h>
 namespace AvgEngine::Utils
 {
 	class Paths
@@ -45,7 +45,8 @@ namespace AvgEngine::Utils
 
         static bool pathExists(std::string path)
         {
-            return std::filesystem::exists(path);
+            struct stat sb;
+            return stat(path.c_str(), &sb) == 0;
         }
 	};
 }

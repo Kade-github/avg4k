@@ -16,8 +16,6 @@
 #include <wtypes.h>
 #include <cstdint>
 #include <boost/algorithm/string.hpp>
-#include <codecvt>
-
 namespace AvgEngine::Utils
 {
 	class StringTools
@@ -29,11 +27,6 @@ namespace AvgEngine::Utils
 		{
 			return search.find(find) != std::string::npos;
 		}
-
-        static bool Contains(std::wstring& search, std::wstring find)
-        {
-            return search.find(find) != std::wstring::npos;
-        }
 
         static const wchar_t* GetWC(const char* c)
         {
@@ -47,13 +40,6 @@ namespace AvgEngine::Utils
         static std::string Trim(const std::string& s)
         {
             std::string t = s;
-            boost::trim(t);
-            return t;
-        }
-
-        static std::wstring Trim(const std::wstring& s)
-        {
-            std::wstring t = s;
             boost::trim(t);
             return t;
         }
@@ -88,37 +74,12 @@ namespace AvgEngine::Utils
             return buf;
         }
 
-        static std::string Ws2s(const std::wstring& wstr)
-        {
-            using convert_typeX = std::codecvt_utf8<wchar_t>;
-            std::wstring_convert<convert_typeX, wchar_t> converterX;
-
-            return converterX.to_bytes(wstr);
-        }
-
-
         static std::vector<std::string> Split(std::string s, std::string delimiter) {
             size_t pos_start = 0, pos_end, delim_len = delimiter.length();
             std::string token;
             std::vector<std::string> res;
 
             while ((pos_end = s.find(delimiter, pos_start)) != std::string::npos) {
-                token = s.substr(pos_start, pos_end - pos_start);
-                pos_start = pos_end + delim_len;
-                res.push_back(token);
-            }
-
-            res.push_back(s.substr(pos_start));
-            return res;
-        }
-
-
-        static std::vector<std::wstring> Split(std::wstring s, std::wstring delimiter) {
-            size_t pos_start = 0, pos_end, delim_len = delimiter.length();
-            std::wstring token;
-            std::vector<std::wstring> res;
-
-            while ((pos_end = s.find(delimiter, pos_start)) != std::wstring::npos) {
                 token = s.substr(pos_start, pos_end - pos_start);
                 pos_start = pos_end + delim_len;
                 res.push_back(token);

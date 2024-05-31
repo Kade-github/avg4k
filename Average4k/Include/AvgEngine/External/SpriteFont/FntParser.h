@@ -89,21 +89,6 @@ namespace AvgEngine::Fnt
 					return f;
 		}
 
-		FntChar GetWChar(wchar_t c)
-		{
-			unsigned int u = c;
-
-			auto it = std::find_if(chars.begin(), chars.end(), [&u](const AvgEngine::Fnt::FntChar& obj) {return obj.id == u; });
-
-			if (it != chars.end())
-				return *it;
-
-			AvgEngine::Fnt::FntChar cc;
-			cc.id = -1;
-
-			return cc;
-		}
-
 		FntChar GetChar(char c)
 		{
 			unsigned int u = c;
@@ -136,10 +121,10 @@ namespace AvgEngine::Fnt
 		{
 			fontFile = file;
 			pugi::xml_document doc;
-			pugi::xml_parse_result result = doc.load_file((folder + file).c_str());
+			pugi::xml_parse_result result = doc.load_file((folder + "/" + file).c_str());
 			if (!result)
 			{
-				Logging::writeLog("[FNT] [Error] Failed to parse " + (folder + file));
+				Logging::writeLog("[FNT] [Error] Failed to parse " + (folder + "/" + file));
 				return;
 			}
 

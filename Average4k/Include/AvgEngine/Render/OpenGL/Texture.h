@@ -47,14 +47,7 @@ namespace AvgEngine::OpenGL
 
 		static Texture* createWithImage(std::string filePath);
 
-		static Texture* loadTextureFromLoadedData(unsigned char* data, int w, int h)
-		{
-			Texture* t = new Texture(data, w, h);
-			t->fromSTBI = true;
-			t->dontDelete = false;
-			return t;
-		}
-		static Texture* loadTextureFromData(char* data, size_t size);
+		static Texture* loadTextureFromData(char* data, size_t outLength);
 		static Texture* loadTextureFromData(unsigned char* data, int w, int h);
 
 		static texData getTextureData(std::string filePath);

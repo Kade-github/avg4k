@@ -1,4 +1,4 @@
-/*
+/* 
 	Copyright 2021-2023 AvgEngine - Kade
 
 	Use of this source code without explict permission from owner is strictly prohibited.
@@ -61,7 +61,7 @@ namespace AvgEngine::Audio
 			BASS_ChannelFree(id);
 			id = -1;
 
-			if (data)
+			if (data) 
 				std::free(data);
 		}
 
@@ -184,7 +184,8 @@ namespace AvgEngine::Audio
 			if (id == -1)
 				return;
 			rate = _rate;
-			if (!BASS_ChannelSetAttribute(id, BASS_ATTRIB_TEMPO_FREQ, SampleRate() * _rate))
+			float bassRate = (rate * 100) - 100;
+			if (!BASS_ChannelSetAttribute(id, BASS_ATTRIB_TEMPO, bassRate))
 				Logging::writeLog("[BASS] [Error] Failed to set channel rate: " + std::to_string(BASS_ErrorGetCode()));
 		}
 
@@ -196,14 +197,7 @@ namespace AvgEngine::Audio
 			if (id == -1)
 				return;
 			BASS_ChannelFree(id);
-			id = BASS_FX_TempoCreate(BASS_StreamCreateFile(false, path.c_str(), 0, 0, BASS_STREAM_DECODE), BASS_FX_FREESOURCE | BASS_FX_TEMPO_ALGO_SHANNON);
-
-
-			BASS_ChannelSetAttribute(id, BASS_ATTRIB_TEMPO_OPTION_SEQUENCE_MS, 0);
-			BASS_ChannelSetAttribute(id, BASS_ATTRIB_TEMPO_OPTION_USE_QUICKALGO, 1);
-			BASS_ChannelSetAttribute(id, BASS_ATTRIB_TEMPO_OPTION_OVERLAP_MS, 4);
-			BASS_ChannelSetAttribute(id, BASS_ATTRIB_TEMPO_OPTION_USE_AA_FILTER, 1);
-
+			id = BASS_FX_TempoCreate(BASS_StreamCreateFile(false, path.c_str(), 0, 0, BASS_STREAM_DECODE), BASS_FX_FREESOURCE);
 		}
 
 		/// <summary>
@@ -214,20 +208,7 @@ namespace AvgEngine::Audio
 		{
 			if (id == -1)
 				return;
-			if (vol <= 0.01f)
-			{
-				volume = 0;
-				BASS_ChannelSetAttribute(id, BASS_ATTRIB_VOL, 0.0f);
-				return;
-			}
-			else
-				volume = std::floor(sqrt(vol) * 100) / 100; // better curve
-
-			if (volume > 1.0f)
-				volume = 1.0f;
-			if (volume < 0.0f)
-				volume = 0.0f;
-
+			volume = vol;
 			if (!BASS_ChannelSetAttribute(id, BASS_ATTRIB_VOL, vol))
 				Logging::writeLog("[BASS] [Error] Failed to set channel volume: " + std::to_string(BASS_ErrorGetCode()));
 		}

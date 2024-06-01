@@ -33,22 +33,22 @@ namespace AvgEngine::OpenGL
 
 		bool dontDelete = false;
 
-		static std::shared_ptr<OpenGL::Texture> returnWhiteTexture()
+		static Texture* returnWhiteTexture()
 		{
-			static std::shared_ptr<OpenGL::Texture> t = NULL;
+			static Texture* t = NULL;
 			if (t == NULL)
 			{
 				unsigned char c[] = { 255, 255, 255, 255 };
-				t = std::make_shared<OpenGL::Texture>(c, 1, 1);
+				t = new Texture(c, 1, 1);
 				t->dontDelete = true;
 			}
 			return t;
 		}
 
-		static std::shared_ptr<OpenGL::Texture> createWithImage(std::string filePath);
+		static Texture* createWithImage(std::string filePath);
 
-		static std::shared_ptr<OpenGL::Texture> loadTextureFromData(char* data, size_t outLength);
-		static std::shared_ptr<OpenGL::Texture> loadTextureFromData(unsigned char* data, int w, int h);
+		static Texture* loadTextureFromData(char* data, size_t outLength);
+		static Texture* loadTextureFromData(unsigned char* data, int w, int h);
 
 		static texData getTextureData(std::string filePath);
 

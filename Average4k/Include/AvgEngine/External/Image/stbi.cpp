@@ -11,12 +11,12 @@
 
 using namespace AvgEngine::External;
 
-std::shared_ptr<AvgEngine::OpenGL::Texture> stbi_h::stbi_load_file(std::string filePath)
+AvgEngine::OpenGL::Texture* stbi_h::stbi_load_file(std::string filePath)
 {
 	int w;
 	int h;
 	unsigned char* c = stbi_load(filePath.c_str(), &w, &h, nullptr, 4);
-	return std::make_shared<AvgEngine::OpenGL::Texture>(c, w, h);
+	return new AvgEngine::OpenGL::Texture(c, w, h);
 }
 
 unsigned char* stbi_h::stbi_load_file_data(std::string filePath, int* w, int* h)
@@ -25,7 +25,7 @@ unsigned char* stbi_h::stbi_load_file_data(std::string filePath, int* w, int* h)
 	return c;
 }
 
-std::shared_ptr<AvgEngine::OpenGL::Texture> stbi_h::stbi_load_memory(char* memory, int size)
+AvgEngine::OpenGL::Texture* stbi_h::stbi_load_memory(char* memory, int size)
 {
     int w = 0;
     int h = 0;
@@ -35,7 +35,7 @@ std::shared_ptr<AvgEngine::OpenGL::Texture> stbi_h::stbi_load_memory(char* memor
 	if (get_error())
 		AvgEngine::Logging::writeLog("[Image] [Error] [Memory] failure to load " + std::string(stbi_failure_reason()));
 
-    return std::make_shared<AvgEngine::OpenGL::Texture>(data, w, h);
+    return new AvgEngine::OpenGL::Texture(data, w, h);
 }
 
 void stbi_h::stbi_free(unsigned char* data)

@@ -18,15 +18,15 @@
 #include <boost/algorithm/string.hpp>
 namespace AvgEngine::Utils
 {
-    class StringTools
-    {
-    public:
+	class StringTools
+	{
+	public:
 
 
-        static bool Contains(std::string& search, std::string find)
-        {
-            return search.find(find) != std::string::npos;
-        }
+		static bool Contains(std::string& search, std::string find)
+		{
+			return search.find(find) != std::string::npos;
+		}
 
         static bool Contains(std::wstring& search, std::wstring find)
         {
@@ -117,10 +117,10 @@ namespace AvgEngine::Utils
         }
 
         static void ToLower(std::string& s)
-        {
+		{
             std::transform(s.begin(), s.end(), s.begin(),
                 [](unsigned char c) { return std::tolower(c); });
-        }
+		}
 
         static void ToUpper(std::string& s)
         {
@@ -133,7 +133,7 @@ namespace AvgEngine::Utils
         static int convertKeyNameToKeyCode(const std::string& keyName);
 
         static std::string convertKeyCodeToKeyName(const int& keyCode);
-    };
+	};
 }
 
 #endif // !STRINGTOOLS_H

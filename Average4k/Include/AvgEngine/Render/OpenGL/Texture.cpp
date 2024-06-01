@@ -35,22 +35,23 @@ bool validImage(std::string path)
 	return true;
 }
 
-std::shared_ptr<Texture> Texture::createWithImage(std::string filePath)
+Texture* Texture::createWithImage(std::string filePath)
 {
 	if (!validImage(filePath) || filePath.find('.') == std::string::npos)
 	{
 		unsigned char c[] = { 0, 0, 0, 255 };
-		std::shared_ptr<OpenGL::Texture> tt = std::make_shared<OpenGL::Texture>(c, 1, 1);
+		Texture* tt = new Texture(c, 1, 1);
 		tt->fromSTBI = false;
 		return tt;
 	}
-	std::shared_ptr<OpenGL::Texture> t = External::stbi_h::stbi_load_file(filePath);
+	Texture* t = External::stbi_h::stbi_load_file(filePath);
 	t->fromSTBI = true;
 
 	if (External::stbi_h::get_error())
 	{
 		unsigned char c[] = { 0, 0, 0, 255 };
-		std::shared_ptr<OpenGL::Texture> tt = std::make_shared<OpenGL::Texture>(c, 1, 1);
+		delete t;
+		Texture* tt = new Texture(c, 1, 1);
 		tt->fromSTBI = false;
 		return tt;
 	}
@@ -58,14 +59,14 @@ std::shared_ptr<Texture> Texture::createWithImage(std::string filePath)
 	return t;
 }
 
-std::shared_ptr<Texture> Texture::loadTextureFromData(char* data, size_t outLength)
+Texture* Texture::loadTextureFromData(char* data, size_t outLength)
 {
 	return External::stbi_h::stbi_load_memory(data, outLength);
 }
 
-std::shared_ptr<Texture> AvgEngine::OpenGL::Texture::loadTextureFromData(unsigned char* data, int w, int h)
+Texture* AvgEngine::OpenGL::Texture::loadTextureFromData(unsigned char* data, int w, int h)
 {
-	std::shared_ptr<Texture> t = std::make_shared<Texture>(data, w, h);
+	Texture* t = new Texture(data, w, h);
 	return t;
 }
 

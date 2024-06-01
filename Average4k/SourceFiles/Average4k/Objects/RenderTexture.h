@@ -20,7 +20,7 @@ namespace Average4k::Objects
 	{
 	public:
 		GLuint fb;
-		AvgEngine::OpenGL::Texture* texture = NULL;
+		std::shared_ptr<AvgEngine::OpenGL::Texture> texture = NULL;
 
 		AvgEngine::Base::Camera* camera = NULL;
 
@@ -33,7 +33,9 @@ namespace Average4k::Objects
 			glGenFramebuffers(1, &fb);
 			glBindFramebuffer(GL_FRAMEBUFFER, fb);
 
-			texture = new AvgEngine::OpenGL::Texture(NULL, w, h);
+			unsigned char* data = new unsigned char[w * h * 4];
+
+			texture = std::make_shared<AvgEngine::OpenGL::Texture>(data, w, h);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture->id, 0);
 
 			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)

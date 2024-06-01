@@ -13,8 +13,8 @@ using namespace AvgEngine::External;
 
 std::shared_ptr<AvgEngine::OpenGL::Texture> stbi_h::stbi_load_file(std::string filePath)
 {
-	int w;
-	int h;
+	int w = 0;
+	int h = 0;
 	unsigned char* c = stbi_load(filePath.c_str(), &w, &h, nullptr, 4);
 	return std::make_shared<AvgEngine::OpenGL::Texture>(c, w, h);
 }

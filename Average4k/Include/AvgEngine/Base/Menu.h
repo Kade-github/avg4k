@@ -41,7 +41,7 @@ namespace AvgEngine::Base
 
 		virtual void load()
 		{
-			
+
 		}
 
 		virtual void draw()
@@ -51,7 +51,7 @@ namespace AvgEngine::Base
 			// Update tweens
 			tween.Update();
 
-			for(auto&& ob : GameObjects)
+			for (auto&& ob : GameObjects)
 			{
 				// Render objects' draw calls.
 				if (ob->render)
@@ -115,6 +115,16 @@ namespace AvgEngine::Base
 			for (std::shared_ptr<GameObject> g : GameObjects)
 				if (g->id == id)
 					GameObjects.erase(std::ranges::remove(GameObjects, g).begin(), GameObjects.end());
+		}
+
+		/**
+		* \brief Removes all objects
+		*/
+
+
+		virtual void removeAllObjects()
+		{
+			GameObjects.clear();
 		}
 
 

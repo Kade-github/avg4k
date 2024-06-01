@@ -47,7 +47,7 @@ namespace Average4k::Objects
 
 		Average4k::Data::Chart::Note data;
 
-		BaseNote(AvgEngine::OpenGL::Texture* spritesheet, Average4k::Data::Chart::Note _data, Average4k::Data::ChartFile* file, bool _downscroll = false, float _cmod = -1, float _xmod = -1) : AvgEngine::Base::Sprite(0,0, spritesheet)
+		BaseNote(std::shared_ptr<AvgEngine::OpenGL::Texture> spritesheet, Average4k::Data::Chart::Note _data, Average4k::Data::ChartFile* file, bool _downscroll = false, float _cmod = -1, float _xmod = -1) : AvgEngine::Base::Sprite(0,0, spritesheet)
 		{
 			downscroll = _downscroll;
 			data = _data;

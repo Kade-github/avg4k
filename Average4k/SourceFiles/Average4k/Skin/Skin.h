@@ -17,7 +17,7 @@ namespace Average4k
 	class Skin {
 	private:
 		Data::Types::SkinData data;
-		std::map<std::string, AvgEngine::OpenGL::Texture*> textures;
+		std::map<std::string, std::shared_ptr<AvgEngine::OpenGL::Texture>> textures;
 	public:
 		Skin(Data::Types::SkinData _data);
 		Skin() {};
@@ -27,8 +27,8 @@ namespace Average4k
 
 		std::string GetPath(std::string p);
 
-		AvgEngine::Base::Sprite* CreateSprite(std::string texture, bool unique = false);
-		AvgEngine::Base::Text* CreateText(std::string font, int size);
+		std::shared_ptr<AvgEngine::Base::Sprite> CreateSprite(std::string texture, bool unique = false);
+		std::shared_ptr<AvgEngine::Base::Text> CreateText(std::string font, int size);
 	};
 }
 

@@ -39,7 +39,7 @@ namespace AvgEngine::OpenGL
 			if (t == NULL)
 			{
 				unsigned char c[] = { 255, 255, 255, 255 };
-				t = std::make_shared<OpenGL::Texture>(reinterpret_cast<unsigned char*>(c), 1, 1);
+				t = std::make_shared<OpenGL::Texture>(c, 1, 1);
 				t->dontDelete = true;
 			}
 			return t;
@@ -60,7 +60,6 @@ namespace AvgEngine::OpenGL
 		unsigned char* pixels{};
 
 		Texture(unsigned char* data, const unsigned int width, const unsigned int height);
-		Texture(unsigned char* data, const int width, const int height);
 		Texture(unsigned char* data, const unsigned int width, const unsigned int height, bool mssa);
 		~Texture();
 

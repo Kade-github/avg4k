@@ -39,7 +39,9 @@ std::shared_ptr<Texture> Texture::createWithImage(std::string filePath)
 {
 	if (!validImage(filePath) || filePath.find('.') == std::string::npos)
 	{
-		std::shared_ptr<OpenGL::Texture> tt = returnWhiteTexture();
+		unsigned char c[] = { 0, 0, 0, 255 };
+		std::shared_ptr<OpenGL::Texture> tt = std::make_shared<OpenGL::Texture>(c, 1, 1);
+		tt->fromSTBI = false;
 		return tt;
 	}
 	std::shared_ptr<OpenGL::Texture> t = External::stbi_h::stbi_load_file(filePath);
@@ -47,7 +49,9 @@ std::shared_ptr<Texture> Texture::createWithImage(std::string filePath)
 
 	if (External::stbi_h::get_error())
 	{
-		std::shared_ptr<OpenGL::Texture> tt = returnWhiteTexture();
+		unsigned char c[] = { 0, 0, 0, 255 };
+		std::shared_ptr<OpenGL::Texture> tt = std::make_shared<OpenGL::Texture>(c, 1, 1);
+		tt->fromSTBI = false;
 		return tt;
 	}
 
@@ -87,26 +91,6 @@ Texture::Texture(unsigned char* data, const unsigned int width, const unsigned i
 	//Create texture object and use given data
 	glGenTextures(1, &id);
 	SetData(data, width, height);
-}
-
-AvgEngine::OpenGL::Texture::Texture(unsigned char* data, const int width, const int height)
-{
-	pixels = data;
-	this->width = width;
-	this->height = height;
-
-	glBindTexture(GL_TEXTURE_2D, id);
-	glEnable(GL_TEXTURE_2D);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-
-	//Set texture parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 Texture::Texture(unsigned char* data, const unsigned int _width, const unsigned int _height, bool mssa)

@@ -26,7 +26,7 @@ namespace Average4k::Screens::Menu
 		std::wstring _path;
 		int _diff;
 
-		std::shared_ptr<AvgEngine::OpenGL::Texture> _noteskinSheet = nullptr;
+		AvgEngine::OpenGL::Texture* _noteskinSheet;
 	public:
 		sol::protected_function setupNote;
 		sol::protected_function overlayUpdate;

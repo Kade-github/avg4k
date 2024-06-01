@@ -63,7 +63,7 @@ namespace Average4k::Api::Stubs
 		void removeAll()
 		{
 			AvgLuaFile::objects.clear();
-			_base->removeAllObjects();
+			_base->removeAll();
 		}
 
 		static void Register(sol::state& state)

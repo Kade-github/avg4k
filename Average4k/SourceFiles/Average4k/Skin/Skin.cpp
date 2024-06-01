@@ -17,6 +17,8 @@ Average4k::Skin::~Skin()
 void Average4k::Skin::ClearTextures()
 {
 	AvgEngine::Fnt::Fnt::ClearCache();
+	for(auto& t : textures)
+		delete t.second;
 	textures.clear();
 }
 
@@ -25,9 +27,9 @@ std::string Average4k::Skin::GetPath(std::string p)
 	return data.path + "/" + p;
 }
 
-std::shared_ptr<AvgEngine::Base::Sprite> Average4k::Skin::CreateSprite(std::string texture, bool unique)
+AvgEngine::Base::Sprite* Average4k::Skin::CreateSprite(std::string texture, bool unique)
 {
-	std::shared_ptr<AvgEngine::OpenGL::Texture> t = nullptr;
+	AvgEngine::OpenGL::Texture* t = nullptr;
 
 	if (!unique)
 		for (auto& tex : textures)
@@ -44,14 +46,14 @@ std::shared_ptr<AvgEngine::Base::Sprite> Average4k::Skin::CreateSprite(std::stri
 		if (!unique)
 			textures[texture] = t;
 	}
-	std::shared_ptr<AvgEngine::Base::Sprite> s = std::make_shared<AvgEngine::Base::Sprite>(0, 0, t);
+	AvgEngine::Base::Sprite* s = new AvgEngine::Base::Sprite(0, 0, t);
 	if (!unique)
 		s->dontDelete = true;
 	return s;
 }
 
-std::shared_ptr<AvgEngine::Base::Text> Average4k::Skin::CreateText(std::string font, int size)
+AvgEngine::Base::Text* Average4k::Skin::CreateText(std::string font, int size)
 {
-	std::shared_ptr<AvgEngine::Base::Text> t = std::make_shared<AvgEngine::Base::Text>(0,0, GetPath("/Fonts/"), font, "", size);
+	AvgEngine::Base::Text* t = new AvgEngine::Base::Text(0,0, GetPath("/Fonts/"), font, "", size);
 	return t;
 }

@@ -46,8 +46,8 @@ namespace Average4k
 		Skin skin;
 		static A4kGame* gameInstance;
 
-		std::shared_ptr<AvgEngine::Base::Text> debugText;
-		std::shared_ptr<AvgEngine::Base::Text> debugTextOutlined;
+		AvgEngine::Base::Text* debugText;
+		AvgEngine::Base::Text* debugTextOutlined;
 		A4kGame(std::string _t, std::string _v, int w = 1920, int h = 1080);
 
 		void Destroy();
@@ -88,8 +88,8 @@ namespace Average4k
 			}
 			else
 			{
-				debugText = std::make_shared<AvgEngine::Base::Text>(0, 0, "Assets/Fallback/Fonts/", "ArialUnicode.fnt", "", 32);
-				debugTextOutlined = std::make_shared<AvgEngine::Base::Text>(0, 0, "Assets/Fallback/Fonts/", "ArialUnicode.fnt", "", 32);
+				debugText = new AvgEngine::Base::Text(0, 0, "Assets/Fallback/Fonts/", "ArialUnicode.fnt", "", 32);
+				debugTextOutlined = new AvgEngine::Base::Text(0, 0, "Assets/Fallback/Fonts/", "ArialUnicode.fnt", "", 32);
 			}
 
 			debugText->tween = &CurrentMenu->tween;

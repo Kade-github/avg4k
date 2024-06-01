@@ -49,7 +49,7 @@ namespace AvgEngine::Fnt
 
 		bool hasKernings = false;
 
-		OpenGL::Texture* texture = NULL;
+		AvgEngine::OpenGL::Texture* texture = NULL;
 
 		static void ClearCache()
 		{
@@ -65,8 +65,6 @@ namespace AvgEngine::Fnt
 			#endif
 			for (Fnt* f : *fonts)
 			{
-				if (f->texture)
-					delete f->texture;
 				delete f;
 			}
 			fonts->clear();

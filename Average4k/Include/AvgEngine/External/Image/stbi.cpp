@@ -13,9 +13,16 @@ using namespace AvgEngine::External;
 
 AvgEngine::OpenGL::Texture* stbi_h::stbi_load_file(std::string filePath)
 {
-	int w;
-	int h;
+	int w = 0;
+	int h = 0;
 	unsigned char* c = stbi_load(filePath.c_str(), &w, &h, nullptr, 4);
+
+	if (get_error())
+	{
+		AvgEngine::Logging::writeLog("[Image] [Error] [Regular] failure to load " + std::string(stbi_failure_reason()));
+		return AvgEngine::OpenGL::Texture::returnWhiteTexture();
+	}
+
 	return new AvgEngine::OpenGL::Texture(c, w, h);
 }
 
@@ -33,7 +40,10 @@ AvgEngine::OpenGL::Texture* stbi_h::stbi_load_memory(char* memory, int size)
 	unsigned char* data = stbi_load_from_memory((stbi_uc*)memory, size, &w, &h, NULL, 4);
 
 	if (get_error())
+	{
 		AvgEngine::Logging::writeLog("[Image] [Error] [Memory] failure to load " + std::string(stbi_failure_reason()));
+		return AvgEngine::OpenGL::Texture::returnWhiteTexture();
+	}
 
     return new AvgEngine::OpenGL::Texture(data, w, h);
 }

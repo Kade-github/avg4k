@@ -27,8 +27,8 @@ namespace Average4k
 
 		std::string GetPath(std::string p);
 
-		AvgEngine::Base::Sprite* CreateSprite(std::string texture, bool unique = false);
-		AvgEngine::Base::Text* CreateText(std::string font, int size);
+		std::shared_ptr<AvgEngine::Base::Sprite> CreateSprite(std::string texture, bool unique = false);
+		std::shared_ptr<AvgEngine::Base::Text> CreateText(std::string font, int size);
 	};
 }
 

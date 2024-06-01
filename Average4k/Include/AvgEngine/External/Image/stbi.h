@@ -31,7 +31,7 @@ namespace AvgEngine::External
 		 * \param filePath The file path
 		 * \return The loaded texture
 		 */
-		static OpenGL::Texture* stbi_load_file(std::string filePath);
+		static AvgEngine::OpenGL::Texture* stbi_load_file(std::string filePath);
 		/**
 		 * \brief Loads the file data for a given image
 		 * \param filePath The file path
@@ -46,7 +46,7 @@ namespace AvgEngine::External
 		 * \param size The size of the memory
 		 * \return The loaded texture
 		 */
-		static OpenGL::Texture* stbi_load_memory(char* memory, int size);
+		static AvgEngine::OpenGL::Texture* stbi_load_memory(char* memory, int size);
 		/**
 		 * \brief Frees stbi_image loaded data
 		 * \param data The STBI loaded data to free

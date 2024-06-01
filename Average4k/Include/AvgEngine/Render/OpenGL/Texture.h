@@ -33,22 +33,22 @@ namespace AvgEngine::OpenGL
 
 		bool dontDelete = false;
 
-		static Texture* returnWhiteTexture()
+		static AvgEngine::OpenGL::Texture* returnWhiteTexture()
 		{
-			static Texture* t = NULL;
+			static AvgEngine::OpenGL::Texture* t = NULL;
 			if (t == NULL)
 			{
 				unsigned char c[] = { 255, 255, 255, 255 };
-				t = new Texture(c, 1, 1);
+				t = new AvgEngine::OpenGL::Texture(reinterpret_cast<unsigned char*>(c), 1, 1);
 				t->dontDelete = true;
 			}
 			return t;
 		}
 
-		static Texture* createWithImage(std::string filePath);
+		static AvgEngine::OpenGL::Texture* createWithImage(std::string filePath);
 
-		static Texture* loadTextureFromData(char* data, size_t outLength);
-		static Texture* loadTextureFromData(unsigned char* data, int w, int h);
+		static AvgEngine::OpenGL::Texture* loadTextureFromData(char* data, size_t outLength);
+		static AvgEngine::OpenGL::Texture* loadTextureFromData(unsigned char* data, int w, int h);
 
 		static texData getTextureData(std::string filePath);
 
@@ -60,6 +60,7 @@ namespace AvgEngine::OpenGL
 		unsigned char* pixels{};
 
 		Texture(unsigned char* data, const unsigned int width, const unsigned int height);
+		Texture(unsigned char* data, const int width, const int height);
 		Texture(unsigned char* data, const unsigned int width, const unsigned int height, bool mssa);
 		~Texture();
 

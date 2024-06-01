@@ -19,7 +19,7 @@ namespace AvgEngine::Base
 	class Sprite : public GameObject
 	{
 	public:
-		OpenGL::Texture* texture = NULL;
+		AvgEngine::OpenGL::Texture* texture = NULL;
 		OpenGL::Shader* shader = NULL;
 
 		Render::Rect src;
@@ -33,16 +33,17 @@ namespace AvgEngine::Base
 			iTransform = transform;
 		}
 
-		Sprite(float x, float y, char* data, size_t size, float width, float height) : GameObject(x, y)
+		Sprite(float x, float y, char* data, size_t size, float w, float h) : GameObject(x, y)
 		{
 			src = { 0,0,1,1 };
 			texture = OpenGL::Texture::loadTextureFromData(data, size);
-			transform.w = width;
-			transform.h = height;
+			transform.w = w;
+			transform.h = h;
 			iTransform = transform;
 		}
 
-		Sprite(float x, float y, OpenGL::Texture* _texture) : GameObject(x, y)
+
+		Sprite(float x, float y, AvgEngine::OpenGL::Texture* _texture) : GameObject(x, y)
 		{
 			src = { 0,0,1,1 };
 			texture = _texture;
@@ -58,12 +59,6 @@ namespace AvgEngine::Base
 			transform.w = static_cast<float>(texture->width);
 			transform.h = static_cast<float>(texture->height);
 			iTransform = transform;
-		}
-
-		~Sprite()
-		{
-			if (!texture->dontDelete)
-				delete texture;
 		}
 
 		void recalculateRatio()

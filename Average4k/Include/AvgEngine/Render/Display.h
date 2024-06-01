@@ -355,7 +355,7 @@ namespace AvgEngine::Render
 		 * \param tex The texture to associate the buffer with
 		 * \param shad The shader to associate the buffer with
 		 */
-		static void DrawBuffer(OpenGL::Texture* tex, OpenGL::Shader* shad);
+		static void DrawBuffer(AvgEngine::OpenGL::Texture* tex, OpenGL::Shader* shad);
 
 	};
 }

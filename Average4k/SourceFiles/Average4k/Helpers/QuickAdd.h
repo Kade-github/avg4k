@@ -17,18 +17,18 @@ namespace Average4k::Helpers
 	{
 	public:
 
-		static AvgEngine::Base::Sprite* AddSprite(AvgEngine::Base::GameObject* addTo, std::string file, int x, int y)
+		static AvgEngine::Base::Sprite* AddSprite(std::shared_ptr<AvgEngine::Base::GameObject> addTo, std::string file, int x, int y)
 		{
-			AvgEngine::Base::Sprite* s = new AvgEngine::Base::Sprite(x, y, file);
+			std::shared_ptr<AvgEngine::Base::Sprite> s = std::make_shared<AvgEngine::Base::Sprite>(x, y, file);
 
 			addTo->addObject(s);
 
 			return s;
 		}
 
-		static AvgEngine::Base::Text* AddText(AvgEngine::Base::GameObject* addTo, std::string text, int size, int x, int y, std::string font = "KadeArial.fnt")
+		static AvgEngine::Base::Text* AddText(std::shared_ptr<AvgEngine::Base::GameObject> addTo, std::string text, int size, int x, int y, std::string font = "KadeArial.fnt")
 		{
-			AvgEngine::Base::Text* t = new AvgEngine::Base::Text(x, y, "Assets/Fonts/", font, text, size);
+			std::shared_ptr <AvgEngine::Base::Text> t = std::make_shared<AvgEngine::Base::Text>(x, y, "Assets/Fonts/", font, text, size);
 
 			addTo->addObject(t);
 

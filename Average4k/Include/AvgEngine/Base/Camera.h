@@ -23,7 +23,7 @@ namespace AvgEngine::Base
 		int zIndex = 0;
 		Render::Rect original;
 		std::vector<Render::Vertex> vertices{};
-		OpenGL::Texture* texture = NULL;
+		AvgEngine::OpenGL::Texture* texture = NULL;
 		OpenGL::Shader* shad = NULL;
 		AvgEngine::Render::Rect clip;
 
@@ -76,7 +76,7 @@ namespace AvgEngine::Base
 		 * \param vertices The vertices of the draw call
 		 * \return The formatted draw call struct
 		 */
-		static drawCall FormatDrawCall(int zIndex, OpenGL::Texture* texture, OpenGL::Shader* shader, std::vector<Render::Vertex> vertices, Render::Rect original)
+		static drawCall FormatDrawCall(int zIndex, AvgEngine::OpenGL::Texture* texture, OpenGL::Shader* shader, std::vector<Render::Vertex> vertices, Render::Rect original)
 		{
 			drawCall call;
 			call.texture = texture;

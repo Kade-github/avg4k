@@ -27,7 +27,7 @@ std::string Average4k::Skin::GetPath(std::string p)
 	return data.path + "/" + p;
 }
 
-AvgEngine::Base::Sprite* Average4k::Skin::CreateSprite(std::string texture, bool unique)
+std::shared_ptr<AvgEngine::Base::Sprite> Average4k::Skin::CreateSprite(std::string texture, bool unique)
 {
 	AvgEngine::OpenGL::Texture* t = nullptr;
 
@@ -46,14 +46,14 @@ AvgEngine::Base::Sprite* Average4k::Skin::CreateSprite(std::string texture, bool
 		if (!unique)
 			textures[texture] = t;
 	}
-	AvgEngine::Base::Sprite* s = new AvgEngine::Base::Sprite(0, 0, t);
+	std::shared_ptr<AvgEngine::Base::Sprite> s = std::make_shared<AvgEngine::Base::Sprite>(0, 0, t);
 	if (!unique)
 		s->dontDelete = true;
 	return s;
 }
 
-AvgEngine::Base::Text* Average4k::Skin::CreateText(std::string font, int size)
+std::shared_ptr<AvgEngine::Base::Text> Average4k::Skin::CreateText(std::string font, int size)
 {
-	AvgEngine::Base::Text* t = new AvgEngine::Base::Text(0,0, GetPath("/Fonts/"), font, "", size);
+	std::shared_ptr<AvgEngine::Base::Text> t = std::make_shared<AvgEngine::Base::Text>(0,0, GetPath("/Fonts/"), font, "", size);
 	return t;
 }

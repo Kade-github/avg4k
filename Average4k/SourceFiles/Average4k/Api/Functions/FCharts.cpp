@@ -134,6 +134,7 @@ void Average4k::Api::Functions::FCharts::ClearAudio()
 			continue;
 		if (c->isPlaying)
 			c->Stop();
+		c->Free();
 		delete c;
 	}
 

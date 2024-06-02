@@ -84,6 +84,10 @@ void Average4k::Data::AsyncChartLoader::ClearAll()
 	{
 		chartPool.wait();
 	}
+	for (auto& [key, value] : textures)
+	{
+		AvgEngine::External::stbi_h::stbi_free(value.data);
+	}
 	textures.clear();
 	chart = ChartFile();
 

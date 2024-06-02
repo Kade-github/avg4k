@@ -1104,6 +1104,6 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 	{
 		notes.erase(std::remove(notes.begin(), notes.end(), n), notes.end());
 		removeObject(n);
-		n->texture->dontDelete = true;
 	}
+	toRemove.clear();
 }

@@ -39,6 +39,13 @@ namespace Average4k::Api::Stubs
 			_baseObject = _base;
 		}
 
+		LuaSprite(float x, float y, unsigned char* data, float w, float h)
+		{
+			_base = std::make_shared<AvgEngine::Base::Sprite>(x, y, data, w, h);
+			_base->texture->dontDelete = false;
+			_baseObject = _base;
+		}
+
 		LuaSprite(std::shared_ptr<AvgEngine::Base::Sprite> sprite)
 		{
 			_base = sprite;

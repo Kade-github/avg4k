@@ -11,9 +11,9 @@ void Average4k::Data::ChartFile::ConstructTimings()
 
 	int tpIndex = 1;
 	int spIndex = 0;
-	if (timingPoints.size() >= 1)
+	if (timingPoints.size() > 1 || stopPoints.size() > 0)
 	{
-		if (stopPoints.size() >= 1)
+		if (stopPoints.size() > 1)
 		{
 			while (tpIndex < timingPoints.size() || spIndex < stopPoints.size())
 			{
@@ -88,6 +88,15 @@ void Average4k::Data::ChartFile::ConstructTimings()
 				}
 			}
 		}
+	}
+
+	if (stopPoints.size() == 1)
+	{
+		StopPoint copy = stopPoints[0];
+		stopPoints.clear();
+		copy.startTimestamp = GetTimeFromBeat(copy.startBeat);
+
+		stopPoints.push_back(copy);
 	}
 
 	if (timingPoints.size() != 0)

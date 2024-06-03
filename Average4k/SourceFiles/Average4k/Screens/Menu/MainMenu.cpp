@@ -227,10 +227,12 @@ void Average4k::Screens::Menu::MainMenu::load()
 	}
 	loaded = true;
 	createFile(path, false);
-
-	if (Steam::UGCHandler::Instance->subscribedItems_queryHandle == 0)
+	if (Average4k::Helpers::SteamHelper::IsSteamRunning)
 	{
-		Steam::UGCHandler::Instance->PopulateSubscribedItems();
+		if (Steam::UGCHandler::Instance->subscribedItems_queryHandle == 0)
+		{
+			Steam::UGCHandler::Instance->PopulateSubscribedItems();
+		}
 	}
 }
 

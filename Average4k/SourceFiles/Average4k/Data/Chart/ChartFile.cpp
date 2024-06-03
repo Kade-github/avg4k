@@ -11,9 +11,9 @@ void Average4k::Data::ChartFile::ConstructTimings()
 
 	int tpIndex = 1;
 	int spIndex = 0;
-	if (timingPoints.size() > 1)
+	if (timingPoints.size() >= 1)
 	{
-		if (stopPoints.size() > 1)
+		if (stopPoints.size() >= 1)
 		{
 			while (tpIndex < timingPoints.size() || spIndex < stopPoints.size())
 			{

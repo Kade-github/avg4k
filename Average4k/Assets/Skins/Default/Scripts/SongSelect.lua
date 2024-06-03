@@ -29,6 +29,12 @@ function sortPack(a,b)
 end
 
 function sortChart(a,b)
+    if a == nil then
+        return false
+    end
+    if b == nil then
+        return true
+    end
     return a["title"] < b["title"]
 end
 

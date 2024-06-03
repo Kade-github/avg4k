@@ -109,7 +109,7 @@ void ChartFinder::FindCharts(const std::map<std::string, std::string> paths)
 
 						if (path.ends_with(L".sm") || path.ends_with(L".ssc"))
 						{
-							Chart::Providers::StepFile stepfile = Chart::Providers::StepFile(path, true); // only metadata
+							Chart::Providers::StepFile stepfile = Chart::Providers::StepFile(path); // only metadata
 
 							if (stepfile.isValid)
 							{
@@ -230,7 +230,7 @@ void ChartFinder::FindCharts(const std::string _path)
 
 								if (path.ends_with(L".sm") || path.ends_with(L".ssc"))
 								{
-									Chart::Providers::StepFile stepfile = Chart::Providers::StepFile(path, true); // only metadata
+									Chart::Providers::StepFile stepfile = Chart::Providers::StepFile(path); // only metadata
 
 									if (stepfile.isValid)
 									{

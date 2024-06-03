@@ -249,6 +249,7 @@ void StepFile::ParseStops(std::wstring line)
 		if (stop.size() != 2)
 			continue;
 
+
 		StopPoint p;
 		p.startBeat = std::stof(stop[0]);
 		p.length = std::stof(stop[1]);

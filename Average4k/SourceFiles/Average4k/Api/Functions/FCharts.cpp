@@ -70,43 +70,60 @@ sol::table Average4k::Api::Functions::FCharts::GetCharts(std::wstring pack)
 		{
 			sol::table charts = Lua->getState().create_table();
 
-			std::wstring_convert<std::codecvt_utf8<char8_t>, char8_t> convert;
+			bool errored = false;
 
 			for (int j = 0; j < p.charts.size(); j++)
 			{
 				Average4k::Data::Chart::Providers::StepFile c = p.charts[j];
 
+				if (c.difficulties.size() == 0)
+				{
+					AvgEngine::Logging::writeLog("[Average4k] [GetCharts] [Warning] No difficulties found on chart: " + Average4k::Helpers::StringTools::Ws2s((p.charts[j].path)));
+					continue;
+				}
 				sol::table chart = Lua->getState().create_table();
 
+				try
+				{
 
+					chart["title"] = Average4k::Helpers::StringTools::Ws2s(c.metadata.title);
+					chart["titleTranslit"] = c.metadata.titleTranslit;
+					chart["subtitle"] = Average4k::Helpers::StringTools::Ws2s(c.metadata.subtitle);
+					chart["subtitleTranslit"] = c.metadata.subtitleTranslit;
+					chart["artist"] = Average4k::Helpers::StringTools::Ws2s(c.metadata.artist);
+					chart["artistTranslit"] = c.metadata.artistTranslit;
+					chart["genre"] = c.metadata.genre;
+					chart["credit"] = Average4k::Helpers::StringTools::Ws2s(c.metadata.credit);
+					chart["banner"] = c.metadata.banner;
+					chart["background"] = c.metadata.background;
+					chart["file"] = c.metadata.file;
+					chart["offset"] = c.metadata.offset;
+					chart["previewStart"] = c.metadata.previewStart;
 
-				chart["title"] = convert.from_bytes(Average4k::Helpers::StringTools::Ws2s(c.metadata.title));
-				chart["titleTranslit"] = c.metadata.titleTranslit;
-				chart["subtitle"] = convert.from_bytes(Average4k::Helpers::StringTools::Ws2s(c.metadata.subtitle));
-				chart["subtitleTranslit"] = c.metadata.subtitleTranslit;
-				chart["artist"] = convert.from_bytes(Average4k::Helpers::StringTools::Ws2s(c.metadata.artist));
-				chart["artistTranslit"] = c.metadata.artistTranslit;
-				chart["genre"] = c.metadata.genre;
-				chart["credit"] = convert.from_bytes(Average4k::Helpers::StringTools::Ws2s(c.metadata.credit));
-				chart["banner"] = c.metadata.banner;
-				chart["background"] = c.metadata.background;
-				chart["file"] = c.metadata.file;
-				chart["offset"] = c.metadata.offset;
-				chart["previewStart"] = c.metadata.previewStart;
+					chart["type"] = c.metadata.type;
+					chart["path"] = c.path;
 
-				chart["type"] = c.metadata.type;
-				chart["path"] = c.path;
+					chart["workshop"] = c.metadata.workshop;
+					// get folder from path
+					chart["folder"] = c.path.substr(0, c.path.find_last_of(L"\\"));
 
-				chart["workshop"] = c.metadata.workshop;
-				// get folder from path
-				chart["folder"] = c.path.substr(0, c.path.find_last_of(L"\\"));
-
-				charts[j + 1] = chart;
+					charts[j + 1] = chart;
+				}
+				catch (const std::exception& e)
+				{
+					AvgEngine::Logging::writeLog("[Average4k] [GetCharts] [Error] " + std::string(e.what()) + " on chart: " + Average4k::Helpers::StringTools::Ws2s((p.charts[j].path)));
+					errored = true;
+					break;
+				}
 			}
+			if (errored)
+				break;
 
 			return charts;
 		}
 	}
+
+	AvgEngine::Logging::writeLog("[Average4k] [GetCharts] Returned nothing.");
 
 	return Lua->getState().create_table();
 }

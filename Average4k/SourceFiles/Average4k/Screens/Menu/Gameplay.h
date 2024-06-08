@@ -28,6 +28,7 @@ namespace Average4k::Screens::Menu
 
 		AvgEngine::OpenGL::Texture* _noteskinSheet;
 	public:
+		bool isLeaving = false;
 		sol::protected_function setupNote;
 		sol::protected_function overlayUpdate;
 		sol::protected_function hitNote;

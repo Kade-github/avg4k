@@ -47,6 +47,7 @@ void Average4k::Screens::Menu::Gameplay::leave()
 	notes.clear();
 	receptors.clear();
 
+	isLeaving = true;
 	AvgEngine::Game::Instance->SwitchMenu(std::make_shared<Average4k::Screens::Menu::MainMenu>("Scripts/MainMenu.lua"));
 }
 
@@ -280,6 +281,7 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 		if (!Helpers::SteamHelper::IsSteamRunning)
 		{
 			AvgEngine::Logging::writeLog("[Gameplay] [Error] Noteskin folder (" + folder + ") not found. Steam isn't running, but this might be a steam skin. Returning to main menu.");
+			leave();
 			return;
 		}
 
@@ -295,6 +297,7 @@ void Average4k::Screens::Menu::Gameplay::loadPlayfield()
 		if (!AvgEngine::Utils::Paths::pathExists(folder))
 		{
 			AvgEngine::Logging::writeLog("[Gameplay] [Error] Noteskin folder (" + folder + ") not found. Returning to main menu.");
+			leave();
 			return;
 		}
 	}
@@ -584,6 +587,9 @@ void Average4k::Screens::Menu::Gameplay::load()
 	loadBackground();
 
 	loadPlayfield();
+
+	if (isLeaving)
+		return;
 
 	// event handlers
 

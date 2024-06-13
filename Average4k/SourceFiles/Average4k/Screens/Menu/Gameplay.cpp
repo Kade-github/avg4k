@@ -926,6 +926,8 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 			{
 				n->hit = true;
 				hitNotes -= 1;
+				if (hitNotes < 0)
+					hitNotes = 0;
 				
 				float acc = (float)hitNotes / (float)totalNotes;
 
@@ -1041,8 +1043,11 @@ void Average4k::Screens::Menu::Gameplay::updateNotes()
 						{
 							float diff = std::abs(hn->endHold - currentBeat);
 
-							if (diff <= 0.25) // grab back
+							if (diff <= 0.5) // regrab
+							{
 								noMiss = true;
+								AvgEngine::Logging::writeLog("[Gameplay] Re-grabbing hold note at beat " + std::to_string(n->data.beat));
+							}
 
 							float endDiff = hn->endTime - currentTime;
 

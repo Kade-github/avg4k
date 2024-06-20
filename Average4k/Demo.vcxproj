@@ -37,6 +37,7 @@
     <ClCompile Include="SourceFiles\Average4k\Api\Functions\FGame.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Api\Functions\FGameplay.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Api\Functions\FMenu.cpp" />
+    <ClCompile Include="SourceFiles\Average4k\Api\Functions\FOnline.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Api\Functions\FSkins.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Api\Functions\FSteam.cpp" />
     <ClCompile Include="SourceFiles\Average4k\Console\CmdHandler.cpp" />
@@ -77,6 +78,7 @@
     <ClInclude Include="SourceFiles\Average4k\Api\Functions\FGame.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Functions\FGameplay.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Functions\FMenu.h" />
+    <ClInclude Include="SourceFiles\Average4k\Api\Functions\FOnline.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Functions\FSkins.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Functions\FSteam.h" />
     <ClInclude Include="SourceFiles\Average4k\Api\Stubs\LuaMenu.h" />
@@ -154,6 +156,7 @@
     <ClInclude Include="SourceFiles\Average4k\Objects\Playfield.h" />
     <ClInclude Include="SourceFiles\Average4k\Objects\RenderTexture.h" />
     <ClInclude Include="SourceFiles\Average4k\Objects\UnicodeText.h" />
+    <ClInclude Include="SourceFiles\Average4k\PacketSubscription.h" />
     <ClInclude Include="SourceFiles\Average4k\Screens\Menu\Gameplay.h" />
     <ClInclude Include="SourceFiles\Average4k\Screens\Menu\MainMenu.h" />
     <ClInclude Include="SourceFiles\Average4k\Skin\Skin.h" />

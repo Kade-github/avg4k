@@ -156,6 +156,9 @@
     <ClCompile Include="SourceFiles\Average4k\Steam\UGCHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SourceFiles\Average4k\Api\Functions\FOnline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceFiles\Average4k\A4kGame.h">
@@ -426,6 +429,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SourceFiles\Average4k\Objects\Playfield.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceFiles\Average4k\Api\Functions\FOnline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceFiles\Average4k\PacketSubscription.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

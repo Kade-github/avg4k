@@ -28,9 +28,6 @@ void Average4k::Api::Functions::FOnline::QueryLobbies()
 	if (!CanSendRequest(2))
 		return;
 
-	Multiplayer::Packets::CPacketServerList packet{};
-
-	Multiplayer::Connection::Instance->sendMessage(packet);
 }
 
 sol::table Average4k::Api::Functions::FOnline::GetLobbies()

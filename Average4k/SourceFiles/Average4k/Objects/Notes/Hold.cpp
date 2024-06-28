@@ -48,13 +48,14 @@ void Average4k::Objects::HoldNote::draw()
 	// (aka holds)
 
 
-	int amount = 1 + (endPosition / (transform.h));
+	int amount = (endPosition / (transform.h));
 
 	if (useXmod)
-		amount = 1 + ((endBeat - data.beat) * (transform.h * xmod)) / (transform.h);
+		amount = ((endBeat - data.beat) * (transform.h * xmod)) / (transform.h);
 
 	if (amount < 0)
 		amount = 0;
+
 
 
 
@@ -188,9 +189,6 @@ void Average4k::Objects::HoldNote::draw()
 				v[5].y = receptor[2].y; // br
 			}
 		}
-
-		if (p1 <= progress && !holding && hasHeld)
-			continue;
 
 		vertices.push_back(v);
 	}

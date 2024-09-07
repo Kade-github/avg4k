@@ -1,0 +1,3 @@
+[submodule "Average4k/AvgEngine"]
+	path = Average4k/AvgEngine
+	url = https://github.com/Kade-github/AvgEngine

@@ -2,6 +2,27 @@
 #include "../../Helpers/TimeToScreen.h"
 #include "../../A4kGame.h"
 
+float Average4k::Objects::HoldNote::calculateHoldHeight()
+{
+	float height = 0;
+
+	if (!downscroll)
+		height = Average4k::Helpers::TimeToScreen::YOffset(cmod, endTime - noteTime);
+	else
+		height = Average4k::Helpers::TimeToScreen::YOffset(cmod, noteTime - endTime);
+
+	int amount = (height / (transform.h));
+
+	if (useXmod)
+		amount = ((endBeat - data.beat) * (transform.h * xmod)) / (transform.h);
+
+	float noteScaleH = Average4k::Api::Functions::FGame::GetHeightScale();
+
+	// (pixel height / (noteHeight)) * scale
+
+	return amount * noteScaleH;
+}
+
 void Average4k::Objects::HoldNote::draw()
 {
 	if (missed)
@@ -156,39 +177,6 @@ void Average4k::Objects::HoldNote::draw()
 			}
 		}
 
-		// hold cliping
-
-		if (holding)
-		{
-			if (p2 <= progress)
-			{
-				if (!downscroll)
-				{
-					v[0].y = receptor[0].y; // tl
-					v[2].y = receptor[2].y; // tr
-					v[3].y = receptor[3].y; // tr
-				}
-				else
-				{
-					// no fuckin idea why you gotta do this shit (this is probably bad and wont work with modfiles)
-					v[0].y = receptor[0].y; // tl
-					v[2].y = receptor[0].y; // tr
-					v[3].y = receptor[0].y; // tr
-
-					v[1].y = receptor[0].y; // bl
-					v[4].y = receptor[0].y; // bl
-					v[5].y = receptor[0].y; // br
-
-				}
-			}
-
-			if (p3 <= progress && !downscroll)
-			{
-				v[1].y = receptor[0].y; // bl
-				v[4].y = receptor[0].y; // bl
-				v[5].y = receptor[2].y; // br
-			}
-		}
 
 		vertices.push_back(v);
 	}
@@ -196,6 +184,7 @@ void Average4k::Objects::HoldNote::draw()
 	for (auto& v : vertices) // draw the hold
 	{
 		Base::drawCall c = Base::Camera::FormatDrawCall(zIndex, texture, shader, v, iTransform);
+
 		camera->addDrawCall(c);
 	}
 

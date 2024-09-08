@@ -1,6 +1,7 @@
 #include "Hold.h"
 #include "../../Helpers/TimeToScreen.h"
 #include "../../A4kGame.h"
+#include "../../Screens/Menu/Gameplay.h"
 
 float Average4k::Objects::HoldNote::calculateHoldHeight()
 {
@@ -69,118 +70,22 @@ void Average4k::Objects::HoldNote::draw()
 	// (aka holds)
 
 
-	int amount = (endPosition / (transform.h));
-
-	if (useXmod)
-		amount = ((endBeat - data.beat) * (transform.h * xmod)) / (transform.h);
-
-	if (amount < 0)
-		amount = 0;
-
-
-
-
 	if (!downscroll) // flip
 		endSrc = { sheet_end_col * w, (sheet_end_row + 1) * h, w,-h };
 
 	std::vector<std::vector<Render::Vertex>> vertices;
+	std::shared_ptr<Average4k::Screens::Menu::Gameplay> gameplay = std::dynamic_pointer_cast<Average4k::Screens::Menu::Gameplay>(Average4k::A4kGame::gameInstance->CurrentMenu);
 
-	float progress = -1;
+	// draw hold
 
-	if (holding)
-	{
-		progress = (currentBeat - data.beat) / (endBeat - noteBeat);
-	}
-	else if (endHold >= 0)
-	{
-		progress = (endHold - data.beat) / (endBeat - noteBeat);
-	}
+	float sHoldBeat = noteBeat;
 
-	if (progress > 1)
-	{
-		holdHasEnded = true;
-		progress = 1;
-	}
+	if (!holding && hasHeld)
+		sHoldBeat = endHold;
 
-	for (int i = 0; i < amount; i++)
-	{
-		Render::Rect r = { transform.x, transform.y + (transform.h / 2) + (transform.h * i), transform.w, transform.h };
+	
 
-		if (downscroll)
-			r.y = (transform.y + (transform.h / 2)) - (transform.h * i);
-
-		float p1 = (float)(i - 1) / (float)amount;
-		float p2 = (float)i / (float)amount;
-		float p3 = (float)(i + 1) / (float)amount;
-		if (p1 < 0)
-			p1 = 0;
-		if (p3 > 1)
-			p3 = 1;
-
-		std::vector<Render::Vertex> v = {};
-
-		if (i + 1 != amount)
-			v = Render::DisplayHelper::RectToVertex(r, bodySrc);
-		else
-			v = Render::DisplayHelper::RectToVertex(r, endSrc);
-
-		// where da quad at, here it is:
-		// [0] tl
-		// [1] bl
-		// [2] tr
-		// [3] tr
-		// [4] bl
-		// [5] br
-
-		if (!downscroll)
-		{
-			if (i == 0 || vertices.size() == 0)
-			{
-				v[0].y = transform.y + (transform.h / 2); // top left
-				v[0].x = transform.x;
-				v[2].y = transform.y + (transform.h / 2); // top right
-				v[2].x = transform.x + transform.w;
-				v[3].y = transform.y + (transform.h / 2); // top right
-				v[3].x = transform.x + transform.w;
-			}
-			else
-			{
-				std::vector<Render::Vertex>& last = vertices.back();
-				v[0].y = last[1].y; // set the top left to the bottom left y
-				v[0].x = last[1].x; // set the top left to the bottom left x
-				v[2].y = last[5].y; // set the top right to the bottom right y
-				v[2].x = last[5].x; // set the top right to the bottom right x
-				v[3].y = last[5].y; // set the top right to the bottom right y
-				v[3].x = last[5].x; // set the top right to the bottom right x
-			}
-		}
-		else
-		{
-			if (i == 0 || vertices.size() == 0)
-			{
-				v[1].y = transform.y + (transform.h / 2); // bottom left
-				v[1].x = transform.x;
-				v[4].y = transform.y + (transform.h / 2); // bottom left
-				v[4].x = transform.x;
-				v[5].y = transform.y + (transform.h / 2); // bottom right
-				v[5].x = transform.x + transform.w;
-			}
-			else
-			{
-				std::vector<Render::Vertex>& last = vertices.back();
-				v[1].y = last[0].y; // set the bottom left to the top left y
-				v[1].x = last[0].x; // set the bottom left to the top left x
-				v[4].y = last[0].y; // set the bottom left to the top left y
-				v[4].x = last[0].x; // set the bottom left to the top left x
-				v[5].y = last[2].y; // set the bottom right to the top right y
-				v[5].x = last[2].x; // set the bottom right to the top right x
-			}
-		}
-
-
-		vertices.push_back(v);
-	}
-
+	
 	for (auto& v : vertices) // draw the hold
 	{
 		Base::drawCall c = Base::Camera::FormatDrawCall(zIndex, texture, shader, v, iTransform);
@@ -189,11 +94,10 @@ void Average4k::Objects::HoldNote::draw()
 	}
 
 
+
 	transform.x += transform.w / 2;
 	transform.y += transform.h / 2;
 
 	if (!hasHeld)
 		Base::Sprite::draw();
-
-
 }

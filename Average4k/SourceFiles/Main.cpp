@@ -16,9 +16,9 @@
 #pragma comment(lib,"Library\\x64_static\\libssl.lib")
 
 #ifdef _DEBUG
-#pragma comment(lib,"Library\\x64_static\\Debug\\AvgEngine.lib")
+#pragma comment(lib,"x64\\Debug\\AvgEngine.lib")
 #else
-#pragma comment(lib,"Library\\x64_static\\Release\\AvgEngine.lib")
+#pragma comment(lib,"x64\\Release\\AvgEngine.lib")
 #endif
 
 #include <thread>
